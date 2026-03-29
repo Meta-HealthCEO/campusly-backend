@@ -49,6 +49,7 @@ export class ParentService {
         .sort(sortField)
         .skip(skip)
         .limit(limit)
+        .lean()
         .exec(),
       Parent.countDocuments(filter),
     ]);

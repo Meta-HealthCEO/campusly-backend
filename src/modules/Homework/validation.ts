@@ -14,6 +14,11 @@ export const createHomeworkSchema = z.object({
   dueDate: z.string().datetime(),
   attachments: z.array(z.string()).optional(),
   totalMarks: z.number().min(1, 'Total marks must be at least 1'),
+  rubric: z.string().optional(),
+  peerReviewEnabled: z.boolean().optional(),
+  groupAssignment: z.boolean().optional(),
+  maxFileSize: z.number().positive('Max file size must be positive').optional(),
+  allowedFileTypes: z.array(z.string()).optional(),
 });
 
 export const updateHomeworkSchema = createHomeworkSchema.partial();

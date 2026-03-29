@@ -62,7 +62,7 @@ export class AcademicService {
     }
 
     const [data, total] = await Promise.all([
-      Grade.find(filter).sort(sortField).skip(skip).limit(limit).exec(),
+      Grade.find(filter).sort(sortField).skip(skip).limit(limit).lean().exec(),
       Grade.countDocuments(filter),
     ]);
 
@@ -123,6 +123,7 @@ export class AcademicService {
         .sort(sortField)
         .skip(skip)
         .limit(limit)
+        .lean()
         .exec(),
       Class.countDocuments(filter),
     ]);
@@ -188,6 +189,7 @@ export class AcademicService {
         .sort(sortField)
         .skip(skip)
         .limit(limit)
+        .lean()
         .exec(),
       Subject.countDocuments(filter),
     ]);
@@ -247,6 +249,7 @@ export class AcademicService {
         .sort(sortField)
         .skip(skip)
         .limit(limit)
+        .lean()
         .exec(),
       Timetable.countDocuments(filter),
     ]);
@@ -333,6 +336,7 @@ export class AcademicService {
         .sort(sortField)
         .skip(skip)
         .limit(limit)
+        .lean()
         .exec(),
       Assessment.countDocuments(filter),
     ]);

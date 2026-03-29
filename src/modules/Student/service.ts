@@ -49,7 +49,8 @@ export class StudentService {
       .populate('classId')
       .sort(sortField)
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
+      .lean();
 
     if (query.search) {
       // Also search by user name via populated field - we need a pipeline approach

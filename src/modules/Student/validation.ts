@@ -35,6 +35,15 @@ export const createStudentSchema = z.object({
     .enum(['active', 'transferred', 'graduated', 'expelled', 'withdrawn'])
     .optional(),
   medicalProfile: medicalProfileSchema.optional(),
+  dateOfBirth: z.string().datetime().optional(),
+  gender: z.enum(['male', 'female', 'other']).optional(),
+  previousSchool: z.string().trim().optional(),
+  homeLanguage: z.string().trim().optional(),
+  additionalLanguages: z.array(z.string()).optional(),
+  transportRequired: z.boolean().optional(),
+  afterCareRequired: z.boolean().optional(),
+  saIdNumber: z.string().trim().optional(),
+  luritsNumber: z.string().trim().optional(),
 });
 
 export const updateStudentSchema = createStudentSchema.partial();

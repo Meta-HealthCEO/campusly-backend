@@ -37,6 +37,15 @@ export interface IStudent extends Document {
   enrollmentDate: Date;
   enrollmentStatus: EnrollmentStatus;
   medicalProfile: IMedicalProfile;
+  dateOfBirth?: Date;
+  gender?: 'male' | 'female' | 'other';
+  previousSchool?: string;
+  homeLanguage?: string;
+  additionalLanguages: string[];
+  transportRequired: boolean;
+  afterCareRequired: boolean;
+  saIdNumber?: string;
+  luritsNumber?: string;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -119,6 +128,41 @@ const studentSchema = new Schema<IStudent>(
         conditions: [],
         emergencyContacts: [],
       }),
+    },
+    dateOfBirth: {
+      type: Date,
+    },
+    gender: {
+      type: String,
+      enum: ['male', 'female', 'other'],
+    },
+    previousSchool: {
+      type: String,
+      trim: true,
+    },
+    homeLanguage: {
+      type: String,
+      trim: true,
+    },
+    additionalLanguages: {
+      type: [String],
+      default: [],
+    },
+    transportRequired: {
+      type: Boolean,
+      default: false,
+    },
+    afterCareRequired: {
+      type: Boolean,
+      default: false,
+    },
+    saIdNumber: {
+      type: String,
+      trim: true,
+    },
+    luritsNumber: {
+      type: String,
+      trim: true,
     },
     isDeleted: {
       type: Boolean,

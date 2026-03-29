@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
+import mongoose from 'mongoose';
 import swaggerUi from 'swagger-ui-express';
 import { config } from './config/env.js';
 import { swaggerSpec } from './config/swagger.js';
@@ -22,6 +23,12 @@ import attendanceRoutes from './modules/Attendance/routes.js';
 import tuckShopRoutes from './modules/TuckShop/routes.js';
 import notificationRoutes from './modules/Notification/routes.js';
 import announcementRoutes from './modules/Announcement/routes.js';
+import eventRoutes from './modules/Event/routes.js';
+import transportRoutes from './modules/Transport/routes.js';
+import afterCareRoutes from './modules/AfterCare/routes.js';
+import sportRoutes from './modules/Sport/routes.js';
+import fundraisingRoutes from './modules/Fundraising/routes.js';
+import uniformRoutes from './modules/Uniform/routes.js';
 
 const app = express();
 
@@ -41,8 +48,14 @@ if (config.nodeEnv !== 'test') {
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Health check
-app.get('/health', (_req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+app.get('/health', async (_req, res) => {
+  const mongoStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
+  res.json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    mongodb: mongoStatus,
+  });
 });
 
 // API routes
@@ -58,6 +71,12 @@ app.use('/api/attendance', attendanceRoutes);
 app.use('/api/tuck-shop', tuckShopRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/announcements', announcementRoutes);
+app.use('/api/events', eventRoutes);
+app.use('/api/transport', transportRoutes);
+app.use('/api/after-care', afterCareRoutes);
+app.use('/api/sports', sportRoutes);
+app.use('/api/fundraising', fundraisingRoutes);
+app.use('/api/uniforms', uniformRoutes);
 
 // 404 handler
 app.use((_req, res) => {

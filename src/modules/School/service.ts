@@ -49,7 +49,7 @@ export class SchoolService {
     }
 
     const [data, total] = await Promise.all([
-      School.find(filter).sort(sortObj).skip(skip).limit(limit),
+      School.find(filter).sort(sortObj).skip(skip).limit(limit).lean(),
       School.countDocuments(filter),
     ]);
 

@@ -11,6 +11,11 @@ export interface IAttendance extends Document {
   status: AttendanceStatus;
   recordedBy: Types.ObjectId;
   notes?: string;
+  earlyDeparture: boolean;
+  reason?: string;
+  verifiedByParent: boolean;
+  arrivalTime?: string;
+  departureTime?: string;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -52,6 +57,23 @@ const attendanceSchema = new Schema<IAttendance>(
       required: true,
     },
     notes: {
+      type: String,
+    },
+    earlyDeparture: {
+      type: Boolean,
+      default: false,
+    },
+    reason: {
+      type: String,
+    },
+    verifiedByParent: {
+      type: Boolean,
+      default: false,
+    },
+    arrivalTime: {
+      type: String,
+    },
+    departureTime: {
       type: String,
     },
     isDeleted: {

@@ -13,6 +13,10 @@ export const createMenuItemSchema = z.object({
   category: menuItemCategorySchema,
   image: z.string().url('Image must be a valid URL').optional(),
   stock: z.int().min(-1, 'Stock must be -1 (unlimited) or a non-negative integer').optional(),
+  nutritionalInfo: z.string().optional(),
+  allergenWarnings: z.array(z.string()).optional(),
+  isDailySpecial: z.boolean().optional(),
+  stockAlertThreshold: z.int().min(0, 'Stock alert threshold must be non-negative').optional(),
 });
 
 export const updateMenuItemSchema = createMenuItemSchema.partial();

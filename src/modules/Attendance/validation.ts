@@ -13,6 +13,11 @@ export const recordAttendanceSchema = z.object({
   period: z.int().positive('Period must be a positive integer'),
   status: attendanceStatusSchema,
   notes: z.string().optional(),
+  earlyDeparture: z.boolean().optional(),
+  reason: z.string().optional(),
+  verifiedByParent: z.boolean().optional(),
+  arrivalTime: z.string().optional(),
+  departureTime: z.string().optional(),
 });
 
 export const bulkAttendanceSchema = z.object({

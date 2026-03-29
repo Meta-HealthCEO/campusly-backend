@@ -33,6 +33,9 @@ export const createSchoolSchema = z.object({
   subscription: subscriptionSchema,
   modulesEnabled: z.array(z.string()).optional(),
   settings: settingsSchema,
+  principal: z.string().trim().optional(),
+  emisNumber: z.string().trim().optional(),
+  type: z.enum(['primary', 'secondary', 'combined', 'special']).optional(),
 });
 
 export const updateSchoolSchema = z.object({
@@ -43,6 +46,9 @@ export const updateSchoolSchema = z.object({
   subscription: subscriptionSchema.optional(),
   modulesEnabled: z.array(z.string()).optional(),
   settings: settingsSchema.optional(),
+  principal: z.string().trim().optional(),
+  emisNumber: z.string().trim().optional(),
+  type: z.enum(['primary', 'secondary', 'combined', 'special']).optional(),
   isActive: z.boolean().optional(),
 });
 

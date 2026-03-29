@@ -8,6 +8,7 @@ import {
   NotFoundError,
   UnauthorizedError,
 } from '../../common/errors.js';
+import { EmailService } from '../../services/email.service.js';
 import type { RegisterInput } from './validation.js';
 
 interface TokenPair {
@@ -67,6 +68,7 @@ export class AuthService {
 
     const tokens = AuthService.generateTokenPair(user);
 
+    user.lastLoginAt = new Date();
     user.refreshTokens.push(tokens.refreshToken);
     await user.save();
 
@@ -123,8 +125,11 @@ export class AuthService {
       { expiresIn: '1h' },
     );
 
-    // TODO: Send reset email with token
-    // await EmailService.sendPasswordResetEmail(user.email, resetToken);
+    user.passwordResetToken = resetToken;
+    user.passwordResetExpires = new Date(Date.now() + 3600000); // 1 hour
+    await user.save();
+
+    await EmailService.sendPasswordReset(user.email, resetToken);
 
     return 'If an account with that email exists, a password reset link has been sent';
   }
@@ -143,6 +148,8 @@ export class AuthService {
     }
 
     user.password = newPassword;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
     user.refreshTokens = [];
     await user.save();
   }

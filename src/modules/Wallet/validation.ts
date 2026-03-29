@@ -4,6 +4,10 @@ export const createWalletSchema = z.object({
   studentId: z.string().min(1, 'Student ID is required'),
   schoolId: z.string().min(1, 'School ID is required'),
   dailyLimit: z.int().positive('Daily limit must be a positive integer').optional(),
+  currency: z.string().optional(),
+  autoTopUpEnabled: z.boolean().optional(),
+  autoTopUpAmount: z.int().positive('Auto top-up amount must be a positive integer in cents').optional(),
+  autoTopUpThreshold: z.int().positive('Auto top-up threshold must be a positive integer in cents').optional(),
 });
 
 export const loadMoneySchema = z.object({

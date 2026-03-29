@@ -174,7 +174,8 @@ export class WalletService {
       WalletTransaction.find(filter)
         .sort({ createdAt: -1 })
         .skip(skip)
-        .limit(limit),
+        .limit(limit)
+        .lean(),
       WalletTransaction.countDocuments(filter),
     ]);
 

@@ -15,6 +15,11 @@ export interface IHomework extends Document {
   attachments: string[];
   totalMarks: number;
   status: HomeworkStatus;
+  rubric?: string;
+  peerReviewEnabled: boolean;
+  groupAssignment: boolean;
+  maxFileSize?: number;
+  allowedFileTypes: string[];
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -67,6 +72,24 @@ const homeworkSchema = new Schema<IHomework>(
       type: String,
       enum: ['assigned', 'closed'],
       default: 'assigned',
+    },
+    rubric: {
+      type: String,
+    },
+    peerReviewEnabled: {
+      type: Boolean,
+      default: false,
+    },
+    groupAssignment: {
+      type: Boolean,
+      default: false,
+    },
+    maxFileSize: {
+      type: Number,
+    },
+    allowedFileTypes: {
+      type: [String],
+      default: [],
     },
     isDeleted: {
       type: Boolean,

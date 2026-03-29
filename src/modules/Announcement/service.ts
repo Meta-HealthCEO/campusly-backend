@@ -46,7 +46,8 @@ export class AnnouncementService {
         .populate('authorId', 'firstName lastName email')
         .sort(sortField)
         .skip(skip)
-        .limit(limit),
+        .limit(limit)
+        .lean(),
       Announcement.countDocuments(filter),
     ]);
 

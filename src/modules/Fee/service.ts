@@ -33,7 +33,7 @@ export class FeeService {
     }
 
     const [feeTypes, total] = await Promise.all([
-      FeeType.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit),
+      FeeType.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
       FeeType.countDocuments(filter),
     ]);
 
@@ -97,7 +97,8 @@ export class FeeService {
         .populate('feeTypeId')
         .sort({ dueDate: 1 })
         .skip(skip)
-        .limit(limit),
+        .limit(limit)
+        .lean(),
       FeeSchedule.countDocuments(filter),
     ]);
 
@@ -184,7 +185,8 @@ export class FeeService {
         .populate('feeScheduleId')
         .sort({ createdAt: -1 })
         .skip(skip)
-        .limit(limit),
+        .limit(limit)
+        .lean(),
       Invoice.countDocuments(filter),
     ]);
 

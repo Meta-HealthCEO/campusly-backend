@@ -65,7 +65,7 @@ export class TuckShopService {
     }
 
     const [items, total] = await Promise.all([
-      MenuItem.find(filter).sort('-createdAt').skip(skip).limit(limit),
+      MenuItem.find(filter).sort('-createdAt').skip(skip).limit(limit).lean(),
       MenuItem.countDocuments(filter),
     ]);
 

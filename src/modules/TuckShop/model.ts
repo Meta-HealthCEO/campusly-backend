@@ -13,6 +13,10 @@ export interface IMenuItem extends Document {
   image?: string;
   isAvailable: boolean;
   stock: number;
+  nutritionalInfo?: string;
+  allergenWarnings: string[];
+  isDailySpecial: boolean;
+  stockAlertThreshold: number;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -52,6 +56,21 @@ const menuItemSchema = new Schema<IMenuItem>(
     stock: {
       type: Number,
       default: 0,
+    },
+    nutritionalInfo: {
+      type: String,
+    },
+    allergenWarnings: {
+      type: [String],
+      default: [],
+    },
+    isDailySpecial: {
+      type: Boolean,
+      default: false,
+    },
+    stockAlertThreshold: {
+      type: Number,
+      default: 10,
     },
     isDeleted: {
       type: Boolean,

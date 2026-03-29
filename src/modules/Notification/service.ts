@@ -56,7 +56,8 @@ export class NotificationService {
       Notification.find(filter)
         .sort({ createdAt: -1 })
         .skip(skip)
-        .limit(limit),
+        .limit(limit)
+        .lean(),
       Notification.countDocuments(filter),
     ]);
 

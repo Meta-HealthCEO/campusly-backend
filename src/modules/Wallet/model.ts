@@ -8,6 +8,10 @@ export interface IWallet extends Document {
   schoolId: Types.ObjectId;
   balance: number;
   dailyLimit: number;
+  currency: string;
+  autoTopUpEnabled: boolean;
+  autoTopUpAmount?: number;
+  autoTopUpThreshold?: number;
   isActive: boolean;
   isDeleted: boolean;
   createdAt: Date;
@@ -33,6 +37,20 @@ const walletSchema = new Schema<IWallet>(
     dailyLimit: {
       type: Number,
       default: 10000, // R100 in cents
+    },
+    currency: {
+      type: String,
+      default: 'ZAR',
+    },
+    autoTopUpEnabled: {
+      type: Boolean,
+      default: false,
+    },
+    autoTopUpAmount: {
+      type: Number,
+    },
+    autoTopUpThreshold: {
+      type: Number,
     },
     isActive: {
       type: Boolean,

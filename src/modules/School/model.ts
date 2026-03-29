@@ -33,6 +33,9 @@ export interface ISchool extends Document {
   subscription: ISubscription;
   modulesEnabled: string[];
   settings: ISettings;
+  principal?: string;
+  emisNumber?: string;
+  type?: 'primary' | 'secondary' | 'combined' | 'special';
   isActive: boolean;
   isDeleted: boolean;
   createdAt: Date;
@@ -113,6 +116,18 @@ const schoolSchema = new Schema<ISchool>(
     settings: {
       type: settingsSchema,
       required: true,
+    },
+    principal: {
+      type: String,
+      trim: true,
+    },
+    emisNumber: {
+      type: String,
+      trim: true,
+    },
+    type: {
+      type: String,
+      enum: ['primary', 'secondary', 'combined', 'special'],
     },
     isActive: {
       type: Boolean,

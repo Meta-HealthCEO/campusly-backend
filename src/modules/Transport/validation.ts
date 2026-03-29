@@ -1,0 +1,51 @@
+import { z } from 'zod/v4';
+
+const objectIdRegex = /^[0-9a-fA-F]{24}$/;
+const objectIdSchema = z.string().regex(objectIdRegex, 'Invalid ObjectId format');
+
+const busStopSchema = z.object({
+  name: z.string().min(1, 'Stop name is required'),
+  time: z.string().min(1, 'Stop time is required'),
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
+});
+
+export const createBusRouteSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  schoolId: objectIdSchema,
+  driverName: z.string().min(1, 'Driver name is required'),
+  driverPhone: z.string().min(1, 'Driver phone is required'),
+  vehicleRegistration: z.string().min(1, 'Vehicle registration is required'),
+  capacity: z.number().int().positive('Capacity must be a positive integer'),
+  stops: z.array(busStopSchema).optional(),
+  isActive: z.boolean().optional(),
+});
+
+export const updateBusRouteSchema = z.object({
+  name: z.string().min(1, 'Name is required').optional(),
+  driverName: z.string().min(1, 'Driver name is required').optional(),
+  driverPhone: z.string().min(1, 'Driver phone is required').optional(),
+  vehicleRegistration: z.string().min(1, 'Vehicle registration is required').optional(),
+  capacity: z.number().int().positive('Capacity must be a positive integer').optional(),
+  stops: z.array(busStopSchema).optional(),
+  isActive: z.boolean().optional(),
+});
+
+export const createAssignmentSchema = z.object({
+  studentId: objectIdSchema,
+  schoolId: objectIdSchema,
+  busRouteId: objectIdSchema,
+  stopName: z.string().min(1, 'Stop name is required'),
+  direction: z.enum(['morning', 'afternoon', 'both']),
+});
+
+export const updateAssignmentSchema = z.object({
+  busRouteId: objectIdSchema.optional(),
+  stopName: z.string().min(1, 'Stop name is required').optional(),
+  direction: z.enum(['morning', 'afternoon', 'both']).optional(),
+});
+
+export type CreateBusRouteInput = z.infer<typeof createBusRouteSchema>;
+export type UpdateBusRouteInput = z.infer<typeof updateBusRouteSchema>;
+export type CreateAssignmentInput = z.infer<typeof createAssignmentSchema>;
+export type UpdateAssignmentInput = z.infer<typeof updateAssignmentSchema>;

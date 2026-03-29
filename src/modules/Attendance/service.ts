@@ -128,7 +128,8 @@ export class AttendanceService {
       isDeleted: false,
     })
       .sort({ date: 1, period: 1 })
-      .populate('classId');
+      .populate('classId')
+      .lean();
 
     return records;
   }
@@ -140,7 +141,8 @@ export class AttendanceService {
       isDeleted: false,
     })
       .sort({ period: 1 })
-      .populate('studentId');
+      .populate('studentId')
+      .lean();
 
     return records;
   }

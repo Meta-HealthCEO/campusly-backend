@@ -15,6 +15,9 @@ export interface IAnnouncement extends Document {
   publishedAt?: Date;
   expiresAt?: Date;
   isPublished: boolean;
+  pinned: boolean;
+  scheduledPublishDate?: Date;
+  readBy: Types.ObjectId[];
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -67,6 +70,18 @@ const announcementSchema = new Schema<IAnnouncement>(
     isPublished: {
       type: Boolean,
       default: false,
+    },
+    pinned: {
+      type: Boolean,
+      default: false,
+    },
+    scheduledPublishDate: {
+      type: Date,
+    },
+    readBy: {
+      type: [Schema.Types.ObjectId],
+      ref: 'User',
+      default: [],
     },
     isDeleted: {
       type: Boolean,

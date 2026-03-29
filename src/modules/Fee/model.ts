@@ -145,6 +145,7 @@ export interface IInvoice extends Document {
   paidAmount: number;
   status: InvoiceStatus;
   dueDate: Date;
+  receiptNumber?: string;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -196,6 +197,9 @@ const invoiceSchema = new Schema<IInvoice>(
       type: Date,
       required: true,
     },
+    receiptNumber: {
+      type: String,
+    },
     isDeleted: {
       type: Boolean,
       default: false,
@@ -212,7 +216,7 @@ export const Invoice = mongoose.model<IInvoice>('Invoice', invoiceSchema);
 
 // ─── Payment ───────────────────────────────────────────────────────────────────
 
-export type FeePaymentMethod = 'cash' | 'eft' | 'debit_order' | 'card';
+export type FeePaymentMethod = 'cash' | 'eft' | 'debit_order' | 'card' | 'snapscan' | 'wallet';
 
 export interface IPayment extends Document {
   invoiceId: Types.ObjectId;
@@ -251,7 +255,7 @@ const paymentSchema = new Schema<IPayment>(
     },
     paymentMethod: {
       type: String,
-      enum: ['cash', 'eft', 'debit_order', 'card'],
+      enum: ['cash', 'eft', 'debit_order', 'card', 'snapscan', 'wallet'],
       required: true,
     },
     reference: {

@@ -65,6 +65,7 @@ export class HomeworkService {
         .sort(sortField)
         .skip(skip)
         .limit(limit)
+        .lean()
         .exec(),
       Homework.countDocuments(filter),
     ]);
