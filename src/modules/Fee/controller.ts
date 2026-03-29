@@ -151,4 +151,165 @@ export class FeeController {
     await FeeService.deleteDebitOrder(req.params.id as string);
     res.json(apiResponse(true, undefined, 'Debit order deleted successfully'));
   }
+
+  // ─── Debtors Report ─────────────────────────────────────────────────────────
+
+  static async getDebtorsReport(req: Request, res: Response): Promise<void> {
+    const schoolId = req.params.schoolId as string;
+    const result = await FeeService.getDebtorsReport(schoolId, {
+      page: req.query.page ? Number(req.query.page) : undefined,
+      limit: req.query.limit ? Number(req.query.limit) : undefined,
+      minAge: req.query.minAge ? Number(req.query.minAge) : undefined,
+    });
+    res.json(apiResponse(true, result));
+  }
+
+  // ─── Collection Escalation ──────────────────────────────────────────────────
+
+  static async escalateCollection(req: Request, res: Response): Promise<void> {
+    const result = await FeeService.escalateCollection(req.body, req.user!.id);
+    res.status(201).json(apiResponse(true, result, 'Collection escalated successfully'));
+  }
+
+  static async listCollectionActions(req: Request, res: Response): Promise<void> {
+    const schoolId = req.params.schoolId as string;
+    const result = await FeeService.listCollectionActions(schoolId, {
+      page: req.query.page ? Number(req.query.page) : undefined,
+      limit: req.query.limit ? Number(req.query.limit) : undefined,
+      stage: req.query.stage as string | undefined,
+    });
+    res.json(apiResponse(true, result));
+  }
+
+  // ─── Statement ──────────────────────────────────────────────────────────────
+
+  static async generateStatement(req: Request, res: Response): Promise<void> {
+    const result = await FeeService.generateStatement(req.body);
+    res.json(apiResponse(true, result));
+  }
+
+  // ─── Late Fees ──────────────────────────────────────────────────────────────
+
+  static async calculateLateFees(req: Request, res: Response): Promise<void> {
+    const schoolId = req.params.schoolId as string;
+    const percentage = Number(req.body.percentage ?? 5);
+    const result = await FeeService.calculateLateFees(schoolId, percentage);
+    res.json(apiResponse(true, result, 'Late fees calculated'));
+  }
+
+  // ─── Allocate Payment ───────────────────────────────────────────────────────
+
+  static async allocatePayment(req: Request, res: Response): Promise<void> {
+    const result = await FeeService.allocatePayment(
+      req.params.studentId as string,
+      req.body,
+      req.user!.id,
+    );
+    res.status(201).json(apiResponse(true, result, 'Payment allocated successfully'));
+  }
+
+  // ─── Payment Arrangement ────────────────────────────────────────────────────
+
+  static async createPaymentArrangement(req: Request, res: Response): Promise<void> {
+    const arrangement = await FeeService.createPaymentArrangement(req.body);
+    res.status(201).json(apiResponse(true, arrangement, 'Payment arrangement created successfully'));
+  }
+
+  static async listPaymentArrangements(req: Request, res: Response): Promise<void> {
+    const schoolId = req.params.schoolId as string;
+    const result = await FeeService.listPaymentArrangements(schoolId, {
+      page: req.query.page ? Number(req.query.page) : undefined,
+      limit: req.query.limit ? Number(req.query.limit) : undefined,
+      status: req.query.status as string | undefined,
+    });
+    res.json(apiResponse(true, result));
+  }
+
+  // ─── Write Off ──────────────────────────────────────────────────────────────
+
+  static async writeOffDebt(req: Request, res: Response): Promise<void> {
+    const result = await FeeService.writeOffDebt(req.body, req.user!.id);
+    res.json(apiResponse(true, result, 'Debt written off successfully'));
+  }
+
+  // ─── Discount ───────────────────────────────────────────────────────────────
+
+  static async applyDiscount(req: Request, res: Response): Promise<void> {
+    const result = await FeeService.applyDiscount(req.body, req.user!.id);
+    res.json(apiResponse(true, result, 'Discount applied successfully'));
+  }
+
+  // ─── Parent Account Balance ─────────────────────────────────────────────────
+
+  static async getParentAccountBalance(req: Request, res: Response): Promise<void> {
+    const balance = await FeeService.getParentAccountBalance(
+      req.params.parentId as string,
+      req.params.schoolId as string,
+    );
+    res.json(apiResponse(true, balance));
+  }
+
+  // ─── Bulk Invoice ───────────────────────────────────────────────────────────
+
+  static async bulkInvoiceGeneration(req: Request, res: Response): Promise<void> {
+    const result = await FeeService.bulkInvoiceGeneration(req.body);
+    res.status(201).json(apiResponse(true, result, 'Bulk invoices generated successfully'));
+  }
+
+  // ─── Credit Note ────────────────────────────────────────────────────────────
+
+  static async createCreditNote(req: Request, res: Response): Promise<void> {
+    const creditNote = await FeeService.createCreditNote(req.body);
+    res.status(201).json(apiResponse(true, creditNote, 'Credit note created successfully'));
+  }
+
+  static async approveCreditNote(req: Request, res: Response): Promise<void> {
+    const creditNote = await FeeService.approveCreditNote(
+      req.params.id as string,
+      req.body,
+      req.user!.id,
+    );
+    res.json(apiResponse(true, creditNote, 'Credit note updated successfully'));
+  }
+
+  static async listCreditNotes(req: Request, res: Response): Promise<void> {
+    const schoolId = req.params.schoolId as string;
+    const result = await FeeService.listCreditNotes(schoolId, {
+      page: req.query.page ? Number(req.query.page) : undefined,
+      limit: req.query.limit ? Number(req.query.limit) : undefined,
+      status: req.query.status as string | undefined,
+    });
+    res.json(apiResponse(true, result));
+  }
+
+  // ─── Fee Exemption ──────────────────────────────────────────────────────────
+
+  static async createFeeExemption(req: Request, res: Response): Promise<void> {
+    const exemption = await FeeService.createFeeExemption(req.body, req.user!.id);
+    res.status(201).json(apiResponse(true, exemption, 'Fee exemption created successfully'));
+  }
+
+  static async listFeeExemptions(req: Request, res: Response): Promise<void> {
+    const schoolId = req.params.schoolId as string;
+    const result = await FeeService.listFeeExemptions(schoolId, {
+      page: req.query.page ? Number(req.query.page) : undefined,
+      limit: req.query.limit ? Number(req.query.limit) : undefined,
+      status: req.query.status as string | undefined,
+    });
+    res.json(apiResponse(true, result));
+  }
+
+  // ─── Account Ledger ─────────────────────────────────────────────────────────
+
+  static async getAccountLedger(req: Request, res: Response): Promise<void> {
+    const result = await FeeService.getAccountLedger(
+      req.params.studentId as string,
+      req.params.schoolId as string,
+      {
+        page: req.query.page ? Number(req.query.page) : undefined,
+        limit: req.query.limit ? Number(req.query.limit) : undefined,
+      },
+    );
+    res.json(apiResponse(true, result));
+  }
 }

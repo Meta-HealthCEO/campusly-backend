@@ -46,3 +46,13 @@ export const notificationDispatchQueue = new Queue('notification-dispatch', {
   connection: redisConnection,
   defaultJobOptions,
 });
+
+export const collectionsEscalationQueue = new Queue('collections-escalation', {
+  connection: redisConnection,
+  defaultJobOptions,
+});
+
+export const lateFeeCalculatorQueue = new Queue('late-fee-calculator', {
+  connection: redisConnection,
+  defaultJobOptions,
+});

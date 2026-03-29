@@ -10,6 +10,15 @@ import {
   recordPaymentSchema,
   createDebitOrderSchema,
   updateDebitOrderSchema,
+  createCreditNoteSchema,
+  approveCreditNoteSchema,
+  createFeeExemptionSchema,
+  createPaymentArrangementSchema,
+  escalateCollectionSchema,
+  writeOffDebtSchema,
+  applyDiscountSchema,
+  bulkInvoiceSchema,
+  generateStatementSchema,
 } from './validation.js';
 
 const router = Router();
@@ -176,6 +185,165 @@ router.delete(
   authenticate,
   authorize('super_admin', 'school_admin'),
   FeeController.deleteDebitOrder,
+);
+
+// ─── Debtors Report ─────────────────────────────────────────────────────────
+
+router.get(
+  '/debtors/school/:schoolId',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  FeeController.getDebtorsReport,
+);
+
+// ─── Collections ────────────────────────────────────────────────────────────
+
+router.post(
+  '/collections/escalate',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  validate(escalateCollectionSchema),
+  FeeController.escalateCollection,
+);
+
+router.get(
+  '/collections/school/:schoolId',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  FeeController.listCollectionActions,
+);
+
+// ─── Statements ─────────────────────────────────────────────────────────────
+
+router.post(
+  '/statements',
+  authenticate,
+  validate(generateStatementSchema),
+  FeeController.generateStatement,
+);
+
+// ─── Late Fees ──────────────────────────────────────────────────────────────
+
+router.post(
+  '/late-fees/school/:schoolId',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  FeeController.calculateLateFees,
+);
+
+// ─── Allocate Payment ───────────────────────────────────────────────────────
+
+router.post(
+  '/allocate-payment/student/:studentId',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  validate(recordPaymentSchema),
+  FeeController.allocatePayment,
+);
+
+// ─── Payment Arrangements ───────────────────────────────────────────────────
+
+router.post(
+  '/payment-arrangements',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  validate(createPaymentArrangementSchema),
+  FeeController.createPaymentArrangement,
+);
+
+router.get(
+  '/payment-arrangements/school/:schoolId',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  FeeController.listPaymentArrangements,
+);
+
+// ─── Write Off ──────────────────────────────────────────────────────────────
+
+router.post(
+  '/write-off',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  validate(writeOffDebtSchema),
+  FeeController.writeOffDebt,
+);
+
+// ─── Discount ───────────────────────────────────────────────────────────────
+
+router.post(
+  '/discount',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  validate(applyDiscountSchema),
+  FeeController.applyDiscount,
+);
+
+// ─── Parent Account Balance ─────────────────────────────────────────────────
+
+router.get(
+  '/parents/:parentId/school/:schoolId/balance',
+  authenticate,
+  FeeController.getParentAccountBalance,
+);
+
+// ─── Bulk Invoice ───────────────────────────────────────────────────────────
+
+router.post(
+  '/invoices/bulk',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  validate(bulkInvoiceSchema),
+  FeeController.bulkInvoiceGeneration,
+);
+
+// ─── Credit Notes ───────────────────────────────────────────────────────────
+
+router.post(
+  '/credit-notes',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  validate(createCreditNoteSchema),
+  FeeController.createCreditNote,
+);
+
+router.patch(
+  '/credit-notes/:id/approve',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  validate(approveCreditNoteSchema),
+  FeeController.approveCreditNote,
+);
+
+router.get(
+  '/credit-notes/school/:schoolId',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  FeeController.listCreditNotes,
+);
+
+// ─── Fee Exemptions ─────────────────────────────────────────────────────────
+
+router.post(
+  '/exemptions',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  validate(createFeeExemptionSchema),
+  FeeController.createFeeExemption,
+);
+
+router.get(
+  '/exemptions/school/:schoolId',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  FeeController.listFeeExemptions,
+);
+
+// ─── Account Ledger ─────────────────────────────────────────────────────────
+
+router.get(
+  '/ledger/student/:studentId/school/:schoolId',
+  authenticate,
+  FeeController.getAccountLedger,
 );
 
 export default router;

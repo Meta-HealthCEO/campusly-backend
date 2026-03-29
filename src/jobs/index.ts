@@ -7,6 +7,8 @@ export {
   lowBalanceAlertQueue,
   reportGenerationQueue,
   notificationDispatchQueue,
+  collectionsEscalationQueue,
+  lateFeeCalculatorQueue,
   redisConnection,
 } from './queues.js';
 
@@ -15,6 +17,8 @@ export { addAttendanceAlertJob } from './attendance-alert.job.js';
 export { scheduleLowBalanceAlerts } from './low-balance-alert.job.js';
 export { addNotificationDispatchJob } from './notification-dispatch.job.js';
 export { addReportGenerationJob } from './report-generation.job.js';
+export { scheduleCollectionsEscalation } from './collections-escalation.job.js';
+export { scheduleLateFeeCalculation } from './late-fee-calculator.job.js';
 
 export async function setupWorkers(): Promise<Worker[]> {
   const workers: Worker[] = [];
@@ -39,12 +43,16 @@ export async function setupWorkers(): Promise<Worker[]> {
     const { createLowBalanceAlertWorker } = await import('./low-balance-alert.job.js');
     const { createNotificationDispatchWorker } = await import('./notification-dispatch.job.js');
     const { createReportGenerationWorker } = await import('./report-generation.job.js');
+    const { createCollectionsEscalationWorker } = await import('./collections-escalation.job.js');
+    const { createLateFeeCalculatorWorker } = await import('./late-fee-calculator.job.js');
 
     workers.push(createPaymentReminderWorker());
     workers.push(createAttendanceAlertWorker());
     workers.push(createLowBalanceAlertWorker());
     workers.push(createNotificationDispatchWorker());
     workers.push(createReportGenerationWorker());
+    workers.push(createCollectionsEscalationWorker());
+    workers.push(createLateFeeCalculatorWorker());
 
     console.log(`[Jobs] ${workers.length} workers started successfully`);
 
@@ -54,6 +62,11 @@ export async function setupWorkers(): Promise<Worker[]> {
 
     await schedulePaymentReminders();
     await scheduleLowBalanceAlerts();
+
+    const { scheduleCollectionsEscalation } = await import('./collections-escalation.job.js');
+    const { scheduleLateFeeCalculation } = await import('./late-fee-calculator.job.js');
+    await scheduleCollectionsEscalation();
+    await scheduleLateFeeCalculation();
 
     console.log('[Jobs] Repeatable jobs scheduled');
   } catch (error) {

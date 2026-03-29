@@ -96,6 +96,97 @@ export const updateDebitOrderSchema = z.object({
   isActive: z.boolean().optional(),
 });
 
+// ─── Credit Note ──────────────────────────────────────────────────────────────
+
+export const createCreditNoteSchema = z.object({
+  invoiceId: z.string().min(1, 'Invoice ID is required'),
+  studentId: z.string().min(1, 'Student ID is required'),
+  schoolId: z.string().min(1, 'School ID is required'),
+  amount: z.int().positive('Amount must be a positive integer in cents'),
+  reason: z.string().min(1, 'Reason is required').trim(),
+});
+
+export const approveCreditNoteSchema = z.object({
+  status: z.enum(['approved', 'rejected']),
+});
+
+// ─── Fee Exemption ────────────────────────────────────────────────────────────
+
+export const createFeeExemptionSchema = z.object({
+  studentId: z.string().min(1, 'Student ID is required'),
+  schoolId: z.string().min(1, 'School ID is required'),
+  feeTypeId: z.string().min(1, 'Fee type ID is required'),
+  exemptionType: z.enum(['full', 'partial', 'bursary', 'sibling_discount', 'staff_discount', 'early_payment']),
+  discountPercentage: z.number().min(0).max(100).optional(),
+  fixedAmount: z.int().positive().optional(),
+  reason: z.string().min(1, 'Reason is required').trim(),
+  validFrom: z.string().min(1, 'Valid from date is required'),
+  validTo: z.string().min(1, 'Valid to date is required'),
+});
+
+// ─── Payment Arrangement ──────────────────────────────────────────────────────
+
+export const createPaymentArrangementSchema = z.object({
+  studentId: z.string().min(1, 'Student ID is required'),
+  schoolId: z.string().min(1, 'School ID is required'),
+  totalOutstanding: z.int().positive('Total outstanding must be a positive integer in cents'),
+  instalmentAmount: z.int().positive('Instalment amount must be a positive integer in cents'),
+  numberOfInstalments: z.int().min(2, 'At least 2 instalments required').max(60),
+  frequency: z.enum(['weekly', 'monthly']),
+  startDate: z.string().min(1, 'Start date is required'),
+});
+
+// ─── Collection Action ────────────────────────────────────────────────────────
+
+export const escalateCollectionSchema = z.object({
+  invoiceId: z.string().min(1, 'Invoice ID is required'),
+  stage: z.enum(['friendly_reminder', 'warning_letter', 'final_demand', 'legal_handover', 'write_off']),
+  notes: z.string().optional(),
+  sentVia: z.string().optional(),
+});
+
+// ─── Write Off ────────────────────────────────────────────────────────────────
+
+export const writeOffDebtSchema = z.object({
+  invoiceId: z.string().min(1, 'Invoice ID is required'),
+  amount: z.int().positive('Amount must be a positive integer in cents'),
+  reason: z.string().min(1, 'Reason is required').trim(),
+});
+
+// ─── Discount ─────────────────────────────────────────────────────────────────
+
+export const applyDiscountSchema = z.object({
+  invoiceId: z.string().min(1, 'Invoice ID is required'),
+  amount: z.int().positive('Discount amount must be a positive integer in cents'),
+  reason: z.string().min(1, 'Reason is required').trim(),
+});
+
+// ─── Bulk Invoice ─────────────────────────────────────────────────────────────
+
+export const bulkInvoiceSchema = z.object({
+  schoolId: z.string().min(1, 'School ID is required'),
+  feeScheduleId: z.string().min(1, 'Fee schedule ID is required'),
+  studentIds: z.array(z.string().min(1)).min(1, 'At least one student ID is required'),
+  items: z
+    .array(
+      z.object({
+        description: z.string().min(1, 'Description is required'),
+        amount: z.int().positive('Amount must be a positive integer in cents'),
+      }),
+    )
+    .min(1, 'At least one item is required'),
+  dueDate: z.string().min(1, 'Due date is required'),
+});
+
+// ─── Statement ────────────────────────────────────────────────────────────────
+
+export const generateStatementSchema = z.object({
+  studentId: z.string().min(1, 'Student ID is required'),
+  schoolId: z.string().min(1, 'School ID is required'),
+  fromDate: z.string().optional(),
+  toDate: z.string().optional(),
+});
+
 // ─── Inferred Types ────────────────────────────────────────────────────────────
 
 export type CreateFeeTypeInput = z.infer<typeof createFeeTypeSchema>;
@@ -106,3 +197,12 @@ export type CreateInvoiceInput = z.infer<typeof createInvoiceSchema>;
 export type RecordPaymentInput = z.infer<typeof recordPaymentSchema>;
 export type CreateDebitOrderInput = z.infer<typeof createDebitOrderSchema>;
 export type UpdateDebitOrderInput = z.infer<typeof updateDebitOrderSchema>;
+export type CreateCreditNoteInput = z.infer<typeof createCreditNoteSchema>;
+export type ApproveCreditNoteInput = z.infer<typeof approveCreditNoteSchema>;
+export type CreateFeeExemptionInput = z.infer<typeof createFeeExemptionSchema>;
+export type CreatePaymentArrangementInput = z.infer<typeof createPaymentArrangementSchema>;
+export type EscalateCollectionInput = z.infer<typeof escalateCollectionSchema>;
+export type WriteOffDebtInput = z.infer<typeof writeOffDebtSchema>;
+export type ApplyDiscountInput = z.infer<typeof applyDiscountSchema>;
+export type BulkInvoiceInput = z.infer<typeof bulkInvoiceSchema>;
+export type GenerateStatementInput = z.infer<typeof generateStatementSchema>;
