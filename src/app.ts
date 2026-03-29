@@ -36,6 +36,7 @@ import reportRoutes from './modules/Report/routes.js';
 import auditRoutes from './modules/Audit/routes.js';
 import migrationRoutes from './modules/Migration/routes.js';
 import learningRoutes from './modules/Learning/routes.js';
+import superAdminRoutes from './modules/SuperAdmin/routes.js';
 
 const app = express();
 
@@ -64,6 +65,9 @@ app.get('/health', async (_req, res) => {
     mongodb: mongoStatus,
   });
 });
+
+// API routes — Super Admin (platform management)
+app.use('/api/superadmin', superAdminRoutes);
 
 // API routes — Core modules (no guard)
 app.use('/api/auth', authRoutes);
