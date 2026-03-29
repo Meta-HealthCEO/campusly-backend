@@ -3,7 +3,17 @@ import { authenticate } from '../../middleware/auth.js';
 import { authorize } from '../../middleware/rbac.js';
 import { validate } from '../../middleware/validate.js';
 import { EventController } from './controller.js';
-import { createEventSchema, updateEventSchema, createRsvpSchema, updateRsvpSchema } from './validation.js';
+import {
+  createEventSchema,
+  updateEventSchema,
+  createRsvpSchema,
+  updateRsvpSchema,
+  purchaseTicketSchema,
+  createSeatsSchema,
+  reserveSeatSchema,
+  checkInSchema,
+  uploadGallerySchema,
+} from './validation.js';
 
 const router = Router();
 
@@ -21,6 +31,13 @@ router.get(
   '/',
   authenticate,
   EventController.list,
+);
+
+// Ticket QR lookup must be defined before /:id to avoid "tickets" matching as an id
+router.get(
+  '/tickets/qr/:qrCode',
+  authenticate,
+  EventController.getTicketByQrCode,
 );
 
 router.get(
@@ -70,6 +87,99 @@ router.delete(
   '/:eventId/rsvp',
   authenticate,
   EventController.deleteRsvp,
+);
+
+// ─── Ticket Routes ──────────────────────────────────────────────────────────
+
+router.post(
+  '/:eventId/tickets',
+  authenticate,
+  validate(purchaseTicketSchema),
+  EventController.purchaseTicket,
+);
+
+router.get(
+  '/:eventId/tickets',
+  authenticate,
+  EventController.listTicketsByEvent,
+);
+
+router.patch(
+  '/:eventId/tickets/:ticketId/cancel',
+  authenticate,
+  EventController.cancelTicket,
+);
+
+// ─── Seat Routes ────────────────────────────────────────────────────────────
+
+router.post(
+  '/:eventId/seats',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  validate(createSeatsSchema),
+  EventController.createSeats,
+);
+
+router.get(
+  '/:eventId/seats',
+  authenticate,
+  EventController.listSeatsByEvent,
+);
+
+router.patch(
+  '/:eventId/seats/:seatId/reserve',
+  authenticate,
+  validate(reserveSeatSchema),
+  EventController.reserveSeat,
+);
+
+router.patch(
+  '/:eventId/seats/:seatId/release',
+  authenticate,
+  EventController.releaseSeat,
+);
+
+// ─── Check-In Routes ────────────────────────────────────────────────────────
+
+router.post(
+  '/:eventId/check-in',
+  authenticate,
+  validate(checkInSchema),
+  EventController.checkIn,
+);
+
+router.get(
+  '/:eventId/check-ins',
+  authenticate,
+  EventController.listCheckInsByEvent,
+);
+
+router.get(
+  '/:eventId/check-in/stats',
+  authenticate,
+  EventController.checkInStats,
+);
+
+// ─── Gallery Routes ─────────────────────────────────────────────────────────
+
+router.post(
+  '/:eventId/gallery',
+  authenticate,
+  validate(uploadGallerySchema),
+  EventController.uploadGalleryImage,
+);
+
+router.get(
+  '/:eventId/gallery',
+  authenticate,
+  EventController.listGalleryByEvent,
+);
+
+router.delete(
+  '/:eventId/gallery/:imageId',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  EventController.deleteGalleryImage,
 );
 
 export default router;

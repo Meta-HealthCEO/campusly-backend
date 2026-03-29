@@ -152,3 +152,147 @@ export const TransportAssignment = mongoose.model<ITransportAssignment>(
   'TransportAssignment',
   transportAssignmentSchema,
 );
+
+// ─── Boarding Log ──────────────────────────────────────────────────────────
+
+export interface IBoardingLog extends Document {
+  studentId: Types.ObjectId;
+  schoolId: Types.ObjectId;
+  routeId: Types.ObjectId;
+  boardedAt: Date;
+  alightedAt?: Date;
+  boardingLat?: number;
+  boardingLng?: number;
+  alightingLat?: number;
+  alightingLng?: number;
+  isDeleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const boardingLogSchema = new Schema<IBoardingLog>(
+  {
+    studentId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Student',
+      required: true,
+    },
+    schoolId: {
+      type: Schema.Types.ObjectId,
+      ref: 'School',
+      required: true,
+    },
+    routeId: {
+      type: Schema.Types.ObjectId,
+      ref: 'BusRoute',
+      required: true,
+    },
+    boardedAt: {
+      type: Date,
+      required: true,
+    },
+    alightedAt: {
+      type: Date,
+    },
+    boardingLat: {
+      type: Number,
+    },
+    boardingLng: {
+      type: Number,
+    },
+    alightingLat: {
+      type: Number,
+    },
+    alightingLng: {
+      type: Number,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  { timestamps: true },
+);
+
+boardingLogSchema.index({ studentId: 1, boardedAt: -1 });
+boardingLogSchema.index({ routeId: 1, boardedAt: -1 });
+boardingLogSchema.index({ schoolId: 1, boardedAt: -1 });
+
+export const BoardingLog = mongoose.model<IBoardingLog>('BoardingLog', boardingLogSchema);
+
+// ─── Transport Alert ───────────────────────────────────────────────────────
+
+export type TransportAlertType = 'delay' | 'breakdown' | 'route_change' | 'emergency' | 'weather';
+export type TransportAlertSeverity = 'low' | 'medium' | 'high' | 'critical';
+
+export interface ITransportAlert extends Document {
+  schoolId: Types.ObjectId;
+  routeId?: Types.ObjectId;
+  type: TransportAlertType;
+  title: string;
+  message: string;
+  severity: TransportAlertSeverity;
+  isResolved: boolean;
+  resolvedAt?: Date;
+  createdBy: Types.ObjectId;
+  isDeleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const transportAlertSchema = new Schema<ITransportAlert>(
+  {
+    schoolId: {
+      type: Schema.Types.ObjectId,
+      ref: 'School',
+      required: true,
+    },
+    routeId: {
+      type: Schema.Types.ObjectId,
+      ref: 'BusRoute',
+    },
+    type: {
+      type: String,
+      enum: ['delay', 'breakdown', 'route_change', 'emergency', 'weather'],
+      required: true,
+    },
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    message: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    severity: {
+      type: String,
+      enum: ['low', 'medium', 'high', 'critical'],
+      required: true,
+    },
+    isResolved: {
+      type: Boolean,
+      default: false,
+    },
+    resolvedAt: {
+      type: Date,
+    },
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  { timestamps: true },
+);
+
+transportAlertSchema.index({ schoolId: 1, isResolved: 1 });
+transportAlertSchema.index({ routeId: 1, isResolved: 1 });
+transportAlertSchema.index({ schoolId: 1, type: 1 });
+
+export const TransportAlert = mongoose.model<ITransportAlert>('TransportAlert', transportAlertSchema);

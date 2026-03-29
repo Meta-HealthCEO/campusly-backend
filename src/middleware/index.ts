@@ -5,3 +5,4 @@ export { validate } from './validate.js';
 export { errorHandler } from './errorHandler.js';
 export { createRateLimiter } from './rateLimiter.js';
 export { schoolContext } from './schoolContext.js';
+export { requireModule } from './moduleGuard.js';

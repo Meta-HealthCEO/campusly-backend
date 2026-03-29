@@ -1,4 +1,15 @@
-import { UniformItem, IUniformItem, UniformOrder, IUniformOrder, SecondHandListing, ISecondHandListing } from './model.js';
+import {
+  UniformItem,
+  IUniformItem,
+  UniformOrder,
+  IUniformOrder,
+  SecondHandListing,
+  ISecondHandListing,
+  SizeGuide,
+  ISizeGuide,
+  PreOrder,
+  IPreOrder,
+} from './model.js';
 import { NotFoundError, BadRequestError } from '../../common/errors.js';
 import { paginationHelper } from '../../common/utils.js';
 import type {
@@ -8,6 +19,10 @@ import type {
   UpdateUniformOrderStatusInput,
   CreateSecondHandListingInput,
   UpdateSecondHandListingInput,
+  CreateSizeGuideInput,
+  UpdateSizeGuideInput,
+  CreatePreOrderInput,
+  UpdatePreOrderStatusInput,
 } from './validation.js';
 
 interface ListItemQuery {
@@ -197,6 +212,12 @@ export class UniformService {
       throw new NotFoundError('Uniform order not found');
     }
 
+    // TODO: Dispatch notification when order status changes to 'ready'
+    // This is where notification dispatch would go (e.g., push notification, email, SMS)
+    if (data.status === 'ready') {
+      // await NotificationService.send({ userId: order.orderedBy, type: 'uniform_order_ready', orderId: order._id });
+    }
+
     return order;
   }
 
@@ -329,6 +350,191 @@ export class UniformService {
 
     return {
       listings,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
+  // ─── Size Guide ──────────────────────────────────────────────────────────
+
+  static async createSizeGuide(data: CreateSizeGuideInput): Promise<ISizeGuide> {
+    const sizeGuide = await SizeGuide.create(data);
+    return sizeGuide;
+  }
+
+  static async getSizeGuideByItem(uniformItemId: string): Promise<ISizeGuide> {
+    const sizeGuide = await SizeGuide.findOne({ uniformItemId, isDeleted: false });
+
+    if (!sizeGuide) {
+      throw new NotFoundError('Size guide not found for this item');
+    }
+
+    return sizeGuide;
+  }
+
+  static async updateSizeGuide(uniformItemId: string, data: UpdateSizeGuideInput): Promise<ISizeGuide> {
+    const sizeGuide = await SizeGuide.findOneAndUpdate(
+      { uniformItemId, isDeleted: false },
+      { $set: data },
+      { new: true, runValidators: true },
+    );
+
+    if (!sizeGuide) {
+      throw new NotFoundError('Size guide not found for this item');
+    }
+
+    return sizeGuide;
+  }
+
+  static async deleteSizeGuide(uniformItemId: string): Promise<ISizeGuide> {
+    const sizeGuide = await SizeGuide.findOneAndUpdate(
+      { uniformItemId, isDeleted: false },
+      { $set: { isDeleted: true } },
+      { new: true },
+    );
+
+    if (!sizeGuide) {
+      throw new NotFoundError('Size guide not found for this item');
+    }
+
+    return sizeGuide;
+  }
+
+  // ─── Pre Order ───────────────────────────────────────────────────────────
+
+  static async createPreOrder(data: CreatePreOrderInput, orderedBy: string): Promise<IPreOrder> {
+    const preOrder = await PreOrder.create({
+      ...data,
+      orderedBy,
+    });
+
+    return preOrder;
+  }
+
+  static async listPreOrders(
+    query: { page?: number; limit?: number; schoolId?: string; status?: string; uniformItemId?: string },
+  ): Promise<{
+    preOrders: IPreOrder[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  }> {
+    const { skip, limit } = paginationHelper(query.page, query.limit);
+    const page = Math.max(query.page ?? 1, 1);
+
+    const filter: Record<string, unknown> = {
+      isDeleted: false,
+    };
+
+    if (query.schoolId) {
+      filter.schoolId = query.schoolId;
+    }
+
+    if (query.status) {
+      filter.status = query.status;
+    }
+
+    if (query.uniformItemId) {
+      filter.uniformItemId = query.uniformItemId;
+    }
+
+    const [preOrders, total] = await Promise.all([
+      PreOrder.find(filter)
+        .populate('uniformItemId')
+        .populate('studentId')
+        .populate('orderedBy', 'firstName lastName email')
+        .sort('-createdAt')
+        .skip(skip)
+        .limit(limit),
+      PreOrder.countDocuments(filter),
+    ]);
+
+    return {
+      preOrders,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
+  static async getPreOrder(id: string): Promise<IPreOrder> {
+    const preOrder = await PreOrder.findOne({ _id: id, isDeleted: false })
+      .populate('uniformItemId')
+      .populate('studentId')
+      .populate('orderedBy', 'firstName lastName email');
+
+    if (!preOrder) {
+      throw new NotFoundError('Pre-order not found');
+    }
+
+    return preOrder;
+  }
+
+  static async updatePreOrderStatus(id: string, data: UpdatePreOrderStatusInput): Promise<IPreOrder> {
+    const preOrder = await PreOrder.findOneAndUpdate(
+      { _id: id, isDeleted: false },
+      { $set: { status: data.status } },
+      { new: true, runValidators: true },
+    )
+      .populate('uniformItemId')
+      .populate('studentId')
+      .populate('orderedBy', 'firstName lastName email');
+
+    if (!preOrder) {
+      throw new NotFoundError('Pre-order not found');
+    }
+
+    return preOrder;
+  }
+
+  static async deletePreOrder(id: string): Promise<IPreOrder> {
+    const preOrder = await PreOrder.findOneAndUpdate(
+      { _id: id, isDeleted: false },
+      { $set: { isDeleted: true } },
+      { new: true },
+    );
+
+    if (!preOrder) {
+      throw new NotFoundError('Pre-order not found');
+    }
+
+    return preOrder;
+  }
+
+  // ─── Low Stock ───────────────────────────────────────────────────────────
+
+  static async getLowStockItems(
+    query: { page?: number; limit?: number; schoolId?: string },
+  ): Promise<{
+    items: IUniformItem[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  }> {
+    const { skip, limit } = paginationHelper(query.page, query.limit);
+    const page = Math.max(query.page ?? 1, 1);
+
+    const filter: Record<string, unknown> = {
+      isDeleted: false,
+      $expr: { $lte: ['$stock', '$lowStockThreshold'] },
+    };
+
+    if (query.schoolId) {
+      filter.schoolId = query.schoolId;
+    }
+
+    const [items, total] = await Promise.all([
+      UniformItem.find(filter).sort('-createdAt').skip(skip).limit(limit),
+      UniformItem.countDocuments(filter),
+    ]);
+
+    return {
+      items,
       total,
       page,
       limit,

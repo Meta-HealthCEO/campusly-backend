@@ -68,4 +68,127 @@ export class EventController {
     await EventService.deleteRsvp(req.params.eventId as string, req.user!.id);
     res.json(apiResponse(true, undefined, 'RSVP deleted successfully'));
   }
+
+  // ─── Tickets ──────────────────────────────────────────────────────────────
+
+  static async purchaseTicket(req: Request, res: Response): Promise<void> {
+    const ticket = await EventService.purchaseTicket(
+      req.params.eventId as string,
+      req.user!.id,
+      req.body,
+    );
+    res.status(201).json(apiResponse(true, ticket, 'Ticket purchased successfully'));
+  }
+
+  static async listTicketsByEvent(req: Request, res: Response): Promise<void> {
+    const query = {
+      page: req.query.page ? Number(req.query.page) : undefined,
+      limit: req.query.limit ? Number(req.query.limit) : undefined,
+    };
+
+    const result = await EventService.listTicketsByEvent(req.params.eventId as string, query);
+    res.json(apiResponse(true, result, 'Tickets retrieved successfully'));
+  }
+
+  static async getTicketByQrCode(req: Request, res: Response): Promise<void> {
+    const ticket = await EventService.getTicketByQrCode(req.params.qrCode as string);
+    res.json(apiResponse(true, ticket, 'Ticket retrieved successfully'));
+  }
+
+  static async cancelTicket(req: Request, res: Response): Promise<void> {
+    const ticket = await EventService.cancelTicket(
+      req.params.eventId as string,
+      req.params.ticketId as string,
+    );
+    res.json(apiResponse(true, ticket, 'Ticket cancelled successfully'));
+  }
+
+  // ─── Seats ────────────────────────────────────────────────────────────────
+
+  static async createSeats(req: Request, res: Response): Promise<void> {
+    const seats = await EventService.createSeats(req.params.eventId as string, req.body);
+    res.status(201).json(apiResponse(true, seats, 'Seats created successfully'));
+  }
+
+  static async listSeatsByEvent(req: Request, res: Response): Promise<void> {
+    const query = {
+      page: req.query.page ? Number(req.query.page) : undefined,
+      limit: req.query.limit ? Number(req.query.limit) : undefined,
+    };
+
+    const result = await EventService.listSeatsByEvent(req.params.eventId as string, query);
+    res.json(apiResponse(true, result, 'Seats retrieved successfully'));
+  }
+
+  static async reserveSeat(req: Request, res: Response): Promise<void> {
+    const seat = await EventService.reserveSeat(
+      req.params.eventId as string,
+      req.params.seatId as string,
+      req.body.ticketId,
+    );
+    res.json(apiResponse(true, seat, 'Seat reserved successfully'));
+  }
+
+  static async releaseSeat(req: Request, res: Response): Promise<void> {
+    const seat = await EventService.releaseSeat(
+      req.params.eventId as string,
+      req.params.seatId as string,
+    );
+    res.json(apiResponse(true, seat, 'Seat released successfully'));
+  }
+
+  // ─── Check-In ─────────────────────────────────────────────────────────────
+
+  static async checkIn(req: Request, res: Response): Promise<void> {
+    const checkIn = await EventService.checkIn(
+      req.params.eventId as string,
+      req.body,
+      req.user!.id,
+    );
+    res.status(201).json(apiResponse(true, checkIn, 'Check-in successful'));
+  }
+
+  static async listCheckInsByEvent(req: Request, res: Response): Promise<void> {
+    const query = {
+      page: req.query.page ? Number(req.query.page) : undefined,
+      limit: req.query.limit ? Number(req.query.limit) : undefined,
+    };
+
+    const result = await EventService.listCheckInsByEvent(req.params.eventId as string, query);
+    res.json(apiResponse(true, result, 'Check-ins retrieved successfully'));
+  }
+
+  static async checkInStats(req: Request, res: Response): Promise<void> {
+    const stats = await EventService.checkInStats(req.params.eventId as string);
+    res.json(apiResponse(true, stats, 'Check-in stats retrieved successfully'));
+  }
+
+  // ─── Gallery ──────────────────────────────────────────────────────────────
+
+  static async uploadGalleryImage(req: Request, res: Response): Promise<void> {
+    const image = await EventService.uploadGalleryImage(
+      req.params.eventId as string,
+      req.user!.id,
+      req.body,
+    );
+    res.status(201).json(apiResponse(true, image, 'Gallery image uploaded successfully'));
+  }
+
+  static async listGalleryByEvent(req: Request, res: Response): Promise<void> {
+    const query = {
+      page: req.query.page ? Number(req.query.page) : undefined,
+      limit: req.query.limit ? Number(req.query.limit) : undefined,
+    };
+
+    const result = await EventService.listGalleryByEvent(req.params.eventId as string, query);
+    res.json(apiResponse(true, result, 'Gallery images retrieved successfully'));
+  }
+
+  static async deleteGalleryImage(req: Request, res: Response): Promise<void> {
+    await EventService.deleteGalleryImage(
+      req.params.eventId as string,
+      req.params.imageId as string,
+    );
+    res.json(apiResponse(true, undefined, 'Gallery image deleted successfully'));
+  }
 }

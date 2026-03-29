@@ -9,6 +9,10 @@ import {
   createUniformOrderSchema,
   updateUniformOrderStatusSchema,
   createSecondHandListingSchema,
+  createSizeGuideSchema,
+  updateSizeGuideSchema,
+  createPreOrderSchema,
+  updatePreOrderStatusSchema,
 } from './validation.js';
 
 const router = Router();
@@ -124,6 +128,82 @@ router.patch(
   authenticate,
   authorize('super_admin', 'school_admin', 'parent'),
   UniformController.markSecondHandSold,
+);
+
+// ─── Size Guide Routes ─────────────────────────────────────────────────────
+
+router.post(
+  '/items/:itemId/size-guide',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  validate(createSizeGuideSchema),
+  UniformController.createSizeGuide,
+);
+
+router.get(
+  '/items/:itemId/size-guide',
+  authenticate,
+  UniformController.getSizeGuide,
+);
+
+router.put(
+  '/items/:itemId/size-guide',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  validate(updateSizeGuideSchema),
+  UniformController.updateSizeGuide,
+);
+
+router.delete(
+  '/items/:itemId/size-guide',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  UniformController.deleteSizeGuide,
+);
+
+// ─── Pre Order Routes ──────────────────────────────────────────────────────
+
+router.post(
+  '/pre-orders',
+  authenticate,
+  validate(createPreOrderSchema),
+  UniformController.createPreOrder,
+);
+
+router.get(
+  '/pre-orders',
+  authenticate,
+  UniformController.listPreOrders,
+);
+
+router.get(
+  '/pre-orders/:id',
+  authenticate,
+  UniformController.getPreOrder,
+);
+
+router.patch(
+  '/pre-orders/:id/status',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  validate(updatePreOrderStatusSchema),
+  UniformController.updatePreOrderStatus,
+);
+
+router.delete(
+  '/pre-orders/:id',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  UniformController.deletePreOrder,
+);
+
+// ─── Low Stock Routes ──────────────────────────────────────────────────────
+
+router.get(
+  '/low-stock',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  UniformController.getLowStockItems,
 );
 
 export default router;

@@ -14,6 +14,8 @@ export interface IUniformItem extends Document {
   stock: number;
   image?: string;
   isAvailable: boolean;
+  lowStockThreshold: number;
+  sizeGuideUrl?: string;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -58,6 +60,13 @@ const uniformItemSchema = new Schema<IUniformItem>(
       type: Boolean,
       default: true,
     },
+    lowStockThreshold: {
+      type: Number,
+      default: 5,
+    },
+    sizeGuideUrl: {
+      type: String,
+    },
     isDeleted: {
       type: Boolean,
       default: false,
@@ -81,7 +90,7 @@ export interface IUniformOrderItem {
   totalPrice: number;
 }
 
-export type UniformOrderStatus = 'pending' | 'confirmed' | 'ready' | 'collected' | 'cancelled';
+export type UniformOrderStatus = 'pending' | 'processing' | 'confirmed' | 'ready' | 'collected' | 'cancelled';
 
 export interface IUniformOrder extends Document {
   studentId: Types.ObjectId;
@@ -144,7 +153,7 @@ const uniformOrderSchema = new Schema<IUniformOrder>(
     },
     status: {
       type: String,
-      enum: ['pending', 'confirmed', 'ready', 'collected', 'cancelled'],
+      enum: ['pending', 'processing', 'confirmed', 'ready', 'collected', 'cancelled'],
       default: 'pending',
     },
     orderedBy: {
@@ -246,3 +255,155 @@ secondHandListingSchema.index({ schoolId: 1, status: 1 });
 secondHandListingSchema.index({ parentId: 1 });
 
 export const SecondHandListing = mongoose.model<ISecondHandListing>('SecondHandListing', secondHandListingSchema);
+
+// ─── Size Guide ────────────────────────────────────────────────────────────
+
+export interface ISizeGuideMeasurement {
+  size: string;
+  chest: string;
+  waist: string;
+  length: string;
+}
+
+export interface ISizeGuide extends Document {
+  uniformItemId: Types.ObjectId;
+  schoolId: Types.ObjectId;
+  sizeChartImageUrl: string;
+  measurements: ISizeGuideMeasurement[];
+  notes?: string;
+  isDeleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const sizeGuideMeasurementSchema = new Schema<ISizeGuideMeasurement>(
+  {
+    size: {
+      type: String,
+      required: true,
+    },
+    chest: {
+      type: String,
+      required: true,
+    },
+    waist: {
+      type: String,
+      required: true,
+    },
+    length: {
+      type: String,
+      required: true,
+    },
+  },
+  { _id: false },
+);
+
+const sizeGuideSchema = new Schema<ISizeGuide>(
+  {
+    uniformItemId: {
+      type: Schema.Types.ObjectId,
+      ref: 'UniformItem',
+      required: true,
+    },
+    schoolId: {
+      type: Schema.Types.ObjectId,
+      ref: 'School',
+      required: true,
+    },
+    sizeChartImageUrl: {
+      type: String,
+      required: true,
+    },
+    measurements: {
+      type: [sizeGuideMeasurementSchema],
+      default: [],
+    },
+    notes: {
+      type: String,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  { timestamps: true },
+);
+
+sizeGuideSchema.index({ uniformItemId: 1 }, { unique: true });
+
+export const SizeGuide = mongoose.model<ISizeGuide>('SizeGuide', sizeGuideSchema);
+
+// ─── Pre Order ─────────────────────────────────────────────────────────────
+
+export type PreOrderStatus = 'pre_order' | 'available' | 'ready' | 'collected';
+
+export interface IPreOrder extends Document {
+  uniformItemId: Types.ObjectId;
+  studentId: Types.ObjectId;
+  schoolId: Types.ObjectId;
+  size: string;
+  quantity: number;
+  status: PreOrderStatus;
+  availableDate: Date;
+  orderedBy: Types.ObjectId;
+  notes?: string;
+  isDeleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const preOrderSchema = new Schema<IPreOrder>(
+  {
+    uniformItemId: {
+      type: Schema.Types.ObjectId,
+      ref: 'UniformItem',
+      required: true,
+    },
+    studentId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Student',
+      required: true,
+    },
+    schoolId: {
+      type: Schema.Types.ObjectId,
+      ref: 'School',
+      required: true,
+    },
+    size: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    quantity: {
+      type: Number,
+      required: true,
+    },
+    status: {
+      type: String,
+      enum: ['pre_order', 'available', 'ready', 'collected'],
+      default: 'pre_order',
+    },
+    availableDate: {
+      type: Date,
+      required: true,
+    },
+    orderedBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    notes: {
+      type: String,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  { timestamps: true },
+);
+
+preOrderSchema.index({ schoolId: 1, status: 1 });
+preOrderSchema.index({ uniformItemId: 1 });
+
+export const PreOrder = mongoose.model<IPreOrder>('PreOrder', preOrderSchema);

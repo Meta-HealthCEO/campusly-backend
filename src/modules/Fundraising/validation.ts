@@ -55,8 +55,46 @@ export const buyRaffleTicketsSchema = z.object({
   quantity: z.number().int().min(1).max(100),
 });
 
+// ─── Tax Certificate Schemas ───────────────────────────────────────────────
+
+export const generateTaxCertificateSchema = z.object({
+  donationId: objectIdSchema,
+  schoolId: objectIdSchema,
+  donorName: z.string().min(1, 'Donor name is required'),
+  donorIdNumber: z.string().optional(),
+  donorAddress: z.string().optional(),
+  schoolTaxNumber: z.string().min(1, 'School tax number is required'),
+});
+
+// ─── Donor Wall Schemas ────────────────────────────────────────────────────
+
+export const addDonorWallSchema = z.object({
+  campaignId: objectIdSchema,
+  schoolId: objectIdSchema,
+  donorName: z.string().min(1, 'Donor name is required'),
+  amount: z.number().int().positive('Amount must be a positive integer in cents'),
+  message: z.string().optional(),
+  isPublic: z.boolean().optional(),
+  donationId: objectIdSchema,
+});
+
+// ─── Recurring Donation Schemas ────────────────────────────────────────────
+
+export const createRecurringDonationSchema = z.object({
+  campaignId: objectIdSchema,
+  schoolId: objectIdSchema,
+  donorName: z.string().min(1, 'Donor name is required'),
+  donorEmail: z.string().email('Invalid email format'),
+  amount: z.number().int().positive('Amount must be a positive integer in cents'),
+  frequency: z.enum(['monthly', 'weekly']),
+  nextChargeDate: z.string().datetime(),
+});
+
 export type CreateCampaignInput = z.infer<typeof createCampaignSchema>;
 export type UpdateCampaignInput = z.infer<typeof updateCampaignSchema>;
 export type CreateDonationInput = z.infer<typeof createDonationSchema>;
 export type CreateRaffleInput = z.infer<typeof createRaffleSchema>;
 export type BuyRaffleTicketsInput = z.infer<typeof buyRaffleTicketsSchema>;
+export type GenerateTaxCertificateInput = z.infer<typeof generateTaxCertificateSchema>;
+export type AddDonorWallInput = z.infer<typeof addDonorWallSchema>;
+export type CreateRecurringDonationInput = z.infer<typeof createRecurringDonationSchema>;

@@ -9,6 +9,7 @@ import { config } from './config/env.js';
 import { swaggerSpec } from './config/swagger.js';
 import { requestId } from './middleware/requestId.js';
 import { errorHandler } from './middleware/errorHandler.js';
+import { requireModule } from './middleware/moduleGuard.js';
 
 // Module routes
 import authRoutes from './modules/Auth/routes.js';
@@ -62,29 +63,31 @@ app.get('/health', async (_req, res) => {
   });
 });
 
-// API routes
+// API routes — Core modules (no guard)
 app.use('/api/auth', authRoutes);
 app.use('/api/schools', schoolRoutes);
 app.use('/api/students', studentRoutes);
 app.use('/api/parents', parentRoutes);
-app.use('/api/wallets', walletRoutes);
-app.use('/api/fees', feeRoutes);
-app.use('/api/academic', academicRoutes);
-app.use('/api/homework', homeworkRoutes);
-app.use('/api/attendance', attendanceRoutes);
-app.use('/api/tuck-shop', tuckShopRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/announcements', announcementRoutes);
-app.use('/api/events', eventRoutes);
-app.use('/api/transport', transportRoutes);
-app.use('/api/after-care', afterCareRoutes);
-app.use('/api/sports', sportRoutes);
-app.use('/api/fundraising', fundraisingRoutes);
-app.use('/api/uniforms', uniformRoutes);
-app.use('/api/achiever', achieverRoutes);
-app.use('/api/consent', consentRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/audit', auditRoutes);
+
+// API routes — Bolt-on modules (guarded)
+app.use('/api/fees', requireModule('fee'), feeRoutes);
+app.use('/api/wallets', requireModule('wallet'), walletRoutes);
+app.use('/api/tuck-shop', requireModule('tuckshop'), tuckShopRoutes);
+app.use('/api/academic', requireModule('academic'), academicRoutes);
+app.use('/api/homework', requireModule('homework'), homeworkRoutes);
+app.use('/api/attendance', requireModule('attendance'), attendanceRoutes);
+app.use('/api/achiever', requireModule('achiever'), achieverRoutes);
+app.use('/api/consent', requireModule('consent'), consentRoutes);
+app.use('/api/sports', requireModule('sport'), sportRoutes);
+app.use('/api/uniforms', requireModule('uniform'), uniformRoutes);
+app.use('/api/events', requireModule('event'), eventRoutes);
+app.use('/api/fundraising', requireModule('fundraising'), fundraisingRoutes);
+app.use('/api/transport', requireModule('transport'), transportRoutes);
+app.use('/api/after-care', requireModule('aftercare'), afterCareRoutes);
 
 // 404 handler
 app.use((_req, res) => {

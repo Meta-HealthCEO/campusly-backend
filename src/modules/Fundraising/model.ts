@@ -265,3 +265,214 @@ raffleTicketSchema.index({ raffleId: 1, ticketNumber: 1 }, { unique: true });
 raffleTicketSchema.index({ parentId: 1 });
 
 export const RaffleTicket = mongoose.model<IRaffleTicket>('RaffleTicket', raffleTicketSchema);
+
+// ─── Tax Certificate (Section 18A) ────────────────────────────────────────
+
+export interface ITaxCertificate extends Document {
+  donationId: Types.ObjectId;
+  schoolId: Types.ObjectId;
+  certificateNumber: string;
+  donorName: string;
+  donorIdNumber?: string;
+  donorAddress?: string;
+  amount: number;
+  dateIssued: Date;
+  schoolTaxNumber: string;
+  isDeleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const taxCertificateSchema = new Schema<ITaxCertificate>(
+  {
+    donationId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Donation',
+      required: true,
+    },
+    schoolId: {
+      type: Schema.Types.ObjectId,
+      ref: 'School',
+      required: true,
+    },
+    certificateNumber: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
+    donorName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    donorIdNumber: {
+      type: String,
+      trim: true,
+    },
+    donorAddress: {
+      type: String,
+      trim: true,
+    },
+    amount: {
+      type: Number,
+      required: true,
+    },
+    dateIssued: {
+      type: Date,
+      required: true,
+    },
+    schoolTaxNumber: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  { timestamps: true },
+);
+
+taxCertificateSchema.index({ certificateNumber: 1 }, { unique: true });
+taxCertificateSchema.index({ donationId: 1 });
+
+export const TaxCertificate = mongoose.model<ITaxCertificate>('TaxCertificate', taxCertificateSchema);
+
+// ─── Donor Wall ────────────────────────────────────────────────────────────
+
+export interface IDonorWall extends Document {
+  campaignId: Types.ObjectId;
+  schoolId: Types.ObjectId;
+  donorName: string;
+  amount: number;
+  message?: string;
+  isPublic: boolean;
+  donationId: Types.ObjectId;
+  isDeleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const donorWallSchema = new Schema<IDonorWall>(
+  {
+    campaignId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Campaign',
+      required: true,
+    },
+    schoolId: {
+      type: Schema.Types.ObjectId,
+      ref: 'School',
+      required: true,
+    },
+    donorName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    amount: {
+      type: Number,
+      required: true,
+    },
+    message: {
+      type: String,
+    },
+    isPublic: {
+      type: Boolean,
+      default: true,
+    },
+    donationId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Donation',
+      required: true,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  { timestamps: true },
+);
+
+donorWallSchema.index({ campaignId: 1, isPublic: 1 });
+
+export const DonorWall = mongoose.model<IDonorWall>('DonorWall', donorWallSchema);
+
+// ─── Recurring Donation ────────────────────────────────────────────────────
+
+export interface IRecurringDonation extends Document {
+  campaignId: Types.ObjectId;
+  schoolId: Types.ObjectId;
+  donorName: string;
+  donorEmail: string;
+  amount: number;
+  frequency: 'monthly' | 'weekly';
+  isActive: boolean;
+  nextChargeDate: Date;
+  lastChargedDate?: Date;
+  totalCharged: number;
+  isDeleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const recurringDonationSchema = new Schema<IRecurringDonation>(
+  {
+    campaignId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Campaign',
+      required: true,
+    },
+    schoolId: {
+      type: Schema.Types.ObjectId,
+      ref: 'School',
+      required: true,
+    },
+    donorName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    donorEmail: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    amount: {
+      type: Number,
+      required: true,
+    },
+    frequency: {
+      type: String,
+      enum: ['monthly', 'weekly'],
+      required: true,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    nextChargeDate: {
+      type: Date,
+      required: true,
+    },
+    lastChargedDate: {
+      type: Date,
+    },
+    totalCharged: {
+      type: Number,
+      default: 0,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  { timestamps: true },
+);
+
+recurringDonationSchema.index({ schoolId: 1, isActive: 1 });
+recurringDonationSchema.index({ nextChargeDate: 1 });
+
+export const RecurringDonation = mongoose.model<IRecurringDonation>('RecurringDonation', recurringDonationSchema);

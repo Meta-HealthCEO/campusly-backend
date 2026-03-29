@@ -70,4 +70,64 @@ export class TransportController {
     await TransportService.deleteAssignment(req.params.id as string);
     res.json(apiResponse(true, undefined, 'Transport assignment deleted successfully'));
   }
+
+  // ─── Boarding Log ───────────────────────────────────────────────────────────
+
+  static async createBoardingLog(req: Request, res: Response): Promise<void> {
+    const boardingLog = await TransportService.createBoardingLog(req.body);
+    res.status(201).json(apiResponse(true, boardingLog, 'Boarding log created successfully'));
+  }
+
+  static async logAlight(req: Request, res: Response): Promise<void> {
+    const boardingLog = await TransportService.logAlight(req.params.id as string, req.body);
+    res.json(apiResponse(true, boardingLog, 'Alighting logged successfully'));
+  }
+
+  static async listBoardingLogs(req: Request, res: Response): Promise<void> {
+    const query = {
+      page: req.query.page ? Number(req.query.page) : undefined,
+      limit: req.query.limit ? Number(req.query.limit) : undefined,
+      routeId: req.query.routeId as string | undefined,
+      studentId: req.query.studentId as string | undefined,
+      date: req.query.date as string | undefined,
+    };
+
+    const result = await TransportService.listBoardingLogsByRoute(query);
+    res.json(apiResponse(true, result, 'Boarding logs retrieved successfully'));
+  }
+
+  // ─── Transport Alert ────────────────────────────────────────────────────────
+
+  static async createTransportAlert(req: Request, res: Response): Promise<void> {
+    const alert = await TransportService.createTransportAlert(req.body);
+    res.status(201).json(apiResponse(true, alert, 'Transport alert created successfully'));
+  }
+
+  static async listTransportAlerts(req: Request, res: Response): Promise<void> {
+    const query = {
+      page: req.query.page ? Number(req.query.page) : undefined,
+      limit: req.query.limit ? Number(req.query.limit) : undefined,
+      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      routeId: req.query.routeId as string | undefined,
+      isResolved: req.query.isResolved !== undefined ? req.query.isResolved === 'true' : undefined,
+    };
+
+    const result = await TransportService.listTransportAlerts(query);
+    res.json(apiResponse(true, result, 'Transport alerts retrieved successfully'));
+  }
+
+  static async getTransportAlert(req: Request, res: Response): Promise<void> {
+    const alert = await TransportService.getTransportAlert(req.params.id as string);
+    res.json(apiResponse(true, alert, 'Transport alert retrieved successfully'));
+  }
+
+  static async resolveTransportAlert(req: Request, res: Response): Promise<void> {
+    const alert = await TransportService.resolveTransportAlert(req.params.id as string);
+    res.json(apiResponse(true, alert, 'Transport alert resolved successfully'));
+  }
+
+  static async deleteTransportAlert(req: Request, res: Response): Promise<void> {
+    await TransportService.deleteTransportAlert(req.params.id as string);
+    res.json(apiResponse(true, undefined, 'Transport alert deleted successfully'));
+  }
 }

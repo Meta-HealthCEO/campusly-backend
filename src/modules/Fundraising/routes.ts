@@ -9,6 +9,9 @@ import {
   createDonationSchema,
   createRaffleSchema,
   buyRaffleTicketsSchema,
+  generateTaxCertificateSchema,
+  addDonorWallSchema,
+  createRecurringDonationSchema,
 } from './validation.js';
 
 const router = Router();
@@ -106,6 +109,85 @@ router.get(
   '/raffles/tickets/parent/:parentId',
   authenticate,
   FundraisingController.getTicketsByParent,
+);
+
+// ─── Campaign Progress Route ──────────────────────────────────────────────
+
+router.get(
+  '/campaigns/:campaignId/progress',
+  authenticate,
+  FundraisingController.getCampaignProgress,
+);
+
+// ─── Tax Certificate Routes ───────────────────────────────────────────────
+
+router.post(
+  '/tax-certificates',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  validate(generateTaxCertificateSchema),
+  FundraisingController.generateTaxCertificate,
+);
+
+router.get(
+  '/tax-certificates',
+  authenticate,
+  FundraisingController.listTaxCertificates,
+);
+
+router.get(
+  '/tax-certificates/:id',
+  authenticate,
+  FundraisingController.getTaxCertificate,
+);
+
+// ─── Donor Wall Routes ────────────────────────────────────────────────────
+
+router.post(
+  '/donor-wall',
+  authenticate,
+  validate(addDonorWallSchema),
+  FundraisingController.addDonorWallEntry,
+);
+
+router.get(
+  '/campaigns/:campaignId/donor-wall',
+  authenticate,
+  FundraisingController.listDonorWall,
+);
+
+// ─── Recurring Donation Routes ────────────────────────────────────────────
+
+router.post(
+  '/recurring-donations',
+  authenticate,
+  validate(createRecurringDonationSchema),
+  FundraisingController.createRecurringDonation,
+);
+
+router.get(
+  '/recurring-donations',
+  authenticate,
+  FundraisingController.listRecurringDonations,
+);
+
+router.get(
+  '/recurring-donations/:id',
+  authenticate,
+  FundraisingController.getRecurringDonation,
+);
+
+router.patch(
+  '/recurring-donations/:id/cancel',
+  authenticate,
+  FundraisingController.cancelRecurringDonation,
+);
+
+router.post(
+  '/recurring-donations/process',
+  authenticate,
+  authorize('super_admin'),
+  FundraisingController.processRecurringDonations,
 );
 
 export default router;

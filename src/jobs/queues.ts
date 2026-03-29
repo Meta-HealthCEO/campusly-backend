@@ -56,3 +56,8 @@ export const lateFeeCalculatorQueue = new Queue('late-fee-calculator', {
   connection: redisConnection,
   defaultJobOptions,
 });
+
+export const transportBoardingQueue = new Queue('transport-boarding', {
+  connection: redisConnection,
+  defaultJobOptions,
+});

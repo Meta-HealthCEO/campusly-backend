@@ -45,7 +45,41 @@ export const updateAssignmentSchema = z.object({
   direction: z.enum(['morning', 'afternoon', 'both']).optional(),
 });
 
+// ─── Boarding Log Schemas ──────────────────────────────────────────────────
+
+export const createBoardingLogSchema = z.object({
+  studentId: objectIdSchema,
+  schoolId: objectIdSchema,
+  routeId: objectIdSchema,
+  boardedAt: z.coerce.date(),
+  boardingLat: z.number().optional(),
+  boardingLng: z.number().optional(),
+});
+
+export const logAlightSchema = z.object({
+  alightedAt: z.coerce.date(),
+  alightingLat: z.number().optional(),
+  alightingLng: z.number().optional(),
+});
+
+// ─── Transport Alert Schemas ──────────────────────────────────────────────
+
+export const createTransportAlertSchema = z.object({
+  schoolId: objectIdSchema,
+  routeId: objectIdSchema.optional(),
+  type: z.enum(['delay', 'breakdown', 'route_change', 'emergency', 'weather']),
+  title: z.string().min(1, 'Title is required'),
+  message: z.string().min(1, 'Message is required'),
+  severity: z.enum(['low', 'medium', 'high', 'critical']),
+  createdBy: objectIdSchema,
+});
+
+// ─── Type Exports ─────────────────────────────────────────────────────────
+
 export type CreateBusRouteInput = z.infer<typeof createBusRouteSchema>;
 export type UpdateBusRouteInput = z.infer<typeof updateBusRouteSchema>;
 export type CreateAssignmentInput = z.infer<typeof createAssignmentSchema>;
 export type UpdateAssignmentInput = z.infer<typeof updateAssignmentSchema>;
+export type CreateBoardingLogInput = z.infer<typeof createBoardingLogSchema>;
+export type LogAlightInput = z.infer<typeof logAlightSchema>;
+export type CreateTransportAlertInput = z.infer<typeof createTransportAlertSchema>;

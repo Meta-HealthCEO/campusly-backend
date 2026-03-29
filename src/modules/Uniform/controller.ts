@@ -118,4 +118,78 @@ export class UniformController {
     const result = await UniformService.getMyListings(parentId, query);
     res.json(apiResponse(true, result, 'My listings retrieved successfully'));
   }
+
+  // ─── Size Guide ──────────────────────────────────────────────────────────
+
+  static async createSizeGuide(req: Request, res: Response): Promise<void> {
+    const data = {
+      ...req.body,
+      uniformItemId: req.params.itemId,
+    };
+    const sizeGuide = await UniformService.createSizeGuide(data);
+    res.status(201).json(apiResponse(true, sizeGuide, 'Size guide created successfully'));
+  }
+
+  static async getSizeGuide(req: Request, res: Response): Promise<void> {
+    const sizeGuide = await UniformService.getSizeGuideByItem(req.params.itemId as string);
+    res.json(apiResponse(true, sizeGuide, 'Size guide retrieved successfully'));
+  }
+
+  static async updateSizeGuide(req: Request, res: Response): Promise<void> {
+    const sizeGuide = await UniformService.updateSizeGuide(req.params.itemId as string, req.body);
+    res.json(apiResponse(true, sizeGuide, 'Size guide updated successfully'));
+  }
+
+  static async deleteSizeGuide(req: Request, res: Response): Promise<void> {
+    await UniformService.deleteSizeGuide(req.params.itemId as string);
+    res.json(apiResponse(true, undefined, 'Size guide deleted successfully'));
+  }
+
+  // ─── Pre Orders ──────────────────────────────────────────────────────────
+
+  static async createPreOrder(req: Request, res: Response): Promise<void> {
+    const preOrder = await UniformService.createPreOrder(req.body, req.user!.id);
+    res.status(201).json(apiResponse(true, preOrder, 'Pre-order created successfully'));
+  }
+
+  static async listPreOrders(req: Request, res: Response): Promise<void> {
+    const query = {
+      page: req.query.page ? Number(req.query.page) : undefined,
+      limit: req.query.limit ? Number(req.query.limit) : undefined,
+      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      status: req.query.status as string | undefined,
+      uniformItemId: req.query.uniformItemId as string | undefined,
+    };
+
+    const result = await UniformService.listPreOrders(query);
+    res.json(apiResponse(true, result, 'Pre-orders retrieved successfully'));
+  }
+
+  static async getPreOrder(req: Request, res: Response): Promise<void> {
+    const preOrder = await UniformService.getPreOrder(req.params.id as string);
+    res.json(apiResponse(true, preOrder, 'Pre-order retrieved successfully'));
+  }
+
+  static async updatePreOrderStatus(req: Request, res: Response): Promise<void> {
+    const preOrder = await UniformService.updatePreOrderStatus(req.params.id as string, req.body);
+    res.json(apiResponse(true, preOrder, 'Pre-order status updated successfully'));
+  }
+
+  static async deletePreOrder(req: Request, res: Response): Promise<void> {
+    await UniformService.deletePreOrder(req.params.id as string);
+    res.json(apiResponse(true, undefined, 'Pre-order deleted successfully'));
+  }
+
+  // ─── Low Stock ───────────────────────────────────────────────────────────
+
+  static async getLowStockItems(req: Request, res: Response): Promise<void> {
+    const query = {
+      page: req.query.page ? Number(req.query.page) : undefined,
+      limit: req.query.limit ? Number(req.query.limit) : undefined,
+      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+    };
+
+    const result = await UniformService.getLowStockItems(query);
+    res.json(apiResponse(true, result, 'Low stock items retrieved successfully'));
+  }
 }

@@ -15,6 +15,8 @@ export const createUniformItemSchema = z.object({
   stock: z.number().int().nonnegative('Stock must be a non-negative integer').optional(),
   image: z.string().url('Image must be a valid URL').optional(),
   isAvailable: z.boolean().optional(),
+  lowStockThreshold: z.number().int().nonnegative('Low stock threshold must be a non-negative integer').optional(),
+  sizeGuideUrl: z.string().url('Size guide URL must be a valid URL').optional(),
 });
 
 export const updateUniformItemSchema = z.object({
@@ -26,6 +28,8 @@ export const updateUniformItemSchema = z.object({
   stock: z.number().int().nonnegative('Stock must be a non-negative integer').optional(),
   image: z.string().url('Image must be a valid URL').optional(),
   isAvailable: z.boolean().optional(),
+  lowStockThreshold: z.number().int().nonnegative('Low stock threshold must be a non-negative integer').optional(),
+  sizeGuideUrl: z.string().url('Size guide URL must be a valid URL').optional(),
 });
 
 export const createUniformOrderSchema = z.object({
@@ -46,7 +50,7 @@ export const createUniformOrderSchema = z.object({
 });
 
 export const updateUniformOrderStatusSchema = z.object({
-  status: z.enum(['pending', 'confirmed', 'ready', 'collected', 'cancelled']),
+  status: z.enum(['pending', 'processing', 'confirmed', 'ready', 'collected', 'cancelled']),
 });
 
 const secondHandConditionSchema = z.enum(['new', 'like_new', 'good', 'fair']);
@@ -71,9 +75,56 @@ export const updateSecondHandListingSchema = z.object({
   description: z.string().optional(),
 });
 
+// ─── Size Guide Schemas ────────────────────────────────────────────────────
+
+const measurementSchema = z.object({
+  size: z.string().min(1, 'Size is required'),
+  chest: z.string().min(1, 'Chest measurement is required'),
+  waist: z.string().min(1, 'Waist measurement is required'),
+  length: z.string().min(1, 'Length measurement is required'),
+});
+
+export const createSizeGuideSchema = z.object({
+  uniformItemId: objectIdSchema,
+  schoolId: objectIdSchema,
+  sizeChartImageUrl: z.string().url('Size chart image URL must be a valid URL'),
+  measurements: z.array(measurementSchema).optional(),
+  notes: z.string().optional(),
+});
+
+export const updateSizeGuideSchema = z.object({
+  sizeChartImageUrl: z.string().url('Size chart image URL must be a valid URL').optional(),
+  measurements: z.array(measurementSchema).optional(),
+  notes: z.string().optional(),
+});
+
+// ─── Pre Order Schemas ─────────────────────────────────────────────────────
+
+const preOrderStatusSchema = z.enum(['pre_order', 'available', 'ready', 'collected']);
+
+export const createPreOrderSchema = z.object({
+  uniformItemId: objectIdSchema,
+  studentId: objectIdSchema,
+  schoolId: objectIdSchema,
+  size: z.string().min(1, 'Size is required'),
+  quantity: z.number().int().positive('Quantity must be a positive integer'),
+  availableDate: z.coerce.date(),
+  notes: z.string().optional(),
+});
+
+export const updatePreOrderStatusSchema = z.object({
+  status: preOrderStatusSchema,
+});
+
+// ─── Type Exports ──────────────────────────────────────────────────────────
+
 export type CreateUniformItemInput = z.infer<typeof createUniformItemSchema>;
 export type UpdateUniformItemInput = z.infer<typeof updateUniformItemSchema>;
 export type CreateUniformOrderInput = z.infer<typeof createUniformOrderSchema>;
 export type UpdateUniformOrderStatusInput = z.infer<typeof updateUniformOrderStatusSchema>;
 export type CreateSecondHandListingInput = z.infer<typeof createSecondHandListingSchema>;
 export type UpdateSecondHandListingInput = z.infer<typeof updateSecondHandListingSchema>;
+export type CreateSizeGuideInput = z.infer<typeof createSizeGuideSchema>;
+export type UpdateSizeGuideInput = z.infer<typeof updateSizeGuideSchema>;
+export type CreatePreOrderInput = z.infer<typeof createPreOrderSchema>;
+export type UpdatePreOrderStatusInput = z.infer<typeof updatePreOrderStatusSchema>;

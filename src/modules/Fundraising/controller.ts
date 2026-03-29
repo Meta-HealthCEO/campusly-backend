@@ -89,4 +89,95 @@ export class FundraisingController {
     const tickets = await FundraisingService.getTicketsByParent(parentId, raffleId);
     res.json(apiResponse(true, tickets, 'Tickets retrieved successfully'));
   }
+
+  // ─── Campaign Progress ──────────────────────────────────────────────────
+
+  static async getCampaignProgress(req: Request, res: Response): Promise<void> {
+    const result = await FundraisingService.getCampaignProgress(req.params.campaignId as string);
+    res.json(apiResponse(true, result, 'Campaign progress retrieved successfully'));
+  }
+
+  // ─── Tax Certificate ────────────────────────────────────────────────────
+
+  static async generateTaxCertificate(req: Request, res: Response): Promise<void> {
+    const certificate = await FundraisingService.generateTaxCertificate(req.body);
+    res.status(201).json(apiResponse(true, certificate, 'Tax certificate generated successfully'));
+  }
+
+  static async getTaxCertificate(req: Request, res: Response): Promise<void> {
+    const certificate = await FundraisingService.getTaxCertificateById(req.params.id as string);
+    res.json(apiResponse(true, certificate, 'Tax certificate retrieved successfully'));
+  }
+
+  static async listTaxCertificates(req: Request, res: Response): Promise<void> {
+    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const donorName = req.query.donorName as string | undefined;
+
+    const query = {
+      page: req.query.page ? Number(req.query.page) : undefined,
+      limit: req.query.limit ? Number(req.query.limit) : undefined,
+    };
+
+    if (donorName) {
+      const result = await FundraisingService.listTaxCertificatesByDonor(donorName, schoolId, query);
+      res.json(apiResponse(true, result, 'Tax certificates retrieved successfully'));
+      return;
+    }
+
+    const result = await FundraisingService.listTaxCertificatesBySchool(schoolId, query);
+    res.json(apiResponse(true, result, 'Tax certificates retrieved successfully'));
+  }
+
+  // ─── Donor Wall ─────────────────────────────────────────────────────────
+
+  static async addDonorWallEntry(req: Request, res: Response): Promise<void> {
+    const entry = await FundraisingService.addDonorWallEntry(req.body);
+    res.status(201).json(apiResponse(true, entry, 'Donor wall entry added successfully'));
+  }
+
+  static async listDonorWall(req: Request, res: Response): Promise<void> {
+    const campaignId = req.params.campaignId as string;
+    const query = {
+      page: req.query.page ? Number(req.query.page) : undefined,
+      limit: req.query.limit ? Number(req.query.limit) : undefined,
+    };
+
+    const result = await FundraisingService.listDonorWallByCampaign(campaignId, query);
+    res.json(apiResponse(true, result, 'Donor wall retrieved successfully'));
+  }
+
+  // ─── Recurring Donation ─────────────────────────────────────────────────
+
+  static async createRecurringDonation(req: Request, res: Response): Promise<void> {
+    const recurring = await FundraisingService.createRecurringDonation(req.body);
+    res.status(201).json(apiResponse(true, recurring, 'Recurring donation created successfully'));
+  }
+
+  static async listRecurringDonations(req: Request, res: Response): Promise<void> {
+    const query = {
+      page: req.query.page ? Number(req.query.page) : undefined,
+      limit: req.query.limit ? Number(req.query.limit) : undefined,
+      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      campaignId: req.query.campaignId as string | undefined,
+      isActive: req.query.isActive !== undefined ? req.query.isActive === 'true' : undefined,
+    };
+
+    const result = await FundraisingService.listRecurringDonations(query);
+    res.json(apiResponse(true, result, 'Recurring donations retrieved successfully'));
+  }
+
+  static async getRecurringDonation(req: Request, res: Response): Promise<void> {
+    const recurring = await FundraisingService.getRecurringDonation(req.params.id as string);
+    res.json(apiResponse(true, recurring, 'Recurring donation retrieved successfully'));
+  }
+
+  static async cancelRecurringDonation(req: Request, res: Response): Promise<void> {
+    const recurring = await FundraisingService.cancelRecurringDonation(req.params.id as string);
+    res.json(apiResponse(true, recurring, 'Recurring donation cancelled successfully'));
+  }
+
+  static async processRecurringDonations(req: Request, res: Response): Promise<void> {
+    const result = await FundraisingService.processRecurringDonations();
+    res.json(apiResponse(true, result, 'Recurring donations processed successfully'));
+  }
 }

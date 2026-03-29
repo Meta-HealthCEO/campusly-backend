@@ -8,6 +8,9 @@ import {
   updateBusRouteSchema,
   createAssignmentSchema,
   updateAssignmentSchema,
+  createBoardingLogSchema,
+  logAlightSchema,
+  createTransportAlertSchema,
 } from './validation.js';
 
 const router = Router();
@@ -84,6 +87,66 @@ router.delete(
   authenticate,
   authorize('super_admin', 'school_admin'),
   TransportController.deleteAssignment,
+);
+
+// ─── Boarding Log Routes ────────────────────────────────────────────────────
+
+router.post(
+  '/boarding',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'teacher'),
+  validate(createBoardingLogSchema),
+  TransportController.createBoardingLog,
+);
+
+router.get(
+  '/boarding',
+  authenticate,
+  TransportController.listBoardingLogs,
+);
+
+router.patch(
+  '/boarding/:id/alight',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'teacher'),
+  validate(logAlightSchema),
+  TransportController.logAlight,
+);
+
+// ─── Transport Alert Routes ─────────────────────────────────────────────────
+
+router.post(
+  '/alerts',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  validate(createTransportAlertSchema),
+  TransportController.createTransportAlert,
+);
+
+router.get(
+  '/alerts',
+  authenticate,
+  TransportController.listTransportAlerts,
+);
+
+router.get(
+  '/alerts/:id',
+  authenticate,
+  TransportController.getTransportAlert,
+);
+
+router.patch(
+  '/alerts/:id/resolve',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  TransportController.resolveTransportAlert,
+);
+
+router.delete(
+  '/alerts/:id',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  TransportController.deleteTransportAlert,
 );
 
 export default router;
