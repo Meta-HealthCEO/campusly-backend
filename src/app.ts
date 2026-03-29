@@ -34,6 +34,8 @@ import achieverRoutes from './modules/Achiever/routes.js';
 import consentRoutes from './modules/Consent/routes.js';
 import reportRoutes from './modules/Report/routes.js';
 import auditRoutes from './modules/Audit/routes.js';
+import migrationRoutes from './modules/Migration/routes.js';
+import learningRoutes from './modules/Learning/routes.js';
 
 const app = express();
 
@@ -88,6 +90,8 @@ app.use('/api/events', requireModule('event'), eventRoutes);
 app.use('/api/fundraising', requireModule('fundraising'), fundraisingRoutes);
 app.use('/api/transport', requireModule('transport'), transportRoutes);
 app.use('/api/after-care', requireModule('aftercare'), afterCareRoutes);
+app.use('/api/migration', requireModule('migration'), migrationRoutes);
+app.use('/api/learning', requireModule('learning'), learningRoutes);
 
 // 404 handler
 app.use((_req, res) => {

@@ -28,6 +28,8 @@ export const BOLT_ON_MODULES = [
   'fundraising',
   'transport',
   'aftercare',
+  'migration',
+  'learning',
 ] as const;
 
 export const ALL_MODULES = [...CORE_MODULES, ...BOLT_ON_MODULES] as const;
@@ -85,6 +87,14 @@ export const MODULE_PACKAGES: Record<string, { label: string; modules: readonly 
   aftercare: {
     label: 'After Care',
     modules: ['aftercare'],
+  },
+  migration: {
+    label: 'Data Migration',
+    modules: ['migration'],
+  },
+  learning: {
+    label: 'Learning Platform',
+    modules: ['learning', 'homework'],
   },
 };
 
