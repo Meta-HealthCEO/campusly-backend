@@ -4,6 +4,16 @@ import mongoose, { Schema, Document, Types } from 'mongoose';
 
 export type MenuItemCategory = 'snack' | 'drink' | 'meal' | 'stationery' | 'other';
 
+export type AllergenType = 'nuts' | 'dairy' | 'gluten' | 'eggs' | 'soy' | 'fish' | 'shellfish';
+
+export interface INutritionalInfo {
+  calories?: number;
+  protein?: number;
+  carbs?: number;
+  fat?: number;
+  sugar?: number;
+}
+
 export interface IMenuItem extends Document {
   name: string;
   schoolId: Types.ObjectId;
@@ -13,8 +23,11 @@ export interface IMenuItem extends Document {
   image?: string;
   isAvailable: boolean;
   stock: number;
-  nutritionalInfo?: string;
+  allergens: AllergenType[];
   allergenWarnings: string[];
+  isHalal: boolean;
+  isKosher: boolean;
+  nutritionalInfo: INutritionalInfo;
   isDailySpecial: boolean;
   stockAlertThreshold: number;
   isDeleted: boolean;
@@ -57,12 +70,32 @@ const menuItemSchema = new Schema<IMenuItem>(
       type: Number,
       default: 0,
     },
-    nutritionalInfo: {
-      type: String,
+    allergens: {
+      type: [String],
+      enum: ['nuts', 'dairy', 'gluten', 'eggs', 'soy', 'fish', 'shellfish'],
+      default: [],
     },
     allergenWarnings: {
       type: [String],
       default: [],
+    },
+    isHalal: {
+      type: Boolean,
+      default: false,
+    },
+    isKosher: {
+      type: Boolean,
+      default: false,
+    },
+    nutritionalInfo: {
+      type: new Schema({
+        calories: { type: Number },
+        protein: { type: Number },
+        carbs: { type: Number },
+        fat: { type: Number },
+        sugar: { type: Number },
+      }, { _id: false }),
+      default: () => ({}),
     },
     isDailySpecial: {
       type: Boolean,

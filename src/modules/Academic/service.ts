@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import {
   Grade,
   IGrade,
@@ -11,6 +12,16 @@ import {
   IAssessment,
   Mark,
   IMark,
+  Exam,
+  IExam,
+  ExamTimetable,
+  IExamTimetable,
+  PastPaper,
+  IPastPaper,
+  SubjectWeighting,
+  ISubjectWeighting,
+  RemedialTracking,
+  IRemedialTracking,
 } from './model.js';
 import { Student } from '../Student/model.js';
 import { NotFoundError } from '../../common/errors.js';
@@ -522,5 +533,352 @@ export class AcademicService {
         homeLanguage: student.homeLanguage || '',
       };
     });
+  }
+
+  // ─── Exam CRUD ────────────────────────────────────────────────────────────
+
+  static async createExam(data: Partial<IExam>): Promise<IExam> {
+    const exam = new Exam(data);
+    return exam.save();
+  }
+
+  static async listExams(schoolId: string, query: ListQuery): Promise<PaginatedResult<IExam>> {
+    const { page, limit, skip, sortField } = getPagination(query);
+    const filter: Record<string, unknown> = { schoolId, isDeleted: false };
+    if (query.search) filter.name = new RegExp(query.search, 'i');
+
+    const [data, total] = await Promise.all([
+      Exam.find(filter).sort(sortField).skip(skip).limit(limit).lean().exec(),
+      Exam.countDocuments(filter),
+    ]);
+    return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
+  }
+
+  static async getExamById(id: string): Promise<IExam> {
+    const exam = await Exam.findOne({ _id: id, isDeleted: false });
+    if (!exam) throw new NotFoundError('Exam not found');
+    return exam;
+  }
+
+  static async updateExam(id: string, data: Partial<IExam>): Promise<IExam> {
+    const exam = await Exam.findOneAndUpdate(
+      { _id: id, isDeleted: false },
+      { $set: data },
+      { new: true, runValidators: true },
+    );
+    if (!exam) throw new NotFoundError('Exam not found');
+    return exam;
+  }
+
+  static async deleteExam(id: string): Promise<IExam> {
+    const exam = await Exam.findOneAndUpdate(
+      { _id: id, isDeleted: false },
+      { $set: { isDeleted: true } },
+      { new: true },
+    );
+    if (!exam) throw new NotFoundError('Exam not found');
+    return exam;
+  }
+
+  // ─── Exam Timetable CRUD ─────────��──────────────────────────────���─────────
+
+  static async createExamTimetable(data: Partial<IExamTimetable>): Promise<IExamTimetable> {
+    const entry = new ExamTimetable(data);
+    return entry.save();
+  }
+
+  static async listExamTimetable(examId: string, query: ListQuery): Promise<PaginatedResult<IExamTimetable>> {
+    const { page, limit, skip } = getPagination(query);
+    const filter: Record<string, unknown> = { examId, isDeleted: false };
+
+    const [data, total] = await Promise.all([
+      ExamTimetable.find(filter)
+        .populate('subjectId', 'name code')
+        .populate('gradeId', 'name')
+        .populate('invigilator', 'firstName lastName email')
+        .sort('date startTime')
+        .skip(skip)
+        .limit(limit)
+        .lean()
+        .exec(),
+      ExamTimetable.countDocuments(filter),
+    ]);
+    return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
+  }
+
+  static async getExamTimetableById(id: string): Promise<IExamTimetable> {
+    const entry = await ExamTimetable.findOne({ _id: id, isDeleted: false })
+      .populate('subjectId', 'name code')
+      .populate('gradeId', 'name')
+      .populate('invigilator', 'firstName lastName email');
+    if (!entry) throw new NotFoundError('Exam timetable entry not found');
+    return entry;
+  }
+
+  static async updateExamTimetable(id: string, data: Partial<IExamTimetable>): Promise<IExamTimetable> {
+    const entry = await ExamTimetable.findOneAndUpdate(
+      { _id: id, isDeleted: false },
+      { $set: data },
+      { new: true, runValidators: true },
+    ).populate('subjectId', 'name code').populate('gradeId', 'name').populate('invigilator', 'firstName lastName email');
+    if (!entry) throw new NotFoundError('Exam timetable entry not found');
+    return entry;
+  }
+
+  static async deleteExamTimetable(id: string): Promise<IExamTimetable> {
+    const entry = await ExamTimetable.findOneAndUpdate(
+      { _id: id, isDeleted: false },
+      { $set: { isDeleted: true } },
+      { new: true },
+    );
+    if (!entry) throw new NotFoundError('Exam timetable entry not found');
+    return entry;
+  }
+
+  // ─── Past Paper CRUD ──���────────────────────────────���──────────────────────
+
+  static async createPastPaper(data: Partial<IPastPaper>, uploadedBy: string): Promise<IPastPaper> {
+    const paper = new PastPaper({ ...data, uploadedBy });
+    return paper.save();
+  }
+
+  static async listPastPapers(
+    schoolId: string,
+    filters: { subjectId?: string; gradeId?: string; year?: number },
+    query: ListQuery,
+  ): Promise<PaginatedResult<IPastPaper>> {
+    const { page, limit, skip } = getPagination(query);
+    const filter: Record<string, unknown> = { schoolId, isDeleted: false };
+    if (filters.subjectId) filter.subjectId = filters.subjectId;
+    if (filters.gradeId) filter.gradeId = filters.gradeId;
+    if (filters.year) filter.year = filters.year;
+
+    const [data, total] = await Promise.all([
+      PastPaper.find(filter)
+        .populate('subjectId', 'name code')
+        .populate('gradeId', 'name')
+        .populate('uploadedBy', 'firstName lastName email')
+        .sort('-year -term')
+        .skip(skip)
+        .limit(limit)
+        .lean()
+        .exec(),
+      PastPaper.countDocuments(filter),
+    ]);
+    return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
+  }
+
+  static async deletePastPaper(id: string): Promise<IPastPaper> {
+    const paper = await PastPaper.findOneAndUpdate(
+      { _id: id, isDeleted: false },
+      { $set: { isDeleted: true } },
+      { new: true },
+    );
+    if (!paper) throw new NotFoundError('Past paper not found');
+    return paper;
+  }
+
+  // ─── Subject Weighting CRUD ────────────────��───────────────────────��──────
+
+  static async createSubjectWeighting(data: Partial<ISubjectWeighting>): Promise<ISubjectWeighting> {
+    const weighting = new SubjectWeighting(data);
+    return weighting.save();
+  }
+
+  static async listSubjectWeightings(
+    schoolId: string,
+    filters: { subjectId?: string; gradeId?: string; term?: number },
+  ): Promise<ISubjectWeighting[]> {
+    const filter: Record<string, unknown> = { schoolId, isDeleted: false };
+    if (filters.subjectId) filter.subjectId = filters.subjectId;
+    if (filters.gradeId) filter.gradeId = filters.gradeId;
+    if (filters.term) filter.term = filters.term;
+
+    return SubjectWeighting.find(filter)
+      .populate('subjectId', 'name code')
+      .populate('gradeId', 'name')
+      .lean()
+      .exec();
+  }
+
+  static async updateSubjectWeighting(id: string, data: Partial<ISubjectWeighting>): Promise<ISubjectWeighting> {
+    const weighting = await SubjectWeighting.findOneAndUpdate(
+      { _id: id, isDeleted: false },
+      { $set: data },
+      { new: true, runValidators: true },
+    ).populate('subjectId', 'name code').populate('gradeId', 'name');
+    if (!weighting) throw new NotFoundError('Subject weighting not found');
+    return weighting;
+  }
+
+  static async deleteSubjectWeighting(id: string): Promise<ISubjectWeighting> {
+    const weighting = await SubjectWeighting.findOneAndUpdate(
+      { _id: id, isDeleted: false },
+      { $set: { isDeleted: true } },
+      { new: true },
+    );
+    if (!weighting) throw new NotFoundError('Subject weighting not found');
+    return weighting;
+  }
+
+  // ─── Remedial Tracking CRUD ───────────────────────────────────────────────
+
+  static async createRemedial(data: Partial<IRemedialTracking>): Promise<IRemedialTracking> {
+    const remedial = new RemedialTracking(data);
+    return remedial.save();
+  }
+
+  static async listRemedials(
+    schoolId: string,
+    filters: { studentId?: string; subjectId?: string; status?: string },
+    query: ListQuery,
+  ): Promise<PaginatedResult<IRemedialTracking>> {
+    const { page, limit, skip } = getPagination(query);
+    const filter: Record<string, unknown> = { schoolId, isDeleted: false };
+    if (filters.studentId) filter.studentId = filters.studentId;
+    if (filters.subjectId) filter.subjectId = filters.subjectId;
+    if (filters.status) filter.status = filters.status;
+
+    const [data, total] = await Promise.all([
+      RemedialTracking.find(filter)
+        .populate('studentId')
+        .populate('subjectId', 'name code')
+        .sort('-identifiedDate')
+        .skip(skip)
+        .limit(limit)
+        .lean()
+        .exec(),
+      RemedialTracking.countDocuments(filter),
+    ]);
+    return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
+  }
+
+  static async getRemedialById(id: string): Promise<IRemedialTracking> {
+    const remedial = await RemedialTracking.findOne({ _id: id, isDeleted: false })
+      .populate('studentId')
+      .populate('subjectId', 'name code');
+    if (!remedial) throw new NotFoundError('Remedial record not found');
+    return remedial;
+  }
+
+  static async updateRemedial(id: string, data: Partial<IRemedialTracking>): Promise<IRemedialTracking> {
+    const remedial = await RemedialTracking.findOneAndUpdate(
+      { _id: id, isDeleted: false },
+      { $set: data },
+      { new: true, runValidators: true },
+    ).populate('studentId').populate('subjectId', 'name code');
+    if (!remedial) throw new NotFoundError('Remedial record not found');
+    return remedial;
+  }
+
+  static async deleteRemedial(id: string): Promise<IRemedialTracking> {
+    const remedial = await RemedialTracking.findOneAndUpdate(
+      { _id: id, isDeleted: false },
+      { $set: { isDeleted: true } },
+      { new: true },
+    );
+    if (!remedial) throw new NotFoundError('Remedial record not found');
+    return remedial;
+  }
+
+  // ─── Promotion Calculation ──────────────────────────��─────────────────────
+
+  static async calculatePromotion(studentId: string, year: number) {
+    const student = await Student.findOne({ _id: studentId, isDeleted: false }).populate('gradeId');
+    if (!student) throw new NotFoundError('Student not found');
+
+    const gradeId = (student.gradeId as any)._id ?? student.gradeId;
+    const schoolId = student.schoolId;
+
+    // Get all subjects for the student's grade
+    const subjects = await Subject.find({
+      gradeIds: gradeId,
+      schoolId,
+      isDeleted: false,
+    }).lean();
+
+    const results = [];
+
+    for (const subject of subjects) {
+      // Get all marks for this student in this subject for the year
+      const marks = await Mark.find({
+        studentId: new mongoose.Types.ObjectId(studentId),
+        isDeleted: false,
+      }).populate({
+        path: 'assessmentId',
+        match: {
+          subjectId: subject._id,
+          academicYear: year,
+          isDeleted: false,
+        },
+      }).lean();
+
+      const filteredMarks = marks.filter((m) => m.assessmentId !== null);
+      const avgPercentage = filteredMarks.length > 0
+        ? filteredMarks.reduce((sum, m) => sum + m.percentage, 0) / filteredMarks.length
+        : 0;
+
+      results.push({
+        subjectId: subject._id,
+        subjectName: subject.name,
+        subjectCode: subject.code,
+        averagePercentage: Math.round(avgPercentage * 100) / 100,
+        assessmentCount: filteredMarks.length,
+        passed: avgPercentage >= 50,
+      });
+    }
+
+    const totalSubjects = results.length;
+    const passedSubjects = results.filter((r) => r.passed).length;
+    const overallAverage = totalSubjects > 0
+      ? Math.round((results.reduce((sum, r) => sum + r.averagePercentage, 0) / totalSubjects) * 100) / 100
+      : 0;
+
+    return {
+      studentId,
+      year,
+      gradeId,
+      totalSubjects,
+      passedSubjects,
+      failedSubjects: totalSubjects - passedSubjects,
+      overallAverage,
+      promoted: passedSubjects >= Math.ceil(totalSubjects * 0.5),
+      subjects: results,
+    };
+  }
+
+  static async promotionReport(gradeId: string, year: number) {
+    const students = await Student.find({
+      gradeId,
+      enrollmentStatus: 'active',
+      isDeleted: false,
+    }).populate('userId', 'firstName lastName').lean();
+
+    const results = [];
+    for (const student of students) {
+      const promotion = await AcademicService.calculatePromotion(student._id.toString(), year);
+      const user = student.userId as any;
+      const { studentId: _sid, ...promotionData } = promotion;
+      results.push({
+        studentId: student._id,
+        admissionNumber: student.admissionNumber,
+        firstName: user?.firstName || '',
+        lastName: user?.lastName || '',
+        ...promotionData,
+      });
+    }
+
+    const totalStudents = results.length;
+    const promoted = results.filter((r) => r.promoted).length;
+
+    return {
+      gradeId,
+      year,
+      totalStudents,
+      promoted,
+      notPromoted: totalStudents - promoted,
+      promotionRate: totalStudents > 0 ? Math.round((promoted / totalStudents) * 10000) / 100 : 0,
+      students: results,
+    };
   }
 }

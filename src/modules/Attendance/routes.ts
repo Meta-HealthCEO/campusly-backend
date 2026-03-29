@@ -3,7 +3,17 @@ import { authenticate } from '../../middleware/auth.js';
 import { authorize } from '../../middleware/rbac.js';
 import { validate } from '../../middleware/validate.js';
 import { AttendanceController } from './controller.js';
-import { recordAttendanceSchema, bulkAttendanceSchema } from './validation.js';
+import {
+  recordAttendanceSchema,
+  bulkAttendanceSchema,
+  createDisciplineSchema,
+  updateDisciplineSchema,
+  createMeritSchema,
+  createLessonPlanSchema,
+  updateLessonPlanSchema,
+  createSubstituteSchema,
+  updateSubstituteSchema,
+} from './validation.js';
 
 const router = Router();
 
@@ -55,6 +65,145 @@ router.get(
   authenticate,
   authorize('school_admin', 'super_admin'),
   AttendanceController.getDailyReport,
+);
+
+// ─── Discipline Routes ──────────────────────────────────────────────────────
+
+router.post(
+  '/discipline',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  validate(createDisciplineSchema),
+  AttendanceController.createDiscipline,
+);
+
+router.get(
+  '/discipline',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  AttendanceController.listDiscipline,
+);
+
+router.get(
+  '/discipline/:id',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  AttendanceController.getDiscipline,
+);
+
+router.put(
+  '/discipline/:id',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  validate(updateDisciplineSchema),
+  AttendanceController.updateDiscipline,
+);
+
+router.delete(
+  '/discipline/:id',
+  authenticate,
+  authorize('school_admin', 'super_admin'),
+  AttendanceController.deleteDiscipline,
+);
+
+// ─── Merit / Demerit Routes ─────────────────────────────────────────────────
+
+router.post(
+  '/merits',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  validate(createMeritSchema),
+  AttendanceController.createMerit,
+);
+
+router.get(
+  '/merits',
+  authenticate,
+  AttendanceController.listMerits,
+);
+
+router.get(
+  '/merits/balance/:studentId',
+  authenticate,
+  AttendanceController.getMeritBalance,
+);
+
+// ─── Lesson Plan Routes ─────────────────────────────────────────────────────
+
+router.post(
+  '/lesson-plans',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  validate(createLessonPlanSchema),
+  AttendanceController.createLessonPlan,
+);
+
+router.get(
+  '/lesson-plans',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  AttendanceController.listLessonPlans,
+);
+
+router.get(
+  '/lesson-plans/:id',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  AttendanceController.getLessonPlan,
+);
+
+router.put(
+  '/lesson-plans/:id',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  validate(updateLessonPlanSchema),
+  AttendanceController.updateLessonPlan,
+);
+
+router.delete(
+  '/lesson-plans/:id',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  AttendanceController.deleteLessonPlan,
+);
+
+// ─── Substitute Teacher Routes ──────────────────────────────────────────────
+
+router.post(
+  '/substitutes',
+  authenticate,
+  authorize('school_admin', 'super_admin'),
+  validate(createSubstituteSchema),
+  AttendanceController.createSubstitute,
+);
+
+router.get(
+  '/substitutes',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  AttendanceController.listSubstitutes,
+);
+
+router.get(
+  '/substitutes/:id',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  AttendanceController.getSubstitute,
+);
+
+router.put(
+  '/substitutes/:id',
+  authenticate,
+  authorize('school_admin', 'super_admin'),
+  validate(updateSubstituteSchema),
+  AttendanceController.updateSubstitute,
+);
+
+router.delete(
+  '/substitutes/:id',
+  authenticate,
+  authorize('school_admin', 'super_admin'),
+  AttendanceController.deleteSubstitute,
 );
 
 export default router;

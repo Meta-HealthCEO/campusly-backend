@@ -61,3 +61,14 @@ export const transportBoardingQueue = new Queue('transport-boarding', {
   connection: redisConnection,
   defaultJobOptions,
 });
+
+export const libraryOverdueQueue = new Queue('library-overdue', {
+  connection: redisConnection,
+  defaultJobOptions,
+
+});
+
+export const bulkMessageQueue = new Queue('bulk-message', {
+  connection: redisConnection,
+  defaultJobOptions,
+});

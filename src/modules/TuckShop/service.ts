@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import { MenuItem, IMenuItem, TuckShopOrder, ITuckShopOrder } from './model.js';
 import { Wallet, WalletTransaction, Wristband } from '../Wallet/model.js';
+import { Student } from '../Student/model.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../common/constants.js';
 import { TransactionType } from '../../common/enums.js';
@@ -125,6 +126,7 @@ export class TuckShopService {
       items: Array<{ menuItemId: string; quantity: number }>;
       paymentMethod: 'wallet' | 'wristband' | 'cash';
       wristbandId?: string;
+      allergenOverride?: boolean;
     },
     processedBy: string,
   ): Promise<ITuckShopOrder> {
@@ -144,6 +146,26 @@ export class TuckShopService {
       }
 
       const menuItemMap = new Map(menuItems.map((item) => [item._id.toString(), item]));
+
+      // Allergen safety check
+      if (!data.allergenOverride) {
+        const student = await Student.findOne({ _id: data.studentId, isDeleted: false }).session(session);
+        if (student?.medicalProfile?.allergies?.length) {
+          const studentAllergies = student.medicalProfile.allergies.map((a) => a.toLowerCase());
+          for (const orderItem of data.items) {
+            const menuItem = menuItemMap.get(orderItem.menuItemId);
+            if (menuItem?.allergens?.length) {
+              for (const allergen of menuItem.allergens) {
+                if (studentAllergies.includes(allergen.toLowerCase())) {
+                  throw new BadRequestError(
+                    `This item contains ${allergen} which the student is allergic to. Set allergenOverride to true if parent has pre-authorized.`,
+                  );
+                }
+              }
+            }
+          }
+        }
+      }
 
       // Build order items and check stock
       const orderItems = [];

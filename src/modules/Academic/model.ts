@@ -351,3 +351,191 @@ markSchema.index({ assessmentId: 1, studentId: 1 }, { unique: true });
 markSchema.index({ studentId: 1 });
 
 export const Mark = mongoose.model<IMark>('Mark', markSchema);
+
+// ─── Exam ───────────────────────────────────────────────────────────────────
+
+export type ExamStatus = 'scheduled' | 'in_progress' | 'completed';
+
+export interface IExam extends Document {
+  schoolId: Types.ObjectId;
+  name: string;
+  term: number;
+  year: number;
+  startDate: Date;
+  endDate: Date;
+  status: ExamStatus;
+  isDeleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const examSchema = new Schema<IExam>(
+  {
+    schoolId: { type: Schema.Types.ObjectId, ref: 'School', required: true },
+    name: { type: String, required: true, trim: true },
+    term: { type: Number, required: true },
+    year: { type: Number, required: true },
+    startDate: { type: Date, required: true },
+    endDate: { type: Date, required: true },
+    status: {
+      type: String,
+      enum: ['scheduled', 'in_progress', 'completed'],
+      default: 'scheduled',
+    },
+    isDeleted: { type: Boolean, default: false },
+  },
+  { timestamps: true },
+);
+
+examSchema.index({ schoolId: 1, year: 1, term: 1 });
+
+export const Exam = mongoose.model<IExam>('Exam', examSchema);
+
+// ─── Exam Timetable ─────────────────────────────────────────────────────────
+
+export interface IExamTimetable extends Document {
+  examId: Types.ObjectId;
+  subjectId: Types.ObjectId;
+  gradeId: Types.ObjectId;
+  date: Date;
+  startTime: string;
+  endTime: string;
+  venue: string;
+  invigilator: Types.ObjectId;
+  duration: number;
+  isDeleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const examTimetableSchema = new Schema<IExamTimetable>(
+  {
+    examId: { type: Schema.Types.ObjectId, ref: 'Exam', required: true },
+    subjectId: { type: Schema.Types.ObjectId, ref: 'Subject', required: true },
+    gradeId: { type: Schema.Types.ObjectId, ref: 'Grade', required: true },
+    date: { type: Date, required: true },
+    startTime: { type: String, required: true },
+    endTime: { type: String, required: true },
+    venue: { type: String, required: true },
+    invigilator: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    duration: { type: Number, required: true },
+    isDeleted: { type: Boolean, default: false },
+  },
+  { timestamps: true },
+);
+
+examTimetableSchema.index({ examId: 1, subjectId: 1, gradeId: 1 });
+
+export const ExamTimetable = mongoose.model<IExamTimetable>('ExamTimetable', examTimetableSchema);
+
+// ─── Past Paper ─────────────────────────────────────────────────────────────
+
+export interface IPastPaper extends Document {
+  schoolId: Types.ObjectId;
+  subjectId: Types.ObjectId;
+  gradeId: Types.ObjectId;
+  year: number;
+  term: number;
+  fileUrl: string;
+  uploadedBy: Types.ObjectId;
+  isDeleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const pastPaperSchema = new Schema<IPastPaper>(
+  {
+    schoolId: { type: Schema.Types.ObjectId, ref: 'School', required: true },
+    subjectId: { type: Schema.Types.ObjectId, ref: 'Subject', required: true },
+    gradeId: { type: Schema.Types.ObjectId, ref: 'Grade', required: true },
+    year: { type: Number, required: true },
+    term: { type: Number, required: true },
+    fileUrl: { type: String, required: true },
+    uploadedBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    isDeleted: { type: Boolean, default: false },
+  },
+  { timestamps: true },
+);
+
+pastPaperSchema.index({ schoolId: 1, subjectId: 1, gradeId: 1 });
+
+export const PastPaper = mongoose.model<IPastPaper>('PastPaper', pastPaperSchema);
+
+// ─── Subject Weighting ──────────────────────────────────────────────────────
+
+export interface ISubjectWeighting extends Document {
+  subjectId: Types.ObjectId;
+  schoolId: Types.ObjectId;
+  gradeId: Types.ObjectId;
+  assessmentType: AssessmentType;
+  weightPercentage: number;
+  term: number;
+  isDeleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const subjectWeightingSchema = new Schema<ISubjectWeighting>(
+  {
+    subjectId: { type: Schema.Types.ObjectId, ref: 'Subject', required: true },
+    schoolId: { type: Schema.Types.ObjectId, ref: 'School', required: true },
+    gradeId: { type: Schema.Types.ObjectId, ref: 'Grade', required: true },
+    assessmentType: {
+      type: String,
+      enum: ['test', 'exam', 'assignment', 'practical', 'project'],
+      required: true,
+    },
+    weightPercentage: { type: Number, required: true },
+    term: { type: Number, required: true },
+    isDeleted: { type: Boolean, default: false },
+  },
+  { timestamps: true },
+);
+
+subjectWeightingSchema.index({ subjectId: 1, schoolId: 1, gradeId: 1, term: 1 });
+
+export const SubjectWeighting = mongoose.model<ISubjectWeighting>('SubjectWeighting', subjectWeightingSchema);
+
+// ─── Remedial Tracking ──────────────────────────────────────────────────────
+
+export type RemedialStatus = 'identified' | 'in_progress' | 'resolved';
+
+export interface IRemedialTracking extends Document {
+  studentId: Types.ObjectId;
+  subjectId: Types.ObjectId;
+  schoolId: Types.ObjectId;
+  identifiedDate: Date;
+  areas: string[];
+  interventions: string[];
+  progress: string[];
+  status: RemedialStatus;
+  reviewDate?: Date;
+  isDeleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const remedialTrackingSchema = new Schema<IRemedialTracking>(
+  {
+    studentId: { type: Schema.Types.ObjectId, ref: 'Student', required: true },
+    subjectId: { type: Schema.Types.ObjectId, ref: 'Subject', required: true },
+    schoolId: { type: Schema.Types.ObjectId, ref: 'School', required: true },
+    identifiedDate: { type: Date, required: true },
+    areas: { type: [String], default: [] },
+    interventions: { type: [String], default: [] },
+    progress: { type: [String], default: [] },
+    status: {
+      type: String,
+      enum: ['identified', 'in_progress', 'resolved'],
+      default: 'identified',
+    },
+    reviewDate: { type: Date },
+    isDeleted: { type: Boolean, default: false },
+  },
+  { timestamps: true },
+);
+
+remedialTrackingSchema.index({ studentId: 1, subjectId: 1 });
+remedialTrackingSchema.index({ schoolId: 1, status: 1 });
+
+export const RemedialTracking = mongoose.model<IRemedialTracking>('RemedialTracking', remedialTrackingSchema);

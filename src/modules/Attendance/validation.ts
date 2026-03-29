@@ -41,6 +41,79 @@ export const attendanceReportSchema = z.object({
   endDate: z.string().datetime(),
 });
 
+// ─── Discipline ─────────────────────────────────────────────────────────────
+
+export const createDisciplineSchema = z.object({
+  studentId: objectIdSchema,
+  schoolId: objectIdSchema,
+  type: z.enum(['misconduct', 'bullying', 'vandalism', 'truancy', 'dress_code', 'late', 'other']),
+  severity: z.enum(['minor', 'moderate', 'serious', 'critical']),
+  description: z.string().min(1, 'Description is required'),
+  witnesses: z.array(z.string()).optional(),
+  actionTaken: z.string().optional(),
+  parentNotified: z.boolean().optional(),
+  parentNotifiedDate: z.string().datetime().optional(),
+  meetingScheduled: z.boolean().optional(),
+  meetingDate: z.string().datetime().optional(),
+  outcome: z.enum(['warning', 'detention', 'suspension', 'expulsion', 'counselling', 'community_service']).optional(),
+  detentionDate: z.string().datetime().optional(),
+  detentionServed: z.boolean().optional(),
+  followUpRequired: z.boolean().optional(),
+  followUpDate: z.string().datetime().optional(),
+  followUpNotes: z.string().optional(),
+  status: z.enum(['reported', 'investigating', 'resolved', 'escalated']).optional(),
+});
+
+export const updateDisciplineSchema = createDisciplineSchema.partial();
+
+// ─── Merit / Demerit ────────────────────────────────────────────────────────
+
+export const createMeritSchema = z.object({
+  studentId: objectIdSchema,
+  schoolId: objectIdSchema,
+  type: z.enum(['merit', 'demerit']),
+  points: z.number().int().positive('Points must be positive'),
+  category: z.enum(['academic', 'behaviour', 'sport', 'service', 'leadership']),
+  reason: z.string().min(1, 'Reason is required'),
+});
+
+// ─── Lesson Plan ────────────────────────────────────────────────────────────
+
+export const createLessonPlanSchema = z.object({
+  schoolId: objectIdSchema,
+  subjectId: objectIdSchema,
+  classId: objectIdSchema,
+  date: z.string().datetime(),
+  topic: z.string().min(1, 'Topic is required'),
+  objectives: z.array(z.string()).optional(),
+  activities: z.array(z.string()).optional(),
+  resources: z.array(z.string()).optional(),
+  homework: z.string().optional(),
+  reflectionNotes: z.string().optional(),
+});
+
+export const updateLessonPlanSchema = createLessonPlanSchema.partial();
+
+// ─── Substitute Teacher ─────────────────────────────────────────────────────
+
+export const createSubstituteSchema = z.object({
+  originalTeacherId: objectIdSchema,
+  substituteTeacherId: objectIdSchema,
+  schoolId: objectIdSchema,
+  date: z.string().datetime(),
+  periods: z.array(z.number().int().positive()).min(1, 'At least one period is required'),
+  reason: z.string().min(1, 'Reason is required'),
+  classIds: z.array(objectIdSchema).min(1, 'At least one class is required'),
+});
+
+export const updateSubstituteSchema = createSubstituteSchema.partial();
+
+// ─── Inferred Types ─────────────────────────────────────────────────────────
+
 export type RecordAttendanceInput = z.infer<typeof recordAttendanceSchema>;
 export type BulkAttendanceInput = z.infer<typeof bulkAttendanceSchema>;
 export type AttendanceReportInput = z.infer<typeof attendanceReportSchema>;
+export type CreateDisciplineInput = z.infer<typeof createDisciplineSchema>;
+export type CreateMeritInput = z.infer<typeof createMeritSchema>;
+export type CreateLessonPlanInput = z.infer<typeof createLessonPlanSchema>;
+export type CreateSubstituteInput = z.infer<typeof createSubstituteSchema>;

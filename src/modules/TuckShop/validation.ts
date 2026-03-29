@@ -5,6 +5,16 @@ const objectIdSchema = z.string().regex(objectIdRegex, 'Invalid ObjectId format'
 
 const menuItemCategorySchema = z.enum(['snack', 'drink', 'meal', 'stationery', 'other']);
 
+const allergenTypeSchema = z.enum(['nuts', 'dairy', 'gluten', 'eggs', 'soy', 'fish', 'shellfish']);
+
+const nutritionalInfoSchema = z.object({
+  calories: z.number().min(0).optional(),
+  protein: z.number().min(0).optional(),
+  carbs: z.number().min(0).optional(),
+  fat: z.number().min(0).optional(),
+  sugar: z.number().min(0).optional(),
+}).optional();
+
 export const createMenuItemSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   schoolId: objectIdSchema,
@@ -13,8 +23,11 @@ export const createMenuItemSchema = z.object({
   category: menuItemCategorySchema,
   image: z.string().url('Image must be a valid URL').optional(),
   stock: z.int().min(-1, 'Stock must be -1 (unlimited) or a non-negative integer').optional(),
-  nutritionalInfo: z.string().optional(),
+  allergens: z.array(allergenTypeSchema).optional(),
   allergenWarnings: z.array(z.string()).optional(),
+  isHalal: z.boolean().optional(),
+  isKosher: z.boolean().optional(),
+  nutritionalInfo: nutritionalInfoSchema,
   isDailySpecial: z.boolean().optional(),
   stockAlertThreshold: z.int().min(0, 'Stock alert threshold must be non-negative').optional(),
 });
@@ -34,6 +47,7 @@ export const placeOrderSchema = z.object({
     .min(1, 'At least one item is required'),
   paymentMethod: z.enum(['wallet', 'wristband', 'cash']),
   wristbandId: z.string().optional(),
+  allergenOverride: z.boolean().optional(),
 });
 
 export type CreateMenuItemInput = z.infer<typeof createMenuItemSchema>;

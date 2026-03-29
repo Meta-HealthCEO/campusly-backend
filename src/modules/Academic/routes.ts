@@ -16,6 +16,15 @@ import {
   updateAssessmentSchema,
   markSchema,
   bulkMarkSchema,
+  examCreateSchema,
+  examUpdateSchema,
+  examTimetableCreateSchema,
+  examTimetableUpdateSchema,
+  pastPaperCreateSchema,
+  subjectWeightingCreateSchema,
+  subjectWeightingUpdateSchema,
+  remedialCreateSchema,
+  remedialUpdateSchema,
 } from './validation.js';
 
 const router = Router();
@@ -259,5 +268,47 @@ router.get(
   authorize('super_admin', 'school_admin'),
   AcademicController.exportLurits,
 );
+
+// ─── Exams ──────────────────────────────────────────────────────────────────
+
+router.post('/exams', authenticate, authorize('super_admin', 'school_admin'), validate(examCreateSchema), AcademicController.createExam);
+router.get('/exams', authenticate, AcademicController.listExams);
+router.get('/exams/:id', authenticate, AcademicController.getExam);
+router.put('/exams/:id', authenticate, authorize('super_admin', 'school_admin'), validate(examUpdateSchema), AcademicController.updateExam);
+router.delete('/exams/:id', authenticate, authorize('super_admin', 'school_admin'), AcademicController.deleteExam);
+
+// ─── Exam Timetable ─────────────────────────────────────────────────────────
+
+router.post('/exam-timetable', authenticate, authorize('super_admin', 'school_admin'), validate(examTimetableCreateSchema), AcademicController.createExamTimetable);
+router.get('/exam-timetable/exam/:examId', authenticate, AcademicController.listExamTimetable);
+router.get('/exam-timetable/:id', authenticate, AcademicController.getExamTimetable);
+router.put('/exam-timetable/:id', authenticate, authorize('super_admin', 'school_admin'), validate(examTimetableUpdateSchema), AcademicController.updateExamTimetable);
+router.delete('/exam-timetable/:id', authenticate, authorize('super_admin', 'school_admin'), AcademicController.deleteExamTimetable);
+
+// ─── Past Papers ────────────────────────────────────────────────────────────
+
+router.post('/past-papers', authenticate, authorize('super_admin', 'school_admin', 'teacher'), validate(pastPaperCreateSchema), AcademicController.createPastPaper);
+router.get('/past-papers', authenticate, AcademicController.listPastPapers);
+router.delete('/past-papers/:id', authenticate, authorize('super_admin', 'school_admin'), AcademicController.deletePastPaper);
+
+// ─── Subject Weightings ─────────────────────────────────────────────────────
+
+router.post('/subject-weightings', authenticate, authorize('super_admin', 'school_admin'), validate(subjectWeightingCreateSchema), AcademicController.createSubjectWeighting);
+router.get('/subject-weightings', authenticate, AcademicController.listSubjectWeightings);
+router.put('/subject-weightings/:id', authenticate, authorize('super_admin', 'school_admin'), validate(subjectWeightingUpdateSchema), AcademicController.updateSubjectWeighting);
+router.delete('/subject-weightings/:id', authenticate, authorize('super_admin', 'school_admin'), AcademicController.deleteSubjectWeighting);
+
+// ─── Remedial Tracking ──────────────────────────────────────────────────────
+
+router.post('/remedials', authenticate, authorize('super_admin', 'school_admin', 'teacher'), validate(remedialCreateSchema), AcademicController.createRemedial);
+router.get('/remedials', authenticate, authorize('super_admin', 'school_admin', 'teacher'), AcademicController.listRemedials);
+router.get('/remedials/:id', authenticate, authorize('super_admin', 'school_admin', 'teacher'), AcademicController.getRemedial);
+router.put('/remedials/:id', authenticate, authorize('super_admin', 'school_admin', 'teacher'), validate(remedialUpdateSchema), AcademicController.updateRemedial);
+router.delete('/remedials/:id', authenticate, authorize('super_admin', 'school_admin'), AcademicController.deleteRemedial);
+
+// ─── Promotion ──────────────────────────────────────────────────────────────
+
+router.get('/promotion/student/:studentId', authenticate, authorize('super_admin', 'school_admin', 'teacher'), AcademicController.calculatePromotion);
+router.get('/promotion/grade/:gradeId', authenticate, authorize('super_admin', 'school_admin'), AcademicController.promotionReport);
 
 export default router;

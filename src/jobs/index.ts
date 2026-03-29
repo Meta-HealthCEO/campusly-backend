@@ -9,6 +9,8 @@ export {
   notificationDispatchQueue,
   collectionsEscalationQueue,
   lateFeeCalculatorQueue,
+  libraryOverdueQueue,
+  bulkMessageQueue,
   redisConnection,
 } from './queues.js';
 
@@ -19,6 +21,7 @@ export { addNotificationDispatchJob } from './notification-dispatch.job.js';
 export { addReportGenerationJob } from './report-generation.job.js';
 export { scheduleCollectionsEscalation } from './collections-escalation.job.js';
 export { scheduleLateFeeCalculation } from './late-fee-calculator.job.js';
+export { scheduleLibraryOverdueCheck } from './library-overdue.job.js';
 
 export async function setupWorkers(): Promise<Worker[]> {
   const workers: Worker[] = [];
@@ -54,6 +57,9 @@ export async function setupWorkers(): Promise<Worker[]> {
     workers.push(createCollectionsEscalationWorker());
     workers.push(createLateFeeCalculatorWorker());
 
+    const { createLibraryOverdueWorker } = await import('./library-overdue.job.js');
+    workers.push(createLibraryOverdueWorker());
+
     console.log(`[Jobs] ${workers.length} workers started successfully`);
 
     // Schedule repeatable jobs
@@ -67,6 +73,9 @@ export async function setupWorkers(): Promise<Worker[]> {
     const { scheduleLateFeeCalculation } = await import('./late-fee-calculator.job.js');
     await scheduleCollectionsEscalation();
     await scheduleLateFeeCalculation();
+
+    const { scheduleLibraryOverdueCheck } = await import('./library-overdue.job.js');
+    await scheduleLibraryOverdueCheck();
 
     console.log('[Jobs] Repeatable jobs scheduled');
   } catch (error) {
