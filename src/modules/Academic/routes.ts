@@ -251,4 +251,13 @@ router.get(
   AcademicController.getAssessmentMarks,
 );
 
+// ─── LURITS Export ──────────────────────────────────────────────────────────
+
+router.get(
+  '/lurits-export',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  AcademicController.exportLurits,
+);
+
 export default router;

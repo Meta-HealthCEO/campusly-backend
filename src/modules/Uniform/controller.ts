@@ -71,4 +71,51 @@ export class UniformController {
     await UniformService.deleteOrder(req.params.id as string);
     res.json(apiResponse(true, undefined, 'Uniform order deleted successfully'));
   }
+
+  // ─── Second Hand Marketplace ───────────────────────────────────────────────
+
+  static async createSecondHandListing(req: Request, res: Response): Promise<void> {
+    const listing = await UniformService.createSecondHandListing(req.body);
+    res.status(201).json(apiResponse(true, listing, 'Second hand listing created successfully'));
+  }
+
+  static async listSecondHandListings(req: Request, res: Response): Promise<void> {
+    const query = {
+      page: req.query.page ? Number(req.query.page) : undefined,
+      limit: req.query.limit ? Number(req.query.limit) : undefined,
+      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      condition: req.query.condition as string | undefined,
+      status: req.query.status as string | undefined,
+    };
+
+    const result = await UniformService.listSecondHandListings(query);
+    res.json(apiResponse(true, result, 'Second hand listings retrieved successfully'));
+  }
+
+  static async getSecondHandListing(req: Request, res: Response): Promise<void> {
+    const listing = await UniformService.getSecondHandListing(req.params.id as string);
+    res.json(apiResponse(true, listing, 'Second hand listing retrieved successfully'));
+  }
+
+  static async reserveSecondHandListing(req: Request, res: Response): Promise<void> {
+    const buyerId = req.body.buyerId as string;
+    const listing = await UniformService.reserveSecondHandListing(req.params.id as string, buyerId);
+    res.json(apiResponse(true, listing, 'Listing reserved successfully'));
+  }
+
+  static async markSecondHandSold(req: Request, res: Response): Promise<void> {
+    const listing = await UniformService.markSecondHandSold(req.params.id as string);
+    res.json(apiResponse(true, listing, 'Listing marked as sold successfully'));
+  }
+
+  static async getMyListings(req: Request, res: Response): Promise<void> {
+    const parentId = req.params.parentId as string;
+    const query = {
+      page: req.query.page ? Number(req.query.page) : undefined,
+      limit: req.query.limit ? Number(req.query.limit) : undefined,
+    };
+
+    const result = await UniformService.getMyListings(parentId, query);
+    res.json(apiResponse(true, result, 'My listings retrieved successfully'));
+  }
 }

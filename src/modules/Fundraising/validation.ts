@@ -32,6 +32,31 @@ export const createDonationSchema = z.object({
   isAnonymous: z.boolean().optional(),
 });
 
+export const createRaffleSchema = z.object({
+  campaignId: objectIdSchema,
+  ticketPrice: z.number().int().positive('Ticket price must be a positive integer'),
+  totalTickets: z.number().int().positive('Total tickets must be a positive integer'),
+  drawDate: z.string().datetime(),
+  prizes: z
+    .array(
+      z.object({
+        place: z.number().int().positive(),
+        description: z.string().min(1),
+        value: z.number().int().positive('Prize value must be a positive integer'),
+      }),
+    )
+    .optional(),
+});
+
+export const buyRaffleTicketsSchema = z.object({
+  raffleId: objectIdSchema,
+  parentId: objectIdSchema,
+  studentId: objectIdSchema,
+  quantity: z.number().int().min(1).max(100),
+});
+
 export type CreateCampaignInput = z.infer<typeof createCampaignSchema>;
 export type UpdateCampaignInput = z.infer<typeof updateCampaignSchema>;
 export type CreateDonationInput = z.infer<typeof createDonationSchema>;
+export type CreateRaffleInput = z.infer<typeof createRaffleSchema>;
+export type BuyRaffleTicketsInput = z.infer<typeof buyRaffleTicketsSchema>;

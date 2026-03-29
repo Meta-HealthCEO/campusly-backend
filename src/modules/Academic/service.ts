@@ -12,6 +12,7 @@ import {
   Mark,
   IMark,
 } from './model.js';
+import { Student } from '../Student/model.js';
 import { NotFoundError } from '../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../common/constants.js';
 
@@ -482,5 +483,44 @@ export class AcademicService {
         populate: { path: 'userId', select: 'firstName lastName email' },
       })
       .exec();
+  }
+
+  // ─── LURITS Export ────────────────────────────────────────────────────────
+
+  static async getLuritsExport(schoolId: string): Promise<Array<{
+    admissionNumber: string;
+    firstName: string;
+    lastName: string;
+    dateOfBirth: string;
+    gender: string;
+    grade: string;
+    luritsNumber: string;
+    saIdNumber: string;
+    homeLanguage: string;
+  }>> {
+    const students = await Student.find({
+      schoolId,
+      isDeleted: false,
+      enrollmentStatus: 'active',
+    })
+      .populate('userId', 'firstName lastName email')
+      .populate('gradeId', 'name');
+
+    return students.map((student) => {
+      const user = student.userId as any;
+      const grade = student.gradeId as any;
+
+      return {
+        admissionNumber: student.admissionNumber || '',
+        firstName: user?.firstName || '',
+        lastName: user?.lastName || '',
+        dateOfBirth: student.dateOfBirth ? student.dateOfBirth.toISOString().split('T')[0] : '',
+        gender: student.gender || '',
+        grade: grade?.name || '',
+        luritsNumber: student.luritsNumber || '',
+        saIdNumber: student.saIdNumber || '',
+        homeLanguage: student.homeLanguage || '',
+      };
+    });
   }
 }

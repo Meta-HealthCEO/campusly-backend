@@ -239,4 +239,49 @@ export class AcademicController {
     const marks = await AcademicService.getAssessmentMarks(req.params.assessmentId as string);
     res.json(apiResponse(true, marks, 'Assessment marks retrieved successfully'));
   }
+
+  // ─── LURITS Export ────────────────────────────────────────────────────────
+
+  static async exportLurits(req: Request, res: Response): Promise<void> {
+    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+
+    if (!schoolId) {
+      res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
+      return;
+    }
+
+    const data = await AcademicService.getLuritsExport(schoolId);
+
+    const headers = [
+      'admissionNumber',
+      'firstName',
+      'lastName',
+      'dateOfBirth',
+      'gender',
+      'grade',
+      'luritsNumber',
+      'saIdNumber',
+      'homeLanguage',
+    ];
+
+    const csvRows = [headers.join(',')];
+
+    for (const row of data) {
+      const values = headers.map((h) => {
+        const val = String((row as any)[h] ?? '');
+        // Escape values containing commas, quotes, or newlines
+        if (val.includes(',') || val.includes('"') || val.includes('\n')) {
+          return `"${val.replace(/"/g, '""')}"`;
+        }
+        return val;
+      });
+      csvRows.push(values.join(','));
+    }
+
+    const csvString = csvRows.join('\n');
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename=lurits-export.csv');
+    res.send(csvString);
+  }
 }

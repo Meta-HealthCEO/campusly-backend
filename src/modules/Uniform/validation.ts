@@ -49,7 +49,31 @@ export const updateUniformOrderStatusSchema = z.object({
   status: z.enum(['pending', 'confirmed', 'ready', 'collected', 'cancelled']),
 });
 
+const secondHandConditionSchema = z.enum(['new', 'like_new', 'good', 'fair']);
+
+export const createSecondHandListingSchema = z.object({
+  schoolId: objectIdSchema,
+  parentId: objectIdSchema,
+  itemName: z.string().min(1, 'Item name is required'),
+  size: z.string().min(1, 'Size is required'),
+  condition: secondHandConditionSchema,
+  price: z.number().int().positive('Price must be a positive integer in cents'),
+  photos: z.array(z.string()).optional(),
+  description: z.string().optional(),
+});
+
+export const updateSecondHandListingSchema = z.object({
+  itemName: z.string().min(1, 'Item name is required').optional(),
+  size: z.string().min(1, 'Size is required').optional(),
+  condition: secondHandConditionSchema.optional(),
+  price: z.number().int().positive('Price must be a positive integer in cents').optional(),
+  photos: z.array(z.string()).optional(),
+  description: z.string().optional(),
+});
+
 export type CreateUniformItemInput = z.infer<typeof createUniformItemSchema>;
 export type UpdateUniformItemInput = z.infer<typeof updateUniformItemSchema>;
 export type CreateUniformOrderInput = z.infer<typeof createUniformOrderSchema>;
 export type UpdateUniformOrderStatusInput = z.infer<typeof updateUniformOrderStatusSchema>;
+export type CreateSecondHandListingInput = z.infer<typeof createSecondHandListingSchema>;
+export type UpdateSecondHandListingInput = z.infer<typeof updateSecondHandListingSchema>;

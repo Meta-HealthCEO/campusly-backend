@@ -7,6 +7,8 @@ import {
   createCampaignSchema,
   updateCampaignSchema,
   createDonationSchema,
+  createRaffleSchema,
+  buyRaffleTicketsSchema,
 } from './validation.js';
 
 const router = Router();
@@ -74,6 +76,36 @@ router.delete(
   authenticate,
   authorize('super_admin', 'school_admin'),
   FundraisingController.deleteDonation,
+);
+
+// ─── Raffle Routes ─────────────────────────────────────────────────────────
+
+router.post(
+  '/raffles',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  validate(createRaffleSchema),
+  FundraisingController.createRaffle,
+);
+
+router.post(
+  '/raffles/buy-tickets',
+  authenticate,
+  validate(buyRaffleTicketsSchema),
+  FundraisingController.buyTickets,
+);
+
+router.post(
+  '/raffles/:id/draw',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  FundraisingController.drawWinners,
+);
+
+router.get(
+  '/raffles/tickets/parent/:parentId',
+  authenticate,
+  FundraisingController.getTicketsByParent,
 );
 
 export default router;

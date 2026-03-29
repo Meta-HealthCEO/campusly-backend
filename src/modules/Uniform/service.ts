@@ -1,11 +1,13 @@
-import { UniformItem, IUniformItem, UniformOrder, IUniformOrder } from './model.js';
-import { NotFoundError } from '../../common/errors.js';
+import { UniformItem, IUniformItem, UniformOrder, IUniformOrder, SecondHandListing, ISecondHandListing } from './model.js';
+import { NotFoundError, BadRequestError } from '../../common/errors.js';
 import { paginationHelper } from '../../common/utils.js';
 import type {
   CreateUniformItemInput,
   UpdateUniformItemInput,
   CreateUniformOrderInput,
   UpdateUniformOrderStatusInput,
+  CreateSecondHandListingInput,
+  UpdateSecondHandListingInput,
 } from './validation.js';
 
 interface ListItemQuery {
@@ -210,5 +212,127 @@ export class UniformService {
     }
 
     return order;
+  }
+
+  // ─── Second Hand Marketplace ───────────────────────────────────────────────
+
+  static async createSecondHandListing(data: CreateSecondHandListingInput): Promise<ISecondHandListing> {
+    const listing = await SecondHandListing.create(data);
+    return listing;
+  }
+
+  static async listSecondHandListings(
+    query: { page?: number; limit?: number; schoolId?: string; condition?: string; status?: string },
+  ): Promise<{
+    listings: ISecondHandListing[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  }> {
+    const { skip, limit } = paginationHelper(query.page, query.limit);
+    const page = Math.max(query.page ?? 1, 1);
+
+    const filter: Record<string, unknown> = {
+      isDeleted: false,
+      status: query.status ?? 'available',
+    };
+
+    if (query.schoolId) {
+      filter.schoolId = query.schoolId;
+    }
+
+    if (query.condition) {
+      filter.condition = query.condition;
+    }
+
+    const [listings, total] = await Promise.all([
+      SecondHandListing.find(filter)
+        .populate('parentId')
+        .sort('-createdAt')
+        .skip(skip)
+        .limit(limit),
+      SecondHandListing.countDocuments(filter),
+    ]);
+
+    return {
+      listings,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
+  static async getSecondHandListing(id: string): Promise<ISecondHandListing> {
+    const listing = await SecondHandListing.findOne({ _id: id, isDeleted: false })
+      .populate('parentId')
+      .populate('buyerId');
+
+    if (!listing) {
+      throw new NotFoundError('Second hand listing not found');
+    }
+
+    return listing;
+  }
+
+  static async reserveSecondHandListing(id: string, buyerId: string): Promise<ISecondHandListing> {
+    const listing = await SecondHandListing.findOneAndUpdate(
+      { _id: id, isDeleted: false, status: 'available' },
+      { $set: { status: 'reserved', buyerId } },
+      { new: true, runValidators: true },
+    );
+
+    if (!listing) {
+      throw new NotFoundError('Listing not found or not available');
+    }
+
+    return listing;
+  }
+
+  static async markSecondHandSold(id: string): Promise<ISecondHandListing> {
+    const listing = await SecondHandListing.findOneAndUpdate(
+      { _id: id, isDeleted: false },
+      { $set: { status: 'sold' } },
+      { new: true, runValidators: true },
+    );
+
+    if (!listing) {
+      throw new NotFoundError('Second hand listing not found');
+    }
+
+    return listing;
+  }
+
+  static async getMyListings(
+    parentId: string,
+    query: { page?: number; limit?: number },
+  ): Promise<{
+    listings: ISecondHandListing[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  }> {
+    const { skip, limit } = paginationHelper(query.page, query.limit);
+    const page = Math.max(query.page ?? 1, 1);
+
+    const filter: Record<string, unknown> = {
+      parentId,
+      isDeleted: false,
+    };
+
+    const [listings, total] = await Promise.all([
+      SecondHandListing.find(filter).sort('-createdAt').skip(skip).limit(limit),
+      SecondHandListing.countDocuments(filter),
+    ]);
+
+    return {
+      listings,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 }

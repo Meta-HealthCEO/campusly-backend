@@ -165,3 +165,84 @@ uniformOrderSchema.index({ studentId: 1, createdAt: -1 });
 uniformOrderSchema.index({ schoolId: 1, status: 1 });
 
 export const UniformOrder = mongoose.model<IUniformOrder>('UniformOrder', uniformOrderSchema);
+
+// ─── Second Hand Listing ────────────────────────────────────────────────────
+
+export type SecondHandCondition = 'new' | 'like_new' | 'good' | 'fair';
+export type SecondHandStatus = 'available' | 'reserved' | 'sold';
+
+export interface ISecondHandListing extends Document {
+  schoolId: Types.ObjectId;
+  parentId: Types.ObjectId;
+  itemName: string;
+  size: string;
+  condition: SecondHandCondition;
+  price: number;
+  photos: string[];
+  description?: string;
+  status: SecondHandStatus;
+  buyerId?: Types.ObjectId;
+  isDeleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const secondHandListingSchema = new Schema<ISecondHandListing>(
+  {
+    schoolId: {
+      type: Schema.Types.ObjectId,
+      ref: 'School',
+      required: true,
+    },
+    parentId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Parent',
+      required: true,
+    },
+    itemName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    size: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    condition: {
+      type: String,
+      enum: ['new', 'like_new', 'good', 'fair'],
+      required: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    photos: {
+      type: [String],
+      default: [],
+    },
+    description: {
+      type: String,
+    },
+    status: {
+      type: String,
+      enum: ['available', 'reserved', 'sold'],
+      default: 'available',
+    },
+    buyerId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Parent',
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  { timestamps: true },
+);
+
+secondHandListingSchema.index({ schoolId: 1, status: 1 });
+secondHandListingSchema.index({ parentId: 1 });
+
+export const SecondHandListing = mongoose.model<ISecondHandListing>('SecondHandListing', secondHandListingSchema);

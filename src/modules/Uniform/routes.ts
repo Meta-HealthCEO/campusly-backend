@@ -8,6 +8,7 @@ import {
   updateUniformItemSchema,
   createUniformOrderSchema,
   updateUniformOrderStatusSchema,
+  createSecondHandListingSchema,
 } from './validation.js';
 
 const router = Router();
@@ -83,6 +84,46 @@ router.delete(
   authenticate,
   authorize('super_admin', 'school_admin'),
   UniformController.deleteOrder,
+);
+
+// ─── Second Hand Marketplace Routes ─────────────────────────────────────────
+
+router.post(
+  '/second-hand',
+  authenticate,
+  validate(createSecondHandListingSchema),
+  UniformController.createSecondHandListing,
+);
+
+router.get(
+  '/second-hand',
+  authenticate,
+  UniformController.listSecondHandListings,
+);
+
+router.get(
+  '/second-hand/my-listings/:parentId',
+  authenticate,
+  UniformController.getMyListings,
+);
+
+router.get(
+  '/second-hand/:id',
+  authenticate,
+  UniformController.getSecondHandListing,
+);
+
+router.patch(
+  '/second-hand/:id/reserve',
+  authenticate,
+  UniformController.reserveSecondHandListing,
+);
+
+router.patch(
+  '/second-hand/:id/sold',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'parent'),
+  UniformController.markSecondHandSold,
 );
 
 export default router;

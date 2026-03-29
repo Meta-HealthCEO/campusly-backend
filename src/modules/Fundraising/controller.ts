@@ -65,4 +65,28 @@ export class FundraisingController {
     await FundraisingService.deleteDonation(req.params.id as string);
     res.json(apiResponse(true, undefined, 'Donation deleted successfully'));
   }
+
+  // ─── Raffle ─────────────────────────────────────────────────────────────────
+
+  static async createRaffle(req: Request, res: Response): Promise<void> {
+    const raffle = await FundraisingService.createRaffle(req.body);
+    res.status(201).json(apiResponse(true, raffle, 'Raffle created successfully'));
+  }
+
+  static async buyTickets(req: Request, res: Response): Promise<void> {
+    const tickets = await FundraisingService.buyTickets(req.body);
+    res.status(201).json(apiResponse(true, tickets, 'Tickets purchased successfully'));
+  }
+
+  static async drawWinners(req: Request, res: Response): Promise<void> {
+    const winners = await FundraisingService.drawWinners(req.params.id as string);
+    res.json(apiResponse(true, winners, 'Winners drawn successfully'));
+  }
+
+  static async getTicketsByParent(req: Request, res: Response): Promise<void> {
+    const parentId = req.params.parentId as string;
+    const raffleId = req.query.raffleId as string | undefined;
+    const tickets = await FundraisingService.getTicketsByParent(parentId, raffleId);
+    res.json(apiResponse(true, tickets, 'Tickets retrieved successfully'));
+  }
 }

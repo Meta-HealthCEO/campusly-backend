@@ -29,6 +29,10 @@ import afterCareRoutes from './modules/AfterCare/routes.js';
 import sportRoutes from './modules/Sport/routes.js';
 import fundraisingRoutes from './modules/Fundraising/routes.js';
 import uniformRoutes from './modules/Uniform/routes.js';
+import achieverRoutes from './modules/Achiever/routes.js';
+import consentRoutes from './modules/Consent/routes.js';
+import reportRoutes from './modules/Report/routes.js';
+import auditRoutes from './modules/Audit/routes.js';
 
 const app = express();
 
@@ -77,6 +81,10 @@ app.use('/api/after-care', afterCareRoutes);
 app.use('/api/sports', sportRoutes);
 app.use('/api/fundraising', fundraisingRoutes);
 app.use('/api/uniforms', uniformRoutes);
+app.use('/api/achiever', achieverRoutes);
+app.use('/api/consent', consentRoutes);
+app.use('/api/reports', reportRoutes);
+app.use('/api/audit', auditRoutes);
 
 // 404 handler
 app.use((_req, res) => {
