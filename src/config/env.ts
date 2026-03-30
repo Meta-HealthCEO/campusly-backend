@@ -49,6 +49,11 @@ export const config = {
     name: getEnv('APP_NAME', 'Campusly'),
     url: getEnv('APP_URL', 'http://localhost:3000'),
   },
+
+  anthropic: {
+    apiKey: getEnv('ANTHROPIC_API_KEY', ''),
+    model: getEnv('ANTHROPIC_MODEL', 'claude-sonnet-4-20250514'),
+  },
 } as const;
 
 export type Config = typeof config;

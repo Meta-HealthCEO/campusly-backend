@@ -77,3 +77,11 @@ export const lostFoundArchiveQueue = new Queue('lost-found-archive', {
   connection: redisConnection,
   defaultJobOptions,
 });
+
+export const aiGradingQueue = new Queue('ai-grading', {
+  connection: redisConnection,
+  defaultJobOptions: {
+    ...defaultJobOptions,
+    attempts: 3,
+  },
+});

@@ -31,6 +31,7 @@ export const BOLT_ON_MODULES = [
   'migration',
   'learning',
   'lost_found',
+  'ai_tools',
 ] as const;
 
 export const ALL_MODULES = [...CORE_MODULES, ...BOLT_ON_MODULES] as const;
@@ -100,6 +101,10 @@ export const MODULE_PACKAGES: Record<string, { label: string; modules: readonly 
   lost_found: {
     label: 'Lost & Found',
     modules: ['lost_found'],
+  },
+  ai_tools: {
+    label: 'AI Teacher Tools',
+    modules: ['ai_tools'],
   },
 };
 

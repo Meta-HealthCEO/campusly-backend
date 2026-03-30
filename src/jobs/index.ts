@@ -12,6 +12,7 @@ export {
   libraryOverdueQueue,
   bulkMessageQueue,
   lostFoundArchiveQueue,
+  aiGradingQueue,
   redisConnection,
 } from './queues.js';
 
@@ -24,6 +25,7 @@ export { scheduleCollectionsEscalation } from './collections-escalation.job.js';
 export { scheduleLateFeeCalculation } from './late-fee-calculator.job.js';
 export { scheduleLibraryOverdueCheck } from './library-overdue.job.js';
 export { scheduleLostFoundArchive } from './lost-found-archive.job.js';
+export { addAIGradingJob } from './ai-grading.job.js';
 
 export async function setupWorkers(): Promise<Worker[]> {
   const workers: Worker[] = [];
@@ -64,6 +66,9 @@ export async function setupWorkers(): Promise<Worker[]> {
 
     const { createLostFoundArchiveWorker } = await import('./lost-found-archive.job.js');
     workers.push(createLostFoundArchiveWorker());
+
+    const { createAIGradingWorker } = await import('./ai-grading.job.js');
+    workers.push(createAIGradingWorker());
 
     console.log(`[Jobs] ${workers.length} workers started successfully`);
 
