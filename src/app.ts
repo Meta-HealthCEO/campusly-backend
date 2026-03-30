@@ -37,6 +37,7 @@ import auditRoutes from './modules/Audit/routes.js';
 import migrationRoutes from './modules/Migration/routes.js';
 import learningRoutes from './modules/Learning/routes.js';
 import superAdminRoutes from './modules/SuperAdmin/routes.js';
+import lostFoundRoutes from './modules/LostFound/routes.js';
 
 const app = express();
 
@@ -96,6 +97,7 @@ app.use('/api/transport', requireModule('transport'), transportRoutes);
 app.use('/api/after-care', requireModule('aftercare'), afterCareRoutes);
 app.use('/api/migration', requireModule('migration'), migrationRoutes);
 app.use('/api/learning', requireModule('learning'), learningRoutes);
+app.use('/api/lost-found', requireModule('lost_found'), lostFoundRoutes);
 
 // 404 handler
 app.use((_req, res) => {

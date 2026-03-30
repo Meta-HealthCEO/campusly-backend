@@ -11,6 +11,7 @@ export {
   lateFeeCalculatorQueue,
   libraryOverdueQueue,
   bulkMessageQueue,
+  lostFoundArchiveQueue,
   redisConnection,
 } from './queues.js';
 
@@ -22,6 +23,7 @@ export { addReportGenerationJob } from './report-generation.job.js';
 export { scheduleCollectionsEscalation } from './collections-escalation.job.js';
 export { scheduleLateFeeCalculation } from './late-fee-calculator.job.js';
 export { scheduleLibraryOverdueCheck } from './library-overdue.job.js';
+export { scheduleLostFoundArchive } from './lost-found-archive.job.js';
 
 export async function setupWorkers(): Promise<Worker[]> {
   const workers: Worker[] = [];
@@ -60,6 +62,9 @@ export async function setupWorkers(): Promise<Worker[]> {
     const { createLibraryOverdueWorker } = await import('./library-overdue.job.js');
     workers.push(createLibraryOverdueWorker());
 
+    const { createLostFoundArchiveWorker } = await import('./lost-found-archive.job.js');
+    workers.push(createLostFoundArchiveWorker());
+
     console.log(`[Jobs] ${workers.length} workers started successfully`);
 
     // Schedule repeatable jobs
@@ -76,6 +81,9 @@ export async function setupWorkers(): Promise<Worker[]> {
 
     const { scheduleLibraryOverdueCheck } = await import('./library-overdue.job.js');
     await scheduleLibraryOverdueCheck();
+
+    const { scheduleLostFoundArchive } = await import('./lost-found-archive.job.js');
+    await scheduleLostFoundArchive();
 
     console.log('[Jobs] Repeatable jobs scheduled');
   } catch (error) {

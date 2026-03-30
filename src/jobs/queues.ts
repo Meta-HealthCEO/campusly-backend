@@ -72,3 +72,8 @@ export const bulkMessageQueue = new Queue('bulk-message', {
   connection: redisConnection,
   defaultJobOptions,
 });
+
+export const lostFoundArchiveQueue = new Queue('lost-found-archive', {
+  connection: redisConnection,
+  defaultJobOptions,
+});

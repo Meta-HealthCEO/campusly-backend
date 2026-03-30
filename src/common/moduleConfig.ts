@@ -30,6 +30,7 @@ export const BOLT_ON_MODULES = [
   'aftercare',
   'migration',
   'learning',
+  'lost_found',
 ] as const;
 
 export const ALL_MODULES = [...CORE_MODULES, ...BOLT_ON_MODULES] as const;
@@ -95,6 +96,10 @@ export const MODULE_PACKAGES: Record<string, { label: string; modules: readonly 
   learning: {
     label: 'Learning Platform',
     modules: ['learning', 'homework'],
+  },
+  lost_found: {
+    label: 'Lost & Found',
+    modules: ['lost_found'],
   },
 };
 
