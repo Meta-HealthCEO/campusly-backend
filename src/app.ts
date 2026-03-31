@@ -39,6 +39,7 @@ import learningRoutes from './modules/Learning/routes.js';
 import superAdminRoutes from './modules/SuperAdmin/routes.js';
 import lostFoundRoutes from './modules/LostFound/routes.js';
 import aiToolsRoutes from './modules/AITools/routes.js';
+import staffRoutes from './modules/Staff/routes.js';
 
 const app = express();
 
@@ -80,6 +81,7 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/announcements', announcementRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/audit', auditRoutes);
+app.use('/api/staff', staffRoutes);
 
 // API routes — Bolt-on modules (guarded)
 app.use('/api/fees', requireModule('fee'), feeRoutes);
