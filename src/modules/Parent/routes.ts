@@ -27,6 +27,12 @@ router.get(
 );
 
 router.get(
+  '/me',
+  authenticate,
+  ParentController.getMe,
+);
+
+router.get(
   '/:id',
   authenticate,
   ParentController.getById,

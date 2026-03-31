@@ -23,6 +23,7 @@ export class AuthController {
       apiResponse(true, {
         user: safeUser,
         accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
       }, 'User registered successfully'),
     );
   }
@@ -40,6 +41,7 @@ export class AuthController {
       apiResponse(true, {
         user: safeUser,
         accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
       }, 'Login successful'),
     );
   }
@@ -59,6 +61,7 @@ export class AuthController {
     res.status(200).json(
       apiResponse(true, {
         accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
       }, 'Token refreshed successfully'),
     );
   }

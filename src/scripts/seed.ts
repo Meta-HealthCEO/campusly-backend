@@ -47,6 +47,8 @@ async function seed() {
       modulesEnabled: [
         'auth', 'wallet', 'fees', 'academic', 'homework',
         'attendance', 'tuckshop', 'notifications', 'announcements',
+        'library', 'achiever', 'consent', 'event', 'transport',
+        'lost_found', 'sport', 'aftercare',
       ],
       settings: {
         academicYear: 2026,

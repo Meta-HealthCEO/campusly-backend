@@ -27,6 +27,11 @@ export class ParentController {
     res.json(apiResponse(true, result, 'Parents retrieved successfully'));
   }
 
+  static async getMe(req: Request, res: Response): Promise<void> {
+    const parent = await ParentService.getByUserId(req.user!.id);
+    res.json(apiResponse(true, parent, 'Parent retrieved successfully'));
+  }
+
   static async getById(req: Request, res: Response): Promise<void> {
     const parent = await ParentService.getById(req.params.id as string);
     res.json(apiResponse(true, parent, 'Parent retrieved successfully'));

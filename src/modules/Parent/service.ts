@@ -63,6 +63,21 @@ export class ParentService {
     };
   }
 
+  static async getByUserId(userId: string): Promise<IParent> {
+    const parent = await Parent.findOne({ userId, isDeleted: false })
+      .populate('userId', 'firstName lastName email phone profileImage')
+      .populate({
+        path: 'childrenIds',
+        populate: { path: 'userId', select: 'firstName lastName email phone' },
+      });
+
+    if (!parent) {
+      throw new NotFoundError('Parent not found');
+    }
+
+    return parent;
+  }
+
   static async getById(id: string): Promise<IParent> {
     const parent = await Parent.findOne({ _id: id, isDeleted: false })
       .populate('userId', 'firstName lastName email phone profileImage')

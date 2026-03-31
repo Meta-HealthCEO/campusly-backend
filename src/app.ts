@@ -40,6 +40,7 @@ import superAdminRoutes from './modules/SuperAdmin/routes.js';
 import lostFoundRoutes from './modules/LostFound/routes.js';
 import aiToolsRoutes from './modules/AITools/routes.js';
 import staffRoutes from './modules/Staff/routes.js';
+import libraryRoutes from './modules/Library/routes.js';
 
 const app = express();
 
@@ -101,6 +102,7 @@ app.use('/api/after-care', requireModule('aftercare'), afterCareRoutes);
 app.use('/api/migration', requireModule('migration'), migrationRoutes);
 app.use('/api/learning', requireModule('learning'), learningRoutes);
 app.use('/api/lost-found', requireModule('lost_found'), lostFoundRoutes);
+app.use('/api/library', requireModule('library'), libraryRoutes);
 app.use('/api/ai-tools', requireModule('ai_tools'), aiToolsRoutes);
 
 // 404 handler
