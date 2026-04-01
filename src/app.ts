@@ -1,3 +1,5 @@
+// Express 5 natively catches rejected promises in async handlers,
+// so express-async-errors is NOT needed (and is incompatible with Express 5).
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -10,6 +12,7 @@ import { swaggerSpec } from './config/swagger.js';
 import { requestId } from './middleware/requestId.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { requireModule } from './middleware/moduleGuard.js';
+import { authenticate } from './middleware/auth.js';
 
 // Module routes
 import authRoutes from './modules/Auth/routes.js';
@@ -39,13 +42,18 @@ import learningRoutes from './modules/Learning/routes.js';
 import superAdminRoutes from './modules/SuperAdmin/routes.js';
 import lostFoundRoutes from './modules/LostFound/routes.js';
 import aiToolsRoutes from './modules/AITools/routes.js';
+import teacherWorkbenchRoutes from './modules/TeacherWorkbench/routes.js';
 import staffRoutes from './modules/Staff/routes.js';
 import libraryRoutes from './modules/Library/routes.js';
 
 const app = express();
 
 // Global middleware
-app.use(helmet());
+app.use(helmet({
+  hsts: { maxAge: 63072000, includeSubDomains: true, preload: true },
+  frameguard: { action: 'deny' },
+  contentSecurityPolicy: false, // API-only, no HTML served
+}));
 app.use(cors({ origin: config.cors.origin, credentials: true }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
@@ -56,8 +64,10 @@ if (config.nodeEnv !== 'test') {
   app.use(morgan('short'));
 }
 
-// API docs
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+// API docs (disabled in production)
+if (config.nodeEnv !== 'production') {
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+}
 
 // Health check
 app.get('/health', async (_req, res) => {
@@ -75,7 +85,7 @@ app.use('/api/superadmin', superAdminRoutes);
 
 // API routes — Core modules (no guard)
 app.use('/api/auth', authRoutes);
-app.use('/api/schools', schoolRoutes);
+app.use('/api/schools', authenticate, schoolRoutes);
 app.use('/api/students', studentRoutes);
 app.use('/api/parents', parentRoutes);
 app.use('/api/notifications', notificationRoutes);
@@ -104,6 +114,7 @@ app.use('/api/learning', requireModule('learning'), learningRoutes);
 app.use('/api/lost-found', requireModule('lost_found'), lostFoundRoutes);
 app.use('/api/library', requireModule('library'), libraryRoutes);
 app.use('/api/ai-tools', requireModule('ai_tools'), aiToolsRoutes);
+app.use('/api/teacher-workbench', requireModule('teacher_workbench'), teacherWorkbenchRoutes);
 
 // 404 handler
 app.use((_req, res) => {

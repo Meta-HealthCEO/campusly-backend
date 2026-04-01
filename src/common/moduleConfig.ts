@@ -32,6 +32,7 @@ export const BOLT_ON_MODULES = [
   'learning',
   'lost_found',
   'ai_tools',
+  'teacher_workbench',
 ] as const;
 
 export const ALL_MODULES = [...CORE_MODULES, ...BOLT_ON_MODULES] as const;
