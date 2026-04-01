@@ -107,6 +107,7 @@ export class QuestionService {
     paperId: string,
     teacherId: string,
     schoolId: string,
+    frameworkId: string,
   ): Promise<IQuestion[]> {
     const paper = await GeneratedPaper.findOne({ _id: paperId, isDeleted: false }).lean().exec();
     if (!paper) throw new NotFoundError('Paper not found');
@@ -117,8 +118,8 @@ export class QuestionService {
         questionDocs.push({
           schoolId,
           teacherId,
-          frameworkId: undefined,
-          subjectId: undefined,
+          frameworkId,
+          subjectId: paper.subject ?? undefined,
           gradeLevel: paper.grade,
           topicId: null,
           questionText: q.questionText,

@@ -51,7 +51,8 @@ export class QuestionController {
   static async importFromPaper(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
     const schoolId = String(req.query.schoolId ?? user.schoolId ?? '');
-    const questions = await QuestionService.importFromPaper(req.params.paperId as string, user.id, schoolId);
+    const frameworkId = (req.body.frameworkId as string) ?? '';
+    const questions = await QuestionService.importFromPaper(req.params.paperId as string, user.id, schoolId, frameworkId);
     res.status(201).json(apiResponse(true, questions, `${questions.length} questions imported`));
   }
 }
