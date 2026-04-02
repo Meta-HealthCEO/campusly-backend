@@ -46,6 +46,7 @@ export interface IStudent extends Document {
   afterCareRequired: boolean;
   saIdNumber?: string;
   luritsNumber?: string;
+  photoUrl?: string;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -161,6 +162,10 @@ const studentSchema = new Schema<IStudent>(
       trim: true,
     },
     luritsNumber: {
+      type: String,
+      trim: true,
+    },
+    photoUrl: {
       type: String,
       trim: true,
     },

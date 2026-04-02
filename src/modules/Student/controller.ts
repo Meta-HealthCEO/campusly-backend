@@ -28,22 +28,26 @@ export class StudentController {
   }
 
   static async getById(req: Request, res: Response): Promise<void> {
-    const student = await StudentService.getById(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const student = await StudentService.getById(req.params.id as string, schoolId);
     res.json(apiResponse(true, student, 'Student retrieved successfully'));
   }
 
   static async update(req: Request, res: Response): Promise<void> {
-    const student = await StudentService.update(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const student = await StudentService.update(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, student, 'Student updated successfully'));
   }
 
   static async delete(req: Request, res: Response): Promise<void> {
-    await StudentService.delete(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await StudentService.delete(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Student deleted successfully'));
   }
 
   static async updateMedicalProfile(req: Request, res: Response): Promise<void> {
-    const student = await StudentService.updateMedicalProfile(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const student = await StudentService.updateMedicalProfile(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, student, 'Medical profile updated successfully'));
   }
 }

@@ -67,8 +67,8 @@ export class StudentService {
     };
   }
 
-  static async getById(id: string): Promise<IStudent> {
-    const student = await Student.findOne({ _id: id, isDeleted: false })
+  static async getById(id: string, schoolId: string): Promise<IStudent> {
+    const student = await Student.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('userId', 'firstName lastName email phone profileImage')
       .populate('gradeId')
       .populate('classId')
@@ -85,9 +85,9 @@ export class StudentService {
     return student;
   }
 
-  static async update(id: string, data: Partial<IStudent>): Promise<IStudent> {
+  static async update(id: string, schoolId: string, data: Partial<IStudent>): Promise<IStudent> {
     const student = await Student.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     )
@@ -102,9 +102,9 @@ export class StudentService {
     return student;
   }
 
-  static async delete(id: string): Promise<IStudent> {
+  static async delete(id: string, schoolId: string): Promise<IStudent> {
     const student = await Student.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -118,10 +118,11 @@ export class StudentService {
 
   static async updateMedicalProfile(
     id: string,
+    schoolId: string,
     data: IStudent['medicalProfile'],
   ): Promise<IStudent> {
     const student = await Student.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { medicalProfile: data } },
       { new: true, runValidators: true },
     );
