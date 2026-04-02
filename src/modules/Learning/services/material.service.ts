@@ -89,8 +89,8 @@ export class MaterialService {
     return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
-  static async getStudyMaterial(id: string): Promise<IStudyMaterial> {
-    const material = await StudyMaterial.findOne({ _id: id, isDeleted: false })
+  static async getStudyMaterial(id: string, schoolId: string): Promise<IStudyMaterial> {
+    const material = await StudyMaterial.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('subjectId', 'name code')
       .populate('gradeId', 'name')
       .populate('teacherId', 'firstName lastName email')
@@ -102,9 +102,10 @@ export class MaterialService {
   static async updateStudyMaterial(
     id: string,
     data: Partial<IStudyMaterial>,
+    schoolId: string,
   ): Promise<IStudyMaterial> {
     const material = await StudyMaterial.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     );
@@ -112,9 +113,9 @@ export class MaterialService {
     return material;
   }
 
-  static async deleteStudyMaterial(id: string): Promise<IStudyMaterial> {
+  static async deleteStudyMaterial(id: string, schoolId: string): Promise<IStudyMaterial> {
     const material = await StudyMaterial.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -122,9 +123,9 @@ export class MaterialService {
     return material;
   }
 
-  static async incrementDownloads(id: string): Promise<IStudyMaterial> {
+  static async incrementDownloads(id: string, schoolId: string): Promise<IStudyMaterial> {
     const material = await StudyMaterial.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $inc: { downloads: 1 } },
       { new: true },
     );
@@ -139,8 +140,8 @@ export class MaterialService {
     return rubric.save();
   }
 
-  static async getRubric(id: string): Promise<IRubric> {
-    const rubric = await Rubric.findOne({ _id: id, isDeleted: false })
+  static async getRubric(id: string, schoolId: string): Promise<IRubric> {
+    const rubric = await Rubric.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('subjectId', 'name code')
       .populate('teacherId', 'firstName lastName email')
       .lean();
@@ -171,9 +172,9 @@ export class MaterialService {
     return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
-  static async updateRubric(id: string, data: Partial<IRubric>): Promise<IRubric> {
+  static async updateRubric(id: string, data: Partial<IRubric>, schoolId: string): Promise<IRubric> {
     const rubric = await Rubric.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     );
@@ -181,9 +182,9 @@ export class MaterialService {
     return rubric;
   }
 
-  static async deleteRubric(id: string): Promise<IRubric> {
+  static async deleteRubric(id: string, schoolId: string): Promise<IRubric> {
     const rubric = await Rubric.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );

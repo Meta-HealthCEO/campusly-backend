@@ -8,12 +8,14 @@ export class LearningController {
   // ─── Quizzes ─────────────────────────────────────────────────────────
 
   static async createQuiz(req: Request, res: Response): Promise<void> {
-    const quiz = await LearningService.createQuiz(req.body, getUser(req).id);
+    const schoolId = req.user!.schoolId!;
+    const quiz = await LearningService.createQuiz({ ...req.body, schoolId }, getUser(req).id);
     res.status(201).json(apiResponse(true, quiz, 'Quiz created successfully'));
   }
 
   static async getQuiz(req: Request, res: Response): Promise<void> {
-    const quiz = await LearningService.getQuiz(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const quiz = await LearningService.getQuiz(req.params.id as string, schoolId);
     res.json(apiResponse(true, quiz, 'Quiz retrieved successfully'));
   }
 
@@ -33,41 +35,66 @@ export class LearningController {
   }
 
   static async updateQuiz(req: Request, res: Response): Promise<void> {
-    const quiz = await LearningService.updateQuiz(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const quiz = await LearningService.updateQuiz(req.params.id as string, req.body, schoolId);
     res.json(apiResponse(true, quiz, 'Quiz updated successfully'));
   }
 
   static async publishQuiz(req: Request, res: Response): Promise<void> {
-    const quiz = await LearningService.publishQuiz(req.params.id as string, req.body.status);
+    const schoolId = req.user!.schoolId!;
+    const quiz = await LearningService.publishQuiz(req.params.id as string, req.body.status, schoolId);
     res.json(apiResponse(true, quiz, `Quiz ${req.body.status} successfully`));
   }
 
   static async deleteQuiz(req: Request, res: Response): Promise<void> {
-    await LearningService.deleteQuiz(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await LearningService.deleteQuiz(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Quiz deleted successfully'));
   }
 
   // ─── Quiz Attempts ───────────────────────────────────────────────────
 
+  static async startQuizAttempt(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const result = await LearningService.startQuizAttempt(
+      getUser(req).id,
+      schoolId,
+      req.params.id as string,
+    );
+    res.json(apiResponse(true, result, 'Quiz started'));
+  }
+
   static async submitQuizAttempt(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const attempt = await LearningService.submitQuizAttempt(
       req.params.id as string,
       getUser(req).id,
       req.body.answers,
       req.body.startedAt,
+      schoolId,
+      req.body.timeSpent,
     );
     res.status(201).json(apiResponse(true, attempt, 'Quiz attempt submitted and graded'));
   }
 
   static async getQuizResults(req: Request, res: Response): Promise<void> {
-    const results = await LearningService.getQuizResults(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const results = await LearningService.getQuizResults(req.params.id as string, schoolId);
     res.json(apiResponse(true, results, 'Quiz results retrieved'));
+  }
+
+  static async getQuizLeaderboard(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const limit = req.query.limit ? Number(req.query.limit) : 10;
+    const results = await LearningService.getQuizLeaderboard(schoolId, req.params.id as string, limit);
+    res.json(apiResponse(true, results, 'Quiz leaderboard retrieved'));
   }
 
   // ─── Study Materials ─────────────────────────────────────────────────
 
   static async uploadStudyMaterial(req: Request, res: Response): Promise<void> {
-    const material = await LearningService.uploadStudyMaterial(req.body, getUser(req).id);
+    const schoolId = req.user!.schoolId!;
+    const material = await LearningService.uploadStudyMaterial({ ...req.body, schoolId }, getUser(req).id);
     res.status(201).json(apiResponse(true, material, 'Study material uploaded successfully'));
   }
 
@@ -89,37 +116,44 @@ export class LearningController {
   }
 
   static async getStudyMaterial(req: Request, res: Response): Promise<void> {
-    const material = await LearningService.getStudyMaterial(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const material = await LearningService.getStudyMaterial(req.params.id as string, schoolId);
     res.json(apiResponse(true, material, 'Study material retrieved'));
   }
 
   static async updateStudyMaterial(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const material = await LearningService.updateStudyMaterial(
       req.params.id as string,
       req.body,
+      schoolId,
     );
     res.json(apiResponse(true, material, 'Study material updated'));
   }
 
   static async deleteStudyMaterial(req: Request, res: Response): Promise<void> {
-    await LearningService.deleteStudyMaterial(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await LearningService.deleteStudyMaterial(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Study material deleted'));
   }
 
   static async downloadStudyMaterial(req: Request, res: Response): Promise<void> {
-    const material = await LearningService.incrementDownloads(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const material = await LearningService.incrementDownloads(req.params.id as string, schoolId);
     res.json(apiResponse(true, material, 'Download recorded'));
   }
 
   // ─── Rubrics ─────────────────────────────────────────────────────────
 
   static async createRubric(req: Request, res: Response): Promise<void> {
-    const rubric = await LearningService.createRubric(req.body, getUser(req).id);
+    const schoolId = req.user!.schoolId!;
+    const rubric = await LearningService.createRubric({ ...req.body, schoolId }, getUser(req).id);
     res.status(201).json(apiResponse(true, rubric, 'Rubric created successfully'));
   }
 
   static async getRubric(req: Request, res: Response): Promise<void> {
-    const rubric = await LearningService.getRubric(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const rubric = await LearningService.getRubric(req.params.id as string, schoolId);
     res.json(apiResponse(true, rubric, 'Rubric retrieved'));
   }
 
@@ -137,12 +171,14 @@ export class LearningController {
   }
 
   static async updateRubric(req: Request, res: Response): Promise<void> {
-    const rubric = await LearningService.updateRubric(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const rubric = await LearningService.updateRubric(req.params.id as string, req.body, schoolId);
     res.json(apiResponse(true, rubric, 'Rubric updated'));
   }
 
   static async deleteRubric(req: Request, res: Response): Promise<void> {
-    await LearningService.deleteRubric(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await LearningService.deleteRubric(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Rubric deleted'));
   }
 
@@ -170,6 +206,7 @@ export class LearningController {
   }
 
   static async gradeWithRubric(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const submission = await LearningService.gradeWithRubric(
       req.params.id as string,
       getUser(req).id,
@@ -179,36 +216,43 @@ export class LearningController {
         audioFeedbackUrl: req.body.audioFeedbackUrl,
       },
       req.body.mark,
+      schoolId,
     );
     res.json(apiResponse(true, submission, 'Submission graded'));
   }
 
   static async enablePeerReview(req: Request, res: Response): Promise<void> {
-    await LearningService.enablePeerReview(req.params.homeworkId as string);
+    const schoolId = req.user!.schoolId!;
+    await LearningService.enablePeerReview(req.params.homeworkId as string, schoolId);
     res.json(apiResponse(true, undefined, 'Peer review enabled'));
   }
 
   static async submitPeerReview(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const submission = await LearningService.submitPeerReview(
       req.params.id as string,
       getUser(req).id,
       req.body.rating,
       req.body.comments,
+      schoolId,
     );
     res.json(apiResponse(true, submission, 'Peer review submitted'));
   }
 
   static async requestRevision(req: Request, res: Response): Promise<void> {
-    const submission = await LearningService.requestRevision(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const submission = await LearningService.requestRevision(req.params.id as string, schoolId);
     res.json(apiResponse(true, submission, 'Revision requested'));
   }
 
   static async getSubmission(req: Request, res: Response): Promise<void> {
-    const submission = await LearningService.getSubmission(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const submission = await LearningService.getSubmission(req.params.id as string, schoolId);
     res.json(apiResponse(true, submission, 'Submission retrieved'));
   }
 
   static async getSubmissionsForHomework(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const query = {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
@@ -217,6 +261,7 @@ export class LearningController {
     const result = await LearningService.getSubmissionsForHomework(
       req.params.homeworkId as string,
       query,
+      schoolId,
     );
     res.json(apiResponse(true, result, 'Submissions retrieved'));
   }
@@ -224,16 +269,18 @@ export class LearningController {
   // ─── Student Progress ────────────────────────────────────────────────
 
   static async getStudentProgress(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const progress = await LearningService.getStudentProgress(
       req.params.studentId as string,
       req.query.subjectId as string | undefined,
+      schoolId,
     );
     res.json(apiResponse(true, progress, 'Student progress retrieved'));
   }
 
   static async calculateMastery(req: Request, res: Response): Promise<void> {
     const { studentId, subjectId } = req.params;
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId ?? '';
+    const schoolId = req.user!.schoolId!;
     const term = Number(req.query.term) || 1;
     const year = Number(req.query.year) || new Date().getFullYear();
 
@@ -248,13 +295,16 @@ export class LearningController {
   }
 
   static async flagStrugglingStudents(req: Request, res: Response): Promise<void> {
-    const struggling = await LearningService.flagStrugglingStudents(req.params.classId as string);
+    const schoolId = req.user!.schoolId!;
+    const struggling = await LearningService.flagStrugglingStudents(req.params.classId as string, schoolId);
     res.json(apiResponse(true, struggling, 'Struggling students identified'));
   }
 
   static async getAssignmentAnalytics(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const analytics = await LearningService.getAssignmentAnalytics(
       req.params.homeworkId as string,
+      schoolId,
     );
     res.json(apiResponse(true, analytics, 'Assignment analytics retrieved'));
   }

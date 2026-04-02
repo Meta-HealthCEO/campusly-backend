@@ -18,8 +18,10 @@ export const LearningService = {
   updateQuiz: QuizService.updateQuiz,
   publishQuiz: QuizService.publishQuiz,
   deleteQuiz: QuizService.deleteQuiz,
+  startQuizAttempt: QuizService.startQuizAttempt,
   submitQuizAttempt: QuizService.submitQuizAttempt,
   getQuizResults: QuizService.getQuizResults,
+  getQuizLeaderboard: QuizService.getQuizLeaderboard,
   flagStrugglingStudents: QuizService.flagStrugglingStudents,
 
   // Material & Rubric

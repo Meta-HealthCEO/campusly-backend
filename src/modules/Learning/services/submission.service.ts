@@ -113,9 +113,12 @@ export class SubmissionService {
     gradedBy: string,
     feedback: { comments: string; rubricScores: { criterionId: string; level: string; points: number }[]; audioFeedbackUrl?: string },
     mark?: number,
+    schoolId?: string,
   ): Promise<IAssignmentSubmission> {
+    const filter: Record<string, unknown> = { _id: submissionId, isDeleted: false };
+    if (schoolId) filter.schoolId = schoolId;
     const submission = await AssignmentSubmission.findOneAndUpdate(
-      { _id: submissionId, isDeleted: false },
+      filter,
       {
         $set: {
           teacherFeedback: feedback,
@@ -131,9 +134,11 @@ export class SubmissionService {
     return submission;
   }
 
-  static async enablePeerReview(homeworkId: string): Promise<void> {
+  static async enablePeerReview(homeworkId: string, schoolId?: string): Promise<void> {
+    const filter: Record<string, unknown> = { homeworkId, isDeleted: false };
+    if (schoolId) filter.schoolId = schoolId;
     const result = await AssignmentSubmission.updateMany(
-      { homeworkId, isDeleted: false },
+      filter,
       { $set: { peerReviewEnabled: true } },
     );
     if (result.matchedCount === 0) {
@@ -146,12 +151,15 @@ export class SubmissionService {
     reviewerId: string,
     rating: number,
     comments: string,
+    schoolId?: string,
   ): Promise<IAssignmentSubmission> {
-    const check = await AssignmentSubmission.findOne({
+    const checkFilter: Record<string, unknown> = {
       _id: submissionId,
       isDeleted: false,
       peerReviewEnabled: true,
-    }).lean();
+    };
+    if (schoolId) checkFilter.schoolId = schoolId;
+    const check = await AssignmentSubmission.findOne(checkFilter).lean();
 
     if (!check) throw new NotFoundError('Submission not found or peer review not enabled');
 
@@ -184,9 +192,11 @@ export class SubmissionService {
     return result;
   }
 
-  static async requestRevision(submissionId: string): Promise<IAssignmentSubmission> {
+  static async requestRevision(submissionId: string, schoolId?: string): Promise<IAssignmentSubmission> {
+    const filter: Record<string, unknown> = { _id: submissionId, isDeleted: false };
+    if (schoolId) filter.schoolId = schoolId;
     const submission = await AssignmentSubmission.findOneAndUpdate(
-      { _id: submissionId, isDeleted: false },
+      filter,
       { $set: { isDraft: true } },
       { new: true },
     );
@@ -194,8 +204,10 @@ export class SubmissionService {
     return submission;
   }
 
-  static async getSubmission(id: string): Promise<IAssignmentSubmission> {
-    const submission = await AssignmentSubmission.findOne({ _id: id, isDeleted: false })
+  static async getSubmission(id: string, schoolId?: string): Promise<IAssignmentSubmission> {
+    const filter: Record<string, unknown> = { _id: id, isDeleted: false };
+    if (schoolId) filter.schoolId = schoolId;
+    const submission = await AssignmentSubmission.findOne(filter)
       .populate('studentId', 'userId')
       .populate('gradedBy', 'firstName lastName email')
       .lean();
@@ -206,10 +218,12 @@ export class SubmissionService {
   static async getSubmissionsForHomework(
     homeworkId: string,
     query: ListQuery,
+    schoolId?: string,
   ): Promise<PaginatedResult<IAssignmentSubmission>> {
     const { page, limit, skip, sortField } = getPagination(query);
 
     const filter: Record<string, unknown> = { homeworkId, isDeleted: false };
+    if (schoolId) filter.schoolId = schoolId;
 
     const [data, total] = await Promise.all([
       AssignmentSubmission.find(filter)
@@ -231,8 +245,10 @@ export class SubmissionService {
   static async getStudentProgress(
     studentId: string,
     subjectId?: string,
+    schoolId?: string,
   ): Promise<IStudentProgress[]> {
     const filter: Record<string, unknown> = { studentId, isDeleted: false };
+    if (schoolId) filter.schoolId = schoolId;
     if (subjectId) filter.subjectId = subjectId;
 
     return StudentProgress.find(filter)
@@ -296,18 +312,20 @@ export class SubmissionService {
 
   // ─── Assignment Analytics ────────────────────────────────────────────
 
-  static async getAssignmentAnalytics(homeworkId: string): Promise<{
+  static async getAssignmentAnalytics(homeworkId: string, schoolId?: string): Promise<{
     totalSubmissions: number;
     submissionRate: number;
     lateRate: number;
     averageMark: number;
     scoreDistribution: { range: string; count: number }[];
   }> {
-    const submissions = await AssignmentSubmission.find({
+    const analyticsFilter: Record<string, unknown> = {
       homeworkId,
       isDeleted: false,
       isDraft: false,
-    }).lean();
+    };
+    if (schoolId) analyticsFilter.schoolId = schoolId;
+    const submissions = await AssignmentSubmission.find(analyticsFilter).lean();
 
     const total = submissions.length;
     const lateCount = submissions.filter((s) => s.isLate).length;

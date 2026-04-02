@@ -49,15 +49,15 @@ export class LibraryService {
     return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
-  static async getBookById(id: string): Promise<IBook> {
-    const book = await Book.findOne({ _id: id, isDeleted: false }).lean();
+  static async getBookById(id: string, schoolId: string): Promise<IBook> {
+    const book = await Book.findOne({ _id: id, schoolId, isDeleted: false }).lean();
     if (!book) throw new NotFoundError('Book not found');
     return book;
   }
 
-  static async updateBook(id: string, data: Partial<IBook>): Promise<IBook> {
+  static async updateBook(id: string, schoolId: string, data: Partial<IBook>): Promise<IBook> {
     const book = await Book.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     );
@@ -65,9 +65,9 @@ export class LibraryService {
     return book;
   }
 
-  static async deleteBook(id: string): Promise<IBook> {
+  static async deleteBook(id: string, schoolId: string): Promise<IBook> {
     const book = await Book.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -98,8 +98,8 @@ export class LibraryService {
     return loan.save();
   }
 
-  static async returnBook(loanId: string, fineAmount?: number): Promise<IBookLoan> {
-    const loan = await BookLoan.findOne({ _id: loanId, status: { $in: ['issued', 'overdue'] }, isDeleted: false });
+  static async returnBook(loanId: string, schoolId: string, fineAmount?: number): Promise<IBookLoan> {
+    const loan = await BookLoan.findOne({ _id: loanId, schoolId, status: { $in: ['issued', 'overdue'] }, isDeleted: false });
     if (!loan) throw new NotFoundError('Active loan not found');
 
     loan.returnedDate = new Date();
@@ -113,8 +113,8 @@ export class LibraryService {
     return loan;
   }
 
-  static async markLost(loanId: string, fineAmount: number): Promise<IBookLoan> {
-    const loan = await BookLoan.findOne({ _id: loanId, status: { $in: ['issued', 'overdue'] }, isDeleted: false });
+  static async markLost(loanId: string, schoolId: string, fineAmount: number): Promise<IBookLoan> {
+    const loan = await BookLoan.findOne({ _id: loanId, schoolId, status: { $in: ['issued', 'overdue'] }, isDeleted: false });
     if (!loan) throw new NotFoundError('Active loan not found');
 
     loan.status = 'lost';
@@ -152,9 +152,9 @@ export class LibraryService {
     return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
-  static async getStudentLoans(studentId: string, query: ListQuery) {
+  static async getStudentLoans(studentId: string, schoolId: string, query: ListQuery) {
     const { page, limit, skip } = getPagination(query);
-    const filter = { studentId, isDeleted: false };
+    const filter = { studentId, schoolId, isDeleted: false };
 
     const [data, total] = await Promise.all([
       BookLoan.find(filter)
@@ -186,15 +186,15 @@ export class LibraryService {
     return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
-  static async getChallengeById(id: string): Promise<IReadingChallenge> {
-    const challenge = await ReadingChallenge.findOne({ _id: id, isDeleted: false }).lean();
+  static async getChallengeById(id: string, schoolId: string): Promise<IReadingChallenge> {
+    const challenge = await ReadingChallenge.findOne({ _id: id, schoolId, isDeleted: false }).lean();
     if (!challenge) throw new NotFoundError('Reading challenge not found');
     return challenge;
   }
 
-  static async updateChallenge(id: string, data: Partial<IReadingChallenge>): Promise<IReadingChallenge> {
+  static async updateChallenge(id: string, schoolId: string, data: Partial<IReadingChallenge>): Promise<IReadingChallenge> {
     const challenge = await ReadingChallenge.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     );
@@ -202,9 +202,9 @@ export class LibraryService {
     return challenge;
   }
 
-  static async joinChallenge(challengeId: string, studentId: string): Promise<IReadingChallenge> {
+  static async joinChallenge(challengeId: string, schoolId: string, studentId: string): Promise<IReadingChallenge> {
     const challenge = await ReadingChallenge.findOneAndUpdate(
-      { _id: challengeId, isDeleted: false },
+      { _id: challengeId, schoolId, isDeleted: false },
       { $addToSet: { participants: studentId } },
       { new: true },
     );
@@ -212,9 +212,9 @@ export class LibraryService {
     return challenge;
   }
 
-  static async deleteChallenge(id: string): Promise<IReadingChallenge> {
+  static async deleteChallenge(id: string, schoolId: string): Promise<IReadingChallenge> {
     const challenge = await ReadingChallenge.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -229,9 +229,9 @@ export class LibraryService {
     return log.save();
   }
 
-  static async getStudentReadingLogs(studentId: string, query: ListQuery) {
+  static async getStudentReadingLogs(studentId: string, schoolId: string, query: ListQuery) {
     const { page, limit, skip } = getPagination(query);
-    const filter = { studentId, isDeleted: false };
+    const filter = { studentId, schoolId, isDeleted: false };
 
     const [data, total] = await Promise.all([
       ReadingLog.find(filter)

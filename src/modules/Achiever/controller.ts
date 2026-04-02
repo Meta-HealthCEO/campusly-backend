@@ -8,7 +8,8 @@ export class AchieverController {
   // ─── Achievement ──────────────────────────────────────────────────────
 
   static async createAchievement(req: Request, res: Response): Promise<void> {
-    const achievement = await AchieverService.createAchievement(req.body);
+    const schoolId = req.user!.schoolId!;
+    const achievement = await AchieverService.createAchievement({ ...req.body, schoolId });
     res.status(201).json(apiResponse(true, achievement, 'Achievement created successfully'));
   }
 
@@ -34,17 +35,20 @@ export class AchieverController {
   }
 
   static async getAchievement(req: Request, res: Response): Promise<void> {
-    const achievement = await AchieverService.getAchievement(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const achievement = await AchieverService.getAchievement(req.params.id as string, schoolId);
     res.json(apiResponse(true, achievement, 'Achievement retrieved successfully'));
   }
 
   static async updateAchievement(req: Request, res: Response): Promise<void> {
-    const achievement = await AchieverService.updateAchievement(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const achievement = await AchieverService.updateAchievement(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, achievement, 'Achievement updated successfully'));
   }
 
   static async deleteAchievement(req: Request, res: Response): Promise<void> {
-    await AchieverService.deleteAchievement(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await AchieverService.deleteAchievement(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Achievement deleted successfully'));
   }
 
@@ -88,7 +92,8 @@ export class AchieverController {
   // ─── HousePoints ─────────────────────────────────────────────────────
 
   static async createHousePoints(req: Request, res: Response): Promise<void> {
-    const house = await AchieverService.createHousePoints(req.body);
+    const schoolId = req.user!.schoolId!;
+    const house = await AchieverService.createHousePoints({ ...req.body, schoolId });
     res.status(201).json(apiResponse(true, house, 'House created successfully'));
   }
 
@@ -107,7 +112,8 @@ export class AchieverController {
   }
 
   static async updateHousePoints(req: Request, res: Response): Promise<void> {
-    const house = await AchieverService.updateHousePoints(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const house = await AchieverService.updateHousePoints(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, house, 'House updated successfully'));
   }
 

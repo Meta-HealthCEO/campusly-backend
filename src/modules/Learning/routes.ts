@@ -60,6 +60,13 @@ router.delete(
 
 // Quiz attempts
 router.post(
+  '/quizzes/:id/start',
+  authenticate,
+  authorize('student'),
+  LearningController.startQuizAttempt,
+);
+
+router.post(
   '/quizzes/:id/attempt',
   authenticate,
   authorize('student'),
@@ -72,6 +79,12 @@ router.get(
   authenticate,
   authorize('teacher', 'school_admin', 'super_admin'),
   LearningController.getQuizResults,
+);
+
+router.get(
+  '/quizzes/:id/leaderboard',
+  authenticate,
+  LearningController.getQuizLeaderboard,
 );
 
 // ─── Study Materials ─────────────────────────────────────────────────────────

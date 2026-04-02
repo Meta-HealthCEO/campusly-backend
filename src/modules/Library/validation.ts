@@ -57,6 +57,18 @@ export const createReadingLogSchema = z.object({
   review: z.string().optional(),
 }).strict();
 
+// ─── Library Fine Config ────────────────────────────────────────────────────
+
+export const updateFineConfigSchema = z.object({
+  finePerDayCents: z.number().int().min(0).optional(),
+  maxFineCents: z.number().int().min(0).optional(),
+  exemptGrades: z.array(z.string()).optional(),
+}).strict();
+
+export const generateFineInvoicesSchema = z.object({
+  finePerDayCents: z.number().int().min(0).optional(),
+}).strict();
+
 // ─── Inferred Types ─────────────────────────────────────────────────────────
 
 export type CreateBookInput = z.infer<typeof createBookSchema>;

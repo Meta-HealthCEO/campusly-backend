@@ -54,6 +54,7 @@ export interface IBookLoan extends Document {
   returnedDate?: Date;
   status: BookLoanStatus;
   fineAmount: number;
+  fineInvoiceId?: Types.ObjectId;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -74,6 +75,7 @@ const bookLoanSchema = new Schema<IBookLoan>(
       default: 'issued',
     },
     fineAmount: { type: Number, default: 0 },
+    fineInvoiceId: { type: Schema.Types.ObjectId, ref: 'Invoice' },
     isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true },
@@ -153,3 +155,30 @@ readingLogSchema.index({ studentId: 1, bookId: 1 });
 readingLogSchema.index({ challengeId: 1, studentId: 1 });
 
 export const ReadingLog = mongoose.model<IReadingLog>('ReadingLog', readingLogSchema);
+
+// ─── Library Fine Config ───────────────────────────────────────────────
+
+export interface ILibraryFineConfig extends Document {
+  schoolId: Types.ObjectId;
+  finePerDayCents: number;
+  maxFineCents?: number;
+  exemptGrades: string[];
+  isDeleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const libraryFineConfigSchema = new Schema<ILibraryFineConfig>(
+  {
+    schoolId: { type: Schema.Types.ObjectId, ref: 'School', required: true, unique: true },
+    finePerDayCents: { type: Number, required: true, default: 200, min: 0 },
+    maxFineCents: { type: Number, min: 0 },
+    exemptGrades: { type: [String], default: [] },
+    isDeleted: { type: Boolean, default: false },
+  },
+  { timestamps: true },
+);
+
+libraryFineConfigSchema.index({ schoolId: 1 });
+
+export const LibraryFineConfig = mongoose.model<ILibraryFineConfig>('LibraryFineConfig', libraryFineConfigSchema);

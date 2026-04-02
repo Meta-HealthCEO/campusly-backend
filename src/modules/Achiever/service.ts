@@ -79,8 +79,8 @@ export class AchieverService {
     return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
-  static async getAchievement(id: string): Promise<IAchievement> {
-    const achievement = await Achievement.findOne({ _id: id, isDeleted: false })
+  static async getAchievement(id: string, schoolId: string): Promise<IAchievement> {
+    const achievement = await Achievement.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('studentId')
       .populate('awardedBy', 'firstName lastName email')
       .lean();
@@ -88,9 +88,9 @@ export class AchieverService {
     return achievement;
   }
 
-  static async updateAchievement(id: string, data: Partial<IAchievement>): Promise<IAchievement> {
+  static async updateAchievement(id: string, schoolId: string, data: Partial<IAchievement>): Promise<IAchievement> {
     const achievement = await Achievement.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     )
@@ -100,9 +100,9 @@ export class AchieverService {
     return achievement;
   }
 
-  static async deleteAchievement(id: string): Promise<IAchievement> {
+  static async deleteAchievement(id: string, schoolId: string): Promise<IAchievement> {
     const achievement = await Achievement.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -227,9 +227,9 @@ export class AchieverService {
     return HousePoints.find(filter).sort('houseName').lean().exec();
   }
 
-  static async updateHousePoints(id: string, data: Partial<IHousePoints>): Promise<IHousePoints> {
+  static async updateHousePoints(id: string, schoolId: string, data: Partial<IHousePoints>): Promise<IHousePoints> {
     const house = await HousePoints.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     );

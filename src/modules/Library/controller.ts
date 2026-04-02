@@ -2,7 +2,9 @@ import type { Request } from 'express';
 import { Response } from 'express';
 import { getUser } from '../../types/authenticated-request.js';
 import { LibraryService } from './service.js';
+import { LibraryFineService } from './fine.service.js';
 import { apiResponse } from '../../common/utils.js';
+import { UserRole } from '../../common/enums.js';
 
 export class LibraryController {
   // ─── Books ────────────────────────────────────────────────────────────────
@@ -25,17 +27,20 @@ export class LibraryController {
   }
 
   static async getBook(req: Request, res: Response): Promise<void> {
-    const book = await LibraryService.getBookById(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const book = await LibraryService.getBookById(req.params.id as string, schoolId);
     res.json(apiResponse(true, book, 'Book retrieved successfully'));
   }
 
   static async updateBook(req: Request, res: Response): Promise<void> {
-    const book = await LibraryService.updateBook(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const book = await LibraryService.updateBook(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, book, 'Book updated successfully'));
   }
 
   static async deleteBook(req: Request, res: Response): Promise<void> {
-    await LibraryService.deleteBook(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await LibraryService.deleteBook(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Book deleted successfully'));
   }
 
@@ -47,13 +52,15 @@ export class LibraryController {
   }
 
   static async returnBook(req: Request, res: Response): Promise<void> {
-    const loan = await LibraryService.returnBook(req.params.id as string, req.body.fineAmount);
+    const schoolId = req.user!.schoolId!;
+    const loan = await LibraryService.returnBook(req.params.id as string, schoolId, req.body.fineAmount);
     res.json(apiResponse(true, loan, 'Book returned successfully'));
   }
 
   static async markLost(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const fineAmount = req.body.fineAmount ?? 0;
-    const loan = await LibraryService.markLost(req.params.id as string, fineAmount);
+    const loan = await LibraryService.markLost(req.params.id as string, schoolId, fineAmount);
     res.json(apiResponse(true, loan, 'Book marked as lost'));
   }
 
@@ -68,7 +75,8 @@ export class LibraryController {
   }
 
   static async getStudentLoans(req: Request, res: Response): Promise<void> {
-    const result = await LibraryService.getStudentLoans(req.params.studentId as string, {
+    const schoolId = req.user!.schoolId!;
+    const result = await LibraryService.getStudentLoans(req.params.studentId as string, schoolId, {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
     });
@@ -93,23 +101,44 @@ export class LibraryController {
   }
 
   static async getChallenge(req: Request, res: Response): Promise<void> {
-    const challenge = await LibraryService.getChallengeById(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const challenge = await LibraryService.getChallengeById(req.params.id as string, schoolId);
     res.json(apiResponse(true, challenge, 'Reading challenge retrieved successfully'));
   }
 
   static async updateChallenge(req: Request, res: Response): Promise<void> {
-    const challenge = await LibraryService.updateChallenge(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const challenge = await LibraryService.updateChallenge(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, challenge, 'Reading challenge updated successfully'));
   }
 
   static async joinChallenge(req: Request, res: Response): Promise<void> {
-    const { studentId } = req.body;
-    const challenge = await LibraryService.joinChallenge(req.params.id as string, studentId);
+    const user = getUser(req);
+    const schoolId = user.schoolId!;
+    const isAdmin = user.role === UserRole.SUPER_ADMIN || user.role === UserRole.SCHOOL_ADMIN || user.role === UserRole.TEACHER;
+
+    let studentId: string;
+    if (isAdmin) {
+      // Admins/teachers may join any student
+      studentId = req.body.studentId as string;
+    } else {
+      // Students can only join themselves — resolve studentId from their user record
+      const { Student } = await import('../Student/model.js');
+      const student = await Student.findOne({ userId: user.id, isDeleted: false }).lean();
+      if (!student) {
+        res.status(403).json(apiResponse(false, undefined, undefined, 'Student record not found for this user'));
+        return;
+      }
+      studentId = String(student._id);
+    }
+
+    const challenge = await LibraryService.joinChallenge(req.params.id as string, schoolId, studentId);
     res.json(apiResponse(true, challenge, 'Joined reading challenge successfully'));
   }
 
   static async deleteChallenge(req: Request, res: Response): Promise<void> {
-    await LibraryService.deleteChallenge(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await LibraryService.deleteChallenge(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Reading challenge deleted successfully'));
   }
 
@@ -121,7 +150,8 @@ export class LibraryController {
   }
 
   static async getStudentReadingLogs(req: Request, res: Response): Promise<void> {
-    const result = await LibraryService.getStudentReadingLogs(req.params.studentId as string, {
+    const schoolId = req.user!.schoolId!;
+    const result = await LibraryService.getStudentReadingLogs(req.params.studentId as string, schoolId, {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
     });
@@ -134,5 +164,32 @@ export class LibraryController {
     const limit = req.query.limit ? Number(req.query.limit) : 20;
     const result = await LibraryService.getLeaderboard(req.params.challengeId as string, limit);
     res.json(apiResponse(true, result, 'Leaderboard retrieved successfully'));
+  }
+
+  // ─── Library Fines ───────────────────────────────────────────────────────
+
+  static async calculateFines(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const fines = await LibraryFineService.calculateFines(schoolId);
+    res.json(apiResponse(true, fines, 'Overdue fines calculated'));
+  }
+
+  static async generateFineInvoices(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const finePerDayCents = req.body.finePerDayCents as number | undefined;
+    const result = await LibraryFineService.generateFineInvoices(schoolId, finePerDayCents);
+    res.status(201).json(apiResponse(true, result, 'Fine invoices generated'));
+  }
+
+  static async getFineConfig(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const config = await LibraryFineService.getFineConfig(schoolId);
+    res.json(apiResponse(true, config, 'Fine config retrieved'));
+  }
+
+  static async updateFineConfig(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const config = await LibraryFineService.updateFineConfig(schoolId, req.body);
+    res.json(apiResponse(true, config, 'Fine config updated'));
   }
 }

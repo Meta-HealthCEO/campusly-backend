@@ -4,14 +4,51 @@ import { authorize } from '../../middleware/rbac.js';
 import { validate } from '../../middleware/validate.js';
 import { requireParentOwnership } from '../../middleware/parentOwnership.js';
 import { HomeworkController } from './controller.js';
+import { HomeworkTemplateController } from './template.controller.js';
 import {
   createHomeworkSchema,
   updateHomeworkSchema,
   submitHomeworkSchema,
   gradeSubmissionSchema,
 } from './validation.js';
+import {
+  createTemplateSchema,
+  cloneTemplateSchema,
+} from './template.validation.js';
 
 const router = Router();
+
+// ─── Templates (must be above /:id to avoid route clash) ───────────────────
+
+router.post(
+  '/templates',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  validate(createTemplateSchema),
+  HomeworkTemplateController.createTemplate,
+);
+
+router.get(
+  '/templates',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  HomeworkTemplateController.listTemplates,
+);
+
+router.delete(
+  '/templates/:id',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  HomeworkTemplateController.deleteTemplate,
+);
+
+router.post(
+  '/templates/:id/clone',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  validate(cloneTemplateSchema),
+  HomeworkTemplateController.cloneTemplate,
+);
 
 router.post(
   '/',
@@ -61,6 +98,13 @@ router.delete(
   authenticate,
   authorize('teacher', 'school_admin', 'super_admin'),
   HomeworkController.delete,
+);
+
+router.post(
+  '/:id/save-as-template',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  HomeworkTemplateController.saveAsTemplate,
 );
 
 router.post(

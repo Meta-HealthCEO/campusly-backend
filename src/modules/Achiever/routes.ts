@@ -3,6 +3,7 @@ import { authenticate } from '../../middleware/auth.js';
 import { authorize } from '../../middleware/rbac.js';
 import { validate } from '../../middleware/validate.js';
 import { AchieverController } from './controller.js';
+import { GamificationController } from './gamification.controller.js';
 import {
   createAchievementSchema,
   updateAchievementSchema,
@@ -104,6 +105,46 @@ router.get(
   '/houses/:houseId/history',
   authenticate,
   AchieverController.getHousePointHistory,
+);
+
+// ─── Gamification ──────────────────────────────────────────────────────────
+
+router.get(
+  '/gamification/badges',
+  authenticate,
+  GamificationController.getBadgeDefinitions,
+);
+
+router.get(
+  '/gamification/leaderboard',
+  authenticate,
+  GamificationController.getLeaderboard,
+);
+
+router.get(
+  '/gamification/level',
+  authenticate,
+  GamificationController.getStudentLevel,
+);
+
+router.get(
+  '/gamification/badges/:studentId',
+  authenticate,
+  GamificationController.getStudentBadges,
+);
+
+router.post(
+  '/gamification/check-badges',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'teacher'),
+  GamificationController.checkBadges,
+);
+
+router.post(
+  '/gamification/award-xp',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'teacher'),
+  GamificationController.awardXP,
 );
 
 export default router;

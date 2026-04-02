@@ -154,6 +154,7 @@ export interface IHousePointLog extends Document {
   reason: string;
   awardedBy: Types.ObjectId;
   createdAt: Date;
+  updatedAt: Date;
   isDeleted: boolean;
 }
 

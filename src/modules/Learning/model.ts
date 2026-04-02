@@ -35,8 +35,11 @@ export interface IQuiz extends Document {
   questions: IQuizQuestion[];
   totalPoints: number;
   timeLimit?: number;
+  showInstantFeedback: boolean;
+  allowRetry: boolean;
   attempts: number;
   shuffleQuestions: boolean;
+  shuffleOptions: boolean;
   dueDate?: Date;
   status: QuizStatus;
   isDeleted: boolean;
@@ -84,8 +87,11 @@ const quizSchema = new Schema<IQuiz>(
     },
     totalPoints: { type: Number, required: true, min: 1 },
     timeLimit: { type: Number, min: 1 },
+    showInstantFeedback: { type: Boolean, default: false },
+    allowRetry: { type: Boolean, default: false },
     attempts: { type: Number, default: 1, min: 1 },
     shuffleQuestions: { type: Boolean, default: false },
+    shuffleOptions: { type: Boolean, default: false },
     dueDate: { type: Date },
     status: { type: String, enum: ['draft', 'published', 'closed'], default: 'draft' },
     isDeleted: { type: Boolean, default: false },
@@ -118,6 +124,7 @@ export interface IQuizAttempt extends Document {
   percentage: number;
   startedAt: Date;
   completedAt?: Date;
+  timeSpent?: number;
   attempt: number;
   isDeleted: boolean;
   createdAt: Date;
@@ -144,6 +151,7 @@ const quizAttemptSchema = new Schema<IQuizAttempt>(
     percentage: { type: Number, required: true, min: 0, max: 100 },
     startedAt: { type: Date, required: true },
     completedAt: { type: Date },
+    timeSpent: { type: Number, min: 0 },
     attempt: { type: Number, required: true, min: 1 },
     isDeleted: { type: Boolean, default: false },
   },

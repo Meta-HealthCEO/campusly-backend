@@ -29,8 +29,11 @@ export const createQuizSchema = z.object({
   questions: z.array(quizQuestionSchema).min(1, 'At least one question is required'),
   totalPoints: z.number().min(1, 'Total points must be at least 1'),
   timeLimit: z.number().min(1, 'Time limit must be at least 1 minute').optional(),
+  showInstantFeedback: z.boolean().optional().default(false),
+  allowRetry: z.boolean().optional().default(false),
   attempts: z.number().min(1).optional().default(1),
   shuffleQuestions: z.boolean().optional().default(false),
+  shuffleOptions: z.boolean().optional().default(false),
   dueDate: z.string().datetime().optional(),
 }).strict();
 
@@ -51,6 +54,7 @@ const quizAnswerSchema = z.object({
 export const submitQuizAttemptSchema = z.object({
   answers: z.array(quizAnswerSchema).min(1, 'At least one answer is required'),
   startedAt: z.string().datetime(),
+  timeSpent: z.number().min(0).optional(),
 }).strict();
 
 // ─── Study Material ────────────────────────────────────────────────────────────

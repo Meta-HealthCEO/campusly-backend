@@ -11,6 +11,8 @@ import {
   createChallengeSchema,
   updateChallengeSchema,
   createReadingLogSchema,
+  updateFineConfigSchema,
+  generateFineInvoicesSchema,
 } from './validation.js';
 
 const router = Router();
@@ -48,5 +50,12 @@ router.get('/reading-logs/student/:studentId', authenticate, LibraryController.g
 // ─── Leaderboard ────────────────────────────────────────────────────────────
 
 router.get('/leaderboard/:challengeId', authenticate, LibraryController.getLeaderboard);
+
+// ─── Library Fines ──────────────────────────────────────────────────────────
+
+router.get('/fines', authenticate, authorize('school_admin', 'super_admin'), LibraryController.calculateFines);
+router.post('/fines/generate-invoices', authenticate, authorize('school_admin', 'super_admin'), validate(generateFineInvoicesSchema), LibraryController.generateFineInvoices);
+router.get('/fine-config', authenticate, authorize('school_admin', 'super_admin'), LibraryController.getFineConfig);
+router.put('/fine-config', authenticate, authorize('school_admin', 'super_admin'), validate(updateFineConfigSchema), LibraryController.updateFineConfig);
 
 export default router;
