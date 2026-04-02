@@ -71,10 +71,10 @@ export class CareerController {
   }
 
   static async getTranscript(req: Request, res: Response): Promise<void> {
+    // Keep as JSON for now — PDF generation will be added with PDFKit
     const studentId = req.params.studentId as string;
     const result = await CareerModuleService.generateTranscript(studentId);
-    res.setHeader('Content-Type', 'application/json');
-    res.json(apiResponse(true, result));
+    res.json(apiResponse(true, result, 'Transcript data generated'));
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -133,6 +133,9 @@ export class CareerController {
     const result = await CareerModuleService.listProgrammes({
       universityId: req.query.universityId as string | undefined,
       faculty: req.query.faculty as string | undefined,
+      qualificationType: req.query.qualificationType as string | undefined,
+      maxAPS: req.query.maxAPS ? Number(req.query.maxAPS) : undefined,
+      field: req.query.field as string | undefined,
       search: req.query.search as string | undefined,
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
@@ -175,8 +178,11 @@ export class CareerController {
   static async matchProgrammes(req: Request, res: Response): Promise<void> {
     const studentId = req.params.studentId as string;
     const result = await CareerModuleService.matchProgrammes(studentId, {
+      status: req.query.status as 'eligible' | 'close' | 'not_eligible' | undefined,
       universityId: req.query.universityId as string | undefined,
       field: req.query.field as string | undefined,
+      page: req.query.page ? Number(req.query.page) : undefined,
+      limit: req.query.limit ? Number(req.query.limit) : undefined,
     });
     res.json(apiResponse(true, result));
   }
@@ -291,6 +297,7 @@ export class CareerController {
   static async listBursaries(req: Request, res: Response): Promise<void> {
     const result = await CareerModuleService.listBursaries({
       field: req.query.field as string | undefined,
+      provider: req.query.provider as string | undefined,
       search: req.query.search as string | undefined,
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,

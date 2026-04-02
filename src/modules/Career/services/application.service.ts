@@ -100,7 +100,7 @@ export class ApplicationService {
     ]);
 
     const page = query.page ?? 1;
-    return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
+    return { items: data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
   /**

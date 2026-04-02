@@ -13,7 +13,7 @@ interface UniversityListQuery {
 }
 
 interface UniversityListResult {
-  data: (IUniversity & { programmeCount: number })[];
+  items: (IUniversity & { programmeCount: number })[];
   total: number;
   page: number;
   limit: number;
@@ -72,7 +72,7 @@ export class UniversityService {
     const page = query.page ?? 1;
     const totalPages = Math.ceil(total / limit);
 
-    return { data, total, page, limit, totalPages };
+    return { items: data, total, page, limit, totalPages };
   }
 
   /**

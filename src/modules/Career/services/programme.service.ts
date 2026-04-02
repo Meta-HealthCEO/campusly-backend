@@ -16,7 +16,7 @@ interface ProgrammeListQuery {
 }
 
 interface ProgrammeListResult {
-  data: IProgramme[];
+  items: IProgramme[];
   total: number;
   page: number;
   limit: number;
@@ -74,7 +74,7 @@ export class ProgrammeService {
     const totalPages = Math.ceil(total / limit);
 
     return {
-      data: programmes as IProgramme[],
+      items: programmes as IProgramme[],
       total,
       page,
       limit,

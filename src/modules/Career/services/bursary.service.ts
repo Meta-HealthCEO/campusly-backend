@@ -44,7 +44,7 @@ interface CSVRow {
 interface ImportResult {
   imported: number;
   skipped: number;
-  errors: string[];
+  errors: { row: number; reason: string }[];
 }
 
 interface MatchedBursary {
@@ -105,7 +105,7 @@ export class BursaryService {
     ]);
 
     const page = query.page ?? 1;
-    return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
+    return { items: data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
   /**
@@ -186,14 +186,14 @@ export class BursaryService {
   static async importFromCSV(rows: CSVRow[]): Promise<ImportResult> {
     let imported = 0;
     let skipped = 0;
-    const errors: string[] = [];
+    const errors: { row: number; reason: string }[] = [];
 
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
       const rowNum = i + 1;
 
       if (!row.name || !row.provider) {
-        errors.push(`Row ${rowNum}: missing required fields (name, provider)`);
+        errors.push({ row: rowNum, reason: 'Missing required fields (name, provider)' });
         skipped++;
         continue;
       }
@@ -239,7 +239,7 @@ export class BursaryService {
         imported++;
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : 'Unknown error';
-        errors.push(`Row ${rowNum}: ${message}`);
+        errors.push({ row: rowNum, reason: message });
         skipped++;
       }
     }
