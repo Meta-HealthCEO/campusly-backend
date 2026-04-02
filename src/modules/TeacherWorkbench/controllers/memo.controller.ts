@@ -12,7 +12,9 @@ export class MemoController {
   }
 
   static async getMemoByPaper(req: Request, res: Response): Promise<void> {
-    const memo = await MemoService.getMemoByPaper(req.params.paperId as string);
+    const user = getUser(req);
+    const schoolId = String(req.query.schoolId ?? user.schoolId ?? '');
+    const memo = await MemoService.getMemoByPaper(req.params.paperId as string, schoolId);
     res.json(apiResponse(true, memo, 'Memo retrieved'));
   }
 

@@ -1,5 +1,4 @@
 import { AssessmentPlan, IAssessmentPlan } from '../model.assessment.js';
-import { NotFoundError } from '../../../common/errors.js';
 
 interface PlannedAssessmentItem {
   title: string;
@@ -41,13 +40,12 @@ export class PlannerService {
     term: number,
     year: number,
     schoolId: string,
-  ): Promise<IAssessmentPlan> {
+  ): Promise<IAssessmentPlan | null> {
     const plan = await AssessmentPlan.findOne({ classId, term, year, schoolId })
       .populate('subjectId', 'name code')
       .lean()
       .exec();
-    if (!plan) throw new NotFoundError('Assessment plan not found');
-    return plan as IAssessmentPlan;
+    return plan as IAssessmentPlan | null;
   }
 
   static async createOrUpdatePlan(

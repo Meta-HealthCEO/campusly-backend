@@ -106,15 +106,15 @@ export class CurriculumService {
     return topic as unknown as ICurriculumTopic;
   }
 
-  static async deleteTopic(id: string): Promise<void> {
-    const topic = await CurriculumTopic.findOne({ _id: id, isDeleted: false });
+  static async deleteTopic(id: string, schoolId: string): Promise<void> {
+    const topic = await CurriculumTopic.findOne({ _id: id, schoolId, isDeleted: false });
     if (!topic) throw new NotFoundError('Topic not found');
     // Soft-delete children first, then parent
     await CurriculumTopic.updateMany(
-      { parentTopicId: id, isDeleted: false },
+      { parentTopicId: id, schoolId },
       { $set: { isDeleted: true } },
     );
-    await CurriculumTopic.findOneAndUpdate({ _id: id }, { $set: { isDeleted: true } });
+    await CurriculumTopic.findOneAndUpdate({ _id: id, schoolId }, { $set: { isDeleted: true } });
   }
 
   static async bulkImportTopics(

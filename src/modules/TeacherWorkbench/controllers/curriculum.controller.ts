@@ -29,7 +29,9 @@ export class CurriculumController {
   }
 
   static async createTopic(req: Request, res: Response): Promise<void> {
-    const topic = await CurriculumService.createTopic(req.body);
+    const user = getUser(req);
+    const schoolId = String(req.query.schoolId ?? user.schoolId ?? '');
+    const topic = await CurriculumService.createTopic({ ...req.body, schoolId });
     res.status(201).json(apiResponse(true, topic, 'Topic created'));
   }
 
@@ -41,12 +43,16 @@ export class CurriculumController {
   }
 
   static async deleteTopic(req: Request, res: Response): Promise<void> {
-    await CurriculumService.deleteTopic(req.params.id as string);
+    const user = getUser(req);
+    const schoolId = String(req.query.schoolId ?? user.schoolId ?? '');
+    await CurriculumService.deleteTopic(req.params.id as string, schoolId);
     res.json(apiResponse(true, null, 'Topic deleted'));
   }
 
   static async bulkImportTopics(req: Request, res: Response): Promise<void> {
-    const topics = await CurriculumService.bulkImportTopics(req.body);
+    const user = getUser(req);
+    const schoolId = String(req.query.schoolId ?? user.schoolId ?? '');
+    const topics = await CurriculumService.bulkImportTopics({ ...req.body, schoolId });
     res.status(201).json(apiResponse(true, topics, `${topics.length} topics imported`));
   }
 

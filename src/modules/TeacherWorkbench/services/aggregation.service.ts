@@ -9,9 +9,9 @@ import { BulkMessage } from '../../Communication/model.js';
 
 interface DashboardData {
   questionCount: number;
-  pendingModerations: number;
-  coveragePercent: number;
-  pendingMarkingCount: number;
+  pendingModeration: number;
+  coveragePercentage: number;
+  markingItemsDue: number;
   recentActivity: unknown[];
 }
 
@@ -19,20 +19,48 @@ interface MarkingItem {
   id: string;
   type: 'homework';
   title: string;
-  studentCount: number;
-  dueDate: Date | undefined;
+  subjectName: string;
+  className: string;
+  dueDate: string;
+  totalMarks: number;
+  pendingCount: number;
+  totalCount: number;
   priority: 'high' | 'medium' | 'low';
-  homeworkId: string;
 }
 
 interface Student360Data {
   studentId: string;
-  marks: unknown[];
-  attendance: unknown[];
-  discipline: unknown[];
-  merits: unknown[];
-  homeworkSubmissions: unknown[];
-  communications: unknown[];
+  studentName: string;
+  className: string;
+  academic: {
+    termAverage: number;
+    trend: 'improving' | 'declining' | 'stable';
+    subjects: { name: string; mark: number; grade: string; classAvg: number }[];
+    markHistory: { date: string; mark: number }[];
+  };
+  attendance: {
+    rate: number;
+    present: number;
+    absent: number;
+    late: number;
+    excused: number;
+    pattern: string | null;
+  };
+  behaviour: {
+    netMeritScore: number;
+    recentIncidents: { date: string; type: string; severity: string; description: string }[];
+    recentMerits: { date: string; type: string; category: string; points: number; reason: string }[];
+  };
+  homework: {
+    submissionRate: number;
+    averageMark: number;
+    lateCount: number;
+    missingCount: number;
+  };
+  communication: {
+    lastContactDate: string | null;
+    messageCountThisTerm: number;
+  };
 }
 
 function calcPriority(dueDate: Date | undefined): 'high' | 'medium' | 'low' {
@@ -90,9 +118,9 @@ export class AggregationService {
 
     return {
       questionCount,
-      pendingModerations,
-      coveragePercent,
-      pendingMarkingCount: pendingMarkingItems,
+      pendingModeration: pendingModerations,
+      coveragePercentage: coveragePercent,
+      markingItemsDue: pendingMarkingItems,
       recentActivity,
     };
   }
@@ -106,6 +134,8 @@ export class AggregationService {
       teacherId,
       isDeleted: false,
     })
+      .populate('subjectId', 'name')
+      .populate('classId', 'name')
       .lean()
       .exec();
 
@@ -137,10 +167,13 @@ export class AggregationService {
         id: String(item._id),
         type: 'homework' as const,
         title: hw?.title ?? 'Untitled',
-        studentCount: item.count as number,
-        dueDate,
+        subjectName: typeof hw?.subjectId === 'object' ? String((hw.subjectId as unknown as Record<string, unknown>).name ?? '') : '',
+        className: typeof hw?.classId === 'object' ? String((hw.classId as unknown as Record<string, unknown>).name ?? '') : '',
+        dueDate: dueDate ? dueDate.toISOString() : '',
+        totalMarks: hw?.totalMarks ?? 0,
+        pendingCount: item.count as number,
+        totalCount: item.count as number,
         priority: calcPriority(dueDate),
-        homeworkId: String(item._id),
       };
     });
   }
@@ -149,7 +182,10 @@ export class AggregationService {
     studentId: string,
     schoolId: string,
   ): Promise<Student360Data> {
-    const [marks, attendance, discipline, merits, homeworkSubmissions, communications] =
+    const termStart = new Date();
+    termStart.setMonth(termStart.getMonth() - 3);
+
+    const [marks, attendanceRecords, discipline, merits, homeworkSubmissions, communications, totalHomeworks] =
       await Promise.all([
         Mark.find({ studentId, schoolId }).sort({ createdAt: -1 }).limit(50).lean().exec(),
         Attendance.find({ studentId, schoolId }).sort({ date: -1 }).limit(60).lean().exec(),
@@ -157,24 +193,108 @@ export class AggregationService {
         Merit.find({ studentId, schoolId }).sort({ createdAt: -1 }).limit(20).lean().exec(),
         HomeworkSubmission.find({ studentId, schoolId, isDeleted: false })
           .sort({ submittedAt: -1 })
-          .limit(20)
+          .limit(50)
           .lean()
           .exec(),
-        BulkMessage.find({ schoolId })
+        BulkMessage.find({ schoolId, createdAt: { $gte: termStart } })
           .sort({ createdAt: -1 })
           .limit(10)
           .lean()
           .exec(),
+        Homework.countDocuments({ schoolId, isDeleted: false }),
       ]);
+
+    // Academic aggregates
+    const percentages = marks.map((m) => m.percentage ?? 0);
+    const termAverage = percentages.length > 0
+      ? Math.round(percentages.reduce((a, b) => a + b, 0) / percentages.length)
+      : 0;
+
+    const last5 = percentages.slice(0, 5);
+    const prev5 = percentages.slice(5, 10);
+    const last5Avg = last5.length > 0 ? last5.reduce((a, b) => a + b, 0) / last5.length : 0;
+    const prev5Avg = prev5.length > 0 ? prev5.reduce((a, b) => a + b, 0) / prev5.length : last5Avg;
+    let trend: 'improving' | 'declining' | 'stable' = 'stable';
+    if (last5Avg - prev5Avg > 3) trend = 'improving';
+    else if (prev5Avg - last5Avg > 3) trend = 'declining';
+
+    const markHistory = marks.slice(0, 20).map((m) => ({
+      date: (m.createdAt as Date).toISOString(),
+      mark: m.percentage ?? 0,
+    }));
+
+    // Attendance aggregates
+    const present = attendanceRecords.filter((a) => a.status === 'present').length;
+    const absent = attendanceRecords.filter((a) => a.status === 'absent').length;
+    const late = attendanceRecords.filter((a) => a.status === 'late').length;
+    const excused = attendanceRecords.filter((a) => a.status === 'excused').length;
+    const total = attendanceRecords.length;
+    const rate = total > 0 ? Math.round((present / total) * 100) : 0;
+
+    // Behaviour aggregates
+    const netMeritScore = merits.reduce((sum, m) => {
+      return sum + (m.type === 'merit' ? m.points : -m.points);
+    }, 0);
+
+    // Homework aggregates
+    const submittedCount = homeworkSubmissions.length;
+    const submissionRate = totalHomeworks > 0 ? Math.round((submittedCount / totalHomeworks) * 100) : 0;
+    const markedSubmissions = homeworkSubmissions.filter((s) => s.mark !== undefined && s.mark !== null);
+    const averageMark = markedSubmissions.length > 0
+      ? Math.round(markedSubmissions.reduce((sum, s) => sum + (s.mark as number), 0) / markedSubmissions.length)
+      : 0;
+    const lateCount = homeworkSubmissions.filter((s) => s.isLate).length;
+    const missingCount = Math.max(0, totalHomeworks - submittedCount);
+
+    // Communication aggregates
+    const lastMsg = communications[0];
+    const lastContactDate = lastMsg ? (lastMsg.createdAt as Date).toISOString() : null;
+    const messageCountThisTerm = communications.length;
 
     return {
       studentId,
-      marks,
-      attendance,
-      discipline,
-      merits,
-      homeworkSubmissions,
-      communications,
+      studentName: '',
+      className: '',
+      academic: {
+        termAverage,
+        trend,
+        subjects: [],
+        markHistory,
+      },
+      attendance: {
+        rate,
+        present,
+        absent,
+        late,
+        excused,
+        pattern: null,
+      },
+      behaviour: {
+        netMeritScore,
+        recentIncidents: discipline.map((d) => ({
+          date: (d.createdAt as Date).toISOString(),
+          type: d.type ?? '',
+          severity: d.status ?? '',
+          description: d.description ?? '',
+        })),
+        recentMerits: merits.map((m) => ({
+          date: (m.createdAt as Date).toISOString(),
+          type: m.type,
+          category: m.category ?? '',
+          points: m.points,
+          reason: m.reason ?? '',
+        })),
+      },
+      homework: {
+        submissionRate,
+        averageMark,
+        lateCount,
+        missingCount,
+      },
+      communication: {
+        lastContactDate,
+        messageCountThisTerm,
+      },
     };
   }
 }

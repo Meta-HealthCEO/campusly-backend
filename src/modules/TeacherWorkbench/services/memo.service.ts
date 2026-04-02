@@ -140,7 +140,7 @@ export class MemoService {
     teacherId: string,
     schoolId: string,
   ): Promise<IPaperMemo> {
-    const memo = await PaperMemo.findOne({ _id: memoId }).exec();
+    const memo = await PaperMemo.findOne({ _id: memoId, schoolId }).exec();
     if (!memo) throw new NotFoundError('Memo not found');
 
     const paper = await GeneratedPaper.findOne({ _id: memo.paperId, isDeleted: false }).lean().exec();
@@ -213,8 +213,8 @@ ${targetQuestion.markingGuideline ? `Guideline: ${targetQuestion.markingGuidelin
     return memo.save();
   }
 
-  static async getMemoByPaper(paperId: string): Promise<IPaperMemo> {
-    const memo = await PaperMemo.findOne({ paperId }).lean().exec();
+  static async getMemoByPaper(paperId: string, schoolId: string): Promise<IPaperMemo> {
+    const memo = await PaperMemo.findOne({ paperId, schoolId }).lean().exec();
     if (!memo) throw new NotFoundError('Memo not found');
     return memo as IPaperMemo;
   }
