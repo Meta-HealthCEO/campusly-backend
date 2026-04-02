@@ -31,17 +31,20 @@ export class AcademicController {
   }
 
   static async getGrade(req: Request, res: Response): Promise<void> {
-    const grade = await AcademicService.getGradeById(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const grade = await AcademicService.getGradeById(req.params.id as string, schoolId);
     res.json(apiResponse(true, grade, 'Grade retrieved successfully'));
   }
 
   static async updateGrade(req: Request, res: Response): Promise<void> {
-    const grade = await AcademicService.updateGrade(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const grade = await AcademicService.updateGrade(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, grade, 'Grade updated successfully'));
   }
 
   static async deleteGrade(req: Request, res: Response): Promise<void> {
-    await AcademicService.deleteGrade(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await AcademicService.deleteGrade(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Grade deleted successfully'));
   }
 
@@ -53,8 +56,9 @@ export class AcademicController {
   }
 
   static async listClasses(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const filters = {
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId,
       gradeId: req.query.gradeId as string | undefined,
     };
 
@@ -70,17 +74,20 @@ export class AcademicController {
   }
 
   static async getClass(req: Request, res: Response): Promise<void> {
-    const cls = await AcademicService.getClassById(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const cls = await AcademicService.getClassById(req.params.id as string, schoolId);
     res.json(apiResponse(true, cls, 'Class retrieved successfully'));
   }
 
   static async updateClass(req: Request, res: Response): Promise<void> {
-    const cls = await AcademicService.updateClass(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const cls = await AcademicService.updateClass(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, cls, 'Class updated successfully'));
   }
 
   static async deleteClass(req: Request, res: Response): Promise<void> {
-    await AcademicService.deleteClass(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await AcademicService.deleteClass(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Class deleted successfully'));
   }
 
@@ -110,17 +117,20 @@ export class AcademicController {
   }
 
   static async getSubject(req: Request, res: Response): Promise<void> {
-    const subject = await AcademicService.getSubjectById(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const subject = await AcademicService.getSubjectById(req.params.id as string, schoolId);
     res.json(apiResponse(true, subject, 'Subject retrieved successfully'));
   }
 
   static async updateSubject(req: Request, res: Response): Promise<void> {
-    const subject = await AcademicService.updateSubject(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const subject = await AcademicService.updateSubject(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, subject, 'Subject updated successfully'));
   }
 
   static async deleteSubject(req: Request, res: Response): Promise<void> {
-    await AcademicService.deleteSubject(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await AcademicService.deleteSubject(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Subject deleted successfully'));
   }
 
@@ -132,8 +142,9 @@ export class AcademicController {
   }
 
   static async listTimetable(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const filters = {
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId,
       classId: req.query.classId as string | undefined,
     };
 
@@ -149,7 +160,8 @@ export class AcademicController {
   }
 
   static async getTimetable(req: Request, res: Response): Promise<void> {
-    const entry = await AcademicService.getTimetableById(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const entry = await AcademicService.getTimetableById(req.params.id as string, schoolId);
     res.json(apiResponse(true, entry, 'Timetable entry retrieved successfully'));
   }
 
@@ -164,13 +176,21 @@ export class AcademicController {
   }
 
   static async updateTimetable(req: Request, res: Response): Promise<void> {
-    const entry = await AcademicService.updateTimetable(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const entry = await AcademicService.updateTimetable(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, entry, 'Timetable entry updated successfully'));
   }
 
   static async deleteTimetable(req: Request, res: Response): Promise<void> {
-    await AcademicService.deleteTimetable(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await AcademicService.deleteTimetable(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Timetable entry deleted successfully'));
+  }
+
+  static async detectTimetableClashes(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const clashes = await AcademicService.detectTimetableClashes(schoolId);
+    res.json(apiResponse(true, clashes, 'Timetable clashes retrieved successfully'));
   }
 
   // ─── Assessment ────────────────────────────────────────────────────────
@@ -181,8 +201,9 @@ export class AcademicController {
   }
 
   static async listAssessments(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const filters = {
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId,
       classId: req.query.classId as string | undefined,
       subjectId: req.query.subjectId as string | undefined,
       term: req.query.term ? Number(req.query.term) : undefined,
@@ -201,17 +222,20 @@ export class AcademicController {
   }
 
   static async getAssessment(req: Request, res: Response): Promise<void> {
-    const assessment = await AcademicService.getAssessmentById(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const assessment = await AcademicService.getAssessmentById(req.params.id as string, schoolId);
     res.json(apiResponse(true, assessment, 'Assessment retrieved successfully'));
   }
 
   static async updateAssessment(req: Request, res: Response): Promise<void> {
-    const assessment = await AcademicService.updateAssessment(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const assessment = await AcademicService.updateAssessment(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, assessment, 'Assessment updated successfully'));
   }
 
   static async deleteAssessment(req: Request, res: Response): Promise<void> {
-    await AcademicService.deleteAssessment(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await AcademicService.deleteAssessment(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Assessment deleted successfully'));
   }
 
@@ -229,16 +253,18 @@ export class AcademicController {
   }
 
   static async getStudentMarks(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const studentId = req.params.studentId as string;
     const term = req.query.term ? Number(req.query.term) : undefined;
     const academicYear = req.query.academicYear ? Number(req.query.academicYear) : undefined;
 
-    const marks = await AcademicService.getStudentMarks(studentId, term, academicYear);
+    const marks = await AcademicService.getStudentMarks(studentId, schoolId, term, academicYear);
     res.json(apiResponse(true, marks, 'Student marks retrieved successfully'));
   }
 
   static async getAssessmentMarks(req: Request, res: Response): Promise<void> {
-    const marks = await AcademicService.getAssessmentMarks(req.params.assessmentId as string);
+    const schoolId = req.user!.schoolId!;
+    const marks = await AcademicService.getAssessmentMarks(req.params.assessmentId as string, schoolId);
     res.json(apiResponse(true, marks, 'Assessment marks retrieved successfully'));
   }
 
@@ -315,17 +341,20 @@ export class AcademicController {
   }
 
   static async getExam(req: Request, res: Response): Promise<void> {
-    const exam = await AcademicService.getExamById(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const exam = await AcademicService.getExamById(req.params.id as string, schoolId);
     res.json(apiResponse(true, exam, 'Exam retrieved successfully'));
   }
 
   static async updateExam(req: Request, res: Response): Promise<void> {
-    const exam = await AcademicService.updateExam(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const exam = await AcademicService.updateExam(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, exam, 'Exam updated successfully'));
   }
 
   static async deleteExam(req: Request, res: Response): Promise<void> {
-    await AcademicService.deleteExam(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await AcademicService.deleteExam(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Exam deleted successfully'));
   }
 
@@ -382,7 +411,8 @@ export class AcademicController {
   }
 
   static async deletePastPaper(req: Request, res: Response): Promise<void> {
-    await AcademicService.deletePastPaper(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await AcademicService.deletePastPaper(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Past paper deleted successfully'));
   }
 
@@ -406,12 +436,14 @@ export class AcademicController {
   }
 
   static async updateSubjectWeighting(req: Request, res: Response): Promise<void> {
-    const weighting = await AcademicService.updateSubjectWeighting(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const weighting = await AcademicService.updateSubjectWeighting(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, weighting, 'Subject weighting updated successfully'));
   }
 
   static async deleteSubjectWeighting(req: Request, res: Response): Promise<void> {
-    await AcademicService.deleteSubjectWeighting(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await AcademicService.deleteSubjectWeighting(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Subject weighting deleted successfully'));
   }
 
@@ -436,17 +468,20 @@ export class AcademicController {
   }
 
   static async getRemedial(req: Request, res: Response): Promise<void> {
-    const remedial = await AcademicService.getRemedialById(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const remedial = await AcademicService.getRemedialById(req.params.id as string, schoolId);
     res.json(apiResponse(true, remedial, 'Remedial record retrieved successfully'));
   }
 
   static async updateRemedial(req: Request, res: Response): Promise<void> {
-    const remedial = await AcademicService.updateRemedial(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const remedial = await AcademicService.updateRemedial(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, remedial, 'Remedial record updated successfully'));
   }
 
   static async deleteRemedial(req: Request, res: Response): Promise<void> {
-    await AcademicService.deleteRemedial(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await AcademicService.deleteRemedial(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Remedial record deleted successfully'));
   }
 

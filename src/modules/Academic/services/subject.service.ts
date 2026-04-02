@@ -64,17 +64,17 @@ export class SubjectService {
     return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
-  static async getSubjectById(id: string): Promise<ISubject> {
-    const subject = await Subject.findOne({ _id: id, isDeleted: false })
+  static async getSubjectById(id: string, schoolId: string): Promise<ISubject> {
+    const subject = await Subject.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('gradeIds', 'name level')
       .lean();
     if (!subject) throw new NotFoundError('Subject not found');
     return subject;
   }
 
-  static async updateSubject(id: string, data: Partial<ISubject>): Promise<ISubject> {
+  static async updateSubject(id: string, schoolId: string, data: Partial<ISubject>): Promise<ISubject> {
     const subject = await Subject.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     ).populate('gradeIds', 'name level');
@@ -82,9 +82,9 @@ export class SubjectService {
     return subject;
   }
 
-  static async deleteSubject(id: string): Promise<ISubject> {
+  static async deleteSubject(id: string, schoolId: string): Promise<ISubject> {
     const subject = await Subject.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );

@@ -2,6 +2,7 @@ import type { Request } from 'express';
 import { Response } from 'express';
 import { getUser } from '../../types/authenticated-request.js';
 import { AttendanceService } from './service.js';
+import { ChronicAbsenceService } from './chronic-absence.service.js';
 import { apiResponse } from '../../common/utils.js';
 
 export class AttendanceController {
@@ -16,6 +17,7 @@ export class AttendanceController {
   }
 
   static async getByStudent(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const studentId = req.params.studentId as string;
     const { startDate, endDate } = req.query;
 
@@ -28,11 +30,13 @@ export class AttendanceController {
       studentId,
       startDate as string,
       endDate as string,
+      schoolId,
     );
     res.json(apiResponse(true, records, 'Student attendance retrieved successfully'));
   }
 
   static async getByClass(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const classId = req.params.classId as string;
     const { date } = req.query;
 
@@ -41,11 +45,12 @@ export class AttendanceController {
       return;
     }
 
-    const records = await AttendanceService.getByClass(classId, date as string);
+    const records = await AttendanceService.getByClass(classId, date as string, schoolId);
     res.json(apiResponse(true, records, 'Class attendance retrieved successfully'));
   }
 
   static async getReport(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const { studentId, classId, startDate, endDate } = req.query;
 
     if (!startDate || !endDate) {
@@ -54,6 +59,7 @@ export class AttendanceController {
     }
 
     const report = await AttendanceService.getReport({
+      schoolId,
       studentId: studentId as string | undefined,
       classId: classId as string | undefined,
       startDate: startDate as string,
@@ -98,6 +104,22 @@ export class AttendanceController {
     res.json(apiResponse(true, report, 'Daily report retrieved successfully'));
   }
 
+  // ─── Chronic Absence ────────────────────────────────────────────────────────
+
+  static async getChronicAbsentees(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const threshold = req.query.threshold ? Number(req.query.threshold) : 80;
+    const absentees = await ChronicAbsenceService.getChronicAbsentees(schoolId, threshold);
+    res.json(apiResponse(true, absentees, 'Chronic absentees retrieved successfully'));
+  }
+
+  static async getStudentPatterns(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const studentId = req.params.studentId as string;
+    const patterns = await ChronicAbsenceService.getStudentPatterns(studentId, schoolId);
+    res.json(apiResponse(true, patterns, 'Attendance patterns retrieved successfully'));
+  }
+
   // ─── Discipline ─────────────────────────────────────────────────────────────
 
   static async createDiscipline(req: Request, res: Response): Promise<void> {
@@ -118,17 +140,20 @@ export class AttendanceController {
   }
 
   static async getDiscipline(req: Request, res: Response): Promise<void> {
-    const record = await AttendanceService.getDisciplineById(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const record = await AttendanceService.getDisciplineById(req.params.id as string, schoolId);
     res.json(apiResponse(true, record, 'Discipline record retrieved successfully'));
   }
 
   static async updateDiscipline(req: Request, res: Response): Promise<void> {
-    const record = await AttendanceService.updateDiscipline(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const record = await AttendanceService.updateDiscipline(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, record, 'Discipline record updated successfully'));
   }
 
   static async deleteDiscipline(req: Request, res: Response): Promise<void> {
-    await AttendanceService.deleteDiscipline(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await AttendanceService.deleteDiscipline(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Discipline record deleted successfully'));
   }
 
@@ -180,17 +205,20 @@ export class AttendanceController {
   }
 
   static async getLessonPlan(req: Request, res: Response): Promise<void> {
-    const plan = await AttendanceService.getLessonPlanById(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const plan = await AttendanceService.getLessonPlanById(req.params.id as string, schoolId);
     res.json(apiResponse(true, plan, 'Lesson plan retrieved successfully'));
   }
 
   static async updateLessonPlan(req: Request, res: Response): Promise<void> {
-    const plan = await AttendanceService.updateLessonPlan(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const plan = await AttendanceService.updateLessonPlan(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, plan, 'Lesson plan updated successfully'));
   }
 
   static async deleteLessonPlan(req: Request, res: Response): Promise<void> {
-    await AttendanceService.deleteLessonPlan(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await AttendanceService.deleteLessonPlan(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Lesson plan deleted successfully'));
   }
 
@@ -214,17 +242,20 @@ export class AttendanceController {
   }
 
   static async getSubstitute(req: Request, res: Response): Promise<void> {
-    const sub = await AttendanceService.getSubstituteById(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const sub = await AttendanceService.getSubstituteById(req.params.id as string, schoolId);
     res.json(apiResponse(true, sub, 'Substitute record retrieved successfully'));
   }
 
   static async updateSubstitute(req: Request, res: Response): Promise<void> {
-    const sub = await AttendanceService.updateSubstitute(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const sub = await AttendanceService.updateSubstitute(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, sub, 'Substitute record updated successfully'));
   }
 
   static async deleteSubstitute(req: Request, res: Response): Promise<void> {
-    await AttendanceService.deleteSubstitute(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await AttendanceService.deleteSubstitute(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Substitute record deleted successfully'));
   }
 }

@@ -49,15 +49,15 @@ export class ExamService {
     return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
-  static async getExamById(id: string): Promise<IExam> {
-    const exam = await Exam.findOne({ _id: id, isDeleted: false }).lean();
+  static async getExamById(id: string, schoolId: string): Promise<IExam> {
+    const exam = await Exam.findOne({ _id: id, schoolId, isDeleted: false }).lean();
     if (!exam) throw new NotFoundError('Exam not found');
     return exam;
   }
 
-  static async updateExam(id: string, data: Partial<IExam>): Promise<IExam> {
+  static async updateExam(id: string, schoolId: string, data: Partial<IExam>): Promise<IExam> {
     const exam = await Exam.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     );
@@ -65,9 +65,9 @@ export class ExamService {
     return exam;
   }
 
-  static async deleteExam(id: string): Promise<IExam> {
+  static async deleteExam(id: string, schoolId: string): Promise<IExam> {
     const exam = await Exam.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );

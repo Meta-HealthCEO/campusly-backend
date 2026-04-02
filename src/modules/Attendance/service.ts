@@ -10,6 +10,7 @@ import { NotFoundError } from '../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../common/constants.js';
 
 interface AttendanceReportFilters {
+  schoolId?: string;
   studentId?: string;
   classId?: string;
   startDate: string;
@@ -128,9 +129,11 @@ export class AttendanceService {
     studentId: string,
     startDate: string,
     endDate: string,
+    schoolId: string,
   ): Promise<IAttendance[]> {
     const records = await Attendance.find({
       studentId,
+      schoolId,
       date: { $gte: new Date(startDate), $lte: new Date(endDate) },
       isDeleted: false,
     })
@@ -141,9 +144,10 @@ export class AttendanceService {
     return records;
   }
 
-  static async getByClass(classId: string, date: string): Promise<IAttendance[]> {
+  static async getByClass(classId: string, date: string, schoolId: string): Promise<IAttendance[]> {
     const records = await Attendance.find({
       classId,
+      schoolId,
       date: new Date(date),
       isDeleted: false,
     })
@@ -159,6 +163,10 @@ export class AttendanceService {
       date: { $gte: new Date(filters.startDate), $lte: new Date(filters.endDate) },
       isDeleted: false,
     };
+
+    if (filters.schoolId) {
+      query.schoolId = filters.schoolId;
+    }
 
     if (filters.studentId) {
       query.studentId = filters.studentId;
@@ -306,8 +314,8 @@ export class AttendanceService {
     return { data, total, page: sanitizedPage, limit: sanitizedLimit, totalPages: Math.ceil(total / sanitizedLimit) };
   }
 
-  static async getDisciplineById(id: string): Promise<IDiscipline> {
-    const record = await Discipline.findOne({ _id: id, isDeleted: false })
+  static async getDisciplineById(id: string, schoolId: string): Promise<IDiscipline> {
+    const record = await Discipline.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('studentId', 'admissionNumber userId gradeId classId')
       .populate('reportedBy', 'firstName lastName email')
       .lean();
@@ -315,9 +323,9 @@ export class AttendanceService {
     return record;
   }
 
-  static async updateDiscipline(id: string, data: Partial<IDiscipline>): Promise<IDiscipline> {
+  static async updateDiscipline(id: string, schoolId: string, data: Partial<IDiscipline>): Promise<IDiscipline> {
     const record = await Discipline.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     ).populate('studentId', 'admissionNumber userId gradeId classId').populate('reportedBy', 'firstName lastName email');
@@ -325,9 +333,9 @@ export class AttendanceService {
     return record;
   }
 
-  static async deleteDiscipline(id: string): Promise<IDiscipline> {
+  static async deleteDiscipline(id: string, schoolId: string): Promise<IDiscipline> {
     const record = await Discipline.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -425,8 +433,8 @@ export class AttendanceService {
     return { data, total, page: sanitizedPage, limit: sanitizedLimit, totalPages: Math.ceil(total / sanitizedLimit) };
   }
 
-  static async getLessonPlanById(id: string): Promise<ILessonPlan> {
-    const plan = await LessonPlan.findOne({ _id: id, isDeleted: false })
+  static async getLessonPlanById(id: string, schoolId: string): Promise<ILessonPlan> {
+    const plan = await LessonPlan.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('subjectId', 'name code')
       .populate('classId', 'name')
       .populate('teacherId', 'firstName lastName email')
@@ -435,9 +443,9 @@ export class AttendanceService {
     return plan;
   }
 
-  static async updateLessonPlan(id: string, data: Partial<ILessonPlan>): Promise<ILessonPlan> {
+  static async updateLessonPlan(id: string, schoolId: string, data: Partial<ILessonPlan>): Promise<ILessonPlan> {
     const plan = await LessonPlan.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     ).populate('subjectId', 'name code').populate('classId', 'name');
@@ -445,9 +453,9 @@ export class AttendanceService {
     return plan;
   }
 
-  static async deleteLessonPlan(id: string): Promise<ILessonPlan> {
+  static async deleteLessonPlan(id: string, schoolId: string): Promise<ILessonPlan> {
     const plan = await LessonPlan.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -492,8 +500,8 @@ export class AttendanceService {
     return { data, total, page: sanitizedPage, limit: sanitizedLimit, totalPages: Math.ceil(total / sanitizedLimit) };
   }
 
-  static async getSubstituteById(id: string): Promise<ISubstituteTeacher> {
-    const sub = await SubstituteTeacher.findOne({ _id: id, isDeleted: false })
+  static async getSubstituteById(id: string, schoolId: string): Promise<ISubstituteTeacher> {
+    const sub = await SubstituteTeacher.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('originalTeacherId', 'firstName lastName email')
       .populate('substituteTeacherId', 'firstName lastName email')
       .populate('approvedBy', 'firstName lastName email')
@@ -503,9 +511,9 @@ export class AttendanceService {
     return sub;
   }
 
-  static async updateSubstitute(id: string, data: Partial<ISubstituteTeacher>): Promise<ISubstituteTeacher> {
+  static async updateSubstitute(id: string, schoolId: string, data: Partial<ISubstituteTeacher>): Promise<ISubstituteTeacher> {
     const sub = await SubstituteTeacher.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     ).populate('originalTeacherId', 'firstName lastName email')
@@ -514,9 +522,9 @@ export class AttendanceService {
     return sub;
   }
 
-  static async deleteSubstitute(id: string): Promise<ISubstituteTeacher> {
+  static async deleteSubstitute(id: string, schoolId: string): Promise<ISubstituteTeacher> {
     const sub = await SubstituteTeacher.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );

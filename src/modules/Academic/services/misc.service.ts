@@ -9,6 +9,7 @@ import { NotFoundError } from '../../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../../common/constants.js';
 import type { PopulatedUser, PopulatedGrade } from '../../../types/populated.js';
 import { getPopulated } from '../../../types/populated.js';
+import { TimetableClashService } from './timetable-clash.service.js';
 
 interface ListQuery {
   page?: number;
@@ -40,18 +41,27 @@ export class MiscAcademicService {
   // ─── Timetable CRUD ─────────────────────────────────────────────────────
 
   static async createTimetable(data: Partial<ITimetable>): Promise<ITimetable> {
+    // Validate no clashes before saving
+    if (data.schoolId && data.teacherId && data.classId && data.day && data.period !== undefined) {
+      await TimetableClashService.validateNoClash(
+        String(data.schoolId),
+        String(data.teacherId),
+        String(data.classId),
+        data.day,
+        data.period,
+      );
+    }
     const entry = new Timetable(data);
     return entry.save();
   }
 
   static async listTimetable(
-    filters: { schoolId?: string; classId?: string },
+    filters: { schoolId: string; classId?: string },
     query: ListQuery,
   ): Promise<PaginatedResult<ITimetable>> {
     const { page, limit, skip, sortField } = getPagination(query);
 
-    const filter: Record<string, unknown> = { isDeleted: false };
-    if (filters.schoolId) filter.schoolId = filters.schoolId;
+    const filter: Record<string, unknown> = { schoolId: filters.schoolId, isDeleted: false };
     if (filters.classId) filter.classId = filters.classId;
 
     const [data, total] = await Promise.all([
@@ -70,8 +80,8 @@ export class MiscAcademicService {
     return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
-  static async getTimetableById(id: string): Promise<ITimetable> {
-    const entry = await Timetable.findOne({ _id: id, isDeleted: false })
+  static async getTimetableById(id: string, schoolId: string): Promise<ITimetable> {
+    const entry = await Timetable.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('classId', 'name gradeId')
       .populate('subjectId', 'name code')
       .populate('teacherId', 'firstName lastName email')
@@ -98,9 +108,23 @@ export class MiscAcademicService {
       .exec();
   }
 
-  static async updateTimetable(id: string, data: Partial<ITimetable>): Promise<ITimetable> {
+  static async updateTimetable(id: string, schoolId: string, data: Partial<ITimetable>): Promise<ITimetable> {
+    // If day/period/teacher/class are changing, validate no clashes
+    if (data.teacherId || data.classId || data.day || data.period !== undefined) {
+      const existing = await Timetable.findOne({ _id: id, schoolId, isDeleted: false }).lean();
+      if (existing) {
+        await TimetableClashService.validateNoClash(
+          schoolId,
+          String(data.teacherId ?? existing.teacherId),
+          String(data.classId ?? existing.classId),
+          (data.day ?? existing.day) as string,
+          data.period ?? existing.period,
+          id,
+        );
+      }
+    }
     const entry = await Timetable.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     )
@@ -111,9 +135,9 @@ export class MiscAcademicService {
     return entry;
   }
 
-  static async deleteTimetable(id: string): Promise<ITimetable> {
+  static async deleteTimetable(id: string, schoolId: string): Promise<ITimetable> {
     const entry = await Timetable.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -154,9 +178,9 @@ export class MiscAcademicService {
     return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
-  static async deletePastPaper(id: string): Promise<IPastPaper> {
+  static async deletePastPaper(id: string, schoolId: string): Promise<IPastPaper> {
     const paper = await PastPaper.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -187,9 +211,9 @@ export class MiscAcademicService {
       .exec();
   }
 
-  static async updateSubjectWeighting(id: string, data: Partial<ISubjectWeighting>): Promise<ISubjectWeighting> {
+  static async updateSubjectWeighting(id: string, schoolId: string, data: Partial<ISubjectWeighting>): Promise<ISubjectWeighting> {
     const weighting = await SubjectWeighting.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     ).populate('subjectId', 'name code').populate('gradeId', 'name');
@@ -197,9 +221,9 @@ export class MiscAcademicService {
     return weighting;
   }
 
-  static async deleteSubjectWeighting(id: string): Promise<ISubjectWeighting> {
+  static async deleteSubjectWeighting(id: string, schoolId: string): Promise<ISubjectWeighting> {
     const weighting = await SubjectWeighting.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -239,8 +263,8 @@ export class MiscAcademicService {
     return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
-  static async getRemedialById(id: string): Promise<IRemedialTracking> {
-    const remedial = await RemedialTracking.findOne({ _id: id, isDeleted: false })
+  static async getRemedialById(id: string, schoolId: string): Promise<IRemedialTracking> {
+    const remedial = await RemedialTracking.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('studentId', 'admissionNumber userId gradeId classId')
       .populate('subjectId', 'name code')
       .lean();
@@ -248,9 +272,9 @@ export class MiscAcademicService {
     return remedial;
   }
 
-  static async updateRemedial(id: string, data: Partial<IRemedialTracking>): Promise<IRemedialTracking> {
+  static async updateRemedial(id: string, schoolId: string, data: Partial<IRemedialTracking>): Promise<IRemedialTracking> {
     const remedial = await RemedialTracking.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     ).populate('studentId', 'admissionNumber userId gradeId classId').populate('subjectId', 'name code');
@@ -258,9 +282,9 @@ export class MiscAcademicService {
     return remedial;
   }
 
-  static async deleteRemedial(id: string): Promise<IRemedialTracking> {
+  static async deleteRemedial(id: string, schoolId: string): Promise<IRemedialTracking> {
     const remedial = await RemedialTracking.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );

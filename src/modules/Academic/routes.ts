@@ -43,7 +43,7 @@ router.post(
 router.get(
   '/grades',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher'),
+  authorize('super_admin', 'school_admin', 'teacher', 'student', 'parent'),
   AcademicController.listGrades,
 );
 
@@ -82,7 +82,7 @@ router.post(
 router.get(
   '/classes',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher'),
+  authorize('super_admin', 'school_admin', 'teacher', 'student', 'parent'),
   AcademicController.listClasses,
 );
 
@@ -121,7 +121,7 @@ router.post(
 router.get(
   '/subjects',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher'),
+  authorize('super_admin', 'school_admin', 'teacher', 'student', 'parent'),
   AcademicController.listSubjects,
 );
 
@@ -165,9 +165,16 @@ router.get(
 );
 
 router.get(
-  '/timetable/class/:classId',
+  '/timetable/clashes',
   authenticate,
   authorize('super_admin', 'school_admin', 'teacher'),
+  AcademicController.detectTimetableClashes,
+);
+
+router.get(
+  '/timetable/class/:classId',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'teacher', 'student', 'parent'),
   AcademicController.getTimetableByClass,
 );
 
@@ -260,7 +267,7 @@ router.post(
 router.get(
   '/marks/student/:studentId',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'parent'),
+  authorize('super_admin', 'school_admin', 'teacher', 'parent', 'student'),
   requireParentOwnership('studentId'),
   AcademicController.getStudentMarks,
 );

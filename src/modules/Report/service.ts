@@ -1,10 +1,12 @@
 import { DashboardReportService } from './services/dashboard.service.js';
 import { FinancialReportService } from './services/financial.service.js';
 import { AcademicReportService } from './services/academic.service.js';
+import { Student360Service } from './services/student360.service.js';
 
 export { DashboardReportService } from './services/dashboard.service.js';
 export { FinancialReportService } from './services/financial.service.js';
 export { AcademicReportService } from './services/academic.service.js';
+export { Student360Service } from './services/student360.service.js';
 
 /**
  * Unified facade so existing consumers (`import { ReportService }`)
@@ -29,4 +31,6 @@ export const ReportService = {
   getStudentFullReport: AcademicReportService.getStudentFullReport,
   getClassPerformance: AcademicReportService.getClassPerformance,
   getSubjectPerformance: AcademicReportService.getSubjectPerformance,
+  // Student 360
+  getStudent360: Student360Service.getStudent360,
 } as const;

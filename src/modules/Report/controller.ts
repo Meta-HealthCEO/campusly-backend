@@ -71,14 +71,32 @@ export class ReportController {
     const studentId = req.params.studentId as string;
     const term = Number(req.query.term);
     const academicYear = Number(req.query.academicYear);
+    const schoolId = req.user?.schoolId;
 
     if (!term || !academicYear) {
       res.status(400).json(apiResponse(false, undefined, undefined, 'term and academicYear are required'));
       return;
     }
 
-    const reportCard = await ReportService.getStudentReportCard(studentId, term, academicYear);
+    const reportCard = await ReportService.getStudentReportCard(studentId, term, academicYear, schoolId);
     res.json(apiResponse(true, reportCard, 'Student report card retrieved successfully'));
+  }
+
+  // ─── Student 360 View ───────────────────────────────────────────────────────
+
+  static async getStudent360(req: Request, res: Response): Promise<void> {
+    const studentId = req.params.studentId as string;
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
+      return;
+    }
+    const data = await ReportService.getStudent360(schoolId, studentId);
+    if (!data) {
+      res.status(404).json(apiResponse(false, undefined, undefined, 'Student not found'));
+      return;
+    }
+    res.json(apiResponse(true, data, 'Student 360 view retrieved successfully'));
   }
 
   // ─── Debtors Report ─────────────────────────────────────────────────────────

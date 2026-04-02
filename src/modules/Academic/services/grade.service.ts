@@ -57,15 +57,15 @@ export class GradeService {
     return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
-  static async getGradeById(id: string): Promise<IGrade> {
-    const grade = await Grade.findOne({ _id: id, isDeleted: false }).lean();
+  static async getGradeById(id: string, schoolId: string): Promise<IGrade> {
+    const grade = await Grade.findOne({ _id: id, schoolId, isDeleted: false }).lean();
     if (!grade) throw new NotFoundError('Grade not found');
     return grade;
   }
 
-  static async updateGrade(id: string, data: Partial<IGrade>): Promise<IGrade> {
+  static async updateGrade(id: string, schoolId: string, data: Partial<IGrade>): Promise<IGrade> {
     const grade = await Grade.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     );
@@ -73,9 +73,9 @@ export class GradeService {
     return grade;
   }
 
-  static async deleteGrade(id: string): Promise<IGrade> {
+  static async deleteGrade(id: string, schoolId: string): Promise<IGrade> {
     const grade = await Grade.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -91,13 +91,12 @@ export class GradeService {
   }
 
   static async listClasses(
-    filters: { schoolId?: string; gradeId?: string },
+    filters: { schoolId: string; gradeId?: string },
     query: ListQuery,
   ): Promise<PaginatedResult<IClass>> {
     const { page, limit, skip, sortField } = getPagination(query);
 
-    const filter: Record<string, unknown> = { isDeleted: false };
-    if (filters.schoolId) filter.schoolId = filters.schoolId;
+    const filter: Record<string, unknown> = { schoolId: filters.schoolId, isDeleted: false };
     if (filters.gradeId) filter.gradeId = filters.gradeId;
 
     if (query.search) {
@@ -119,8 +118,8 @@ export class GradeService {
     return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
-  static async getClassById(id: string): Promise<IClass> {
-    const cls = await Class.findOne({ _id: id, isDeleted: false })
+  static async getClassById(id: string, schoolId: string): Promise<IClass> {
+    const cls = await Class.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('gradeId', 'name level')
       .populate('teacherId', 'firstName lastName email')
       .lean();
@@ -128,9 +127,9 @@ export class GradeService {
     return cls;
   }
 
-  static async updateClass(id: string, data: Partial<IClass>): Promise<IClass> {
+  static async updateClass(id: string, schoolId: string, data: Partial<IClass>): Promise<IClass> {
     const cls = await Class.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     )
@@ -140,9 +139,9 @@ export class GradeService {
     return cls;
   }
 
-  static async deleteClass(id: string): Promise<IClass> {
+  static async deleteClass(id: string, schoolId: string): Promise<IClass> {
     const cls = await Class.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );

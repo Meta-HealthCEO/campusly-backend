@@ -52,9 +52,18 @@ router.get(
 router.get(
   '/student-report-card/:studentId',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher'),
+  authorize('super_admin', 'school_admin', 'teacher', 'parent'),
   validate({ query: reportQuerySchema }),
   ReportController.getStudentReportCard,
+);
+
+// ─── Student 360 View ──────────────────────────────────────────────────────
+
+router.get(
+  '/student/:studentId/360',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'teacher', 'parent'),
+  ReportController.getStudent360,
 );
 
 // ─── Debtors ────────────────────────────────────────────────────────────────

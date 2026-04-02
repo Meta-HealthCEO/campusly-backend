@@ -45,13 +45,12 @@ export class AssessmentService {
   }
 
   static async listAssessments(
-    filters: { schoolId?: string; classId?: string; subjectId?: string; term?: number; academicYear?: number },
+    filters: { schoolId: string; classId?: string; subjectId?: string; term?: number; academicYear?: number },
     query: ListQuery,
   ): Promise<PaginatedResult<IAssessment>> {
     const { page, limit, skip, sortField } = getPagination(query);
 
-    const filter: Record<string, unknown> = { isDeleted: false };
-    if (filters.schoolId) filter.schoolId = filters.schoolId;
+    const filter: Record<string, unknown> = { schoolId: filters.schoolId, isDeleted: false };
     if (filters.classId) filter.classId = filters.classId;
     if (filters.subjectId) filter.subjectId = filters.subjectId;
     if (filters.term) filter.term = filters.term;
@@ -76,8 +75,8 @@ export class AssessmentService {
     return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
-  static async getAssessmentById(id: string): Promise<IAssessment> {
-    const assessment = await Assessment.findOne({ _id: id, isDeleted: false })
+  static async getAssessmentById(id: string, schoolId: string): Promise<IAssessment> {
+    const assessment = await Assessment.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('subjectId', 'name code')
       .populate('classId', 'name gradeId')
       .lean();
@@ -85,9 +84,9 @@ export class AssessmentService {
     return assessment;
   }
 
-  static async updateAssessment(id: string, data: Partial<IAssessment>): Promise<IAssessment> {
+  static async updateAssessment(id: string, schoolId: string, data: Partial<IAssessment>): Promise<IAssessment> {
     const assessment = await Assessment.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     )
@@ -97,9 +96,9 @@ export class AssessmentService {
     return assessment;
   }
 
-  static async deleteAssessment(id: string): Promise<IAssessment> {
+  static async deleteAssessment(id: string, schoolId: string): Promise<IAssessment> {
     const assessment = await Assessment.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -193,11 +192,13 @@ export class AssessmentService {
 
   static async getStudentMarks(
     studentId: string,
+    schoolId: string,
     term?: number,
     academicYear?: number,
   ): Promise<IMark[]> {
     const markFilter: Record<string, unknown> = {
       studentId,
+      schoolId,
       isDeleted: false,
     };
 
@@ -220,8 +221,8 @@ export class AssessmentService {
     return marks.filter((m) => m.assessmentId !== null);
   }
 
-  static async getAssessmentMarks(assessmentId: string): Promise<IMark[]> {
-    return Mark.find({ assessmentId, isDeleted: false })
+  static async getAssessmentMarks(assessmentId: string, schoolId: string): Promise<IMark[]> {
+    return Mark.find({ assessmentId, schoolId, isDeleted: false })
       .populate({
         path: 'studentId',
         populate: { path: 'userId', select: 'firstName lastName email' },

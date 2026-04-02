@@ -14,6 +14,7 @@ import { SubjectService } from './services/subject.service.js';
 import { AssessmentService } from './services/assessment.service.js';
 import { ExamService } from './services/exam.service.js';
 import { MiscAcademicService } from './services/misc.service.js';
+import { TimetableClashService } from './services/timetable-clash.service.js';
 
 export class AcademicService {
   // ─── Grade + Class (from grade.service) ───────────────────────────────────
@@ -81,6 +82,9 @@ export class AcademicService {
   static updateRemedial = MiscAcademicService.updateRemedial;
   static deleteRemedial = MiscAcademicService.deleteRemedial;
   static getLuritsExport = MiscAcademicService.getLuritsExport;
+
+  // ─── Timetable Clash Detection (from timetable-clash.service) ─────────────
+  static detectTimetableClashes = TimetableClashService.detectClashes;
 }
 
 // Also export sub-services for direct import
@@ -89,3 +93,4 @@ export { SubjectService } from './services/subject.service.js';
 export { AssessmentService } from './services/assessment.service.js';
 export { ExamService } from './services/exam.service.js';
 export { MiscAcademicService } from './services/misc.service.js';
+export { TimetableClashService } from './services/timetable-clash.service.js';

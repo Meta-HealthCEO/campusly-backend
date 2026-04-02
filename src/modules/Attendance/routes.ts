@@ -69,6 +69,20 @@ router.get(
   AttendanceController.getDailyReport,
 );
 
+router.get(
+  '/chronic-absentees',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  AttendanceController.getChronicAbsentees,
+);
+
+router.get(
+  '/student/:studentId/patterns',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  AttendanceController.getStudentPatterns,
+);
+
 // ─── Discipline Routes ──────────────────────────────────────────────────────
 
 router.post(

@@ -57,9 +57,10 @@ export class AcademicReportService {
     term?: number,
     academicYear?: number,
   ) {
+    const schoolObjId = new mongoose.Types.ObjectId(schoolId);
     const results = await Mark.aggregate([
       {
-        $match: { isDeleted: false },
+        $match: { schoolId: schoolObjId, isDeleted: false },
       },
       {
         $lookup: {
@@ -72,7 +73,7 @@ export class AcademicReportService {
       { $unwind: '$assessment' },
       {
         $match: {
-          'assessment.schoolId': new mongoose.Types.ObjectId(schoolId),
+          'assessment.schoolId': schoolObjId,
           'assessment.isDeleted': false,
           ...(term ? { 'assessment.term': term } : {}),
           ...(academicYear ? { 'assessment.academicYear': academicYear } : {}),
@@ -112,11 +113,12 @@ export class AcademicReportService {
     return results;
   }
 
-  static async getStudentReportCard(studentId: string, term: number, academicYear: number) {
-    const marks = await Mark.find({
+  static async getStudentReportCard(studentId: string, term: number, academicYear: number, schoolId?: string) {
+    const markFilter: Record<string, unknown> = {
       studentId: new mongoose.Types.ObjectId(studentId),
       isDeleted: false,
-    })
+    };
+    const marks = await Mark.find(markFilter)
       .populate({
         path: 'assessmentId',
         match: { term, academicYear, isDeleted: false },
@@ -134,13 +136,16 @@ export class AcademicReportService {
     };
   }
 
-  static async getStudentFullReport(studentId: string) {
+  static async getStudentFullReport(studentId: string, schoolId?: string) {
     const studentObjId = new mongoose.Types.ObjectId(studentId);
     const now = new Date();
     const startOfYear = new Date(now.getFullYear(), 0, 1);
 
+    const studentFilter: Record<string, unknown> = { _id: studentObjId, isDeleted: false };
+    if (schoolId) studentFilter.schoolId = new mongoose.Types.ObjectId(schoolId);
+
     const [student, marks, attendanceStats, behaviourStats, walletInfo, homeworkStats] = await Promise.all([
-      Student.findOne({ _id: studentObjId, isDeleted: false })
+      Student.findOne(studentFilter)
         .populate('userId', 'firstName lastName email')
         .populate('gradeId', 'name')
         .populate('classId', 'name')
@@ -203,14 +208,20 @@ export class AcademicReportService {
     };
   }
 
-  static async getClassPerformance(classId: string) {
+  static async getClassPerformance(classId: string, schoolId?: string) {
     const classObjId = new mongoose.Types.ObjectId(classId);
 
-    const students = await Student.find({ classId: classObjId, enrollmentStatus: 'active', isDeleted: false })
+    const studentFilter: Record<string, unknown> = { classId: classObjId, enrollmentStatus: 'active', isDeleted: false };
+    if (schoolId) studentFilter.schoolId = new mongoose.Types.ObjectId(schoolId);
+
+    const students = await Student.find(studentFilter)
       .populate('userId', 'firstName lastName')
       .lean();
 
-    const assessments = await Assessment.find({ classId: classObjId, isDeleted: false })
+    const assessmentFilter: Record<string, unknown> = { classId: classObjId, isDeleted: false };
+    if (schoolId) assessmentFilter.schoolId = new mongoose.Types.ObjectId(schoolId);
+
+    const assessments = await Assessment.find(assessmentFilter)
       .populate('subjectId', 'name code')
       .lean();
 
