@@ -65,8 +65,8 @@ export class ConsentService {
     };
   }
 
-  static async getForm(id: string): Promise<IConsentForm> {
-    const form = await ConsentForm.findOne({ _id: id, isDeleted: false })
+  static async getForm(id: string, schoolId: string): Promise<IConsentForm> {
+    const form = await ConsentForm.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('createdBy', 'firstName lastName email');
 
     if (!form) {
@@ -76,9 +76,9 @@ export class ConsentService {
     return form;
   }
 
-  static async updateForm(id: string, data: UpdateConsentFormInput): Promise<IConsentForm> {
+  static async updateForm(id: string, schoolId: string, data: UpdateConsentFormInput): Promise<IConsentForm> {
     const form = await ConsentForm.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     ).populate('createdBy', 'firstName lastName email');
@@ -90,9 +90,9 @@ export class ConsentService {
     return form;
   }
 
-  static async deleteForm(id: string): Promise<IConsentForm> {
+  static async deleteForm(id: string, schoolId: string): Promise<IConsentForm> {
     const form = await ConsentForm.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -106,8 +106,8 @@ export class ConsentService {
 
   // ─── Consent Response ─────────────────────────────────────────────────────
 
-  static async recordResponse(data: RecordConsentResponseInput): Promise<IConsentResponse> {
-    const form = await ConsentForm.findOne({ _id: data.formId, isDeleted: false });
+  static async recordResponse(data: RecordConsentResponseInput, schoolId: string): Promise<IConsentResponse> {
+    const form = await ConsentForm.findOne({ _id: data.formId, schoolId, isDeleted: false });
 
     if (!form) {
       throw new NotFoundError('Consent form not found');
@@ -151,7 +151,7 @@ export class ConsentService {
     };
   }
 
-  static async getOutstandingConsents(studentId: string): Promise<IConsentForm[]> {
+  static async getOutstandingConsents(studentId: string, schoolId: string): Promise<IConsentForm[]> {
     const respondedFormIds = await ConsentResponse.distinct('formId', {
       studentId,
       isDeleted: false,
@@ -159,6 +159,7 @@ export class ConsentService {
 
     const outstandingForms = await ConsentForm.find({
       targetStudents: studentId,
+      schoolId,
       _id: { $nin: respondedFormIds },
       isDeleted: false,
     }).populate('createdBy', 'firstName lastName email');

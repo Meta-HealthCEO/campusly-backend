@@ -6,7 +6,8 @@ export class ConsentController {
   // ─── Consent Form CRUD ────────────────────────────────────────────────────
 
   static async createForm(req: Request, res: Response): Promise<void> {
-    const form = await ConsentService.createForm(req.body);
+    const schoolId = req.user!.schoolId!;
+    const form = await ConsentService.createForm({ ...req.body, schoolId });
     res.status(201).json(apiResponse(true, form, 'Consent form created successfully'));
   }
 
@@ -23,24 +24,28 @@ export class ConsentController {
   }
 
   static async getForm(req: Request, res: Response): Promise<void> {
-    const form = await ConsentService.getForm(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const form = await ConsentService.getForm(req.params.id as string, schoolId);
     res.json(apiResponse(true, form, 'Consent form retrieved successfully'));
   }
 
   static async updateForm(req: Request, res: Response): Promise<void> {
-    const form = await ConsentService.updateForm(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const form = await ConsentService.updateForm(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, form, 'Consent form updated successfully'));
   }
 
   static async deleteForm(req: Request, res: Response): Promise<void> {
-    await ConsentService.deleteForm(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await ConsentService.deleteForm(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Consent form deleted successfully'));
   }
 
   // ─── Consent Response ─────────────────────────────────────────────────────
 
   static async recordResponse(req: Request, res: Response): Promise<void> {
-    const response = await ConsentService.recordResponse(req.body);
+    const schoolId = req.user!.schoolId!;
+    const response = await ConsentService.recordResponse(req.body, schoolId);
     res.status(201).json(apiResponse(true, response, 'Consent response recorded successfully'));
   }
 
@@ -55,7 +60,8 @@ export class ConsentController {
   }
 
   static async getOutstandingConsents(req: Request, res: Response): Promise<void> {
-    const forms = await ConsentService.getOutstandingConsents(req.params.studentId as string);
+    const schoolId = req.user!.schoolId!;
+    const forms = await ConsentService.getOutstandingConsents(req.params.studentId as string, schoolId);
     res.json(apiResponse(true, forms, 'Outstanding consents retrieved successfully'));
   }
 }

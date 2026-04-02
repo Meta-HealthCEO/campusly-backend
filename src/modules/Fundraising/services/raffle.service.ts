@@ -5,9 +5,63 @@ import {
   RaffleTicket, IRaffleTicket,
 } from '../model.js';
 import { NotFoundError, BadRequestError } from '../../../common/errors.js';
+import { paginationHelper } from '../../../common/utils.js';
 import type { CreateRaffleInput, BuyRaffleTicketsInput } from '../validation.js';
 
+interface ListRaffleQuery {
+  page?: number;
+  limit?: number;
+  schoolId?: string;
+  campaignId?: string;
+}
+
 export class RaffleService {
+  static async listRaffles(
+    query: ListRaffleQuery,
+  ): Promise<{
+    raffles: IRaffle[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  }> {
+    const { skip, limit } = paginationHelper(query.page, query.limit);
+    const page = Math.max(query.page ?? 1, 1);
+
+    // Raffles don't have schoolId directly — scope via campaigns
+    const campaignFilter: Record<string, unknown> = { isDeleted: false };
+    if (query.schoolId) {
+      campaignFilter.schoolId = query.schoolId;
+    }
+
+    const campaignIds = query.campaignId
+      ? [query.campaignId]
+      : (await Campaign.find(campaignFilter).select('_id').lean()).map((c) => c._id);
+
+    const filter: Record<string, unknown> = {
+      campaignId: { $in: campaignIds },
+      isDeleted: false,
+    };
+
+    const [raffles, total] = await Promise.all([
+      Raffle.find(filter)
+        .populate('campaignId', 'title schoolId')
+        .sort('-createdAt')
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Raffle.countDocuments(filter),
+    ]);
+
+    return {
+      raffles: raffles as unknown as IRaffle[],
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
   static async createRaffle(data: CreateRaffleInput): Promise<IRaffle> {
     const campaign = await Campaign.findOne({ _id: data.campaignId, isDeleted: false });
 
@@ -65,8 +119,8 @@ export class RaffleService {
     }
   }
 
-  static async drawWinners(raffleId: string): Promise<IRaffleTicket[]> {
-    const raffle = await Raffle.findOne({ _id: raffleId, isDeleted: false });
+  static async drawWinners(raffleId: string, schoolId: string): Promise<IRaffleTicket[]> {
+    const raffle = await Raffle.findOne({ _id: raffleId, schoolId, isDeleted: false });
 
     if (!raffle) {
       throw new NotFoundError('Raffle not found');

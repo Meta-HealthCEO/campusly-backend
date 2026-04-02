@@ -52,6 +52,29 @@ router.delete(
   TransportController.deleteBusRoute,
 );
 
+// ─── Route Capacity Routes ─────────────────────────────────────────────────
+
+router.get(
+  '/capacity-overview',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  TransportController.getCapacityOverview,
+);
+
+router.get(
+  '/routes/:id/capacity',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  TransportController.getRouteCapacity,
+);
+
+router.get(
+  '/routes/:id/students',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  TransportController.getRouteStudents,
+);
+
 // ─── Assignment Routes ──────────────────────────────────────────────────────
 
 router.post(

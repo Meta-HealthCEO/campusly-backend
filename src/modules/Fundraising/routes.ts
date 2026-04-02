@@ -83,6 +83,12 @@ router.delete(
 
 // ─── Raffle Routes ─────────────────────────────────────────────────────────
 
+router.get(
+  '/raffles',
+  authenticate,
+  FundraisingController.listRaffles,
+);
+
 router.post(
   '/raffles',
   authenticate,

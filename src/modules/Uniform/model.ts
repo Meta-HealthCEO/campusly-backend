@@ -95,12 +95,19 @@ export interface IUniformOrderItem {
 
 export type UniformOrderStatus = 'pending' | 'processing' | 'confirmed' | 'ready' | 'collected' | 'cancelled';
 
+export interface IStatusHistoryEntry {
+  status: string;
+  timestamp: Date;
+  notes?: string;
+}
+
 export interface IUniformOrder extends Document {
   studentId: Types.ObjectId;
   schoolId: Types.ObjectId;
   items: IUniformOrderItem[];
   totalAmount: number;
   status: UniformOrderStatus;
+  statusHistory: IStatusHistoryEntry[];
   orderedBy: Types.ObjectId;
   isDeleted: boolean;
   createdAt: Date;
@@ -137,6 +144,15 @@ const uniformOrderItemSchema = new Schema<IUniformOrderItem>(
   { _id: false },
 );
 
+const statusHistoryEntrySchema = new Schema<IStatusHistoryEntry>(
+  {
+    status: { type: String, required: true },
+    timestamp: { type: Date, required: true },
+    notes: { type: String },
+  },
+  { _id: false },
+);
+
 const uniformOrderSchema = new Schema<IUniformOrder>(
   {
     studentId: {
@@ -161,6 +177,10 @@ const uniformOrderSchema = new Schema<IUniformOrder>(
       type: String,
       enum: ['pending', 'processing', 'confirmed', 'ready', 'collected', 'cancelled'],
       default: 'pending',
+    },
+    statusHistory: {
+      type: [statusHistoryEntrySchema],
+      default: [],
     },
     orderedBy: {
       type: Schema.Types.ObjectId,

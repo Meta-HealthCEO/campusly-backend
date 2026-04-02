@@ -1,5 +1,6 @@
 import {
   Campaign, ICampaign,
+  Donation, IDonation,
 } from '../model.js';
 import { NotFoundError } from '../../../common/errors.js';
 import { paginationHelper } from '../../../common/utils.js';
@@ -61,8 +62,8 @@ export class CampaignService {
     };
   }
 
-  static async getCampaign(id: string): Promise<ICampaign> {
-    const campaign = await Campaign.findOne({ _id: id, isDeleted: false }).lean();
+  static async getCampaign(id: string, schoolId: string): Promise<ICampaign> {
+    const campaign = await Campaign.findOne({ _id: id, schoolId, isDeleted: false }).lean();
 
     if (!campaign) {
       throw new NotFoundError('Campaign not found');
@@ -71,9 +72,9 @@ export class CampaignService {
     return campaign;
   }
 
-  static async updateCampaign(id: string, data: UpdateCampaignInput): Promise<ICampaign> {
+  static async updateCampaign(id: string, schoolId: string, data: UpdateCampaignInput): Promise<ICampaign> {
     const campaign = await Campaign.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     );
@@ -85,9 +86,9 @@ export class CampaignService {
     return campaign;
   }
 
-  static async deleteCampaign(id: string): Promise<ICampaign> {
+  static async deleteCampaign(id: string, schoolId: string): Promise<ICampaign> {
     const campaign = await Campaign.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -99,11 +100,13 @@ export class CampaignService {
     return campaign;
   }
 
-  static async getCampaignProgress(campaignId: string): Promise<{
+  static async getCampaignProgress(campaignId: string, schoolId: string): Promise<{
     campaign: ICampaign;
     percentageComplete: number;
+    donorCount: number;
+    recentDonations: IDonation[];
   }> {
-    const campaign = await Campaign.findOne({ _id: campaignId, isDeleted: false }).lean();
+    const campaign = await Campaign.findOne({ _id: campaignId, schoolId, isDeleted: false }).lean();
 
     if (!campaign) {
       throw new NotFoundError('Campaign not found');
@@ -113,6 +116,14 @@ export class CampaignService {
       ? Math.round(((campaign.raisedAmount / campaign.targetAmount) * 100) * 100) / 100
       : 0;
 
-    return { campaign, percentageComplete };
+    const [donorCount, recentDonations] = await Promise.all([
+      Donation.countDocuments({ campaignId, schoolId, isDeleted: false }),
+      Donation.find({ campaignId, schoolId, isDeleted: false })
+        .sort('-createdAt')
+        .limit(5)
+        .lean(),
+    ]);
+
+    return { campaign, percentageComplete, donorCount, recentDonations };
   }
 }

@@ -26,24 +26,28 @@ export class EventController {
   }
 
   static async getById(req: Request, res: Response): Promise<void> {
-    const event = await EventService.getById(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const event = await EventService.getById(req.params.id as string, schoolId);
     res.json(apiResponse(true, event, 'Event retrieved successfully'));
   }
 
   static async update(req: Request, res: Response): Promise<void> {
-    const event = await EventService.update(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const event = await EventService.update(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, event, 'Event updated successfully'));
   }
 
   static async delete(req: Request, res: Response): Promise<void> {
-    await EventService.delete(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await EventService.delete(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Event deleted successfully'));
   }
 
   // ─── RSVP ────────────────────────────────────────────────────────────────
 
   static async createRsvp(req: Request, res: Response): Promise<void> {
-    const rsvp = await EventService.createRsvp(req.body, getUser(req).id);
+    const schoolId = req.user!.schoolId!;
+    const rsvp = await EventService.createRsvp(req.body, getUser(req).id, schoolId);
     res.status(201).json(apiResponse(true, rsvp, 'RSVP submitted successfully'));
   }
 
@@ -67,17 +71,20 @@ export class EventController {
   }
 
   static async deleteRsvp(req: Request, res: Response): Promise<void> {
-    await EventService.deleteRsvp(req.params.eventId as string, getUser(req).id);
+    const schoolId = req.user!.schoolId!;
+    await EventService.deleteRsvp(req.params.eventId as string, getUser(req).id, schoolId);
     res.json(apiResponse(true, undefined, 'RSVP deleted successfully'));
   }
 
   // ─── Tickets ──────────────────────────────────────────────────────────────
 
   static async purchaseTicket(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const ticket = await EventService.purchaseTicket(
       req.params.eventId as string,
       getUser(req).id,
       req.body,
+      schoolId,
     );
     res.status(201).json(apiResponse(true, ticket, 'Ticket purchased successfully'));
   }
@@ -93,14 +100,17 @@ export class EventController {
   }
 
   static async getTicketByQrCode(req: Request, res: Response): Promise<void> {
-    const ticket = await EventService.getTicketByQrCode(req.params.qrCode as string);
+    const schoolId = req.user!.schoolId!;
+    const ticket = await EventService.getTicketByQrCode(req.params.qrCode as string, schoolId);
     res.json(apiResponse(true, ticket, 'Ticket retrieved successfully'));
   }
 
   static async cancelTicket(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const ticket = await EventService.cancelTicket(
       req.params.eventId as string,
       req.params.ticketId as string,
+      schoolId,
     );
     res.json(apiResponse(true, ticket, 'Ticket cancelled successfully'));
   }
@@ -108,7 +118,8 @@ export class EventController {
   // ─── Seats ────────────────────────────────────────────────────────────────
 
   static async createSeats(req: Request, res: Response): Promise<void> {
-    const seats = await EventService.createSeats(req.params.eventId as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const seats = await EventService.createSeats(req.params.eventId as string, req.body, schoolId);
     res.status(201).json(apiResponse(true, seats, 'Seats created successfully'));
   }
 
@@ -123,18 +134,22 @@ export class EventController {
   }
 
   static async reserveSeat(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const seat = await EventService.reserveSeat(
       req.params.eventId as string,
       req.params.seatId as string,
       req.body.ticketId,
+      schoolId,
     );
     res.json(apiResponse(true, seat, 'Seat reserved successfully'));
   }
 
   static async releaseSeat(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const seat = await EventService.releaseSeat(
       req.params.eventId as string,
       req.params.seatId as string,
+      schoolId,
     );
     res.json(apiResponse(true, seat, 'Seat released successfully'));
   }
@@ -142,10 +157,12 @@ export class EventController {
   // ─── Check-In ─────────────────────────────────────────────────────────────
 
   static async checkIn(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const checkIn = await EventService.checkIn(
       req.params.eventId as string,
       req.body,
       getUser(req).id,
+      schoolId,
     );
     res.status(201).json(apiResponse(true, checkIn, 'Check-in successful'));
   }
@@ -187,9 +204,11 @@ export class EventController {
   }
 
   static async deleteGalleryImage(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     await EventService.deleteGalleryImage(
       req.params.eventId as string,
       req.params.imageId as string,
+      schoolId,
     );
     res.json(apiResponse(true, undefined, 'Gallery image deleted successfully'));
   }

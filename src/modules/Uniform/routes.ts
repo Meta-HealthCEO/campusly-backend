@@ -83,6 +83,12 @@ router.patch(
   UniformController.updateOrderStatus,
 );
 
+router.get(
+  '/orders/:id/timeline',
+  authenticate,
+  UniformController.getOrderTimeline,
+);
+
 router.delete(
   '/orders/:id',
   authenticate,
@@ -195,6 +201,20 @@ router.delete(
   authenticate,
   authorize('super_admin', 'school_admin'),
   UniformController.deletePreOrder,
+);
+
+// ─── Size Recommendation Routes ───────────────────────────────────────────
+
+router.get(
+  '/size-recommendation/:studentId',
+  authenticate,
+  UniformController.getSizeRecommendation,
+);
+
+router.get(
+  '/requirements/:gradeId',
+  authenticate,
+  UniformController.getUniformRequirements,
 );
 
 // ─── Low Stock Routes ──────────────────────────────────────────────────────

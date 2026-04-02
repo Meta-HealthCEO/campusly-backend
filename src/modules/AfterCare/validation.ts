@@ -90,6 +90,7 @@ export const createActivitySchema = z.object({
   description: z.string().optional(),
   supervisorId: objectIdSchema,
   studentIds: z.array(objectIdSchema).optional(),
+  capacity: z.number().int().nonnegative().optional(),
   startTime: z.string().min(1, 'Start time is required'),
   endTime: z.string().min(1, 'End time is required'),
 }).strict();
@@ -101,9 +102,16 @@ export const updateActivitySchema = z.object({
   description: z.string().optional(),
   supervisorId: objectIdSchema.optional(),
   studentIds: z.array(objectIdSchema).optional(),
+  capacity: z.number().int().nonnegative().optional(),
   startTime: z.string().min(1, 'Start time is required').optional(),
   endTime: z.string().min(1, 'End time is required').optional(),
 }).strict();
+
+export const bookActivitySchema = z.object({
+  studentId: objectIdSchema,
+}).strict();
+
+export type BookActivityInput = z.infer<typeof bookActivitySchema>;
 
 // ─── After Care Invoice ────────────────────────────────────────────────────
 

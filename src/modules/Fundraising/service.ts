@@ -37,6 +37,7 @@ export const FundraisingService = {
   processRecurringDonations: DonationService.processRecurringDonations,
 
   // Raffle
+  listRaffles: RaffleService.listRaffles,
   createRaffle: RaffleService.createRaffle,
   buyTickets: RaffleService.buyTickets,
   drawWinners: RaffleService.drawWinners,

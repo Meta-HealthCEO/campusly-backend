@@ -23,17 +23,20 @@ export class FundraisingController {
   }
 
   static async getCampaign(req: Request, res: Response): Promise<void> {
-    const campaign = await FundraisingService.getCampaign(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const campaign = await FundraisingService.getCampaign(req.params.id as string, schoolId);
     res.json(apiResponse(true, campaign, 'Campaign retrieved successfully'));
   }
 
   static async updateCampaign(req: Request, res: Response): Promise<void> {
-    const campaign = await FundraisingService.updateCampaign(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const campaign = await FundraisingService.updateCampaign(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, campaign, 'Campaign updated successfully'));
   }
 
   static async deleteCampaign(req: Request, res: Response): Promise<void> {
-    await FundraisingService.deleteCampaign(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await FundraisingService.deleteCampaign(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Campaign deleted successfully'));
   }
 
@@ -57,16 +60,30 @@ export class FundraisingController {
   }
 
   static async getDonation(req: Request, res: Response): Promise<void> {
-    const donation = await FundraisingService.getDonation(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const donation = await FundraisingService.getDonation(req.params.id as string, schoolId);
     res.json(apiResponse(true, donation, 'Donation retrieved successfully'));
   }
 
   static async deleteDonation(req: Request, res: Response): Promise<void> {
-    await FundraisingService.deleteDonation(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await FundraisingService.deleteDonation(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Donation deleted successfully'));
   }
 
   // ─── Raffle ─────────────────────────────────────────────────────────────────
+
+  static async listRaffles(req: Request, res: Response): Promise<void> {
+    const query = {
+      page: req.query.page ? Number(req.query.page) : undefined,
+      limit: req.query.limit ? Number(req.query.limit) : undefined,
+      campaignId: req.query.campaignId as string | undefined,
+      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+    };
+
+    const result = await FundraisingService.listRaffles(query);
+    res.json(apiResponse(true, result, 'Raffles retrieved successfully'));
+  }
 
   static async createRaffle(req: Request, res: Response): Promise<void> {
     const raffle = await FundraisingService.createRaffle(req.body);
@@ -79,7 +96,8 @@ export class FundraisingController {
   }
 
   static async drawWinners(req: Request, res: Response): Promise<void> {
-    const winners = await FundraisingService.drawWinners(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const winners = await FundraisingService.drawWinners(req.params.id as string, schoolId);
     res.json(apiResponse(true, winners, 'Winners drawn successfully'));
   }
 
@@ -93,7 +111,8 @@ export class FundraisingController {
   // ─── Campaign Progress ──────────────────────────────────────────────────
 
   static async getCampaignProgress(req: Request, res: Response): Promise<void> {
-    const result = await FundraisingService.getCampaignProgress(req.params.campaignId as string);
+    const schoolId = req.user!.schoolId!;
+    const result = await FundraisingService.getCampaignProgress(req.params.campaignId as string, schoolId);
     res.json(apiResponse(true, result, 'Campaign progress retrieved successfully'));
   }
 
@@ -105,7 +124,8 @@ export class FundraisingController {
   }
 
   static async getTaxCertificate(req: Request, res: Response): Promise<void> {
-    const certificate = await FundraisingService.getTaxCertificateById(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const certificate = await FundraisingService.getTaxCertificateById(req.params.id as string, schoolId);
     res.json(apiResponse(true, certificate, 'Tax certificate retrieved successfully'));
   }
 
@@ -167,12 +187,14 @@ export class FundraisingController {
   }
 
   static async getRecurringDonation(req: Request, res: Response): Promise<void> {
-    const recurring = await FundraisingService.getRecurringDonation(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const recurring = await FundraisingService.getRecurringDonation(req.params.id as string, schoolId);
     res.json(apiResponse(true, recurring, 'Recurring donation retrieved successfully'));
   }
 
   static async cancelRecurringDonation(req: Request, res: Response): Promise<void> {
-    const recurring = await FundraisingService.cancelRecurringDonation(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const recurring = await FundraisingService.cancelRecurringDonation(req.params.id as string, schoolId);
     res.json(apiResponse(true, recurring, 'Recurring donation cancelled successfully'));
   }
 

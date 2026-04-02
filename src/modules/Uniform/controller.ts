@@ -3,6 +3,7 @@ import { Response } from 'express';
 import { getUser } from '../../types/authenticated-request.js';
 import { UniformService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
+import { UserRole } from '../../common/enums.js';
 
 export class UniformController {
   // ─── Uniform Items ────────────────────────────────────────────────────────
@@ -31,17 +32,20 @@ export class UniformController {
   }
 
   static async getItem(req: Request, res: Response): Promise<void> {
-    const item = await UniformService.getItem(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const item = await UniformService.getItem(req.params.id as string, schoolId);
     res.json(apiResponse(true, item, 'Uniform item retrieved successfully'));
   }
 
   static async updateItem(req: Request, res: Response): Promise<void> {
-    const item = await UniformService.updateItem(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const item = await UniformService.updateItem(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, item, 'Uniform item updated successfully'));
   }
 
   static async deleteItem(req: Request, res: Response): Promise<void> {
-    await UniformService.deleteItem(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await UniformService.deleteItem(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Uniform item deleted successfully'));
   }
 
@@ -72,17 +76,20 @@ export class UniformController {
   }
 
   static async getOrder(req: Request, res: Response): Promise<void> {
-    const order = await UniformService.getOrder(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const order = await UniformService.getOrder(req.params.id as string, schoolId);
     res.json(apiResponse(true, order, 'Uniform order retrieved successfully'));
   }
 
   static async updateOrderStatus(req: Request, res: Response): Promise<void> {
-    const order = await UniformService.updateOrderStatus(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const order = await UniformService.updateOrderStatus(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, order, 'Uniform order status updated successfully'));
   }
 
   static async deleteOrder(req: Request, res: Response): Promise<void> {
-    await UniformService.deleteOrder(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await UniformService.deleteOrder(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Uniform order deleted successfully'));
   }
 
@@ -113,23 +120,46 @@ export class UniformController {
   }
 
   static async getSecondHandListing(req: Request, res: Response): Promise<void> {
-    const listing = await UniformService.getSecondHandListing(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const listing = await UniformService.getSecondHandListing(req.params.id as string, schoolId);
     res.json(apiResponse(true, listing, 'Second hand listing retrieved successfully'));
   }
 
   static async reserveSecondHandListing(req: Request, res: Response): Promise<void> {
-    const buyerId = req.body.buyerId as string;
-    const listing = await UniformService.reserveSecondHandListing(req.params.id as string, buyerId);
+    const user = getUser(req);
+    const schoolId = user.schoolId!;
+    // Non-admin users can only reserve for themselves — override buyerId with their own ID
+    const isAdmin = user.role === UserRole.SUPER_ADMIN || user.role === UserRole.SCHOOL_ADMIN;
+    const buyerId = isAdmin ? (req.body.buyerId as string) : user.id;
+    const listing = await UniformService.reserveSecondHandListing(req.params.id as string, schoolId, buyerId);
     res.json(apiResponse(true, listing, 'Listing reserved successfully'));
   }
 
   static async markSecondHandSold(req: Request, res: Response): Promise<void> {
-    const listing = await UniformService.markSecondHandSold(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const listing = await UniformService.markSecondHandSold(req.params.id as string, schoolId);
     res.json(apiResponse(true, listing, 'Listing marked as sold successfully'));
   }
 
   static async getMyListings(req: Request, res: Response): Promise<void> {
-    const parentId = req.params.parentId as string;
+    const user = getUser(req);
+    const isAdmin = user.role === UserRole.SUPER_ADMIN || user.role === UserRole.SCHOOL_ADMIN;
+
+    let parentId: string;
+    if (isAdmin) {
+      // Admins may view any parent's listings via the URL param
+      parentId = req.params.parentId as string;
+    } else {
+      // Non-admin (parent) users — resolve parentId from their own user record
+      const { Parent } = await import('../Parent/model.js');
+      const parent = await Parent.findOne({ userId: user.id, isDeleted: false }).lean();
+      if (!parent) {
+        res.status(403).json(apiResponse(false, undefined, undefined, 'Parent record not found for this user'));
+        return;
+      }
+      parentId = String(parent._id);
+    }
+
     const query = {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
@@ -151,17 +181,20 @@ export class UniformController {
   }
 
   static async getSizeGuide(req: Request, res: Response): Promise<void> {
-    const sizeGuide = await UniformService.getSizeGuideByItem(req.params.itemId as string);
+    const schoolId = req.user!.schoolId!;
+    const sizeGuide = await UniformService.getSizeGuideByItem(req.params.itemId as string, schoolId);
     res.json(apiResponse(true, sizeGuide, 'Size guide retrieved successfully'));
   }
 
   static async updateSizeGuide(req: Request, res: Response): Promise<void> {
-    const sizeGuide = await UniformService.updateSizeGuide(req.params.itemId as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const sizeGuide = await UniformService.updateSizeGuide(req.params.itemId as string, schoolId, req.body);
     res.json(apiResponse(true, sizeGuide, 'Size guide updated successfully'));
   }
 
   static async deleteSizeGuide(req: Request, res: Response): Promise<void> {
-    await UniformService.deleteSizeGuide(req.params.itemId as string);
+    const schoolId = req.user!.schoolId!;
+    await UniformService.deleteSizeGuide(req.params.itemId as string, schoolId);
     res.json(apiResponse(true, undefined, 'Size guide deleted successfully'));
   }
 
@@ -192,18 +225,45 @@ export class UniformController {
   }
 
   static async getPreOrder(req: Request, res: Response): Promise<void> {
-    const preOrder = await UniformService.getPreOrder(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const preOrder = await UniformService.getPreOrder(req.params.id as string, schoolId);
     res.json(apiResponse(true, preOrder, 'Pre-order retrieved successfully'));
   }
 
   static async updatePreOrderStatus(req: Request, res: Response): Promise<void> {
-    const preOrder = await UniformService.updatePreOrderStatus(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const preOrder = await UniformService.updatePreOrderStatus(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, preOrder, 'Pre-order status updated successfully'));
   }
 
   static async deletePreOrder(req: Request, res: Response): Promise<void> {
-    await UniformService.deletePreOrder(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await UniformService.deletePreOrder(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Pre-order deleted successfully'));
+  }
+
+  // ─── Order Timeline ──────────────────────────────────────────────────────
+
+  static async getOrderTimeline(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const timeline = await UniformService.getOrderTimeline(req.params.id as string, schoolId);
+    res.json(apiResponse(true, timeline, 'Order timeline retrieved successfully'));
+  }
+
+  // ─── Size Recommendation ────────────────────────────────────────────────
+
+  static async getSizeRecommendation(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const result = await UniformService.getSizeRecommendation(schoolId, req.params.studentId as string);
+    res.json(apiResponse(true, result, 'Size recommendation retrieved successfully'));
+  }
+
+  // ─── Uniform Requirements ──────────────────────────────────────────────
+
+  static async getUniformRequirements(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const items = await UniformService.getUniformRequirements(schoolId, req.params.gradeId as string);
+    res.json(apiResponse(true, items, 'Uniform requirements retrieved successfully'));
   }
 
   // ─── Low Stock ───────────────────────────────────────────────────────────

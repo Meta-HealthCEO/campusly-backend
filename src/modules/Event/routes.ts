@@ -3,6 +3,7 @@ import { authenticate } from '../../middleware/auth.js';
 import { authorize } from '../../middleware/rbac.js';
 import { validate } from '../../middleware/validate.js';
 import { EventController } from './controller.js';
+import { EventWaitlistFeedbackController } from './waitlist-feedback.controller.js';
 import {
   createEventSchema,
   updateEventSchema,
@@ -14,6 +15,10 @@ import {
   checkInSchema,
   uploadGallerySchema,
 } from './validation.js';
+import {
+  joinWaitlistSchema,
+  submitFeedbackSchema,
+} from './waitlist-feedback.validation.js';
 
 const router = Router();
 
@@ -180,6 +185,54 @@ router.delete(
   authenticate,
   authorize('super_admin', 'school_admin'),
   EventController.deleteGalleryImage,
+);
+
+// ─── Waitlist Routes ───────────────────────────────────────────────────────
+
+router.post(
+  '/:eventId/waitlist',
+  authenticate,
+  authorize('parent'),
+  validate(joinWaitlistSchema),
+  EventWaitlistFeedbackController.joinWaitlist,
+);
+
+router.get(
+  '/:eventId/waitlist',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  EventWaitlistFeedbackController.getWaitlist,
+);
+
+router.post(
+  '/:eventId/waitlist/process',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  EventWaitlistFeedbackController.processWaitlist,
+);
+
+// ─── Feedback Routes ───────────────────────────────────────────────────────
+
+router.post(
+  '/:eventId/feedback',
+  authenticate,
+  authorize('parent'),
+  validate(submitFeedbackSchema),
+  EventWaitlistFeedbackController.submitFeedback,
+);
+
+router.get(
+  '/:eventId/feedback',
+  authenticate,
+  EventWaitlistFeedbackController.getEventFeedback,
+);
+
+// ─── iCal Route ────────────────────────────────────────────────────────────
+
+router.get(
+  '/:eventId/ical',
+  authenticate,
+  EventWaitlistFeedbackController.generateICal,
 );
 
 export default router;

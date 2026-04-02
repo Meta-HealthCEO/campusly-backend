@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import {
   BusRoute,
   IBusRoute,
@@ -39,6 +40,7 @@ interface ListAssignmentQuery {
 interface ListBoardingLogQuery {
   page?: number;
   limit?: number;
+  schoolId?: string;
   routeId?: string;
   studentId?: string;
   date?: string;
@@ -99,8 +101,8 @@ export class TransportService {
     };
   }
 
-  static async getBusRoute(id: string): Promise<IBusRoute> {
-    const busRoute = await BusRoute.findOne({ _id: id, isDeleted: false });
+  static async getBusRoute(id: string, schoolId: string): Promise<IBusRoute> {
+    const busRoute = await BusRoute.findOne({ _id: id, schoolId, isDeleted: false });
 
     if (!busRoute) {
       throw new NotFoundError('Bus route not found');
@@ -109,9 +111,9 @@ export class TransportService {
     return busRoute;
   }
 
-  static async updateBusRoute(id: string, data: UpdateBusRouteInput): Promise<IBusRoute> {
+  static async updateBusRoute(id: string, schoolId: string, data: UpdateBusRouteInput): Promise<IBusRoute> {
     const busRoute = await BusRoute.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     );
@@ -123,9 +125,9 @@ export class TransportService {
     return busRoute;
   }
 
-  static async deleteBusRoute(id: string): Promise<IBusRoute> {
+  static async deleteBusRoute(id: string, schoolId: string): Promise<IBusRoute> {
     const busRoute = await BusRoute.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -187,8 +189,8 @@ export class TransportService {
     };
   }
 
-  static async getAssignment(id: string): Promise<ITransportAssignment> {
-    const assignment = await TransportAssignment.findOne({ _id: id, isDeleted: false })
+  static async getAssignment(id: string, schoolId: string): Promise<ITransportAssignment> {
+    const assignment = await TransportAssignment.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('studentId')
       .populate('busRouteId', 'name');
 
@@ -199,9 +201,9 @@ export class TransportService {
     return assignment;
   }
 
-  static async updateAssignment(id: string, data: UpdateAssignmentInput): Promise<ITransportAssignment> {
+  static async updateAssignment(id: string, schoolId: string, data: UpdateAssignmentInput): Promise<ITransportAssignment> {
     const assignment = await TransportAssignment.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     )
@@ -215,9 +217,9 @@ export class TransportService {
     return assignment;
   }
 
-  static async deleteAssignment(id: string): Promise<ITransportAssignment> {
+  static async deleteAssignment(id: string, schoolId: string): Promise<ITransportAssignment> {
     const assignment = await TransportAssignment.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -243,9 +245,9 @@ export class TransportService {
     return boardingLog;
   }
 
-  static async logAlight(id: string, data: LogAlightInput): Promise<IBoardingLog> {
+  static async logAlight(id: string, schoolId: string, data: LogAlightInput): Promise<IBoardingLog> {
     const boardingLog = await BoardingLog.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     );
@@ -272,6 +274,10 @@ export class TransportService {
     const filter: Record<string, unknown> = {
       isDeleted: false,
     };
+
+    if (query.schoolId) {
+      filter.schoolId = query.schoolId;
+    }
 
     if (query.routeId) {
       filter.routeId = query.routeId;
@@ -362,8 +368,8 @@ export class TransportService {
     };
   }
 
-  static async getTransportAlert(id: string): Promise<ITransportAlert> {
-    const alert = await TransportAlert.findOne({ _id: id, isDeleted: false })
+  static async getTransportAlert(id: string, schoolId: string): Promise<ITransportAlert> {
+    const alert = await TransportAlert.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('routeId', 'name')
       .populate('createdBy', 'name email');
 
@@ -374,9 +380,9 @@ export class TransportService {
     return alert;
   }
 
-  static async resolveTransportAlert(id: string): Promise<ITransportAlert> {
+  static async resolveTransportAlert(id: string, schoolId: string): Promise<ITransportAlert> {
     const alert = await TransportAlert.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isResolved: true, resolvedAt: new Date() } },
       { new: true },
     );
@@ -388,9 +394,9 @@ export class TransportService {
     return alert;
   }
 
-  static async deleteTransportAlert(id: string): Promise<ITransportAlert> {
+  static async deleteTransportAlert(id: string, schoolId: string): Promise<ITransportAlert> {
     const alert = await TransportAlert.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -400,5 +406,110 @@ export class TransportService {
     }
 
     return alert;
+  }
+
+  // ─── Route Capacity ──────────────────────────────────────────────────────
+
+  static async getRouteCapacity(
+    schoolId: string,
+    routeId: string,
+  ): Promise<{
+    routeId: string;
+    routeName: string;
+    capacity: number;
+    assignedCount: number;
+    availableSpots: number;
+    utilisationPercent: number;
+  }> {
+    const route = await BusRoute.findOne({ _id: routeId, schoolId, isDeleted: false });
+    if (!route) {
+      throw new NotFoundError('Bus route not found');
+    }
+
+    const assignedCount = await TransportAssignment.countDocuments({
+      busRouteId: routeId,
+      schoolId,
+      isDeleted: false,
+    });
+
+    const availableSpots = Math.max(0, route.capacity - assignedCount);
+    const utilisationPercent = route.capacity > 0
+      ? Math.round((assignedCount / route.capacity) * 100)
+      : 0;
+
+    return {
+      routeId: String(route._id),
+      routeName: route.name,
+      capacity: route.capacity,
+      assignedCount,
+      availableSpots,
+      utilisationPercent,
+    };
+  }
+
+  static async getCapacityOverview(
+    schoolId: string,
+  ): Promise<{
+    routeId: string;
+    routeName: string;
+    capacity: number;
+    assignedCount: number;
+    availableSpots: number;
+    utilisationPercent: number;
+  }[]> {
+    const routes = await BusRoute.find({ schoolId, isDeleted: false, isActive: true })
+      .sort('name')
+      .lean();
+
+    if (routes.length === 0) return [];
+
+    const routeIds = routes.map((r) => r._id);
+    const counts = await TransportAssignment.aggregate([
+      { $match: { schoolId: new mongoose.Types.ObjectId(schoolId), busRouteId: { $in: routeIds }, isDeleted: false } },
+      { $group: { _id: '$busRouteId', count: { $sum: 1 } } },
+    ]);
+
+    const countMap = new Map<string, number>();
+    for (const c of counts) {
+      countMap.set(String(c._id), c.count as number);
+    }
+
+    return routes.map((route) => {
+      const assignedCount = countMap.get(String(route._id)) ?? 0;
+      const availableSpots = Math.max(0, route.capacity - assignedCount);
+      const utilisationPercent = route.capacity > 0
+        ? Math.round((assignedCount / route.capacity) * 100)
+        : 0;
+
+      return {
+        routeId: String(route._id),
+        routeName: route.name,
+        capacity: route.capacity,
+        assignedCount,
+        availableSpots,
+        utilisationPercent,
+      };
+    });
+  }
+
+  static async getRouteStudents(
+    schoolId: string,
+    routeId: string,
+  ): Promise<ITransportAssignment[]> {
+    const route = await BusRoute.findOne({ _id: routeId, schoolId, isDeleted: false });
+    if (!route) {
+      throw new NotFoundError('Bus route not found');
+    }
+
+    const assignments = await TransportAssignment.find({
+      busRouteId: routeId,
+      schoolId,
+      isDeleted: false,
+    })
+      .populate({ path: 'studentId', populate: { path: 'userId', select: 'firstName lastName email phone' } })
+      .populate('busRouteId', 'name')
+      .lean();
+
+    return assignments;
   }
 }

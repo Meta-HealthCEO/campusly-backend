@@ -8,7 +8,8 @@ export class AfterCareController {
   // ─── Registration ─────────────────────────────────────────────────────────
 
   static async createRegistration(req: Request, res: Response): Promise<void> {
-    const registration = await AfterCareService.createRegistration(req.body);
+    const schoolId = req.user!.schoolId!;
+    const registration = await AfterCareService.createRegistration({ ...req.body, schoolId });
     res.status(201).json(apiResponse(true, registration, 'After care registration created successfully'));
   }
 
@@ -24,17 +25,20 @@ export class AfterCareController {
   }
 
   static async getRegistration(req: Request, res: Response): Promise<void> {
-    const registration = await AfterCareService.getRegistration(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const registration = await AfterCareService.getRegistration(req.params.id as string, schoolId);
     res.json(apiResponse(true, registration, 'Registration retrieved successfully'));
   }
 
   static async updateRegistration(req: Request, res: Response): Promise<void> {
-    const registration = await AfterCareService.updateRegistration(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const registration = await AfterCareService.updateRegistration(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, registration, 'Registration updated successfully'));
   }
 
   static async deleteRegistration(req: Request, res: Response): Promise<void> {
-    await AfterCareService.deleteRegistration(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await AfterCareService.deleteRegistration(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Registration deleted successfully'));
   }
 
@@ -46,8 +50,10 @@ export class AfterCareController {
   }
 
   static async checkOut(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const attendance = await AfterCareService.checkOut(
       req.params.id as string,
+      schoolId,
       req.body,
       getUser(req).id,
     );
@@ -68,19 +74,22 @@ export class AfterCareController {
   }
 
   static async getAttendance(req: Request, res: Response): Promise<void> {
-    const attendance = await AfterCareService.getAttendance(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const attendance = await AfterCareService.getAttendance(req.params.id as string, schoolId);
     res.json(apiResponse(true, attendance, 'Attendance record retrieved successfully'));
   }
 
   static async deleteAttendance(req: Request, res: Response): Promise<void> {
-    await AfterCareService.deleteAttendance(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await AfterCareService.deleteAttendance(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Attendance record deleted successfully'));
   }
 
   // ─── Pickup Authorization ───────────────────────────────────────────────
 
   static async createPickupAuth(req: Request, res: Response): Promise<void> {
-    const auth = await AfterCareService.createPickupAuth(req.body);
+    const schoolId = req.user!.schoolId!;
+    const auth = await AfterCareService.createPickupAuth({ ...req.body, schoolId });
     res.status(201).json(apiResponse(true, auth, 'Pickup authorization created successfully'));
   }
 
@@ -97,19 +106,22 @@ export class AfterCareController {
   }
 
   static async updatePickupAuth(req: Request, res: Response): Promise<void> {
-    const auth = await AfterCareService.updatePickupAuth(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const auth = await AfterCareService.updatePickupAuth(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, auth, 'Pickup authorization updated successfully'));
   }
 
   static async deletePickupAuth(req: Request, res: Response): Promise<void> {
-    await AfterCareService.deletePickupAuth(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await AfterCareService.deletePickupAuth(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Pickup authorization deleted successfully'));
   }
 
   // ─── Sign Out Log ──────────────────────────────────────────────────────
 
   static async createSignOutLog(req: Request, res: Response): Promise<void> {
-    const log = await AfterCareService.createSignOutLog(req.body);
+    const schoolId = req.user!.schoolId!;
+    const log = await AfterCareService.createSignOutLog({ ...req.body, schoolId });
     res.status(201).json(apiResponse(true, log, 'Sign out log created successfully'));
   }
 
@@ -129,7 +141,8 @@ export class AfterCareController {
   // ─── After Care Activity ───────────────────────────────────────────────
 
   static async createActivity(req: Request, res: Response): Promise<void> {
-    const activity = await AfterCareService.createActivity(req.body);
+    const schoolId = req.user!.schoolId!;
+    const activity = await AfterCareService.createActivity({ ...req.body, schoolId });
     res.status(201).json(apiResponse(true, activity, 'Activity created successfully'));
   }
 
@@ -146,17 +159,20 @@ export class AfterCareController {
   }
 
   static async getActivity(req: Request, res: Response): Promise<void> {
-    const activity = await AfterCareService.getActivity(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const activity = await AfterCareService.getActivity(req.params.id as string, schoolId);
     res.json(apiResponse(true, activity, 'Activity retrieved successfully'));
   }
 
   static async updateActivity(req: Request, res: Response): Promise<void> {
-    const activity = await AfterCareService.updateActivity(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const activity = await AfterCareService.updateActivity(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, activity, 'Activity updated successfully'));
   }
 
   static async deleteActivity(req: Request, res: Response): Promise<void> {
-    await AfterCareService.deleteActivity(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await AfterCareService.deleteActivity(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Activity deleted successfully'));
   }
 
@@ -183,7 +199,45 @@ export class AfterCareController {
   }
 
   static async markInvoicePaid(req: Request, res: Response): Promise<void> {
-    const invoice = await AfterCareService.markInvoicePaid(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const invoice = await AfterCareService.markInvoicePaid(req.params.id as string, schoolId);
     res.json(apiResponse(true, invoice, 'Invoice marked as paid successfully'));
+  }
+
+  // ─── Late Pickups ──────────────────────────────────────────────────────────
+
+  static async getLatePickups(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const date = req.query.date as string | undefined;
+    const result = await AfterCareService.getLatePickups(schoolId, date);
+    res.json(apiResponse(true, result, 'Late pickups retrieved successfully'));
+  }
+
+  // ─── Activity Bookings ────────────────────────────────────────────────────
+
+  static async getActivityBookings(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const result = await AfterCareService.getActivityBookings(schoolId, req.params.id as string);
+    res.json(apiResponse(true, result, 'Activity bookings retrieved successfully'));
+  }
+
+  static async bookActivity(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const activity = await AfterCareService.bookActivity(
+      schoolId,
+      req.params.id as string,
+      req.body.studentId as string,
+    );
+    res.status(201).json(apiResponse(true, activity, 'Activity booked successfully'));
+  }
+
+  static async cancelActivityBooking(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const activity = await AfterCareService.cancelActivityBooking(
+      schoolId,
+      req.params.id as string,
+      req.params.studentId as string,
+    );
+    res.json(apiResponse(true, activity, 'Activity booking cancelled successfully'));
   }
 }

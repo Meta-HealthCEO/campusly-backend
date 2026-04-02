@@ -14,6 +14,7 @@ import {
   createActivitySchema,
   updateActivitySchema,
   generateInvoicesSchema,
+  bookActivitySchema,
 } from './validation.js';
 
 const router = Router();
@@ -139,6 +140,15 @@ router.get(
   AfterCareController.listSignOutLogs,
 );
 
+// ─── Late Pickup Routes ────────────────────────────────────────────────────
+
+router.get(
+  '/late-pickups',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  AfterCareController.getLatePickups,
+);
+
 // ─── Activity Routes ────────────────────────────────────────────────────────
 
 router.post(
@@ -167,6 +177,28 @@ router.put(
   authorize('super_admin', 'school_admin', 'teacher'),
   validate(updateActivitySchema),
   AfterCareController.updateActivity,
+);
+
+router.get(
+  '/activities/:id/bookings',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  AfterCareController.getActivityBookings,
+);
+
+router.post(
+  '/activities/:id/book',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'parent'),
+  validate(bookActivitySchema),
+  AfterCareController.bookActivity,
+);
+
+router.delete(
+  '/activities/:id/book/:studentId',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'parent'),
+  AfterCareController.cancelActivityBooking,
 );
 
 router.delete(

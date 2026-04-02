@@ -3,6 +3,7 @@ import { authenticate } from '../../middleware/auth.js';
 import { authorize } from '../../middleware/rbac.js';
 import { validate } from '../../middleware/validate.js';
 import { ConsentController } from './controller.js';
+import { ConsentStatsController } from './stats.controller.js';
 import { createConsentFormSchema, updateConsentFormSchema, recordConsentResponseSchema } from './validation.js';
 
 const router = Router();
@@ -44,6 +45,22 @@ router.delete(
   ConsentController.deleteForm,
 );
 
+// ─── Consent Form Stats Routes ───────────────────────────────────────────────
+
+router.get(
+  '/forms/:id/stats',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'teacher'),
+  ConsentStatsController.getCompletionStats,
+);
+
+router.get(
+  '/forms/:id/pending',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'teacher'),
+  ConsentStatsController.getPendingParents,
+);
+
 // ─── Consent Response Routes ──────────────────────────────────────────────────
 
 router.post(
@@ -59,6 +76,13 @@ router.get(
   authenticate,
   authorize('super_admin', 'school_admin', 'teacher'),
   ConsentController.getResponsesByForm,
+);
+
+router.get(
+  '/responses/:id/export',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  ConsentStatsController.exportSignedForm,
 );
 
 router.get(

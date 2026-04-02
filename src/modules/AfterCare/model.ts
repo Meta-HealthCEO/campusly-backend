@@ -283,6 +283,7 @@ export interface IAfterCareActivity extends Document {
   description?: string;
   supervisorId: Types.ObjectId;
   studentIds: Types.ObjectId[];
+  capacity: number;
   startTime: string;
   endTime: string;
   isDeleted: boolean;
@@ -323,6 +324,10 @@ const afterCareActivitySchema = new Schema<IAfterCareActivity>(
       type: [Schema.Types.ObjectId],
       ref: 'Student',
       default: [],
+    },
+    capacity: {
+      type: Number,
+      default: 0,
     },
     startTime: {
       type: String,

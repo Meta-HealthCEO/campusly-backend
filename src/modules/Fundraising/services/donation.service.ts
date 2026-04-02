@@ -95,8 +95,8 @@ export class DonationService {
     };
   }
 
-  static async getDonation(id: string): Promise<IDonation> {
-    const donation = await Donation.findOne({ _id: id, isDeleted: false })
+  static async getDonation(id: string, schoolId: string): Promise<IDonation> {
+    const donation = await Donation.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('campaignId', 'title')
       .lean();
 
@@ -107,12 +107,12 @@ export class DonationService {
     return donation;
   }
 
-  static async deleteDonation(id: string): Promise<IDonation> {
+  static async deleteDonation(id: string, schoolId: string): Promise<IDonation> {
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
       const donation = await Donation.findOneAndUpdate(
-        { _id: id, isDeleted: false },
+        { _id: id, schoolId, isDeleted: false },
         { $set: { isDeleted: true } },
         { new: true, session },
       );
@@ -140,7 +140,7 @@ export class DonationService {
   // ─── Tax Certificate (Section 18A) ──────────────────────────────────────
 
   static async generateTaxCertificate(data: GenerateTaxCertificateInput): Promise<ITaxCertificate> {
-    const donation = await Donation.findOne({ _id: data.donationId, isDeleted: false });
+    const donation = await Donation.findOne({ _id: data.donationId, schoolId: data.schoolId, isDeleted: false });
 
     if (!donation) {
       throw new NotFoundError('Donation not found');
@@ -173,8 +173,8 @@ export class DonationService {
     return certificate;
   }
 
-  static async getTaxCertificateById(id: string): Promise<ITaxCertificate> {
-    const certificate = await TaxCertificate.findOne({ _id: id, isDeleted: false })
+  static async getTaxCertificateById(id: string, schoolId: string): Promise<ITaxCertificate> {
+    const certificate = await TaxCertificate.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('donationId')
       .lean();
 
@@ -368,8 +368,8 @@ export class DonationService {
     };
   }
 
-  static async getRecurringDonation(id: string): Promise<IRecurringDonation> {
-    const recurring = await RecurringDonation.findOne({ _id: id, isDeleted: false })
+  static async getRecurringDonation(id: string, schoolId: string): Promise<IRecurringDonation> {
+    const recurring = await RecurringDonation.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('campaignId', 'title')
       .lean();
 
@@ -380,9 +380,9 @@ export class DonationService {
     return recurring;
   }
 
-  static async cancelRecurringDonation(id: string): Promise<IRecurringDonation> {
+  static async cancelRecurringDonation(id: string, schoolId: string): Promise<IRecurringDonation> {
     const recurring = await RecurringDonation.findOneAndUpdate(
-      { _id: id, isDeleted: false, isActive: true },
+      { _id: id, schoolId, isDeleted: false, isActive: true },
       { $set: { isActive: false } },
       { new: true },
     );

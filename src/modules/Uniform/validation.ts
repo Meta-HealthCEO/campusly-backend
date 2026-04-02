@@ -51,6 +51,7 @@ export const createUniformOrderSchema = z.object({
 
 export const updateUniformOrderStatusSchema = z.object({
   status: z.enum(['pending', 'processing', 'confirmed', 'ready', 'collected', 'cancelled']),
+  notes: z.string().optional(),
 }).strict();
 
 const secondHandConditionSchema = z.enum(['new', 'like_new', 'good', 'fair']);

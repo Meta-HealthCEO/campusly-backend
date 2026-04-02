@@ -91,8 +91,8 @@ export class UniformService {
     };
   }
 
-  static async getItem(id: string): Promise<IUniformItem> {
-    const item = await UniformItem.findOne({ _id: id, isDeleted: false }).lean();
+  static async getItem(id: string, schoolId: string): Promise<IUniformItem> {
+    const item = await UniformItem.findOne({ _id: id, schoolId, isDeleted: false }).lean();
 
     if (!item) {
       throw new NotFoundError('Uniform item not found');
@@ -101,9 +101,9 @@ export class UniformService {
     return item;
   }
 
-  static async updateItem(id: string, data: UpdateUniformItemInput): Promise<IUniformItem> {
+  static async updateItem(id: string, schoolId: string, data: UpdateUniformItemInput): Promise<IUniformItem> {
     const item = await UniformItem.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     );
@@ -115,9 +115,9 @@ export class UniformService {
     return item;
   }
 
-  static async deleteItem(id: string): Promise<IUniformItem> {
+  static async deleteItem(id: string, schoolId: string): Promise<IUniformItem> {
     const item = await UniformItem.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -188,8 +188,8 @@ export class UniformService {
     };
   }
 
-  static async getOrder(id: string): Promise<IUniformOrder> {
-    const order = await UniformOrder.findOne({ _id: id, isDeleted: false })
+  static async getOrder(id: string, schoolId: string): Promise<IUniformOrder> {
+    const order = await UniformOrder.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('studentId')
       .populate('orderedBy', 'firstName lastName email')
       .lean();
@@ -201,10 +201,19 @@ export class UniformService {
     return order;
   }
 
-  static async updateOrderStatus(id: string, data: UpdateUniformOrderStatusInput): Promise<IUniformOrder> {
+  static async updateOrderStatus(id: string, schoolId: string, data: UpdateUniformOrderStatusInput): Promise<IUniformOrder> {
     const order = await UniformOrder.findOneAndUpdate(
-      { _id: id, isDeleted: false },
-      { $set: { status: data.status } },
+      { _id: id, schoolId, isDeleted: false },
+      {
+        $set: { status: data.status },
+        $push: {
+          statusHistory: {
+            status: data.status,
+            timestamp: new Date(),
+            notes: data.notes,
+          },
+        },
+      },
       { new: true, runValidators: true },
     )
       .populate('studentId')
@@ -214,18 +223,76 @@ export class UniformService {
       throw new NotFoundError('Uniform order not found');
     }
 
-    // TODO: Dispatch notification when order status changes to 'ready'
-    // This is where notification dispatch would go (e.g., push notification, email, SMS)
-    if (data.status === 'ready') {
-      // await NotificationService.send({ userId: order.orderedBy, type: 'uniform_order_ready', orderId: order._id });
-    }
-
     return order;
   }
 
-  static async deleteOrder(id: string): Promise<IUniformOrder> {
+  static async getOrderTimeline(
+    id: string,
+    schoolId: string,
+  ): Promise<{ status: string; timestamp: Date; notes?: string }[]> {
+    const order = await UniformOrder.findOne({ _id: id, schoolId, isDeleted: false })
+      .select('statusHistory createdAt')
+      .lean();
+
+    if (!order) {
+      throw new NotFoundError('Uniform order not found');
+    }
+
+    // Always include the initial "pending" from creation if statusHistory is empty or doesn't start with pending
+    const timeline = [...(order.statusHistory ?? [])];
+    if (timeline.length === 0 || timeline[0].status !== 'pending') {
+      timeline.unshift({ status: 'pending', timestamp: order.createdAt });
+    }
+
+    return timeline;
+  }
+
+  static async getSizeRecommendation(
+    schoolId: string,
+    studentId: string,
+  ): Promise<{ studentId: string; gradeName: string; recommendedSize: string }> {
+    const { Student } = await import('../Student/model.js');
+    const student = await Student.findOne({ _id: studentId, schoolId, isDeleted: false })
+      .populate('gradeId', 'name')
+      .lean();
+
+    if (!student) {
+      throw new NotFoundError('Student not found');
+    }
+
+    const grade = student.gradeId as { name?: string } | undefined;
+    const gradeName = grade?.name ?? '';
+
+    // Simple grade-based mapping
+    const gradeNum = parseInt(gradeName.replace(/\D/g, ''), 10);
+    let recommendedSize = 'M';
+    if (!isNaN(gradeNum)) {
+      if (gradeNum <= 3) recommendedSize = 'S';
+      else if (gradeNum <= 6) recommendedSize = 'M';
+      else if (gradeNum <= 9) recommendedSize = 'L';
+      else recommendedSize = 'XL';
+    }
+
+    return { studentId, gradeName, recommendedSize };
+  }
+
+  static async getUniformRequirements(
+    schoolId: string,
+    _gradeId: string,
+  ): Promise<IUniformItem[]> {
+    // Return all available items for the school (grade-specific requirements not yet modelled)
+    const items = await UniformItem.find({
+      schoolId,
+      isDeleted: false,
+      isAvailable: true,
+    }).lean();
+
+    return items;
+  }
+
+  static async deleteOrder(id: string, schoolId: string): Promise<IUniformOrder> {
     const order = await UniformOrder.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -288,8 +355,8 @@ export class UniformService {
     };
   }
 
-  static async getSecondHandListing(id: string): Promise<ISecondHandListing> {
-    const listing = await SecondHandListing.findOne({ _id: id, isDeleted: false })
+  static async getSecondHandListing(id: string, schoolId: string): Promise<ISecondHandListing> {
+    const listing = await SecondHandListing.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('parentId')
       .populate('buyerId')
       .lean();
@@ -301,9 +368,9 @@ export class UniformService {
     return listing;
   }
 
-  static async reserveSecondHandListing(id: string, buyerId: string): Promise<ISecondHandListing> {
+  static async reserveSecondHandListing(id: string, schoolId: string, buyerId: string): Promise<ISecondHandListing> {
     const listing = await SecondHandListing.findOneAndUpdate(
-      { _id: id, isDeleted: false, status: 'available' },
+      { _id: id, schoolId, isDeleted: false, status: 'available' },
       { $set: { status: 'reserved', buyerId } },
       { new: true, runValidators: true },
     );
@@ -315,9 +382,9 @@ export class UniformService {
     return listing;
   }
 
-  static async markSecondHandSold(id: string): Promise<ISecondHandListing> {
+  static async markSecondHandSold(id: string, schoolId: string): Promise<ISecondHandListing> {
     const listing = await SecondHandListing.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { status: 'sold' } },
       { new: true, runValidators: true },
     );
@@ -368,8 +435,8 @@ export class UniformService {
     return sizeGuide;
   }
 
-  static async getSizeGuideByItem(uniformItemId: string): Promise<ISizeGuide> {
-    const sizeGuide = await SizeGuide.findOne({ uniformItemId, isDeleted: false }).lean();
+  static async getSizeGuideByItem(uniformItemId: string, schoolId: string): Promise<ISizeGuide> {
+    const sizeGuide = await SizeGuide.findOne({ uniformItemId, schoolId, isDeleted: false }).lean();
 
     if (!sizeGuide) {
       throw new NotFoundError('Size guide not found for this item');
@@ -378,9 +445,9 @@ export class UniformService {
     return sizeGuide;
   }
 
-  static async updateSizeGuide(uniformItemId: string, data: UpdateSizeGuideInput): Promise<ISizeGuide> {
+  static async updateSizeGuide(uniformItemId: string, schoolId: string, data: UpdateSizeGuideInput): Promise<ISizeGuide> {
     const sizeGuide = await SizeGuide.findOneAndUpdate(
-      { uniformItemId, isDeleted: false },
+      { uniformItemId, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     );
@@ -392,9 +459,9 @@ export class UniformService {
     return sizeGuide;
   }
 
-  static async deleteSizeGuide(uniformItemId: string): Promise<ISizeGuide> {
+  static async deleteSizeGuide(uniformItemId: string, schoolId: string): Promise<ISizeGuide> {
     const sizeGuide = await SizeGuide.findOneAndUpdate(
-      { uniformItemId, isDeleted: false },
+      { uniformItemId, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -466,8 +533,8 @@ export class UniformService {
     };
   }
 
-  static async getPreOrder(id: string): Promise<IPreOrder> {
-    const preOrder = await PreOrder.findOne({ _id: id, isDeleted: false })
+  static async getPreOrder(id: string, schoolId: string): Promise<IPreOrder> {
+    const preOrder = await PreOrder.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('uniformItemId')
       .populate('studentId')
       .populate('orderedBy', 'firstName lastName email')
@@ -480,9 +547,9 @@ export class UniformService {
     return preOrder;
   }
 
-  static async updatePreOrderStatus(id: string, data: UpdatePreOrderStatusInput): Promise<IPreOrder> {
+  static async updatePreOrderStatus(id: string, schoolId: string, data: UpdatePreOrderStatusInput): Promise<IPreOrder> {
     const preOrder = await PreOrder.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { status: data.status } },
       { new: true, runValidators: true },
     )
@@ -497,9 +564,9 @@ export class UniformService {
     return preOrder;
   }
 
-  static async deletePreOrder(id: string): Promise<IPreOrder> {
+  static async deletePreOrder(id: string, schoolId: string): Promise<IPreOrder> {
     const preOrder = await PreOrder.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );

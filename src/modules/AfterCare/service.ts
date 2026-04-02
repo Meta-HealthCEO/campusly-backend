@@ -125,8 +125,8 @@ export class AfterCareService {
     };
   }
 
-  static async getRegistration(id: string): Promise<IAfterCareRegistration> {
-    const registration = await AfterCareRegistration.findOne({ _id: id, isDeleted: false })
+  static async getRegistration(id: string, schoolId: string): Promise<IAfterCareRegistration> {
+    const registration = await AfterCareRegistration.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('studentId');
 
     if (!registration) {
@@ -136,9 +136,9 @@ export class AfterCareService {
     return registration;
   }
 
-  static async updateRegistration(id: string, data: UpdateRegistrationInput): Promise<IAfterCareRegistration> {
+  static async updateRegistration(id: string, schoolId: string, data: UpdateRegistrationInput): Promise<IAfterCareRegistration> {
     const registration = await AfterCareRegistration.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     ).populate('studentId');
@@ -150,9 +150,9 @@ export class AfterCareService {
     return registration;
   }
 
-  static async deleteRegistration(id: string): Promise<IAfterCareRegistration> {
+  static async deleteRegistration(id: string, schoolId: string): Promise<IAfterCareRegistration> {
     const registration = await AfterCareRegistration.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -175,9 +175,9 @@ export class AfterCareService {
     return attendance;
   }
 
-  static async checkOut(id: string, data: CheckOutInput, checkedOutBy: string): Promise<IAfterCareAttendance> {
+  static async checkOut(id: string, schoolId: string, data: CheckOutInput, checkedOutBy: string): Promise<IAfterCareAttendance> {
     const attendance = await AfterCareAttendance.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { checkOutTime: data.checkOutTime, checkedOutBy, notes: data.notes } },
       { new: true, runValidators: true },
     )
@@ -244,8 +244,8 @@ export class AfterCareService {
     };
   }
 
-  static async getAttendance(id: string): Promise<IAfterCareAttendance> {
-    const attendance = await AfterCareAttendance.findOne({ _id: id, isDeleted: false })
+  static async getAttendance(id: string, schoolId: string): Promise<IAfterCareAttendance> {
+    const attendance = await AfterCareAttendance.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('studentId')
       .populate('checkedInBy', 'firstName lastName email')
       .populate('checkedOutBy', 'firstName lastName email');
@@ -257,9 +257,9 @@ export class AfterCareService {
     return attendance;
   }
 
-  static async deleteAttendance(id: string): Promise<IAfterCareAttendance> {
+  static async deleteAttendance(id: string, schoolId: string): Promise<IAfterCareAttendance> {
     const attendance = await AfterCareAttendance.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -320,9 +320,9 @@ export class AfterCareService {
     };
   }
 
-  static async updatePickupAuth(id: string, data: UpdatePickupAuthInput): Promise<IPickupAuthorization> {
+  static async updatePickupAuth(id: string, schoolId: string, data: UpdatePickupAuthInput): Promise<IPickupAuthorization> {
     const auth = await PickupAuthorization.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     ).populate('studentId');
@@ -334,9 +334,9 @@ export class AfterCareService {
     return auth;
   }
 
-  static async deletePickupAuth(id: string): Promise<IPickupAuthorization> {
+  static async deletePickupAuth(id: string, schoolId: string): Promise<IPickupAuthorization> {
     const auth = await PickupAuthorization.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -407,8 +407,8 @@ export class AfterCareService {
     };
   }
 
-  static async getSignOutLog(id: string): Promise<ISignOutLog> {
-    const log = await SignOutLog.findOne({ _id: id, isDeleted: false })
+  static async getSignOutLog(id: string, schoolId: string): Promise<ISignOutLog> {
+    const log = await SignOutLog.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('studentId')
       .populate('attendanceId')
       .populate('authorizationId');
@@ -474,8 +474,8 @@ export class AfterCareService {
     };
   }
 
-  static async getActivity(id: string): Promise<IAfterCareActivity> {
-    const activity = await AfterCareActivity.findOne({ _id: id, isDeleted: false })
+  static async getActivity(id: string, schoolId: string): Promise<IAfterCareActivity> {
+    const activity = await AfterCareActivity.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('supervisorId', 'firstName lastName email')
       .populate('studentIds');
 
@@ -486,9 +486,9 @@ export class AfterCareService {
     return activity;
   }
 
-  static async updateActivity(id: string, data: UpdateActivityInput): Promise<IAfterCareActivity> {
+  static async updateActivity(id: string, schoolId: string, data: UpdateActivityInput): Promise<IAfterCareActivity> {
     const activity = await AfterCareActivity.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     )
@@ -502,9 +502,9 @@ export class AfterCareService {
     return activity;
   }
 
-  static async deleteActivity(id: string): Promise<IAfterCareActivity> {
+  static async deleteActivity(id: string, schoolId: string): Promise<IAfterCareActivity> {
     const activity = await AfterCareActivity.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -632,9 +632,9 @@ export class AfterCareService {
     };
   }
 
-  static async markInvoicePaid(id: string): Promise<IAfterCareInvoice> {
+  static async markInvoicePaid(id: string, schoolId: string): Promise<IAfterCareInvoice> {
     const invoice = await AfterCareInvoice.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { status: 'paid' } },
       { new: true, runValidators: true },
     )
@@ -646,5 +646,136 @@ export class AfterCareService {
     }
 
     return invoice;
+  }
+
+  // ─── Late Pickups ──────────────────────────────────────────────────────────
+
+  static async getLatePickups(
+    schoolId: string,
+    date?: string,
+  ): Promise<{
+    studentId: unknown;
+    studentName: string;
+    parentPhone: string;
+    checkInTime: string;
+    minutesLate: number;
+  }[]> {
+    const targetDate = date ? new Date(date) : new Date();
+    const startOfDay = new Date(targetDate);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(targetDate);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    // Students checked in but NOT checked out
+    const uncheckedOut = await AfterCareAttendance.find({
+      schoolId,
+      isDeleted: false,
+      date: { $gte: startOfDay, $lte: endOfDay },
+      checkOutTime: { $exists: false },
+    })
+      .populate({ path: 'studentId', populate: { path: 'userId', select: 'firstName lastName phone email' } })
+      .lean();
+
+    // Also include those with null checkOutTime
+    const stillHere = uncheckedOut.filter((a) => !a.checkOutTime);
+
+    const LATE_THRESHOLD_HOUR = 17;
+    const LATE_THRESHOLD_MINUTE = 30;
+    const now = new Date();
+    const thresholdMinutes = LATE_THRESHOLD_HOUR * 60 + LATE_THRESHOLD_MINUTE;
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+    // Only show if past threshold
+    if (currentMinutes < thresholdMinutes && !date) return [];
+
+    return stillHere.map((a) => {
+      const student = a.studentId as unknown as Record<string, unknown>;
+      const userId = student?.userId as Record<string, unknown> | undefined;
+      const studentName = userId
+        ? `${(userId.firstName as string) ?? ''} ${(userId.lastName as string) ?? ''}`.trim()
+        : (student?.admissionNumber as string) ?? String(student?._id ?? '');
+      const parentPhone = (userId?.phone as string) ?? (userId?.email as string) ?? '';
+
+      const minutesLate = Math.max(0, currentMinutes - thresholdMinutes);
+
+      return {
+        studentId: student?._id ?? a.studentId,
+        studentName,
+        parentPhone,
+        checkInTime: a.checkInTime,
+        minutesLate,
+      };
+    });
+  }
+
+  // ─── Activity Bookings ────────────────────────────────────────────────────
+
+  static async getActivityBookings(
+    schoolId: string,
+    activityId: string,
+  ): Promise<{ activity: IAfterCareActivity; bookedCount: number; capacity: number }> {
+    const activity = await AfterCareActivity.findOne({ _id: activityId, schoolId, isDeleted: false })
+      .populate('studentIds')
+      .populate('supervisorId', 'firstName lastName email');
+
+    if (!activity) {
+      throw new NotFoundError('Activity not found');
+    }
+
+    return {
+      activity,
+      bookedCount: activity.studentIds.length,
+      capacity: activity.capacity,
+    };
+  }
+
+  static async bookActivity(
+    schoolId: string,
+    activityId: string,
+    studentId: string,
+  ): Promise<IAfterCareActivity> {
+    const activity = await AfterCareActivity.findOne({ _id: activityId, schoolId, isDeleted: false });
+
+    if (!activity) {
+      throw new NotFoundError('Activity not found');
+    }
+
+    // Check capacity (0 means unlimited)
+    if (activity.capacity > 0 && activity.studentIds.length >= activity.capacity) {
+      throw new BadRequestError('Activity is full — no spots available');
+    }
+
+    // Prevent duplicate booking
+    const alreadyBooked = activity.studentIds.some((sid) => sid.toString() === studentId);
+    if (alreadyBooked) {
+      throw new BadRequestError('Student is already booked for this activity');
+    }
+
+    activity.studentIds.push(new mongoose.Types.ObjectId(studentId) as unknown as mongoose.Types.ObjectId);
+    await activity.save();
+
+    return activity;
+  }
+
+  static async cancelActivityBooking(
+    schoolId: string,
+    activityId: string,
+    studentId: string,
+  ): Promise<IAfterCareActivity> {
+    const activity = await AfterCareActivity.findOne({ _id: activityId, schoolId, isDeleted: false });
+
+    if (!activity) {
+      throw new NotFoundError('Activity not found');
+    }
+
+    const idx = activity.studentIds.findIndex((sid) => sid.toString() === studentId);
+    if (idx === -1) {
+      throw new BadRequestError('Student is not booked for this activity');
+    }
+
+    activity.studentIds.splice(idx, 1);
+    await activity.save();
+
+    return activity;
   }
 }

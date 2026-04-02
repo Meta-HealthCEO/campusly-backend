@@ -91,8 +91,8 @@ export class EventService {
     };
   }
 
-  static async getById(id: string): Promise<IEvent> {
-    const event = await Event.findOne({ _id: id, isDeleted: false })
+  static async getById(id: string, schoolId: string): Promise<IEvent> {
+    const event = await Event.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('organizerId', 'firstName lastName email')
       .lean();
 
@@ -103,9 +103,9 @@ export class EventService {
     return event;
   }
 
-  static async update(id: string, data: UpdateEventInput): Promise<IEvent> {
+  static async update(id: string, schoolId: string, data: UpdateEventInput): Promise<IEvent> {
     const event = await Event.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     ).populate('organizerId', 'firstName lastName email');
@@ -117,9 +117,9 @@ export class EventService {
     return event;
   }
 
-  static async delete(id: string): Promise<IEvent> {
+  static async delete(id: string, schoolId: string): Promise<IEvent> {
     const event = await Event.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -133,8 +133,8 @@ export class EventService {
 
   // ─── RSVP ────────────────────────────────────────────────────────────────
 
-  static async createRsvp(data: CreateRsvpInput, userId: string): Promise<IEventRsvp> {
-    const event = await Event.findOne({ _id: data.eventId, isDeleted: false });
+  static async createRsvp(data: CreateRsvpInput, userId: string, schoolId: string): Promise<IEventRsvp> {
+    const event = await Event.findOne({ _id: data.eventId, schoolId, isDeleted: false });
 
     if (!event) {
       throw new NotFoundError('Event not found');
@@ -197,7 +197,13 @@ export class EventService {
     };
   }
 
-  static async deleteRsvp(eventId: string, userId: string): Promise<IEventRsvp> {
+  static async deleteRsvp(eventId: string, userId: string, schoolId: string): Promise<IEventRsvp> {
+    // Verify event belongs to school
+    const event = await Event.findOne({ _id: eventId, schoolId, isDeleted: false });
+    if (!event) {
+      throw new NotFoundError('Event not found');
+    }
+
     const rsvp = await EventRsvp.findOneAndUpdate(
       { eventId, userId, isDeleted: false },
       { $set: { isDeleted: true } },
@@ -217,8 +223,9 @@ export class EventService {
     eventId: string,
     userId: string,
     data: PurchaseTicketInput,
+    schoolId: string,
   ): Promise<IEventTicket> {
-    const event = await Event.findOne({ _id: eventId, isDeleted: false });
+    const event = await Event.findOne({ _id: eventId, schoolId, isDeleted: false });
 
     if (!event) {
       throw new NotFoundError('Event not found');
@@ -270,8 +277,8 @@ export class EventService {
     };
   }
 
-  static async getTicketByQrCode(qrCode: string): Promise<IEventTicket> {
-    const ticket = await EventTicket.findOne({ qrCode, isDeleted: false })
+  static async getTicketByQrCode(qrCode: string, schoolId: string): Promise<IEventTicket> {
+    const ticket = await EventTicket.findOne({ qrCode, schoolId, isDeleted: false })
       .populate('eventId', 'title date venue')
       .populate('userId', 'firstName lastName email')
       .lean();
@@ -283,9 +290,9 @@ export class EventService {
     return ticket;
   }
 
-  static async cancelTicket(eventId: string, ticketId: string): Promise<IEventTicket> {
+  static async cancelTicket(eventId: string, ticketId: string, schoolId: string): Promise<IEventTicket> {
     const ticket = await EventTicket.findOneAndUpdate(
-      { _id: ticketId, eventId, isDeleted: false, status: 'active' },
+      { _id: ticketId, eventId, schoolId, isDeleted: false, status: 'active' },
       { $set: { status: 'cancelled' } },
       { new: true },
     );
@@ -302,8 +309,9 @@ export class EventService {
   static async createSeats(
     eventId: string,
     data: CreateSeatsInput,
+    schoolId: string,
   ): Promise<IEventSeat[]> {
-    const event = await Event.findOne({ _id: eventId, isDeleted: false });
+    const event = await Event.findOne({ _id: eventId, schoolId, isDeleted: false });
 
     if (!event) {
       throw new NotFoundError('Event not found');
@@ -359,7 +367,14 @@ export class EventService {
     eventId: string,
     seatId: string,
     ticketId: string,
+    schoolId: string,
   ): Promise<IEventSeat> {
+    // Verify event belongs to school
+    const event = await Event.findOne({ _id: eventId, schoolId, isDeleted: false });
+    if (!event) {
+      throw new NotFoundError('Event not found');
+    }
+
     const seat = await EventSeat.findOneAndUpdate(
       { _id: seatId, eventId, isDeleted: false, status: 'available' },
       { $set: { status: 'reserved', ticketId } },
@@ -376,7 +391,14 @@ export class EventService {
   static async releaseSeat(
     eventId: string,
     seatId: string,
+    schoolId: string,
   ): Promise<IEventSeat> {
+    // Verify event belongs to school
+    const event = await Event.findOne({ _id: eventId, schoolId, isDeleted: false });
+    if (!event) {
+      throw new NotFoundError('Event not found');
+    }
+
     const seat = await EventSeat.findOneAndUpdate(
       { _id: seatId, eventId, isDeleted: false, status: { $in: ['reserved', 'sold'] } },
       { $set: { status: 'available', ticketId: undefined } },
@@ -396,10 +418,12 @@ export class EventService {
     eventId: string,
     data: CheckInInput,
     checkedInBy: string,
+    schoolId: string,
   ): Promise<IEventCheckIn> {
     const ticket = await EventTicket.findOne({
       qrCode: data.qrCode,
       eventId,
+      schoolId,
       isDeleted: false,
     });
 
@@ -545,9 +569,9 @@ export class EventService {
     };
   }
 
-  static async deleteGalleryImage(eventId: string, imageId: string): Promise<IEventGallery> {
+  static async deleteGalleryImage(eventId: string, imageId: string, schoolId: string): Promise<IEventGallery> {
     const image = await EventGallery.findOneAndUpdate(
-      { _id: imageId, eventId, isDeleted: false },
+      { _id: imageId, eventId, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
