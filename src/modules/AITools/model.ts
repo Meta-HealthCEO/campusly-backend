@@ -204,7 +204,7 @@ export const GradingJob = mongoose.model<IGradingJob>('GradingJob', gradingJobSc
 
 // ─── AI Usage Log ─────────────────────────────────────────────────────────────
 
-export type AIUsageType = 'paper_generation' | 'question_regeneration' | 'grading';
+export type AIUsageType = 'paper_generation' | 'question_regeneration' | 'grading' | 'memo_generation';
 
 export interface IAIUsageLog extends Document {
   schoolId: Types.ObjectId;
@@ -221,7 +221,7 @@ const aiUsageLogSchema = new Schema<IAIUsageLog>(
     teacherId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     type: {
       type: String,
-      enum: ['paper_generation', 'question_regeneration', 'grading'],
+      enum: ['paper_generation', 'question_regeneration', 'grading', 'memo_generation'],
       required: true,
     },
     tokensUsed: {

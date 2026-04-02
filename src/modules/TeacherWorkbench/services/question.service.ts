@@ -1,7 +1,48 @@
 import { Question, IQuestion } from '../model.assessment.js';
+import type { QuestionType, Difficulty, CognitiveLevel } from '../model.js';
 import { GeneratedPaper } from '../../AITools/model.js';
 import { NotFoundError } from '../../../common/errors.js';
 import { paginationHelper, escapeRegex } from '../../../common/utils.js';
+
+// ─── Section metadata helpers ─────────────────────────────────────────────────
+
+const MCQ_PATTERNS = /multiple.choice|mcq/i;
+const ESSAY_PATTERNS = /essay|long.answer/i;
+const TRUE_FALSE_PATTERNS = /true.false|true\/false/i;
+const MATCHING_PATTERNS = /matching|match/i;
+const FILL_BLANK_PATTERNS = /fill.in|fill.blank|cloze/i;
+const SHORT_ANSWER_PATTERNS = /short.answer|brief/i;
+
+function resolveSectionQuestionType(sectionType: string): QuestionType {
+  if (MCQ_PATTERNS.test(sectionType)) return 'mcq';
+  if (ESSAY_PATTERNS.test(sectionType)) return 'essay';
+  if (TRUE_FALSE_PATTERNS.test(sectionType)) return 'true_false';
+  if (MATCHING_PATTERNS.test(sectionType)) return 'matching';
+  if (FILL_BLANK_PATTERNS.test(sectionType)) return 'fill_in_blank';
+  if (SHORT_ANSWER_PATTERNS.test(sectionType)) return 'short_answer';
+  return 'structured';
+}
+
+function resolveQuestionDifficulty(paperDifficulty: string, sectionType: string): Difficulty {
+  const lower = sectionType.toLowerCase();
+  if (lower.includes('easy')) return 'easy';
+  if (lower.includes('hard') || lower.includes('challenge')) return 'hard';
+  if (paperDifficulty === 'easy') return 'easy';
+  if (paperDifficulty === 'hard') return 'hard';
+  return 'medium';
+}
+
+function resolveCognitiveLevel(sectionType: string): CognitiveLevel {
+  const lower = sectionType.toLowerCase();
+  if (lower.includes('essay') || lower.includes('evaluation')) return 'evaluation';
+  if (lower.includes('analysis') || lower.includes('analys')) return 'analysis';
+  if (lower.includes('application') || lower.includes('apply')) return 'application';
+  if (lower.includes('comprehension') || lower.includes('understand')) return 'comprehension';
+  if (lower.includes('synthesis') || lower.includes('create')) return 'synthesis';
+  return 'knowledge';
+}
+
+// ─── Filters / result types ───────────────────────────────────────────────────
 
 interface QuestionFilters {
   subjectId?: string;
@@ -114,6 +155,10 @@ export class QuestionService {
 
     const questionDocs: Record<string, unknown>[] = [];
     for (const section of paper.sections) {
+      const questionType = resolveSectionQuestionType(section.questionType);
+      const difficulty = resolveQuestionDifficulty(paper.difficulty, section.questionType);
+      const cognitiveLevel = resolveCognitiveLevel(section.questionType);
+
       for (const q of section.questions) {
         questionDocs.push({
           schoolId,
@@ -123,10 +168,10 @@ export class QuestionService {
           gradeLevel: paper.grade,
           topicId: null,
           questionText: q.questionText,
-          questionType: 'structured',
+          questionType,
           marks: q.marks,
-          difficulty: paper.difficulty === 'mixed' ? 'medium' : paper.difficulty,
-          cognitiveLevel: 'knowledge',
+          difficulty,
+          cognitiveLevel,
           modelAnswer: q.modelAnswer,
           markingNotes: q.markingGuideline,
           images: [],
