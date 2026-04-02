@@ -45,6 +45,7 @@ import aiToolsRoutes from './modules/AITools/routes.js';
 import teacherWorkbenchRoutes from './modules/TeacherWorkbench/routes.js';
 import staffRoutes from './modules/Staff/routes.js';
 import libraryRoutes from './modules/Library/routes.js';
+import careerRoutes from './modules/Career/routes.js';
 
 const app = express();
 
@@ -115,6 +116,7 @@ app.use('/api/lost-found', requireModule('lost_found'), lostFoundRoutes);
 app.use('/api/library', requireModule('library'), libraryRoutes);
 app.use('/api/ai-tools', requireModule('ai_tools'), aiToolsRoutes);
 app.use('/api/teacher-workbench', requireModule('teacher_workbench'), teacherWorkbenchRoutes);
+app.use('/api/careers', requireModule('careers'), careerRoutes);
 
 // 404 handler
 app.use((_req, res) => {
