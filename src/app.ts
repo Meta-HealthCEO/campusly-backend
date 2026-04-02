@@ -52,6 +52,9 @@ import messagingRoutes from './modules/Messaging/routes.js';
 import paymentGatewayRoutes from './modules/PaymentGateway/routes.js';
 import meetingRoutes from './modules/Meetings/routes.js';
 import whatsappRoutes from './modules/WhatsApp/routes.js';
+import noticeBoardRoutes from './modules/NoticeBoard/routes.js';
+import digestRoutes from './modules/Digest/routes.js';
+import accountingRoutes from './modules/Accounting/routes.js';
 
 const app = express();
 
@@ -101,6 +104,9 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/audit', auditRoutes);
 app.use('/api/staff', staffRoutes);
 app.use('/api/meetings', authenticate, meetingRoutes);
+app.use('/api/notice-board', authenticate, noticeBoardRoutes);
+app.use('/api/digest', authenticate, digestRoutes);
+app.use('/api/accounting', authenticate, requireModule('fee'), accountingRoutes);
 
 // API routes — Bolt-on modules (guarded)
 app.use('/api/fees', authenticate, requireModule('fee'), feeRoutes);
