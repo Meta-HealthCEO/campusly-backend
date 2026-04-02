@@ -3,6 +3,7 @@ import { authenticate } from '../../middleware/auth.js';
 import { authorize } from '../../middleware/rbac.js';
 import { validate } from '../../middleware/validate.js';
 import { SportController } from './controller.js';
+import { StatsController } from './controller-stats.js';
 import {
   createTeamSchema,
   updateTeamSchema,
@@ -15,6 +16,10 @@ import {
   updateMatchResultSchema,
   createMvpVoteSchema,
 } from './validation.js';
+import {
+  recordMatchStatsSchema,
+  recordPersonalBestSchema,
+} from './validation-stats.js';
 
 const router = Router();
 
@@ -189,6 +194,79 @@ router.get(
   '/fixtures/:fixtureId/mvp',
   authenticate,
   SportController.getMvpResults,
+);
+
+// ─── Sport Configs ─────────────────────────────────────────────────────────
+
+router.get(
+  '/configs',
+  authenticate,
+  StatsController.listSportConfigs,
+);
+
+router.get(
+  '/configs/:code',
+  authenticate,
+  StatsController.getSportConfig,
+);
+
+// ─── Match Stats Routes ────────────────────────────────────────────────────
+
+router.post(
+  '/fixtures/:fixtureId/stats',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'teacher'),
+  validate(recordMatchStatsSchema),
+  StatsController.recordMatchStats,
+);
+
+router.get(
+  '/fixtures/:fixtureId/stats',
+  authenticate,
+  StatsController.getMatchStats,
+);
+
+// ─── Player Stats & Cards Routes ───────────────────────────────────────────
+
+router.get(
+  '/players/:studentId/stats',
+  authenticate,
+  StatsController.getPlayerCareerStats,
+);
+
+router.get(
+  '/players/:studentId/card',
+  authenticate,
+  StatsController.getPlayerCard,
+);
+
+router.get(
+  '/players/:studentId/personal-bests',
+  authenticate,
+  StatsController.getPersonalBests,
+);
+
+router.post(
+  '/players/:studentId/personal-best',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'teacher'),
+  validate(recordPersonalBestSchema),
+  StatsController.recordPersonalBest,
+);
+
+router.post(
+  '/players/:studentId/recalculate-card',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'teacher'),
+  StatsController.recalculatePlayerCard,
+);
+
+// ─── Player Card Listings ──────────────────────────────────────────────────
+
+router.get(
+  '/cards',
+  authenticate,
+  StatsController.listPlayerCards,
 );
 
 export default router;

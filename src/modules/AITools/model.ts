@@ -179,7 +179,7 @@ const gradingJobSchema = new Schema<IGradingJob>(
   {
     schoolId: { type: Schema.Types.ObjectId, ref: 'School', required: true },
     teacherId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    assignmentId: { type: Schema.Types.ObjectId, required: true },
+    assignmentId: { type: Schema.Types.ObjectId, ref: 'Homework', required: true },
     studentId: { type: Schema.Types.ObjectId, ref: 'Student', required: true },
     submissionText: { type: String, required: true },
     rubric: [rubricCriterionSchema],
@@ -204,7 +204,7 @@ export const GradingJob = mongoose.model<IGradingJob>('GradingJob', gradingJobSc
 
 // ─── AI Usage Log ─────────────────────────────────────────────────────────────
 
-export type AIUsageType = 'paper_generation' | 'question_regeneration' | 'grading' | 'memo_generation';
+export type AIUsageType = 'paper_generation' | 'question_regeneration' | 'grading' | 'memo_generation' | 'tutor_chat' | 'tutor_practice' | 'report_comments';
 
 export interface IAIUsageLog extends Document {
   schoolId: Types.ObjectId;
@@ -213,6 +213,7 @@ export interface IAIUsageLog extends Document {
   tokensUsed: { input: number; output: number };
   aiModel: string;
   createdAt: Date;
+  updatedAt: Date;
 }
 
 const aiUsageLogSchema = new Schema<IAIUsageLog>(
@@ -221,7 +222,7 @@ const aiUsageLogSchema = new Schema<IAIUsageLog>(
     teacherId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     type: {
       type: String,
-      enum: ['paper_generation', 'question_regeneration', 'grading', 'memo_generation'],
+      enum: ['paper_generation', 'question_regeneration', 'grading', 'memo_generation', 'tutor_chat', 'tutor_practice', 'report_comments'],
       required: true,
     },
     tokensUsed: {

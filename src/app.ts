@@ -46,6 +46,11 @@ import teacherWorkbenchRoutes from './modules/TeacherWorkbench/routes.js';
 import staffRoutes from './modules/Staff/routes.js';
 import libraryRoutes from './modules/Library/routes.js';
 import careerRoutes from './modules/Career/routes.js';
+import communicationRoutes from './modules/Communication/routes.js';
+import aiTutorRoutes from './modules/AITutor/routes.js';
+import messagingRoutes from './modules/Messaging/routes.js';
+import paymentGatewayRoutes from './modules/PaymentGateway/routes.js';
+import meetingRoutes from './modules/Meetings/routes.js';
 
 const app = express();
 
@@ -94,29 +99,34 @@ app.use('/api/announcements', announcementRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/audit', auditRoutes);
 app.use('/api/staff', staffRoutes);
+app.use('/api/meetings', authenticate, meetingRoutes);
 
 // API routes — Bolt-on modules (guarded)
-app.use('/api/fees', requireModule('fee'), feeRoutes);
-app.use('/api/wallets', requireModule('wallet'), walletRoutes);
-app.use('/api/tuck-shop', requireModule('tuckshop'), tuckShopRoutes);
-app.use('/api/academic', requireModule('academic'), academicRoutes);
-app.use('/api/homework', requireModule('homework'), homeworkRoutes);
-app.use('/api/attendance', requireModule('attendance'), attendanceRoutes);
-app.use('/api/achiever', requireModule('achiever'), achieverRoutes);
-app.use('/api/consent', requireModule('consent'), consentRoutes);
-app.use('/api/sports', requireModule('sport'), sportRoutes);
-app.use('/api/uniforms', requireModule('uniform'), uniformRoutes);
-app.use('/api/events', requireModule('event'), eventRoutes);
-app.use('/api/fundraising', requireModule('fundraising'), fundraisingRoutes);
-app.use('/api/transport', requireModule('transport'), transportRoutes);
-app.use('/api/after-care', requireModule('aftercare'), afterCareRoutes);
-app.use('/api/migration', requireModule('migration'), migrationRoutes);
-app.use('/api/learning', requireModule('learning'), learningRoutes);
-app.use('/api/lost-found', requireModule('lost_found'), lostFoundRoutes);
-app.use('/api/library', requireModule('library'), libraryRoutes);
-app.use('/api/ai-tools', requireModule('ai_tools'), aiToolsRoutes);
-app.use('/api/teacher-workbench', requireModule('teacher_workbench'), teacherWorkbenchRoutes);
-app.use('/api/careers', requireModule('careers'), careerRoutes);
+app.use('/api/fees', authenticate, requireModule('fee'), feeRoutes);
+app.use('/api/wallets', authenticate, requireModule('wallet'), walletRoutes);
+app.use('/api/tuck-shop', authenticate, requireModule('tuckshop'), tuckShopRoutes);
+app.use('/api/academic', authenticate, requireModule('academic'), academicRoutes);
+app.use('/api/homework', authenticate, requireModule('homework'), homeworkRoutes);
+app.use('/api/attendance', authenticate, requireModule('attendance'), attendanceRoutes);
+app.use('/api/achiever', authenticate, requireModule('achiever'), achieverRoutes);
+app.use('/api/consent', authenticate, requireModule('consent'), consentRoutes);
+app.use('/api/sports', authenticate, requireModule('sport'), sportRoutes);
+app.use('/api/uniforms', authenticate, requireModule('uniform'), uniformRoutes);
+app.use('/api/events', authenticate, requireModule('event'), eventRoutes);
+app.use('/api/fundraising', authenticate, requireModule('fundraising'), fundraisingRoutes);
+app.use('/api/transport', authenticate, requireModule('transport'), transportRoutes);
+app.use('/api/after-care', authenticate, requireModule('aftercare'), afterCareRoutes);
+app.use('/api/migration', authenticate, requireModule('migration'), migrationRoutes);
+app.use('/api/learning', authenticate, requireModule('learning'), learningRoutes);
+app.use('/api/lost-found', authenticate, requireModule('lost_found'), lostFoundRoutes);
+app.use('/api/library', authenticate, requireModule('library'), libraryRoutes);
+app.use('/api/ai-tools', authenticate, requireModule('ai_tools'), aiToolsRoutes);
+app.use('/api/teacher-workbench', authenticate, requireModule('teacher_workbench'), teacherWorkbenchRoutes);
+app.use('/api/careers', authenticate, requireModule('careers'), careerRoutes);
+app.use('/api/communication', authenticate, requireModule('communication'), communicationRoutes);
+app.use('/api/ai-tutor', authenticate, requireModule('ai_tools'), aiTutorRoutes);
+app.use('/api/messaging', authenticate, messagingRoutes);
+app.use('/api/payment-gateway', paymentGatewayRoutes); // No global authenticate — webhook route needs to be unauthenticated; individual routes handle auth
 
 // Static file serving — uploaded assets
 app.use('/uploads', express.static('uploads'));
