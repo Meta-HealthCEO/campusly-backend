@@ -56,6 +56,7 @@ import noticeBoardRoutes from './modules/NoticeBoard/routes.js';
 import digestRoutes from './modules/Digest/routes.js';
 import accountingRoutes from './modules/Accounting/routes.js';
 import schoolNewsRoutes from './modules/SchoolNews/routes.js';
+import timetableBuilderRoutes from './modules/TimetableBuilder/routes.js';
 
 const app = express();
 
@@ -115,6 +116,7 @@ app.use('/api/fees', authenticate, requireModule('fee'), feeRoutes);
 app.use('/api/wallets', authenticate, requireModule('wallet'), walletRoutes);
 app.use('/api/tuck-shop', authenticate, requireModule('tuckshop'), tuckShopRoutes);
 app.use('/api/academic', authenticate, requireModule('academic'), academicRoutes);
+app.use('/api/timetable-builder', authenticate, requireModule('academic'), timetableBuilderRoutes);
 app.use('/api/homework', authenticate, requireModule('homework'), homeworkRoutes);
 app.use('/api/attendance', authenticate, requireModule('attendance'), attendanceRoutes);
 app.use('/api/achiever', authenticate, requireModule('achiever'), achieverRoutes);
