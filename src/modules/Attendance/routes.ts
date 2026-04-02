@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { authenticate } from '../../middleware/auth.js';
 import { authorize } from '../../middleware/rbac.js';
 import { validate } from '../../middleware/validate.js';
+import { requireParentOwnership } from '../../middleware/parentOwnership.js';
 import { AttendanceController } from './controller.js';
 import {
   recordAttendanceSchema,
@@ -36,6 +37,7 @@ router.post(
 router.get(
   '/student/:studentId',
   authenticate,
+  requireParentOwnership('studentId'),
   AttendanceController.getByStudent,
 );
 
@@ -125,6 +127,7 @@ router.get(
 router.get(
   '/merits/balance/:studentId',
   authenticate,
+  requireParentOwnership('studentId'),
   AttendanceController.getMeritBalance,
 );
 

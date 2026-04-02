@@ -1,19 +1,28 @@
-import { Request, Response } from 'express';
+import type { Request } from 'express';
+import { Response } from 'express';
+import { getUser } from '../../types/authenticated-request.js';
 import { AnnouncementService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
 
 export class AnnouncementController {
   static async create(req: Request, res: Response): Promise<void> {
-    const announcement = await AnnouncementService.create(req.body, req.user!.id);
+    const announcement = await AnnouncementService.create(req.body, getUser(req).id);
     res.status(201).json(apiResponse(true, announcement, 'Announcement created successfully'));
   }
 
   static async list(req: Request, res: Response): Promise<void> {
+    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+
+    if (!schoolId) {
+      res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
+      return;
+    }
+
     const query = {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
       sort: req.query.sort as string | undefined,
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId,
     };
 
     const result = await AnnouncementService.list(query);
@@ -21,7 +30,7 @@ export class AnnouncementController {
   }
 
   static async getActive(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const schoolId = (req.query.schoolId as string) ?? getUser(req).schoolId;
 
     if (!schoolId) {
       res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
@@ -33,7 +42,7 @@ export class AnnouncementController {
       limit: req.query.limit ? Number(req.query.limit) : undefined,
     };
 
-    const result = await AnnouncementService.getActive(schoolId, req.user!.role, query);
+    const result = await AnnouncementService.getActive(schoolId, getUser(req).role, query);
     res.json(apiResponse(true, result, 'Active announcements retrieved successfully'));
   }
 

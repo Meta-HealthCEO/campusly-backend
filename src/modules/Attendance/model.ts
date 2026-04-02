@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document, Types } from 'mongoose';
+import { AttendanceStatus } from '../../common/enums.js';
 
-export type AttendanceStatus = 'present' | 'absent' | 'late' | 'excused';
+export type { AttendanceStatus };
 
 export interface IAttendance extends Document {
   studentId: Types.ObjectId;
@@ -48,7 +49,7 @@ const attendanceSchema = new Schema<IAttendance>(
     },
     status: {
       type: String,
-      enum: ['present', 'absent', 'late', 'excused'],
+      enum: Object.values(AttendanceStatus),
       required: true,
     },
     recordedBy: {
@@ -87,6 +88,7 @@ const attendanceSchema = new Schema<IAttendance>(
 attendanceSchema.index({ studentId: 1, date: 1, period: 1 }, { unique: true });
 attendanceSchema.index({ classId: 1, date: 1 });
 attendanceSchema.index({ schoolId: 1, date: 1 });
+attendanceSchema.index({ schoolId: 1, isDeleted: 1, createdAt: -1 });
 
 export const Attendance = mongoose.model<IAttendance>('Attendance', attendanceSchema);
 
@@ -138,7 +140,11 @@ const disciplineSchema = new Schema<IDiscipline>(
       required: true,
     },
     description: { type: String, required: true },
-    witnesses: { type: [String], default: [] },
+    witnesses: {
+      type: [String],
+      default: [],
+      validate: [(v: string[]) => v.length <= 10, 'Maximum 10 witnesses allowed'],
+    },
     actionTaken: { type: String },
     parentNotified: { type: Boolean, default: false },
     parentNotifiedDate: { type: Date },

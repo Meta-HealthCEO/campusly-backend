@@ -3,7 +3,7 @@ import mongoose, { Document, Schema, Types } from 'mongoose';
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
 export type SourceSystem = 'd6_connect' | 'karri' | 'adam' | 'schooltool' | 'excel' | 'csv';
-export type MigrationStatus = 'pending' | 'validating' | 'importing' | 'completed' | 'failed';
+export type MigrationStatus = 'pending' | 'validating' | 'validated' | 'importing' | 'completed' | 'failed';
 export type EntityType = 'student' | 'parent' | 'staff' | 'grade' | 'fee';
 
 // ─── Validation Error ──────────────────────────────────────────────────────────
@@ -101,7 +101,7 @@ const migrationJobSchema = new Schema<IMigrationJob>(
     schoolId: { type: Schema.Types.ObjectId, ref: 'School', required: true },
     status: {
       type: String,
-      enum: ['pending', 'validating', 'importing', 'completed', 'failed'],
+      enum: ['pending', 'validating', 'validated', 'importing', 'completed', 'failed'],
       default: 'pending',
     },
     sourceSystem: {

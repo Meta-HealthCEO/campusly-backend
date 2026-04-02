@@ -84,6 +84,7 @@ const achievementSchema = new Schema<IAchievement>(
   { timestamps: true },
 );
 
+achievementSchema.index({ schoolId: 1, isDeleted: 1 });
 achievementSchema.index({ schoolId: 1, type: 1 });
 achievementSchema.index({ studentId: 1, year: 1 });
 

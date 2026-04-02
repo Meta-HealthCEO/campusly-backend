@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { authenticate, authorize, validate } from '../../middleware/index.js';
+import { authenticate, authorize, validate, requireParentOwnership, validateSchoolScope } from '../../middleware/index.js';
 import { FeeController } from './controller.js';
 import {
   createFeeTypeSchema,
@@ -36,12 +36,15 @@ router.post(
 router.get(
   '/types/school/:schoolId',
   authenticate,
+  authorize('super_admin', 'school_admin', 'parent'),
+  validateSchoolScope(),
   FeeController.listFeeTypes,
 );
 
 router.get(
   '/types/:id',
   authenticate,
+  authorize('super_admin', 'school_admin', 'parent'),
   FeeController.getFeeType,
 );
 
@@ -73,12 +76,15 @@ router.post(
 router.get(
   '/schedules/school/:schoolId',
   authenticate,
+  authorize('super_admin', 'school_admin', 'parent'),
+  validateSchoolScope(),
   FeeController.listFeeSchedules,
 );
 
 router.get(
   '/schedules/:id',
   authenticate,
+  authorize('super_admin', 'school_admin', 'parent'),
   FeeController.getFeeSchedule,
 );
 
@@ -110,6 +116,8 @@ router.post(
 router.get(
   '/invoices/school/:schoolId',
   authenticate,
+  authorize('super_admin', 'school_admin', 'parent'),
+  validateSchoolScope(),
   FeeController.listInvoices,
 );
 
@@ -117,12 +125,14 @@ router.get(
   '/invoices/school/:schoolId/overdue',
   authenticate,
   authorize('super_admin', 'school_admin'),
+  validateSchoolScope(),
   FeeController.getOverdueInvoices,
 );
 
 router.get(
   '/invoices/:id',
   authenticate,
+  authorize('super_admin', 'school_admin', 'parent'),
   FeeController.getInvoice,
 );
 
@@ -139,6 +149,7 @@ router.post(
 router.get(
   '/payments/:invoiceId',
   authenticate,
+  authorize('super_admin', 'school_admin', 'parent'),
   FeeController.getPayments,
 );
 
@@ -147,6 +158,8 @@ router.get(
 router.get(
   '/students/:studentId/balance',
   authenticate,
+  authorize('super_admin', 'school_admin', 'parent'),
+  requireParentOwnership('studentId'),
   FeeController.getStudentBalance,
 );
 
@@ -163,12 +176,15 @@ router.post(
 router.get(
   '/debit-orders/school/:schoolId',
   authenticate,
+  authorize('super_admin', 'school_admin'),
+  validateSchoolScope(),
   FeeController.listDebitOrders,
 );
 
 router.get(
   '/debit-orders/:id',
   authenticate,
+  authorize('super_admin', 'school_admin'),
   FeeController.getDebitOrder,
 );
 
@@ -193,6 +209,7 @@ router.get(
   '/debtors/school/:schoolId',
   authenticate,
   authorize('super_admin', 'school_admin'),
+  validateSchoolScope(),
   FeeController.getDebtorsReport,
 );
 
@@ -210,6 +227,7 @@ router.get(
   '/collections/school/:schoolId',
   authenticate,
   authorize('super_admin', 'school_admin'),
+  validateSchoolScope(),
   FeeController.listCollectionActions,
 );
 
@@ -218,6 +236,7 @@ router.get(
 router.post(
   '/statements',
   authenticate,
+  authorize('super_admin', 'school_admin', 'parent'),
   validate(generateStatementSchema),
   FeeController.generateStatement,
 );
@@ -228,6 +247,7 @@ router.post(
   '/late-fees/school/:schoolId',
   authenticate,
   authorize('super_admin', 'school_admin'),
+  validateSchoolScope(),
   FeeController.calculateLateFees,
 );
 
@@ -255,6 +275,7 @@ router.get(
   '/payment-arrangements/school/:schoolId',
   authenticate,
   authorize('super_admin', 'school_admin'),
+  validateSchoolScope(),
   FeeController.listPaymentArrangements,
 );
 
@@ -283,6 +304,8 @@ router.post(
 router.get(
   '/parents/:parentId/school/:schoolId/balance',
   authenticate,
+  authorize('super_admin', 'school_admin', 'parent'),
+  validateSchoolScope(),
   FeeController.getParentAccountBalance,
 );
 
@@ -318,6 +341,7 @@ router.get(
   '/credit-notes/school/:schoolId',
   authenticate,
   authorize('super_admin', 'school_admin'),
+  validateSchoolScope(),
   FeeController.listCreditNotes,
 );
 
@@ -335,6 +359,7 @@ router.get(
   '/exemptions/school/:schoolId',
   authenticate,
   authorize('super_admin', 'school_admin'),
+  validateSchoolScope(),
   FeeController.listFeeExemptions,
 );
 
@@ -343,6 +368,9 @@ router.get(
 router.get(
   '/ledger/student/:studentId/school/:schoolId',
   authenticate,
+  authorize('super_admin', 'school_admin', 'parent'),
+  validateSchoolScope(),
+  requireParentOwnership('studentId'),
   FeeController.getAccountLedger,
 );
 

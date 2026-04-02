@@ -1,3 +1,4 @@
+import { logger } from '../common/logger.js';
 import { Worker } from 'bullmq';
 import { redisConnection } from './queues.js';
 
@@ -43,7 +44,7 @@ export async function setupWorkers(): Promise<Worker[]> {
     await testConnection.ping();
     await testConnection.quit();
 
-    console.log('[Jobs] Redis is available, starting workers...');
+    logger.info('[Jobs] Redis is available, starting workers...');
 
     const { createPaymentReminderWorker } = await import('./payment-reminder.job.js');
     const { createAttendanceAlertWorker } = await import('./attendance-alert.job.js');
@@ -70,7 +71,7 @@ export async function setupWorkers(): Promise<Worker[]> {
     const { createAIGradingWorker } = await import('./ai-grading.job.js');
     workers.push(createAIGradingWorker());
 
-    console.log(`[Jobs] ${workers.length} workers started successfully`);
+    logger.info(`[Jobs] ${workers.length} workers started successfully`);
 
     // Schedule repeatable jobs
     const { schedulePaymentReminders } = await import('./payment-reminder.job.js');
@@ -90,11 +91,12 @@ export async function setupWorkers(): Promise<Worker[]> {
     const { scheduleLostFoundArchive } = await import('./lost-found-archive.job.js');
     await scheduleLostFoundArchive();
 
-    console.log('[Jobs] Repeatable jobs scheduled');
+    logger.info('[Jobs] Repeatable jobs scheduled');
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    console.warn(`[Jobs] Redis not available, workers not started: ${message}`);
-    console.warn('[Jobs] The application will run without background job processing');
+    logger.error('⚠️  CRITICAL: Redis unavailable — ALL background jobs are DISABLED');
+    logger.error('⚠️  Late fees, reminders, escalations, and AI grading will NOT run');
+    logger.warn(`[Jobs] Redis not available, workers not started: ${message}`);
   }
 
   return workers;

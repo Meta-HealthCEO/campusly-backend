@@ -179,7 +179,7 @@ export class MigrationService {
       errors,
     };
 
-    job.status = errors.length > 0 && errors.some((e) => e.row === 0) ? 'pending' : 'pending';
+    job.status = errors.length > 0 && errors.some((e) => e.row === 0) ? 'pending' : 'validated';
     await job.save();
     return job;
   }
@@ -210,12 +210,12 @@ export class MigrationService {
     mapping: Record<string, string>,
   ): Promise<IMigrationJob> {
     const job = await MigrationJob.findOneAndUpdate(
-      { _id: jobId, isDeleted: false, status: 'pending' },
+      { _id: jobId, isDeleted: false, status: { $in: ['pending', 'validated'] } },
       { $set: { mapping } },
       { new: true, runValidators: true },
     );
 
-    if (!job) throw new NotFoundError('Migration job not found or not in pending status');
+    if (!job) throw new NotFoundError('Migration job not found or not in pending/validated status');
     return job;
   }
 
@@ -224,8 +224,8 @@ export class MigrationService {
     const job = await MigrationJob.findOne({ _id: jobId, isDeleted: false });
     if (!job) throw new NotFoundError('Migration job not found');
 
-    if (job.status !== 'pending') {
-      throw new BadRequestError('Job must be in pending status to execute import');
+    if (job.status !== 'pending' && job.status !== 'validated') {
+      throw new BadRequestError('Job must be in pending or validated status to execute import');
     }
 
     if (!job.validationResults || job.validationResults.errors.some((e) => e.row === 0)) {

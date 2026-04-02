@@ -2,7 +2,8 @@ import mongoose from 'mongoose';
 import { MenuItem, IMenuItem, TuckShopOrder, ITuckShopOrder } from './model.js';
 import { Wallet, WalletTransaction, Wristband } from '../Wallet/model.js';
 import { Student } from '../Student/model.js';
-import { BadRequestError, NotFoundError } from '../../common/errors.js';
+import { AuditLog } from '../Audit/model.js';
+import { BadRequestError, NotFoundError, UnauthorizedError } from '../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../common/constants.js';
 import { TransactionType } from '../../common/enums.js';
 
@@ -182,19 +183,16 @@ export class TuckShopService {
           throw new BadRequestError(`Menu item "${menuItem.name}" is not available`);
         }
 
-        // Check stock (-1 means unlimited)
+        // Check stock and atomically decrement (-1 means unlimited)
         if (menuItem.stock !== -1) {
-          if (menuItem.stock < orderItem.quantity) {
-            throw new BadRequestError(
-              `Insufficient stock for "${menuItem.name}". Available: ${menuItem.stock}`,
-            );
-          }
-
-          // Decrement stock
-          await MenuItem.updateOne(
-            { _id: menuItem._id },
+          const updated = await MenuItem.findOneAndUpdate(
+            { _id: menuItem._id, stock: { $gte: orderItem.quantity } },
             { $inc: { stock: -orderItem.quantity } },
-          ).session(session);
+            { new: true, session },
+          );
+          if (!updated) {
+            throw new BadRequestError(`Insufficient stock for "${menuItem.name}"`);
+          }
         }
 
         const itemTotal = menuItem.price * orderItem.quantity;
@@ -210,41 +208,35 @@ export class TuckShopService {
 
       let walletTransactionId: mongoose.Types.ObjectId | undefined;
 
-      // Handle wallet payment
+      // Handle payment method
       if (data.paymentMethod === 'wallet') {
-        const wallet = await Wallet.findOne({
-          studentId: data.studentId,
-          isActive: true,
-          isDeleted: false,
-        }).session(session);
+        const updatedWallet = await Wallet.findOneAndUpdate(
+          {
+            studentId: data.studentId,
+            isActive: true,
+            isDeleted: false,
+            balance: { $gte: totalAmount },
+          },
+          { $inc: { balance: -totalAmount } },
+          { new: true, session },
+        );
 
-        if (!wallet) {
-          throw new BadRequestError('Student wallet not found or inactive');
+        if (!updatedWallet) {
+          throw new BadRequestError('Insufficient wallet balance or wallet not found');
         }
-
-        if (wallet.balance < totalAmount) {
-          throw new BadRequestError('Insufficient wallet balance');
-        }
-
-        // Deduct from wallet
-        wallet.balance -= totalAmount;
-        await wallet.save({ session });
 
         // Create wallet transaction
         const transaction = new WalletTransaction({
-          walletId: wallet._id,
+          walletId: updatedWallet._id,
           type: TransactionType.PURCHASE,
           amount: totalAmount,
           description: `Tuck shop purchase - ${orderItems.length} item(s)`,
-          balanceAfter: wallet.balance,
+          balanceAfter: updatedWallet.balance,
           performedBy: processedBy,
         });
         await transaction.save({ session });
         walletTransactionId = transaction._id as mongoose.Types.ObjectId;
-      }
-
-      // Handle wristband payment
-      if (data.paymentMethod === 'wristband') {
+      } else if (data.paymentMethod === 'wristband') {
         if (!data.wristbandId) {
           throw new BadRequestError('Wristband ID is required for wristband payment');
         }
@@ -259,35 +251,40 @@ export class TuckShopService {
           throw new BadRequestError('Wristband not found or inactive');
         }
 
-        const wallet = await Wallet.findOne({
-          studentId: wristband.studentId,
-          isActive: true,
-          isDeleted: false,
-        }).session(session);
-
-        if (!wallet) {
-          throw new BadRequestError('Wallet linked to wristband not found or inactive');
+        if (wristband.studentId.toString() !== data.studentId) {
+          throw new UnauthorizedError('Wristband does not belong to this student');
         }
 
-        if (wallet.balance < totalAmount) {
-          throw new BadRequestError('Insufficient wallet balance');
-        }
+        const updatedWallet = await Wallet.findOneAndUpdate(
+          {
+            studentId: wristband.studentId,
+            isActive: true,
+            isDeleted: false,
+            balance: { $gte: totalAmount },
+          },
+          { $inc: { balance: -totalAmount } },
+          { new: true, session },
+        );
 
-        // Deduct from wallet
-        wallet.balance -= totalAmount;
-        await wallet.save({ session });
+        if (!updatedWallet) {
+          throw new BadRequestError('Insufficient wallet balance or wallet not found');
+        }
 
         // Create wallet transaction
         const transaction = new WalletTransaction({
-          walletId: wallet._id,
+          walletId: updatedWallet._id,
           type: TransactionType.PURCHASE,
           amount: totalAmount,
           description: `Tuck shop purchase via wristband - ${orderItems.length} item(s)`,
-          balanceAfter: wallet.balance,
+          balanceAfter: updatedWallet.balance,
           performedBy: processedBy,
         });
         await transaction.save({ session });
         walletTransactionId = transaction._id as mongoose.Types.ObjectId;
+      } else if (data.paymentMethod === 'cash') {
+        // Cash: no deduction needed, just record the order
+      } else {
+        throw new BadRequestError(`Unsupported payment method: ${data.paymentMethod as string}`);
       }
 
       // Create the order
@@ -301,6 +298,33 @@ export class TuckShopService {
         processedBy,
       });
       await order.save({ session });
+
+      // Audit log for allergen override
+      if (data.allergenOverride) {
+        const student = await Student.findOne({ _id: data.studentId, isDeleted: false }).session(session);
+        const studentAllergies = (student?.medicalProfile?.allergies ?? []).map((a) => a.toLowerCase());
+        const matchingAllergens: string[] = [];
+        for (const orderItem of data.items) {
+          const menuItem = menuItemMap.get(orderItem.menuItemId);
+          if (menuItem?.allergens?.length) {
+            for (const allergen of menuItem.allergens) {
+              if (studentAllergies.includes(allergen.toLowerCase())) {
+                matchingAllergens.push(allergen);
+              }
+            }
+          }
+        }
+        if (matchingAllergens.length > 0) {
+          await AuditLog.create([{
+            userId: processedBy,
+            schoolId: data.schoolId,
+            action: 'ALLERGEN_OVERRIDE',
+            entity: 'TuckShopOrder',
+            entityId: (order._id as mongoose.Types.ObjectId).toString(),
+            details: { studentId: data.studentId, allergens: matchingAllergens },
+          }], { session });
+        }
+      }
 
       await session.commitTransaction();
       return order;

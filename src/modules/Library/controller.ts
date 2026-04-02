@@ -1,4 +1,6 @@
-import { Request, Response } from 'express';
+import type { Request } from 'express';
+import { Response } from 'express';
+import { getUser } from '../../types/authenticated-request.js';
 import { LibraryService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
 
@@ -40,7 +42,7 @@ export class LibraryController {
   // ─── Book Loans ───────────────────────────────────────────────────────────
 
   static async issueBook(req: Request, res: Response): Promise<void> {
-    const loan = await LibraryService.issueBook(req.body, req.user!.id);
+    const loan = await LibraryService.issueBook(req.body, getUser(req).id);
     res.status(201).json(apiResponse(true, loan, 'Book issued successfully'));
   }
 

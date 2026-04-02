@@ -119,7 +119,7 @@ export class AttendanceService {
       date: new Date(data.date),
       period: data.period,
       isDeleted: false,
-    });
+    }).lean();
 
     return records;
   }
@@ -135,7 +135,7 @@ export class AttendanceService {
       isDeleted: false,
     })
       .sort({ date: 1, period: 1 })
-      .populate('classId')
+      .populate('classId', 'name gradeId')
       .lean();
 
     return records;
@@ -148,7 +148,7 @@ export class AttendanceService {
       isDeleted: false,
     })
       .sort({ period: 1 })
-      .populate('studentId')
+      .populate('studentId', 'admissionNumber userId gradeId classId')
       .lean();
 
     return records;
@@ -168,7 +168,7 @@ export class AttendanceService {
       query.classId = filters.classId;
     }
 
-    const records = await Attendance.find(query);
+    const records = await Attendance.find(query).lean();
 
     const totalDays = records.length;
     const present = records.filter((r) => r.status === 'present').length;
@@ -205,8 +205,9 @@ export class AttendanceService {
     }
 
     const absentees = await Attendance.find(query)
-      .populate('studentId')
-      .populate('classId');
+      .populate('studentId', 'admissionNumber userId gradeId classId')
+      .populate('classId', 'name gradeId')
+      .lean();
 
     return absentees;
   }
@@ -293,7 +294,7 @@ export class AttendanceService {
 
     const [data, total] = await Promise.all([
       Discipline.find(filter)
-        .populate('studentId')
+        .populate('studentId', 'admissionNumber userId gradeId classId')
         .populate('reportedBy', 'firstName lastName email')
         .sort('-createdAt')
         .skip(skip)
@@ -307,8 +308,9 @@ export class AttendanceService {
 
   static async getDisciplineById(id: string): Promise<IDiscipline> {
     const record = await Discipline.findOne({ _id: id, isDeleted: false })
-      .populate('studentId')
-      .populate('reportedBy', 'firstName lastName email');
+      .populate('studentId', 'admissionNumber userId gradeId classId')
+      .populate('reportedBy', 'firstName lastName email')
+      .lean();
     if (!record) throw new NotFoundError('Discipline record not found');
     return record;
   }
@@ -318,7 +320,7 @@ export class AttendanceService {
       { _id: id, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
-    ).populate('studentId').populate('reportedBy', 'firstName lastName email');
+    ).populate('studentId', 'admissionNumber userId gradeId classId').populate('reportedBy', 'firstName lastName email');
     if (!record) throw new NotFoundError('Discipline record not found');
     return record;
   }
@@ -357,7 +359,7 @@ export class AttendanceService {
 
     const [data, total] = await Promise.all([
       Merit.find(filter)
-        .populate('studentId')
+        .populate('studentId', 'admissionNumber userId gradeId classId')
         .populate('awardedBy', 'firstName lastName email')
         .sort('-createdAt')
         .skip(skip)
@@ -427,7 +429,8 @@ export class AttendanceService {
     const plan = await LessonPlan.findOne({ _id: id, isDeleted: false })
       .populate('subjectId', 'name code')
       .populate('classId', 'name')
-      .populate('teacherId', 'firstName lastName email');
+      .populate('teacherId', 'firstName lastName email')
+      .lean();
     if (!plan) throw new NotFoundError('Lesson plan not found');
     return plan;
   }
@@ -494,7 +497,8 @@ export class AttendanceService {
       .populate('originalTeacherId', 'firstName lastName email')
       .populate('substituteTeacherId', 'firstName lastName email')
       .populate('approvedBy', 'firstName lastName email')
-      .populate('classIds', 'name');
+      .populate('classIds', 'name')
+      .lean();
     if (!sub) throw new NotFoundError('Substitute record not found');
     return sub;
   }

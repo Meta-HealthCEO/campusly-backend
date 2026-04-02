@@ -1,3 +1,4 @@
+import { logger } from '../common/logger.js';
 import { Parent } from '../modules/Parent/model.js';
 import { EmailService } from './email.service.js';
 import { SmsService } from './sms.service.js';
@@ -16,7 +17,7 @@ export class CommunicationService {
     const parent = await Parent.findById(parentId).populate('userId');
 
     if (!parent) {
-      console.warn(`[CommunicationService] Parent not found: ${parentId}`);
+      logger.warn(`[CommunicationService] Parent not found: ${parentId}`);
       return;
     }
 
@@ -201,21 +202,21 @@ export class CommunicationService {
 
       case 'whatsapp':
         // WhatsApp integration placeholder (e.g., WhatsApp Business API)
-        console.log(`[CommunicationService] WhatsApp message to ${user.phone || user.email}: ${title}`);
-        console.log(`  Message: ${message.substring(0, 200)}...`);
+        logger.info(`[CommunicationService] WhatsApp message to ${user.phone || user.email}: ${title}`);
+        logger.info(`  Message: ${message.substring(0, 200)}...`);
         break;
 
       case 'push':
         // Push notification placeholder (e.g., Firebase Cloud Messaging)
-        console.log(`[CommunicationService] Push notification to ${user.firstName} ${user.lastName}: ${title}`);
-        console.log(`  Message: ${message.substring(0, 200)}...`);
+        logger.info(`[CommunicationService] Push notification to ${user.firstName} ${user.lastName}: ${title}`);
+        logger.info(`  Message: ${message.substring(0, 200)}...`);
         if (data) {
-          console.log(`  Data: ${JSON.stringify(data)}`);
+          logger.info(`  Data: ${JSON.stringify(data)}`);
         }
         break;
 
       default:
-        console.warn(`[CommunicationService] Unknown communication preference: ${preference}`);
+        logger.warn(`[CommunicationService] Unknown communication preference: ${preference}`);
     }
   }
 }

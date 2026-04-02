@@ -10,7 +10,7 @@ export const createNotificationSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   message: z.string().min(1, 'Message is required'),
   data: z.unknown().optional(),
-});
+}).strict();
 
 export const bulkNotificationSchema = z.object({
   schoolId: objectIdSchema,
@@ -20,14 +20,14 @@ export const bulkNotificationSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   message: z.string().min(1, 'Message is required'),
   data: z.unknown().optional(),
-});
+}).strict();
 
 export const updatePreferenceSchema = z.object({
   email: z.boolean().optional(),
   sms: z.boolean().optional(),
   push: z.boolean().optional(),
   inApp: z.boolean().optional(),
-});
+}).strict();
 
 export type CreateNotificationInput = z.infer<typeof createNotificationSchema>;
 export type BulkNotificationInput = z.infer<typeof bulkNotificationSchema>;

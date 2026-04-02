@@ -1,3 +1,4 @@
+import { logger } from '../common/logger.js';
 import mongoose from 'mongoose';
 import { config } from '../config/env.js';
 import { User } from '../modules/Auth/model.js';
@@ -12,20 +13,20 @@ import { Announcement } from '../modules/Announcement/model.js';
 
 async function seed() {
   try {
-    console.log('Connecting to MongoDB...');
+    logger.info('Connecting to MongoDB...');
     await mongoose.connect(config.mongodb.uri);
-    console.log('Connected to MongoDB');
+    logger.info('Connected to MongoDB');
 
     // ─── Clear all collections ────────────────────────────────────────────────
-    console.log('Clearing all collections...');
+    logger.info('Clearing all collections...');
     const collections = mongoose.connection.collections;
     for (const key of Object.keys(collections)) {
       await collections[key].deleteMany({});
     }
-    console.log('All collections cleared');
+    logger.info('All collections cleared');
 
     // ─── School ───────────────────────────────────────────────────────────────
-    console.log('Creating school...');
+    logger.info('Creating school...');
     const school = await School.create({
       name: 'Greenfield Primary School',
       address: {
@@ -59,10 +60,10 @@ async function seed() {
       emisNumber: 'GP-500123',
       type: 'primary',
     });
-    console.log(`School created: ${school.name} (${school._id})`);
+    logger.info(`School created: ${school.name} (${school._id})`);
 
     // ─── Users ────────────────────────────────────────────────────────────────
-    console.log('Creating users...');
+    logger.info('Creating users...');
 
     // The User model has a pre-save hook that hashes passwords automatically
     const superAdmin = await User.create({
@@ -74,7 +75,7 @@ async function seed() {
       phone: '+27 82 000 0001',
       isActive: true,
     });
-    console.log(`Super admin created: ${superAdmin.email}`);
+    logger.info(`Super admin created: ${superAdmin.email}`);
 
     const schoolAdmin = await User.create({
       email: 'admin@greenfieldprimary.co.za',
@@ -86,7 +87,7 @@ async function seed() {
       phone: '+27 82 000 0002',
       isActive: true,
     });
-    console.log(`School admin created: ${schoolAdmin.email}`);
+    logger.info(`School admin created: ${schoolAdmin.email}`);
 
     const teacherData = [
       { firstName: 'Thandi', lastName: 'Molefe', email: 'thandi.molefe@greenfieldprimary.co.za', phone: '+27 83 100 0001' },
@@ -105,7 +106,7 @@ async function seed() {
         }),
       ),
     );
-    console.log(`${teachers.length} teachers created`);
+    logger.info(`${teachers.length} teachers created`);
 
     const parentUserData = [
       { firstName: 'Bongiwe', lastName: 'Mthembu', email: 'bongiwe.mthembu@gmail.com', phone: '+27 84 200 0001' },
@@ -126,7 +127,7 @@ async function seed() {
         }),
       ),
     );
-    console.log(`${parentUsers.length} parent users created`);
+    logger.info(`${parentUsers.length} parent users created`);
 
     const studentUserData = [
       { firstName: 'Lebo', lastName: 'Mthembu', email: 'lebo.mthembu@student.gfp.co.za', gender: 'male' as const, dob: '2019-03-15' },
@@ -154,10 +155,10 @@ async function seed() {
         }),
       ),
     );
-    console.log(`${studentUsers.length} student users created`);
+    logger.info(`${studentUsers.length} student users created`);
 
     // ─── Grades ───────────────────────────────────────────────────────────────
-    console.log('Creating grades...');
+    logger.info('Creating grades...');
     const gradeNames = ['Grade R', 'Grade 1', 'Grade 2', 'Grade 3'];
     const grades = await Promise.all(
       gradeNames.map((name, index) =>
@@ -168,10 +169,10 @@ async function seed() {
         }),
       ),
     );
-    console.log(`${grades.length} grades created`);
+    logger.info(`${grades.length} grades created`);
 
     // ─── Classes ──────────────────────────────────────────────────────────────
-    console.log('Creating classes...');
+    logger.info('Creating classes...');
     const classData = [
       { name: 'Grade R - A', gradeIndex: 0, teacherIndex: 0, capacity: 25 },
       { name: 'Grade 1 - A', gradeIndex: 1, teacherIndex: 0, capacity: 30 },
@@ -192,10 +193,10 @@ async function seed() {
         }),
       ),
     );
-    console.log(`${classes.length} classes created`);
+    logger.info(`${classes.length} classes created`);
 
     // ─── Subjects ─────────────────────────────────────────────────────────────
-    console.log('Creating subjects...');
+    logger.info('Creating subjects...');
     const allGradeIds = grades.map((g) => g._id);
     const subjectData = [
       { name: 'English', code: 'ENG', gradeIds: allGradeIds },
@@ -215,10 +216,10 @@ async function seed() {
         }),
       ),
     );
-    console.log(`${subjects.length} subjects created`);
+    logger.info(`${subjects.length} subjects created`);
 
     // ─── Students ─────────────────────────────────────────────────────────────
-    console.log('Creating students...');
+    logger.info('Creating students...');
 
     // Assign students to classes/grades
     // Grade R-A: Naledi, Anika, Thabo (younger kids, dob 2020)
@@ -269,10 +270,10 @@ async function seed() {
         }),
       ),
     );
-    console.log(`${students.length} students created`);
+    logger.info(`${students.length} students created`);
 
     // ─── Parents ──────────────────────────────────────────────────────────────
-    console.log('Creating parents...');
+    logger.info('Creating parents...');
 
     // Parent 0 (Bongiwe Mthembu) -> children: Lebo (0), Naledi (1)
     // Parent 1 (Pieter Botha) -> children: Jan (2), Anika (3)
@@ -301,10 +302,10 @@ async function seed() {
         }),
       ),
     );
-    console.log(`${parents.length} parents created`);
+    logger.info(`${parents.length} parents created`);
 
     // Update students with guardian references
-    console.log('Linking students to parents...');
+    logger.info('Linking students to parents...');
     const studentParentMap: Record<number, number[]> = {
       0: [0], 1: [0], 2: [1], 3: [1], 4: [2],
       5: [3], 6: [3], 7: [4], 8: [4], 9: [],
@@ -318,10 +319,10 @@ async function seed() {
         });
       }),
     );
-    console.log('Students linked to parents');
+    logger.info('Students linked to parents');
 
     // ─── Wallets ──────────────────────────────────────────────────────────────
-    console.log('Creating wallets...');
+    logger.info('Creating wallets...');
     const walletBalances = [5000, 2500, 7500, 3000, 10000, 1500, 0, 4000, 6000, 0];
     const wallets = await Promise.all(
       students.map((student, index) =>
@@ -335,10 +336,10 @@ async function seed() {
         }),
       ),
     );
-    console.log(`${wallets.length} wallets created (balances in cents)`);
+    logger.info(`${wallets.length} wallets created (balances in cents)`);
 
     // ─── Fee Types ────────────────────────────────────────────────────────────
-    console.log('Creating fee types...');
+    logger.info('Creating fee types...');
     const feeTypeData = [
       {
         name: 'Annual Tuition Fee',
@@ -372,10 +373,10 @@ async function seed() {
         }),
       ),
     );
-    console.log(`${feeTypes.length} fee types created`);
+    logger.info(`${feeTypes.length} fee types created`);
 
     // ─── Menu Items (Tuck Shop) ───────────────────────────────────────────────
-    console.log('Creating tuck shop menu items...');
+    logger.info('Creating tuck shop menu items...');
     const menuItemData = [
       {
         name: 'Simba Chips (Small)',
@@ -445,10 +446,10 @@ async function seed() {
         }),
       ),
     );
-    console.log(`${menuItems.length} menu items created`);
+    logger.info(`${menuItems.length} menu items created`);
 
     // ─── Announcements ────────────────────────────────────────────────────────
-    console.log('Creating announcements...');
+    logger.info('Creating announcements...');
     const announcements = await Promise.all([
       Announcement.create({
         title: 'Welcome to the 2026 Academic Year',
@@ -479,35 +480,35 @@ async function seed() {
         pinned: false,
       }),
     ]);
-    console.log(`${announcements.length} announcements created`);
+    logger.info(`${announcements.length} announcements created`);
 
     // ─── Summary ──────────────────────────────────────────────────────────────
-    console.log('\n========================================');
-    console.log('  Seed completed successfully!');
-    console.log('========================================');
-    console.log(`  School:        1 (${school.name})`);
-    console.log(`  Users:         ${1 + 1 + teachers.length + parentUsers.length + studentUsers.length} total`);
-    console.log(`    Super Admin: 1`);
-    console.log(`    School Admin:1`);
-    console.log(`    Teachers:    ${teachers.length}`);
-    console.log(`    Parents:     ${parentUsers.length}`);
-    console.log(`    Students:    ${studentUsers.length}`);
-    console.log(`  Grades:        ${grades.length}`);
-    console.log(`  Classes:       ${classes.length}`);
-    console.log(`  Subjects:      ${subjects.length}`);
-    console.log(`  Students:      ${students.length}`);
-    console.log(`  Parents:       ${parents.length}`);
-    console.log(`  Wallets:       ${wallets.length}`);
-    console.log(`  Fee Types:     ${feeTypes.length}`);
-    console.log(`  Menu Items:    ${menuItems.length}`);
-    console.log(`  Announcements: ${announcements.length}`);
-    console.log('========================================');
-    console.log('  Default password for all users: Password1');
-    console.log('========================================\n');
+    logger.info('\n========================================');
+    logger.info('  Seed completed successfully!');
+    logger.info('========================================');
+    logger.info(`  School:        1 (${school.name})`);
+    logger.info(`  Users:         ${1 + 1 + teachers.length + parentUsers.length + studentUsers.length} total`);
+    logger.info(`    Super Admin: 1`);
+    logger.info(`    School Admin:1`);
+    logger.info(`    Teachers:    ${teachers.length}`);
+    logger.info(`    Parents:     ${parentUsers.length}`);
+    logger.info(`    Students:    ${studentUsers.length}`);
+    logger.info(`  Grades:        ${grades.length}`);
+    logger.info(`  Classes:       ${classes.length}`);
+    logger.info(`  Subjects:      ${subjects.length}`);
+    logger.info(`  Students:      ${students.length}`);
+    logger.info(`  Parents:       ${parents.length}`);
+    logger.info(`  Wallets:       ${wallets.length}`);
+    logger.info(`  Fee Types:     ${feeTypes.length}`);
+    logger.info(`  Menu Items:    ${menuItems.length}`);
+    logger.info(`  Announcements: ${announcements.length}`);
+    logger.info('========================================');
+    logger.info('  Default password for all users: Password1');
+    logger.info('========================================\n');
 
     process.exit(0);
   } catch (error) {
-    console.error('Seed failed:', error);
+    logger.error({ err: error }, 'Seed failed');
     process.exit(1);
   }
 }

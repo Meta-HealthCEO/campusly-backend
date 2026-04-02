@@ -1,4 +1,6 @@
-import { Request, Response } from 'express';
+import type { Request } from 'express';
+import { Response } from 'express';
+import { getUser } from '../../types/authenticated-request.js';
 import { FeeService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
 
@@ -96,7 +98,7 @@ export class FeeController {
     const result = await FeeService.recordPayment(
       req.params.id as string,
       req.body,
-      req.user!.id,
+      getUser(req).id,
     );
     res.status(201).json(apiResponse(true, result, 'Payment recorded successfully'));
   }
@@ -167,7 +169,7 @@ export class FeeController {
   // ─── Collection Escalation ──────────────────────────────────────────────────
 
   static async escalateCollection(req: Request, res: Response): Promise<void> {
-    const result = await FeeService.escalateCollection(req.body, req.user!.id);
+    const result = await FeeService.escalateCollection(req.body, getUser(req).id);
     res.status(201).json(apiResponse(true, result, 'Collection escalated successfully'));
   }
 
@@ -203,7 +205,7 @@ export class FeeController {
     const result = await FeeService.allocatePayment(
       req.params.studentId as string,
       req.body,
-      req.user!.id,
+      getUser(req).id,
     );
     res.status(201).json(apiResponse(true, result, 'Payment allocated successfully'));
   }
@@ -228,20 +230,30 @@ export class FeeController {
   // ─── Write Off ──────────────────────────────────────────────────────────────
 
   static async writeOffDebt(req: Request, res: Response): Promise<void> {
-    const result = await FeeService.writeOffDebt(req.body, req.user!.id);
+    const result = await FeeService.writeOffDebt(req.body, getUser(req).id);
     res.json(apiResponse(true, result, 'Debt written off successfully'));
   }
 
   // ─── Discount ───────────────────────────────────────────────────────────────
 
   static async applyDiscount(req: Request, res: Response): Promise<void> {
-    const result = await FeeService.applyDiscount(req.body, req.user!.id);
+    const result = await FeeService.applyDiscount(req.body, getUser(req).id);
     res.json(apiResponse(true, result, 'Discount applied successfully'));
   }
 
   // ─── Parent Account Balance ─────────────────────────────────────────────────
 
   static async getParentAccountBalance(req: Request, res: Response): Promise<void> {
+    // Parents can only view their own balance
+    if (req.user?.role === 'parent') {
+      const { Parent } = await import('../Parent/model.js');
+      const parent = await Parent.findOne({ userId: req.user.id }).lean();
+      if (!parent || parent._id.toString() !== req.params.parentId) {
+        res.status(403).json(apiResponse(false, undefined, undefined, 'Access denied: you can only view your own balance'));
+        return;
+      }
+    }
+
     const balance = await FeeService.getParentAccountBalance(
       req.params.parentId as string,
       req.params.schoolId as string,
@@ -267,7 +279,7 @@ export class FeeController {
     const creditNote = await FeeService.approveCreditNote(
       req.params.id as string,
       req.body,
-      req.user!.id,
+      getUser(req).id,
     );
     res.json(apiResponse(true, creditNote, 'Credit note updated successfully'));
   }
@@ -285,7 +297,7 @@ export class FeeController {
   // ─── Fee Exemption ──────────────────────────────────────────────────────────
 
   static async createFeeExemption(req: Request, res: Response): Promise<void> {
-    const exemption = await FeeService.createFeeExemption(req.body, req.user!.id);
+    const exemption = await FeeService.createFeeExemption(req.body, getUser(req).id);
     res.status(201).json(apiResponse(true, exemption, 'Fee exemption created successfully'));
   }
 

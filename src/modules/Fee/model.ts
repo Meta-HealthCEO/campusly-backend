@@ -36,6 +36,7 @@ const feeTypeSchema = new Schema<IFeeType>(
     amount: {
       type: Number,
       required: true,
+      min: 0,
     },
     frequency: {
       type: String,
@@ -151,9 +152,11 @@ export interface IInvoice extends Document {
   writeOffAmount: number;
   writeOffDate?: Date;
   writeOffReason?: string;
+  lastLateFeeDate?: Date;
   status: InvoiceStatus;
   dueDate: Date;
   receiptNumber?: string;
+  lastReminderSentAt?: Date;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -164,7 +167,6 @@ const invoiceSchema = new Schema<IInvoice>(
     invoiceNumber: {
       type: String,
       required: true,
-      unique: true,
     },
     studentId: {
       type: Schema.Types.ObjectId,
@@ -191,10 +193,12 @@ const invoiceSchema = new Schema<IInvoice>(
     totalAmount: {
       type: Number,
       required: true,
+      min: 0,
     },
     paidAmount: {
       type: Number,
       default: 0,
+      min: 0,
     },
     status: {
       type: String,
@@ -208,10 +212,12 @@ const invoiceSchema = new Schema<IInvoice>(
     lateFeeAmount: {
       type: Number,
       default: 0,
+      min: 0,
     },
     discountAmount: {
       type: Number,
       default: 0,
+      min: 0,
     },
     collectionStage: {
       type: String,
@@ -220,6 +226,7 @@ const invoiceSchema = new Schema<IInvoice>(
     writeOffAmount: {
       type: Number,
       default: 0,
+      min: 0,
     },
     writeOffDate: {
       type: Date,
@@ -227,8 +234,14 @@ const invoiceSchema = new Schema<IInvoice>(
     writeOffReason: {
       type: String,
     },
+    lastLateFeeDate: {
+      type: Date,
+    },
     receiptNumber: {
       type: String,
+    },
+    lastReminderSentAt: {
+      type: Date,
     },
     isDeleted: {
       type: Boolean,
@@ -240,8 +253,11 @@ const invoiceSchema = new Schema<IInvoice>(
 
 invoiceSchema.index({ studentId: 1, status: 1 });
 invoiceSchema.index({ schoolId: 1, status: 1 });
+invoiceSchema.index({ schoolId: 1, status: 1, studentId: 1 });
 invoiceSchema.index({ invoiceNumber: 1 }, { unique: true });
 invoiceSchema.index({ schoolId: 1, collectionStage: 1 });
+invoiceSchema.index({ schoolId: 1, isDeleted: 1, createdAt: -1 });
+invoiceSchema.index({ dueDate: 1 });
 
 export const Invoice = mongoose.model<IInvoice>('Invoice', invoiceSchema);
 
@@ -287,6 +303,7 @@ const paymentSchema = new Schema<IPayment>(
     amount: {
       type: Number,
       required: true,
+      min: 0,
     },
     paymentMethod: {
       type: String,
@@ -329,6 +346,7 @@ const paymentSchema = new Schema<IPayment>(
 paymentSchema.index({ invoiceId: 1 });
 paymentSchema.index({ studentId: 1, createdAt: -1 });
 paymentSchema.index({ reconciled: 1 });
+paymentSchema.index({ paymentDate: 1 });
 
 export const Payment = mongoose.model<IPayment>('Payment', paymentSchema);
 
@@ -384,6 +402,7 @@ const debitOrderSchema = new Schema<IDebitOrder>(
     amount: {
       type: Number,
       required: true,
+      min: 0,
     },
     dayOfMonth: {
       type: Number,
@@ -446,6 +465,7 @@ const creditNoteSchema = new Schema<ICreditNote>(
     amount: {
       type: Number,
       required: true,
+      min: 0,
     },
     reason: {
       type: String,

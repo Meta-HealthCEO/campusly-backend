@@ -1,10 +1,12 @@
-import { Request, Response } from 'express';
+import type { Request } from 'express';
+import { Response } from 'express';
+import { getUser } from '../../types/authenticated-request.js';
 import { HomeworkService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
 
 export class HomeworkController {
   static async create(req: Request, res: Response): Promise<void> {
-    const homework = await HomeworkService.create(req.body, req.user!.id);
+    const homework = await HomeworkService.create(req.body, getUser(req).id);
     res.status(201).json(apiResponse(true, homework, 'Homework created successfully'));
   }
 
@@ -41,8 +43,8 @@ export class HomeworkController {
   static async submit(req: Request, res: Response): Promise<void> {
     const homeworkId = req.params.id as string;
     const { files } = req.body;
-    const studentId = req.user!.id;
-    const schoolId = req.user!.schoolId!;
+    const studentId = getUser(req).id;
+    const schoolId = getUser(req).schoolId ?? '';
 
     const submission = await HomeworkService.submitHomework(
       homeworkId,
@@ -56,7 +58,7 @@ export class HomeworkController {
   static async grade(req: Request, res: Response): Promise<void> {
     const submissionId = req.params.submissionId as string;
     const { mark, feedback } = req.body;
-    const gradedBy = req.user!.id;
+    const gradedBy = getUser(req).id;
 
     const submission = await HomeworkService.gradeSubmission(
       submissionId,

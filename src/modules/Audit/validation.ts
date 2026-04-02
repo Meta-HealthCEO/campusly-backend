@@ -11,7 +11,7 @@ export const auditQuerySchema = z.object({
   startDate: z.string().datetime({ offset: true }).optional(),
   endDate: z.string().datetime({ offset: true }).optional(),
   schoolId: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid school ID').optional(),
-});
+}).strict();
 
 // ─── Inferred Types ─────────────────────────────────────────────────────────
 

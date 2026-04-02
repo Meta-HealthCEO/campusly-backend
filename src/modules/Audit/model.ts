@@ -2,7 +2,15 @@ import mongoose, { Schema, Document, Types } from 'mongoose';
 
 // ─── Audit Log ──────────────────────────────────────────────────────────────
 
-export type AuditAction = 'create' | 'update' | 'delete' | 'login' | 'export';
+export type AuditAction =
+  | 'create'
+  | 'update'
+  | 'delete'
+  | 'login'
+  | 'export'
+  | 'ALLERGEN_OVERRIDE'
+  | 'FEE_DISCOUNT_APPLIED'
+  | 'FEE_WRITE_OFF';
 
 export interface IAuditChange {
   field: string;
@@ -17,6 +25,7 @@ export interface IAuditLog extends Document {
   entity: string;
   entityId?: string;
   changes: IAuditChange[];
+  details?: Record<string, unknown>;
   ipAddress?: string;
   userAgent?: string;
   isDeleted: boolean;
@@ -30,9 +39,12 @@ const auditChangeSchema = new Schema<IAuditChange>(
       type: String,
       required: true,
     },
+    // Mixed is intentional — audit logs must capture arbitrary before/after values
+    // from any entity type in the system
     oldValue: {
       type: Schema.Types.Mixed,
     },
+    // Mixed is intentional — see oldValue comment above
     newValue: {
       type: Schema.Types.Mixed,
     },
@@ -53,7 +65,7 @@ const auditLogSchema = new Schema<IAuditLog>(
     },
     action: {
       type: String,
-      enum: ['create', 'update', 'delete', 'login', 'export'],
+      enum: ['create', 'update', 'delete', 'login', 'export', 'ALLERGEN_OVERRIDE', 'FEE_DISCOUNT_APPLIED', 'FEE_WRITE_OFF'],
       required: true,
     },
     entity: {
@@ -68,6 +80,11 @@ const auditLogSchema = new Schema<IAuditLog>(
     changes: {
       type: [auditChangeSchema],
       default: [],
+    },
+    // Mixed is intentional — audit details can contain arbitrary context data
+    // from any module (e.g., allergen override info, fee discount details)
+    details: {
+      type: Schema.Types.Mixed,
     },
     ipAddress: {
       type: String,

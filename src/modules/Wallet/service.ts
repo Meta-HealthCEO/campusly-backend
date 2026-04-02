@@ -106,7 +106,7 @@ export class WalletService {
         throw new BadRequestError('Insufficient funds');
       }
 
-      // Check daily limit — sum of today's purchases
+      // Check daily limit — sum of today's purchases (within transaction session for consistency)
       const startOfDay = new Date();
       startOfDay.setHours(0, 0, 0, 0);
 
@@ -135,17 +135,25 @@ export class WalletService {
         );
       }
 
-      wallet.balance -= amount;
-      await wallet.save({ session });
+      // Atomic balance deduction with balance check to prevent race conditions
+      const updatedWallet = await Wallet.findOneAndUpdate(
+        { _id: walletId, balance: { $gte: amount } },
+        { $inc: { balance: -amount } },
+        { new: true, session },
+      );
+
+      if (!updatedWallet) {
+        throw new BadRequestError('Insufficient funds');
+      }
 
       await WalletTransaction.create(
         [
           {
-            walletId: wallet._id,
+            walletId: updatedWallet._id,
             type: TransactionType.PURCHASE,
             amount,
             description,
-            balanceAfter: wallet.balance,
+            balanceAfter: updatedWallet.balance,
             performedBy,
           },
         ],
@@ -153,7 +161,7 @@ export class WalletService {
       );
 
       await session.commitTransaction();
-      return wallet;
+      return updatedWallet;
     } catch (error) {
       await session.abortTransaction();
       throw error;

@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import type { StringValue } from 'ms';
 import { config } from '../../config/env.js';
@@ -26,10 +27,12 @@ export class AuthService {
     };
 
     const accessToken = jwt.sign(payload, config.jwt.accessSecret, {
+      algorithm: 'HS256',
       expiresIn: config.jwt.accessExpiry as StringValue,
     });
 
     const refreshToken = jwt.sign(payload, config.jwt.refreshSecret, {
+      algorithm: 'HS256',
       expiresIn: config.jwt.refreshExpiry as StringValue,
     });
 
@@ -52,7 +55,7 @@ export class AuthService {
   }
 
   static async login(email: string, password: string): Promise<{ user: IUser; tokens: TokenPair }> {
-    const user = await User.findOne({ email: email.toLowerCase(), isDeleted: false });
+    const user = await User.findOne({ email: email.toLowerCase(), isDeleted: false }).select('+password');
     if (!user) {
       throw new UnauthorizedError('Invalid email or password');
     }
@@ -78,30 +81,29 @@ export class AuthService {
   static async refreshToken(token: string): Promise<TokenPair> {
     let decoded: jwt.JwtPayload;
     try {
-      decoded = jwt.verify(token, config.jwt.refreshSecret) as jwt.JwtPayload;
+      decoded = jwt.verify(token, config.jwt.refreshSecret, { algorithms: ['HS256'] }) as jwt.JwtPayload;
     } catch {
       throw new UnauthorizedError('Invalid or expired refresh token');
     }
 
-    const user = await User.findById(decoded.id);
-    if (!user || user.isDeleted) {
-      throw new UnauthorizedError('User not found');
-    }
+    // Atomically pull old token — prevents race conditions
+    const result = await User.findOneAndUpdate(
+      { _id: decoded.id, isDeleted: false, refreshTokens: token },
+      { $pull: { refreshTokens: token } },
+      { new: true },
+    );
 
-    // Theft detection: if token not found, clear ALL refresh tokens
-    const tokenIndex = user.refreshTokens.indexOf(token);
-    if (tokenIndex === -1) {
-      user.refreshTokens = [];
-      await user.save();
+    if (!result) {
+      // Token not found = reuse detected, clear all tokens
+      await User.findByIdAndUpdate(decoded.id, { $set: { refreshTokens: [] } });
       throw new UnauthorizedError('Refresh token reuse detected — all sessions revoked');
     }
 
-    // Rotate: remove old token, add new one
-    user.refreshTokens.splice(tokenIndex, 1);
-
-    const tokens = AuthService.generateTokenPair(user);
-    user.refreshTokens.push(tokens.refreshToken);
-    await user.save();
+    // Generate new tokens
+    const tokens = AuthService.generateTokenPair(result);
+    await User.findByIdAndUpdate(decoded.id, {
+      $push: { refreshTokens: tokens.refreshToken },
+    });
 
     return tokens;
   }
@@ -121,11 +123,12 @@ export class AuthService {
 
     const resetToken = jwt.sign(
       { id: user._id, email: user.email },
-      config.jwt.accessSecret,
-      { expiresIn: '1h' },
+      config.jwt.resetTokenSecret,
+      { algorithm: 'HS256', expiresIn: '1h' },
     );
 
-    user.passwordResetToken = resetToken;
+    const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+    user.passwordResetToken = hashedToken;
     user.passwordResetExpires = new Date(Date.now() + 3600000); // 1 hour
     await user.save();
 
@@ -137,12 +140,17 @@ export class AuthService {
   static async resetPassword(token: string, newPassword: string): Promise<void> {
     let decoded: jwt.JwtPayload;
     try {
-      decoded = jwt.verify(token, config.jwt.accessSecret) as jwt.JwtPayload;
+      decoded = jwt.verify(token, config.jwt.resetTokenSecret, { algorithms: ['HS256'] }) as jwt.JwtPayload;
     } catch {
       throw new BadRequestError('Invalid or expired reset token');
     }
 
-    const user = await User.findById(decoded.id);
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+    const user = await User.findOne({
+      _id: decoded.id,
+      passwordResetToken: hashedToken,
+      passwordResetExpires: { $gt: new Date() },
+    }).select('+password');
     if (!user || user.isDeleted) {
       throw new NotFoundError('User not found');
     }

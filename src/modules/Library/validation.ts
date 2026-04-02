@@ -15,9 +15,9 @@ export const createBookSchema = z.object({
   availableCopies: z.number().int().min(0),
   shelfLocation: z.string().optional(),
   coverImageUrl: z.string().optional(),
-});
+}).strict();
 
-export const updateBookSchema = createBookSchema.partial();
+export const updateBookSchema = createBookSchema.partial().strict();
 
 // ─── Book Loan ──────────────────────────────────────────────────────────────
 
@@ -26,11 +26,11 @@ export const issueBookSchema = z.object({
   studentId: objectIdSchema,
   schoolId: objectIdSchema,
   dueDate: z.string().datetime(),
-});
+}).strict();
 
 export const returnBookSchema = z.object({
   fineAmount: z.number().min(0).optional(),
-});
+}).strict();
 
 // ─── Reading Challenge ──────────────────────────────────────────────────────
 
@@ -41,9 +41,9 @@ export const createChallengeSchema = z.object({
   startDate: z.string().datetime(),
   endDate: z.string().datetime(),
   rewardPoints: z.number().int().min(0).optional(),
-});
+}).strict();
 
-export const updateChallengeSchema = createChallengeSchema.partial();
+export const updateChallengeSchema = createChallengeSchema.partial().strict();
 
 // ─── Reading Log ────────────────────────────────────────────────────────────
 
@@ -55,7 +55,7 @@ export const createReadingLogSchema = z.object({
   completedDate: z.string().datetime().optional(),
   rating: z.number().int().min(1).max(5).optional(),
   review: z.string().optional(),
-});
+}).strict();
 
 // ─── Inferred Types ─────────────────────────────────────────────────────────
 

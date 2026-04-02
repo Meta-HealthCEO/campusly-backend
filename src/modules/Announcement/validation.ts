@@ -14,7 +14,7 @@ export const createAnnouncementSchema = z.object({
   expiresAt: z.string().datetime().optional(),
   pinned: z.boolean().optional(),
   scheduledPublishDate: z.string().datetime().optional(),
-});
+}).strict();
 
 export const updateAnnouncementSchema = z.object({
   title: z.string().min(1, 'Title is required').optional(),
@@ -24,7 +24,7 @@ export const updateAnnouncementSchema = z.object({
   attachments: z.array(z.string()).optional(),
   priority: z.enum(['low', 'medium', 'high', 'urgent']).optional(),
   expiresAt: z.string().datetime().optional(),
-});
+}).strict();
 
 export type CreateAnnouncementInput = z.infer<typeof createAnnouncementSchema>;
 export type UpdateAnnouncementInput = z.infer<typeof updateAnnouncementSchema>;

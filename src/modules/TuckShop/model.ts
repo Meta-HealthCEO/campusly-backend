@@ -53,6 +53,7 @@ const menuItemSchema = new Schema<IMenuItem>(
     price: {
       type: Number,
       required: true,
+      min: 0,
     },
     category: {
       type: String,
@@ -69,6 +70,7 @@ const menuItemSchema = new Schema<IMenuItem>(
     stock: {
       type: Number,
       default: 0,
+      min: 0,
     },
     allergens: {
       type: [String],
@@ -113,8 +115,10 @@ const menuItemSchema = new Schema<IMenuItem>(
   { timestamps: true },
 );
 
+menuItemSchema.index({ schoolId: 1, isDeleted: 1 });
 menuItemSchema.index({ schoolId: 1, category: 1 });
 menuItemSchema.index({ schoolId: 1, isAvailable: 1 });
+menuItemSchema.index({ schoolId: 1, category: 1, isAvailable: 1 });
 
 export const MenuItem = mongoose.model<IMenuItem>('MenuItem', menuItemSchema);
 
@@ -157,14 +161,17 @@ const orderItemSchema = new Schema<IOrderItem>(
     quantity: {
       type: Number,
       required: true,
+      min: 0,
     },
     unitPrice: {
       type: Number,
       required: true,
+      min: 0,
     },
     totalPrice: {
       type: Number,
       required: true,
+      min: 0,
     },
   },
   { _id: false },
@@ -212,6 +219,7 @@ const tuckShopOrderSchema = new Schema<ITuckShopOrder>(
   { timestamps: true },
 );
 
+tuckShopOrderSchema.index({ schoolId: 1, isDeleted: 1 });
 tuckShopOrderSchema.index({ schoolId: 1, createdAt: -1 });
 tuckShopOrderSchema.index({ studentId: 1, createdAt: -1 });
 

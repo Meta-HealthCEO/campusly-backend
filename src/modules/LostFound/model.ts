@@ -77,6 +77,7 @@ const lostItemSchema = new Schema<ILostItem>(
   { timestamps: true },
 );
 
+lostItemSchema.index({ schoolId: 1, isDeleted: 1 });
 lostItemSchema.index({ schoolId: 1, status: 1 });
 lostItemSchema.index({ schoolId: 1, type: 1 });
 lostItemSchema.index({ schoolId: 1, category: 1 });

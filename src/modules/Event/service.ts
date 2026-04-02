@@ -77,7 +77,8 @@ export class EventService {
         .populate('organizerId', 'firstName lastName email')
         .sort(sortField)
         .skip(skip)
-        .limit(limit),
+        .limit(limit)
+        .lean(),
       Event.countDocuments(filter),
     ]);
 
@@ -92,7 +93,8 @@ export class EventService {
 
   static async getById(id: string): Promise<IEvent> {
     const event = await Event.findOne({ _id: id, isDeleted: false })
-      .populate('organizerId', 'firstName lastName email');
+      .populate('organizerId', 'firstName lastName email')
+      .lean();
 
     if (!event) {
       throw new NotFoundError('Event not found');
@@ -181,7 +183,8 @@ export class EventService {
         .populate('userId', 'firstName lastName email')
         .sort('-createdAt')
         .skip(skip)
-        .limit(limit),
+        .limit(limit)
+        .lean(),
       EventRsvp.countDocuments(filter),
     ]);
 
@@ -253,7 +256,8 @@ export class EventService {
         .populate('userId', 'firstName lastName email')
         .sort('-purchasedAt')
         .skip(skip)
-        .limit(limit),
+        .limit(limit)
+        .lean(),
       EventTicket.countDocuments(filter),
     ]);
 
@@ -269,7 +273,8 @@ export class EventService {
   static async getTicketByQrCode(qrCode: string): Promise<IEventTicket> {
     const ticket = await EventTicket.findOne({ qrCode, isDeleted: false })
       .populate('eventId', 'title date venue')
-      .populate('userId', 'firstName lastName email');
+      .populate('userId', 'firstName lastName email')
+      .lean();
 
     if (!ticket) {
       throw new NotFoundError('Ticket not found');
@@ -336,7 +341,8 @@ export class EventService {
         .populate('ticketId')
         .sort({ row: 1, seatNumber: 1 })
         .skip(skip)
-        .limit(limit),
+        .limit(limit)
+        .lean(),
       EventSeat.countDocuments(filter),
     ]);
 
@@ -444,7 +450,8 @@ export class EventService {
         .populate('checkedInBy', 'firstName lastName email')
         .sort('-checkedInAt')
         .skip(skip)
-        .limit(limit),
+        .limit(limit)
+        .lean(),
       EventCheckIn.countDocuments(filter),
     ]);
 
@@ -524,7 +531,8 @@ export class EventService {
         .populate('uploadedBy', 'firstName lastName email')
         .sort('-createdAt')
         .skip(skip)
-        .limit(limit),
+        .limit(limit)
+        .lean(),
       EventGallery.countDocuments(filter),
     ]);
 

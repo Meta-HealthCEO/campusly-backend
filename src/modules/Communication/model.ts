@@ -38,6 +38,7 @@ const messageTemplateSchema = new Schema<IMessageTemplate>(
   { timestamps: true },
 );
 
+messageTemplateSchema.index({ schoolId: 1, isDeleted: 1 });
 messageTemplateSchema.index({ schoolId: 1, type: 1 });
 
 export const MessageTemplate = mongoose.model<IMessageTemplate>('MessageTemplate', messageTemplateSchema);
@@ -112,6 +113,7 @@ const bulkMessageSchema = new Schema<IBulkMessage>(
   { timestamps: true },
 );
 
+bulkMessageSchema.index({ schoolId: 1, isDeleted: 1 });
 bulkMessageSchema.index({ schoolId: 1, status: 1 });
 bulkMessageSchema.index({ schoolId: 1, createdAt: -1 });
 

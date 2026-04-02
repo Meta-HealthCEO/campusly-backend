@@ -30,9 +30,9 @@ export const createMenuItemSchema = z.object({
   nutritionalInfo: nutritionalInfoSchema,
   isDailySpecial: z.boolean().optional(),
   stockAlertThreshold: z.int().min(0, 'Stock alert threshold must be non-negative').optional(),
-});
+}).strict();
 
-export const updateMenuItemSchema = createMenuItemSchema.partial();
+export const updateMenuItemSchema = createMenuItemSchema.partial().strict();
 
 export const placeOrderSchema = z.object({
   schoolId: objectIdSchema,
@@ -48,7 +48,7 @@ export const placeOrderSchema = z.object({
   paymentMethod: z.enum(['wallet', 'wristband', 'cash']),
   wristbandId: z.string().optional(),
   allergenOverride: z.boolean().optional(),
-});
+}).strict();
 
 export type CreateMenuItemInput = z.infer<typeof createMenuItemSchema>;
 export type UpdateMenuItemInput = z.infer<typeof updateMenuItemSchema>;

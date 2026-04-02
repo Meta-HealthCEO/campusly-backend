@@ -19,7 +19,7 @@ export const createBusRouteSchema = z.object({
   capacity: z.number().int().positive('Capacity must be a positive integer'),
   stops: z.array(busStopSchema).optional(),
   isActive: z.boolean().optional(),
-});
+}).strict();
 
 export const updateBusRouteSchema = z.object({
   name: z.string().min(1, 'Name is required').optional(),
@@ -29,7 +29,7 @@ export const updateBusRouteSchema = z.object({
   capacity: z.number().int().positive('Capacity must be a positive integer').optional(),
   stops: z.array(busStopSchema).optional(),
   isActive: z.boolean().optional(),
-});
+}).strict();
 
 export const createAssignmentSchema = z.object({
   studentId: objectIdSchema,
@@ -37,13 +37,13 @@ export const createAssignmentSchema = z.object({
   busRouteId: objectIdSchema,
   stopName: z.string().min(1, 'Stop name is required'),
   direction: z.enum(['morning', 'afternoon', 'both']),
-});
+}).strict();
 
 export const updateAssignmentSchema = z.object({
   busRouteId: objectIdSchema.optional(),
   stopName: z.string().min(1, 'Stop name is required').optional(),
   direction: z.enum(['morning', 'afternoon', 'both']).optional(),
-});
+}).strict();
 
 // ─── Boarding Log Schemas ──────────────────────────────────────────────────
 
@@ -54,13 +54,13 @@ export const createBoardingLogSchema = z.object({
   boardedAt: z.coerce.date(),
   boardingLat: z.number().optional(),
   boardingLng: z.number().optional(),
-});
+}).strict();
 
 export const logAlightSchema = z.object({
   alightedAt: z.coerce.date(),
   alightingLat: z.number().optional(),
   alightingLng: z.number().optional(),
-});
+}).strict();
 
 // ─── Transport Alert Schemas ──────────────────────────────────────────────
 
@@ -72,7 +72,7 @@ export const createTransportAlertSchema = z.object({
   message: z.string().min(1, 'Message is required'),
   severity: z.enum(['low', 'medium', 'high', 'critical']),
   createdBy: objectIdSchema,
-});
+}).strict();
 
 // ─── Type Exports ─────────────────────────────────────────────────────────
 

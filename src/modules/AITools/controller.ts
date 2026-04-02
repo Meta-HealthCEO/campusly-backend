@@ -1,11 +1,13 @@
-import { Request, Response } from 'express';
+import type { Request } from 'express';
+import { Response } from 'express';
+import { getUser } from '../../types/authenticated-request.js';
 import { AIToolsService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
 
 export class AIToolsController {
   static async generatePaper(req: Request, res: Response): Promise<void> {
     const paper = await AIToolsService.generatePaper(
-      req.user!.id,
+      getUser(req).id,
       req.body.schoolId,
       req.body,
     );
@@ -52,14 +54,14 @@ export class AIToolsController {
       req.params.id as string,
       sectionIndex,
       questionIndex,
-      req.user!.id,
+      getUser(req).id,
     );
     res.json(apiResponse(true, paper, 'Question regenerated successfully'));
   }
 
   static async gradeSubmission(req: Request, res: Response): Promise<void> {
     const job = await AIToolsService.gradeSubmission(
-      req.user!.id,
+      getUser(req).id,
       req.body.schoolId,
       req.body,
     );
@@ -68,7 +70,7 @@ export class AIToolsController {
 
   static async bulkGrade(req: Request, res: Response): Promise<void> {
     const jobs = await AIToolsService.bulkGrade(
-      req.user!.id,
+      getUser(req).id,
       req.body.schoolId,
       req.body,
     );

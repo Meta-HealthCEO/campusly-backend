@@ -82,7 +82,8 @@ export class AchieverService {
   static async getAchievement(id: string): Promise<IAchievement> {
     const achievement = await Achievement.findOne({ _id: id, isDeleted: false })
       .populate('studentId')
-      .populate('awardedBy', 'firstName lastName email');
+      .populate('awardedBy', 'firstName lastName email')
+      .lean();
     if (!achievement) throw new NotFoundError('Achievement not found');
     return achievement;
   }
@@ -256,21 +257,31 @@ export class AchieverService {
     const house = await HousePoints.findOne({ _id: data.houseId, isDeleted: false });
     if (!house) throw new NotFoundError('House not found');
 
-    const log = new HousePointLog({
-      studentId: data.studentId,
-      houseId: data.houseId,
-      points: data.points,
-      reason: data.reason,
-      awardedBy,
-    });
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+      const log = new HousePointLog({
+        studentId: data.studentId,
+        houseId: data.houseId,
+        points: data.points,
+        reason: data.reason,
+        awardedBy,
+      });
 
-    await log.save();
+      await log.save({ session });
 
-    await HousePoints.findByIdAndUpdate(data.houseId, {
-      $inc: { totalPoints: data.points },
-    });
+      await HousePoints.findByIdAndUpdate(data.houseId, {
+        $inc: { totalPoints: data.points },
+      }, { session });
 
-    return log;
+      await session.commitTransaction();
+      return log;
+    } catch (err) {
+      await session.abortTransaction();
+      throw err;
+    } finally {
+      session.endSession();
+    }
   }
 
   static async getHousePointHistory(

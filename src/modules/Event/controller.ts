@@ -1,4 +1,6 @@
-import { Request, Response } from 'express';
+import type { Request } from 'express';
+import { Response } from 'express';
+import { getUser } from '../../types/authenticated-request.js';
 import { EventService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
 
@@ -6,7 +8,7 @@ export class EventController {
   // ─── Event CRUD ───────────────────────────────────────────────────────────
 
   static async create(req: Request, res: Response): Promise<void> {
-    const event = await EventService.create(req.body, req.user!.id);
+    const event = await EventService.create(req.body, getUser(req).id);
     res.status(201).json(apiResponse(true, event, 'Event created successfully'));
   }
 
@@ -41,14 +43,14 @@ export class EventController {
   // ─── RSVP ────────────────────────────────────────────────────────────────
 
   static async createRsvp(req: Request, res: Response): Promise<void> {
-    const rsvp = await EventService.createRsvp(req.body, req.user!.id);
+    const rsvp = await EventService.createRsvp(req.body, getUser(req).id);
     res.status(201).json(apiResponse(true, rsvp, 'RSVP submitted successfully'));
   }
 
   static async updateRsvp(req: Request, res: Response): Promise<void> {
     const rsvp = await EventService.updateRsvp(
       req.params.eventId as string,
-      req.user!.id,
+      getUser(req).id,
       req.body,
     );
     res.json(apiResponse(true, rsvp, 'RSVP updated successfully'));
@@ -65,7 +67,7 @@ export class EventController {
   }
 
   static async deleteRsvp(req: Request, res: Response): Promise<void> {
-    await EventService.deleteRsvp(req.params.eventId as string, req.user!.id);
+    await EventService.deleteRsvp(req.params.eventId as string, getUser(req).id);
     res.json(apiResponse(true, undefined, 'RSVP deleted successfully'));
   }
 
@@ -74,7 +76,7 @@ export class EventController {
   static async purchaseTicket(req: Request, res: Response): Promise<void> {
     const ticket = await EventService.purchaseTicket(
       req.params.eventId as string,
-      req.user!.id,
+      getUser(req).id,
       req.body,
     );
     res.status(201).json(apiResponse(true, ticket, 'Ticket purchased successfully'));
@@ -143,7 +145,7 @@ export class EventController {
     const checkIn = await EventService.checkIn(
       req.params.eventId as string,
       req.body,
-      req.user!.id,
+      getUser(req).id,
     );
     res.status(201).json(apiResponse(true, checkIn, 'Check-in successful'));
   }
@@ -168,7 +170,7 @@ export class EventController {
   static async uploadGalleryImage(req: Request, res: Response): Promise<void> {
     const image = await EventService.uploadGalleryImage(
       req.params.eventId as string,
-      req.user!.id,
+      getUser(req).id,
       req.body,
     );
     res.status(201).json(apiResponse(true, image, 'Gallery image uploaded successfully'));

@@ -1,3 +1,4 @@
+import { logger } from '../common/logger.js';
 import { Redis } from 'ioredis';
 import { config } from './env.js';
 
@@ -6,17 +7,17 @@ export const redis = new Redis(config.redis.url, {
 });
 
 redis.on('connect', () => {
-  console.log('Redis connected successfully');
+  logger.info('Redis connected successfully');
 });
 
 redis.on('error', (error: Error) => {
-  console.error('Redis connection error:', error.message);
+  logger.error({ err: error }, 'Redis connection error');
 });
 
 redis.on('close', () => {
-  console.log('Redis connection closed');
+  logger.info('Redis connection closed');
 });
 
 redis.on('reconnecting', () => {
-  console.log('Redis reconnecting...');
+  logger.info('Redis reconnecting...');
 });

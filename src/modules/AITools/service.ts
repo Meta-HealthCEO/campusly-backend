@@ -97,7 +97,7 @@ Return JSON with this exact structure:
 
 Include a mix of question types (multiple choice, short answer, long answer, structured questions) appropriate for this grade level. Ensure questions are CAPS-aligned and cover key learning outcomes for the topic.`;
 
-      const result = await AIService.generateJSON<AIGeneratedPaper>(systemPrompt, userPrompt);
+      const { data: result, usage } = await AIService.generateJSONWithUsage<AIGeneratedPaper>(systemPrompt, userPrompt);
 
       paper.sections = result.sections;
       paper.memorandum = result.memorandum;
@@ -109,7 +109,7 @@ Include a mix of question types (multiple choice, short answer, long answer, str
         schoolId,
         teacherId,
         type: 'paper_generation',
-        tokensUsed: { input: 0, output: 0 }, // Tokens logged by AIService console
+        tokensUsed: { input: usage.input_tokens, output: usage.output_tokens },
         aiModel: ANTHROPIC_MODEL,
       });
 
@@ -159,7 +159,7 @@ Return JSON with this exact structure:
 
 The question must be different from: "${oldQuestion.questionText}"`;
 
-    const newQuestion = await AIService.generateJSON<AIGeneratedQuestion>(systemPrompt, userPrompt);
+    const { data: newQuestion, usage } = await AIService.generateJSONWithUsage<AIGeneratedQuestion>(systemPrompt, userPrompt);
 
     paper.sections[sectionIndex].questions[questionIndex] = newQuestion;
     paper.status = 'edited';
@@ -169,7 +169,7 @@ The question must be different from: "${oldQuestion.questionText}"`;
       schoolId: paper.schoolId,
       teacherId,
       type: 'question_regeneration',
-      tokensUsed: { input: 0, output: 0 },
+      tokensUsed: { input: usage.input_tokens, output: usage.output_tokens },
       aiModel: ANTHROPIC_MODEL,
     });
 
@@ -362,7 +362,13 @@ The question must be different from: "${oldQuestion.questionText}"`;
 
     if (!paper) throw new NotFoundError('Paper not found');
 
-    Object.assign(paper, updates);
+    // Explicit field assignment to prevent mass-assignment injection
+    const allowedFields = ['subject', 'grade', 'topic', 'difficulty', 'duration', 'totalMarks', 'sections', 'memorandum'] as const;
+    for (const field of allowedFields) {
+      if (updates[field] !== undefined) {
+        (paper as unknown as Record<string, unknown>)[field] = updates[field];
+      }
+    }
     if (updates.sections || updates.memorandum) {
       paper.status = 'edited';
     }

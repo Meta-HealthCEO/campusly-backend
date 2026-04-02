@@ -1,3 +1,4 @@
+import { logger } from '../common/logger.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -25,6 +26,7 @@ export const config = {
   jwt: {
     accessSecret: getEnv('JWT_ACCESS_SECRET'),
     refreshSecret: getEnv('JWT_REFRESH_SECRET'),
+    resetTokenSecret: getEnv('JWT_RESET_SECRET', getEnv('JWT_ACCESS_SECRET')),
     accessExpiry: getEnv('JWT_ACCESS_EXPIRY', '15m'),
     refreshExpiry: getEnv('JWT_REFRESH_EXPIRY', '7d'),
   },
@@ -57,3 +59,11 @@ export const config = {
 } as const;
 
 export type Config = typeof config;
+
+// Validate critical config at startup
+if (config.nodeEnv === 'production') {
+  if (!config.anthropic.apiKey) logger.warn('WARNING: ANTHROPIC_API_KEY not set');
+  if (config.cors.origin === '*') {
+    throw new Error('FATAL: CORS origin cannot be "*" in production. Set CORS_ORIGIN env var.');
+  }
+}

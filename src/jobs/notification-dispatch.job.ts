@@ -1,3 +1,4 @@
+import { logger } from '../common/logger.js';
 import { Worker, Job } from 'bullmq';
 import { redisConnection, notificationDispatchQueue } from './queues.js';
 import { NotificationDispatchService } from '../services/notification.service.js';
@@ -17,7 +18,7 @@ export function createNotificationDispatchWorker(): Worker {
     'notification-dispatch',
     async (job: Job<NotificationDispatchJobData>) => {
       const { type, recipientId, title, message, data } = job.data;
-      console.log(`[NotificationDispatchJob] Dispatching ${type} notification to user ${recipientId}`);
+      logger.info(`[NotificationDispatchJob] Dispatching ${type} notification to user ${recipientId}`);
 
       // Look up recipient contact details
       const user = await User.findById(recipientId).select('email phone');
@@ -31,18 +32,18 @@ export function createNotificationDispatchWorker(): Worker {
         data,
       });
 
-      console.log(`[NotificationDispatchJob] Dispatched ${type} notification: ${title}`);
+      logger.info(`[NotificationDispatchJob] Dispatched ${type} notification: ${title}`);
       return { dispatched: true, type };
     },
     { connection: redisConnection },
   );
 
   worker.on('completed', (job) => {
-    console.log(`[NotificationDispatchJob] Job ${job.id} completed`);
+    logger.info(`[NotificationDispatchJob] Job ${job.id} completed`);
   });
 
   worker.on('failed', (job, err) => {
-    console.error(`[NotificationDispatchJob] Job ${job?.id} failed:`, err.message);
+    logger.error(`[NotificationDispatchJob] Job ${job?.id} failed: ${err.message}`);
   });
 
   return worker;

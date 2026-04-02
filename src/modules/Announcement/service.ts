@@ -7,7 +7,7 @@ interface ListQuery {
   page?: number;
   limit?: number;
   sort?: string;
-  schoolId?: string;
+  schoolId: string;
 }
 
 export class AnnouncementService {
@@ -35,11 +35,8 @@ export class AnnouncementService {
 
     const filter: Record<string, unknown> = {
       isDeleted: false,
+      schoolId: query.schoolId,
     };
-
-    if (query.schoolId) {
-      filter.schoolId = query.schoolId;
-    }
 
     const [announcements, total] = await Promise.all([
       Announcement.find(filter)

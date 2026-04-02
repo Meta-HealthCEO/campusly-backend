@@ -12,9 +12,9 @@ export const createTemplateSchema = z.object({
   subject: z.string().min(1, 'Subject is required'),
   body: z.string().min(1, 'Body is required'),
   channel: z.enum(['email', 'sms', 'whatsapp', 'all']).optional(),
-});
+}).strict();
 
-export const updateTemplateSchema = createTemplateSchema.partial();
+export const updateTemplateSchema = createTemplateSchema.partial().strict();
 
 // ─── Bulk Message ───────────────────────────────────────────────────────────
 
@@ -28,7 +28,7 @@ export const sendBulkMessageSchema = z.object({
     type: z.enum(['school', 'grade', 'class', 'custom']),
     targetIds: z.array(objectIdSchema).optional(),
   }),
-});
+}).strict();
 
 // ─── Inferred Types ─────────────────────────────────────────────────────────
 

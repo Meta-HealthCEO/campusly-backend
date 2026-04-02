@@ -9,9 +9,9 @@ export const gradeSchema = z.object({
   name: z.string().min(1, 'Name is required').trim(),
   schoolId: objectIdSchema,
   orderIndex: z.number().int().min(0),
-});
+}).strict();
 
-export const updateGradeSchema = gradeSchema.partial();
+export const updateGradeSchema = gradeSchema.partial().strict();
 
 // ─── Class ───────────────────────────────────────────────────────────────────
 
@@ -21,9 +21,9 @@ export const classSchema = z.object({
   schoolId: objectIdSchema,
   teacherId: objectIdSchema,
   capacity: z.number().int().min(1, 'Capacity must be at least 1'),
-});
+}).strict();
 
-export const updateClassSchema = classSchema.partial();
+export const updateClassSchema = classSchema.partial().strict();
 
 // ─── Subject ─────────────────────────────────────────────────────────────────
 
@@ -32,9 +32,9 @@ export const subjectSchema = z.object({
   code: z.string().min(1, 'Code is required').trim(),
   schoolId: objectIdSchema,
   gradeIds: z.array(objectIdSchema).min(1, 'At least one grade is required'),
-});
+}).strict();
 
-export const updateSubjectSchema = subjectSchema.partial();
+export const updateSubjectSchema = subjectSchema.partial().strict();
 
 // ─── Timetable ───────────────────────────────────────────────────────────────
 
@@ -48,9 +48,9 @@ export const timetableSchema = z.object({
   subjectId: objectIdSchema,
   teacherId: objectIdSchema,
   room: z.string().trim().optional(),
-});
+}).strict();
 
-export const updateTimetableSchema = timetableSchema.partial();
+export const updateTimetableSchema = timetableSchema.partial().strict();
 
 // ─── Assessment ──────────────────────────────────────────────────────────────
 
@@ -65,9 +65,9 @@ export const assessmentSchema = z.object({
   term: z.number().int().min(1),
   academicYear: z.number().int().min(2000),
   date: z.string().datetime(),
-});
+}).strict();
 
-export const updateAssessmentSchema = assessmentSchema.partial();
+export const updateAssessmentSchema = assessmentSchema.partial().strict();
 
 // ─── Mark ────────────────────────────────────────────────────────────────────
 
@@ -78,7 +78,7 @@ export const markSchema = z.object({
   mark: z.number().min(0),
   total: z.number().min(1),
   comment: z.string().trim().optional(),
-});
+}).strict();
 
 export const bulkMarkSchema = z.object({
   assessmentId: objectIdSchema,
@@ -91,7 +91,7 @@ export const bulkMarkSchema = z.object({
       comment: z.string().trim().optional(),
     }),
   ).min(1, 'At least one mark is required'),
-});
+}).strict();
 
 // ─── Inferred types ──────────────────────────────────────────────────────────
 
@@ -105,9 +105,9 @@ export const examCreateSchema = z.object({
   startDate: z.string().datetime(),
   endDate: z.string().datetime(),
   status: z.enum(['scheduled', 'in_progress', 'completed']).optional(),
-});
+}).strict();
 
-export const examUpdateSchema = examCreateSchema.partial();
+export const examUpdateSchema = examCreateSchema.partial().strict();
 
 // ─── Exam Timetable ─────────────────────────────────────────────────────────
 
@@ -121,9 +121,9 @@ export const examTimetableCreateSchema = z.object({
   venue: z.string().min(1, 'Venue is required'),
   invigilator: objectIdSchema,
   duration: z.number().int().positive('Duration must be positive'),
-});
+}).strict();
 
-export const examTimetableUpdateSchema = examTimetableCreateSchema.partial();
+export const examTimetableUpdateSchema = examTimetableCreateSchema.partial().strict();
 
 // ─── Past Paper ─────────────────────────────────────────────────────────────
 
@@ -134,9 +134,9 @@ export const pastPaperCreateSchema = z.object({
   year: z.number().int().min(2000),
   term: z.number().int().min(1).max(4),
   fileUrl: z.string().min(1, 'File URL is required'),
-});
+}).strict();
 
-export const pastPaperUpdateSchema = pastPaperCreateSchema.partial();
+export const pastPaperUpdateSchema = pastPaperCreateSchema.partial().strict();
 
 // ─── Subject Weighting ──────────────────────────────────────────────────────
 
@@ -147,9 +147,9 @@ export const subjectWeightingCreateSchema = z.object({
   assessmentType: z.enum(['test', 'exam', 'assignment', 'practical', 'project']),
   weightPercentage: z.number().min(0).max(100),
   term: z.number().int().min(1).max(4),
-});
+}).strict();
 
-export const subjectWeightingUpdateSchema = subjectWeightingCreateSchema.partial();
+export const subjectWeightingUpdateSchema = subjectWeightingCreateSchema.partial().strict();
 
 // ─── Remedial Tracking ──────────────────────────────────────────────────────
 
@@ -163,9 +163,9 @@ export const remedialCreateSchema = z.object({
   progress: z.array(z.string()).optional(),
   status: z.enum(['identified', 'in_progress', 'resolved']).optional(),
   reviewDate: z.string().datetime().optional(),
-});
+}).strict();
 
-export const remedialUpdateSchema = remedialCreateSchema.partial();
+export const remedialUpdateSchema = remedialCreateSchema.partial().strict();
 
 // ─── Inferred types ──────────────────────────────────────────────────────────
 

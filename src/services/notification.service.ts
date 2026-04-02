@@ -1,3 +1,4 @@
+import { logger } from '../common/logger.js';
 import { EmailService } from './email.service.js';
 import { SmsService } from './sms.service.js';
 
@@ -21,7 +22,7 @@ export class NotificationDispatchService {
             notification.message,
           );
         } else {
-          console.warn('[NotificationDispatch] Email notification skipped - no recipient email');
+          logger.warn('[NotificationDispatch] Email notification skipped - no recipient email');
         }
         break;
 
@@ -32,23 +33,23 @@ export class NotificationDispatchService {
             notification.message,
           );
         } else {
-          console.warn('[NotificationDispatch] SMS notification skipped - no recipient phone');
+          logger.warn('[NotificationDispatch] SMS notification skipped - no recipient phone');
         }
         break;
 
       case 'push':
         // Push notification integration (e.g., Firebase Cloud Messaging)
-        console.log(`[NotificationDispatch] Push notification: ${notification.title}`);
-        console.log(`  Message: ${notification.message}`);
+        logger.info(`[NotificationDispatch] Push notification: ${notification.title}`);
+        logger.info(`  Message: ${notification.message}`);
         break;
 
       case 'in_app':
         // In-app notifications are already stored in the database
-        console.log(`[NotificationDispatch] In-app notification stored: ${notification.title}`);
+        logger.info(`[NotificationDispatch] In-app notification stored: ${notification.title}`);
         break;
 
       default:
-        console.warn(`[NotificationDispatch] Unknown notification type: ${notification.type}`);
+        logger.warn(`[NotificationDispatch] Unknown notification type: ${notification.type}`);
     }
   }
 }

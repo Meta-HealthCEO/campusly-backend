@@ -4,13 +4,21 @@ import mongoose, { Schema, Document, Types } from 'mongoose';
 
 export type NotificationType = 'email' | 'sms' | 'push' | 'in_app';
 
+export interface INotificationData {
+  entityId?: string;
+  entityType?: string;
+  message?: string;
+  url?: string;
+  [key: string]: unknown;
+}
+
 export interface INotification extends Document {
   recipientId: Types.ObjectId;
   schoolId: Types.ObjectId;
   type: NotificationType;
   title: string;
   message: string;
-  data?: unknown;
+  data?: INotificationData;
   isRead: boolean;
   readAt?: Date;
   isDeleted: boolean;
@@ -45,7 +53,13 @@ const notificationSchema = new Schema<INotification>(
       required: true,
     },
     data: {
-      type: Schema.Types.Mixed,
+      type: new Schema({
+        entityId: { type: String },
+        entityType: { type: String },
+        message: { type: String },
+        url: { type: String },
+      }, { _id: false, strict: false }), // strict: false allows extra fields
+      default: {},
     },
     isRead: {
       type: Boolean,
@@ -64,6 +78,8 @@ const notificationSchema = new Schema<INotification>(
 
 notificationSchema.index({ recipientId: 1, isRead: 1, createdAt: -1 });
 notificationSchema.index({ schoolId: 1 });
+notificationSchema.index({ schoolId: 1, type: 1 });
+notificationSchema.index({ schoolId: 1, isDeleted: 1 });
 
 export const Notification = mongoose.model<INotification>('Notification', notificationSchema);
 

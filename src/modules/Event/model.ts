@@ -94,6 +94,7 @@ const eventSchema = new Schema<IEvent>(
   { timestamps: true },
 );
 
+eventSchema.index({ schoolId: 1, isDeleted: 1 });
 eventSchema.index({ schoolId: 1, date: -1 });
 eventSchema.index({ schoolId: 1, eventType: 1 });
 
@@ -220,6 +221,7 @@ const eventTicketSchema = new Schema<IEventTicket>(
 
 eventTicketSchema.index({ eventId: 1, status: 1 });
 eventTicketSchema.index({ qrCode: 1 }, { unique: true });
+eventTicketSchema.index({ schoolId: 1, isDeleted: 1 });
 
 export const EventTicket = mongoose.model<IEventTicket>('EventTicket', eventTicketSchema);
 
@@ -369,5 +371,6 @@ const eventGallerySchema = new Schema<IEventGallery>(
 );
 
 eventGallerySchema.index({ eventId: 1 });
+eventGallerySchema.index({ schoolId: 1, isDeleted: 1 });
 
 export const EventGallery = mongoose.model<IEventGallery>('EventGallery', eventGallerySchema);

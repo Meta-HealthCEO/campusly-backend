@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { Parent, IParent } from './model.js';
 import { Student } from '../Student/model.js';
 import { NotFoundError } from '../../common/errors.js';
@@ -69,7 +70,8 @@ export class ParentService {
       .populate({
         path: 'childrenIds',
         populate: { path: 'userId', select: 'firstName lastName email phone' },
-      });
+      })
+      .lean();
 
     if (!parent) {
       throw new NotFoundError('Parent not found');
@@ -84,7 +86,8 @@ export class ParentService {
       .populate({
         path: 'childrenIds',
         populate: { path: 'userId', select: 'firstName lastName email phone' },
-      });
+      })
+      .lean();
 
     if (!parent) {
       throw new NotFoundError('Parent not found');
@@ -127,46 +130,80 @@ export class ParentService {
   }
 
   static async linkChild(parentId: string, childId: string): Promise<IParent> {
-    const parent = await Parent.findOne({ _id: parentId, isDeleted: false });
+    const [parent, student] = await Promise.all([
+      Parent.findOne({ _id: parentId, isDeleted: false }),
+      Student.findOne({ _id: childId, isDeleted: false }),
+    ]);
     if (!parent) {
       throw new NotFoundError('Parent not found');
     }
-
-    const student = await Student.findOne({ _id: childId, isDeleted: false });
     if (!student) {
       throw new NotFoundError('Student not found');
     }
 
-    await Parent.findByIdAndUpdate(parentId, {
-      $addToSet: { childrenIds: childId },
-    });
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+      const [updatedParent] = await Promise.all([
+        Parent.findByIdAndUpdate(parentId, {
+          $addToSet: { childrenIds: childId },
+        }, { session, new: true })
+          .populate('userId', 'firstName lastName email phone profileImage')
+          .populate({
+            path: 'childrenIds',
+            populate: { path: 'userId', select: 'firstName lastName email phone' },
+          }),
+        Student.findByIdAndUpdate(childId, {
+          $addToSet: { guardianIds: parentId },
+        }, { session }),
+      ]);
 
-    await Student.findByIdAndUpdate(childId, {
-      $addToSet: { guardianIds: parentId },
-    });
-
-    return ParentService.getById(parentId);
+      await session.commitTransaction();
+      return updatedParent!;
+    } catch (err) {
+      await session.abortTransaction();
+      throw err;
+    } finally {
+      session.endSession();
+    }
   }
 
   static async unlinkChild(parentId: string, childId: string): Promise<IParent> {
-    const parent = await Parent.findOne({ _id: parentId, isDeleted: false });
+    const [parent, student] = await Promise.all([
+      Parent.findOne({ _id: parentId, isDeleted: false }),
+      Student.findOne({ _id: childId, isDeleted: false }),
+    ]);
     if (!parent) {
       throw new NotFoundError('Parent not found');
     }
-
-    const student = await Student.findOne({ _id: childId, isDeleted: false });
     if (!student) {
       throw new NotFoundError('Student not found');
     }
 
-    await Parent.findByIdAndUpdate(parentId, {
-      $pull: { childrenIds: childId },
-    });
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+      const [updatedParent] = await Promise.all([
+        Parent.findByIdAndUpdate(parentId, {
+          $pull: { childrenIds: childId },
+        }, { session, new: true })
+          .populate('userId', 'firstName lastName email phone profileImage')
+          .populate({
+            path: 'childrenIds',
+            populate: { path: 'userId', select: 'firstName lastName email phone' },
+          }),
+        Student.findByIdAndUpdate(childId, {
+          $pull: { guardianIds: parentId },
+        }, { session }),
+      ]);
 
-    await Student.findByIdAndUpdate(childId, {
-      $pull: { guardianIds: parentId },
-    });
-
-    return ParentService.getById(parentId);
+      await session.commitTransaction();
+      return updatedParent!;
+    } catch (err) {
+      await session.abortTransaction();
+      throw err;
+    } finally {
+      session.endSession();
+    }
   }
 }

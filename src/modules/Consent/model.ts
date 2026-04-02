@@ -70,6 +70,7 @@ const consentFormSchema = new Schema<IConsentForm>(
 
 consentFormSchema.index({ schoolId: 1, type: 1 });
 consentFormSchema.index({ schoolId: 1, createdAt: -1 });
+consentFormSchema.index({ schoolId: 1, isDeleted: 1 });
 
 export const ConsentForm = mongoose.model<IConsentForm>('ConsentForm', consentFormSchema);
 

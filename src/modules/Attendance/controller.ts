@@ -1,15 +1,17 @@
-import { Request, Response } from 'express';
+import type { Request } from 'express';
+import { Response } from 'express';
+import { getUser } from '../../types/authenticated-request.js';
 import { AttendanceService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
 
 export class AttendanceController {
   static async record(req: Request, res: Response): Promise<void> {
-    const attendance = await AttendanceService.record(req.body, req.user!.id);
+    const attendance = await AttendanceService.record(req.body, getUser(req).id);
     res.status(201).json(apiResponse(true, attendance, 'Attendance recorded successfully'));
   }
 
   static async bulkRecord(req: Request, res: Response): Promise<void> {
-    const records = await AttendanceService.bulkRecord(req.body, req.user!.id);
+    const records = await AttendanceService.bulkRecord(req.body, getUser(req).id);
     res.status(201).json(apiResponse(true, records, 'Bulk attendance recorded successfully'));
   }
 
@@ -99,7 +101,7 @@ export class AttendanceController {
   // ─── Discipline ─────────────────────────────────────────────────────────────
 
   static async createDiscipline(req: Request, res: Response): Promise<void> {
-    const record = await AttendanceService.createDiscipline(req.body, req.user!.id);
+    const record = await AttendanceService.createDiscipline(req.body, getUser(req).id);
     res.status(201).json(apiResponse(true, record, 'Discipline record created successfully'));
   }
 
@@ -133,7 +135,7 @@ export class AttendanceController {
   // ─── Merit / Demerit ────────────────────────────────────────────────────────
 
   static async createMerit(req: Request, res: Response): Promise<void> {
-    const merit = await AttendanceService.createMerit(req.body, req.user!.id);
+    const merit = await AttendanceService.createMerit(req.body, getUser(req).id);
     res.status(201).json(apiResponse(true, merit, 'Merit/demerit recorded successfully'));
   }
 
@@ -159,7 +161,7 @@ export class AttendanceController {
   // ─── Lesson Plans ─────────────────────────────────────────────────────────
 
   static async createLessonPlan(req: Request, res: Response): Promise<void> {
-    const plan = await AttendanceService.createLessonPlan(req.body, req.user!.id);
+    const plan = await AttendanceService.createLessonPlan(req.body, getUser(req).id);
     res.status(201).json(apiResponse(true, plan, 'Lesson plan created successfully'));
   }
 

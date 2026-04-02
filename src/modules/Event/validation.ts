@@ -18,7 +18,7 @@ export const createEventSchema = z.object({
   ticketPrice: z.number().min(0).optional(),
   isTicketed: z.boolean().optional(),
   galleryEnabled: z.boolean().optional(),
-});
+}).strict();
 
 export const updateEventSchema = z.object({
   title: z.string().min(1, 'Title is required').optional(),
@@ -34,20 +34,20 @@ export const updateEventSchema = z.object({
   ticketPrice: z.number().min(0).optional(),
   isTicketed: z.boolean().optional(),
   galleryEnabled: z.boolean().optional(),
-});
+}).strict();
 
 export const createRsvpSchema = z.object({
   eventId: objectIdSchema,
   status: z.enum(['attending', 'not_attending', 'maybe']),
   notes: z.string().optional(),
   headcount: z.number().int().positive().optional(),
-});
+}).strict();
 
 export const updateRsvpSchema = z.object({
   status: z.enum(['attending', 'not_attending', 'maybe']),
   notes: z.string().optional(),
   headcount: z.number().int().positive().optional(),
-});
+}).strict();
 
 // ─── Ticket Validation ──────────────────────────────────────────────────────
 
@@ -55,9 +55,9 @@ export const purchaseTicketSchema = z.object({
   schoolId: objectIdSchema,
   ticketType: z.string().min(1).optional(),
   price: z.number().min(0).optional(),
-});
+}).strict();
 
-export const cancelTicketSchema = z.object({});
+export const cancelTicketSchema = z.object({}).strict();
 
 // ─── Seat Validation ────────────────────────────────────────────────────────
 
@@ -69,19 +69,19 @@ export const createSeatsSchema = z.object({
       label: z.string().optional(),
     }),
   ).min(1, 'At least one seat is required'),
-});
+}).strict();
 
 export const reserveSeatSchema = z.object({
   ticketId: objectIdSchema,
-});
+}).strict();
 
-export const releaseSeatSchema = z.object({});
+export const releaseSeatSchema = z.object({}).strict();
 
 // ─── Check-In Validation ────────────────────────────────────────────────────
 
 export const checkInSchema = z.object({
   qrCode: z.string().min(1, 'QR code is required'),
-});
+}).strict();
 
 // ─── Gallery Validation ─────────────────────────────────────────────────────
 
@@ -89,7 +89,7 @@ export const uploadGallerySchema = z.object({
   schoolId: objectIdSchema,
   imageUrl: z.string().url('Invalid image URL'),
   caption: z.string().optional(),
-});
+}).strict();
 
 export type CreateEventInput = z.infer<typeof createEventSchema>;
 export type UpdateEventInput = z.infer<typeof updateEventSchema>;

@@ -1,3 +1,4 @@
+import { logger } from '../common/logger.js';
 import Anthropic from '@anthropic-ai/sdk';
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY || '';
@@ -39,8 +40,9 @@ async function callWithRetry(
   } catch (error: unknown) {
     const status =
       error instanceof Anthropic.APIError ? error.status : undefined;
-    if (status === 429 || status === 500) {
-      console.warn(`[AIService] Retrying after status ${status}...`);
+    const retryableStatuses = [429, 500, 502, 503, 504];
+    if (status && retryableStatuses.includes(status)) {
+      logger.warn(`[AIService] Retrying after status ${status}...`);
       return await fn();
     }
     throw error;
@@ -53,6 +55,15 @@ export class AIService {
     userPrompt: string,
     options?: { maxTokens?: number; temperature?: number },
   ): Promise<string> {
+    const { text } = await AIService.generateCompletionWithUsage(systemPrompt, userPrompt, options);
+    return text;
+  }
+
+  static async generateCompletionWithUsage(
+    systemPrompt: string,
+    userPrompt: string,
+    options?: { maxTokens?: number; temperature?: number },
+  ): Promise<{ text: string; usage: { input_tokens: number; output_tokens: number } }> {
     await acquireSemaphore();
     try {
       const client = getClient();
@@ -77,12 +88,15 @@ export class AIService {
 
       const inputTokens = message.usage?.input_tokens ?? 0;
       const outputTokens = message.usage?.output_tokens ?? 0;
-      console.log(
+      logger.info(
         `[AIService] Tokens used — input: ${inputTokens}, output: ${outputTokens}`,
       );
 
       const textBlock = message.content.find((b) => b.type === 'text');
-      return textBlock ? textBlock.text : '';
+      return {
+        text: textBlock ? textBlock.text : '',
+        usage: { input_tokens: inputTokens, output_tokens: outputTokens },
+      };
     } finally {
       releaseSemaphore();
     }
@@ -92,7 +106,15 @@ export class AIService {
     systemPrompt: string,
     userPrompt: string,
   ): Promise<T> {
-    const raw = await AIService.generateCompletion(
+    const { data } = await AIService.generateJSONWithUsage<T>(systemPrompt, userPrompt);
+    return data;
+  }
+
+  static async generateJSONWithUsage<T>(
+    systemPrompt: string,
+    userPrompt: string,
+  ): Promise<{ data: T; usage: { input_tokens: number; output_tokens: number } }> {
+    const { text, usage } = await AIService.generateCompletionWithUsage(
       systemPrompt +
         '\n\nYou MUST respond with valid JSON only. No markdown, no code fences, no explanation.',
       userPrompt,
@@ -100,12 +122,12 @@ export class AIService {
     );
 
     // Strip any accidental markdown fences
-    const cleaned = raw
+    const cleaned = text
       .replace(/^```(?:json)?\s*/i, '')
       .replace(/\s*```$/i, '')
       .trim();
 
-    return JSON.parse(cleaned) as T;
+    return { data: JSON.parse(cleaned) as T, usage };
   }
 
   static getTokenUsage(message: Anthropic.Message): {

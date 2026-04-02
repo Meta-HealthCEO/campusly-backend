@@ -29,12 +29,14 @@ router.get(
 router.get(
   '/me',
   authenticate,
+  authorize('parent', 'super_admin', 'school_admin'),
   ParentController.getMe,
 );
 
 router.get(
   '/:id',
   authenticate,
+  authorize('super_admin', 'school_admin', 'teacher'),
   ParentController.getById,
 );
 

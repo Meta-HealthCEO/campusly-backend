@@ -1,4 +1,6 @@
-import { Request, Response } from 'express';
+import type { Request } from 'express';
+import { Response } from 'express';
+import { getUser } from '../../types/authenticated-request.js';
 import { UniformService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
 
@@ -11,10 +13,16 @@ export class UniformController {
   }
 
   static async listItems(req: Request, res: Response): Promise<void> {
+    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
+      return;
+    }
+
     const query = {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId,
       category: req.query.category as string | undefined,
     };
 
@@ -40,15 +48,21 @@ export class UniformController {
   // ─── Uniform Orders ──────────────────────────────────────────────────────
 
   static async createOrder(req: Request, res: Response): Promise<void> {
-    const order = await UniformService.createOrder(req.body, req.user!.id);
+    const order = await UniformService.createOrder(req.body, getUser(req).id);
     res.status(201).json(apiResponse(true, order, 'Uniform order created successfully'));
   }
 
   static async listOrders(req: Request, res: Response): Promise<void> {
+    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
+      return;
+    }
+
     const query = {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId,
       studentId: req.query.studentId as string | undefined,
       status: req.query.status as string | undefined,
     };
@@ -80,10 +94,16 @@ export class UniformController {
   }
 
   static async listSecondHandListings(req: Request, res: Response): Promise<void> {
+    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
+      return;
+    }
+
     const query = {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId,
       condition: req.query.condition as string | undefined,
       status: req.query.status as string | undefined,
     };
@@ -148,15 +168,21 @@ export class UniformController {
   // ─── Pre Orders ──────────────────────────────────────────────────────────
 
   static async createPreOrder(req: Request, res: Response): Promise<void> {
-    const preOrder = await UniformService.createPreOrder(req.body, req.user!.id);
+    const preOrder = await UniformService.createPreOrder(req.body, getUser(req).id);
     res.status(201).json(apiResponse(true, preOrder, 'Pre-order created successfully'));
   }
 
   static async listPreOrders(req: Request, res: Response): Promise<void> {
+    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
+      return;
+    }
+
     const query = {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId,
       status: req.query.status as string | undefined,
       uniformItemId: req.query.uniformItemId as string | undefined,
     };
@@ -183,10 +209,16 @@ export class UniformController {
   // ─── Low Stock ───────────────────────────────────────────────────────────
 
   static async getLowStockItems(req: Request, res: Response): Promise<void> {
+    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
+      return;
+    }
+
     const query = {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId,
     };
 
     const result = await UniformService.getLowStockItems(query);

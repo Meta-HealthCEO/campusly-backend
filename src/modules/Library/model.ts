@@ -33,6 +33,7 @@ const bookSchema = new Schema<IBook>(
   { timestamps: true },
 );
 
+bookSchema.index({ schoolId: 1, isDeleted: 1 });
 bookSchema.index({ schoolId: 1, title: 1 });
 bookSchema.index({ schoolId: 1, isbn: 1 });
 bookSchema.index({ schoolId: 1, category: 1 });
@@ -115,6 +116,7 @@ const readingChallengeSchema = new Schema<IReadingChallenge>(
 );
 
 readingChallengeSchema.index({ schoolId: 1, endDate: -1 });
+readingChallengeSchema.index({ schoolId: 1, isDeleted: 1 });
 
 export const ReadingChallenge = mongoose.model<IReadingChallenge>('ReadingChallenge', readingChallengeSchema);
 

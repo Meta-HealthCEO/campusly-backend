@@ -1,11 +1,13 @@
 import { Router } from 'express';
 import { authenticate } from '../../middleware/auth.js';
 import { authorize } from '../../middleware/rbac.js';
+import { validate } from '../../middleware/validate.js';
 import { StaffController } from './controller.js';
+import { createStaffSchema } from './validation.js';
 
 const router = Router();
 
 router.get('/', authenticate, authorize('super_admin', 'school_admin'), StaffController.list);
-router.post('/', authenticate, authorize('super_admin', 'school_admin'), StaffController.create);
+router.post('/', authenticate, authorize('super_admin', 'school_admin'), validate(createStaffSchema), StaffController.create);
 
 export default router;

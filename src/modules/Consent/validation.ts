@@ -13,7 +13,7 @@ export const createConsentFormSchema = z.object({
   expiryDate: z.string().datetime().optional(),
   attachmentUrl: z.string().url().optional(),
   createdBy: objectIdSchema,
-});
+}).strict();
 
 export const updateConsentFormSchema = z.object({
   title: z.string().min(1, 'Title is required').optional(),
@@ -23,7 +23,7 @@ export const updateConsentFormSchema = z.object({
   requiresBothParents: z.boolean().optional(),
   expiryDate: z.string().datetime().optional(),
   attachmentUrl: z.string().url().optional(),
-});
+}).strict();
 
 export const recordConsentResponseSchema = z.object({
   formId: objectIdSchema,
@@ -33,7 +33,7 @@ export const recordConsentResponseSchema = z.object({
   ipAddress: z.string().optional(),
   signature: z.string().optional(),
   notes: z.string().optional(),
-});
+}).strict();
 
 export type CreateConsentFormInput = z.infer<typeof createConsentFormSchema>;
 export type UpdateConsentFormInput = z.infer<typeof updateConsentFormSchema>;

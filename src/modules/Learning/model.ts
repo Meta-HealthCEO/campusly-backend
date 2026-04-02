@@ -77,7 +77,11 @@ const quizSchema = new Schema<IQuiz>(
     title: { type: String, required: true, trim: true },
     description: { type: String, trim: true },
     type: { type: String, enum: ['mcq', 'true_false', 'mixed'], required: true },
-    questions: { type: [quizQuestionSchema], required: true },
+    questions: {
+      type: [quizQuestionSchema],
+      required: true,
+      validate: [(v: IQuizQuestion[]) => v.length <= 200, 'Maximum 200 questions allowed'],
+    },
     totalPoints: { type: Number, required: true, min: 1 },
     timeLimit: { type: Number, min: 1 },
     attempts: { type: Number, default: 1, min: 1 },
@@ -89,6 +93,7 @@ const quizSchema = new Schema<IQuiz>(
   { timestamps: true },
 );
 
+quizSchema.index({ schoolId: 1, isDeleted: 1 });
 quizSchema.index({ schoolId: 1, classId: 1, subjectId: 1 });
 quizSchema.index({ teacherId: 1 });
 quizSchema.index({ status: 1, dueDate: -1 });
@@ -216,6 +221,7 @@ const studyMaterialSchema = new Schema<IStudyMaterial>(
   { timestamps: true },
 );
 
+studyMaterialSchema.index({ schoolId: 1, isDeleted: 1 });
 studyMaterialSchema.index({ schoolId: 1, subjectId: 1, gradeId: 1 });
 studyMaterialSchema.index({ tags: 1 });
 studyMaterialSchema.index({ 'curriculum.subject': 1, 'curriculum.grade': 1, 'curriculum.term': 1 });
@@ -281,6 +287,7 @@ const rubricSchema = new Schema<IRubric>(
   { timestamps: true },
 );
 
+rubricSchema.index({ schoolId: 1, isDeleted: 1 });
 rubricSchema.index({ schoolId: 1, teacherId: 1 });
 rubricSchema.index({ subjectId: 1 });
 

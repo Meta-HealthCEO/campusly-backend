@@ -1,4 +1,6 @@
-import { Request, Response } from 'express';
+import type { Request } from 'express';
+import { Response } from 'express';
+import { getUser } from '../../types/authenticated-request.js';
 import { AchieverService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
 
@@ -11,10 +13,16 @@ export class AchieverController {
   }
 
   static async listAchievements(req: Request, res: Response): Promise<void> {
+    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
+      return;
+    }
+
     const query = {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId,
       studentId: req.query.studentId as string | undefined,
       type: req.query.type as string | undefined,
       year: req.query.year ? Number(req.query.year) : undefined,
@@ -120,7 +128,7 @@ export class AchieverController {
   // ─── HousePointLog ────────────────────────────────────────────────────
 
   static async addHousePointLog(req: Request, res: Response): Promise<void> {
-    const awardedBy = req.user!.id;
+    const awardedBy = getUser(req).id;
     const log = await AchieverService.addHousePointLog(req.body, awardedBy);
     res.status(201).json(apiResponse(true, log, 'House points awarded successfully'));
   }

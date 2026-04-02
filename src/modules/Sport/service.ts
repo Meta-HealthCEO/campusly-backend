@@ -10,6 +10,7 @@ import {
 } from './model.js';
 import { NotFoundError, BadRequestError } from '../../common/errors.js';
 import { paginationHelper } from '../../common/utils.js';
+import { getPopulated } from '../../types/populated.js';
 import type {
   CreateTeamInput, UpdateTeamInput,
   CreateFixtureInput, UpdateFixtureInput,
@@ -432,7 +433,7 @@ export class SportService {
 
     // Build standings map keyed by teamId string
     const standingsMap: Record<string, {
-      teamId: string;
+      teamId: mongoose.Types.ObjectId;
       played: number;
       won: number;
       drawn: number;
@@ -443,14 +444,15 @@ export class SportService {
     }> = {};
 
     for (const result of results) {
-      const fixture = result.fixtureId as unknown as ISportFixture;
+      const fixture = getPopulated<ISportFixture>(result.fixtureId);
       if (!fixture || !fixture.teamId) continue;
 
       const teamIdStr = fixture.teamId.toString();
+      const teamIdObj = new mongoose.Types.ObjectId(teamIdStr);
 
       if (!standingsMap[teamIdStr]) {
         standingsMap[teamIdStr] = {
-          teamId: teamIdStr,
+          teamId: teamIdObj,
           played: 0,
           won: 0,
           drawn: 0,
@@ -511,18 +513,17 @@ export class SportService {
   // ─── MVP Voting ──────────────────────────────────────────────────────────
 
   static async castMvpVote(data: CreateMvpVoteInput): Promise<IMvpVote> {
-    const existing = await MvpVote.findOne({
-      fixtureId: data.fixtureId,
-      voterId: data.voterId,
-      isDeleted: false,
-    });
-
-    if (existing) {
-      throw new BadRequestError('You have already voted for this fixture');
+    // Use the unique index on { fixtureId, voterId } to atomically prevent duplicates
+    try {
+      const vote = await MvpVote.create(data);
+      return vote;
+    } catch (err: unknown) {
+      const mongoErr = err as { code?: number };
+      if (mongoErr.code === 11000) {
+        throw new BadRequestError('You have already voted for this fixture');
+      }
+      throw err;
     }
-
-    const vote = await MvpVote.create(data);
-    return vote;
   }
 
   static async getMvpResults(fixtureId: string): Promise<{ studentId: string; votes: number }[]> {

@@ -7,6 +7,7 @@ import {
 } from './model.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../common/constants.js';
+import { escapeRegex } from '../../common/utils.js';
 
 interface ListQuery {
   page?: number;
@@ -35,9 +36,9 @@ export class LibraryService {
     if (query.category) filter.category = query.category;
     if (query.search) {
       filter.$or = [
-        { title: new RegExp(query.search, 'i') },
-        { author: new RegExp(query.search, 'i') },
-        { isbn: new RegExp(query.search, 'i') },
+        { title: new RegExp(escapeRegex(query.search), 'i') },
+        { author: new RegExp(escapeRegex(query.search), 'i') },
+        { isbn: new RegExp(escapeRegex(query.search), 'i') },
       ];
     }
 
@@ -49,7 +50,7 @@ export class LibraryService {
   }
 
   static async getBookById(id: string): Promise<IBook> {
-    const book = await Book.findOne({ _id: id, isDeleted: false });
+    const book = await Book.findOne({ _id: id, isDeleted: false }).lean();
     if (!book) throw new NotFoundError('Book not found');
     return book;
   }
@@ -77,12 +78,13 @@ export class LibraryService {
   // ─── Book Loan Operations ─────────────────────────────────────────────────
 
   static async issueBook(data: { bookId: string; studentId: string; schoolId: string; dueDate: string }, issuedBy: string): Promise<IBookLoan> {
-    const book = await Book.findOne({ _id: data.bookId, isDeleted: false });
-    if (!book) throw new NotFoundError('Book not found');
-    if (book.availableCopies <= 0) throw new BadRequestError('No copies available');
-
-    book.availableCopies -= 1;
-    await book.save();
+    // Atomic decrement — prevents race where two requests both read availableCopies > 0
+    const updated = await Book.findOneAndUpdate(
+      { _id: data.bookId, isDeleted: false, availableCopies: { $gte: 1 } },
+      { $inc: { availableCopies: -1 } },
+      { new: true },
+    );
+    if (!updated) throw new BadRequestError('No copies available');
 
     const loan = new BookLoan({
       bookId: data.bookId,
@@ -119,7 +121,8 @@ export class LibraryService {
     loan.fineAmount = fineAmount;
     await loan.save();
 
-    // Reduce total copies
+    // Do NOT decrement availableCopies here — it was already decremented when the book was issued.
+    // Instead, decrement copies since the book is permanently lost.
     await Book.updateOne({ _id: loan.bookId }, { $inc: { copies: -1 } });
 
     return loan;
@@ -184,7 +187,7 @@ export class LibraryService {
   }
 
   static async getChallengeById(id: string): Promise<IReadingChallenge> {
-    const challenge = await ReadingChallenge.findOne({ _id: id, isDeleted: false });
+    const challenge = await ReadingChallenge.findOne({ _id: id, isDeleted: false }).lean();
     if (!challenge) throw new NotFoundError('Reading challenge not found');
     return challenge;
   }

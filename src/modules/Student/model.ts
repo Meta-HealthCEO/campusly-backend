@@ -175,5 +175,6 @@ const studentSchema = new Schema<IStudent>(
 studentSchema.index({ schoolId: 1, admissionNumber: 1 }, { unique: true });
 studentSchema.index({ userId: 1 });
 studentSchema.index({ gradeId: 1, classId: 1 });
+studentSchema.index({ schoolId: 1, isDeleted: 1, createdAt: -1 });
 
 export const Student = mongoose.model<IStudent>('Student', studentSchema);

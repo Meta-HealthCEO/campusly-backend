@@ -59,6 +59,7 @@ const campaignSchema = new Schema<ICampaign>(
   { timestamps: true },
 );
 
+campaignSchema.index({ schoolId: 1, isDeleted: 1 });
 campaignSchema.index({ schoolId: 1, isActive: 1 });
 campaignSchema.index({ schoolId: 1, startDate: -1 });
 
@@ -119,6 +120,7 @@ const donationSchema = new Schema<IDonation>(
   { timestamps: true },
 );
 
+donationSchema.index({ schoolId: 1, isDeleted: 1 });
 donationSchema.index({ campaignId: 1, createdAt: -1 });
 donationSchema.index({ schoolId: 1, createdAt: -1 });
 

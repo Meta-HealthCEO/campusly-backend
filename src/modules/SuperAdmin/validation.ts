@@ -33,20 +33,20 @@ export const onboardSchoolSchema = z.object({
   billingContact: billingContactSchema.optional(),
   onboardingStatus: z.enum(['pending', 'in_progress', 'complete']).optional().default('pending'),
   notes: z.string().trim().optional(),
-});
+}).strict();
 
 export const updateTenantStatusSchema = z.object({
   status: z.enum(['trial', 'active', 'suspended', 'cancelled']),
   notes: z.string().trim().optional(),
-});
+}).strict();
 
 export const updateTenantModulesSchema = z.object({
   modulesEnabled: z.array(z.string().min(1)),
-});
+}).strict();
 
 export const suspendTenantSchema = z.object({
   reason: z.string().min(1, 'Reason is required').trim(),
-});
+}).strict();
 
 // ─── Platform Invoice ─────────────────────────────────────────────────────────
 
@@ -63,7 +63,7 @@ export const generatePlatformInvoiceSchema = z.object({
   issuedDate: z.string().datetime().optional(),
   dueDate: z.string().datetime(),
   status: z.enum(['draft', 'sent', 'paid', 'overdue']).optional().default('draft'),
-});
+}).strict();
 
 // ─── Support Ticket ───────────────────────────────────────────────────────────
 
@@ -74,20 +74,20 @@ export const createSupportTicketSchema = z.object({
   subject: z.string().min(1, 'Subject is required').trim(),
   description: z.string().min(1, 'Description is required').trim(),
   priority: z.enum(['low', 'medium', 'high', 'urgent']).optional().default('medium'),
-});
+}).strict();
 
 export const replyToTicketSchema = z.object({
   message: z.string().min(1, 'Message is required').trim(),
   isInternal: z.boolean().optional().default(false),
-});
+}).strict();
 
 export const assignTicketSchema = z.object({
   assignedTo: objectIdSchema,
-});
+}).strict();
 
 export const updateTicketStatusSchema = z.object({
   status: z.enum(['open', 'in_progress', 'resolved', 'closed']),
-});
+}).strict();
 
 // ─── Type exports ─────────────────────────────────────────────────────────────
 

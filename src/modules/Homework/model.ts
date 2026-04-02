@@ -63,6 +63,7 @@ const homeworkSchema = new Schema<IHomework>(
     attachments: {
       type: [String],
       default: [],
+      validate: [(v: string[]) => v.length <= 20, 'Maximum 20 attachments allowed'],
     },
     totalMarks: {
       type: Number,
@@ -101,6 +102,7 @@ const homeworkSchema = new Schema<IHomework>(
 
 homeworkSchema.index({ classId: 1, subjectId: 1 });
 homeworkSchema.index({ schoolId: 1, dueDate: -1 });
+homeworkSchema.index({ schoolId: 1, isDeleted: 1, createdAt: -1 });
 
 export const Homework = mongoose.model<IHomework>('Homework', homeworkSchema);
 

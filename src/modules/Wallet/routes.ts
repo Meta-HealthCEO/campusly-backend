@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { authenticate, authorize, validate } from '../../middleware/index.js';
+import { authenticate, authorize, validate, requireParentOwnership, requireParentWalletOwnership } from '../../middleware/index.js';
 import { WalletController } from './controller.js';
 import {
   createWalletSchema,
@@ -22,6 +22,7 @@ router.post(
 router.get(
   '/student/:studentId',
   authenticate,
+  requireParentOwnership('studentId'),
   WalletController.getWallet,
 );
 
@@ -29,6 +30,7 @@ router.post(
   '/:walletId/load',
   authenticate,
   authorize('super_admin', 'school_admin', 'parent'),
+  requireParentWalletOwnership('walletId'),
   validate(loadMoneySchema),
   WalletController.loadMoney,
 );
@@ -44,6 +46,7 @@ router.post(
 router.get(
   '/:walletId/transactions',
   authenticate,
+  requireParentWalletOwnership('walletId'),
   WalletController.getTransactions,
 );
 
@@ -66,6 +69,7 @@ router.patch(
   '/:walletId/daily-limit',
   authenticate,
   authorize('super_admin', 'school_admin', 'parent'),
+  requireParentWalletOwnership('walletId'),
   validate(updateDailyLimitSchema),
   WalletController.updateDailyLimit,
 );

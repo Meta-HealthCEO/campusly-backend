@@ -1,12 +1,13 @@
+import { logger } from '../common/logger.js';
 import { config } from '../config/env.js';
 
 export class EmailService {
   static async sendEmail(to: string, subject: string, html: string): Promise<void> {
     if (config.nodeEnv === 'development') {
-      console.log('[EmailService] Dev mode - email not sent');
-      console.log(`  To: ${to}`);
-      console.log(`  Subject: ${subject}`);
-      console.log(`  Body: ${html.substring(0, 200)}...`);
+      logger.info('[EmailService] Dev mode - email not sent');
+      logger.info(`  To: ${to}`);
+      logger.info(`  Subject: ${subject}`);
+      logger.info(`  Body: ${html.substring(0, 200)}...`);
       return;
     }
 
@@ -18,7 +19,7 @@ export class EmailService {
     // });
     // await transporter.sendMail({ from: config.smtp.user, to, subject, html });
 
-    console.log(`[EmailService] Email sent to ${to}: ${subject}`);
+    logger.info(`[EmailService] Email sent to ${to}: ${subject}`);
   }
 
   static async sendPasswordReset(to: string, token: string): Promise<void> {

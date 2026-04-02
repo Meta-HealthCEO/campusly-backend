@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import { Types } from 'mongoose';
 import { NotFoundError, BadRequestError } from '../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../common/constants.js';
@@ -54,9 +55,7 @@ function getPagination(query: ListQuery) {
 function generateInvoiceNumber(): string {
   const now = new Date();
   const datePart = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
-  const randomPart = Math.floor(Math.random() * 10000)
-    .toString()
-    .padStart(4, '0');
+  const randomPart = crypto.randomBytes(4).toString('hex').toUpperCase();
   return `INV-${datePart}-${randomPart}`;
 }
 
@@ -114,7 +113,7 @@ export class SuperAdminService {
       Tenant.countDocuments(filter),
     ]);
 
-    return { data: data as unknown as ITenant[], total, page, limit, totalPages: Math.ceil(total / limit) };
+    return { data: data as ITenant[], total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
   static async getTenantDetail(tenantId: string): Promise<ITenant> {
@@ -242,12 +241,7 @@ export class SuperAdminService {
     const taxRate = data.tax ?? 0;
     const total = amount + (amount * taxRate) / 100;
 
-    let invoiceNumber = generateInvoiceNumber();
-    let attempts = 0;
-    while (await PlatformInvoice.exists({ invoiceNumber })) {
-      invoiceNumber = generateInvoiceNumber();
-      if (++attempts > 10) throw new BadRequestError('Failed to generate unique invoice number');
-    }
+    const invoiceNumber = generateInvoiceNumber();
 
     const invoice = new PlatformInvoice({
       tenantId: new Types.ObjectId(data.tenantId),
@@ -329,7 +323,7 @@ export class SuperAdminService {
     ]);
 
     return {
-      data: data as unknown as IPlatformInvoice[],
+      data: data as IPlatformInvoice[],
       total,
       page,
       limit,
@@ -381,7 +375,7 @@ export class SuperAdminService {
     ]);
 
     return {
-      data: data as unknown as ISupportTicket[],
+      data: data as ISupportTicket[],
       total,
       page,
       limit,

@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import { config } from '../config/env.js';
 import { UnauthorizedError } from '../common/errors.js';
 import { UserRole } from '../common/enums.js';
+import { logger } from '../common/logger.js';
 
 interface JwtPayload {
   id: string;
@@ -26,7 +27,7 @@ export function authenticate(req: Request, _res: Response, next: NextFunction): 
   }
 
   try {
-    const decoded = jwt.verify(token, config.jwt.accessSecret) as JwtPayload;
+    const decoded = jwt.verify(token, config.jwt.accessSecret, { algorithms: ['HS256'] }) as JwtPayload;
 
     req.user = {
       id: decoded.id,
@@ -37,6 +38,7 @@ export function authenticate(req: Request, _res: Response, next: NextFunction): 
 
     next();
   } catch {
+    logger.warn({ path: req.originalUrl, ip: req.ip }, 'Failed authentication attempt');
     throw new UnauthorizedError('Invalid or expired token');
   }
 }

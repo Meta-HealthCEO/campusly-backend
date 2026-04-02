@@ -1,4 +1,6 @@
-import { Request, Response } from 'express';
+import type { Request } from 'express';
+import { Response } from 'express';
+import { getUser } from '../../types/authenticated-request.js';
 import { AuthService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
 
@@ -23,7 +25,6 @@ export class AuthController {
       apiResponse(true, {
         user: safeUser,
         accessToken: tokens.accessToken,
-        refreshToken: tokens.refreshToken,
       }, 'User registered successfully'),
     );
   }
@@ -41,13 +42,12 @@ export class AuthController {
       apiResponse(true, {
         user: safeUser,
         accessToken: tokens.accessToken,
-        refreshToken: tokens.refreshToken,
       }, 'Login successful'),
     );
   }
 
   static async refresh(req: Request, res: Response): Promise<void> {
-    const token = req.cookies?.refresh_token || req.body.refreshToken;
+    const token = req.cookies?.refresh_token;
 
     if (!token) {
       res.status(400).json(apiResponse(false, undefined, undefined, 'Refresh token is required'));
@@ -61,13 +61,12 @@ export class AuthController {
     res.status(200).json(
       apiResponse(true, {
         accessToken: tokens.accessToken,
-        refreshToken: tokens.refreshToken,
       }, 'Token refreshed successfully'),
     );
   }
 
   static async logout(req: Request, res: Response): Promise<void> {
-    const refreshToken = req.cookies?.refresh_token || req.body.refreshToken;
+    const refreshToken = req.cookies?.refresh_token;
 
     if (req.user?.id && refreshToken) {
       await AuthService.logout(req.user.id, refreshToken);
@@ -90,7 +89,7 @@ export class AuthController {
   }
 
   static async getMe(req: Request, res: Response): Promise<void> {
-    const user = await AuthService.getMe(req.user!.id);
+    const user = await AuthService.getMe(getUser(req).id);
     res.status(200).json(apiResponse(true, { user }, 'User retrieved successfully'));
   }
 }

@@ -78,7 +78,7 @@ export class UniformService {
     }
 
     const [items, total] = await Promise.all([
-      UniformItem.find(filter).sort('-createdAt').skip(skip).limit(limit),
+      UniformItem.find(filter).sort('-createdAt').skip(skip).limit(limit).lean(),
       UniformItem.countDocuments(filter),
     ]);
 
@@ -92,7 +92,7 @@ export class UniformService {
   }
 
   static async getItem(id: string): Promise<IUniformItem> {
-    const item = await UniformItem.findOne({ _id: id, isDeleted: false });
+    const item = await UniformItem.findOne({ _id: id, isDeleted: false }).lean();
 
     if (!item) {
       throw new NotFoundError('Uniform item not found');
@@ -174,7 +174,8 @@ export class UniformService {
         .populate('orderedBy', 'firstName lastName email')
         .sort('-createdAt')
         .skip(skip)
-        .limit(limit),
+        .limit(limit)
+        .lean(),
       UniformOrder.countDocuments(filter),
     ]);
 
@@ -190,7 +191,8 @@ export class UniformService {
   static async getOrder(id: string): Promise<IUniformOrder> {
     const order = await UniformOrder.findOne({ _id: id, isDeleted: false })
       .populate('studentId')
-      .populate('orderedBy', 'firstName lastName email');
+      .populate('orderedBy', 'firstName lastName email')
+      .lean();
 
     if (!order) {
       throw new NotFoundError('Uniform order not found');
@@ -272,7 +274,8 @@ export class UniformService {
         .populate('parentId')
         .sort('-createdAt')
         .skip(skip)
-        .limit(limit),
+        .limit(limit)
+        .lean(),
       SecondHandListing.countDocuments(filter),
     ]);
 
@@ -288,7 +291,8 @@ export class UniformService {
   static async getSecondHandListing(id: string): Promise<ISecondHandListing> {
     const listing = await SecondHandListing.findOne({ _id: id, isDeleted: false })
       .populate('parentId')
-      .populate('buyerId');
+      .populate('buyerId')
+      .lean();
 
     if (!listing) {
       throw new NotFoundError('Second hand listing not found');
@@ -344,7 +348,7 @@ export class UniformService {
     };
 
     const [listings, total] = await Promise.all([
-      SecondHandListing.find(filter).sort('-createdAt').skip(skip).limit(limit),
+      SecondHandListing.find(filter).sort('-createdAt').skip(skip).limit(limit).lean(),
       SecondHandListing.countDocuments(filter),
     ]);
 
@@ -365,7 +369,7 @@ export class UniformService {
   }
 
   static async getSizeGuideByItem(uniformItemId: string): Promise<ISizeGuide> {
-    const sizeGuide = await SizeGuide.findOne({ uniformItemId, isDeleted: false });
+    const sizeGuide = await SizeGuide.findOne({ uniformItemId, isDeleted: false }).lean();
 
     if (!sizeGuide) {
       throw new NotFoundError('Size guide not found for this item');
@@ -448,7 +452,8 @@ export class UniformService {
         .populate('orderedBy', 'firstName lastName email')
         .sort('-createdAt')
         .skip(skip)
-        .limit(limit),
+        .limit(limit)
+        .lean(),
       PreOrder.countDocuments(filter),
     ]);
 
@@ -465,7 +470,8 @@ export class UniformService {
     const preOrder = await PreOrder.findOne({ _id: id, isDeleted: false })
       .populate('uniformItemId')
       .populate('studentId')
-      .populate('orderedBy', 'firstName lastName email');
+      .populate('orderedBy', 'firstName lastName email')
+      .lean();
 
     if (!preOrder) {
       throw new NotFoundError('Pre-order not found');
@@ -529,7 +535,7 @@ export class UniformService {
     }
 
     const [items, total] = await Promise.all([
-      UniformItem.find(filter).sort('-createdAt').skip(skip).limit(limit),
+      UniformItem.find(filter).sort('-createdAt').skip(skip).limit(limit).lean(),
       UniformItem.countDocuments(filter),
     ]);
 

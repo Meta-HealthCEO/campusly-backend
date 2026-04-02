@@ -26,6 +26,7 @@ const gradeSchema = new Schema<IGrade>(
     orderIndex: {
       type: Number,
       required: true,
+      min: 0,
     },
     isDeleted: {
       type: Boolean,
@@ -88,6 +89,7 @@ const classSchema = new Schema<IClass>(
 
 classSchema.index({ gradeId: 1 });
 classSchema.index({ schoolId: 1 });
+classSchema.index({ schoolId: 1, gradeId: 1 });
 
 export const Class = mongoose.model<IClass>('Class', classSchema);
 
@@ -262,10 +264,12 @@ const assessmentSchema = new Schema<IAssessment>(
     totalMarks: {
       type: Number,
       required: true,
+      min: 0,
     },
     weight: {
       type: Number,
       required: true,
+      min: 0,
     },
     term: {
       type: Number,
@@ -288,6 +292,7 @@ const assessmentSchema = new Schema<IAssessment>(
 );
 
 assessmentSchema.index({ classId: 1, subjectId: 1, term: 1 });
+assessmentSchema.index({ schoolId: 1, isDeleted: 1, createdAt: -1 });
 
 export const Assessment = mongoose.model<IAssessment>('Assessment', assessmentSchema);
 

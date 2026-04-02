@@ -1,4 +1,6 @@
-import { Request, Response } from 'express';
+import type { Request } from 'express';
+import { Response } from 'express';
+import { getUser } from '../../types/authenticated-request.js';
 import { WalletService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
 
@@ -19,7 +21,7 @@ export class WalletController {
       req.params.walletId as string,
       amount,
       description,
-      req.user!.id,
+      getUser(req).id,
     );
     res.json(apiResponse(true, wallet, 'Money loaded successfully'));
   }
@@ -30,7 +32,7 @@ export class WalletController {
       req.params.walletId as string,
       amount,
       description,
-      req.user!.id,
+      getUser(req).id,
     );
     res.json(apiResponse(true, wallet, 'Money deducted successfully'));
   }

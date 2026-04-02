@@ -1,4 +1,6 @@
-import { Request, Response } from 'express';
+import type { Request } from 'express';
+import { Response } from 'express';
+import { getUser } from '../../types/authenticated-request.js';
 import { SuperAdminService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
 
@@ -80,7 +82,7 @@ export class SuperAdminController {
   // ─── Support Tickets ──────────────────────────────────────────────────
 
   static async createSupportTicket(req: Request, res: Response): Promise<void> {
-    const ticket = await SuperAdminService.createSupportTicket(req.body, req.user!.id);
+    const ticket = await SuperAdminService.createSupportTicket(req.body, getUser(req).id);
     res.status(201).json(apiResponse(true, ticket, 'Support ticket created successfully'));
   }
 
@@ -105,7 +107,7 @@ export class SuperAdminController {
     const ticket = await SuperAdminService.replyToTicket(
       req.params.id as string,
       req.body,
-      req.user!.id,
+      getUser(req).id,
     );
     res.json(apiResponse(true, ticket, 'Reply sent successfully'));
   }

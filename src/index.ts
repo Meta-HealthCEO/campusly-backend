@@ -1,8 +1,19 @@
+import { logger } from './common/logger.js';
 import mongoose from 'mongoose';
 import { config } from './config/env.js';
 import { connectDatabase } from './config/database.js';
 import { setupWorkers } from './jobs/index.js';
 import app from './app.js';
+
+process.on('uncaughtException', (err) => {
+  logger.error({ err }, 'UNCAUGHT EXCEPTION — shutting down');
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason) => {
+  logger.error({ err: reason }, 'UNHANDLED REJECTION — shutting down');
+  process.exit(1);
+});
 
 const start = async () => {
   await connectDatabase();
@@ -10,21 +21,21 @@ const start = async () => {
   await setupWorkers();
 
   const server = app.listen(config.port, () => {
-    console.log(`[Campusly] Server running on port ${config.port} (${config.nodeEnv})`);
-    console.log(`[Campusly] API docs: http://localhost:${config.port}/api-docs`);
+    logger.info(`[Campusly] Server running on port ${config.port} (${config.nodeEnv})`);
+    logger.info(`[Campusly] API docs: http://localhost:${config.port}/api-docs`);
   });
 
   const shutdown = async (signal: string) => {
-    console.log(`\n[Campusly] ${signal} received, shutting down gracefully...`);
+    logger.info(`\n[Campusly] ${signal} received, shutting down gracefully...`);
     server.close(() => {
-      console.log('[Campusly] HTTP server closed');
+      logger.info('[Campusly] HTTP server closed');
       mongoose.connection.close().then(() => {
-        console.log('[Campusly] MongoDB connection closed');
+        logger.info('[Campusly] MongoDB connection closed');
         process.exit(0);
       });
     });
     setTimeout(() => {
-      console.error('[Campusly] Forced shutdown after timeout');
+      logger.error('[Campusly] Forced shutdown after timeout');
       process.exit(1);
     }, 10000);
   };
@@ -34,6 +45,6 @@ const start = async () => {
 };
 
 start().catch((err) => {
-  console.error('[Campusly] Failed to start:', err);
+  logger.error({ err }, '[Campusly] Failed to start');
   process.exit(1);
 });

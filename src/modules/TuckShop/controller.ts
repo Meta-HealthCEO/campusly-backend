@@ -1,4 +1,6 @@
-import { Request, Response } from 'express';
+import type { Request } from 'express';
+import { Response } from 'express';
+import { getUser } from '../../types/authenticated-request.js';
 import { TuckShopService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
 
@@ -40,7 +42,7 @@ export class TuckShopController {
   // ─── Orders ─────────────────────────────────────────────────────────────────
 
   static async placeOrder(req: Request, res: Response): Promise<void> {
-    const order = await TuckShopService.placeOrder(req.body, req.user!.id);
+    const order = await TuckShopService.placeOrder(req.body, getUser(req).id);
     res.status(201).json(apiResponse(true, order, 'Order placed successfully'));
   }
 

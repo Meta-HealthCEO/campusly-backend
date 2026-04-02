@@ -11,7 +11,7 @@ export const createTeamSchema = z.object({
   coachId: objectIdSchema.optional(),
   playerIds: z.array(objectIdSchema).optional(),
   isActive: z.boolean().optional(),
-});
+}).strict();
 
 export const updateTeamSchema = z.object({
   name: z.string().min(1, 'Name is required').optional(),
@@ -20,7 +20,7 @@ export const updateTeamSchema = z.object({
   coachId: objectIdSchema.optional(),
   playerIds: z.array(objectIdSchema).optional(),
   isActive: z.boolean().optional(),
-});
+}).strict();
 
 export const createFixtureSchema = z.object({
   teamId: objectIdSchema,
@@ -32,7 +32,7 @@ export const createFixtureSchema = z.object({
   isHome: z.boolean().optional(),
   result: z.string().optional(),
   notes: z.string().optional(),
-});
+}).strict();
 
 export const updateFixtureSchema = z.object({
   opponent: z.string().min(1, 'Opponent is required').optional(),
@@ -42,7 +42,7 @@ export const updateFixtureSchema = z.object({
   isHome: z.boolean().optional(),
   result: z.string().optional(),
   notes: z.string().optional(),
-});
+}).strict();
 
 // ─── Season Schemas ────────────────────────────────────────────────────────
 
@@ -53,7 +53,7 @@ export const createSeasonSchema = z.object({
   startDate: z.string().datetime(),
   endDate: z.string().datetime(),
   isActive: z.boolean().optional(),
-});
+}).strict();
 
 export const updateSeasonSchema = z.object({
   name: z.string().min(1, 'Name is required').optional(),
@@ -61,7 +61,7 @@ export const updateSeasonSchema = z.object({
   startDate: z.string().datetime().optional(),
   endDate: z.string().datetime().optional(),
   isActive: z.boolean().optional(),
-});
+}).strict();
 
 // ─── Player Availability Schemas ───────────────────────────────────────────
 
@@ -72,13 +72,13 @@ export const createPlayerAvailabilitySchema = z.object({
   status: z.enum(['available', 'unavailable', 'injured']),
   parentConfirmed: z.boolean().optional(),
   notes: z.string().optional(),
-});
+}).strict();
 
 export const updatePlayerAvailabilitySchema = z.object({
   status: z.enum(['available', 'unavailable', 'injured']).optional(),
   parentConfirmed: z.boolean().optional(),
   notes: z.string().optional(),
-});
+}).strict();
 
 // ─── Match Result Schemas ──────────────────────────────────────────────────
 
@@ -95,7 +95,7 @@ export const createMatchResultSchema = z.object({
   scorers: z.array(scorerSchema).optional(),
   manOfTheMatch: objectIdSchema.optional(),
   notes: z.string().optional(),
-});
+}).strict();
 
 export const updateMatchResultSchema = z.object({
   homeScore: z.number().int().min(0).optional(),
@@ -103,7 +103,7 @@ export const updateMatchResultSchema = z.object({
   scorers: z.array(scorerSchema).optional(),
   manOfTheMatch: objectIdSchema.optional(),
   notes: z.string().optional(),
-});
+}).strict();
 
 // ─── MVP Vote Schema ───────────────────────────────────────────────────────
 
@@ -112,7 +112,7 @@ export const createMvpVoteSchema = z.object({
   voterId: objectIdSchema,
   studentId: objectIdSchema,
   schoolId: objectIdSchema,
-});
+}).strict();
 
 // ─── Type Exports ──────────────────────────────────────────────────────────
 

@@ -1,5 +1,7 @@
+import { logger } from '../common/logger.js';
 import { Worker, Job } from 'bullmq';
 import { redisConnection, reportGenerationQueue } from './queues.js';
+import { ReportService } from '../modules/Report/service.js';
 
 interface ReportGenerationJobData {
   studentId: string;
@@ -12,18 +14,11 @@ export function createReportGenerationWorker(): Worker {
     'report-generation',
     async (job: Job<ReportGenerationJobData>) => {
       const { studentId, term, academicYear } = job.data;
-      console.log(`[ReportGenerationJob] Generating report for student ${studentId}, term ${term}, year ${academicYear}`);
+      logger.info(`[ReportGenerationJob] Generating report for student ${studentId}, term ${term}, year ${academicYear}`);
 
-      // Stub: In production, this would:
-      // 1. Query marks for the student, term, and academic year
-      // 2. Aggregate results by subject
-      // 3. Generate a PDF report card
-      // 4. Store the report and notify the parent
+      const reportCard = await ReportService.getStudentReportCard(studentId, term, academicYear);
 
-      // Simulate processing time
-      console.log(`[ReportGenerationJob] Fetching marks for student ${studentId}...`);
-      console.log(`[ReportGenerationJob] Aggregating results for term ${term}, year ${academicYear}...`);
-      console.log(`[ReportGenerationJob] Report card generated successfully (stub)`);
+      logger.info(`[ReportGenerationJob] Report card generated for student ${studentId}, term ${term}, year ${academicYear}`);
 
       return {
         studentId,
@@ -31,17 +26,18 @@ export function createReportGenerationWorker(): Worker {
         academicYear,
         status: 'generated',
         generatedAt: new Date().toISOString(),
+        marks: reportCard.marks,
       };
     },
     { connection: redisConnection },
   );
 
   worker.on('completed', (job) => {
-    console.log(`[ReportGenerationJob] Job ${job.id} completed`);
+    logger.info(`[ReportGenerationJob] Job ${job.id} completed`);
   });
 
   worker.on('failed', (job, err) => {
-    console.error(`[ReportGenerationJob] Job ${job?.id} failed:`, err.message);
+    logger.error(`[ReportGenerationJob] Job ${job?.id} failed: ${err.message}`);
   });
 
   return worker;
@@ -53,5 +49,5 @@ export async function addReportGenerationJob(data: ReportGenerationJobData): Pro
     backoff: { type: 'exponential', delay: 5000 },
   });
 
-  console.log(`[ReportGenerationJob] Job queued for student ${data.studentId}, term ${data.term}`);
+  logger.info(`[ReportGenerationJob] Job queued for student ${data.studentId}, term ${data.term}`);
 }

@@ -1,6 +1,8 @@
+import { logger } from '../common/logger.js';
+import mongoose, { type AnyBulkWriteOperation } from 'mongoose';
 import { Worker, Job } from 'bullmq';
 import { redisConnection, collectionsEscalationQueue } from './queues.js';
-import { Invoice } from '../modules/Fee/model.js';
+import { Invoice, type IInvoice } from '../modules/Fee/model.js';
 import { CollectionAction } from '../modules/Fee/model.js';
 import { Notification } from '../modules/Notification/model.js';
 import { Student } from '../modules/Student/model.js';
@@ -26,85 +28,120 @@ export function createCollectionsEscalationWorker(): Worker {
   const worker = new Worker(
     'collections-escalation',
     async (job: Job<CollectionsEscalationJobData>) => {
-      console.log(`[CollectionsEscalationJob] Processing job ${job.id}`);
+      logger.info(`[CollectionsEscalationJob] Processing job ${job.id}`);
 
       const now = new Date();
       let escalatedCount = 0;
 
-      for (const rule of ESCALATION_RULES) {
-        const cutoffDate = new Date(now.getTime() - rule.daysOverdue * 24 * 60 * 60 * 1000);
+      const session = await mongoose.startSession();
+      session.startTransaction();
 
-        const filter: Record<string, unknown> = {
-          isDeleted: false,
-          status: { $in: [InvoiceStatus.PENDING, InvoiceStatus.PARTIAL, InvoiceStatus.OVERDUE] },
-          dueDate: { $lt: cutoffDate },
-          collectionStage: rule.fromStage ?? { $exists: false },
-        };
+      try {
+        for (const rule of ESCALATION_RULES) {
+          const cutoffDate = new Date(now.getTime() - rule.daysOverdue * 24 * 60 * 60 * 1000);
 
-        if (rule.fromStage === undefined) {
-          filter.$or = [
-            { collectionStage: { $exists: false } },
-            { collectionStage: null },
-          ];
-          delete filter.collectionStage;
-        }
+          const filter: Record<string, unknown> = {
+            isDeleted: false,
+            status: { $in: [InvoiceStatus.PENDING, InvoiceStatus.PARTIAL, InvoiceStatus.OVERDUE] },
+            dueDate: { $lt: cutoffDate },
+            collectionStage: rule.fromStage ?? { $exists: false },
+          };
 
-        if (job.data.schoolId) {
-          filter.schoolId = job.data.schoolId;
-        }
+          if (rule.fromStage === undefined) {
+            filter.$or = [
+              { collectionStage: { $exists: false } },
+              { collectionStage: null },
+            ];
+            delete filter.collectionStage;
+          }
 
-        const invoices = await Invoice.find(filter).limit(200);
+          if (job.data.schoolId) {
+            filter.schoolId = job.data.schoolId;
+          }
 
-        for (const invoice of invoices) {
-          invoice.collectionStage = rule.toStage;
-          invoice.status = InvoiceStatus.OVERDUE;
-          await invoice.save();
+          const invoices = await Invoice.find(filter).limit(200).session(session);
 
-          await CollectionAction.create({
-            studentId: invoice.studentId,
-            schoolId: invoice.schoolId,
-            invoiceId: invoice._id,
+          if (invoices.length === 0) continue;
+
+          // Batch-fetch all students for this rule's invoices to avoid N+1
+          const invoiceStudentIds = [...new Set(invoices.map(i => i.studentId.toString()))];
+          const ruleStudents = await Student.find({ _id: { $in: invoiceStudentIds } })
+            .populate('userId', 'firstName lastName email')
+            .session(session)
+            .lean();
+          const ruleStudentMap = new Map(ruleStudents.map(s => [s._id.toString(), s]));
+
+          // Batch update invoices
+          const invoiceBulkOps: AnyBulkWriteOperation<IInvoice>[] = invoices.map(inv => ({
+            updateOne: {
+              filter: { _id: inv._id },
+              update: {
+                $set: { collectionStage: rule.toStage, status: InvoiceStatus.OVERDUE },
+              },
+            },
+          }));
+          await Invoice.bulkWrite(invoiceBulkOps, { session });
+
+          // Batch create collection actions
+          const actionDocs = invoices.map(inv => ({
+            studentId: inv.studentId,
+            schoolId: inv.schoolId,
+            invoiceId: inv._id,
             stage: rule.toStage,
             scheduledDate: now,
             sentDate: now,
             sentVia: 'system_auto',
             notes: `Auto-escalated to ${rule.toStage} (${rule.daysOverdue}+ days overdue)`,
-          });
+          }));
+          await CollectionAction.insertMany(actionDocs, { session });
 
-          const student = await Student.findById(invoice.studentId)
-            .populate('userId', 'firstName lastName email');
+          // Batch create notifications
+          const notificationDocs = invoices
+            .map(inv => {
+              const student = ruleStudentMap.get(inv.studentId.toString());
+              if (!student) return null;
+              return {
+                recipientId: student.userId,
+                schoolId: inv.schoolId,
+                type: 'in_app' as const,
+                title: 'Collections Notice',
+                message: `Invoice ${inv.invoiceNumber} has been escalated to ${rule.toStage.replace(/_/g, ' ')}. Outstanding: R${((inv.totalAmount - inv.paidAmount - (inv.writeOffAmount ?? 0)) / 100).toFixed(2)}.`,
+                data: {
+                  invoiceId: inv._id,
+                  invoiceNumber: inv.invoiceNumber,
+                  stage: rule.toStage,
+                },
+              };
+            })
+            .filter((doc): doc is NonNullable<typeof doc> => doc !== null);
 
-          if (student) {
-            await Notification.create({
-              recipientId: student.userId,
-              schoolId: invoice.schoolId,
-              type: 'in_app',
-              title: 'Collections Notice',
-              message: `Invoice ${invoice.invoiceNumber} has been escalated to ${rule.toStage.replace(/_/g, ' ')}. Outstanding: R${((invoice.totalAmount - invoice.paidAmount) / 100).toFixed(2)}.`,
-              data: {
-                invoiceId: invoice._id,
-                invoiceNumber: invoice.invoiceNumber,
-                stage: rule.toStage,
-              },
-            });
+          if (notificationDocs.length > 0) {
+            await Notification.insertMany(notificationDocs, { session });
           }
 
-          escalatedCount++;
+          escalatedCount += invoices.length;
         }
+
+        await session.commitTransaction();
+      } catch (err) {
+        await session.abortTransaction();
+        throw err;
+      } finally {
+        session.endSession();
       }
 
-      console.log(`[CollectionsEscalationJob] Escalated ${escalatedCount} invoices`);
+      logger.info(`[CollectionsEscalationJob] Escalated ${escalatedCount} invoices`);
       return { escalatedCount };
     },
     { connection: redisConnection },
   );
 
   worker.on('completed', (job) => {
-    console.log(`[CollectionsEscalationJob] Job ${job.id} completed`);
+    logger.info(`[CollectionsEscalationJob] Job ${job.id} completed`);
   });
 
   worker.on('failed', (job, err) => {
-    console.error(`[CollectionsEscalationJob] Job ${job?.id} failed:`, err.message);
+    logger.error(`[CollectionsEscalationJob] Job ${job?.id} failed: ${err.message}`);
   });
 
   return worker;
@@ -120,5 +157,5 @@ export async function scheduleCollectionsEscalation(): Promise<void> {
     },
   );
 
-  console.log('[CollectionsEscalationJob] Scheduled daily collections escalation at 09:00');
+  logger.info('[CollectionsEscalationJob] Scheduled daily collections escalation at 09:00');
 }

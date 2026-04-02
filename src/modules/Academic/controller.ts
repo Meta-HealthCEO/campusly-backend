@@ -1,4 +1,6 @@
-import { Request, Response } from 'express';
+import type { Request } from 'express';
+import { Response } from 'express';
+import { getUser } from '../../types/authenticated-request.js';
 import { AcademicService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
 
@@ -264,11 +266,18 @@ export class AcademicController {
       'homeLanguage',
     ];
 
+    function escapeCSV(val: string): string {
+      // Prevent CSV formula injection
+      if (/^[=+@\-]/.test(val)) return `'${val}`;
+      return val;
+    }
+
     const csvRows = [headers.join(',')];
 
     for (const row of data) {
       const values = headers.map((h) => {
-        const val = String((row as any)[h] ?? '');
+        const raw = String((row as Record<string, unknown>)[h] ?? '');
+        const val = escapeCSV(raw);
         // Escape values containing commas, quotes, or newlines
         if (val.includes(',') || val.includes('"') || val.includes('\n')) {
           return `"${val.replace(/"/g, '""')}"`;
@@ -355,7 +364,7 @@ export class AcademicController {
   // ─── Past Papers ──────────────────────────────────────────────────────────
 
   static async createPastPaper(req: Request, res: Response): Promise<void> {
-    const paper = await AcademicService.createPastPaper(req.body, req.user!.id);
+    const paper = await AcademicService.createPastPaper(req.body, getUser(req).id);
     res.status(201).json(apiResponse(true, paper, 'Past paper uploaded successfully'));
   }
 

@@ -11,14 +11,14 @@ export const uploadFileSchema = z.object({
   originalName: z.string().min(1, 'File name is required').trim(),
   fileUrl: z.string().min(1, 'File URL is required'),
   fileSize: z.number().positive('File size must be positive'),
-});
+}).strict();
 
 export const updateMappingSchema = z.object({
   mapping: z.record(z.string(), z.string()).refine(
     (val) => Object.keys(val).length > 0,
     'At least one field mapping is required',
   ),
-});
+}).strict();
 
 export const createTemplateSchema = z.object({
   sourceSystem: sourceSystemEnum,
@@ -33,7 +33,7 @@ export const createTemplateSchema = z.object({
     )
     .min(1, 'At least one field mapping is required'),
   isDefault: z.boolean().optional(),
-});
+}).strict();
 
 export type UploadFileInput = z.infer<typeof uploadFileSchema>;
 export type UpdateMappingInput = z.infer<typeof updateMappingSchema>;

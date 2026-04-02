@@ -1,6 +1,7 @@
 import { Student, IStudent } from './model.js';
 import { NotFoundError } from '../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../common/constants.js';
+import { escapeRegex } from '../../common/utils.js';
 
 interface ListQuery {
   page?: number;
@@ -39,7 +40,7 @@ export class StudentService {
     };
 
     if (query.search) {
-      const searchRegex = new RegExp(query.search, 'i');
+      const searchRegex = new RegExp(escapeRegex(query.search), 'i');
       filter.$or = [{ admissionNumber: searchRegex }];
     }
 
@@ -51,14 +52,6 @@ export class StudentService {
       .skip(skip)
       .limit(limit)
       .lean();
-
-    if (query.search) {
-      // Also search by user name via populated field - we need a pipeline approach
-      // For simplicity, we search admissionNumber directly and let the caller
-      // handle user-name searches if needed. A more advanced approach would use
-      // aggregation with $lookup.
-      baseQuery = baseQuery;
-    }
 
     const [students, total] = await Promise.all([
       baseQuery.exec(),
@@ -82,7 +75,8 @@ export class StudentService {
       .populate({
         path: 'guardianIds',
         populate: { path: 'userId', select: 'firstName lastName email phone' },
-      });
+      })
+      .lean();
 
     if (!student) {
       throw new NotFoundError('Student not found');
@@ -147,7 +141,8 @@ export class StudentService {
       .populate({
         path: 'guardianIds',
         populate: { path: 'userId', select: 'firstName lastName email phone' },
-      });
+      })
+      .lean();
 
     if (!student) {
       throw new NotFoundError('Student not found');

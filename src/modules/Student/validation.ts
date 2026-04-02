@@ -44,9 +44,9 @@ export const createStudentSchema = z.object({
   afterCareRequired: z.boolean().optional(),
   saIdNumber: z.string().trim().optional(),
   luritsNumber: z.string().trim().optional(),
-});
+}).strict();
 
-export const updateStudentSchema = createStudentSchema.partial();
+export const updateStudentSchema = createStudentSchema.partial().strict();
 
 export const updateMedicalProfileSchema = z.object({
   allergies: z.array(z.string()).default([]),
@@ -54,4 +54,4 @@ export const updateMedicalProfileSchema = z.object({
   bloodType: z.string().optional(),
   emergencyContacts: z.array(emergencyContactSchema).default([]),
   medicalAidInfo: medicalAidInfoSchema.optional(),
-});
+}).strict();

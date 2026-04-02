@@ -13,7 +13,7 @@ export const createRegistrationSchema = z.object({
   daysPerWeek: z.array(weekDaySchema).min(1, 'At least one day is required'),
   monthlyFee: z.number().int().nonnegative('Monthly fee must be a non-negative integer in cents'),
   isActive: z.boolean().optional(),
-});
+}).strict();
 
 export const updateRegistrationSchema = z.object({
   term: z.number().int().positive('Term must be a positive integer').optional(),
@@ -21,7 +21,7 @@ export const updateRegistrationSchema = z.object({
   daysPerWeek: z.array(weekDaySchema).min(1, 'At least one day is required').optional(),
   monthlyFee: z.number().int().nonnegative('Monthly fee must be a non-negative integer in cents').optional(),
   isActive: z.boolean().optional(),
-});
+}).strict();
 
 export const checkInSchema = z.object({
   studentId: objectIdSchema,
@@ -29,12 +29,12 @@ export const checkInSchema = z.object({
   date: z.string().datetime(),
   checkInTime: z.string().min(1, 'Check-in time is required'),
   notes: z.string().optional(),
-});
+}).strict();
 
 export const checkOutSchema = z.object({
   checkOutTime: z.string().min(1, 'Check-out time is required'),
   notes: z.string().optional(),
-});
+}).strict();
 
 // ─── Pickup Authorization ──────────────────────────────────────────────────
 
@@ -47,7 +47,7 @@ export const createPickupAuthSchema = z.object({
   phoneNumber: z.string().min(1, 'Phone number is required'),
   photoUrl: z.string().url().optional(),
   isActive: z.boolean().optional(),
-});
+}).strict();
 
 export const updatePickupAuthSchema = z.object({
   authorizedPersonName: z.string().min(1, 'Authorized person name is required').optional(),
@@ -56,7 +56,7 @@ export const updatePickupAuthSchema = z.object({
   phoneNumber: z.string().min(1, 'Phone number is required').optional(),
   photoUrl: z.string().url().optional(),
   isActive: z.boolean().optional(),
-});
+}).strict();
 
 // ─── Sign Out Log ──────────────────────────────────────────────────────────
 
@@ -69,7 +69,7 @@ export const createSignOutLogSchema = z.object({
   isAuthorized: z.boolean(),
   authorizationId: objectIdSchema.optional(),
   notes: z.string().optional(),
-});
+}).strict();
 
 // ─── After Care Activity ───────────────────────────────────────────────────
 
@@ -92,7 +92,7 @@ export const createActivitySchema = z.object({
   studentIds: z.array(objectIdSchema).optional(),
   startTime: z.string().min(1, 'Start time is required'),
   endTime: z.string().min(1, 'End time is required'),
-});
+}).strict();
 
 export const updateActivitySchema = z.object({
   date: z.string().datetime().optional(),
@@ -103,7 +103,7 @@ export const updateActivitySchema = z.object({
   studentIds: z.array(objectIdSchema).optional(),
   startTime: z.string().min(1, 'Start time is required').optional(),
   endTime: z.string().min(1, 'End time is required').optional(),
-});
+}).strict();
 
 // ─── After Care Invoice ────────────────────────────────────────────────────
 
@@ -111,7 +111,7 @@ export const generateInvoicesSchema = z.object({
   schoolId: objectIdSchema,
   month: z.number().int().min(1).max(12),
   year: z.number().int().positive('Year must be a positive integer'),
-});
+}).strict();
 
 // ─── Type Exports ──────────────────────────────────────────────────────────
 

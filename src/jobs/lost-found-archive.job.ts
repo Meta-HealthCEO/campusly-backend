@@ -1,3 +1,4 @@
+import { logger } from '../common/logger.js';
 import { Worker, Job } from 'bullmq';
 import { redisConnection, lostFoundArchiveQueue } from './queues.js';
 import { LostItem } from '../modules/LostFound/model.js';
@@ -12,7 +13,7 @@ export function createLostFoundArchiveWorker(): Worker {
   const worker = new Worker(
     'lost-found-archive',
     async (job: Job<LostFoundArchiveJobData>) => {
-      console.log(`[LostFoundArchiveJob] Processing job ${job.id}`);
+      logger.info(`[LostFoundArchiveJob] Processing job ${job.id}`);
 
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
@@ -55,33 +56,35 @@ export function createLostFoundArchiveWorker(): Worker {
             role: 'school_admin',
             isDeleted: false,
             isActive: true,
-          }).select('_id');
+          }).select('_id').lean();
 
-          for (const admin of admins) {
-            await Notification.create({
+          // Batch-insert admin notifications instead of creating one-by-one
+          if (admins.length > 0) {
+            const adminNotifications = admins.map(admin => ({
               recipientId: admin._id,
               schoolId,
               type: 'in_app',
               title: 'Lost & Found Items Archived',
               message: `${result.modifiedCount} unclaimed lost & found item(s) have been automatically archived after 30 days.`,
               data: { archivedCount: result.modifiedCount },
-            });
+            }));
+            await Notification.insertMany(adminNotifications);
           }
         }
       }
 
-      console.log(`[LostFoundArchiveJob] Archived ${totalArchived} items across ${schools.length} schools`);
+      logger.info(`[LostFoundArchiveJob] Archived ${totalArchived} items across ${schools.length} schools`);
       return { totalArchived, schoolsProcessed: schools.length };
     },
     { connection: redisConnection },
   );
 
   worker.on('completed', (job) => {
-    console.log(`[LostFoundArchiveJob] Job ${job.id} completed`);
+    logger.info(`[LostFoundArchiveJob] Job ${job.id} completed`);
   });
 
   worker.on('failed', (job, err) => {
-    console.error(`[LostFoundArchiveJob] Job ${job?.id} failed:`, err.message);
+    logger.error(`[LostFoundArchiveJob] Job ${job?.id} failed: ${err.message}`);
   });
 
   return worker;
@@ -97,5 +100,5 @@ export async function scheduleLostFoundArchive(): Promise<void> {
     },
   );
 
-  console.log('[LostFoundArchiveJob] Scheduled weekly lost & found archive at Sunday 02:00');
+  logger.info('[LostFoundArchiveJob] Scheduled weekly lost & found archive at Sunday 02:00');
 }

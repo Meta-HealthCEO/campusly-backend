@@ -1,4 +1,4 @@
-import { Notification, NotificationPreference, INotification, INotificationPreference } from './model.js';
+import { Notification, NotificationPreference, INotification, INotificationPreference, INotificationData } from './model.js';
 import { Student } from '../Student/model.js';
 import { NotFoundError } from '../../common/errors.js';
 import { paginationHelper } from '../../common/utils.js';
@@ -18,12 +18,8 @@ export class NotificationService {
       type: data.type,
       title: data.title,
       message: data.message,
-      data: data.data,
+      data: data.data as INotificationData | undefined,
     });
-
-    // In production, queue for dispatch via BullMQ notificationDispatchQueue
-    // For now, the notification record is created as in_app by default
-    console.log(`[NotificationService] Notification created: ${notification._id} (type: ${data.type})`);
 
     return notification;
   }
@@ -127,12 +123,10 @@ export class NotificationService {
       type: data.type,
       title: data.title,
       message: data.message,
-      data: data.data,
+      data: data.data as INotificationData | undefined,
     }));
 
     const created = await Notification.insertMany(notifications);
-
-    console.log(`[NotificationService] Bulk created ${created.length} notifications for ${data.targetType}:${data.targetId}`);
 
     return { count: created.length };
   }

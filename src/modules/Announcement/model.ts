@@ -93,5 +93,6 @@ const announcementSchema = new Schema<IAnnouncement>(
 
 announcementSchema.index({ schoolId: 1, isPublished: 1, publishedAt: -1 });
 announcementSchema.index({ schoolId: 1, targetAudience: 1 });
+announcementSchema.index({ isPublished: 1, schoolId: 1 });
 
 export const Announcement = mongoose.model<IAnnouncement>('Announcement', announcementSchema);

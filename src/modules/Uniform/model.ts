@@ -48,10 +48,12 @@ const uniformItemSchema = new Schema<IUniformItem>(
     price: {
       type: Number,
       required: true,
+      min: 0,
     },
     stock: {
       type: Number,
       default: 0,
+      min: 0,
     },
     image: {
       type: String,
@@ -75,6 +77,7 @@ const uniformItemSchema = new Schema<IUniformItem>(
   { timestamps: true },
 );
 
+uniformItemSchema.index({ schoolId: 1, isDeleted: 1 });
 uniformItemSchema.index({ schoolId: 1, category: 1 });
 uniformItemSchema.index({ schoolId: 1, isAvailable: 1 });
 
@@ -118,14 +121,17 @@ const uniformOrderItemSchema = new Schema<IUniformOrderItem>(
     quantity: {
       type: Number,
       required: true,
+      min: 0,
     },
     unitPrice: {
       type: Number,
       required: true,
+      min: 0,
     },
     totalPrice: {
       type: Number,
       required: true,
+      min: 0,
     },
   },
   { _id: false },

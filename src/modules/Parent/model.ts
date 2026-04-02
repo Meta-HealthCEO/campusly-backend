@@ -32,6 +32,7 @@ const parentSchema = new Schema<IParent>(
       type: [Schema.Types.ObjectId],
       ref: 'Student',
       default: [],
+      validate: [(v: unknown[]) => v.length <= 50, 'Maximum 50 children allowed'],
     },
     relationship: {
       type: String,
@@ -74,5 +75,6 @@ const parentSchema = new Schema<IParent>(
 
 parentSchema.index({ userId: 1 });
 parentSchema.index({ schoolId: 1 });
+parentSchema.index({ schoolId: 1, isDeleted: 1 });
 
 export const Parent = mongoose.model<IParent>('Parent', parentSchema);

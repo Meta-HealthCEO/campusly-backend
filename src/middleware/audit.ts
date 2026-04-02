@@ -1,3 +1,4 @@
+import { logger } from '../common/logger.js';
 import { Request, Response, NextFunction } from 'express';
 import { AuditService } from '../modules/Audit/service.js';
 
@@ -33,7 +34,7 @@ export function auditMiddleware(entity: string) {
           ipAddress: req.ip,
           userAgent: req.headers['user-agent'],
         }).catch((err) => {
-          console.error('[AuditMiddleware] Failed to log audit:', err);
+          logger.error({ err }, '[AuditMiddleware] Failed to log audit');
         });
       }
 

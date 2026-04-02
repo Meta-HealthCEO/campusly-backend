@@ -1,6 +1,7 @@
 import { Homework, IHomework, HomeworkSubmission, IHomeworkSubmission } from './model.js';
 import { NotFoundError } from '../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../common/constants.js';
+import { escapeRegex } from '../../common/utils.js';
 
 interface ListQuery {
   page?: number;
@@ -52,8 +53,8 @@ export class HomeworkService {
 
     if (query.search) {
       filter.$or = [
-        { title: new RegExp(query.search, 'i') },
-        { description: new RegExp(query.search, 'i') },
+        { title: new RegExp(escapeRegex(query.search), 'i') },
+        { description: new RegExp(escapeRegex(query.search), 'i') },
       ];
     }
 
@@ -77,7 +78,8 @@ export class HomeworkService {
     const homework = await Homework.findOne({ _id: id, isDeleted: false })
       .populate('subjectId', 'name code')
       .populate('classId', 'name')
-      .populate('teacherId', 'firstName lastName email');
+      .populate('teacherId', 'firstName lastName email')
+      .lean();
 
     if (!homework) {
       throw new NotFoundError('Homework not found');
@@ -190,6 +192,7 @@ export class HomeworkService {
       })
       .populate('gradedBy', 'firstName lastName email')
       .sort('-submittedAt')
+      .lean()
       .exec();
   }
 
@@ -204,6 +207,7 @@ export class HomeworkService {
       })
       .populate('gradedBy', 'firstName lastName email')
       .sort('-submittedAt')
+      .lean()
       .exec();
   }
 }

@@ -20,6 +20,7 @@ router.post(
 router.get(
   '/stats',
   authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
   LostFoundController.getStats,
 );
 
@@ -27,6 +28,7 @@ router.get(
 router.get(
   '/',
   authenticate,
+  authorize('teacher', 'school_admin', 'super_admin', 'parent'),
   LostFoundController.getItems,
 );
 
@@ -34,6 +36,7 @@ router.get(
 router.get(
   '/:id',
   authenticate,
+  authorize('teacher', 'school_admin', 'super_admin', 'parent'),
   LostFoundController.getItemById,
 );
 
@@ -66,6 +69,7 @@ router.post(
 router.get(
   '/:id/suggestions',
   authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
   LostFoundController.getAutoMatchSuggestions,
 );
 

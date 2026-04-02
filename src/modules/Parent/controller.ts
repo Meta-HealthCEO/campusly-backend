@@ -1,4 +1,6 @@
-import { Request, Response } from 'express';
+import type { Request } from 'express';
+import { Response } from 'express';
+import { getUser } from '../../types/authenticated-request.js';
 import { ParentService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
 
@@ -28,7 +30,7 @@ export class ParentController {
   }
 
   static async getMe(req: Request, res: Response): Promise<void> {
-    const parent = await ParentService.getByUserId(req.user!.id);
+    const parent = await ParentService.getByUserId(getUser(req).id);
     res.json(apiResponse(true, parent, 'Parent retrieved successfully'));
   }
 

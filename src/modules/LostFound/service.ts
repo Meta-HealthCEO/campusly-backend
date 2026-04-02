@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { LostItem, ILostItem } from './model.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
 import { paginationHelper } from '../../common/utils.js';
@@ -58,7 +59,7 @@ export class LostFoundService {
     const item = await LostItem.create({
       ...data,
       type: 'lost',
-      status: 'found',
+      status: 'lost',
       reportedBy,
       dateLost: data.dateLost ? new Date(data.dateLost) : new Date(),
     });
@@ -133,11 +134,11 @@ export class LostFoundService {
       throw new BadRequestError('This item has been archived');
     }
 
-    item.claimedBy = new (await import('mongoose')).Types.ObjectId(claimedBy);
+    item.claimedBy = new mongoose.Types.ObjectId(claimedBy);
     item.claimedDate = new Date();
     item.status = 'claimed';
     if (studentId) {
-      item.studentId = new (await import('mongoose')).Types.ObjectId(studentId);
+      item.studentId = new mongoose.Types.ObjectId(studentId);
     }
 
     await item.save();
@@ -155,7 +156,7 @@ export class LostFoundService {
       throw new BadRequestError('Only claimed items can be verified and returned');
     }
 
-    item.verifiedBy = new (await import('mongoose')).Types.ObjectId(verifiedBy);
+    item.verifiedBy = new mongoose.Types.ObjectId(verifiedBy);
     item.status = 'returned';
 
     await item.save();
@@ -174,8 +175,8 @@ export class LostFoundService {
     if (lostItem.type !== 'lost') throw new BadRequestError('First item must be a lost report');
     if (foundItem.type !== 'found') throw new BadRequestError('Second item must be a found item');
 
-    lostItem.matchedItemId = foundItem._id as import('mongoose').Types.ObjectId;
-    foundItem.matchedItemId = lostItem._id as import('mongoose').Types.ObjectId;
+    lostItem.matchedItemId = foundItem._id as mongoose.Types.ObjectId;
+    foundItem.matchedItemId = lostItem._id as mongoose.Types.ObjectId;
 
     await Promise.all([lostItem.save(), foundItem.save()]);
 
@@ -251,7 +252,7 @@ export class LostFoundService {
       LostItem.aggregate([
         {
           $match: {
-            schoolId: new (await import('mongoose')).Types.ObjectId(schoolId),
+            schoolId: new mongoose.Types.ObjectId(schoolId),
             claimedDate: { $exists: true },
             isDeleted: false,
           },

@@ -13,6 +13,7 @@ router.get(
   '/dashboard',
   authenticate,
   authorize('super_admin', 'school_admin'),
+  validate({ query: reportQuerySchema }),
   ReportController.getDashboardStats,
 );
 
@@ -22,6 +23,7 @@ router.get(
   '/revenue',
   authenticate,
   authorize('super_admin', 'school_admin'),
+  validate({ query: reportQuerySchema }),
   ReportController.getRevenueReport,
 );
 
@@ -31,6 +33,7 @@ router.get(
   '/attendance',
   authenticate,
   authorize('super_admin', 'school_admin'),
+  validate({ query: reportQuerySchema }),
   ReportController.getAttendanceReport,
 );
 
@@ -40,6 +43,7 @@ router.get(
   '/academic-performance',
   authenticate,
   authorize('super_admin', 'school_admin'),
+  validate({ query: reportQuerySchema }),
   ReportController.getAcademicPerformanceReport,
 );
 
@@ -49,6 +53,7 @@ router.get(
   '/student-report-card/:studentId',
   authenticate,
   authorize('super_admin', 'school_admin', 'teacher'),
+  validate({ query: reportQuerySchema }),
   ReportController.getStudentReportCard,
 );
 
@@ -58,6 +63,7 @@ router.get(
   '/debtors',
   authenticate,
   authorize('super_admin', 'school_admin'),
+  validate({ query: reportQuerySchema }),
   ReportController.getDebtorsReport,
 );
 
@@ -67,6 +73,7 @@ router.get(
   '/tuck-shop-sales',
   authenticate,
   authorize('super_admin', 'school_admin'),
+  validate({ query: reportQuerySchema }),
   ReportController.getTuckShopSalesReport,
 );
 

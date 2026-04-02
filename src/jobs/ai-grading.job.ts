@@ -1,3 +1,4 @@
+import { logger } from '../common/logger.js';
 import { Worker, Job } from 'bullmq';
 import { redisConnection, aiGradingQueue } from './queues.js';
 import { GradingJob } from '../modules/AITools/model.js';
@@ -31,7 +32,7 @@ export function createAIGradingWorker(): Worker {
   const worker = new Worker(
     'ai-grading',
     async (job: Job<AIGradingJobData>) => {
-      console.log(`[AIGradingJob] Processing job ${job.id} (grading job: ${job.data.jobId})`);
+      logger.info(`[AIGradingJob] Processing job ${job.id} (grading job: ${job.data.jobId})`);
 
       const gradingJob = await GradingJob.findById(job.data.jobId);
       if (!gradingJob) {
@@ -74,7 +75,7 @@ ${gradingJob.submissionText}
 
 Grade this submission against each criterion. Be specific and constructive.`;
 
-      const aiResult = await AIService.generateJSON<AIGradingResult>(systemPrompt, userPrompt);
+      const { data: aiResult, usage } = await AIService.generateJSONWithUsage<AIGradingResult>(systemPrompt, userPrompt);
 
       gradingJob.aiResult = aiResult;
       gradingJob.status = 'completed';
@@ -84,11 +85,14 @@ Grade this submission against each criterion. Be specific and constructive.`;
         schoolId: job.data.schoolId,
         teacherId: job.data.teacherId,
         type: 'grading',
-        tokensUsed: { input: 0, output: 0 },
+        tokensUsed: {
+          input: usage?.input_tokens ?? 0,
+          output: usage?.output_tokens ?? 0,
+        },
         aiModel: ANTHROPIC_MODEL,
       });
 
-      console.log(
+      logger.info(
         `[AIGradingJob] Completed grading job ${job.data.jobId}: ${aiResult.totalMark}/${aiResult.maxMark}`,
       );
 
@@ -101,11 +105,11 @@ Grade this submission against each criterion. Be specific and constructive.`;
   );
 
   worker.on('completed', (job) => {
-    console.log(`[AIGradingJob] Job ${job.id} completed`);
+    logger.info(`[AIGradingJob] Job ${job.id} completed`);
   });
 
   worker.on('failed', async (job, err) => {
-    console.error(`[AIGradingJob] Job ${job?.id} failed:`, err.message);
+    logger.error(`[AIGradingJob] Job ${job?.id} failed: ${err.message}`);
 
     // Update grading job status on final failure
     if (job && job.attemptsMade >= (job.opts?.attempts ?? 3)) {

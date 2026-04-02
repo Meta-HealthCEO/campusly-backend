@@ -33,10 +33,12 @@ const walletSchema = new Schema<IWallet>(
     balance: {
       type: Number,
       default: 0,
+      min: 0,
     },
     dailyLimit: {
       type: Number,
       default: 10000, // R100 in cents
+      min: 0,
     },
     currency: {
       type: String,
@@ -66,6 +68,7 @@ const walletSchema = new Schema<IWallet>(
 
 walletSchema.index({ studentId: 1 }, { unique: true });
 walletSchema.index({ schoolId: 1 });
+walletSchema.index({ schoolId: 1, isDeleted: 1 });
 
 export const Wallet = mongoose.model<IWallet>('Wallet', walletSchema);
 
@@ -125,6 +128,7 @@ const walletTransactionSchema = new Schema<IWalletTransaction>(
 );
 
 walletTransactionSchema.index({ walletId: 1, createdAt: -1 });
+walletTransactionSchema.index({ type: 1, walletId: 1, createdAt: -1 });
 
 export const WalletTransaction = mongoose.model<IWalletTransaction>(
   'WalletTransaction',

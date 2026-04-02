@@ -91,7 +91,14 @@ export class CommunicationModuleService {
     let recipientUserIds: mongoose.Types.ObjectId[] = [];
 
     if (data.recipients.type === 'school') {
-      const parents = await Parent.find({ schoolId: schoolObjId, isDeleted: false }).select('userId').lean();
+      // Only include parents of actively enrolled students
+      const activeStudents = await Student.find({
+        schoolId: schoolObjId,
+        enrollmentStatus: 'active',
+        isDeleted: false,
+      }).select('guardianIds').lean();
+      const guardianIds = activeStudents.flatMap((s) => s.guardianIds);
+      const parents = await Parent.find({ _id: { $in: guardianIds }, isDeleted: false }).select('userId').lean();
       recipientUserIds = parents.map((p) => p.userId);
     } else if (data.recipients.type === 'grade') {
       const students = await Student.find({

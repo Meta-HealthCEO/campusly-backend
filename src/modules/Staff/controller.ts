@@ -1,6 +1,16 @@
+import crypto from 'crypto';
 import { Request, Response } from 'express';
 import { User } from '../Auth/model.js';
-import { apiResponse, paginationHelper } from '../../common/utils.js';
+import { apiResponse, paginationHelper, escapeRegex } from '../../common/utils.js';
+import { getPopulated } from '../../types/populated.js';
+
+/** Extra fields stored on teacher User docs but not in the IUser interface */
+interface StaffExtras {
+  employeeNumber?: string;
+  department?: string;
+  subjects?: string[];
+  qualifications?: string[];
+}
 
 export class StaffController {
   static async list(req: Request, res: Response): Promise<void> {
@@ -22,7 +32,7 @@ export class StaffController {
     };
 
     if (search) {
-      const regex = new RegExp(search, 'i');
+      const regex = new RegExp(escapeRegex(search), 'i');
       filter.$or = [{ firstName: regex }, { lastName: regex }, { email: regex }];
     }
 
@@ -34,7 +44,7 @@ export class StaffController {
     ]);
 
     const staff = users.map((u) => {
-      const raw = u as unknown as Record<string, unknown>;
+      const extras = getPopulated<StaffExtras>(u);
       return {
         id: u._id,
         userId: u._id,
@@ -48,10 +58,10 @@ export class StaffController {
           isActive: u.isActive,
           schoolId: u.schoolId,
         },
-        employeeNumber: raw.employeeNumber ?? '',
-        department: raw.department ?? '',
-        subjects: raw.subjects ?? [],
-        qualifications: raw.qualifications ?? [],
+        employeeNumber: extras.employeeNumber ?? '',
+        department: extras.department ?? '',
+        subjects: extras.subjects ?? [],
+        qualifications: extras.qualifications ?? [],
         hireDate: u.createdAt,
         classIds: [],
       };
@@ -117,7 +127,7 @@ export class StaffController {
       email: email.toLowerCase().trim(),
       role: 'teacher',
       schoolId,
-      password: 'Temp1234!',
+      password: crypto.randomBytes(16).toString('base64url'),
       department,
       subjects: normalizedSubjects,
     };
@@ -126,10 +136,11 @@ export class StaffController {
     const user = new User(userData as Parameters<typeof User.prototype.set>[0]);
     await user.save();
 
+    const tempPassword = userData.password as string;
     const userObj = user.toObject() as unknown as Record<string, unknown>;
     delete userObj.password;
     delete userObj.refreshTokens;
 
-    res.status(201).json(apiResponse(true, userObj, 'Staff member created successfully'));
+    res.status(201).json(apiResponse(true, { ...userObj, tempPassword }, 'Staff member created successfully'));
   }
 }

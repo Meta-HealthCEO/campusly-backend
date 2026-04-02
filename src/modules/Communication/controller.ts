@@ -1,4 +1,6 @@
-import { Request, Response } from 'express';
+import type { Request } from 'express';
+import { Response } from 'express';
+import { getUser } from '../../types/authenticated-request.js';
 import { CommunicationModuleService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
 
@@ -38,7 +40,7 @@ export class CommunicationController {
   // ─── Bulk Messages ────────────────────────────────────────────────────────
 
   static async sendBulkMessage(req: Request, res: Response): Promise<void> {
-    const message = await CommunicationModuleService.sendBulkMessage(req.body, req.user!.id);
+    const message = await CommunicationModuleService.sendBulkMessage(req.body, getUser(req).id);
     res.status(201).json(apiResponse(true, message, 'Bulk message sent successfully'));
   }
 

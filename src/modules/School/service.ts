@@ -1,6 +1,7 @@
 import { School, ISchool } from './model.js';
 import { NotFoundError, ConflictError } from '../../common/errors.js';
 import type { CreateSchoolInput, UpdateSchoolInput, UpdateSettingsInput } from './validation.js';
+import { escapeRegex, cascadeSoftDeleteSchool } from '../../common/utils.js';
 
 interface PaginationParams {
   page?: number;
@@ -38,7 +39,7 @@ export class SchoolService {
     const filter: Record<string, unknown> = { isDeleted: false };
 
     if (params.search) {
-      filter.name = { $regex: params.search, $options: 'i' };
+      filter.name = { $regex: escapeRegex(params.search), $options: 'i' };
     }
 
     let sortObj: Record<string, 1 | -1> = { createdAt: -1 };
@@ -96,6 +97,9 @@ export class SchoolService {
     if (!school) {
       throw new NotFoundError('School not found');
     }
+
+    // Cascade soft-delete all related records
+    await cascadeSoftDeleteSchool(id);
   }
 
   static async updateSettings(id: string, data: UpdateSettingsInput): Promise<ISchool> {

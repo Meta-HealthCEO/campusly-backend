@@ -18,9 +18,9 @@ export const createAchievementSchema = z.object({
   awardedBy: objectIdSchema,
   awardedAt: z.string().datetime().optional(),
   isPublic: z.boolean().optional(),
-});
+}).strict();
 
-export const updateAchievementSchema = createAchievementSchema.partial();
+export const updateAchievementSchema = createAchievementSchema.partial().strict();
 
 // ─── HousePoints ────────────────────────────────────────────────────────────
 
@@ -30,9 +30,9 @@ export const createHousePointsSchema = z.object({
   houseColor: z.string().min(1, 'House color is required').trim(),
   term: z.number().int().min(1),
   year: z.number().int().min(2000),
-});
+}).strict();
 
-export const updateHousePointsSchema = createHousePointsSchema.partial();
+export const updateHousePointsSchema = createHousePointsSchema.partial().strict();
 
 // ─── HousePointLog ──────────────────────────────────────────────────────────
 
@@ -41,7 +41,7 @@ export const addHousePointLogSchema = z.object({
   houseId: objectIdSchema,
   points: z.number(),
   reason: z.string().min(1, 'Reason is required').trim(),
-});
+}).strict();
 
 // ─── Inferred types ─────────────────────────────────────────────────────────
 

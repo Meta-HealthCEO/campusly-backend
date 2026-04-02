@@ -18,7 +18,7 @@ export const recordAttendanceSchema = z.object({
   verifiedByParent: z.boolean().optional(),
   arrivalTime: z.string().optional(),
   departureTime: z.string().optional(),
-});
+}).strict();
 
 export const bulkAttendanceSchema = z.object({
   classId: objectIdSchema,
@@ -32,14 +32,14 @@ export const bulkAttendanceSchema = z.object({
       notes: z.string().optional(),
     }),
   ).min(1, 'At least one record is required'),
-});
+}).strict();
 
 export const attendanceReportSchema = z.object({
   studentId: objectIdSchema.optional(),
   classId: objectIdSchema.optional(),
   startDate: z.string().datetime(),
   endDate: z.string().datetime(),
-});
+}).strict();
 
 // ─── Discipline ─────────────────────────────────────────────────────────────
 
@@ -62,9 +62,9 @@ export const createDisciplineSchema = z.object({
   followUpDate: z.string().datetime().optional(),
   followUpNotes: z.string().optional(),
   status: z.enum(['reported', 'investigating', 'resolved', 'escalated']).optional(),
-});
+}).strict();
 
-export const updateDisciplineSchema = createDisciplineSchema.partial();
+export const updateDisciplineSchema = createDisciplineSchema.partial().strict();
 
 // ─── Merit / Demerit ────────────────────────────────────────────────────────
 
@@ -75,7 +75,7 @@ export const createMeritSchema = z.object({
   points: z.number().int().positive('Points must be positive'),
   category: z.enum(['academic', 'behaviour', 'sport', 'service', 'leadership']),
   reason: z.string().min(1, 'Reason is required'),
-});
+}).strict();
 
 // ─── Lesson Plan ────────────────────────────────────────────────────────────
 
@@ -90,9 +90,9 @@ export const createLessonPlanSchema = z.object({
   resources: z.array(z.string()).optional(),
   homework: z.string().optional(),
   reflectionNotes: z.string().optional(),
-});
+}).strict();
 
-export const updateLessonPlanSchema = createLessonPlanSchema.partial();
+export const updateLessonPlanSchema = createLessonPlanSchema.partial().strict();
 
 // ─── Substitute Teacher ─────────────────────────────────────────────────────
 
@@ -104,9 +104,9 @@ export const createSubstituteSchema = z.object({
   periods: z.array(z.number().int().positive()).min(1, 'At least one period is required'),
   reason: z.string().min(1, 'Reason is required'),
   classIds: z.array(objectIdSchema).min(1, 'At least one class is required'),
-});
+}).strict();
 
-export const updateSubstituteSchema = createSubstituteSchema.partial();
+export const updateSubstituteSchema = createSubstituteSchema.partial().strict();
 
 // ─── Inferred Types ─────────────────────────────────────────────────────────
 

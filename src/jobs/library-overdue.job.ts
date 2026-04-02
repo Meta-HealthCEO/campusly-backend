@@ -1,3 +1,4 @@
+import { logger } from '../common/logger.js';
 import { Worker, Job } from 'bullmq';
 import { redisConnection, libraryOverdueQueue } from './queues.js';
 
@@ -13,11 +14,11 @@ export function createLibraryOverdueWorker(): Worker {
   );
 
   worker.on('completed', (job) => {
-    console.log(`[Library Overdue] Job ${job?.id} completed`);
+    logger.info(`[Library Overdue] Job ${job?.id} completed`);
   });
 
   worker.on('failed', (job, err) => {
-    console.error(`[Library Overdue] Job ${job?.id} failed:`, err.message);
+    logger.error(`[Library Overdue] Job ${job?.id} failed: ${err.message}`);
   });
 
   return worker;
@@ -31,5 +32,5 @@ export async function scheduleLibraryOverdueCheck(): Promise<void> {
       repeat: { pattern: '0 8 * * *' }, // Daily at 8am
     },
   );
-  console.log('[Library Overdue] Daily overdue check scheduled');
+  logger.info('[Library Overdue] Daily overdue check scheduled');
 }

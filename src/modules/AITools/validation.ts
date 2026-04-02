@@ -14,7 +14,7 @@ export const generatePaperSchema = z.object({
   difficulty: z.enum(['easy', 'medium', 'hard', 'mixed']),
   duration: z.number().int().min(15, 'Minimum 15 minutes').max(300),
   totalMarks: z.number().int().min(10).max(500),
-});
+}).strict();
 
 export type GeneratePaperInput = z.infer<typeof generatePaperSchema>;
 
@@ -44,7 +44,7 @@ export const updatePaperSchema = z.object({
     )
     .optional(),
   memorandum: z.string().optional(),
-});
+}).strict();
 
 export type UpdatePaperInput = z.infer<typeof updatePaperSchema>;
 
@@ -53,7 +53,7 @@ export type UpdatePaperInput = z.infer<typeof updatePaperSchema>;
 export const regenerateQuestionSchema = z.object({
   sectionIndex: z.number().int().min(0),
   questionIndex: z.number().int().min(0),
-});
+}).strict();
 
 export type RegenerateQuestionInput = z.infer<typeof regenerateQuestionSchema>;
 
@@ -71,7 +71,7 @@ export const gradeSubmissionSchema = z.object({
   studentId: objectIdSchema,
   submissionText: z.string().min(1, 'Submission text is required'),
   rubric: z.array(rubricCriterionSchema).min(1, 'At least one rubric criterion is required'),
-});
+}).strict();
 
 export type GradeSubmissionInput = z.infer<typeof gradeSubmissionSchema>;
 
@@ -89,7 +89,7 @@ export const bulkGradeSchema = z.object({
     )
     .min(1, 'At least one submission is required'),
   rubric: z.array(rubricCriterionSchema).min(1, 'At least one rubric criterion is required'),
-});
+}).strict();
 
 export type BulkGradeInput = z.infer<typeof bulkGradeSchema>;
 
@@ -98,6 +98,6 @@ export type BulkGradeInput = z.infer<typeof bulkGradeSchema>;
 export const reviewGradeSchema = z.object({
   finalMark: z.number().min(0),
   teacherNotes: z.string().optional().default(''),
-});
+}).strict();
 
 export type ReviewGradeInput = z.infer<typeof reviewGradeSchema>;

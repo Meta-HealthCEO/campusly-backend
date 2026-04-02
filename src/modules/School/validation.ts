@@ -36,7 +36,7 @@ export const createSchoolSchema = z.object({
   principal: z.string().trim().optional(),
   emisNumber: z.string().trim().optional(),
   type: z.enum(['primary', 'secondary', 'combined', 'special']).optional(),
-});
+}).strict();
 
 export const updateSchoolSchema = z.object({
   name: z.string().min(1).trim().optional(),
@@ -50,9 +50,9 @@ export const updateSchoolSchema = z.object({
   emisNumber: z.string().trim().optional(),
   type: z.enum(['primary', 'secondary', 'combined', 'special']).optional(),
   isActive: z.boolean().optional(),
-});
+}).strict();
 
-export const updateSettingsSchema = settingsSchema.partial();
+export const updateSettingsSchema = settingsSchema.partial().strict();
 
 export type CreateSchoolInput = z.infer<typeof createSchoolSchema>;
 export type UpdateSchoolInput = z.infer<typeof updateSchoolSchema>;

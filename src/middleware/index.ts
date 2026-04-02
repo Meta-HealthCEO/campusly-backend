@@ -6,3 +6,5 @@ export { errorHandler } from './errorHandler.js';
 export { createRateLimiter } from './rateLimiter.js';
 export { schoolContext } from './schoolContext.js';
 export { requireModule } from './moduleGuard.js';
+export { requireParentOwnership, requireParentWalletOwnership } from './parentOwnership.js';
+export { validateSchoolScope } from './schoolScope.js';

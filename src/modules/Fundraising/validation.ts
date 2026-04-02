@@ -11,7 +11,7 @@ export const createCampaignSchema = z.object({
   startDate: z.string().datetime(),
   endDate: z.string().datetime(),
   isActive: z.boolean().optional(),
-});
+}).strict();
 
 export const updateCampaignSchema = z.object({
   title: z.string().min(1, 'Title is required').optional(),
@@ -20,7 +20,7 @@ export const updateCampaignSchema = z.object({
   startDate: z.string().datetime().optional(),
   endDate: z.string().datetime().optional(),
   isActive: z.boolean().optional(),
-});
+}).strict();
 
 export const createDonationSchema = z.object({
   campaignId: objectIdSchema,
@@ -30,7 +30,7 @@ export const createDonationSchema = z.object({
   amount: z.number().int().positive('Amount must be a positive integer in cents'),
   message: z.string().optional(),
   isAnonymous: z.boolean().optional(),
-});
+}).strict();
 
 export const createRaffleSchema = z.object({
   campaignId: objectIdSchema,
@@ -46,14 +46,14 @@ export const createRaffleSchema = z.object({
       }),
     )
     .optional(),
-});
+}).strict();
 
 export const buyRaffleTicketsSchema = z.object({
   raffleId: objectIdSchema,
   parentId: objectIdSchema,
   studentId: objectIdSchema,
   quantity: z.number().int().min(1).max(100),
-});
+}).strict();
 
 // ─── Tax Certificate Schemas ───────────────────────────────────────────────
 
@@ -64,7 +64,7 @@ export const generateTaxCertificateSchema = z.object({
   donorIdNumber: z.string().optional(),
   donorAddress: z.string().optional(),
   schoolTaxNumber: z.string().min(1, 'School tax number is required'),
-});
+}).strict();
 
 // ─── Donor Wall Schemas ────────────────────────────────────────────────────
 
@@ -76,7 +76,7 @@ export const addDonorWallSchema = z.object({
   message: z.string().optional(),
   isPublic: z.boolean().optional(),
   donationId: objectIdSchema,
-});
+}).strict();
 
 // ─── Recurring Donation Schemas ────────────────────────────────────────────
 
@@ -88,7 +88,7 @@ export const createRecurringDonationSchema = z.object({
   amount: z.number().int().positive('Amount must be a positive integer in cents'),
   frequency: z.enum(['monthly', 'weekly']),
   nextChargeDate: z.string().datetime(),
-});
+}).strict();
 
 export type CreateCampaignInput = z.infer<typeof createCampaignSchema>;
 export type UpdateCampaignInput = z.infer<typeof updateCampaignSchema>;

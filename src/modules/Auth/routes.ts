@@ -17,7 +17,7 @@ const authRateLimiter = createRateLimiter(RATE_LIMITS.auth.windowMs, RATE_LIMITS
 
 router.post('/register', authRateLimiter, validate(registerSchema), AuthController.register);
 router.post('/login', authRateLimiter, validate(loginSchema), AuthController.login);
-router.post('/refresh', AuthController.refresh);
+router.post('/refresh', createRateLimiter(15 * 60 * 1000, 30), AuthController.refresh);
 router.post('/logout', authenticate, AuthController.logout);
 router.post('/forgot-password', authRateLimiter, validate(forgotPasswordSchema), AuthController.forgotPassword);
 router.post('/reset-password', authRateLimiter, validate(resetPasswordSchema), AuthController.resetPassword);

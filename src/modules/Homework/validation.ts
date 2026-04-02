@@ -19,22 +19,22 @@ export const createHomeworkSchema = z.object({
   groupAssignment: z.boolean().optional(),
   maxFileSize: z.number().positive('Max file size must be positive').optional(),
   allowedFileTypes: z.array(z.string()).optional(),
-});
+}).strict();
 
-export const updateHomeworkSchema = createHomeworkSchema.partial();
+export const updateHomeworkSchema = createHomeworkSchema.partial().strict();
 
 // ─── Submission ──────────────────────────────────────────────────────────────
 
 export const submitHomeworkSchema = z.object({
   files: z.array(z.string()).min(1, 'At least one file is required'),
-});
+}).strict();
 
 // ─── Grading ─────────────────────────────────────────────────────────────────
 
 export const gradeSubmissionSchema = z.object({
   mark: z.number().min(0, 'Mark cannot be negative'),
   feedback: z.string().trim().optional(),
-});
+}).strict();
 
 // ─── Inferred types ──────────────────────────────────────────────────────────
 

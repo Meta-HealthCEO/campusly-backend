@@ -1,4 +1,6 @@
-import { Request, Response } from 'express';
+import type { Request } from 'express';
+import { Response } from 'express';
+import { getUser } from '../../types/authenticated-request.js';
 import { LearningService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
 
@@ -6,7 +8,7 @@ export class LearningController {
   // ─── Quizzes ─────────────────────────────────────────────────────────
 
   static async createQuiz(req: Request, res: Response): Promise<void> {
-    const quiz = await LearningService.createQuiz(req.body, req.user!.id);
+    const quiz = await LearningService.createQuiz(req.body, getUser(req).id);
     res.status(201).json(apiResponse(true, quiz, 'Quiz created successfully'));
   }
 
@@ -50,7 +52,7 @@ export class LearningController {
   static async submitQuizAttempt(req: Request, res: Response): Promise<void> {
     const attempt = await LearningService.submitQuizAttempt(
       req.params.id as string,
-      req.user!.id,
+      getUser(req).id,
       req.body.answers,
       req.body.startedAt,
     );
@@ -65,7 +67,7 @@ export class LearningController {
   // ─── Study Materials ─────────────────────────────────────────────────
 
   static async uploadStudyMaterial(req: Request, res: Response): Promise<void> {
-    const material = await LearningService.uploadStudyMaterial(req.body, req.user!.id);
+    const material = await LearningService.uploadStudyMaterial(req.body, getUser(req).id);
     res.status(201).json(apiResponse(true, material, 'Study material uploaded successfully'));
   }
 
@@ -112,7 +114,7 @@ export class LearningController {
   // ─── Rubrics ─────────────────────────────────────────────────────────
 
   static async createRubric(req: Request, res: Response): Promise<void> {
-    const rubric = await LearningService.createRubric(req.body, req.user!.id);
+    const rubric = await LearningService.createRubric(req.body, getUser(req).id);
     res.status(201).json(apiResponse(true, rubric, 'Rubric created successfully'));
   }
 
@@ -149,8 +151,8 @@ export class LearningController {
   static async submitDraft(req: Request, res: Response): Promise<void> {
     const submission = await LearningService.submitDraft(
       req.params.homeworkId as string,
-      req.user!.id,
-      req.user!.schoolId!,
+      getUser(req).id,
+      getUser(req).schoolId ?? '',
       req.body.files,
     );
     res.status(201).json(apiResponse(true, submission, 'Draft saved'));
@@ -159,8 +161,8 @@ export class LearningController {
   static async submitFinal(req: Request, res: Response): Promise<void> {
     const submission = await LearningService.submitFinal(
       req.params.homeworkId as string,
-      req.user!.id,
-      req.user!.schoolId!,
+      getUser(req).id,
+      getUser(req).schoolId ?? '',
       req.body.files,
       false,
     );
@@ -170,7 +172,7 @@ export class LearningController {
   static async gradeWithRubric(req: Request, res: Response): Promise<void> {
     const submission = await LearningService.gradeWithRubric(
       req.params.id as string,
-      req.user!.id,
+      getUser(req).id,
       {
         comments: req.body.comments,
         rubricScores: req.body.rubricScores,
@@ -189,7 +191,7 @@ export class LearningController {
   static async submitPeerReview(req: Request, res: Response): Promise<void> {
     const submission = await LearningService.submitPeerReview(
       req.params.id as string,
-      req.user!.id,
+      getUser(req).id,
       req.body.rating,
       req.body.comments,
     );

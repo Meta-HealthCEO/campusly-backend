@@ -17,7 +17,7 @@ export const createUniformItemSchema = z.object({
   isAvailable: z.boolean().optional(),
   lowStockThreshold: z.number().int().nonnegative('Low stock threshold must be a non-negative integer').optional(),
   sizeGuideUrl: z.string().url('Size guide URL must be a valid URL').optional(),
-});
+}).strict();
 
 export const updateUniformItemSchema = z.object({
   name: z.string().min(1, 'Name is required').optional(),
@@ -30,7 +30,7 @@ export const updateUniformItemSchema = z.object({
   isAvailable: z.boolean().optional(),
   lowStockThreshold: z.number().int().nonnegative('Low stock threshold must be a non-negative integer').optional(),
   sizeGuideUrl: z.string().url('Size guide URL must be a valid URL').optional(),
-});
+}).strict();
 
 export const createUniformOrderSchema = z.object({
   studentId: objectIdSchema,
@@ -47,11 +47,11 @@ export const createUniformOrderSchema = z.object({
     )
     .min(1, 'At least one item is required'),
   totalAmount: z.number().int().nonnegative('Total amount must be a non-negative integer in cents'),
-});
+}).strict();
 
 export const updateUniformOrderStatusSchema = z.object({
   status: z.enum(['pending', 'processing', 'confirmed', 'ready', 'collected', 'cancelled']),
-});
+}).strict();
 
 const secondHandConditionSchema = z.enum(['new', 'like_new', 'good', 'fair']);
 
@@ -64,7 +64,7 @@ export const createSecondHandListingSchema = z.object({
   price: z.number().int().positive('Price must be a positive integer in cents'),
   photos: z.array(z.string()).optional(),
   description: z.string().optional(),
-});
+}).strict();
 
 export const updateSecondHandListingSchema = z.object({
   itemName: z.string().min(1, 'Item name is required').optional(),
@@ -73,7 +73,7 @@ export const updateSecondHandListingSchema = z.object({
   price: z.number().int().positive('Price must be a positive integer in cents').optional(),
   photos: z.array(z.string()).optional(),
   description: z.string().optional(),
-});
+}).strict();
 
 // ─── Size Guide Schemas ────────────────────────────────────────────────────
 
@@ -90,13 +90,13 @@ export const createSizeGuideSchema = z.object({
   sizeChartImageUrl: z.string().url('Size chart image URL must be a valid URL'),
   measurements: z.array(measurementSchema).optional(),
   notes: z.string().optional(),
-});
+}).strict();
 
 export const updateSizeGuideSchema = z.object({
   sizeChartImageUrl: z.string().url('Size chart image URL must be a valid URL').optional(),
   measurements: z.array(measurementSchema).optional(),
   notes: z.string().optional(),
-});
+}).strict();
 
 // ─── Pre Order Schemas ─────────────────────────────────────────────────────
 
@@ -110,11 +110,11 @@ export const createPreOrderSchema = z.object({
   quantity: z.number().int().positive('Quantity must be a positive integer'),
   availableDate: z.coerce.date(),
   notes: z.string().optional(),
-});
+}).strict();
 
 export const updatePreOrderStatusSchema = z.object({
   status: preOrderStatusSchema,
-});
+}).strict();
 
 // ─── Type Exports ──────────────────────────────────────────────────────────
 

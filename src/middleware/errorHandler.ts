@@ -1,3 +1,4 @@
+import { logger } from '../common/logger.js';
 import { Request, Response, NextFunction } from 'express';
 import { AppError } from '../common/errors.js';
 import { apiResponse } from '../common/utils.js';
@@ -10,7 +11,7 @@ export function errorHandler(
   _next: NextFunction,
 ): void {
   if (config.nodeEnv === 'development') {
-    console.error(`[${req.method}] ${req.originalUrl} — Error:`, err);
+    logger.error({ err }, `[${req.method}] ${req.originalUrl} — Error`);
   }
 
   // AppError (custom application errors)

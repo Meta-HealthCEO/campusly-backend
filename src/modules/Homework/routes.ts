@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { authenticate } from '../../middleware/auth.js';
 import { authorize } from '../../middleware/rbac.js';
 import { validate } from '../../middleware/validate.js';
+import { requireParentOwnership } from '../../middleware/parentOwnership.js';
 import { HomeworkController } from './controller.js';
 import {
   createHomeworkSchema,
@@ -29,6 +30,7 @@ router.get(
 router.get(
   '/student/:studentId/submissions',
   authenticate,
+  requireParentOwnership('studentId'),
   HomeworkController.getStudentSubmissions,
 );
 

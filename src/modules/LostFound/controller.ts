@@ -1,4 +1,6 @@
-import { Request, Response } from 'express';
+import type { Request } from 'express';
+import { Response } from 'express';
+import { getUser } from '../../types/authenticated-request.js';
 import { LostFoundService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
 
@@ -8,9 +10,9 @@ export class LostFoundController {
     let item;
 
     if (type === 'found') {
-      item = await LostFoundService.reportFoundItem(data, req.user!.id);
+      item = await LostFoundService.reportFoundItem(data, getUser(req).id);
     } else {
-      item = await LostFoundService.reportLostItem(data, req.user!.id);
+      item = await LostFoundService.reportLostItem(data, getUser(req).id);
     }
 
     res.status(201).json(apiResponse(true, item, 'Item reported successfully'));
@@ -50,7 +52,7 @@ export class LostFoundController {
   static async claimItem(req: Request, res: Response): Promise<void> {
     const item = await LostFoundService.claimItem(
       req.params.id as string,
-      req.user!.id,
+      getUser(req).id,
       req.body.studentId,
     );
     res.json(apiResponse(true, item, 'Item claimed successfully'));
@@ -59,7 +61,7 @@ export class LostFoundController {
   static async verifyAndReturn(req: Request, res: Response): Promise<void> {
     const item = await LostFoundService.verifyAndReturn(
       req.params.id as string,
-      req.user!.id,
+      getUser(req).id,
     );
     res.json(apiResponse(true, item, 'Item verified and marked as returned'));
   }

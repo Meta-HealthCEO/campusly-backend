@@ -6,7 +6,7 @@ const objectIdSchema = z.string().regex(objectIdRegex, 'Invalid ObjectId format'
 export const createParentSchema = z.object({
   userId: objectIdSchema,
   schoolId: objectIdSchema,
-  childrenIds: z.array(objectIdSchema).optional(),
+  childrenIds: z.array(objectIdSchema).max(50, 'Maximum 50 children allowed').optional(),
   relationship: z.enum(['mother', 'father', 'guardian', 'other']),
   occupation: z.string().trim().optional(),
   employer: z.string().trim().optional(),
@@ -14,10 +14,10 @@ export const createParentSchema = z.object({
   alternativeEmail: z.string().email().optional(),
   communicationPreference: z.enum(['email', 'sms', 'whatsapp', 'push']).optional(),
   isMainCaregiver: z.boolean().optional(),
-});
+}).strict();
 
-export const updateParentSchema = createParentSchema.partial();
+export const updateParentSchema = createParentSchema.partial().strict();
 
 export const linkChildSchema = z.object({
   childId: objectIdSchema,
-});
+}).strict();

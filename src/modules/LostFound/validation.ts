@@ -20,20 +20,20 @@ export const reportItemSchema = z.object({
   dateLost: z.string().datetime().optional(),
   photos: z.array(z.string().url()).optional(),
   studentId: objectIdSchema.optional(),
-});
+}).strict();
 
 export type ReportItemInput = z.infer<typeof reportItemSchema>;
 
 export const claimItemSchema = z.object({
   studentId: objectIdSchema.optional(),
-});
+}).strict();
 
 export type ClaimItemInput = z.infer<typeof claimItemSchema>;
 
-export const matchItemSchema = z.object({});
+export const matchItemSchema = z.object({}).strict();
 
 export const archiveItemsSchema = z.object({
   schoolId: objectIdSchema,
-});
+}).strict();
 
 export type ArchiveItemsInput = z.infer<typeof archiveItemsSchema>;

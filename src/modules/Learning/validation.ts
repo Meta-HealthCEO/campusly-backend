@@ -32,13 +32,13 @@ export const createQuizSchema = z.object({
   attempts: z.number().min(1).optional().default(1),
   shuffleQuestions: z.boolean().optional().default(false),
   dueDate: z.string().datetime().optional(),
-});
+}).strict();
 
-export const updateQuizSchema = createQuizSchema.partial();
+export const updateQuizSchema = createQuizSchema.partial().strict();
 
 export const publishQuizSchema = z.object({
   status: z.enum(['published', 'closed']),
-});
+}).strict();
 
 // ─── Quiz Attempt ──────────────────────────────────────────────────────────────
 
@@ -51,7 +51,7 @@ const quizAnswerSchema = z.object({
 export const submitQuizAttemptSchema = z.object({
   answers: z.array(quizAnswerSchema).min(1, 'At least one answer is required'),
   startedAt: z.string().datetime(),
-});
+}).strict();
 
 // ─── Study Material ────────────────────────────────────────────────────────────
 
@@ -74,9 +74,9 @@ export const createStudyMaterialSchema = z.object({
     term: z.string().min(1).trim(),
     topic: z.string().min(1).trim(),
   }),
-});
+}).strict();
 
-export const updateStudyMaterialSchema = createStudyMaterialSchema.partial();
+export const updateStudyMaterialSchema = createStudyMaterialSchema.partial().strict();
 
 // ─── Rubric ────────────────────────────────────────────────────────────────────
 
@@ -99,19 +99,19 @@ export const createRubricSchema = z.object({
   criteria: z.array(rubricCriterionSchema).min(1, 'At least one criterion is required'),
   totalPoints: z.number().min(1, 'Total points must be at least 1'),
   reusable: z.boolean().optional().default(true),
-});
+}).strict();
 
-export const updateRubricSchema = createRubricSchema.partial();
+export const updateRubricSchema = createRubricSchema.partial().strict();
 
 // ─── Assignment Submission (Enhanced) ──────────────────────────────────────────
 
 export const submitDraftSchema = z.object({
   files: z.array(z.string()).min(1, 'At least one file is required'),
-});
+}).strict();
 
 export const submitFinalSchema = z.object({
   files: z.array(z.string()).min(1, 'At least one file is required'),
-});
+}).strict();
 
 export const gradeWithRubricSchema = z.object({
   comments: z.string().min(1, 'Comments are required').trim(),
@@ -127,12 +127,12 @@ export const gradeWithRubricSchema = z.object({
     .default([]),
   audioFeedbackUrl: z.string().optional(),
   mark: z.number().min(0).optional(),
-});
+}).strict();
 
 export const submitPeerReviewSchema = z.object({
   rating: z.number().min(1).max(5),
   comments: z.string().min(1, 'Comments are required').trim(),
-});
+}).strict();
 
 // ─── Type Exports ──────────────────────────────────────────────────────────────
 

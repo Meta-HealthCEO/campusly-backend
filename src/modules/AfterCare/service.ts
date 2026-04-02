@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import {
   AfterCareRegistration,
   IAfterCareRegistration,
@@ -522,45 +523,58 @@ export class AfterCareService {
   ): Promise<IAfterCareInvoice[]> {
     const { schoolId, month, year } = data;
 
-    const activeRegistrations = await AfterCareRegistration.find({
-      schoolId,
-      isActive: true,
-      isDeleted: false,
-    });
+    const session = await mongoose.startSession();
+    session.startTransaction();
 
-    if (activeRegistrations.length === 0) {
-      throw new BadRequestError('No active after care registrations found for this school');
-    }
+    try {
+      const activeRegistrations = await AfterCareRegistration.find({
+        schoolId,
+        isActive: true,
+        isDeleted: false,
+      }).session(session);
 
-    const invoices: IAfterCareInvoice[] = [];
+      if (activeRegistrations.length === 0) {
+        throw new BadRequestError('No active after care registrations found for this school');
+      }
 
-    for (const registration of activeRegistrations) {
-      const existing = await AfterCareInvoice.findOne({
-        registrationId: registration._id,
+      // Batch-check which registrations already have invoices for this month (within session)
+      const existingInvoices = await AfterCareInvoice.find({
+        registrationId: { $in: activeRegistrations.map(r => r._id) },
         month,
         year,
         isDeleted: false,
-      });
+      }).select('registrationId').lean().session(session);
 
-      if (existing) {
-        continue;
+      const existingRegIds = new Set(existingInvoices.map(inv => inv.registrationId.toString()));
+
+      const newInvoiceDocs = activeRegistrations
+        .filter(registration => !existingRegIds.has(registration._id.toString()))
+        .map(registration => ({
+          schoolId,
+          registrationId: registration._id,
+          studentId: registration.studentId,
+          month,
+          year,
+          amount: registration.monthlyFee,
+          status: 'pending' as const,
+          generatedAt: new Date(),
+        }));
+
+      if (newInvoiceDocs.length === 0) {
+        await session.abortTransaction();
+        return [];
       }
 
-      const invoice = await AfterCareInvoice.create({
-        schoolId,
-        registrationId: registration._id,
-        studentId: registration.studentId,
-        month,
-        year,
-        amount: registration.monthlyFee,
-        status: 'pending',
-        generatedAt: new Date(),
-      });
+      const invoices = await AfterCareInvoice.insertMany(newInvoiceDocs, { session });
 
-      invoices.push(invoice);
+      await session.commitTransaction();
+      return invoices as unknown as IAfterCareInvoice[];
+    } catch (error) {
+      await session.abortTransaction();
+      throw error;
+    } finally {
+      session.endSession();
     }
-
-    return invoices;
   }
 
   static async listInvoices(

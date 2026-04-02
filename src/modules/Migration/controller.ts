@@ -1,4 +1,6 @@
-import { Request, Response } from 'express';
+import type { Request } from 'express';
+import { Response } from 'express';
+import { getUser } from '../../types/authenticated-request.js';
 import { MigrationService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
 
@@ -9,7 +11,7 @@ export class MigrationController {
       schoolId,
       sourceSystem,
       { originalName, fileUrl, fileSize },
-      req.user!.id,
+      getUser(req).id,
     );
     res.status(201).json(apiResponse(true, job, 'Migration job created successfully'));
   }
