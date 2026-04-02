@@ -205,7 +205,7 @@ export class AptitudeService {
 
     // Upsert result
     const result = await AptitudeResult.findOneAndUpdate(
-      { studentId },
+      { studentId, isDeleted: false },
       {
         studentId,
         schoolId,

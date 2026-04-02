@@ -120,12 +120,6 @@ router.get(
   CareerController.listProgrammes,
 );
 
-router.get(
-  '/programmes/:id',
-  authenticate,
-  CareerController.getProgramme,
-);
-
 router.post(
   '/programmes',
   authenticate,
@@ -134,20 +128,26 @@ router.post(
   CareerController.createProgramme,
 );
 
-router.put(
-  '/programmes/:id',
-  authenticate,
-  authorize('school_admin'),
-  validate(updateProgrammeSchema),
-  CareerController.updateProgramme,
-);
-
 router.post(
   '/programmes/import',
   authenticate,
   authorize('super_admin'),
   upload.single('file'),
   CareerController.importProgrammes,
+);
+
+router.get(
+  '/programmes/:id',
+  authenticate,
+  CareerController.getProgramme,
+);
+
+router.put(
+  '/programmes/:id',
+  authenticate,
+  authorize('school_admin'),
+  validate(updateProgrammeSchema),
+  CareerController.updateProgramme,
 );
 
 // ─── Matcher ───────────────────────────────────────────────────────────────
@@ -270,12 +270,6 @@ router.get(
   CareerController.matchBursaries,
 );
 
-router.get(
-  '/bursaries/:id',
-  authenticate,
-  CareerController.getBursary,
-);
-
 router.post(
   '/bursaries',
   authenticate,
@@ -284,20 +278,26 @@ router.post(
   CareerController.createBursary,
 );
 
-router.put(
-  '/bursaries/:id',
-  authenticate,
-  authorize('school_admin'),
-  validate(updateBursarySchema),
-  CareerController.updateBursary,
-);
-
 router.post(
   '/bursaries/import',
   authenticate,
   authorize('super_admin'),
   upload.single('file'),
   CareerController.importBursaries,
+);
+
+router.get(
+  '/bursaries/:id',
+  authenticate,
+  CareerController.getBursary,
+);
+
+router.put(
+  '/bursaries/:id',
+  authenticate,
+  authorize('school_admin'),
+  validate(updateBursarySchema),
+  CareerController.updateBursary,
 );
 
 export default router;

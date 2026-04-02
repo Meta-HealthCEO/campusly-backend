@@ -29,6 +29,19 @@ export type AddCommunityServiceInput = z.infer<typeof addCommunityServiceSchema>
 export const createSnapshotSchema = z.object({
   year: z.number().int().min(2000).max(2100),
   grade: z.string().min(1).trim(),
+  subjects: z.array(z.object({
+    subjectId: z.string().regex(objectIdRegex),
+    name: z.string().min(1),
+    level: z.enum(['core', 'home_language', 'first_additional_language', 'second_additional_language']),
+    code: z.string().min(1),
+    terms: z.array(z.object({
+      term: z.number().int().min(1).max(4),
+      percentage: z.number().min(0).max(100),
+    })).optional().default([]),
+    finalPercentage: z.number().min(0).max(100),
+  })).min(1),
+  promoted: z.boolean(),
+  promotionStatus: z.enum(['promoted', 'condoned', 'retained']).optional().default('promoted'),
 }).strict();
 
 export type CreateSnapshotInput = z.infer<typeof createSnapshotSchema>;
