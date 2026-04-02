@@ -10,7 +10,6 @@ interface ListQuery {
   search?: string;
   classId?: string;
   subjectId?: string;
-  schoolId?: string;
 }
 
 interface PaginatedResult<T> {
@@ -43,13 +42,12 @@ export class HomeworkService {
     return homework.save();
   }
 
-  static async list(query: ListQuery): Promise<PaginatedResult<IHomework>> {
+  static async list(schoolId: string, query: ListQuery): Promise<PaginatedResult<IHomework>> {
     const { page, limit, skip, sortField } = getPagination(query);
 
-    const filter: Record<string, unknown> = { isDeleted: false };
+    const filter: Record<string, unknown> = { schoolId, isDeleted: false };
     if (query.classId) filter.classId = query.classId;
     if (query.subjectId) filter.subjectId = query.subjectId;
-    if (query.schoolId) filter.schoolId = query.schoolId;
 
     if (query.search) {
       filter.$or = [
@@ -74,8 +72,8 @@ export class HomeworkService {
     return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
-  static async getById(id: string): Promise<IHomework> {
-    const homework = await Homework.findOne({ _id: id, isDeleted: false })
+  static async getById(id: string, schoolId: string): Promise<IHomework> {
+    const homework = await Homework.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('subjectId', 'name code')
       .populate('classId', 'name')
       .populate('teacherId', 'firstName lastName email')
@@ -88,9 +86,9 @@ export class HomeworkService {
     return homework;
   }
 
-  static async update(id: string, data: Partial<IHomework>): Promise<IHomework> {
+  static async update(id: string, schoolId: string, data: Partial<IHomework>): Promise<IHomework> {
     const homework = await Homework.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     )
@@ -105,9 +103,9 @@ export class HomeworkService {
     return homework;
   }
 
-  static async delete(id: string): Promise<IHomework> {
+  static async delete(id: string, schoolId: string): Promise<IHomework> {
     const homework = await Homework.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -127,7 +125,7 @@ export class HomeworkService {
     schoolId: string,
     files: string[],
   ): Promise<IHomeworkSubmission> {
-    const homework = await Homework.findOne({ _id: homeworkId, isDeleted: false });
+    const homework = await Homework.findOne({ _id: homeworkId, schoolId, isDeleted: false });
     if (!homework) {
       throw new NotFoundError('Homework not found');
     }
@@ -155,12 +153,13 @@ export class HomeworkService {
 
   static async gradeSubmission(
     submissionId: string,
+    schoolId: string,
     mark: number,
     feedback: string | undefined,
     gradedBy: string,
   ): Promise<IHomeworkSubmission> {
     const submission = await HomeworkSubmission.findOneAndUpdate(
-      { _id: submissionId, isDeleted: false },
+      { _id: submissionId, schoolId, isDeleted: false },
       {
         $set: {
           mark,
@@ -194,6 +193,51 @@ export class HomeworkService {
       .sort('-submittedAt')
       .lean()
       .exec();
+  }
+
+  /**
+   * Get all homework assigned to a student's class, with submission status.
+   * Used by the parent homework view.
+   */
+  static async getHomeworkForStudent(
+    studentId: string,
+    schoolId: string,
+  ): Promise<Array<Record<string, unknown>>> {
+    // First get the student to find their classId
+    const { Student } = await import('../Student/model.js');
+    const student = await Student.findOne({ _id: studentId, schoolId, isDeleted: false }).lean();
+    if (!student) {
+      throw new NotFoundError('Student not found');
+    }
+
+    // Fetch all homework for the student's class
+    const homeworks = await Homework.find({
+      classId: student.classId,
+      schoolId,
+      isDeleted: false,
+    })
+      .populate('subjectId', 'name code')
+      .populate('classId', 'name')
+      .populate('teacherId', 'firstName lastName')
+      .sort({ dueDate: -1 })
+      .lean();
+
+    // Fetch all submissions by this student
+    const homeworkIds = homeworks.map((h) => h._id);
+    const submissions = await HomeworkSubmission.find({
+      homeworkId: { $in: homeworkIds },
+      studentId,
+      isDeleted: false,
+    }).lean();
+
+    const submissionMap = new Map(
+      submissions.map((s) => [s.homeworkId.toString(), s]),
+    );
+
+    return homeworks.map((hw) => ({
+      ...hw,
+      submission: submissionMap.get(hw._id.toString()),
+    }));
   }
 
   static async getStudentSubmissions(studentId: string): Promise<IHomeworkSubmission[]> {

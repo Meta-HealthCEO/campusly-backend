@@ -4,6 +4,7 @@ import { authorize } from '../../middleware/rbac.js';
 import { validate } from '../../middleware/validate.js';
 import { requireParentOwnership } from '../../middleware/parentOwnership.js';
 import { AttendanceController } from './controller.js';
+import { AttendanceExportController } from './export.controller.js';
 import {
   recordAttendanceSchema,
   bulkAttendanceSchema,
@@ -17,6 +18,15 @@ import {
 } from './validation.js';
 
 const router = Router();
+
+// ─── CSV Export ─────────────────────────────────────────────────────────────
+
+router.get(
+  '/export',
+  authenticate,
+  authorize('school_admin', 'super_admin'),
+  AttendanceExportController.exportAttendance,
+);
 
 router.post(
   '/',

@@ -4,6 +4,7 @@ import { authorize } from '../../middleware/rbac.js';
 import { validate } from '../../middleware/validate.js';
 import { requireParentOwnership } from '../../middleware/parentOwnership.js';
 import { StudentController } from './controller.js';
+import { StudentExportController } from './export.controller.js';
 import {
   createStudentSchema,
   updateStudentSchema,
@@ -11,6 +12,15 @@ import {
 } from './validation.js';
 
 const router = Router();
+
+// ─── CSV Export ─────────────────────────────────────────────────────────────
+
+router.get(
+  '/export',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  StudentExportController.exportStudents,
+);
 
 router.post(
   '/',
@@ -23,7 +33,7 @@ router.post(
 router.get(
   '/',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher'),
+  authorize('super_admin', 'school_admin', 'teacher', 'student', 'parent'),
   StudentController.list,
 );
 

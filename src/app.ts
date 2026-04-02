@@ -55,6 +55,7 @@ import whatsappRoutes from './modules/WhatsApp/routes.js';
 import noticeBoardRoutes from './modules/NoticeBoard/routes.js';
 import digestRoutes from './modules/Digest/routes.js';
 import accountingRoutes from './modules/Accounting/routes.js';
+import schoolNewsRoutes from './modules/SchoolNews/routes.js';
 
 const app = express();
 
@@ -107,6 +108,7 @@ app.use('/api/meetings', authenticate, meetingRoutes);
 app.use('/api/notice-board', authenticate, noticeBoardRoutes);
 app.use('/api/digest', authenticate, digestRoutes);
 app.use('/api/accounting', authenticate, requireModule('fee'), accountingRoutes);
+app.use('/api/school-news', authenticate, schoolNewsRoutes);
 
 // API routes — Bolt-on modules (guarded)
 app.use('/api/fees', authenticate, requireModule('fee'), feeRoutes);

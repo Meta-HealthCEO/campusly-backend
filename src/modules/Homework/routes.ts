@@ -28,6 +28,14 @@ router.get(
 );
 
 router.get(
+  '/parent/:studentId',
+  authenticate,
+  authorize('parent', 'school_admin', 'super_admin'),
+  requireParentOwnership('studentId'),
+  HomeworkController.getHomeworkForParent,
+);
+
+router.get(
   '/student/:studentId/submissions',
   authenticate,
   requireParentOwnership('studentId'),

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { authenticate, authorize, validate, requireParentOwnership, validateSchoolScope } from '../../middleware/index.js';
 import { FeeController } from './controller.js';
+import { FeeExportController } from './export.controller.js';
 import {
   createFeeTypeSchema,
   updateFeeTypeSchema,
@@ -22,6 +23,22 @@ import {
 } from './validation.js';
 
 const router = Router();
+
+// ─── CSV Exports ────────────────────────────────────────────────────────────
+
+router.get(
+  '/export/invoices',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  FeeExportController.exportInvoices,
+);
+
+router.get(
+  '/export/debtors',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  FeeExportController.exportDebtors,
+);
 
 // ─── Fee Types ───────────────────────────────────────────────────────────────
 
@@ -139,7 +156,7 @@ router.get(
 router.post(
   '/invoices/:id/pay',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  authorize('super_admin', 'school_admin', 'parent'),
   validate(recordPaymentSchema),
   FeeController.recordPayment,
 );
