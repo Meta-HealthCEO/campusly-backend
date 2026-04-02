@@ -4,6 +4,7 @@ import { authorize } from '../../middleware/rbac.js';
 import { validate } from '../../middleware/validate.js';
 import { SportController } from './controller.js';
 import { StatsController } from './controller-stats.js';
+import { AISportsController } from './controller-ai-sports.js';
 import {
   createTeamSchema,
   updateTeamSchema,
@@ -267,6 +268,83 @@ router.get(
   '/cards',
   authenticate,
   StatsController.listPlayerCards,
+);
+
+// ─── AI Sports Analytics Routes ────────────────────────────────────────────
+
+router.post(
+  '/ai/player/:studentId/analysis',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'teacher'),
+  AISportsController.generatePlayerAnalysis,
+);
+
+router.post(
+  '/ai/player/:studentId/development-plan',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'teacher'),
+  AISportsController.generateDevelopmentPlan,
+);
+
+router.post(
+  '/ai/player/:studentId/scouting-report',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'teacher'),
+  AISportsController.generateScoutingReport,
+);
+
+router.post(
+  '/ai/player/:studentId/parent-report',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'teacher', 'parent'),
+  AISportsController.generateParentReport,
+);
+
+router.post(
+  '/ai/match/:fixtureId/report',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'teacher'),
+  AISportsController.generateMatchReport,
+);
+
+router.post(
+  '/ai/team/:teamId/analysis',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'teacher'),
+  AISportsController.generateTeamAnalysis,
+);
+
+router.post(
+  '/ai/talent-identification',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  AISportsController.identifyTalent,
+);
+
+router.get(
+  '/ai/talent-flags',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'teacher'),
+  AISportsController.listTalentFlags,
+);
+
+router.patch(
+  '/ai/talent-flags/:id/review',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  AISportsController.reviewTalentFlag,
+);
+
+router.get(
+  '/ai/reports/:id',
+  authenticate,
+  AISportsController.getReport,
+);
+
+router.get(
+  '/ai/reports',
+  authenticate,
+  AISportsController.listReports,
 );
 
 export default router;

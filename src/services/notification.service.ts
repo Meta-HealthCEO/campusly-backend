@@ -3,9 +3,10 @@ import { EmailService } from './email.service.js';
 import { SmsService } from './sms.service.js';
 
 interface NotificationPayload {
-  type: 'email' | 'sms' | 'push' | 'in_app';
+  type: 'email' | 'sms' | 'push' | 'in_app' | 'whatsapp';
   recipientEmail?: string;
   recipientPhone?: string;
+  schoolId?: string;
   title: string;
   message: string;
   data?: unknown;
@@ -46,6 +47,24 @@ export class NotificationDispatchService {
       case 'in_app':
         // In-app notifications are already stored in the database
         logger.info(`[NotificationDispatch] In-app notification stored: ${notification.title}`);
+        break;
+
+      case 'whatsapp':
+        if (notification.recipientPhone && notification.schoolId) {
+          try {
+            const { WhatsAppService } = await import('../modules/WhatsApp/service.js');
+            await WhatsAppService.sendMessage(notification.schoolId, {
+              recipientPhone: notification.recipientPhone,
+              templateType: 'general_announcement',
+              templateParams: { title: notification.title, message: notification.message },
+            });
+          } catch (err: unknown) {
+            const reason = err instanceof Error ? err.message : 'Unknown error';
+            logger.warn(`[NotificationDispatch] WhatsApp notification failed: ${reason}`);
+          }
+        } else {
+          logger.warn('[NotificationDispatch] WhatsApp notification skipped - no phone or schoolId');
+        }
         break;
 
       default:

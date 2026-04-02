@@ -51,6 +51,7 @@ import aiTutorRoutes from './modules/AITutor/routes.js';
 import messagingRoutes from './modules/Messaging/routes.js';
 import paymentGatewayRoutes from './modules/PaymentGateway/routes.js';
 import meetingRoutes from './modules/Meetings/routes.js';
+import whatsappRoutes from './modules/WhatsApp/routes.js';
 
 const app = express();
 
@@ -127,6 +128,7 @@ app.use('/api/communication', authenticate, requireModule('communication'), comm
 app.use('/api/ai-tutor', authenticate, requireModule('ai_tools'), aiTutorRoutes);
 app.use('/api/messaging', authenticate, messagingRoutes);
 app.use('/api/payment-gateway', paymentGatewayRoutes); // No global authenticate — webhook route needs to be unauthenticated; individual routes handle auth
+app.use('/api/whatsapp', whatsappRoutes); // No global authenticate — webhook route needs to be unauthenticated; individual routes handle auth
 
 // Static file serving — uploaded assets
 app.use('/uploads', express.static('uploads'));
