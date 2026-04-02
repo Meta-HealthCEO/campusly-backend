@@ -2,6 +2,7 @@ import type { Request } from 'express';
 import { Response } from 'express';
 import { getUser } from '../../types/authenticated-request.js';
 import { SuperAdminService } from './service.js';
+import { SuperAdminAnalyticsService } from './analytics-service.js';
 import { apiResponse } from '../../common/utils.js';
 
 export class SuperAdminController {
@@ -47,6 +48,23 @@ export class SuperAdminController {
   static async suspendTenant(req: Request, res: Response): Promise<void> {
     const tenant = await SuperAdminService.suspendTenant(req.params.id as string, req.body);
     res.json(apiResponse(true, tenant, 'Tenant suspended successfully'));
+  }
+
+  // ─── Platform Analytics ────────────────────────────────────────────────
+
+  static async getPlatformAnalytics(_req: Request, res: Response): Promise<void> {
+    const analytics = await SuperAdminAnalyticsService.getPlatformAnalytics();
+    res.json(apiResponse(true, analytics, 'Platform analytics retrieved successfully'));
+  }
+
+  static async getTenantHealthScore(req: Request, res: Response): Promise<void> {
+    const health = await SuperAdminAnalyticsService.getTenantHealthScore(req.params.id as string);
+    res.json(apiResponse(true, health, 'Tenant health score retrieved successfully'));
+  }
+
+  static async getHealthOverview(_req: Request, res: Response): Promise<void> {
+    const overview = await SuperAdminAnalyticsService.getTenantHealthOverview();
+    res.json(apiResponse(true, overview, 'Health overview retrieved successfully'));
   }
 
   // ─── Platform Invoice ─────────────────────────────────────────────────

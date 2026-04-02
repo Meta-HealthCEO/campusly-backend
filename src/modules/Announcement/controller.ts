@@ -47,27 +47,59 @@ export class AnnouncementController {
   }
 
   static async getById(req: Request, res: Response): Promise<void> {
-    const announcement = await AnnouncementService.getById(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const announcement = await AnnouncementService.getById(req.params.id as string, schoolId);
     res.json(apiResponse(true, announcement, 'Announcement retrieved successfully'));
   }
 
   static async update(req: Request, res: Response): Promise<void> {
-    const announcement = await AnnouncementService.update(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const announcement = await AnnouncementService.update(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, announcement, 'Announcement updated successfully'));
   }
 
   static async delete(req: Request, res: Response): Promise<void> {
-    await AnnouncementService.delete(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await AnnouncementService.delete(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Announcement deleted successfully'));
   }
 
   static async publish(req: Request, res: Response): Promise<void> {
-    const announcement = await AnnouncementService.publish(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const announcement = await AnnouncementService.publish(req.params.id as string, schoolId);
     res.json(apiResponse(true, announcement, 'Announcement published successfully'));
   }
 
   static async unpublish(req: Request, res: Response): Promise<void> {
-    const announcement = await AnnouncementService.unpublish(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const announcement = await AnnouncementService.unpublish(req.params.id as string, schoolId);
     res.json(apiResponse(true, announcement, 'Announcement unpublished successfully'));
+  }
+
+  static async schedulePublish(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const announcement = await AnnouncementService.schedulePublish(
+      req.params.id as string,
+      schoolId,
+      req.body.publishAt,
+    );
+    res.json(apiResponse(true, announcement, 'Announcement scheduled for publishing'));
+  }
+
+  static async markAnnouncementRead(req: Request, res: Response): Promise<void> {
+    const announcement = await AnnouncementService.markAnnouncementRead(
+      getUser(req).id,
+      req.params.id as string,
+    );
+    res.json(apiResponse(true, announcement, 'Announcement marked as read'));
+  }
+
+  static async getReadAnalytics(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const analytics = await AnnouncementService.getReadAnalytics(
+      schoolId,
+      req.params.id as string,
+    );
+    res.json(apiResponse(true, analytics, 'Read analytics retrieved successfully'));
   }
 }

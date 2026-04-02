@@ -3,7 +3,7 @@ import { authenticate } from '../../middleware/auth.js';
 import { authorize } from '../../middleware/rbac.js';
 import { validate } from '../../middleware/validate.js';
 import { CommunicationController } from './controller.js';
-import { createTemplateSchema, updateTemplateSchema, sendBulkMessageSchema } from './validation.js';
+import { createTemplateSchema, updateTemplateSchema, sendBulkMessageSchema, scheduleMessageSchema } from './validation.js';
 
 const router = Router();
 
@@ -46,6 +46,16 @@ router.delete(
   CommunicationController.deleteTemplate,
 );
 
+// ─── Schedule Route ─────────────────────────────────────────────────────────
+
+router.post(
+  '/schedule',
+  authenticate,
+  authorize('school_admin', 'teacher'),
+  validate(scheduleMessageSchema),
+  CommunicationController.scheduleMessage,
+);
+
 // ─── Bulk Message Routes ────────────────────────────────────────────────────
 
 router.post(
@@ -68,6 +78,29 @@ router.get(
   authenticate,
   authorize('school_admin', 'super_admin'),
   CommunicationController.getMessage,
+);
+
+// ─── Read Receipts ──────────────────────────────────────────────────────────
+
+router.patch(
+  '/messages/:id/mark-read',
+  authenticate,
+  authorize('parent', 'teacher', 'student'),
+  CommunicationController.markMessageRead,
+);
+
+router.get(
+  '/messages/:id/read-receipts',
+  authenticate,
+  authorize('school_admin', 'teacher'),
+  CommunicationController.getReadReceipts,
+);
+
+router.get(
+  '/messages/:id/read-stats',
+  authenticate,
+  authorize('school_admin', 'teacher'),
+  CommunicationController.getReadReceiptStats,
 );
 
 // ─── Delivery Stats ─────────────────────────────────────────────────────────

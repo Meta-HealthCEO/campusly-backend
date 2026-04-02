@@ -27,6 +27,43 @@ function getPagination(query: ListQuery) {
   return { page, limit, skip };
 }
 
+// ─── Shared Helpers ──────────────────────────────────────────────────────────
+
+async function resolveRecipientIds(
+  schoolId: string,
+  recipients: { type: string; targetIds?: string[] },
+): Promise<string[]> {
+  const schoolObjId = new mongoose.Types.ObjectId(schoolId);
+  let userIds: mongoose.Types.ObjectId[] = [];
+
+  if (recipients.type === 'school') {
+    const activeStudents = await Student.find({
+      schoolId: schoolObjId, enrollmentStatus: 'active', isDeleted: false,
+    }).select('guardianIds').lean();
+    const guardianIds = activeStudents.flatMap((s) => s.guardianIds);
+    const parents = await Parent.find({ _id: { $in: guardianIds }, isDeleted: false }).select('userId').lean();
+    userIds = parents.map((p) => p.userId);
+  } else if (recipients.type === 'grade') {
+    const students = await Student.find({
+      schoolId: schoolObjId, gradeId: { $in: recipients.targetIds }, enrollmentStatus: 'active', isDeleted: false,
+    }).select('guardianIds').lean();
+    const guardianIds = students.flatMap((s) => s.guardianIds);
+    const parents = await Parent.find({ _id: { $in: guardianIds }, isDeleted: false }).select('userId').lean();
+    userIds = parents.map((p) => p.userId);
+  } else if (recipients.type === 'class') {
+    const students = await Student.find({
+      schoolId: schoolObjId, classId: { $in: recipients.targetIds }, enrollmentStatus: 'active', isDeleted: false,
+    }).select('guardianIds').lean();
+    const guardianIds = students.flatMap((s) => s.guardianIds);
+    const parents = await Parent.find({ _id: { $in: guardianIds }, isDeleted: false }).select('userId').lean();
+    userIds = parents.map((p) => p.userId);
+  } else if (recipients.type === 'custom') {
+    userIds = (recipients.targetIds ?? []).map((id) => new mongoose.Types.ObjectId(id));
+  }
+
+  return [...new Set(userIds.map((id) => id.toString()))];
+}
+
 export class CommunicationModuleService {
   // ─── Template CRUD ────────────────────────────────────────────────────────
 
@@ -46,15 +83,15 @@ export class CommunicationModuleService {
     return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
-  static async getTemplateById(id: string): Promise<IMessageTemplate> {
-    const template = await MessageTemplate.findOne({ _id: id, isDeleted: false });
+  static async getTemplateById(id: string, schoolId: string): Promise<IMessageTemplate> {
+    const template = await MessageTemplate.findOne({ _id: id, schoolId, isDeleted: false });
     if (!template) throw new NotFoundError('Template not found');
     return template;
   }
 
-  static async updateTemplate(id: string, data: Partial<IMessageTemplate>): Promise<IMessageTemplate> {
+  static async updateTemplate(id: string, schoolId: string, data: Partial<IMessageTemplate>): Promise<IMessageTemplate> {
     const template = await MessageTemplate.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     );
@@ -62,9 +99,9 @@ export class CommunicationModuleService {
     return template;
   }
 
-  static async deleteTemplate(id: string): Promise<IMessageTemplate> {
+  static async deleteTemplate(id: string, schoolId: string): Promise<IMessageTemplate> {
     const template = await MessageTemplate.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -85,47 +122,7 @@ export class CommunicationModuleService {
     },
     sentBy: string,
   ): Promise<IBulkMessage> {
-    const schoolObjId = new mongoose.Types.ObjectId(data.schoolId);
-
-    // Resolve recipients
-    let recipientUserIds: mongoose.Types.ObjectId[] = [];
-
-    if (data.recipients.type === 'school') {
-      // Only include parents of actively enrolled students
-      const activeStudents = await Student.find({
-        schoolId: schoolObjId,
-        enrollmentStatus: 'active',
-        isDeleted: false,
-      }).select('guardianIds').lean();
-      const guardianIds = activeStudents.flatMap((s) => s.guardianIds);
-      const parents = await Parent.find({ _id: { $in: guardianIds }, isDeleted: false }).select('userId').lean();
-      recipientUserIds = parents.map((p) => p.userId);
-    } else if (data.recipients.type === 'grade') {
-      const students = await Student.find({
-        schoolId: schoolObjId,
-        gradeId: { $in: data.recipients.targetIds },
-        enrollmentStatus: 'active',
-        isDeleted: false,
-      }).select('guardianIds').lean();
-      const guardianIds = students.flatMap((s) => s.guardianIds);
-      const parents = await Parent.find({ _id: { $in: guardianIds }, isDeleted: false }).select('userId').lean();
-      recipientUserIds = parents.map((p) => p.userId);
-    } else if (data.recipients.type === 'class') {
-      const students = await Student.find({
-        schoolId: schoolObjId,
-        classId: { $in: data.recipients.targetIds },
-        enrollmentStatus: 'active',
-        isDeleted: false,
-      }).select('guardianIds').lean();
-      const guardianIds = students.flatMap((s) => s.guardianIds);
-      const parents = await Parent.find({ _id: { $in: guardianIds }, isDeleted: false }).select('userId').lean();
-      recipientUserIds = parents.map((p) => p.userId);
-    } else if (data.recipients.type === 'custom') {
-      recipientUserIds = (data.recipients.targetIds ?? []).map((id) => new mongoose.Types.ObjectId(id));
-    }
-
-    // Deduplicate
-    const uniqueIds = [...new Set(recipientUserIds.map((id) => id.toString()))];
+    const uniqueIds = await resolveRecipientIds(data.schoolId, data.recipients);
 
     const bulkMessage = new BulkMessage({
       schoolId: data.schoolId,
@@ -186,12 +183,108 @@ export class CommunicationModuleService {
     return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
-  static async getMessageById(id: string): Promise<IBulkMessage> {
-    const message = await BulkMessage.findOne({ _id: id, isDeleted: false })
+  static async getMessageById(id: string, schoolId: string): Promise<IBulkMessage> {
+    const message = await BulkMessage.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('sentBy', 'firstName lastName email')
       .populate('templateId', 'name');
     if (!message) throw new NotFoundError('Message not found');
     return message;
+  }
+
+  // ─── Scheduling ────────────────────────────────────────────────────────────
+
+  static async scheduleMessage(
+    data: {
+      schoolId: string;
+      templateId?: string;
+      subject: string;
+      body: string;
+      channel?: string;
+      recipients: { type: string; targetIds?: string[] };
+      scheduledFor: string;
+    },
+    sentBy: string,
+  ): Promise<IBulkMessage> {
+    const scheduledDate = new Date(data.scheduledFor);
+    if (scheduledDate <= new Date()) {
+      throw new NotFoundError('Scheduled date must be in the future');
+    }
+
+    const uniqueIds = await resolveRecipientIds(data.schoolId, data.recipients);
+
+    const bulkMessage = new BulkMessage({
+      schoolId: data.schoolId,
+      templateId: data.templateId,
+      subject: data.subject,
+      body: data.body,
+      channel: data.channel ?? 'all',
+      sentBy,
+      recipients: data.recipients,
+      totalRecipients: uniqueIds.length,
+      status: 'scheduled',
+      scheduledFor: scheduledDate,
+    });
+
+    return bulkMessage.save();
+  }
+
+  // ─── Read Receipts ────────────────────────────────────────────────────────
+
+  static async markMessageRead(userId: string, messageId: string): Promise<IBulkMessage> {
+    const message = await BulkMessage.findOne({ _id: messageId, isDeleted: false });
+    if (!message) throw new NotFoundError('Message not found');
+
+    const userObjId = new mongoose.Types.ObjectId(userId);
+    const alreadyRead = message.readBy.some((r) => r.userId.equals(userObjId));
+    if (alreadyRead) return message;
+
+    const updated = await BulkMessage.findOneAndUpdate(
+      { _id: messageId, isDeleted: false },
+      { $push: { readBy: { userId: userObjId, readAt: new Date() } } },
+      { new: true },
+    );
+    if (!updated) throw new NotFoundError('Message not found');
+    return updated;
+  }
+
+  static async getReadReceipts(schoolId: string, messageId: string) {
+    const message = await BulkMessage.findOne({
+      _id: messageId, schoolId, isDeleted: false,
+    }).populate('readBy.userId', 'firstName lastName email').lean();
+
+    if (!message) throw new NotFoundError('Message not found');
+    return message.readBy;
+  }
+
+  static async getReadReceiptStats(schoolId: string, messageId: string) {
+    const message = await BulkMessage.findOne({
+      _id: messageId, schoolId, isDeleted: false,
+    }).lean();
+
+    if (!message) throw new NotFoundError('Message not found');
+
+    const totalRecipients = message.totalRecipients;
+    const readCount = message.readBy.length;
+    const readPercentage = totalRecipients > 0
+      ? Math.round((readCount / totalRecipients) * 100)
+      : 0;
+
+    // Calculate average time to read (from sentAt)
+    let avgTimeToReadMs = 0;
+    if (message.sentAt && readCount > 0) {
+      const sentTime = new Date(message.sentAt).getTime();
+      const totalReadTime = message.readBy.reduce((sum, r) => {
+        return sum + (new Date(r.readAt).getTime() - sentTime);
+      }, 0);
+      avgTimeToReadMs = totalReadTime / readCount;
+    }
+
+    return {
+      totalRecipients,
+      readCount,
+      readPercentage,
+      avgTimeToReadMinutes: Math.round(avgTimeToReadMs / 60000),
+    };
   }
 
   // ─── Delivery Stats ───────────────────────────────────────────────────────

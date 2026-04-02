@@ -45,13 +45,16 @@ export class LostFoundController {
   }
 
   static async getItemById(req: Request, res: Response): Promise<void> {
-    const item = await LostFoundService.getItemById(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const item = await LostFoundService.getItemById(req.params.id as string, schoolId);
     res.json(apiResponse(true, item, 'Item retrieved successfully'));
   }
 
   static async claimItem(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const item = await LostFoundService.claimItem(
       req.params.id as string,
+      schoolId,
       getUser(req).id,
       req.body.studentId,
     );
@@ -59,17 +62,21 @@ export class LostFoundController {
   }
 
   static async verifyAndReturn(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const item = await LostFoundService.verifyAndReturn(
       req.params.id as string,
+      schoolId,
       getUser(req).id,
     );
     res.json(apiResponse(true, item, 'Item verified and marked as returned'));
   }
 
   static async matchItems(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const result = await LostFoundService.matchItems(
       req.params.id as string,
       req.params.matchId as string,
+      schoolId,
     );
     res.json(apiResponse(true, result, 'Items matched successfully'));
   }
@@ -80,7 +87,7 @@ export class LostFoundController {
   }
 
   static async archiveOldItems(req: Request, res: Response): Promise<void> {
-    const { schoolId } = req.body;
+    const schoolId = req.user!.schoolId!;
     const archivedCount = await LostFoundService.archiveOldItems(schoolId);
     res.json(apiResponse(true, { archivedCount }, `${archivedCount} items archived`));
   }
@@ -97,8 +104,23 @@ export class LostFoundController {
     res.json(apiResponse(true, stats, 'Stats retrieved successfully'));
   }
 
+  static async getHotspotReport(req: Request, res: Response): Promise<void> {
+    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
+      return;
+    }
+
+    const report = await LostFoundService.getHotspotReport(schoolId, {
+      startDate: req.query.startDate as string | undefined,
+      endDate: req.query.endDate as string | undefined,
+    });
+    res.json(apiResponse(true, report, 'Hotspot report retrieved successfully'));
+  }
+
   static async softDelete(req: Request, res: Response): Promise<void> {
-    const item = await LostFoundService.softDelete(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const item = await LostFoundService.softDelete(req.params.id as string, schoolId);
     res.json(apiResponse(true, item, 'Item deleted successfully'));
   }
 }

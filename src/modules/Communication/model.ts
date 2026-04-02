@@ -46,11 +46,16 @@ export const MessageTemplate = mongoose.model<IMessageTemplate>('MessageTemplate
 // ─── Bulk Message ───────────────────────────────────────────────────────────
 
 export type RecipientTargetType = 'school' | 'grade' | 'class' | 'custom';
-export type BulkMessageStatus = 'draft' | 'queued' | 'sending' | 'sent' | 'failed';
+export type BulkMessageStatus = 'draft' | 'scheduled' | 'queued' | 'sending' | 'sent' | 'failed';
 
 export interface IBulkMessageRecipients {
   type: RecipientTargetType;
   targetIds: Types.ObjectId[];
+}
+
+export interface IReadReceipt {
+  userId: Types.ObjectId;
+  readAt: Date;
 }
 
 export interface IBulkMessage extends Document {
@@ -65,7 +70,9 @@ export interface IBulkMessage extends Document {
   delivered: number;
   failed: number;
   status: BulkMessageStatus;
+  scheduledFor?: Date;
   sentAt?: Date;
+  readBy: IReadReceipt[];
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -104,10 +111,21 @@ const bulkMessageSchema = new Schema<IBulkMessage>(
     failed: { type: Number, default: 0 },
     status: {
       type: String,
-      enum: ['draft', 'queued', 'sending', 'sent', 'failed'],
+      enum: ['draft', 'scheduled', 'queued', 'sending', 'sent', 'failed'],
       default: 'draft',
     },
+    scheduledFor: { type: Date },
     sentAt: { type: Date },
+    readBy: {
+      type: [
+        {
+          userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+          readAt: { type: Date, required: true },
+        },
+      ],
+      default: [],
+      _id: false,
+    },
     isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true },

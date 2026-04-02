@@ -24,6 +24,14 @@ router.get(
   LostFoundController.getStats,
 );
 
+// GET /hotspot-report — location/category hotspot analysis
+router.get(
+  '/hotspot-report',
+  authenticate,
+  authorize('school_admin', 'super_admin'),
+  LostFoundController.getHotspotReport,
+);
+
 // GET / — list items (filterable)
 router.get(
   '/',

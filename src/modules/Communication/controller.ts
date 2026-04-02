@@ -23,17 +23,20 @@ export class CommunicationController {
   }
 
   static async getTemplate(req: Request, res: Response): Promise<void> {
-    const template = await CommunicationModuleService.getTemplateById(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const template = await CommunicationModuleService.getTemplateById(req.params.id as string, schoolId);
     res.json(apiResponse(true, template, 'Template retrieved successfully'));
   }
 
   static async updateTemplate(req: Request, res: Response): Promise<void> {
-    const template = await CommunicationModuleService.updateTemplate(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const template = await CommunicationModuleService.updateTemplate(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, template, 'Template updated successfully'));
   }
 
   static async deleteTemplate(req: Request, res: Response): Promise<void> {
-    await CommunicationModuleService.deleteTemplate(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await CommunicationModuleService.deleteTemplate(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Template deleted successfully'));
   }
 
@@ -55,8 +58,44 @@ export class CommunicationController {
   }
 
   static async getMessage(req: Request, res: Response): Promise<void> {
-    const message = await CommunicationModuleService.getMessageById(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const message = await CommunicationModuleService.getMessageById(req.params.id as string, schoolId);
     res.json(apiResponse(true, message, 'Message retrieved successfully'));
+  }
+
+  // ─── Scheduling ────────────────────────────────────────────────────────────
+
+  static async scheduleMessage(req: Request, res: Response): Promise<void> {
+    const message = await CommunicationModuleService.scheduleMessage(req.body, getUser(req).id);
+    res.status(201).json(apiResponse(true, message, 'Message scheduled successfully'));
+  }
+
+  // ─── Read Receipts ────────────────────────────────────────────────────────
+
+  static async markMessageRead(req: Request, res: Response): Promise<void> {
+    const message = await CommunicationModuleService.markMessageRead(
+      getUser(req).id,
+      req.params.id as string,
+    );
+    res.json(apiResponse(true, message, 'Message marked as read'));
+  }
+
+  static async getReadReceipts(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const receipts = await CommunicationModuleService.getReadReceipts(
+      schoolId,
+      req.params.id as string,
+    );
+    res.json(apiResponse(true, receipts, 'Read receipts retrieved successfully'));
+  }
+
+  static async getReadReceiptStats(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const stats = await CommunicationModuleService.getReadReceiptStats(
+      schoolId,
+      req.params.id as string,
+    );
+    res.json(apiResponse(true, stats, 'Read receipt stats retrieved successfully'));
   }
 
   // ─── Delivery Stats ───────────────────────────────────────────────────────

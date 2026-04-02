@@ -3,7 +3,7 @@ import { authenticate } from '../../middleware/auth.js';
 import { authorize } from '../../middleware/rbac.js';
 import { validate } from '../../middleware/validate.js';
 import { AnnouncementController } from './controller.js';
-import { createAnnouncementSchema, updateAnnouncementSchema } from './validation.js';
+import { createAnnouncementSchema, updateAnnouncementSchema, schedulePublishSchema } from './validation.js';
 
 const router = Router();
 
@@ -60,6 +60,27 @@ router.patch(
   authenticate,
   authorize('super_admin', 'school_admin'),
   AnnouncementController.unpublish,
+);
+
+router.patch(
+  '/:id/schedule',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  validate(schedulePublishSchema),
+  AnnouncementController.schedulePublish,
+);
+
+router.get(
+  '/:id/read-analytics',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  AnnouncementController.getReadAnalytics,
+);
+
+router.patch(
+  '/:id/mark-read',
+  authenticate,
+  AnnouncementController.markAnnouncementRead,
 );
 
 export default router;

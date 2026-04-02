@@ -26,5 +26,10 @@ export const updateAnnouncementSchema = z.object({
   expiresAt: z.string().datetime().optional(),
 }).strict();
 
+export const schedulePublishSchema = z.object({
+  publishAt: z.string().datetime('publishAt must be a valid date-time'),
+}).strict();
+
 export type CreateAnnouncementInput = z.infer<typeof createAnnouncementSchema>;
 export type UpdateAnnouncementInput = z.infer<typeof updateAnnouncementSchema>;
+export type SchedulePublishInput = z.infer<typeof schedulePublishSchema>;

@@ -1,5 +1,6 @@
+import mongoose from 'mongoose';
 import { Announcement, IAnnouncement } from './model.js';
-import { NotFoundError } from '../../common/errors.js';
+import { NotFoundError, BadRequestError } from '../../common/errors.js';
 import { paginationHelper } from '../../common/utils.js';
 import type { CreateAnnouncementInput, UpdateAnnouncementInput } from './validation.js';
 
@@ -57,8 +58,8 @@ export class AnnouncementService {
     };
   }
 
-  static async getById(id: string): Promise<IAnnouncement> {
-    const announcement = await Announcement.findOne({ _id: id, isDeleted: false })
+  static async getById(id: string, schoolId: string): Promise<IAnnouncement> {
+    const announcement = await Announcement.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('authorId', 'firstName lastName email');
 
     if (!announcement) {
@@ -68,9 +69,9 @@ export class AnnouncementService {
     return announcement;
   }
 
-  static async update(id: string, data: UpdateAnnouncementInput): Promise<IAnnouncement> {
+  static async update(id: string, schoolId: string, data: UpdateAnnouncementInput): Promise<IAnnouncement> {
     const announcement = await Announcement.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     ).populate('authorId', 'firstName lastName email');
@@ -82,9 +83,9 @@ export class AnnouncementService {
     return announcement;
   }
 
-  static async delete(id: string): Promise<IAnnouncement> {
+  static async delete(id: string, schoolId: string): Promise<IAnnouncement> {
     const announcement = await Announcement.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -96,9 +97,9 @@ export class AnnouncementService {
     return announcement;
   }
 
-  static async publish(id: string): Promise<IAnnouncement> {
+  static async publish(id: string, schoolId: string): Promise<IAnnouncement> {
     const announcement = await Announcement.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isPublished: true, publishedAt: new Date() } },
       { new: true },
     ).populate('authorId', 'firstName lastName email');
@@ -110,9 +111,9 @@ export class AnnouncementService {
     return announcement;
   }
 
-  static async unpublish(id: string): Promise<IAnnouncement> {
+  static async unpublish(id: string, schoolId: string): Promise<IAnnouncement> {
     const announcement = await Announcement.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isPublished: false } },
       { new: true },
     ).populate('authorId', 'firstName lastName email');
@@ -180,6 +181,97 @@ export class AnnouncementService {
       page,
       limit,
       totalPages: Math.ceil(total / limit),
+    };
+  }
+
+  // ─── Scheduled Publish ─────────────────────────────────────────────────
+
+  static async schedulePublish(
+    announcementId: string,
+    schoolId: string,
+    publishAt: string,
+  ): Promise<IAnnouncement> {
+    const scheduledDate = new Date(publishAt);
+    if (scheduledDate <= new Date()) {
+      throw new BadRequestError('Scheduled publish date must be in the future');
+    }
+
+    const announcement = await Announcement.findOneAndUpdate(
+      { _id: announcementId, schoolId, isDeleted: false },
+      { $set: { scheduledPublishDate: scheduledDate } },
+      { new: true, runValidators: true },
+    ).populate('authorId', 'firstName lastName email');
+
+    if (!announcement) {
+      throw new NotFoundError('Announcement not found');
+    }
+
+    return announcement;
+  }
+
+  // ─── Read Tracking ─────────────────────────────────────────────────────
+
+  static async markAnnouncementRead(
+    userId: string,
+    announcementId: string,
+  ): Promise<IAnnouncement> {
+    const userObjId = new mongoose.Types.ObjectId(userId);
+
+    // Check if already read
+    const existing = await Announcement.findOne({
+      _id: announcementId,
+      isDeleted: false,
+      'readBy.userId': userObjId,
+    });
+    if (existing) return existing;
+
+    const announcement = await Announcement.findOneAndUpdate(
+      { _id: announcementId, isDeleted: false },
+      { $push: { readBy: { userId: userObjId, readAt: new Date() } } },
+      { new: true },
+    );
+
+    if (!announcement) {
+      throw new NotFoundError('Announcement not found');
+    }
+
+    return announcement;
+  }
+
+  static async getReadAnalytics(schoolId: string, announcementId: string) {
+    const announcement = await Announcement.findOne({
+      _id: announcementId,
+      schoolId,
+      isDeleted: false,
+    })
+      .populate('readBy.userId', 'firstName lastName email role')
+      .lean();
+
+    if (!announcement) {
+      throw new NotFoundError('Announcement not found');
+    }
+
+    const readBy = announcement.readBy ?? [];
+    const readCount = readBy.length;
+
+    // Estimate audience size based on target
+    // For now just return read count since total audience requires
+    // resolving all matching users, which is expensive
+    const roleBreakdown: Record<string, number> = {};
+    for (const r of readBy) {
+      const user = r.userId as unknown as { role?: string };
+      const role = user?.role ?? 'unknown';
+      roleBreakdown[role] = (roleBreakdown[role] ?? 0) + 1;
+    }
+
+    return {
+      readCount,
+      targetAudience: announcement.targetAudience,
+      roleBreakdown,
+      readers: readBy.map((r) => ({
+        user: r.userId,
+        readAt: r.readAt,
+      })),
     };
   }
 }

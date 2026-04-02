@@ -30,7 +30,23 @@ export const sendBulkMessageSchema = z.object({
   }),
 }).strict();
 
+// ─── Schedule Message ──────────────────────────────────────────────────────
+
+export const scheduleMessageSchema = z.object({
+  schoolId: objectIdSchema,
+  templateId: objectIdSchema.optional(),
+  subject: z.string().min(1, 'Subject is required'),
+  body: z.string().min(1, 'Body is required'),
+  channel: z.enum(['email', 'sms', 'whatsapp', 'all']).optional(),
+  recipients: z.object({
+    type: z.enum(['school', 'grade', 'class', 'custom']),
+    targetIds: z.array(objectIdSchema).optional(),
+  }),
+  scheduledFor: z.string().datetime('scheduledFor must be a valid date-time'),
+}).strict();
+
 // ─── Inferred Types ─────────────────────────────────────────────────────────
 
 export type CreateTemplateInput = z.infer<typeof createTemplateSchema>;
 export type SendBulkMessageInput = z.infer<typeof sendBulkMessageSchema>;
+export type ScheduleMessageInput = z.infer<typeof scheduleMessageSchema>;

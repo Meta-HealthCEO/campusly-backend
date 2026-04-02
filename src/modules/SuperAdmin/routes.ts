@@ -20,8 +20,10 @@ const router = Router();
 // All routes require authentication and super_admin role
 router.use(authenticate, authorize('super_admin'));
 
-// ─── Platform Stats ───────────────────────────────────────────────────────────
+// ─── Platform Stats & Analytics ──────────────────────────────────────────────
 router.get('/stats', SuperAdminController.getPlatformStats);
+router.get('/analytics', SuperAdminController.getPlatformAnalytics);
+router.get('/health-overview', SuperAdminController.getHealthOverview);
 
 // ─── Tenant Management ────────────────────────────────────────────────────────
 router.post('/tenants/onboard', validate(onboardSchoolSchema), SuperAdminController.onboardSchool);
@@ -42,6 +44,7 @@ router.post(
   validate(suspendTenantSchema),
   SuperAdminController.suspendTenant,
 );
+router.get('/tenants/:id/health', SuperAdminController.getTenantHealthScore);
 
 // ─── Platform Invoices ────────────────────────────────────────────────────────
 router.post(

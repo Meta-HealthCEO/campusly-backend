@@ -104,8 +104,8 @@ export class LostFoundService {
     return { items, total };
   }
 
-  static async getItemById(id: string): Promise<ILostItem> {
-    const item = await LostItem.findOne({ _id: id, isDeleted: false })
+  static async getItemById(id: string, schoolId: string): Promise<ILostItem> {
+    const item = await LostItem.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('reportedBy', 'firstName lastName email')
       .populate('claimedBy', 'firstName lastName email')
       .populate('verifiedBy', 'firstName lastName email')
@@ -119,8 +119,8 @@ export class LostFoundService {
     return item;
   }
 
-  static async claimItem(itemId: string, claimedBy: string, studentId?: string): Promise<ILostItem> {
-    const item = await LostItem.findOne({ _id: itemId, isDeleted: false });
+  static async claimItem(itemId: string, schoolId: string, claimedBy: string, studentId?: string): Promise<ILostItem> {
+    const item = await LostItem.findOne({ _id: itemId, schoolId, isDeleted: false });
 
     if (!item) {
       throw new NotFoundError('Lost & found item not found');
@@ -145,8 +145,8 @@ export class LostFoundService {
     return item;
   }
 
-  static async verifyAndReturn(itemId: string, verifiedBy: string): Promise<ILostItem> {
-    const item = await LostItem.findOne({ _id: itemId, isDeleted: false });
+  static async verifyAndReturn(itemId: string, schoolId: string, verifiedBy: string): Promise<ILostItem> {
+    const item = await LostItem.findOne({ _id: itemId, schoolId, isDeleted: false });
 
     if (!item) {
       throw new NotFoundError('Lost & found item not found');
@@ -163,10 +163,10 @@ export class LostFoundService {
     return item;
   }
 
-  static async matchItems(lostItemId: string, foundItemId: string): Promise<{ lostItem: ILostItem; foundItem: ILostItem }> {
+  static async matchItems(lostItemId: string, foundItemId: string, schoolId: string): Promise<{ lostItem: ILostItem; foundItem: ILostItem }> {
     const [lostItem, foundItem] = await Promise.all([
-      LostItem.findOne({ _id: lostItemId, isDeleted: false }),
-      LostItem.findOne({ _id: foundItemId, isDeleted: false }),
+      LostItem.findOne({ _id: lostItemId, schoolId, isDeleted: false }),
+      LostItem.findOne({ _id: foundItemId, schoolId, isDeleted: false }),
     ]);
 
     if (!lostItem) throw new NotFoundError('Lost item not found');
@@ -287,9 +287,59 @@ export class LostFoundService {
     };
   }
 
-  static async softDelete(id: string): Promise<ILostItem> {
+  static async getHotspotReport(
+    schoolId: string,
+    dateRange?: { startDate?: string; endDate?: string },
+  ) {
+    const matchFilter: Record<string, unknown> = {
+      schoolId: new mongoose.Types.ObjectId(schoolId),
+      isDeleted: false,
+    };
+
+    if (dateRange?.startDate || dateRange?.endDate) {
+      const dateFilter: Record<string, Date> = {};
+      if (dateRange.startDate) dateFilter.$gte = new Date(dateRange.startDate);
+      if (dateRange.endDate) dateFilter.$lte = new Date(dateRange.endDate);
+      matchFilter.createdAt = dateFilter;
+    }
+
+    const [byLocation, byCategory, byMonth] = await Promise.all([
+      LostItem.aggregate([
+        { $match: { ...matchFilter, type: 'lost' } },
+        {
+          $group: {
+            _id: { $ifNull: ['$locationLost', 'Unknown'] },
+            count: { $sum: 1 },
+          },
+        },
+        { $sort: { count: -1 } },
+        { $limit: 10 },
+        { $project: { _id: 0, location: '$_id', count: 1 } },
+      ]),
+      LostItem.aggregate([
+        { $match: matchFilter },
+        { $group: { _id: '$category', count: { $sum: 1 } } },
+        { $sort: { count: -1 } },
+        { $project: { _id: 0, category: '$_id', count: 1 } },
+      ]),
+      LostItem.aggregate([
+        { $match: matchFilter },
+        {
+          $group: {
+            _id: { year: { $year: '$createdAt' }, month: { $month: '$createdAt' } },
+            count: { $sum: 1 },
+          },
+        },
+        { $sort: { '_id.year': 1, '_id.month': 1 } },
+      ]),
+    ]);
+
+    return { byLocation, byCategory, byMonth };
+  }
+
+  static async softDelete(id: string, schoolId: string): Promise<ILostItem> {
     const item = await LostItem.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
