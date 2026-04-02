@@ -9,6 +9,7 @@ import {
   ModerationController,
   PlannerController,
   AggregationController,
+  UploadController,
 } from './controllers/index.js';
 import {
   createFrameworkSchema,
@@ -32,6 +33,11 @@ const teacherOnly = authorize('teacher');
 
 // GET /dashboard — teacher workbench dashboard
 router.get('/dashboard', authenticate, allRoles, AggregationController.getDashboard);
+
+// ─── Uploads ──────────────────────────────────────────────────────────────────
+
+// POST /uploads/image — upload a question bank diagram/figure (jpeg, png, gif, webp; max 5 MB)
+router.post('/uploads/image', authenticate, allRoles, UploadController.uploadImage);
 
 // ─── Curriculum ───────────────────────────────────────────────────────────────
 

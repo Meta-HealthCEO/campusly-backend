@@ -118,6 +118,9 @@ app.use('/api/ai-tools', requireModule('ai_tools'), aiToolsRoutes);
 app.use('/api/teacher-workbench', requireModule('teacher_workbench'), teacherWorkbenchRoutes);
 app.use('/api/careers', requireModule('careers'), careerRoutes);
 
+// Static file serving — uploaded assets
+app.use('/uploads', express.static('uploads'));
+
 // 404 handler
 app.use((_req, res) => {
   res.status(404).json({ success: false, error: 'Route not found' });
