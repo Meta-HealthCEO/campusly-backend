@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import type { PipelineStage } from 'mongoose';
 import {
   CurriculumFramework,
@@ -72,7 +73,7 @@ export class CurriculumService {
     schoolId: string,
     filters: TopicFilters,
   ): Promise<ICurriculumTopic[]> {
-    const query: Record<string, unknown> = { schoolId };
+    const query: Record<string, unknown> = { schoolId, isDeleted: false };
     if (filters.frameworkId) query.frameworkId = filters.frameworkId;
     if (filters.subjectId) query.subjectId = filters.subjectId;
     if (filters.gradeLevel !== undefined) query.gradeLevel = filters.gradeLevel;
@@ -94,9 +95,10 @@ export class CurriculumService {
   static async updateTopic(
     id: string,
     data: Record<string, unknown>,
+    schoolId: string,
   ): Promise<ICurriculumTopic> {
     const topic = await CurriculumTopic.findOneAndUpdate(
-      { _id: id },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true },
     ).lean().exec();
@@ -105,10 +107,14 @@ export class CurriculumService {
   }
 
   static async deleteTopic(id: string): Promise<void> {
-    const topic = await CurriculumTopic.findOne({ _id: id });
+    const topic = await CurriculumTopic.findOne({ _id: id, isDeleted: false });
     if (!topic) throw new NotFoundError('Topic not found');
-    await CurriculumTopic.deleteOne({ _id: id });
-    await CurriculumTopic.deleteMany({ parentTopicId: id });
+    // Soft-delete children first, then parent
+    await CurriculumTopic.updateMany(
+      { parentTopicId: id, isDeleted: false },
+      { $set: { isDeleted: true } },
+    );
+    await CurriculumTopic.findOneAndUpdate({ _id: id }, { $set: { isDeleted: true } });
   }
 
   static async bulkImportTopics(
@@ -134,10 +140,18 @@ export class CurriculumService {
     if (filters.teacherId) query.teacherId = filters.teacherId;
     if (filters.classId) query.classId = filters.classId;
 
-    return CurriculumCoverage.find(query)
+    const results = await CurriculumCoverage.find(query)
       .populate('topicId')
       .lean()
       .exec() as unknown as ICurriculumCoverage[];
+
+    if (filters.subjectId) {
+      return results.filter((r) => {
+        const topic = r.topicId as unknown as Record<string, unknown>;
+        return topic && String(topic.subjectId) === filters.subjectId;
+      });
+    }
+    return results;
   }
 
   static async updateCoverage(
@@ -172,9 +186,9 @@ export class CurriculumService {
     schoolId: string,
     filters: CoverageReportFilters,
   ): Promise<unknown[]> {
-    const match: Record<string, unknown> = { schoolId };
-    if (filters.teacherId) match.teacherId = filters.teacherId;
-    if (filters.classId) match.classId = filters.classId;
+    const match: Record<string, unknown> = { schoolId: new mongoose.Types.ObjectId(schoolId) };
+    if (filters.teacherId) match.teacherId = new mongoose.Types.ObjectId(filters.teacherId);
+    if (filters.classId) match.classId = new mongoose.Types.ObjectId(filters.classId);
 
     const pipeline: PipelineStage[] = [
       { $match: match },
@@ -223,7 +237,7 @@ export class CurriculumService {
     // subjectId filter must be applied after $lookup since it's on the joined doc
     if (filters.subjectId) {
       pipeline.splice(3, 0, {
-        $match: { 'topic.subjectId': filters.subjectId },
+        $match: { 'topic.subjectId': new mongoose.Types.ObjectId(filters.subjectId) },
       });
     }
 

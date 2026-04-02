@@ -87,6 +87,9 @@ export class MemoService {
     const paper = await GeneratedPaper.findOne({ _id: paperId, isDeleted: false }).lean().exec();
     if (!paper) throw new NotFoundError('Paper not found');
 
+    // Delete any existing memo for this paper before regenerating
+    await PaperMemo.deleteOne({ paperId });
+
     const systemPrompt = buildMemoSystemPrompt();
     const userPrompt = buildMemoUserPrompt(
       paper.subject,
@@ -219,9 +222,10 @@ ${targetQuestion.markingGuideline ? `Guideline: ${targetQuestion.markingGuidelin
   static async updateMemo(
     id: string,
     data: Record<string, unknown>,
+    schoolId: string,
   ): Promise<IPaperMemo> {
     const memo = await PaperMemo.findOneAndUpdate(
-      { _id: id },
+      { _id: id, schoolId },
       { $set: data },
       { new: true },
     ).lean().exec();

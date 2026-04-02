@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { Question } from '../model.assessment.js';
 import { PaperModeration } from '../model.assessment.js';
 import { CurriculumCoverage } from '../model.js';
@@ -58,7 +59,7 @@ export class AggregationService {
       Question.countDocuments({ schoolId, teacherId, isDeleted: false }),
       PaperModeration.countDocuments({ schoolId, status: 'pending', isDeleted: false }),
       CurriculumCoverage.aggregate([
-        { $match: { schoolId, teacherId } },
+        { $match: { schoolId: new mongoose.Types.ObjectId(schoolId), teacherId: new mongoose.Types.ObjectId(teacherId) } },
         {
           $group: {
             _id: null,

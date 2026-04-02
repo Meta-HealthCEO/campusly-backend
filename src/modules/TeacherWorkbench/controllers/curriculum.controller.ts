@@ -34,7 +34,9 @@ export class CurriculumController {
   }
 
   static async updateTopic(req: Request, res: Response): Promise<void> {
-    const topic = await CurriculumService.updateTopic(req.params.id as string, req.body);
+    const user = getUser(req);
+    const schoolId = String(req.query.schoolId ?? user.schoolId ?? '');
+    const topic = await CurriculumService.updateTopic(req.params.id as string, req.body, schoolId);
     res.json(apiResponse(true, topic, 'Topic updated'));
   }
 

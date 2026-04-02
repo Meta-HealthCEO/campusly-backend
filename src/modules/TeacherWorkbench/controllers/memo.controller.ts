@@ -17,7 +17,21 @@ export class MemoController {
   }
 
   static async updateMemo(req: Request, res: Response): Promise<void> {
-    const memo = await MemoService.updateMemo(req.params.id as string, req.body);
+    const user = getUser(req);
+    const schoolId = String(req.query.schoolId ?? user.schoolId ?? '');
+    const memo = await MemoService.updateMemo(req.params.id as string, req.body, schoolId);
     res.json(apiResponse(true, memo, 'Memo updated'));
+  }
+
+  static async regenerateAnswer(req: Request, res: Response): Promise<void> {
+    const user = getUser(req);
+    const schoolId = String(req.query.schoolId ?? user.schoolId ?? '');
+    const memo = await MemoService.regenerateAnswer(
+      req.params.memoId as string,
+      req.params.questionNumber as string,
+      user.id,
+      schoolId,
+    );
+    res.json(apiResponse(true, memo, 'Answer regenerated'));
   }
 }

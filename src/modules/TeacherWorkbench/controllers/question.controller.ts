@@ -34,17 +34,23 @@ export class QuestionController {
   }
 
   static async getQuestion(req: Request, res: Response): Promise<void> {
-    const question = await QuestionService.getQuestion(req.params.id as string);
+    const user = getUser(req);
+    const schoolId = String(req.query.schoolId ?? user.schoolId ?? '');
+    const question = await QuestionService.getQuestion(req.params.id as string, schoolId);
     res.json(apiResponse(true, question, 'Question retrieved'));
   }
 
   static async updateQuestion(req: Request, res: Response): Promise<void> {
-    const question = await QuestionService.updateQuestion(req.params.id as string, req.body);
+    const user = getUser(req);
+    const schoolId = String(req.query.schoolId ?? user.schoolId ?? '');
+    const question = await QuestionService.updateQuestion(req.params.id as string, req.body, schoolId);
     res.json(apiResponse(true, question, 'Question updated'));
   }
 
   static async deleteQuestion(req: Request, res: Response): Promise<void> {
-    await QuestionService.deleteQuestion(req.params.id as string);
+    const user = getUser(req);
+    const schoolId = String(req.query.schoolId ?? user.schoolId ?? '');
+    await QuestionService.deleteQuestion(req.params.id as string, schoolId);
     res.json(apiResponse(true, null, 'Question deleted'));
   }
 

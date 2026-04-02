@@ -23,18 +23,25 @@ export class ModerationController {
   }
 
   static async getModerationStatus(req: Request, res: Response): Promise<void> {
-    const moderation = await ModerationService.getModerationStatus(req.params.paperId as string);
+    const user = getUser(req);
+    const schoolId = String(req.query.schoolId ?? user.schoolId ?? '');
+    const moderation = await ModerationService.getModerationStatus(
+      req.params.paperId as string,
+      schoolId,
+    );
     res.json(apiResponse(true, moderation, 'Moderation status retrieved'));
   }
 
   static async reviewPaper(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const schoolId = String(req.query.schoolId ?? user.schoolId ?? '');
     const { status, comments } = req.body as { status: string; comments: string };
     const moderation = await ModerationService.reviewPaper(
       req.params.paperId as string,
       user.id,
       status,
       comments ?? '',
+      schoolId,
     );
     res.json(apiResponse(true, moderation, 'Review submitted'));
   }

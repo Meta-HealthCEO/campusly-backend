@@ -79,6 +79,7 @@ export interface ICurriculumTopic extends Document {
   orderIndex: number;
   cognitiveLevel: CognitiveLevel;
   estimatedPeriods: number;
+  isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -100,6 +101,7 @@ const curriculumTopicSchema = new Schema<ICurriculumTopic>(
       required: true,
     },
     estimatedPeriods: { type: Number, required: true, default: 1 },
+    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true },
 );

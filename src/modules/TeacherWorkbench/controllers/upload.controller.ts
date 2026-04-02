@@ -3,6 +3,7 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { v4 as uuid } from 'uuid';
+import { apiResponse } from '../../../common/utils.js';
 
 const UPLOAD_DIR = 'uploads/teacher-workbench';
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
@@ -44,7 +45,7 @@ export const UploadController = {
   uploadImage(req: Request, res: Response, next: NextFunction): void {
     uploadMiddleware(req, res, (err: unknown) => {
       if (err instanceof multer.MulterError) {
-        res.status(400).json({ success: false, error: err.message });
+        res.status(400).json(apiResponse(false, null, err.message));
         return;
       }
       if (err) {
@@ -52,14 +53,11 @@ export const UploadController = {
         return;
       }
       if (!req.file) {
-        res.status(400).json({
-          success: false,
-          error: 'No file uploaded or file type not allowed. Use jpeg, png, gif, or webp.',
-        });
+        res.status(400).json(apiResponse(false, null, 'No file uploaded or file type not allowed. Use jpeg, png, gif, or webp.'));
         return;
       }
       const url = `/uploads/teacher-workbench/${req.file.filename}`;
-      res.status(201).json({ success: true, data: { url } });
+      res.status(201).json(apiResponse(true, { url }, 'Image uploaded successfully'));
     });
   },
 };

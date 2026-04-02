@@ -113,8 +113,8 @@ export class QuestionService {
     return question.save();
   }
 
-  static async getQuestion(id: string): Promise<IQuestion> {
-    const question = await Question.findOne({ _id: id, isDeleted: false })
+  static async getQuestion(id: string, schoolId: string): Promise<IQuestion> {
+    const question = await Question.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('topicId', 'name term')
       .populate('subjectId', 'name code')
       .lean()
@@ -126,9 +126,10 @@ export class QuestionService {
   static async updateQuestion(
     id: string,
     data: Record<string, unknown>,
+    schoolId: string,
   ): Promise<IQuestion> {
     const question = await Question.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true },
     ).lean().exec();
@@ -136,9 +137,9 @@ export class QuestionService {
     return question as IQuestion;
   }
 
-  static async deleteQuestion(id: string): Promise<void> {
+  static async deleteQuestion(id: string, schoolId: string): Promise<void> {
     const result = await Question.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
     );
     if (!result) throw new NotFoundError('Question not found');

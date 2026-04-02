@@ -7,14 +7,24 @@ export class ModerationService {
     teacherId: string,
     schoolId: string,
   ): Promise<IPaperModeration> {
-    const moderation = new PaperModeration({
-      paperId,
-      schoolId,
-      submittedBy: teacherId,
-      submittedAt: new Date(),
-      status: 'pending',
-    });
-    return moderation.save();
+    const moderation = await PaperModeration.findOneAndUpdate(
+      { paperId },
+      {
+        $set: {
+          paperId,
+          schoolId,
+          submittedBy: teacherId,
+          submittedAt: new Date(),
+          status: 'pending',
+          moderatorId: null,
+          moderatedAt: null,
+          comments: '',
+          isDeleted: false,
+        },
+      },
+      { new: true, upsert: true },
+    );
+    return moderation as IPaperModeration;
   }
 
   static async getModerationQueue(schoolId: string): Promise<IPaperModeration[]> {
@@ -30,8 +40,8 @@ export class ModerationService {
       .exec();
   }
 
-  static async getModerationStatus(paperId: string): Promise<IPaperModeration> {
-    const moderation = await PaperModeration.findOne({ paperId })
+  static async getModerationStatus(paperId: string, schoolId: string): Promise<IPaperModeration> {
+    const moderation = await PaperModeration.findOne({ paperId, schoolId })
       .populate('submittedBy', 'firstName lastName email')
       .populate('moderatorId', 'firstName lastName email')
       .lean()
@@ -45,6 +55,7 @@ export class ModerationService {
     moderatorId: string,
     status: string,
     comments: string,
+    schoolId: string,
   ): Promise<IPaperModeration> {
     const historyEntry = {
       moderatorId,
@@ -54,7 +65,7 @@ export class ModerationService {
     };
 
     const moderation = await PaperModeration.findOneAndUpdate(
-      { paperId },
+      { paperId, schoolId },
       {
         $set: {
           status,

@@ -27,7 +27,8 @@ import {
 const router = express.Router();
 
 const allRoles = authorize('teacher', 'school_admin', 'super_admin');
-const teacherOnly = authorize('teacher');
+const teacherOnly = authorize('teacher', 'super_admin');
+const adminOnly = authorize('school_admin', 'super_admin');
 
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 
@@ -165,6 +166,14 @@ router.put(
   MemoController.updateMemo,
 );
 
+// POST /memos/:memoId/regenerate/:questionNumber — regenerate a single answer
+router.post(
+  '/memos/:memoId/regenerate/:questionNumber',
+  authenticate,
+  allRoles,
+  MemoController.regenerateAnswer,
+);
+
 // ─── Moderation ───────────────────────────────────────────────────────────────
 
 // POST /moderation/submit/:paperId — submit paper for moderation
@@ -181,11 +190,11 @@ router.get('/moderation/queue', authenticate, allRoles, ModerationController.get
 // GET /moderation/:paperId — get moderation status for a paper
 router.get('/moderation/:paperId', authenticate, allRoles, ModerationController.getModerationStatus);
 
-// POST /moderation/:paperId/review — review a paper
+// POST /moderation/:paperId/review — review a paper (admins/HODs only)
 router.post(
   '/moderation/:paperId/review',
   authenticate,
-  allRoles,
+  adminOnly,
   validate(reviewPaperSchema),
   ModerationController.reviewPaper,
 );

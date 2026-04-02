@@ -38,6 +38,7 @@ export interface IQuestion extends Document {
   source: QuestionSource;
   usageCount: number;
   lastUsedDate: Date | null;
+  isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -88,6 +89,7 @@ const questionSchema = new Schema<IQuestion>(
     },
     usageCount: { type: Number, default: 0 },
     lastUsedDate: { type: Date, default: null },
+    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true },
 );
@@ -159,7 +161,7 @@ const memoSectionSchema = new Schema<IMemoSection>(
 
 const paperMemoSchema = new Schema<IPaperMemo>(
   {
-    paperId: { type: Schema.Types.ObjectId, required: true },
+    paperId: { type: Schema.Types.ObjectId, ref: 'GeneratedPaper', required: true },
     schoolId: { type: Schema.Types.ObjectId, ref: 'School', required: true },
     teacherId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     sections: { type: [memoSectionSchema], default: [] },
@@ -210,7 +212,7 @@ const moderationHistoryEntrySchema = new Schema<IModerationHistoryEntry>(
 
 const paperModerationSchema = new Schema<IPaperModeration>(
   {
-    paperId: { type: Schema.Types.ObjectId, required: true },
+    paperId: { type: Schema.Types.ObjectId, ref: 'GeneratedPaper', required: true },
     schoolId: { type: Schema.Types.ObjectId, ref: 'School', required: true },
     submittedBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     submittedAt: { type: Date, required: true },
@@ -244,6 +246,8 @@ export interface IPlannedAssessment {
   assessmentType: AssessmentType;
   plannedDate: Date;
   totalMarks: number;
+  weight: number;
+  topicIds: Types.ObjectId[];
   status: PlanStatus;
   linkedPaperId: Types.ObjectId | null;
 }
@@ -270,6 +274,8 @@ const plannedAssessmentSchema = new Schema<IPlannedAssessment>(
     },
     plannedDate: { type: Date, required: true },
     totalMarks: { type: Number, required: true },
+    weight: { type: Number, default: 0, min: 0, max: 100 },
+    topicIds: [{ type: Schema.Types.ObjectId, ref: 'CurriculumTopic' }],
     status: {
       type: String,
       enum: ['planned', 'created', 'completed'],
