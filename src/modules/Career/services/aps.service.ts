@@ -47,38 +47,53 @@ function isLifeOrientation(name: string): boolean {
 interface SubjectAPS {
   subjectId: string;
   name: string;
-  percentage: number;
+  level: string;
+  currentPercentage: number;
+  rating: number;
   apsPoints: number;
   description: string;
   isLifeOrientation: boolean;
   includedInTotal: boolean;
 }
 
+interface LifeOrientationInfo {
+  percentage: number;
+  apsPoints: number;
+  note?: string;
+}
+
+interface APSConversionEntry {
+  min: number;
+  max: number;
+  rating: number;
+  points: number;
+  description: string;
+}
+
 interface APSResult {
   totalAPS: number;
   maxAPS: number;
-  lifeOrientationPoints: number;
+  lifeOrientation: LifeOrientationInfo;
   subjects: SubjectAPS[];
+  apsConversionTable: APSConversionEntry[];
   year: number;
   grade: string;
 }
 
-interface SimulationChange {
-  subjectId: string;
+interface SimulationSubject {
   name: string;
   currentPercentage: number;
   hypotheticalPercentage: number;
-  currentPoints: number;
-  newPoints: number;
-  pointsGained: number;
+  currentAPS: number;
+  simulatedAPS: number;
+  change: string;
 }
 
 interface SimulationResult {
   currentAPS: number;
   simulatedAPS: number;
   improvement: number;
-  maxAPS: number;
-  changes: SimulationChange[];
+  subjects: SimulationSubject[];
   newProgrammesUnlocked: number;
 }
 
@@ -106,7 +121,9 @@ export class APSService {
       return {
         subjectId: String(s.subjectId),
         name: s.name,
-        percentage: s.finalPercentage,
+        level: s.level,
+        currentPercentage: s.finalPercentage,
+        rating: aps.rating,
         apsPoints: aps.points,
         description: aps.description,
         isLifeOrientation: isLifeOrientation(s.name),
@@ -125,12 +142,18 @@ export class APSService {
 
     const totalAPS = best6.reduce((sum, s) => sum + s.apsPoints, 0);
     const loPoints = loSubjects.reduce((sum, s) => sum + s.apsPoints, 0);
+    const loPercentage = loSubjects.length > 0 ? loSubjects[0].currentPercentage : 0;
 
     return {
       totalAPS,
       maxAPS: MAX_APS,
-      lifeOrientationPoints: loPoints,
+      lifeOrientation: {
+        percentage: loPercentage,
+        apsPoints: loPoints,
+        note: 'Excluded from total (most universities)',
+      },
       subjects,
+      apsConversionTable: APS_TABLE,
       year: latest.year,
       grade: latest.grade,
     };
@@ -151,21 +174,21 @@ export class APSService {
       adjustments.map((a) => [a.subjectId, a.hypotheticalPercentage]),
     );
 
-    const changes: SimulationChange[] = [];
+    const simSubjects: SimulationSubject[] = [];
     const simulatedSubjects = currentResult.subjects.map((s) => {
       const newPct = adjustmentMap.get(s.subjectId);
       if (newPct !== undefined) {
         const newAps = percentageToAPS(newPct);
-        changes.push({
-          subjectId: s.subjectId,
+        const pointsGained = newAps.points - s.apsPoints;
+        simSubjects.push({
           name: s.name,
-          currentPercentage: s.percentage,
+          currentPercentage: s.currentPercentage,
           hypotheticalPercentage: newPct,
-          currentPoints: s.apsPoints,
-          newPoints: newAps.points,
-          pointsGained: newAps.points - s.apsPoints,
+          currentAPS: s.apsPoints,
+          simulatedAPS: newAps.points,
+          change: pointsGained > 0 ? `+${pointsGained}` : String(pointsGained),
         });
-        return { ...s, apsPoints: newAps.points, percentage: newPct };
+        return { ...s, apsPoints: newAps.points, currentPercentage: newPct };
       }
       return s;
     });
@@ -189,8 +212,7 @@ export class APSService {
       currentAPS,
       simulatedAPS,
       improvement: simulatedAPS - currentAPS,
-      maxAPS: MAX_APS,
-      changes,
+      subjects: simSubjects,
       newProgrammesUnlocked,
     };
   }

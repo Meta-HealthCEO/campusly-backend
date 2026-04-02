@@ -1,6 +1,8 @@
 import {
   Programme,
+  University,
   type IProgramme,
+  type IUniversity,
   StudentPortfolio,
   type ISubjectRecord,
 } from '../model.js';
@@ -40,20 +42,25 @@ interface SubjectGap {
   subjectName: string;
   required: number;
   actual: number;
-  shortfall: number;
+  gap: number;
 }
 
 interface ProgrammeMatch {
   programmeId: string;
   programmeName: string;
-  universityId: string;
+  universityName: string;
+  universityLogo?: string;
   faculty: string;
   qualificationType: string;
-  minimumAPS: number;
   status: MatchStatus;
-  overallFit: number;
+  apsRequired: number;
+  apsActual: number;
+  apsGap: number;
   subjectGaps: SubjectGap[];
   missingSubjects: string[];
+  overallFit: number;
+  annualTuition?: number;
+  applicationDeadline?: string;
 }
 
 interface MatchFilters {
@@ -113,6 +120,14 @@ export class MatcherService {
 
     const programmes = await Programme.find(programmeFilter).lean();
 
+    // 2b. Fetch all relevant universities for name/logo lookup
+    const universityIds = [...new Set(programmes.map((p: IProgramme & { _id: unknown }) => String(p.universityId)))];
+    const universities = await University.find({ _id: { $in: universityIds } }).lean();
+    const uniMap = new Map<string, IUniversity & { _id: unknown }>();
+    for (const uni of universities) {
+      uniMap.set(String(uni._id), uni as IUniversity & { _id: unknown });
+    }
+
     // 3. Score each programme
     const allMatches: ProgrammeMatch[] = programmes.map(
       (prog: IProgramme & { _id: unknown }) => {
@@ -136,7 +151,7 @@ export class MatcherService {
               subjectName: req.subjectName,
               required: req.minimumPercentage,
               actual,
-              shortfall: req.minimumPercentage - actual,
+              gap: req.minimumPercentage - actual,
             });
           } else {
             compulsoryMet++;
@@ -160,7 +175,7 @@ export class MatcherService {
           missingSubjects.length === 0 &&
           compulsoryShort <= 1 &&
           subjectGaps.every(
-            (g: SubjectGap) => g.shortfall <= g.required * 0.1,
+            (g: SubjectGap) => g.gap <= g.required * 0.1,
           )
         ) {
           status = 'close';
@@ -170,17 +185,24 @@ export class MatcherService {
 
         const overallFit = Math.round((apsFit * 0.5 + subjectFit * 0.5) * 100);
 
+        const uni = uniMap.get(String(prog.universityId));
+
         return {
           programmeId: String(prog._id),
           programmeName: prog.name,
-          universityId: String(prog.universityId),
+          universityName: uni?.name ?? 'Unknown University',
+          universityLogo: uni?.logo,
           faculty: prog.faculty,
           qualificationType: prog.qualificationType,
-          minimumAPS: prog.minimumAPS,
           status,
-          overallFit,
+          apsRequired: prog.minimumAPS,
+          apsActual: studentAPS,
+          apsGap: Math.max(prog.minimumAPS - studentAPS, 0),
           subjectGaps,
           missingSubjects,
+          overallFit,
+          annualTuition: prog.annualTuition,
+          applicationDeadline: prog.applicationDeadline ? prog.applicationDeadline.toISOString() : undefined,
         };
       },
     );

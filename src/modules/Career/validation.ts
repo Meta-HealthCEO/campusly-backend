@@ -173,3 +173,14 @@ export type CreateBursaryInput = z.infer<typeof createBursarySchema>;
 export const updateBursarySchema = createBursarySchema.partial().strict();
 
 export type UpdateBursaryInput = z.infer<typeof updateBursarySchema>;
+
+// ---------------------------------------------------------------------------
+// 8. Document upload
+// ---------------------------------------------------------------------------
+
+export const addDocumentSchema = z.object({
+  name: z.string().min(1, 'Document name is required').trim(),
+  type: z.enum(['id_copy', 'transcript', 'proof_of_payment', 'motivation_letter', 'other']),
+}).strict();
+
+export type AddDocumentInput = z.infer<typeof addDocumentSchema>;

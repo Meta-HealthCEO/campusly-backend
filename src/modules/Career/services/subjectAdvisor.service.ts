@@ -9,27 +9,21 @@ interface SubjectCombination {
   qualifyingProgrammes: number;
 }
 
-interface SubjectPerformance {
-  name: string;
-  percentage: number;
-  trend: 'improving' | 'stable' | 'declining';
-}
-
 interface Warning {
-  severity: 'high' | 'medium' | 'low';
-  message: string;
+  subject: string;
+  impact: string;
 }
 
 interface Recommendation {
-  combination: string;
-  subjects: string[];
-  reason: string;
-  qualifyingProgrammes: number;
+  subjectCombination: string[];
+  reasoning: string;
+  programmesUnlocked: number;
+  careerPaths: string[];
 }
 
 interface AdviceResult {
   aptitudeTopCluster: string | null;
-  currentPerformance: SubjectPerformance[];
+  currentPerformance: Record<string, number>;
   recommendations: Recommendation[];
   warnings: Warning[];
 }
@@ -68,6 +62,17 @@ const SUBJECT_COMBINATIONS: SubjectCombination[] = [
     qualifyingProgrammes: 0,
   },
 ];
+
+// ─── Career Path Mapping ─────────────────────────────────────────────────
+
+const COMBINATION_CAREER_PATHS: Record<string, string[]> = {
+  'STEM & IT': ['Software Engineer', 'Data Scientist', 'IT Consultant', 'Actuary'],
+  'Health Sciences': ['Doctor', 'Pharmacist', 'Physiotherapist', 'Biomedical Scientist'],
+  'Commerce': ['Chartered Accountant', 'Financial Analyst', 'Economist', 'Business Manager'],
+  'Humanities & Tourism': ['Tourism Manager', 'Hospitality Manager', 'Journalist', 'Social Worker'],
+  'Law & Social Sciences': ['Lawyer', 'Psychologist', 'Political Analyst', 'Policy Researcher'],
+  'Engineering': ['Civil Engineer', 'Mechanical Engineer', 'Electrical Engineer', 'Industrial Engineer'],
+};
 
 // ─── Helpers ──────────────────────────────────────────────────────────────
 
@@ -116,16 +121,19 @@ export class SubjectAdvisorService {
         )[0]?.name ?? null
       : null;
 
-    // 3. Current performance with trends
-    const currentPerformance: SubjectPerformance[] = latest.subjects.map(
-      (s) => ({
-        name: s.name,
-        percentage: s.finalPercentage,
-        trend: computeTrend(
-          s.terms.map((t) => ({ term: t.term, percentage: t.percentage })),
-        ),
-      }),
+    // 3. Current performance as Record<subjectName, percentage>
+    const currentPerformance: Record<string, number> = Object.fromEntries(
+      latest.subjects.map((s) => [s.name, s.finalPercentage]),
     );
+
+    // Track trends for warning generation
+    const subjectTrends = latest.subjects.map((s) => ({
+      name: s.name,
+      percentage: s.finalPercentage,
+      trend: computeTrend(
+        s.terms.map((t) => ({ term: t.term, percentage: t.percentage })),
+      ),
+    }));
 
     // 4. For each combination, count qualifying programmes
     const studentSubjectNames = new Set(
@@ -151,8 +159,8 @@ export class SubjectAdvisorService {
         },
       });
 
-      // Build reason based on aptitude alignment
-      let reason = `Qualifies for ${count} programmes.`;
+      // Build reasoning based on aptitude alignment
+      let reasoning = `Qualifies for ${count} programmes.`;
       if (aptitudeTopCluster) {
         const comboNameLower = combo.name.toLowerCase();
         const clusterLower = aptitudeTopCluster.toLowerCase();
@@ -160,22 +168,22 @@ export class SubjectAdvisorService {
           comboNameLower.includes(clusterLower) ||
           clusterLower.includes(comboNameLower.split(' ')[0])
         ) {
-          reason += ` Aligns with your aptitude for ${aptitudeTopCluster}.`;
+          reasoning += ` Aligns with your aptitude for ${aptitudeTopCluster}.`;
         }
       }
 
       recommendations.push({
-        combination: combo.name,
-        subjects: combo.subjects,
-        reason,
-        qualifyingProgrammes: count,
+        subjectCombination: combo.subjects,
+        reasoning,
+        programmesUnlocked: count,
+        careerPaths: COMBINATION_CAREER_PATHS[combo.name] ?? [],
       });
     }
 
-    // Sort by qualifying programmes descending
+    // Sort by programmesUnlocked descending
     recommendations.sort(
       (a: Recommendation, b: Recommendation) =>
-        b.qualifyingProgrammes - a.qualifyingProgrammes,
+        b.programmesUnlocked - a.programmesUnlocked,
     );
 
     // 5. Generate warnings
@@ -194,20 +202,20 @@ export class SubjectAdvisorService {
 
     if (hasMathsLit && !hasMaths) {
       warnings.push({
-        severity: 'high',
-        message:
-          'You are taking Mathematical Literacy instead of Mathematics. This significantly limits university programme options, especially in STEM, Engineering, Commerce, and Health Sciences.',
+        subject: 'Mathematical Literacy',
+        impact:
+          'Taking Mathematical Literacy instead of Mathematics significantly limits university programme options, especially in STEM, Engineering, Commerce, and Health Sciences.',
       });
     }
 
     // Check for subjects with declining performance
-    const declining = currentPerformance.filter(
-      (s: SubjectPerformance) => s.trend === 'declining',
+    const declining = subjectTrends.filter(
+      (s: { name: string; percentage: number; trend: string }) => s.trend === 'declining',
     );
     for (const s of declining) {
       warnings.push({
-        severity: 'medium',
-        message: `Your performance in ${s.name} is declining (currently ${s.percentage}%). Consider seeking extra help.`,
+        subject: s.name,
+        impact: `Performance is declining (currently ${s.percentage}%). Consider seeking extra help.`,
       });
     }
 
@@ -218,8 +226,8 @@ export class SubjectAdvisorService {
     );
     for (const s of lowPerformers) {
       warnings.push({
-        severity: 'high',
-        message: `You are below 40% in ${s.name}, a core subject. This may affect your NSC pass.`,
+        subject: s.name,
+        impact: `Below 40% in this core subject. This may affect your NSC pass.`,
       });
     }
 
@@ -227,9 +235,9 @@ export class SubjectAdvisorService {
     const hasPhysics = studentSubjectNames.has('physical sciences');
     if (!hasPhysics) {
       warnings.push({
-        severity: 'medium',
-        message:
-          'You are not taking Physical Sciences. This limits options in Engineering, Health Sciences, and some STEM programmes.',
+        subject: 'Physical Sciences',
+        impact:
+          'Not taking Physical Sciences limits options in Engineering, Health Sciences, and some STEM programmes.',
       });
     }
 

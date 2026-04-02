@@ -16,6 +16,7 @@ import {
   submitAptitudeSchema,
   createBursarySchema,
   updateBursarySchema,
+  addDocumentSchema,
 } from './validation.js';
 
 const router = Router();
@@ -191,6 +192,7 @@ router.post(
   authenticate,
   authorize('student'),
   upload.single('file'),
+  validate(addDocumentSchema),
   CareerController.addDocument,
 );
 

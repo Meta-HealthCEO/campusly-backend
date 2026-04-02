@@ -47,10 +47,7 @@ interface ImportResult {
   errors: { row: number; reason: string }[];
 }
 
-interface MatchedBursary {
-  bursary: IBursary;
-  apsMatch: boolean;
-}
+// MatchedBursary wrapper removed — frontend expects flat IBursary[]
 
 // ─── Helpers ──────────────────────────────────────────────────────────────
 
@@ -145,7 +142,7 @@ export class BursaryService {
    */
   static async matchForStudent(
     studentId: string,
-  ): Promise<MatchedBursary[]> {
+  ): Promise<IBursary[]> {
     const portfolio = await StudentPortfolio.findOne({
       studentId,
       isDeleted: false,
@@ -174,10 +171,7 @@ export class BursaryService {
       .sort({ annualValue: -1 })
       .lean();
 
-    return bursaries.map((b: IBursary) => ({
-      bursary: b,
-      apsMatch: b.minimumAPS ? studentAPS >= b.minimumAPS : true,
-    }));
+    return bursaries as IBursary[];
   }
 
   /**
