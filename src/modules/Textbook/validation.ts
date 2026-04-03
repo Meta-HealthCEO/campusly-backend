@@ -20,6 +20,7 @@ export const updateTextbookSchema = z.object({
   title: z.string().min(1, 'Title is required').trim().optional(),
   description: z.string().optional(),
   coverImageUrl: z.string().optional(),
+  status: z.enum(['draft', 'published', 'archived']).optional(),
 }).strict();
 
 export type UpdateTextbookInput = z.infer<typeof updateTextbookSchema>;

@@ -25,17 +25,19 @@ const POPULATE_DETAIL = [
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
 
-function getTextbookOrThrow(
+async function getTextbookOrThrow(
   id: string,
   schoolId: string,
 ) {
   const oid = new mongoose.Types.ObjectId(id);
   const soid = new mongoose.Types.ObjectId(schoolId);
-  return Textbook.findOne({
+  const textbook = await Textbook.findOne({
     _id: oid,
     isDeleted: false,
     $or: [{ schoolId: null }, { schoolId: soid }],
   });
+  if (!textbook) throw new NotFoundError('Textbook not found');
+  return textbook;
 }
 
 async function getOwnedTextbookOrThrow(id: string, schoolId: string) {
@@ -100,7 +102,6 @@ export class TextbookService {
 
   static async getTextbook(id: string, schoolId: string) {
     const doc = await getTextbookOrThrow(id, schoolId);
-    if (!doc) throw new NotFoundError('Textbook not found');
 
     const textbook = await Textbook.findById(doc._id)
       .populate(POPULATE_DETAIL)
