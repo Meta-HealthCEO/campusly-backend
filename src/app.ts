@@ -72,6 +72,7 @@ import budgetRoutes from './modules/Budget/routes.js';
 import assetRoutes from './modules/Asset/routes.js';
 import governanceRoutes from './modules/Governance/routes.js';
 import curriculumRoutes from './modules/Curriculum/routes.js';
+import curriculumStructureRoutes from './modules/CurriculumStructure/routes.js';
 import pastoralRoutes from './modules/Pastoral/routes.js';
 import classroomRoutes from './modules/Classroom/routes.js';
 
@@ -171,6 +172,7 @@ app.use('/api/payroll', authenticate, requireModule('payroll'), payrollRoutes);
 app.use('/api/assets', authenticate, requireModule('asset_management'), assetRoutes);
 app.use('/api/governance', authenticate, governanceRoutes);
 app.use('/api/curriculum', authenticate, curriculumRoutes);
+app.use('/api/curriculum-structure', authenticate, curriculumStructureRoutes);
 app.use('/api/pastoral', authenticate, pastoralRoutes);
 app.use('/api/classroom', authenticate, classroomRoutes);
 
