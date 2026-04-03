@@ -75,6 +75,7 @@ import curriculumRoutes from './modules/Curriculum/routes.js';
 import curriculumStructureRoutes from './modules/CurriculumStructure/routes.js';
 import pastoralRoutes from './modules/Pastoral/routes.js';
 import classroomRoutes from './modules/Classroom/routes.js';
+import contentLibraryRoutes from './modules/ContentLibrary/routes.js';
 
 const app = express();
 
@@ -175,6 +176,7 @@ app.use('/api/curriculum', authenticate, curriculumRoutes);
 app.use('/api/curriculum-structure', authenticate, curriculumStructureRoutes);
 app.use('/api/pastoral', authenticate, pastoralRoutes);
 app.use('/api/classroom', authenticate, classroomRoutes);
+app.use('/api/content-library', authenticate, contentLibraryRoutes);
 
 // Static file serving — uploaded assets
 app.use('/uploads', express.static('uploads'));
