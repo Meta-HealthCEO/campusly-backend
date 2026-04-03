@@ -11,7 +11,6 @@ import {
   updatePaperSchema,
   addQuestionSchema,
   paperQuerySchema,
-  finalisePaperSchema,
 } from './validation.js';
 
 const router = Router();
@@ -84,7 +83,6 @@ router.patch(
 router.post(
   '/papers/:id/finalise',
   authorize(...READ_ROLES),
-  validate(finalisePaperSchema),
   QuestionBankController.finalisePaper,
 );
 

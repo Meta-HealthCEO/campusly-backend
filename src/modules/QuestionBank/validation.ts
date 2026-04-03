@@ -105,7 +105,7 @@ export const questionQuerySchema = z.object({
   mine: z.preprocess((val) => val === 'true', z.boolean()).optional(),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),
-}).strict();
+});
 
 // ─── Paper Section / Question ──────────────────────────────────────────────
 
@@ -162,9 +162,7 @@ export const paperQuerySchema = z.object({
   search: z.string().optional(),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),
-}).strict();
-
-export const finalisePaperSchema = z.object({}).strict();
+});
 
 // ─── Inferred Types ────────────────────────────────────────────────────────
 

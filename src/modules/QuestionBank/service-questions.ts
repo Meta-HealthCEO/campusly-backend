@@ -233,7 +233,7 @@ export class QuestionsService {
     }
 
     const updated = await Question.findOneAndUpdate(
-      { _id: oid, isDeleted: false },
+      { _id: oid, schoolId: soid, isDeleted: false },
       { $set: { status: 'pending_review' } },
       { new: true },
     ).lean();
@@ -264,7 +264,7 @@ export class QuestionsService {
     const newStatus = data.action === 'approve' ? 'approved' : 'rejected';
 
     const updated = await Question.findOneAndUpdate(
-      { _id: oid, isDeleted: false },
+      { _id: oid, schoolId: soid, isDeleted: false },
       {
         $set: {
           status: newStatus,

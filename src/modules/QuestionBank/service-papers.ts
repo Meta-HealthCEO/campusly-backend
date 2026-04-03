@@ -1,9 +1,13 @@
 import mongoose from 'mongoose';
 import { AssessmentPaper, Question } from './model.js';
-import type { IQuestion } from './model.js';
 import { NotFoundError, ForbiddenError, BadRequestError } from '../../common/errors.js';
 import { paginationHelper } from '../../common/utils.js';
 import { ComplianceService } from './service-compliance.js';
+import {
+  collectPaperQuestions,
+  clonePaper as clonePaperHelper,
+  checkCompliance as checkComplianceHelper,
+} from './service-papers-helpers.js';
 import type {
   CreatePaperInput,
   UpdatePaperInput,
@@ -22,6 +26,9 @@ const POPULATE_DETAIL = [
   { path: 'sections.questions.questionId' },
 ];
 
+const REVIEW_ROLES = ['super_admin', 'school_admin', 'principal', 'hod'];
+const ADMIN_ROLES = ['super_admin', 'school_admin', 'principal'];
+
 export class PapersService {
   static async listPapers(
     schoolId: string,
@@ -32,10 +39,7 @@ export class PapersService {
     const soid = new mongoose.Types.ObjectId(schoolId);
     const uoid = new mongoose.Types.ObjectId(userId);
     const query: Record<string, unknown> = { schoolId: soid, isDeleted: false };
-
-    // Visibility: teacher sees own; HOD/admin see all school papers
-    const reviewRoles = ['super_admin', 'school_admin', 'principal', 'hod'];
-    if (!reviewRoles.includes(userRole)) {
+    if (!REVIEW_ROLES.includes(userRole)) {
       query.createdBy = uoid;
     }
 
@@ -55,7 +59,6 @@ export class PapersService {
 
     const [papers, total] = await Promise.all([
       AssessmentPaper.find(query)
-        .select('-sections')
         .populate(POPULATE_LIST)
         .sort({ createdAt: -1 })
         .skip(skip)
@@ -76,10 +79,7 @@ export class PapersService {
       schoolId: soid,
       isDeleted: false,
     };
-
-    // Teachers can only see own papers
-    const reviewRoles = ['super_admin', 'school_admin', 'principal', 'hod'];
-    if (!reviewRoles.includes(userRole)) {
+    if (!REVIEW_ROLES.includes(userRole)) {
       query.createdBy = new mongoose.Types.ObjectId(userId);
     }
 
@@ -144,14 +144,11 @@ export class PapersService {
       throw new ForbiddenError('Only draft papers can be edited');
     }
 
+    const fields = ['title', 'term', 'year', 'paperType', 'duration', 'instructions', 'sections'] as const;
     const update: Record<string, unknown> = {};
-    if (data.title !== undefined) update.title = data.title;
-    if (data.term !== undefined) update.term = data.term;
-    if (data.year !== undefined) update.year = data.year;
-    if (data.paperType !== undefined) update.paperType = data.paperType;
-    if (data.duration !== undefined) update.duration = data.duration;
-    if (data.instructions !== undefined) update.instructions = data.instructions;
-    if (data.sections !== undefined) update.sections = data.sections;
+    for (const key of fields) {
+      if (data[key] !== undefined) update[key] = data[key];
+    }
 
     const updated = await AssessmentPaper.findOneAndUpdate(
       { _id: oid, schoolId: soid, isDeleted: false },
@@ -181,7 +178,7 @@ export class PapersService {
 
     if (!paper) throw new NotFoundError('Assessment paper not found');
 
-    const isAdmin = ['super_admin', 'school_admin', 'principal'].includes(userRole);
+    const isAdmin = ADMIN_ROLES.includes(userRole);
     const isCreator = paper.createdBy.toString() === userId;
     if (!isAdmin && !isCreator) {
       throw new ForbiddenError('Only the creator or an admin can delete this paper');
@@ -194,8 +191,6 @@ export class PapersService {
 
     return { deleted: true };
   }
-
-  // ─── Question Management ─────────────────────────────────────────────────
 
   static async addQuestion(
     id: string,
@@ -223,10 +218,16 @@ export class PapersService {
       throw new BadRequestError('Invalid section index');
     }
 
-    // Verify question exists
+    // Verify question exists and is accessible to this school
+    const uid = new mongoose.Types.ObjectId(userId);
     const question = await Question.findOne({
       _id: new mongoose.Types.ObjectId(data.questionId),
       isDeleted: false,
+      $or: [
+        { schoolId: null, status: 'approved' },
+        { schoolId: soid, status: 'approved' },
+        { schoolId: soid, createdBy: uid },
+      ],
     }).lean();
 
     if (!question) throw new NotFoundError('Question not found');
@@ -242,14 +243,11 @@ export class PapersService {
     });
 
     paper.totalMarks += data.marks;
-
-    // Increment usage count
     await Question.findOneAndUpdate(
       { _id: new mongoose.Types.ObjectId(data.questionId) },
       { $inc: { usageCount: 1 } },
     );
 
-    // Recalculate compliance
     const allQuestions = await collectPaperQuestions(paper.sections);
     paper.capsCompliance = await ComplianceService.calculateCompliance(paper, allQuestions);
 
@@ -291,14 +289,11 @@ export class PapersService {
 
     const removed = section.questions.splice(questionIndex, 1)[0];
     paper.totalMarks -= removed.marks;
-
-    // Decrement usage count
     await Question.findOneAndUpdate(
       { _id: removed.questionId },
       { $inc: { usageCount: -1 } },
     );
 
-    // Recalculate compliance
     const allQuestions = await collectPaperQuestions(paper.sections);
     if (allQuestions.length > 0) {
       paper.capsCompliance = await ComplianceService.calculateCompliance(paper, allQuestions);
@@ -309,8 +304,6 @@ export class PapersService {
     await paper.save();
     return paper.toObject();
   }
-
-  // ─── Finalise ────────────────────────────────────────────────────────────
 
   static async finalisePaper(id: string, schoolId: string, userId: string) {
     const oid = new mongoose.Types.ObjectId(id);
@@ -330,16 +323,12 @@ export class PapersService {
       throw new BadRequestError('Only draft papers can be finalised');
     }
 
-    // Must have at least one question
     const allQuestions = await collectPaperQuestions(paper.sections);
     if (allQuestions.length === 0) {
       throw new BadRequestError('Paper must have at least one question');
     }
 
-    // Recalculate compliance
     const compliance = await ComplianceService.calculateCompliance(paper, allQuestions);
-
-    // Verify total marks match
     const calculatedTotal = allQuestions.reduce((sum, q) => sum + q.marks, 0);
     if (calculatedTotal !== paper.totalMarks) {
       throw new BadRequestError(
@@ -360,96 +349,11 @@ export class PapersService {
     return paper.toObject();
   }
 
-  // ─── Clone ───────────────────────────────────────────────────────────────
-
-  static async clonePaper(id: string, schoolId: string, userId: string) {
-    const oid = new mongoose.Types.ObjectId(id);
-    const soid = new mongoose.Types.ObjectId(schoolId);
-
-    const source = await AssessmentPaper.findOne({
-      _id: oid,
-      schoolId: soid,
-      isDeleted: false,
-    }).lean();
-
-    if (!source) throw new NotFoundError('Assessment paper not found');
-
-    const clone = await AssessmentPaper.create({
-      schoolId: soid,
-      title: `${source.title} (Copy)`,
-      subjectId: source.subjectId,
-      gradeId: source.gradeId,
-      term: source.term,
-      year: source.year,
-      paperType: source.paperType,
-      totalMarks: source.totalMarks,
-      duration: source.duration,
-      sections: source.sections.map((s) => ({
-        title: s.title,
-        instructions: s.instructions,
-        order: s.order,
-        questions: s.questions.map((q) => ({
-          questionId: q.questionId,
-          questionNumber: q.questionNumber,
-          marks: q.marks,
-          order: q.order,
-        })),
-      })),
-      instructions: source.instructions,
-      capsCompliance: null,
-      status: 'draft',
-      createdBy: new mongoose.Types.ObjectId(userId),
-    });
-
-    return clone.toObject();
+  static clonePaper(id: string, schoolId: string, userId: string) {
+    return clonePaperHelper(id, schoolId, userId);
   }
 
-  // ─── Compliance Check (standalone) ───────────────────────────────────────
-
-  static async checkCompliance(id: string, schoolId: string, userId: string) {
-    const oid = new mongoose.Types.ObjectId(id);
-    const soid = new mongoose.Types.ObjectId(schoolId);
-
-    const paper = await AssessmentPaper.findOne({
-      _id: oid,
-      schoolId: soid,
-      isDeleted: false,
-    });
-
-    if (!paper) throw new NotFoundError('Assessment paper not found');
-
-    const allQuestions = await collectPaperQuestions(paper.sections);
-    if (allQuestions.length === 0) {
-      throw new BadRequestError('Paper has no questions to check');
-    }
-
-    const compliance = await ComplianceService.calculateCompliance(paper, allQuestions);
-    paper.capsCompliance = compliance;
-    await paper.save();
-
-    return compliance;
+  static checkCompliance(id: string, schoolId: string) {
+    return checkComplianceHelper(id, schoolId);
   }
-}
-
-// ─── Helpers ────────────────────────────────────────────────────────────────
-
-interface SectionLike {
-  questions: Array<{ questionId: mongoose.Types.ObjectId }>;
-}
-
-async function collectPaperQuestions(sections: SectionLike[]): Promise<IQuestion[]> {
-  const questionIds = sections.flatMap((s) =>
-    s.questions.map((q) => q.questionId),
-  );
-
-  if (questionIds.length === 0) return [];
-
-  const questions = await Question.find({
-    _id: { $in: questionIds },
-    isDeleted: false,
-  })
-    .populate({ path: 'curriculumNodeId', select: 'title code type' })
-    .lean();
-
-  return questions as IQuestion[];
 }

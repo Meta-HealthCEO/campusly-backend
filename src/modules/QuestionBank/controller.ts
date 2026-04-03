@@ -207,7 +207,6 @@ export class QuestionBankController {
     const report = await PapersService.checkCompliance(
       req.params.id as string,
       user.schoolId!,
-      user.id,
     );
     res.json(apiResponse(true, report));
   }
