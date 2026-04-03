@@ -71,6 +71,8 @@ import payrollRoutes from './modules/Payroll/routes.js';
 import budgetRoutes from './modules/Budget/routes.js';
 import assetRoutes from './modules/Asset/routes.js';
 import governanceRoutes from './modules/Governance/routes.js';
+import curriculumRoutes from './modules/Curriculum/routes.js';
+import pastoralRoutes from './modules/Pastoral/routes.js';
 
 const app = express();
 
@@ -167,6 +169,8 @@ app.use('/api/budget', authenticate, requireModule('budget'), budgetRoutes);
 app.use('/api/payroll', authenticate, requireModule('payroll'), payrollRoutes);
 app.use('/api/assets', authenticate, requireModule('asset_management'), assetRoutes);
 app.use('/api/governance', authenticate, governanceRoutes);
+app.use('/api/curriculum', authenticate, curriculumRoutes);
+app.use('/api/pastoral', authenticate, pastoralRoutes);
 
 // Static file serving — uploaded assets
 app.use('/uploads', express.static('uploads'));
