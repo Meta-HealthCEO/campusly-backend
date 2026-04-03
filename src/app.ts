@@ -77,6 +77,7 @@ import pastoralRoutes from './modules/Pastoral/routes.js';
 import classroomRoutes from './modules/Classroom/routes.js';
 import contentLibraryRoutes from './modules/ContentLibrary/routes.js';
 import contentLibraryStudentRoutes from './modules/ContentLibrary/routes-student.js';
+import questionBankRoutes from './modules/QuestionBank/routes.js';
 
 const app = express();
 
@@ -179,6 +180,7 @@ app.use('/api/pastoral', authenticate, pastoralRoutes);
 app.use('/api/classroom', authenticate, classroomRoutes);
 app.use('/api/content-library', authenticate, contentLibraryRoutes);
 app.use('/api/content-library/student', authenticate, contentLibraryStudentRoutes);
+app.use('/api/question-bank', authenticate, questionBankRoutes);
 
 // Static file serving — uploaded assets
 app.use('/uploads', express.static('uploads'));
