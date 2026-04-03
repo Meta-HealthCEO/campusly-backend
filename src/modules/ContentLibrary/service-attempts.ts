@@ -75,7 +75,13 @@ function gradeFillBlank(content: string, response: string, points: number): Grad
     };
     const blanks = parsed.blanks ?? [];
     const alternatives = parsed.acceptAlternatives ?? [];
-    const answers = response.split(',').map((s) => normalise(s));
+    let answers: string[];
+    try {
+      const responseArr = JSON.parse(response);
+      answers = (Array.isArray(responseArr) ? responseArr : [response]).map((s: unknown) => normalise(String(s)));
+    } catch {
+      answers = response.split(',').map((s) => normalise(s));
+    }
     const maxScore = points;
 
     let allCorrect = true;
@@ -185,6 +191,7 @@ export class AttemptsService {
       _id: resourceOid,
       isDeleted: false,
       status: 'approved',
+      $or: [{ schoolId: null }, { schoolId: schoolOid }],
     }).lean();
 
     if (!resource) throw new NotFoundError('Content resource not found');

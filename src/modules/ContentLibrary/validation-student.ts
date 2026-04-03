@@ -13,6 +13,10 @@ export const submitAttemptSchema = z.object({
 
 export type SubmitAttemptInput = z.infer<typeof submitAttemptSchema>;
 
+export const attemptQuerySchema = z.object({
+  studentId: objectIdSchema,
+}).strict();
+
 // ─── Mastery Query ──────────────────────────────────────────────────────────
 
 export const masteryQuerySchema = z.object({

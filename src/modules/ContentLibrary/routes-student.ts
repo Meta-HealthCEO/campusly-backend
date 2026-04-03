@@ -3,6 +3,7 @@ import { authorize, validate } from '../../middleware/index.js';
 import { StudentContentController } from './controller-student.js';
 import {
   submitAttemptSchema,
+  attemptQuerySchema,
   masteryQuerySchema,
   studentResourceQuerySchema,
 } from './validation-student.js';
@@ -37,7 +38,7 @@ router.get(
 router.post(
   '/resources/:id/attempt',
   authorize(...STUDENT_ROLES),
-  validate(submitAttemptSchema),
+  validate({ body: submitAttemptSchema, query: attemptQuerySchema }),
   StudentContentController.submitAttempt,
 );
 

@@ -3,11 +3,27 @@ import mongoose from 'mongoose';
 import { getUser } from '../../types/authenticated-request.js';
 import { apiResponse } from '../../common/utils.js';
 import { paginationHelper } from '../../common/utils.js';
-import { NotFoundError, BadRequestError } from '../../common/errors.js';
+import { NotFoundError, BadRequestError, ForbiddenError } from '../../common/errors.js';
 import { ContentResource } from './model.js';
+import { Student } from '../Student/model.js';
 import { AttemptsService } from './service-attempts.js';
 import { MasteryService } from './service-mastery.js';
 import type { StudentResourceQueryInput, MasteryQueryInput, SubmitAttemptInput } from './validation-student.js';
+
+async function verifyStudentOwnership(
+  studentId: string,
+  userId: string,
+  schoolId: string,
+): Promise<void> {
+  const studentRecord = await Student.findOne({
+    _id: new mongoose.Types.ObjectId(studentId),
+    userId: new mongoose.Types.ObjectId(userId),
+    schoolId: new mongoose.Types.ObjectId(schoolId),
+  }).lean();
+  if (!studentRecord) {
+    throw new ForbiddenError('You can only access your own student data');
+  }
+}
 
 const POPULATE_LIST = [
   { path: 'curriculumNodeId', select: 'title code type' },
@@ -94,6 +110,11 @@ export class StudentContentController {
       throw new BadRequestError('studentId query parameter is required');
     }
 
+    // Verify student belongs to the current user
+    if (user.role === 'student') {
+      await verifyStudentOwnership(studentId, user.id!, user.schoolId!);
+    }
+
     const attempt = await AttemptsService.submitAttempt(
       studentId,
       user.schoolId!,
@@ -113,6 +134,11 @@ export class StudentContentController {
     const studentId = filters.studentId;
     if (!studentId) {
       throw new BadRequestError('studentId query parameter is required');
+    }
+
+    // Verify student belongs to the current user
+    if (user.role === 'student') {
+      await verifyStudentOwnership(studentId, user.id!, user.schoolId!);
     }
 
     const result = await MasteryService.getStudentMastery(
