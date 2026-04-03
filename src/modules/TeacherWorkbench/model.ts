@@ -36,11 +36,11 @@ export type PlanStatus = 'planned' | 'created' | 'completed';
 // ─── CurriculumFramework ──────────────────────────────────────────────────────
 
 export interface ICurriculumFramework extends Document {
-  schoolId: Types.ObjectId;
+  schoolId: Types.ObjectId | null;
   name: string;
   description: string;
   isDefault: boolean;
-  createdBy: Types.ObjectId;
+  createdBy: Types.ObjectId | null;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -48,11 +48,11 @@ export interface ICurriculumFramework extends Document {
 
 const curriculumFrameworkSchema = new Schema<ICurriculumFramework>(
   {
-    schoolId: { type: Schema.Types.ObjectId, ref: 'School', required: true },
+    schoolId: { type: Schema.Types.ObjectId, ref: 'School', default: null },
     name: { type: String, required: true, trim: true },
     description: { type: String, default: '' },
     isDefault: { type: Boolean, default: false },
-    createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    createdBy: { type: Schema.Types.ObjectId, ref: 'User', default: null },
     isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true },
@@ -125,6 +125,7 @@ export interface ICurriculumCoverage extends Document {
   dateCovered: Date | null;
   notes: string;
   linkedLessonPlanId: Types.ObjectId | null;
+  isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -142,7 +143,8 @@ const curriculumCoverageSchema = new Schema<ICurriculumCoverage>(
     },
     dateCovered: { type: Date, default: null },
     notes: { type: String, default: '' },
-    linkedLessonPlanId: { type: Schema.Types.ObjectId, default: null },
+    linkedLessonPlanId: { type: Schema.Types.ObjectId, ref: 'LessonPlan', default: null },
+    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true },
 );

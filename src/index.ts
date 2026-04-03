@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import { config } from './config/env.js';
 import { connectDatabase } from './config/database.js';
 import { setupWorkers } from './jobs/index.js';
+import { seedSystemFrameworks } from './modules/CurriculumStructure/seed-frameworks.js';
 import app from './app.js';
 
 process.on('uncaughtException', (err) => {
@@ -17,6 +18,7 @@ process.on('unhandledRejection', (reason) => {
 
 const start = async () => {
   await connectDatabase();
+  await seedSystemFrameworks();
 
   await setupWorkers();
 
