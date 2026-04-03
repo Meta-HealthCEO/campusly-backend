@@ -59,7 +59,7 @@ export interface ITextbook extends Document {
   subjectId: Types.ObjectId;
   gradeId: Types.ObjectId;
   coverImageUrl: string;
-  chapters: IChapter[];
+  chapters: mongoose.Types.DocumentArray<IChapter>;
   status: TextbookStatus;
   schoolId: Types.ObjectId | null;
   createdBy: Types.ObjectId;
