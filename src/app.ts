@@ -36,6 +36,7 @@ import uniformRoutes from './modules/Uniform/routes.js';
 import achieverRoutes from './modules/Achiever/routes.js';
 import consentRoutes from './modules/Consent/routes.js';
 import reportRoutes from './modules/Report/routes.js';
+import principalReportRoutes from './modules/Report/principal-routes.js';
 import auditRoutes from './modules/Audit/routes.js';
 import migrationRoutes from './modules/Migration/routes.js';
 import learningRoutes from './modules/Learning/routes.js';
@@ -57,6 +58,19 @@ import digestRoutes from './modules/Digest/routes.js';
 import accountingRoutes from './modules/Accounting/routes.js';
 import schoolNewsRoutes from './modules/SchoolNews/routes.js';
 import timetableBuilderRoutes from './modules/TimetableBuilder/routes.js';
+import permissionRoutes from './modules/Permission/routes.js';
+import leaveRoutes from './modules/Leave/routes.js';
+import conferenceRoutes from './modules/Conference/routes.js';
+import visitorRoutes from './modules/Visitor/routes.js';
+import departmentRoutes from './modules/Department/routes.js';
+import admissionsRoutes from './modules/Admissions/routes.js';
+import incidentRoutes from './modules/Incident/routes.js';
+import wellbeingRoutes from './modules/Wellbeing/routes.js';
+import sgbRoutes from './modules/SGB/routes.js';
+import payrollRoutes from './modules/Payroll/routes.js';
+import budgetRoutes from './modules/Budget/routes.js';
+import assetRoutes from './modules/Asset/routes.js';
+import governanceRoutes from './modules/Governance/routes.js';
 
 const app = express();
 
@@ -103,6 +117,7 @@ app.use('/api/parents', parentRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/announcements', announcementRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/reports/principal', principalReportRoutes);
 app.use('/api/audit', auditRoutes);
 app.use('/api/staff', staffRoutes);
 app.use('/api/meetings', authenticate, meetingRoutes);
@@ -110,6 +125,12 @@ app.use('/api/notice-board', authenticate, noticeBoardRoutes);
 app.use('/api/digest', authenticate, digestRoutes);
 app.use('/api/accounting', authenticate, requireModule('fee'), accountingRoutes);
 app.use('/api/school-news', authenticate, schoolNewsRoutes);
+app.use('/api/permissions', authenticate, permissionRoutes);
+app.use('/api/leave', authenticate, requireModule('staff_leave'), leaveRoutes);
+app.use('/api/conferences', authenticate, requireModule('conference_booking'), conferenceRoutes);
+app.use('/api/visitors', authenticate, requireModule('visitor_management'), visitorRoutes);
+app.use('/api/departments', authenticate, departmentRoutes);
+app.use('/api/admissions', admissionsRoutes); // No global authenticate — public routes need to be unauthenticated; individual routes handle auth
 
 // API routes — Bolt-on modules (guarded)
 app.use('/api/fees', authenticate, requireModule('fee'), feeRoutes);
@@ -139,6 +160,13 @@ app.use('/api/ai-tutor', authenticate, requireModule('ai_tools'), aiTutorRoutes)
 app.use('/api/messaging', authenticate, messagingRoutes);
 app.use('/api/payment-gateway', paymentGatewayRoutes); // No global authenticate — webhook route needs to be unauthenticated; individual routes handle auth
 app.use('/api/whatsapp', whatsappRoutes); // No global authenticate — webhook route needs to be unauthenticated; individual routes handle auth
+app.use('/api/incidents', authenticate, requireModule('incident_wellbeing'), incidentRoutes);
+app.use('/api/wellbeing', authenticate, requireModule('incident_wellbeing'), wellbeingRoutes);
+app.use('/api/sgb', authenticate, sgbRoutes);
+app.use('/api/budget', authenticate, requireModule('budget'), budgetRoutes);
+app.use('/api/payroll', authenticate, requireModule('payroll'), payrollRoutes);
+app.use('/api/assets', authenticate, requireModule('asset_management'), assetRoutes);
+app.use('/api/governance', authenticate, governanceRoutes);
 
 // Static file serving — uploaded assets
 app.use('/uploads', express.static('uploads'));
