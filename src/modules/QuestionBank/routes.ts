@@ -11,6 +11,7 @@ import {
   updatePaperSchema,
   addQuestionSchema,
   paperQuerySchema,
+  generatePaperSchema,
 } from './validation.js';
 
 const router = Router();
@@ -76,6 +77,27 @@ router.patch(
   authorize(...HOD_ROLES),
   validate(reviewQuestionSchema),
   QuestionBankController.reviewQuestion,
+);
+
+// ─── AI Paper Generation (BEFORE :id to avoid route shadowing) ────────────
+
+router.post(
+  '/papers/generate',
+  authorize(...READ_ROLES),
+  validate(generatePaperSchema),
+  QuestionBankController.generatePaper,
+);
+
+router.get(
+  '/papers/:id/pdf',
+  authorize(...READ_ROLES),
+  QuestionBankController.downloadPaperPdf,
+);
+
+router.get(
+  '/papers/:id/memo-pdf',
+  authorize(...READ_ROLES),
+  QuestionBankController.downloadMemoPdf,
 );
 
 // ─── Paper Operations (BEFORE generic :id) ─────────────────────────────────

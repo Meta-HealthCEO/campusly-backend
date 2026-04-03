@@ -164,6 +164,27 @@ export const paperQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(20),
 });
 
+// ─── AI Paper Generation ──────────────────────────────────────────────────
+
+export const generatePaperSchema = z.object({
+  subjectId: objectIdSchema,
+  gradeId: objectIdSchema,
+  term: z.number().int().min(1).max(4),
+  year: z.number().int().min(2020),
+  paperType: paperTypeEnum,
+  totalMarks: z.number().int().min(1),
+  duration: z.number().int().min(1),
+  topicNodeIds: z.array(objectIdSchema).default([]),
+  cognitiveWeighting: z.object({
+    knowledge: z.number().min(0).max(100),
+    routine: z.number().min(0).max(100),
+    complex: z.number().min(0).max(100),
+    problemSolving: z.number().min(0).max(100),
+  }).optional(),
+  difficulty: z.enum(['easy', 'balanced', 'challenging']).default('balanced'),
+  instructions: z.string().default(''),
+}).strict();
+
 // ─── Inferred Types ────────────────────────────────────────────────────────
 
 export type CreateQuestionInput = z.infer<typeof createQuestionSchema>;
@@ -175,3 +196,4 @@ export type CreatePaperInput = z.infer<typeof createPaperSchema>;
 export type UpdatePaperInput = z.infer<typeof updatePaperSchema>;
 export type AddQuestionInput = z.infer<typeof addQuestionSchema>;
 export type PaperQueryInput = z.infer<typeof paperQuerySchema>;
+export type GeneratePaperInput = z.infer<typeof generatePaperSchema>;
