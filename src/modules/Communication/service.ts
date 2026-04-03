@@ -1,11 +1,10 @@
 import mongoose from 'mongoose';
 import {
   MessageTemplate,
-  IMessageTemplate,
+  type IMessageTemplate,
   BulkMessage,
-  IBulkMessage,
+  type IBulkMessage,
   MessageLog,
-  IMessageLog,
 } from './model.js';
 import { Student } from '../Student/model.js';
 import { Parent } from '../Parent/model.js';
@@ -15,6 +14,10 @@ import { PAGINATION_DEFAULTS } from '../../common/constants.js';
 interface ListQuery {
   page?: number;
   limit?: number;
+  channel?: string;
+  category?: string;
+  search?: string;
+  isActive?: boolean;
 }
 
 function getPagination(query: ListQuery) {
@@ -74,7 +77,18 @@ export class CommunicationModuleService {
 
   static async listTemplates(schoolId: string, query: ListQuery) {
     const { page, limit, skip } = getPagination(query);
-    const filter = { schoolId, isDeleted: false };
+    const filter: Record<string, unknown> = { schoolId, isDeleted: false };
+
+    if (query.channel) filter.channel = query.channel;
+    if (query.category) filter.category = query.category;
+    if (query.isActive !== undefined) filter.isActive = query.isActive;
+    if (query.search) {
+      const escaped = query.search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      filter.$or = [
+        { name: { $regex: escaped, $options: 'i' } },
+        { body: { $regex: escaped, $options: 'i' } },
+      ];
+    }
 
     const [data, total] = await Promise.all([
       MessageTemplate.find(filter).sort('-createdAt').skip(skip).limit(limit).lean(),
@@ -230,8 +244,8 @@ export class CommunicationModuleService {
 
   // ─── Read Receipts ────────────────────────────────────────────────────────
 
-  static async markMessageRead(userId: string, messageId: string): Promise<IBulkMessage> {
-    const message = await BulkMessage.findOne({ _id: messageId, isDeleted: false });
+  static async markMessageRead(schoolId: string, userId: string, messageId: string): Promise<IBulkMessage> {
+    const message = await BulkMessage.findOne({ _id: messageId, schoolId, isDeleted: false });
     if (!message) throw new NotFoundError('Message not found');
 
     const userObjId = new mongoose.Types.ObjectId(userId);
@@ -239,7 +253,7 @@ export class CommunicationModuleService {
     if (alreadyRead) return message;
 
     const updated = await BulkMessage.findOneAndUpdate(
-      { _id: messageId, isDeleted: false },
+      { _id: messageId, schoolId, isDeleted: false },
       { $push: { readBy: { userId: userObjId, readAt: new Date() } } },
       { new: true },
     );
@@ -289,7 +303,14 @@ export class CommunicationModuleService {
 
   // ─── Delivery Stats ───────────────────────────────────────────────────────
 
-  static async getDeliveryStats(bulkMessageId: string) {
+  static async getDeliveryStats(bulkMessageId: string, schoolId: string) {
+    const message = await BulkMessage.findOne({
+      _id: bulkMessageId,
+      schoolId: new mongoose.Types.ObjectId(schoolId),
+      isDeleted: false,
+    }).lean();
+    if (!message) throw new NotFoundError('Bulk message not found');
+
     const stats = await MessageLog.aggregate([
       { $match: { bulkMessageId: new mongoose.Types.ObjectId(bulkMessageId) } },
       {
@@ -310,7 +331,14 @@ export class CommunicationModuleService {
     return stats;
   }
 
-  static async getMessageLogs(bulkMessageId: string, query: ListQuery) {
+  static async getMessageLogs(bulkMessageId: string, schoolId: string, query: ListQuery) {
+    const message = await BulkMessage.findOne({
+      _id: bulkMessageId,
+      schoolId: new mongoose.Types.ObjectId(schoolId),
+      isDeleted: false,
+    }).lean();
+    if (!message) throw new NotFoundError('Bulk message not found');
+
     const { page, limit, skip } = getPagination(query);
     const filter = { bulkMessageId: new mongoose.Types.ObjectId(bulkMessageId) };
 
