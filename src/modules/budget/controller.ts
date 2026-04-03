@@ -202,6 +202,22 @@ export class BudgetController {
     res.json(apiResponse(true, data, 'Budget alerts retrieved successfully'));
   }
 
+  static async exportReport(req: Request, res: Response): Promise<void> {
+    const schoolId = (req.query.schoolId as string) || req.user!.schoolId!;
+    const budgetId = req.query.budgetId as string;
+
+    const { ExportService } = await import('./service-export.js');
+    const wb = await ExportService.generateBudgetExcel(schoolId, budgetId);
+
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    );
+    res.setHeader('Content-Disposition', `attachment; filename="budget-report.xlsx"`);
+    await wb.xlsx.write(res);
+    res.end();
+  }
+
   static async uploadReceipt(req: Request, res: Response): Promise<void> {
     const multerReq = req as Request & { file?: Express.Multer.File };
     if (!multerReq.file) {

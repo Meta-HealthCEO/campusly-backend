@@ -177,6 +177,12 @@ router.get(
   BudgetController.getComparison,
 );
 
+router.get(
+  '/reports/export',
+  authorize('super_admin', 'school_admin'),
+  BudgetController.exportReport,
+);
+
 // ─── Alerts ─────────────────────────────────────────────────────────────────
 
 router.get(
