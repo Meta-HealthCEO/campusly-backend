@@ -81,7 +81,10 @@ export const bulkImportSchema = z.object({
 
 export const nodeQuerySchema = z.object({
   frameworkId: objectIdSchema.optional(),
-  parentId: objectIdSchema.nullable().optional(),
+  parentId: z.preprocess(
+    (val) => val === 'null' ? null : val,
+    objectIdSchema.nullable(),
+  ).optional(),
   type: nodeTypeEnum.optional(),
   search: z.string().optional(),
   page: z.coerce.number().int().min(1).default(1),

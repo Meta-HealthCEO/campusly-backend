@@ -87,7 +87,10 @@ export class NodesService {
           connectFromField: '_id',
           connectToField: 'parentId',
           as: 'descendants',
-          restrictSearchWithMatch: { isDeleted: false },
+          restrictSearchWithMatch: {
+            isDeleted: false,
+            $or: [{ schoolId: null }, { schoolId: soid }],
+          },
         },
       },
       { $project: { descendants: 1 } },
@@ -192,7 +195,10 @@ export class NodesService {
           connectFromField: '_id',
           connectToField: 'parentId',
           as: 'descendants',
-          restrictSearchWithMatch: { isDeleted: false },
+          restrictSearchWithMatch: {
+            isDeleted: false,
+            $or: [{ schoolId: null }, { schoolId: soid }],
+          },
         },
       },
       { $project: { descendantIds: '$descendants._id' } },
