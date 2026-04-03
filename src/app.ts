@@ -73,6 +73,7 @@ import assetRoutes from './modules/Asset/routes.js';
 import governanceRoutes from './modules/Governance/routes.js';
 import curriculumRoutes from './modules/Curriculum/routes.js';
 import pastoralRoutes from './modules/Pastoral/routes.js';
+import classroomRoutes from './modules/Classroom/routes.js';
 
 const app = express();
 
@@ -171,6 +172,7 @@ app.use('/api/assets', authenticate, requireModule('asset_management'), assetRou
 app.use('/api/governance', authenticate, governanceRoutes);
 app.use('/api/curriculum', authenticate, curriculumRoutes);
 app.use('/api/pastoral', authenticate, pastoralRoutes);
+app.use('/api/classroom', authenticate, classroomRoutes);
 
 // Static file serving — uploaded assets
 app.use('/uploads', express.static('uploads'));
