@@ -4,8 +4,8 @@ import { objectIdSchema } from '../../common/validation.js';
 // ─── Block Types ────────────────────────────────────────────────────────────
 
 const blockTypeEnum = z.enum([
-  'text', 'heading', 'image', 'video', 'audio', 'equation',
-  'code', 'table', 'multiple_choice', 'short_answer', 'matching',
+  'text', 'image', 'video', 'quiz', 'drag_drop', 'fill_blank',
+  'match_columns', 'ordering', 'hotspot', 'step_reveal', 'code',
 ]);
 
 const resourceTypeEnum = z.enum([

@@ -38,7 +38,7 @@ export class ResourcesService {
         // School approved visible to school members
         { schoolId: soid, status: 'approved' },
         // Own drafts/rejected visible to creator
-        { createdBy: uoid, status: { $in: ['draft', 'rejected'] } },
+        { createdBy: uoid, schoolId: soid, status: { $in: ['draft', 'rejected'] } },
       ];
 
       // HOD/admin can see pending_review for their school
@@ -187,7 +187,7 @@ export class ResourcesService {
     }
 
     const updated = await ContentResource.findOneAndUpdate(
-      { _id: oid, isDeleted: false },
+      { _id: oid, schoolId: soid, isDeleted: false },
       { $set: update },
       { new: true },
     )
@@ -221,7 +221,7 @@ export class ResourcesService {
     }
 
     await ContentResource.findOneAndUpdate(
-      { _id: oid, isDeleted: false },
+      { _id: oid, schoolId: soid, isDeleted: false },
       { $set: { isDeleted: true } },
     );
 

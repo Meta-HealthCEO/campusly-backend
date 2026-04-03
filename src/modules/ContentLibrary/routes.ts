@@ -55,7 +55,7 @@ router.put(
 
 router.delete(
   '/resources/:id',
-  authorize(...ADMIN_ROLES),
+  authorize(...READ_ROLES),
   ContentLibraryController.deleteResource,
 );
 

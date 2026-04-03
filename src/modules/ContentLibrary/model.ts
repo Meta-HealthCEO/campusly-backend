@@ -4,16 +4,16 @@ import mongoose, { Schema, Document, Types } from 'mongoose';
 
 export const BLOCK_TYPES = [
   'text',
-  'heading',
   'image',
   'video',
-  'audio',
-  'equation',
+  'quiz',
+  'drag_drop',
+  'fill_blank',
+  'match_columns',
+  'ordering',
+  'hotspot',
+  'step_reveal',
   'code',
-  'table',
-  'multiple_choice',
-  'short_answer',
-  'matching',
 ] as const;
 
 export type BlockType = (typeof BLOCK_TYPES)[number];
