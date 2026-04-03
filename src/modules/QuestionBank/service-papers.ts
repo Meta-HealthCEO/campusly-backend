@@ -248,7 +248,7 @@ export class PapersService {
       { $inc: { usageCount: 1 } },
     );
 
-    const allQuestions = await collectPaperQuestions(paper.sections);
+    const allQuestions = await collectPaperQuestions(paper.sections, schoolId);
     paper.capsCompliance = await ComplianceService.calculateCompliance(paper, allQuestions);
 
     await paper.save();
@@ -294,7 +294,7 @@ export class PapersService {
       { $inc: { usageCount: -1 } },
     );
 
-    const allQuestions = await collectPaperQuestions(paper.sections);
+    const allQuestions = await collectPaperQuestions(paper.sections, schoolId);
     if (allQuestions.length > 0) {
       paper.capsCompliance = await ComplianceService.calculateCompliance(paper, allQuestions);
     } else {
@@ -323,7 +323,7 @@ export class PapersService {
       throw new BadRequestError('Only draft papers can be finalised');
     }
 
-    const allQuestions = await collectPaperQuestions(paper.sections);
+    const allQuestions = await collectPaperQuestions(paper.sections, schoolId);
     if (allQuestions.length === 0) {
       throw new BadRequestError('Paper must have at least one question');
     }

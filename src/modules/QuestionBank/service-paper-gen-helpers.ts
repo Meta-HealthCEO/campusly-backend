@@ -205,7 +205,7 @@ async function saveGeneratedQuestions(
     difficulty: data.difficulty === 'easy' ? 2 : data.difficulty === 'challenging' ? 4 : 3,
     tags: ['ai_paper_generation'],
     source: 'ai_generated' as const,
-    status: 'draft' as const,
+    status: 'approved' as const,
     createdBy: uoid,
   }));
 

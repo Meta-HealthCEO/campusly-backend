@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import { Question, AssessmentPaper } from './model.js';
 import type { IQuestion } from './model.js';
+import { Grade } from '../Academic/model.js';
 import { ComplianceService } from './service-compliance.js';
 import { BadRequestError } from '../../common/errors.js';
 import {
@@ -75,10 +76,12 @@ export class PaperGenerationService {
     const sections = organiseSections(allQuestions);
 
     // ── Build title ──
+    const gradeDoc = await Grade.findById(groid).lean();
+    const gradeLabel = gradeDoc?.name ?? data.gradeId;
     const paperTypeLabel = data.paperType
       .replace(/_/g, ' ')
       .replace(/\b\w/g, (c) => c.toUpperCase());
-    const title = `Grade ${data.gradeId} – ${paperTypeLabel} – Term ${data.term} ${data.year}`;
+    const title = `${gradeLabel} – ${paperTypeLabel} – Term ${data.term} ${data.year}`;
 
     // ── Create the paper ──
     const actualTotal = allQuestions.reduce((sum, q) => sum + q.marks, 0);

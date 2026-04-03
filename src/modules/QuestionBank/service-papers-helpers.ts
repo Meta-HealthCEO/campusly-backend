@@ -10,6 +10,7 @@ interface SectionLike {
 
 export async function collectPaperQuestions(
   sections: SectionLike[],
+  schoolId: string,
 ): Promise<IQuestion[]> {
   const questionIds = sections.flatMap((s) =>
     s.questions.map((q) => q.questionId),
@@ -17,9 +18,12 @@ export async function collectPaperQuestions(
 
   if (questionIds.length === 0) return [];
 
+  const soid = new mongoose.Types.ObjectId(schoolId);
+
   const questions = await Question.find({
     _id: { $in: questionIds },
     isDeleted: false,
+    $or: [{ schoolId: null }, { schoolId: soid }],
   })
     .populate({ path: 'curriculumNodeId', select: 'title code type' })
     .lean();
@@ -81,7 +85,7 @@ export async function checkCompliance(id: string, schoolId: string) {
 
   if (!paper) throw new NotFoundError('Assessment paper not found');
 
-  const allQuestions = await collectPaperQuestions(paper.sections);
+  const allQuestions = await collectPaperQuestions(paper.sections, schoolId);
   if (allQuestions.length === 0) {
     throw new BadRequestError('Paper has no questions to check');
   }

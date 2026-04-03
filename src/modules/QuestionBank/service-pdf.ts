@@ -70,7 +70,7 @@ async function loadPaperData(paperId: string, schoolId: string): Promise<PaperDa
 
   if (!paper) throw new NotFoundError('Assessment paper not found');
 
-  const allQuestions = await collectPaperQuestions(paper.sections);
+  const allQuestions = await collectPaperQuestions(paper.sections, schoolId);
   const questionsMap = new Map<string, IQuestion>();
   for (const q of allQuestions) {
     questionsMap.set(q._id.toString(), q);
