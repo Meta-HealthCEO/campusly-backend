@@ -11,6 +11,7 @@ export const createHomeworkSchema = z.object({
   subjectId: objectIdSchema,
   classId: objectIdSchema,
   schoolId: objectIdSchema,
+  resourceId: objectIdSchema.optional(),
   dueDate: z.string().datetime(),
   attachments: z.array(z.string()).optional(),
   totalMarks: z.number().min(1, 'Total marks must be at least 1'),

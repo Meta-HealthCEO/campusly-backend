@@ -11,6 +11,7 @@ export interface IHomework extends Document {
   classId: Types.ObjectId;
   schoolId: Types.ObjectId;
   teacherId: Types.ObjectId;
+  resourceId?: Types.ObjectId;
   dueDate: Date;
   attachments: string[];
   totalMarks: number;
@@ -55,6 +56,11 @@ const homeworkSchema = new Schema<IHomework>(
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
+    },
+    resourceId: {
+      type: Schema.Types.ObjectId,
+      ref: 'ContentResource',
+      default: null,
     },
     dueDate: {
       type: Date,

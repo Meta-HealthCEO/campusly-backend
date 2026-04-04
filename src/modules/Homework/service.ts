@@ -61,6 +61,7 @@ export class HomeworkService {
         .populate('subjectId', 'name code')
         .populate('classId', 'name')
         .populate('teacherId', 'firstName lastName email')
+        .populate('resourceId', 'title type status blocks')
         .sort(sortField)
         .skip(skip)
         .limit(limit)
@@ -77,6 +78,7 @@ export class HomeworkService {
       .populate('subjectId', 'name code')
       .populate('classId', 'name')
       .populate('teacherId', 'firstName lastName email')
+      .populate('resourceId', 'title type status blocks')
       .lean();
 
     if (!homework) {
@@ -94,7 +96,8 @@ export class HomeworkService {
     )
       .populate('subjectId', 'name code')
       .populate('classId', 'name')
-      .populate('teacherId', 'firstName lastName email');
+      .populate('teacherId', 'firstName lastName email')
+      .populate('resourceId', 'title type status blocks');
 
     if (!homework) {
       throw new NotFoundError('Homework not found');
@@ -219,6 +222,7 @@ export class HomeworkService {
       .populate('subjectId', 'name code')
       .populate('classId', 'name')
       .populate('teacherId', 'firstName lastName')
+      .populate('resourceId', 'title type status blocks')
       .sort({ dueDate: -1 })
       .lean();
 
