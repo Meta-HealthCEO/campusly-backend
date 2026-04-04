@@ -4,7 +4,7 @@ import type { IQuestionOption } from './model.js';
 import { CurriculumNode } from '../CurriculumStructure/model.js';
 import { AIService } from '../../services/ai.service.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
-import type { GenerateQuestionsInput } from './validation.js';
+import type { GenerateQuestionsInput, ExtractFromPaperInput } from './validation.js';
 
 const DAILY_LIMIT = 20;
 
@@ -100,6 +100,46 @@ export class GenerationService {
     const questions = await Question.insertMany(docs);
     return questions.map((q) => q.toObject());
   }
+
+  /**
+   * Extract questions from an uploaded paper image using AI vision.
+   * Returns parsed question objects (NOT saved) so the teacher can review first.
+   */
+  static async extractFromPaper(
+    schoolId: string,
+    userId: string,
+    data: ExtractFromPaperInput,
+  ) {
+    const systemPrompt = [
+      'You are an expert at reading South African school exam papers.',
+      'You will be shown a photo/scan of an exam paper page.',
+      'Extract every question you can identify from the page.',
+      'Respond ONLY with a valid JSON array of question objects.',
+      'Each object must have:',
+      '  stem (string — the full question text),',
+      '  type (one of: mcq, true_false, short_answer, structured, essay, match, fill_blank, calculation, diagram_label, case_study),',
+      '  options (array of {label, text, isCorrect} for MCQ/true_false — set isCorrect to false if answer is unknown, empty array for other types),',
+      '  answer (string — if visible on the paper, otherwise empty string),',
+      '  markingRubric (string — if visible, otherwise empty string),',
+      '  marks (number — the mark allocation if visible, otherwise 1),',
+      '  capsLevel (one of: knowledge, routine, complex, problem_solving — your best estimate),',
+      '  difficulty (number 1-5 — your best estimate).',
+      'If no questions are found, return an empty array [].',
+      'Do NOT include section headers, instructions, or non-question text.',
+    ].join(' ');
+
+    const userText = 'Extract all exam/test questions from this paper image.';
+
+    const result = await AIService.generateVisionCompletion(
+      systemPrompt,
+      userText,
+      data.image,
+      data.imageType as 'image/jpeg' | 'image/png' | 'image/webp',
+      { maxTokens: 8192, temperature: 0.2 },
+    );
+
+    return parseExtractedQuestions(result.text);
+  }
 }
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -156,5 +196,67 @@ function parseAIQuestions(
         marks: data.difficulty,
       },
     ];
+  }
+}
+
+// ─── Extract helpers ──────────────────────────────────────────────────────
+
+interface ExtractedQuestion {
+  stem: string;
+  type: string;
+  options: IQuestionOption[];
+  answer: string;
+  markingRubric: string;
+  marks: number;
+  capsLevel: string;
+  difficulty: number;
+}
+
+const VALID_TYPES = new Set([
+  'mcq', 'true_false', 'short_answer', 'structured', 'essay',
+  'match', 'fill_blank', 'calculation', 'diagram_label', 'case_study',
+]);
+
+const VALID_CAPS = new Set(['knowledge', 'routine', 'complex', 'problem_solving']);
+
+function parseExtractedQuestions(response: string): ExtractedQuestion[] {
+  try {
+    const jsonMatch = response.match(/\[[\s\S]*\]/);
+    if (!jsonMatch) return [];
+
+    const parsed: unknown[] = JSON.parse(jsonMatch[0]);
+    if (!Array.isArray(parsed)) return [];
+
+    return parsed.map((item: unknown) => {
+      const q = item as Record<string, unknown>;
+
+      const options: IQuestionOption[] = Array.isArray(q.options)
+        ? (q.options as unknown[]).map((opt: unknown) => {
+            const o = opt as Record<string, unknown>;
+            return {
+              label: typeof o.label === 'string' ? o.label : '',
+              text: typeof o.text === 'string' ? o.text : '',
+              isCorrect: typeof o.isCorrect === 'boolean' ? o.isCorrect : false,
+            };
+          })
+        : [];
+
+      const rawType = typeof q.type === 'string' ? q.type : 'short_answer';
+      const rawCaps = typeof q.capsLevel === 'string' ? q.capsLevel : 'knowledge';
+
+      return {
+        stem: typeof q.stem === 'string' ? q.stem : '',
+        type: VALID_TYPES.has(rawType) ? rawType : 'short_answer',
+        options,
+        answer: typeof q.answer === 'string' ? q.answer : '',
+        markingRubric: typeof q.markingRubric === 'string' ? q.markingRubric : '',
+        marks: typeof q.marks === 'number' && q.marks >= 1 ? q.marks : 1,
+        capsLevel: VALID_CAPS.has(rawCaps) ? rawCaps : 'knowledge',
+        difficulty: typeof q.difficulty === 'number' && q.difficulty >= 1 && q.difficulty <= 5
+          ? q.difficulty : 3,
+      };
+    }).filter((q: ExtractedQuestion) => q.stem.length > 0);
+  } catch {
+    return [];
   }
 }

@@ -6,6 +6,7 @@ import {
   updateQuestionSchema,
   reviewQuestionSchema,
   generateQuestionsSchema,
+  extractFromPaperSchema,
   questionQuerySchema,
   createPaperSchema,
   updatePaperSchema,
@@ -27,6 +28,13 @@ router.post(
   authorize(...READ_ROLES),
   validate(generateQuestionsSchema),
   QuestionBankController.generateQuestions,
+);
+
+router.post(
+  '/questions/extract-from-paper',
+  authorize(...READ_ROLES),
+  validate(extractFromPaperSchema),
+  QuestionBankController.extractFromPaper,
 );
 
 // ─── Questions CRUD ────────────────────────────────────────────────────────

@@ -143,6 +143,21 @@ export class QuestionBankController {
     res.status(201).json(apiResponse(true, questions, 'Questions generated successfully'));
   }
 
+  static async extractFromPaper(req: Request, res: Response): Promise<void> {
+    const user = getUser(req);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
+    const questions = await GenerationService.extractFromPaper(
+      schoolId,
+      user.id,
+      req.body,
+    );
+    res.json(apiResponse(true, questions, 'Questions extracted from paper'));
+  }
+
   // ─── Papers CRUD ─────────────────────────────────────────────────────────
 
   static async listPapers(req: Request, res: Response): Promise<void> {

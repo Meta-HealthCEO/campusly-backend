@@ -185,6 +185,15 @@ export const generatePaperSchema = z.object({
   instructions: z.string().default(''),
 }).strict();
 
+// ─── Extract From Paper (Vision) ──────────────────────────────────────────
+
+export const extractFromPaperSchema = z.object({
+  image: z.string().min(1, 'Base64 image data is required'),
+  imageType: z.enum(['image/jpeg', 'image/png', 'image/webp']),
+  subjectId: objectIdSchema,
+  gradeId: objectIdSchema,
+}).strict();
+
 // ─── Inferred Types ────────────────────────────────────────────────────────
 
 export type CreateQuestionInput = z.infer<typeof createQuestionSchema>;
@@ -197,3 +206,4 @@ export type UpdatePaperInput = z.infer<typeof updatePaperSchema>;
 export type AddQuestionInput = z.infer<typeof addQuestionSchema>;
 export type PaperQueryInput = z.infer<typeof paperQuerySchema>;
 export type GeneratePaperInput = z.infer<typeof generatePaperSchema>;
+export type ExtractFromPaperInput = z.infer<typeof extractFromPaperSchema>;
