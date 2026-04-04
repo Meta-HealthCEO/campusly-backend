@@ -4,7 +4,7 @@ import Anthropic from '@anthropic-ai/sdk';
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY || '';
 const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
 const MAX_CONCURRENT = 5;
-const TIMEOUT_MS = 60_000;
+const TIMEOUT_MS = 180_000; // 3 minutes for content generation
 
 let activeCalls = 0;
 const waitQueue: Array<() => void> = [];
