@@ -1,13 +1,18 @@
 import crypto from 'crypto';
 import mongoose from 'mongoose';
 import { ContentResource } from './model.js';
-import type { IContentBlock } from './model.js';
+import type { IContentBlock, BlockType, ResourceFormat } from './model.js';
 import { CurriculumNode } from '../CurriculumStructure/model.js';
 import { AIService } from '../../services/ai.service.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
+import type { ICurriculumNode } from '../CurriculumStructure/model.js';
 import type { GenerateContentInput } from './validation.js';
 
 const DAILY_LIMIT = 20;
+
+const INTERACTIVE_TYPES: ReadonlySet<string> = new Set([
+  'quiz', 'fill_blank', 'drag_drop', 'match_columns', 'ordering', 'hotspot',
+]);
 
 export class GenerationService {
   static async generateContent(
@@ -15,7 +20,6 @@ export class GenerationService {
     userId: string,
     data: GenerateContentInput,
   ) {
-    // ── Rate limit: 20 per day per teacher ──
     const startOfDay = new Date();
     startOfDay.setHours(0, 0, 0, 0);
 
@@ -32,7 +36,6 @@ export class GenerationService {
       );
     }
 
-    // ── Fetch curriculum node for context ──
     const node = await CurriculumNode.findOne({
       _id: new mongoose.Types.ObjectId(data.curriculumNodeId),
       isDeleted: false,
@@ -40,47 +43,24 @@ export class GenerationService {
 
     if (!node) throw new NotFoundError('Curriculum node not found');
 
-    // ── Build prompt ──
-    const blockTypesStr = data.blockTypes.join(', ');
-    const systemPrompt = [
-      'You are an expert educational content creator for South African schools.',
-      'You create content aligned with the CAPS curriculum.',
-      'Respond ONLY with a valid JSON array of content blocks.',
-      'Each block must have: blockId (string UUID), type (one of the requested types),',
-      'order (integer starting at 0), content (string with the actual content),',
-      'points (number, 0 for non-question blocks),',
-      'hints (array of strings, empty for non-question blocks),',
-      'explanation (string, empty for non-question blocks).',
-      'For multiple_choice blocks, use JSON in the content field with question, options array, and correctIndex.',
-      'For matching blocks, use JSON in the content field with pairs array of {left, right}.',
-    ].join(' ');
+    const systemPrompt = buildSystemPrompt();
+    const userPrompt = buildUserPrompt(data, node);
 
-    const userPrompt = [
-      `Create a ${data.type.replace('_', ' ')} resource for:`,
-      `Topic: ${node.title}${node.description ? ` — ${node.description}` : ''}`,
-      `Term: ${data.term}`,
-      `Difficulty: ${data.difficulty}/5`,
-      `Required block types: ${blockTypesStr}`,
-      data.instructions ? `Additional instructions: ${data.instructions}` : '',
-    ]
-      .filter(Boolean)
-      .join('\n');
-
-    // ── Call AI ──
     const aiResponse = await AIService.generateCompletion(systemPrompt, userPrompt, {
-      maxTokens: 4096,
-      temperature: 0.7,
+      maxTokens: 8192,
+      temperature: 0.4,
     });
 
-    // ── Parse response to blocks ──
     const blocks = parseAIResponseToBlocks(aiResponse, data.blockTypes);
+    const format: ResourceFormat = blocks.some((b) => INTERACTIVE_TYPES.has(b.type))
+      ? 'interactive'
+      : 'static';
 
-    // ── Save as draft ──
     const resource = await ContentResource.create({
       curriculumNodeId: new mongoose.Types.ObjectId(data.curriculumNodeId),
       schoolId: new mongoose.Types.ObjectId(schoolId),
       type: data.type,
-      format: 'static',
+      format,
       title: `${node.title} — ${data.type.replace('_', ' ')}`,
       blocks,
       source: 'ai_generated',
@@ -101,14 +81,190 @@ export class GenerationService {
   }
 }
 
-// ─── Helpers ────────────────────────────────────────────────────────────────
+function buildSystemPrompt(): string {
+  return `You are a world-class South African CAPS curriculum content author. You produce rich, pedagogically sound educational resources for South African learners from Grade R to Grade 12.
+
+RESPONSE FORMAT
+Respond with ONLY a valid JSON array of content blocks. No markdown fences, no preamble, no commentary — just the JSON array.
+
+BLOCK SCHEMA
+Each element in the array must be an object with these fields:
+- "blockId": a unique UUID string (e.g. "b1", "b2", … or a full UUID)
+- "type": one of "text", "image", "quiz", "fill_blank", "drag_drop", "match_columns", "ordering", "hotspot", "step_reveal", "code"
+- "order": integer starting at 0
+- "content": string (see content rules per type below)
+- "points": number (0 for non-question blocks, positive integer for question blocks)
+- "hints": array of hint strings (empty for non-question blocks)
+- "explanation": string with a full worked explanation (empty for non-question blocks)
+- "metadata": object with type-specific data (see below)
+
+CONTENT RULES BY BLOCK TYPE
+
+1. TEXT blocks (type: "text")
+   - Content is rich Markdown with:
+     * Headings using ## and ###
+     * **Bold** and *italic* for emphasis
+     * Bullet lists and numbered lists
+     * Inline LaTeX math: $x^2 + y^2 = r^2$
+     * Display LaTeX math on its own line: $$\\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$$
+     * GFM tables for comparisons and data
+     * Blockquotes (> ) for tips, memory aids, exam advice
+   - metadata: {}
+
+2. QUIZ blocks (type: "quiz")
+   - Content is the question text (may include LaTeX math)
+   - metadata MUST contain:
+     * "questionType": "mcq"
+     * "options": array of 4 option strings
+     * "correctAnswer": the exact text of the correct option
+   - points: 1-3 depending on difficulty
+   - hints: 1-2 helpful hints
+   - explanation: full worked solution
+
+3. FILL_BLANK blocks (type: "fill_blank")
+   - Content uses ___ (triple underscore) to mark each blank
+   - metadata MUST contain:
+     * "blanks": array of correct answers in order
+   - points: 1 per blank
+   - hints: 1 hint per blank
+   - explanation: why each answer is correct
+
+4. IMAGE blocks (type: "image")
+   - For diagrams, flowcharts, hierarchies, cycles, and processes
+   - Content is a valid Mermaid diagram string (graph TD, flowchart LR, sequenceDiagram, classDiagram, pie, etc.)
+   - metadata MUST contain:
+     * "renderer": "mermaid"
+     * "caption": descriptive caption string
+   - points: 0, hints: [], explanation: ""
+
+5. MATCH_COLUMNS blocks (type: "match_columns")
+   - Content describes the matching task
+   - metadata MUST contain:
+     * "pairs": array of {"left": "...", "right": "..."} objects
+   - points: 1 per pair
+   - hints and explanation as appropriate
+
+6. ORDERING blocks (type: "ordering")
+   - Content describes what to order
+   - metadata MUST contain:
+     * "correctOrder": array of items in the correct sequence
+   - points: based on number of items
+
+7. DRAG_DROP blocks (type: "drag_drop")
+   - Content describes the activity
+   - metadata MUST contain:
+     * "items": array of draggable item strings
+     * "targets": array of target zone strings
+     * "correctMapping": object mapping item to target
+
+SOUTH AFRICAN CONTEXT
+- Use South African English spelling (colour, metre, organisation)
+- Currency examples in Rand (R) — e.g. "R150", "R2 500"
+- Use SA geography: Table Mountain, Kruger National Park, Drakensberg, Orange River, Limpopo
+- Reference SA flora/fauna: protea, springbok, African penguin, baobab tree
+- Use SA names in examples: Thabo, Naledi, Sipho, Ayanda, Fatima, Pieter
+- Reference SA context: load shedding, taxi routes, braai, Ubuntu philosophy
+- Align to CAPS curriculum standards and terminology
+
+PEDAGOGICAL STRUCTURE
+For LESSONS: follow this flow:
+  1. Introduction / Hook — engage curiosity with a real-world SA scenario
+  2. Key Concepts — clear explanations with definitions, LaTeX math where applicable
+  3. Worked Examples — step-by-step solutions
+  4. Visual Aid — Mermaid diagram if the topic benefits from it
+  5. Practice — interactive quiz and fill_blank blocks
+  6. Summary — key takeaways in a blockquote
+
+For WORKSHEETS: structure with progressive difficulty:
+  - Section A: Easy recall questions (quiz/fill_blank)
+  - Section B: Medium application questions
+  - Section C: Challenging analysis/evaluation questions
+  Include a mix of question types. Start with a text block stating instructions.
+
+For ACTIVITIES: hands-on, exploratory:
+  - Context-setting text block
+  - Step-by-step instructions
+  - Interactive checkpoints (quiz/fill_blank)
+  - Reflection or discussion prompt
+
+For STUDY_NOTES: comprehensive reference:
+  - Topic overview with key definitions
+  - Detailed explanations with examples
+  - Summary tables (GFM markdown)
+  - Memory aids in blockquotes
+  - Self-check quiz at the end
+
+For WORKED_EXAMPLES: step-by-step problem solving:
+  - Problem statement
+  - Method/approach explanation
+  - Step-by-step solution with LaTeX math
+  - Common mistakes to avoid
+  - Practice problem (quiz block)
+
+BLOCK COUNT REQUIREMENTS
+- Lessons: 8–12 blocks
+- Worksheets: 6–10 blocks
+- Activities: 5–8 blocks
+- Study notes: 8–12 blocks
+- Worked examples: 6–10 blocks
+
+MANDATORY MINIMUMS
+- At least 2 interactive blocks (quiz or fill_blank) per resource
+- At least 1 Mermaid diagram (image block) when the topic benefits from visual representation (processes, hierarchies, cycles, relationships, data flow)
+- ALL mathematical expressions must use LaTeX notation (inline $ or display $$)`;
+}
+
+function buildUserPrompt(
+  data: GenerateContentInput,
+  node: Pick<ICurriculumNode, 'title' | 'description'>,
+): string {
+  const nodeTitle = node.title;
+  const nodeDesc = node.description;
+  const difficultyLabels: Record<number, string> = {
+    1: 'Very Easy (Grade-entry level)',
+    2: 'Easy (Below average)',
+    3: 'Medium (Grade-appropriate)',
+    4: 'Hard (Above average)',
+    5: 'Very Hard (Extension / Olympiad prep)',
+  };
+  const diffLabel = difficultyLabels[data.difficulty] ?? `${data.difficulty}/5`;
+  const typeLabel = data.type.replace(/_/g, ' ');
+  const blockTypesStr = data.blockTypes.join(', ');
+
+  const lines = [
+    `Generate a CAPS-aligned ${typeLabel} for South African learners.`,
+    ``,
+    `TOPIC: ${nodeTitle}${nodeDesc ? ` — ${nodeDesc}` : ''}`,
+    `TERM: ${data.term}`,
+    `DIFFICULTY: ${diffLabel}`,
+    `REQUESTED BLOCK TYPES: ${blockTypesStr}`,
+    ``,
+    `Requirements:`,
+    `- Use the requested block types: ${blockTypesStr}`,
+    `- Include at least 2 interactive blocks (quiz or fill_blank)`,
+    `- Include a Mermaid diagram if the topic benefits from visual representation`,
+    `- All math must use LaTeX ($ for inline, $$ for display)`,
+    `- Use South African context, names, and examples throughout`,
+    `- Follow the pedagogical structure for a "${typeLabel}" as described in your instructions`,
+  ];
+
+  if (data.instructions) {
+    lines.push(``, `ADDITIONAL TEACHER INSTRUCTIONS: ${data.instructions}`);
+  }
+
+  return lines.join('\n');
+}
 
 function parseAIResponseToBlocks(
   response: string,
   requestedTypes: string[],
 ): IContentBlock[] {
+  const validTypes = new Set([
+    'text', 'image', 'video', 'quiz', 'drag_drop', 'fill_blank',
+    'match_columns', 'ordering', 'hotspot', 'step_reveal', 'code',
+  ]);
+
   try {
-    // Try to extract JSON array from the response
     const jsonMatch = response.match(/\[[\s\S]*\]/);
     if (!jsonMatch) throw new Error('No JSON array found');
 
@@ -117,15 +273,74 @@ function parseAIResponseToBlocks(
 
     return parsed.map((block: unknown, index: number) => {
       const b = block as Record<string, unknown>;
+
+      const rawType = typeof b.type === 'string' ? b.type : requestedTypes[0];
+      const blockType: BlockType = (
+        validTypes.has(rawType) ? rawType : 'text'
+      ) as BlockType;
+
+      const rawContent = typeof b.content === 'string'
+        ? b.content
+        : JSON.stringify(b.content ?? '');
+
+      const rawMetadata = (
+        b.metadata !== null && typeof b.metadata === 'object' && !Array.isArray(b.metadata)
+      )
+        ? b.metadata as Record<string, unknown>
+        : {};
+
+      const metadata: Record<string, unknown> = { ...rawMetadata };
+
+      if (blockType === 'quiz') {
+        if (!metadata.questionType) metadata.questionType = 'mcq';
+        if (!metadata.options && Array.isArray(b.options)) {
+          metadata.options = b.options;
+        }
+        if (!metadata.correctAnswer && typeof b.correctAnswer === 'string') {
+          metadata.correctAnswer = b.correctAnswer;
+        }
+      }
+
+      if (blockType === 'fill_blank') {
+        if (!metadata.blanks && Array.isArray(b.blanks)) {
+          metadata.blanks = b.blanks;
+        }
+      }
+
+      if (blockType === 'image') {
+        if (!metadata.renderer && typeof b.renderer === 'string') {
+          metadata.renderer = b.renderer;
+        }
+        if (!metadata.caption && typeof b.caption === 'string') {
+          metadata.caption = b.caption;
+        }
+      }
+
+      if (blockType === 'match_columns') {
+        if (!metadata.pairs && Array.isArray(b.pairs)) {
+          metadata.pairs = b.pairs;
+        }
+      }
+
+      if (blockType === 'ordering') {
+        if (!metadata.correctOrder && Array.isArray(b.correctOrder)) {
+          metadata.correctOrder = b.correctOrder;
+        }
+      }
+
+      if (blockType === 'drag_drop') {
+        if (!metadata.items && Array.isArray(b.items)) metadata.items = b.items;
+        if (!metadata.targets && Array.isArray(b.targets)) metadata.targets = b.targets;
+        if (!metadata.correctMapping && typeof b.correctMapping === 'object') {
+          metadata.correctMapping = b.correctMapping;
+        }
+      }
+
       return {
         blockId: typeof b.blockId === 'string' ? b.blockId : crypto.randomUUID(),
-        type: (typeof b.type === 'string' && requestedTypes.includes(b.type)
-          ? b.type
-          : requestedTypes[0]) as IContentBlock['type'],
+        type: blockType,
         order: typeof b.order === 'number' ? b.order : index,
-        content: typeof b.content === 'string'
-          ? b.content
-          : JSON.stringify(b.content ?? ''),
+        content: rawContent,
         curriculumNodeId: null,
         cognitiveLevel: null,
         points: typeof b.points === 'number' ? b.points : 0,
@@ -133,11 +348,10 @@ function parseAIResponseToBlocks(
           ? (b.hints as unknown[]).filter((h): h is string => typeof h === 'string')
           : [],
         explanation: typeof b.explanation === 'string' ? b.explanation : '',
-        metadata: {},
+        metadata,
       };
     });
   } catch {
-    // Fallback: wrap entire response as a single text block
     return [
       {
         blockId: crypto.randomUUID(),
