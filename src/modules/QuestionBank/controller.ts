@@ -16,9 +16,14 @@ export class QuestionBankController {
 
   static async listQuestions(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const filters = req.query as unknown as QuestionQueryInput;
     const result = await QuestionsService.listQuestions(
-      user.schoolId!,
+      schoolId,
       user.id,
       user.role,
       filters,
@@ -28,9 +33,14 @@ export class QuestionBankController {
 
   static async getQuestion(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const question = await QuestionsService.getQuestion(
       req.params.id as string,
-      user.schoolId!,
+      schoolId,
       user.id,
     );
     res.json(apiResponse(true, question));
@@ -38,8 +48,13 @@ export class QuestionBankController {
 
   static async createQuestion(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const question = await QuestionsService.createQuestion(
-      user.schoolId!,
+      schoolId,
       user.id,
       req.body,
     );
@@ -48,9 +63,14 @@ export class QuestionBankController {
 
   static async updateQuestion(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const question = await QuestionsService.updateQuestion(
       req.params.id as string,
-      user.schoolId!,
+      schoolId,
       user.id,
       req.body,
     );
@@ -59,9 +79,14 @@ export class QuestionBankController {
 
   static async deleteQuestion(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const result = await QuestionsService.deleteQuestion(
       req.params.id as string,
-      user.schoolId!,
+      schoolId,
       user.id,
       user.role,
     );
@@ -72,9 +97,14 @@ export class QuestionBankController {
 
   static async submitForReview(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const question = await QuestionsService.submitForReview(
       req.params.id as string,
-      user.schoolId!,
+      schoolId,
       user.id,
     );
     res.json(apiResponse(true, question, 'Question submitted for review'));
@@ -82,9 +112,14 @@ export class QuestionBankController {
 
   static async reviewQuestion(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const question = await QuestionsService.reviewQuestion(
       req.params.id as string,
-      user.schoolId!,
+      schoolId,
       user.id,
       req.body,
     );
@@ -95,8 +130,13 @@ export class QuestionBankController {
 
   static async generateQuestions(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const questions = await GenerationService.generateQuestions(
-      user.schoolId!,
+      schoolId,
       user.id,
       req.body,
     );
@@ -107,9 +147,14 @@ export class QuestionBankController {
 
   static async listPapers(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const filters = req.query as unknown as PaperQueryInput;
     const result = await PapersService.listPapers(
-      user.schoolId!,
+      schoolId,
       user.id,
       user.role,
       filters,
@@ -119,9 +164,14 @@ export class QuestionBankController {
 
   static async getPaper(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const paper = await PapersService.getPaper(
       req.params.id as string,
-      user.schoolId!,
+      schoolId,
       user.id,
       user.role,
     );
@@ -130,8 +180,13 @@ export class QuestionBankController {
 
   static async createPaper(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const paper = await PapersService.createPaper(
-      user.schoolId!,
+      schoolId,
       user.id,
       req.body,
     );
@@ -140,9 +195,14 @@ export class QuestionBankController {
 
   static async updatePaper(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const paper = await PapersService.updatePaper(
       req.params.id as string,
-      user.schoolId!,
+      schoolId,
       user.id,
       req.body,
     );
@@ -151,9 +211,14 @@ export class QuestionBankController {
 
   static async deletePaper(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const result = await PapersService.deletePaper(
       req.params.id as string,
-      user.schoolId!,
+      schoolId,
       user.id,
       user.role,
     );
@@ -164,9 +229,14 @@ export class QuestionBankController {
 
   static async addQuestion(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const paper = await PapersService.addQuestion(
       req.params.id as string,
-      user.schoolId!,
+      schoolId,
       user.id,
       req.body,
     );
@@ -175,11 +245,16 @@ export class QuestionBankController {
 
   static async removeQuestion(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const sectionIndex = parseInt(req.params.sectionIndex as string, 10);
     const questionIndex = parseInt(req.params.questionIndex as string, 10);
     const paper = await PapersService.removeQuestion(
       req.params.id as string,
-      user.schoolId!,
+      schoolId,
       user.id,
       sectionIndex,
       questionIndex,
@@ -189,9 +264,14 @@ export class QuestionBankController {
 
   static async finalisePaper(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const paper = await PapersService.finalisePaper(
       req.params.id as string,
-      user.schoolId!,
+      schoolId,
       user.id,
     );
     res.json(apiResponse(true, paper, 'Paper finalised successfully'));
@@ -199,9 +279,14 @@ export class QuestionBankController {
 
   static async clonePaper(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const paper = await PapersService.clonePaper(
       req.params.id as string,
-      user.schoolId!,
+      schoolId,
       user.id,
     );
     res.status(201).json(apiResponse(true, paper, 'Paper cloned successfully'));
@@ -209,9 +294,14 @@ export class QuestionBankController {
 
   static async checkCompliance(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const report = await PapersService.checkCompliance(
       req.params.id as string,
-      user.schoolId!,
+      schoolId,
     );
     res.json(apiResponse(true, report));
   }
@@ -220,8 +310,13 @@ export class QuestionBankController {
 
   static async generatePaper(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const paper = await PaperGenerationService.generatePaper(
-      user.schoolId!,
+      schoolId,
       user.id,
       req.body,
     );
@@ -232,11 +327,16 @@ export class QuestionBankController {
 
   static async downloadPaperPdf(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    await verifyPdfAccess(req.params.id as string, user.schoolId!, user.id, user.role);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
+    await verifyPdfAccess(req.params.id as string, schoolId, user.id, user.role);
 
     const buffer = await PdfService.generatePaperPdf(
       req.params.id as string,
-      user.schoolId!,
+      schoolId,
     );
 
     res.setHeader('Content-Type', 'application/pdf');
@@ -247,11 +347,16 @@ export class QuestionBankController {
 
   static async downloadMemoPdf(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    await verifyPdfAccess(req.params.id as string, user.schoolId!, user.id, user.role);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
+    await verifyPdfAccess(req.params.id as string, schoolId, user.id, user.role);
 
     const buffer = await PdfService.generateMemoPdf(
       req.params.id as string,
-      user.schoolId!,
+      schoolId,
     );
 
     res.setHeader('Content-Type', 'application/pdf');

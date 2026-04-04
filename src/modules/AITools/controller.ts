@@ -6,7 +6,11 @@ import { apiResponse } from '../../common/utils.js';
 
 export class AIToolsController {
   static async generatePaper(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const paper = await AIToolsService.generatePaper(
       getUser(req).id,
       schoolId,
@@ -40,19 +44,31 @@ export class AIToolsController {
   }
 
   static async getPaperById(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const paper = await AIToolsService.getPaperById(req.params.id as string, schoolId);
     res.json(apiResponse(true, paper, 'Paper retrieved successfully'));
   }
 
   static async updatePaper(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const paper = await AIToolsService.updatePaper(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, paper, 'Paper updated successfully'));
   }
 
   static async regenerateQuestion(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const { sectionIndex, questionIndex } = req.body;
     const paper = await AIToolsService.regenerateQuestion(
       req.params.id as string,
@@ -65,7 +81,11 @@ export class AIToolsController {
   }
 
   static async gradeSubmission(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const job = await AIToolsService.gradeSubmission(
       getUser(req).id,
       schoolId,
@@ -75,7 +95,11 @@ export class AIToolsController {
   }
 
   static async bulkGrade(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const jobs = await AIToolsService.bulkGrade(
       getUser(req).id,
       schoolId,
@@ -85,25 +109,41 @@ export class AIToolsController {
   }
 
   static async getGradingJob(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const job = await AIToolsService.getGradingJobById(req.params.jobId as string, schoolId);
     res.json(apiResponse(true, job, 'Grading job retrieved successfully'));
   }
 
   static async reviewGrade(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const job = await AIToolsService.reviewGrade(req.params.jobId as string, schoolId, req.body);
     res.json(apiResponse(true, job, 'Grade reviewed successfully'));
   }
 
   static async publishGrade(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const job = await AIToolsService.publishGrade(req.params.jobId as string, schoolId);
     res.json(apiResponse(true, job, 'Grade published successfully'));
   }
 
   static async markPaper(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const result = await AIToolsService.markPaperFromImage(
       getUser(req).id,
       schoolId,

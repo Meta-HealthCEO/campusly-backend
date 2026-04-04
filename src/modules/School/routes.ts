@@ -32,7 +32,7 @@ router.get(
 router.put(
   '/:id',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  authorize('super_admin', 'school_admin', 'teacher'),
   validate(updateSchoolSchema),
   SchoolController.update,
 );

@@ -10,7 +10,8 @@ import {
   UnauthorizedError,
 } from '../../common/errors.js';
 import { EmailService } from '../../services/email.service.js';
-import type { RegisterInput } from './validation.js';
+import type { RegisterInput, RegisterTeacherInput } from './validation.js';
+import { School } from '../School/model.js';
 
 interface TokenPair {
   accessToken: string;
@@ -54,6 +55,45 @@ export class AuthService {
     const user = await User.create(data);
     const tokens = AuthService.generateTokenPair(user);
 
+    user.refreshTokens.push(tokens.refreshToken);
+    await user.save();
+
+    return { user, tokens };
+  }
+
+  static async registerTeacher(data: RegisterTeacherInput): Promise<{ user: IUser; tokens: TokenPair }> {
+    const existingUser = await User.findOne({ email: data.email.toLowerCase() });
+    if (existingUser) {
+      throw new ConflictError('A user with this email already exists');
+    }
+
+    const schoolName = data.schoolName?.trim() || `${data.firstName}'s Classroom`;
+
+    // Create the school with sensible defaults for an independent teacher
+    const school = await School.create({
+      name: schoolName,
+      type: 'combined',
+      address: { street: 'TBD', city: 'TBD', province: 'TBD', postalCode: '0000', country: 'South Africa' },
+      contactInfo: { email: data.email.toLowerCase(), phone: '0000000000' },
+      subscription: { tier: 'basic', expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) },
+      modulesEnabled: ['auth', 'academic', 'ai_tools', 'teacher_workbench', 'learning'],
+      settings: { academicYear: new Date().getFullYear(), terms: 4, gradingSystem: 'percentage' },
+      principal: `${data.firstName} ${data.lastName}`,
+      isActive: true,
+    });
+
+    // Create user as teacher + school principal
+    const user = await User.create({
+      email: data.email.toLowerCase(),
+      password: data.password,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      role: 'teacher',
+      schoolId: school._id,
+      isSchoolPrincipal: true,
+    });
+
+    const tokens = AuthService.generateTokenPair(user);
     user.refreshTokens.push(tokens.refreshToken);
     await user.save();
 

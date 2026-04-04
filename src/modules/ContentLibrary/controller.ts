@@ -11,9 +11,14 @@ export class ContentLibraryController {
 
   static async listResources(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const filters = req.query as unknown as ResourceQueryInput;
     const result = await ResourcesService.listResources(
-      user.schoolId!,
+      schoolId,
       user.id,
       user.role,
       filters,
@@ -23,9 +28,14 @@ export class ContentLibraryController {
 
   static async getResource(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const resource = await ResourcesService.getResource(
       req.params.id as string,
-      user.schoolId!,
+      schoolId,
       user.id,
     );
     res.json(apiResponse(true, resource));
@@ -33,8 +43,13 @@ export class ContentLibraryController {
 
   static async createResource(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const resource = await ResourcesService.createResource(
-      user.schoolId!,
+      schoolId,
       user.id,
       req.body,
     );
@@ -43,9 +58,14 @@ export class ContentLibraryController {
 
   static async updateResource(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const resource = await ResourcesService.updateResource(
       req.params.id as string,
-      user.schoolId!,
+      schoolId,
       user.id,
       req.body,
     );
@@ -54,9 +74,14 @@ export class ContentLibraryController {
 
   static async deleteResource(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const result = await ResourcesService.deleteResource(
       req.params.id as string,
-      user.schoolId!,
+      schoolId,
       user.id,
       user.role,
     );
@@ -67,9 +92,14 @@ export class ContentLibraryController {
 
   static async submitForReview(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const resource = await ReviewService.submitForReview(
       req.params.id as string,
-      user.schoolId!,
+      schoolId,
       user.id,
     );
     res.json(apiResponse(true, resource, 'Resource submitted for review'));
@@ -77,9 +107,14 @@ export class ContentLibraryController {
 
   static async reviewResource(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const resource = await ReviewService.reviewResource(
       req.params.id as string,
-      user.schoolId!,
+      schoolId,
       user.id,
       req.body,
     );
@@ -90,8 +125,13 @@ export class ContentLibraryController {
 
   static async generateContent(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const resource = await GenerationService.generateContent(
-      user.schoolId!,
+      schoolId,
       user.id,
       req.body,
     );
@@ -100,9 +140,14 @@ export class ContentLibraryController {
 
   static async refineResource(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
     const resource = await GenerationService.refineContent(
       req.params.id as string,
-      user.schoolId!,
+      schoolId,
       user.id,
       req.body,
     );
