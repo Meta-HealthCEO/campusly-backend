@@ -7,8 +7,7 @@ import { AIService } from '../../services/ai.service.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
 import type { ICurriculumNode } from '../CurriculumStructure/model.js';
 import type { GenerateContentInput, RefineResourceInput } from './validation.js';
-
-const DAILY_LIMIT = 20;
+import { checkUsageLimit } from '../../middleware/usageLimits.js';
 
 const INTERACTIVE_TYPES: ReadonlySet<string> = new Set([
   'quiz', 'fill_blank', 'drag_drop', 'match_columns', 'ordering', 'hotspot',
@@ -20,19 +19,11 @@ export class GenerationService {
     userId: string,
     data: GenerateContentInput,
   ) {
-    const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
+    const limitCheck = await checkUsageLimit(schoolId, 'maxAiGenerationsPerDay');
 
-    const todayCount = await ContentResource.countDocuments({
-      createdBy: new mongoose.Types.ObjectId(userId),
-      source: 'ai_generated',
-      createdAt: { $gte: startOfDay },
-      isDeleted: false,
-    });
-
-    if (todayCount >= DAILY_LIMIT) {
+    if (!limitCheck.allowed) {
       throw new BadRequestError(
-        `Daily AI generation limit reached (${DAILY_LIMIT}/day). Try again tomorrow.`,
+        `Daily AI generation limit reached (${limitCheck.current}/${limitCheck.limit} on ${limitCheck.plan} plan). Try again tomorrow.`,
       );
     }
 

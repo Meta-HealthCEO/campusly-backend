@@ -48,6 +48,7 @@ export interface IClass extends Document {
   schoolId: Types.ObjectId;
   teacherId: Types.ObjectId;
   capacity: number;
+  classroomCode: string;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -79,6 +80,13 @@ const classSchema = new Schema<IClass>(
       type: Number,
       required: true,
     },
+    classroomCode: {
+      type: String,
+      required: true,
+      unique: true,
+      uppercase: true,
+      trim: true,
+    },
     isDeleted: {
       type: Boolean,
       default: false,
@@ -90,6 +98,7 @@ const classSchema = new Schema<IClass>(
 classSchema.index({ gradeId: 1 });
 classSchema.index({ schoolId: 1 });
 classSchema.index({ schoolId: 1, gradeId: 1 });
+classSchema.index({ classroomCode: 1 }, { unique: true });
 
 export const Class = mongoose.model<IClass>('Class', classSchema);
 

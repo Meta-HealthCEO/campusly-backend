@@ -108,6 +108,20 @@ router.delete(
   AcademicController.deleteClass,
 );
 
+router.get(
+  '/classes/:id/join-code',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'teacher'),
+  AcademicController.getClassJoinCode,
+);
+
+router.post(
+  '/classes/:id/regenerate-code',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'teacher'),
+  AcademicController.regenerateClassJoinCode,
+);
+
 // ─── Subjects ────────────────────────────────────────────────────────────────
 
 router.post(

@@ -28,6 +28,8 @@ export class AcademicService {
   static getClassById = GradeService.getClassById;
   static updateClass = GradeService.updateClass;
   static deleteClass = GradeService.deleteClass;
+  static getClassByCode = GradeService.getClassByCode;
+  static regenerateClassroomCode = GradeService.regenerateClassroomCode;
 
   // ─── Subject (from subject.service) ────────────────────────────────────────
   static createSubject = SubjectService.createSubject;

@@ -2,6 +2,7 @@ import { School, ISchool } from './model.js';
 import { NotFoundError, ConflictError } from '../../common/errors.js';
 import type { CreateSchoolInput, UpdateSchoolInput, UpdateSettingsInput } from './validation.js';
 import { escapeRegex, cascadeSoftDeleteSchool } from '../../common/utils.js';
+import { getUsageSnapshot, type UsageSnapshot } from '../../middleware/usageLimits.js';
 
 interface PaginationParams {
   page?: number;
@@ -100,6 +101,22 @@ export class SchoolService {
 
     // Cascade soft-delete all related records
     await cascadeSoftDeleteSchool(id);
+  }
+
+  static async getUsage(schoolId: string): Promise<UsageSnapshot> {
+    const school = await School.findOne({ _id: schoolId, isDeleted: false }, { _id: 1 }).lean();
+    if (!school) {
+      throw new NotFoundError('School not found');
+    }
+    return getUsageSnapshot(schoolId);
+  }
+
+  static async getJoinCode(schoolId: string): Promise<string> {
+    const school = await School.findOne({ _id: schoolId, isDeleted: false, isActive: true }).select('joinCode');
+    if (!school) {
+      throw new NotFoundError('School not found');
+    }
+    return school.joinCode;
   }
 
   static async updateSettings(id: string, data: UpdateSettingsInput): Promise<ISchool> {

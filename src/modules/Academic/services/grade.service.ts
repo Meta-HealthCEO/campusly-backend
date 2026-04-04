@@ -1,7 +1,12 @@
+import crypto from 'crypto';
 import { Grade, IGrade, Class, IClass } from '../model.js';
 import { NotFoundError } from '../../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../../common/constants.js';
 import { escapeRegex } from '../../../common/utils.js';
+
+function generateClassroomCode(): string {
+  return crypto.randomBytes(3).toString('hex').toUpperCase();
+}
 
 interface ListQuery {
   page?: number;
@@ -86,8 +91,35 @@ export class GradeService {
   // ─── Class CRUD ──────────────────────────────────────────────────────────
 
   static async createClass(data: Partial<IClass>): Promise<IClass> {
-    const cls = new Class(data);
+    // Generate a unique 6-char uppercase alphanumeric classroom code
+    let code = generateClassroomCode();
+    let attempts = 0;
+    while (await Class.exists({ classroomCode: code }) && attempts < 10) {
+      code = generateClassroomCode();
+      attempts++;
+    }
+    const cls = new Class({ ...data, classroomCode: code });
     return cls.save();
+  }
+
+  static async getClassByCode(classroomCode: string): Promise<IClass | null> {
+    return Class.findOne({ classroomCode: classroomCode.toUpperCase(), isDeleted: false }).lean();
+  }
+
+  static async regenerateClassroomCode(id: string, schoolId: string): Promise<IClass> {
+    let code = generateClassroomCode();
+    let attempts = 0;
+    while (await Class.exists({ classroomCode: code }) && attempts < 10) {
+      code = generateClassroomCode();
+      attempts++;
+    }
+    const cls = await Class.findOneAndUpdate(
+      { _id: id, schoolId, isDeleted: false },
+      { $set: { classroomCode: code } },
+      { new: true },
+    );
+    if (!cls) throw new NotFoundError('Class not found');
+    return cls;
   }
 
   static async listClasses(

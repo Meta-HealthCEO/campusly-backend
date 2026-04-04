@@ -36,10 +36,21 @@ export interface ISchool extends Document {
   principal?: string;
   emisNumber?: string;
   type?: 'primary' | 'secondary' | 'combined' | 'special';
+  joinCode: string;
   isActive: boolean;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
+}
+
+/** Generate a random 6-character alphanumeric join code (uppercase). */
+export function generateJoinCode(): string {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let code = '';
+  for (let i = 0; i < 6; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
 }
 
 const addressSchema = new Schema<IAddress>(
@@ -129,6 +140,13 @@ const schoolSchema = new Schema<ISchool>(
       type: String,
       enum: ['primary', 'secondary', 'combined', 'special'],
     },
+    joinCode: {
+      type: String,
+      required: true,
+      unique: true,
+      uppercase: true,
+      trim: true,
+    },
     isActive: {
       type: Boolean,
       default: true,
@@ -142,5 +160,12 @@ const schoolSchema = new Schema<ISchool>(
 );
 
 schoolSchema.index({ name: 1 });
+schoolSchema.index({ joinCode: 1 }, { unique: true });
+
+schoolSchema.pre('save', function () {
+  if (!this.joinCode) {
+    this.joinCode = generateJoinCode();
+  }
+});
 
 export const School = mongoose.model<ISchool>('School', schoolSchema);

@@ -22,6 +22,21 @@ router.get(
   SchoolController.list,
 );
 
+// Static routes MUST come before /:id to avoid being swallowed by the param
+router.get(
+  '/usage',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'teacher'),
+  SchoolController.getUsage,
+);
+
+router.get(
+  '/join-code',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  SchoolController.getJoinCode,
+);
+
 router.get(
   '/:id',
   authenticate,

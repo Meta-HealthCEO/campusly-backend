@@ -108,4 +108,36 @@ export class AuthController {
     const user = await AuthService.getMe(getUser(req).id);
     res.status(200).json(apiResponse(true, { user }, 'User retrieved successfully'));
   }
+
+  static async registerStudent(req: Request, res: Response): Promise<void> {
+    const { user, tokens } = await AuthService.registerStudent(req.body);
+
+    res.cookie('refresh_token', tokens.refreshToken, REFRESH_COOKIE_OPTIONS);
+
+    const userData = user.toObject();
+    const { password: _, refreshTokens: __, ...safeUser } = userData;
+
+    res.status(201).json(
+      apiResponse(true, {
+        user: safeUser,
+        accessToken: tokens.accessToken,
+      }, 'Student registered successfully'),
+    );
+  }
+
+  static async joinSchool(req: Request, res: Response): Promise<void> {
+    const { user, tokens } = await AuthService.joinSchool(getUser(req).id, req.body);
+
+    res.cookie('refresh_token', tokens.refreshToken, REFRESH_COOKIE_OPTIONS);
+
+    const userData = user.toObject();
+    const { password: _, refreshTokens: __, ...safeUser } = userData;
+
+    res.status(200).json(
+      apiResponse(true, {
+        user: safeUser,
+        accessToken: tokens.accessToken,
+      }, 'Successfully joined school'),
+    );
+  }
 }

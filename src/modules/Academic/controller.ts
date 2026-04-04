@@ -91,6 +91,18 @@ export class AcademicController {
     res.json(apiResponse(true, undefined, 'Class deleted successfully'));
   }
 
+  static async getClassJoinCode(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const cls = await AcademicService.getClassById(req.params.id as string, schoolId);
+    res.json(apiResponse(true, { classroomCode: (cls as unknown as Record<string, unknown>).classroomCode, className: cls.name }, 'Join code retrieved successfully'));
+  }
+
+  static async regenerateClassJoinCode(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const cls = await AcademicService.regenerateClassroomCode(req.params.id as string, schoolId);
+    res.json(apiResponse(true, { classroomCode: (cls as unknown as Record<string, unknown>).classroomCode, className: cls.name }, 'Join code regenerated successfully'));
+  }
+
   // ─── Subject ───────────────────────────────────────────────────────────
 
   static async createSubject(req: Request, res: Response): Promise<void> {

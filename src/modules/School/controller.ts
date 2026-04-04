@@ -42,4 +42,16 @@ export class SchoolController {
     const school = await SchoolService.updateSettings(req.params.id as string, req.body);
     res.status(200).json(apiResponse(true, { school }, 'School settings updated successfully'));
   }
+
+  static async getUsage(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const snapshot = await SchoolService.getUsage(schoolId);
+    res.status(200).json(apiResponse(true, snapshot, 'Usage retrieved successfully'));
+  }
+
+  static async getJoinCode(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const joinCode = await SchoolService.getJoinCode(schoolId);
+    res.status(200).json(apiResponse(true, { joinCode }, 'Join code retrieved successfully'));
+  }
 }
