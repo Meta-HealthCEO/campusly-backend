@@ -79,7 +79,7 @@ router.patch(
 
 router.patch(
   '/resources/:id/review',
-  authorize(...HOD_ROLES),
+  authorize(...READ_ROLES),
   validate(reviewResourceSchema),
   ContentLibraryController.reviewResource,
 );

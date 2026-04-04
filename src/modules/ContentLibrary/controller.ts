@@ -112,6 +112,12 @@ export class ContentLibraryController {
       res.status(400).json({ success: false, error: 'User must be assigned to a school' });
       return;
     }
+    const canReview = ['super_admin', 'school_admin', 'principal', 'hod'].includes(user.role)
+      || (user as Record<string, unknown>).isSchoolPrincipal === true;
+    if (!canReview) {
+      res.status(403).json({ success: false, error: 'You do not have permission to review content. Submit for review instead.' });
+      return;
+    }
     const resource = await ReviewService.reviewResource(
       req.params.id as string,
       schoolId,
