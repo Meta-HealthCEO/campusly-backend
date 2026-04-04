@@ -30,7 +30,11 @@ export class CurriculumStructureController {
     const user = getUser(req);
     // Query has been parsed & defaulted by validate({ query: nodeQuerySchema })
     const filters = req.query as unknown as NodeQueryInput;
-    const result = await NodesService.listNodes(user.schoolId!, filters);
+    if (!user.schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
+    const result = await NodesService.listNodes(user.schoolId, filters);
     res.json(apiResponse(true, result));
   }
 

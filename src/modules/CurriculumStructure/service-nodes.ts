@@ -12,8 +12,9 @@ export class NodesService {
       query.frameworkId = new mongoose.Types.ObjectId(filters.frameworkId);
     }
     if (filters.parentId !== undefined) {
-      query.parentId = filters.parentId
-        ? new mongoose.Types.ObjectId(filters.parentId)
+      const pid = filters.parentId;
+      query.parentId = (pid && pid !== 'null')
+        ? new mongoose.Types.ObjectId(pid)
         : null;
     }
     if (filters.type) {
