@@ -189,7 +189,7 @@ export const generatePaperSchema = z.object({
 
 export const extractFromPaperSchema = z.object({
   image: z.string().min(1, 'Base64 image data is required'),
-  imageType: z.enum(['image/jpeg', 'image/png', 'image/webp']),
+  imageType: z.enum(['image/jpeg', 'image/png', 'image/webp', 'application/pdf']),
   subjectId: objectIdSchema,
   gradeId: objectIdSchema,
 }).strict();

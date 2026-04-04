@@ -130,11 +130,11 @@ export class GenerationService {
 
     const userText = 'Extract all exam/test questions from this paper image.';
 
-    const result = await AIService.generateVisionCompletion(
+    const result = await AIService.generateDocumentCompletion(
       systemPrompt,
       userText,
       data.image,
-      data.imageType as 'image/jpeg' | 'image/png' | 'image/webp',
+      data.imageType as 'application/pdf' | 'image/jpeg' | 'image/png' | 'image/webp',
       { maxTokens: 8192, temperature: 0.2 },
     );
 

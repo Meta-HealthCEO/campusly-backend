@@ -193,6 +193,75 @@ export class AIService {
     }
   }
 
+  static async generateDocumentCompletion(
+    systemPrompt: string,
+    userText: string,
+    documentBase64: string,
+    mediaType: 'application/pdf' | 'image/jpeg' | 'image/png' | 'image/webp',
+    options?: { maxTokens?: number; temperature?: number },
+  ): Promise<{ text: string; usage: { input_tokens: number; output_tokens: number } }> {
+    // For images, delegate to the vision method
+    if (mediaType !== 'application/pdf') {
+      return this.generateVisionCompletion(
+        systemPrompt, userText, documentBase64,
+        mediaType as 'image/jpeg' | 'image/png' | 'image/webp',
+        options,
+      );
+    }
+
+    await acquireSemaphore();
+    try {
+      const client = getClient();
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS * 2);
+
+      const message = await callWithRetry(() =>
+        client.messages.create(
+          {
+            model: ANTHROPIC_MODEL,
+            max_tokens: options?.maxTokens ?? 8192,
+            temperature: options?.temperature ?? 0.3,
+            system: systemPrompt,
+            messages: [
+              {
+                role: 'user',
+                content: [
+                  {
+                    type: 'document',
+                    source: {
+                      type: 'base64',
+                      media_type: 'application/pdf',
+                      data: documentBase64,
+                    },
+                  } as Anthropic.DocumentBlockParam,
+                  {
+                    type: 'text',
+                    text: userText,
+                  },
+                ],
+              },
+            ],
+          },
+          { signal: controller.signal },
+        ),
+      );
+
+      clearTimeout(timeout);
+
+      const inputTokens = message.usage?.input_tokens ?? 0;
+      const outputTokens = message.usage?.output_tokens ?? 0;
+      logger.info(`[AIService] Document tokens — input: ${inputTokens}, output: ${outputTokens}`);
+
+      const textBlock = message.content.find((b) => b.type === 'text');
+      return {
+        text: textBlock ? textBlock.text : '',
+        usage: { input_tokens: inputTokens, output_tokens: outputTokens },
+      };
+    } finally {
+      releaseSemaphore();
+    }
+  }
+
   static getTokenUsage(message: Anthropic.Message): {
     input: number;
     output: number;
