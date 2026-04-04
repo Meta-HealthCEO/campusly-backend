@@ -3,7 +3,7 @@ import { GeneratedPaper, AIUsageLog } from '../../AITools/model.js';
 import { AIService } from '../../../services/ai.service.js';
 import { NotFoundError, BadRequestError } from '../../../common/errors.js';
 
-const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514';
+const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
 
 interface AIMarkAllocation {
   criterion: string;

@@ -6,7 +6,7 @@ import { NotFoundError } from '../../common/errors.js';
 import { paginationHelper } from '../../common/utils.js';
 import type { SendMessageInput } from './validation.js';
 
-const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514';
+const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
 const MAX_CONTEXT_MESSAGES = 20;
 
 interface WeakArea {

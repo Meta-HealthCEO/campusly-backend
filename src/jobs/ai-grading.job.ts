@@ -5,7 +5,7 @@ import { GradingJob } from '../modules/AITools/model.js';
 import { AIUsageLog } from '../modules/AITools/model.js';
 import { AIService } from '../services/ai.service.js';
 
-const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514';
+const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
 
 interface AIGradingJobData {
   jobId: string;
