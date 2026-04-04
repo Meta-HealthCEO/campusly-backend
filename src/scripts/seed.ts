@@ -6,7 +6,7 @@ import { School } from '../modules/School/model.js';
 import { Student } from '../modules/Student/model.js';
 import { Parent } from '../modules/Parent/model.js';
 import { Wallet } from '../modules/Wallet/model.js';
-import { Grade, Class, Subject } from '../modules/Academic/model.js';
+import { Grade, Class, Subject, Assessment, Mark } from '../modules/Academic/model.js';
 import { FeeType } from '../modules/Fee/model.js';
 import { MenuItem } from '../modules/TuckShop/model.js';
 import { Announcement } from '../modules/Announcement/model.js';
@@ -482,6 +482,65 @@ async function seed() {
     ]);
     logger.info(`${announcements.length} announcements created`);
 
+    // ─── Assessments & Marks ─────────────────────────────────────────────────
+    logger.info('Creating assessments and marks...');
+
+    const assessmentTemplates = [
+      { name: 'Term 1 Test', type: 'test' as const, totalMarks: 50, weight: 25, term: 1 },
+      { name: 'Term 1 Assignment', type: 'assignment' as const, totalMarks: 30, weight: 15, term: 1 },
+      { name: 'Practical Assessment', type: 'practical' as const, totalMarks: 40, weight: 20, term: 1 },
+    ];
+
+    // Use first 2 subjects (English, Afrikaans) across all classes with students
+    const seedSubjects = subjects.slice(0, 2);
+    const allAssessments: mongoose.Document[] = [];
+    let totalMarkCount = 0;
+
+    for (const cls of classes) {
+      // Find students assigned to this class
+      const classStudents = students.filter((s, i) =>
+        studentAssignments[i].classIndex === classes.indexOf(cls),
+      );
+      if (classStudents.length === 0) continue;
+
+      for (const subj of seedSubjects) {
+        for (const tpl of assessmentTemplates) {
+          const assessment = await Assessment.create({
+            name: `${subj.name} - ${tpl.name}`,
+            subjectId: subj._id,
+            classId: cls._id,
+            schoolId: school._id,
+            type: tpl.type,
+            totalMarks: tpl.totalMarks,
+            weight: tpl.weight,
+            term: tpl.term,
+            academicYear: 2026,
+            date: new Date('2026-03-15'),
+          });
+          allAssessments.push(assessment);
+
+          // Create random marks for each student (40-95% range)
+          const markDocs = classStudents.map((student) => {
+            const minMark = Math.round(0.4 * tpl.totalMarks);
+            const maxMark = Math.round(0.95 * tpl.totalMarks);
+            const mark = Math.round(minMark + Math.random() * (maxMark - minMark));
+            return {
+              assessmentId: assessment._id,
+              studentId: student._id,
+              schoolId: school._id,
+              mark,
+              total: tpl.totalMarks,
+              percentage: Math.round((mark / tpl.totalMarks) * 100),
+            };
+          });
+
+          await Mark.insertMany(markDocs);
+          totalMarkCount += markDocs.length;
+        }
+      }
+    }
+    logger.info(`${allAssessments.length} assessments created with ${totalMarkCount} marks`);
+
     // ─── Summary ──────────────────────────────────────────────────────────────
     logger.info('\n========================================');
     logger.info('  Seed completed successfully!');
@@ -502,6 +561,8 @@ async function seed() {
     logger.info(`  Fee Types:     ${feeTypes.length}`);
     logger.info(`  Menu Items:    ${menuItems.length}`);
     logger.info(`  Announcements: ${announcements.length}`);
+    logger.info(`  Assessments:   ${allAssessments.length}`);
+    logger.info(`  Marks:         ${totalMarkCount}`);
     logger.info('========================================');
     logger.info('  Default password for all users: Password1');
     logger.info('========================================\n');
