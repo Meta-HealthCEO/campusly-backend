@@ -102,6 +102,17 @@ export const reviewGradeSchema = z.object({
 
 export type ReviewGradeInput = z.infer<typeof reviewGradeSchema>;
 
+// ─── Mark Paper from Image (OCR) ─────────────────────────────────────────
+
+export const markPaperSchema = z.object({
+  paperId: z.string().min(1, 'Paper ID is required'),
+  studentName: z.string().min(1, 'Student name is required').trim(),
+  image: z.string().min(1, 'Image data is required'),
+  imageType: z.enum(['image/jpeg', 'image/png', 'image/webp']).default('image/jpeg'),
+}).strict();
+
+export type MarkPaperInput = z.infer<typeof markPaperSchema>;
+
 // ─── Publish Grade (params only) ─────────────────────────────────────────────
 
 export const publishGradeParamsSchema = z.object({

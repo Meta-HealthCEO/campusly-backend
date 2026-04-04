@@ -102,6 +102,16 @@ export class AIToolsController {
     res.json(apiResponse(true, job, 'Grade published successfully'));
   }
 
+  static async markPaper(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const result = await AIToolsService.markPaperFromImage(
+      getUser(req).id,
+      schoolId,
+      req.body,
+    );
+    res.json(apiResponse(true, result, 'Paper marked successfully'));
+  }
+
   static async getUsage(req: Request, res: Response): Promise<void> {
     const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
 

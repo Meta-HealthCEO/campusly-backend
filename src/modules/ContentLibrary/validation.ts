@@ -106,10 +106,17 @@ export const resourceQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(20),
 }).strict();
 
+// ─── Refine Resource ───────────────────────────────────────────────────────
+
+export const refineResourceSchema = z.object({
+  instruction: z.string().min(1).max(1000),
+}).strict();
+
 // ─── Inferred Types ─────────────────────────────────────────────────────────
 
 export type CreateResourceInput = z.infer<typeof createResourceSchema>;
 export type UpdateResourceInput = z.infer<typeof updateResourceSchema>;
 export type ReviewResourceInput = z.infer<typeof reviewResourceSchema>;
 export type GenerateContentInput = z.infer<typeof generateContentSchema>;
+export type RefineResourceInput = z.infer<typeof refineResourceSchema>;
 export type ResourceQueryInput = z.infer<typeof resourceQuerySchema>;

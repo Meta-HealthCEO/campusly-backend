@@ -97,4 +97,15 @@ export class ContentLibraryController {
     );
     res.status(201).json(apiResponse(true, resource, 'Content generated successfully'));
   }
+
+  static async refineResource(req: Request, res: Response): Promise<void> {
+    const user = getUser(req);
+    const resource = await GenerationService.refineContent(
+      req.params.id as string,
+      user.schoolId!,
+      user.id,
+      req.body,
+    );
+    res.json(apiResponse(true, resource, 'Resource refined successfully'));
+  }
 }

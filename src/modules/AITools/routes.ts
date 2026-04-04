@@ -11,6 +11,7 @@ import {
   bulkGradeSchema,
   reviewGradeSchema,
   publishGradeParamsSchema,
+  markPaperSchema,
 } from './validation.js';
 
 const router = express.Router();
@@ -58,6 +59,17 @@ router.post(
   authorize('teacher', 'school_admin', 'super_admin'),
   validate(regenerateQuestionSchema),
   AIToolsController.regenerateQuestion,
+);
+
+// ─── OCR Paper Marking ───────────────────────────────────────────────────────
+
+// POST /mark-paper — OCR-based paper marking from image
+router.post(
+  '/mark-paper',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  validate(markPaperSchema),
+  AIToolsController.markPaper,
 );
 
 // ─── AI Grading ───────────────────────────────────────────────────────────────

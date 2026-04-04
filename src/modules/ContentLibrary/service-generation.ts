@@ -6,7 +6,7 @@ import { CurriculumNode } from '../CurriculumStructure/model.js';
 import { AIService } from '../../services/ai.service.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
 import type { ICurriculumNode } from '../CurriculumStructure/model.js';
-import type { GenerateContentInput } from './validation.js';
+import type { GenerateContentInput, RefineResourceInput } from './validation.js';
 
 const DAILY_LIMIT = 20;
 
@@ -78,6 +78,61 @@ export class GenerationService {
     });
 
     return resource.toObject();
+  }
+
+  static async refineContent(
+    resourceId: string,
+    schoolId: string,
+    userId: string,
+    data: RefineResourceInput,
+  ) {
+    const oid = new mongoose.Types.ObjectId(resourceId);
+    const soid = new mongoose.Types.ObjectId(schoolId);
+
+    const resource = await ContentResource.findOne({
+      _id: oid,
+      schoolId: soid,
+      isDeleted: false,
+    }).lean();
+
+    if (!resource) throw new NotFoundError('Content resource not found');
+    if (resource.createdBy.toString() !== userId) {
+      throw new BadRequestError('Only the creator can refine this resource');
+    }
+
+    const currentBlocksJson = JSON.stringify(resource.blocks, null, 2);
+
+    const systemPrompt =
+      'You are refining an existing educational resource for South African CAPS curriculum. ' +
+      'The teacher has requested a change. You must return the COMPLETE updated blocks array ' +
+      '(not just the changes). Maintain the same JSON format. Keep all existing content that ' +
+      "wasn't mentioned in the instruction. Apply the teacher's instruction precisely.\n\n" +
+      'You MUST respond with valid JSON only. No markdown, no code fences, no explanation — just the JSON array.';
+
+    const userPrompt =
+      `CURRENT BLOCKS:\n${currentBlocksJson}\n\n` +
+      `TEACHER INSTRUCTION: ${data.instruction}`;
+
+    const aiResponse = await AIService.generateCompletion(systemPrompt, userPrompt, {
+      maxTokens: 8192,
+      temperature: 0.3,
+    });
+
+    const blockTypes = resource.blocks.map(
+      (b: { type: string }) => b.type,
+    );
+    const blocks = parseAIResponseToBlocks(aiResponse, blockTypes);
+    const format = blocks.some((b) => INTERACTIVE_TYPES.has(b.type))
+      ? 'interactive'
+      : 'static';
+
+    const updated = await ContentResource.findOneAndUpdate(
+      { _id: oid, schoolId: soid, isDeleted: false },
+      { $set: { blocks, format } },
+      { new: true },
+    ).lean();
+
+    return updated;
   }
 }
 

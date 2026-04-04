@@ -6,6 +6,7 @@ import {
   updateResourceSchema,
   reviewResourceSchema,
   generateContentSchema,
+  refineResourceSchema,
   resourceQuerySchema,
 } from './validation.js';
 
@@ -57,6 +58,15 @@ router.delete(
   '/resources/:id',
   authorize(...READ_ROLES),
   ContentLibraryController.deleteResource,
+);
+
+// ─── AI Refinement ─────────────────────────────────────────────────────────
+
+router.post(
+  '/resources/:id/refine',
+  authorize(...READ_ROLES),
+  validate(refineResourceSchema),
+  ContentLibraryController.refineResource,
 );
 
 // ─── Review Workflow ────────────────────────────────────────────────────────

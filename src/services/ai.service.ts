@@ -130,6 +130,69 @@ export class AIService {
     return { data: JSON.parse(cleaned) as T, usage };
   }
 
+  static async generateVisionCompletion(
+    systemPrompt: string,
+    userText: string,
+    imageBase64: string,
+    imageMediaType: 'image/jpeg' | 'image/png' | 'image/webp',
+    options?: { maxTokens?: number; temperature?: number },
+  ): Promise<{ text: string; usage: { input_tokens: number; output_tokens: number } }> {
+    await acquireSemaphore();
+    try {
+      const client = getClient();
+
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS * 2); // longer timeout for vision
+
+      const message = await callWithRetry(() =>
+        client.messages.create(
+          {
+            model: ANTHROPIC_MODEL,
+            max_tokens: options?.maxTokens ?? 4096,
+            temperature: options?.temperature ?? 0.3,
+            system: systemPrompt,
+            messages: [
+              {
+                role: 'user',
+                content: [
+                  {
+                    type: 'image',
+                    source: {
+                      type: 'base64',
+                      media_type: imageMediaType,
+                      data: imageBase64,
+                    },
+                  },
+                  {
+                    type: 'text',
+                    text: userText,
+                  },
+                ],
+              },
+            ],
+          },
+          { signal: controller.signal },
+        ),
+      );
+
+      clearTimeout(timeout);
+
+      const inputTokens = message.usage?.input_tokens ?? 0;
+      const outputTokens = message.usage?.output_tokens ?? 0;
+      logger.info(
+        `[AIService] Vision tokens — input: ${inputTokens}, output: ${outputTokens}`,
+      );
+
+      const textBlock = message.content.find((b) => b.type === 'text');
+      return {
+        text: textBlock ? textBlock.text : '',
+        usage: { input_tokens: inputTokens, output_tokens: outputTokens },
+      };
+    } finally {
+      releaseSemaphore();
+    }
+  }
+
   static getTokenUsage(message: Anthropic.Message): {
     input: number;
     output: number;
