@@ -1,0 +1,610 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "FET Phase",
+      "code": "CAPS-FET",
+      "description": "Further Education and Training Phase (Grades 10-12)",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 12",
+      "code": "CAPS-GR12",
+      "description": "",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 12
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR12",
+      "title": "Life Sciences",
+      "code": "CAPS-LIFESCI-GR12",
+      "description": "Life Sciences — Grade 12 — CAPS Curriculum",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFESCI-GR12",
+      "title": "Term 1",
+      "code": "CAPS-LIFESCI-GR12-T1",
+      "description": "SBA: Practical and Test",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR12-T1",
+      "title": "DNA: The Code of Life",
+      "code": "CAPS-LIFESCI-GR12-T1-DNA",
+      "description": "DNA location, structure, replication, RNA, genetic code and protein synthesis",
+      "metadata": { "weekNumbers": [1,2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T1-DNA",
+      "title": "DNA location, chromosomes and genes",
+      "code": "CAPS-LIFESCI-GR12-T1-DNA-01",
+      "description": "Location of DNA in the cell, chromosomes, genes and extra-nuclear DNA; discovery of DNA",
+      "metadata": { "weekNumbers": [1], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T1-DNA",
+      "title": "Structure, role and replication of DNA",
+      "code": "CAPS-LIFESCI-GR12-T1-DNA-02",
+      "description": "Structure of the DNA molecule, its biological role and the process of DNA replication",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T1-DNA",
+      "title": "DNA profiling",
+      "code": "CAPS-LIFESCI-GR12-T1-DNA-03",
+      "description": "Principles and applications of DNA profiling",
+      "metadata": { "weekNumbers": [2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T1-DNA",
+      "title": "RNA: types, location and structure",
+      "code": "CAPS-LIFESCI-GR12-T1-DNA-04",
+      "description": "Types of RNA (mRNA, tRNA, rRNA), their locations in the cell and structural features",
+      "metadata": { "weekNumbers": [2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T1-DNA",
+      "title": "Genetic code",
+      "code": "CAPS-LIFESCI-GR12-T1-DNA-05",
+      "description": "Nature and properties of the genetic code; codons and anticodons",
+      "metadata": { "weekNumbers": [2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T1-DNA",
+      "title": "Protein synthesis: transcription and translation",
+      "code": "CAPS-LIFESCI-GR12-T1-DNA-06",
+      "description": "Process of protein synthesis including transcription (nucleus) and translation (ribosomes)",
+      "metadata": { "weekNumbers": [3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 6
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR12-T1",
+      "title": "Meiosis",
+      "code": "CAPS-LIFESCI-GR12-T1-MEI",
+      "description": "Chromosome structure, the process of meiosis, its importance, abnormal meiosis and comparison with mitosis",
+      "metadata": { "weekNumbers": [4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T1-MEI",
+      "title": "Chromosome structure and terminology",
+      "code": "CAPS-LIFESCI-GR12-T1-MEI-01",
+      "description": "Structure of chromosomes; key terminology: homologous chromosomes, haploid, diploid, chromatid, centromere",
+      "metadata": { "weekNumbers": [4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T1-MEI",
+      "title": "Process of meiosis",
+      "code": "CAPS-LIFESCI-GR12-T1-MEI-02",
+      "description": "Stages of meiosis I and meiosis II including crossing over and independent assortment",
+      "metadata": { "weekNumbers": [4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T1-MEI",
+      "title": "Importance of meiosis",
+      "code": "CAPS-LIFESCI-GR12-T1-MEI-03",
+      "description": "Role of meiosis in maintaining chromosome number and generating genetic variation",
+      "metadata": { "weekNumbers": [5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T1-MEI",
+      "title": "Abnormal meiosis and consequences",
+      "code": "CAPS-LIFESCI-GR12-T1-MEI-04",
+      "description": "Non-disjunction, aneuploidy and resulting genetic disorders (e.g. Down syndrome, Turner syndrome)",
+      "metadata": { "weekNumbers": [5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T1-MEI",
+      "title": "Similarities and differences between meiosis and mitosis",
+      "code": "CAPS-LIFESCI-GR12-T1-MEI-05",
+      "description": "Comparison of meiosis and mitosis in terms of purpose, stages, outcomes and genetic results",
+      "metadata": { "weekNumbers": [5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR12-T1",
+      "title": "Reproduction in Vertebrates",
+      "code": "CAPS-LIFESCI-GR12-T1-REPVERT",
+      "description": "Diversity of reproductive strategies in vertebrates",
+      "metadata": { "weekNumbers": [6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T1-REPVERT",
+      "title": "Diversity of reproductive strategies",
+      "code": "CAPS-LIFESCI-GR12-T1-REPVERT-01",
+      "description": "Comparison of sexual and asexual reproduction; external and internal fertilisation; oviparity, ovoviviparity and viviparity across vertebrate groups",
+      "metadata": { "weekNumbers": [6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR12-T1",
+      "title": "Human Reproduction",
+      "code": "CAPS-LIFESCI-GR12-T1-HUMREP",
+      "description": "Male and female reproductive systems, puberty, gametogenesis, menstrual cycle, fertilisation, development and implantation",
+      "metadata": { "weekNumbers": [7,8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T1-HUMREP",
+      "title": "Male and female reproductive systems",
+      "code": "CAPS-LIFESCI-GR12-T1-HUMREP-01",
+      "description": "Structure and function of the male and female reproductive systems",
+      "metadata": { "weekNumbers": [7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T1-HUMREP",
+      "title": "Puberty",
+      "code": "CAPS-LIFESCI-GR12-T1-HUMREP-02",
+      "description": "Hormonal control and physical changes during puberty in males and females",
+      "metadata": { "weekNumbers": [7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T1-HUMREP",
+      "title": "Gametogenesis",
+      "code": "CAPS-LIFESCI-GR12-T1-HUMREP-03",
+      "description": "Spermatogenesis and oogenesis: formation of gametes via meiosis",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T1-HUMREP",
+      "title": "Menstrual cycle",
+      "code": "CAPS-LIFESCI-GR12-T1-HUMREP-04",
+      "description": "Hormonal regulation of the menstrual cycle including FSH, LH, oestrogen and progesterone",
+      "metadata": { "weekNumbers": [8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T1-HUMREP",
+      "title": "Fertilisation",
+      "code": "CAPS-LIFESCI-GR12-T1-HUMREP-05",
+      "description": "Process of fertilisation including acrosome reaction and prevention of polyspermy",
+      "metadata": { "weekNumbers": [8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T1-HUMREP",
+      "title": "Development from zygote to blastocyst",
+      "code": "CAPS-LIFESCI-GR12-T1-HUMREP-06",
+      "description": "Early embryonic development: cleavage, morula and blastocyst formation",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T1-HUMREP",
+      "title": "Implantation, gestation and role of the placenta",
+      "code": "CAPS-LIFESCI-GR12-T1-HUMREP-07",
+      "description": "Implantation of the blastocyst, gestation period and structure and functions of the placenta",
+      "metadata": { "weekNumbers": [9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 7
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFESCI-GR12",
+      "title": "Term 2",
+      "code": "CAPS-LIFESCI-GR12-T2",
+      "description": "SBA: Practical and June Exam/Controlled Test",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR12-T2",
+      "title": "Genetics and Inheritance",
+      "code": "CAPS-LIFESCI-GR12-T2-GEN",
+      "description": "Concepts of inheritance, monohybrid and dihybrid crosses, sex linkage, blood grouping, pedigree diagrams, mutations and genetic engineering",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T2-GEN",
+      "title": "Concepts of inheritance",
+      "code": "CAPS-LIFESCI-GR12-T2-GEN-01",
+      "description": "Key terminology: allele, genotype, phenotype, dominant, recessive, homozygous, heterozygous, co-dominance, incomplete dominance",
+      "metadata": { "weekNumbers": [1], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T2-GEN",
+      "title": "Monohybrid crosses and sex determination",
+      "code": "CAPS-LIFESCI-GR12-T2-GEN-02",
+      "description": "Monohybrid crosses using Punnett squares; sex determination in humans (XX/XY system)",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T2-GEN",
+      "title": "Sex-linked inheritance",
+      "code": "CAPS-LIFESCI-GR12-T2-GEN-03",
+      "description": "X-linked traits including haemophilia and colour blindness; sex-influenced traits",
+      "metadata": { "weekNumbers": [2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T2-GEN",
+      "title": "Dihybrid crosses",
+      "code": "CAPS-LIFESCI-GR12-T2-GEN-04",
+      "description": "Dihybrid crosses and the law of independent assortment; 9:3:3:1 ratios and deviations",
+      "metadata": { "weekNumbers": [2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T2-GEN",
+      "title": "Blood grouping",
+      "code": "CAPS-LIFESCI-GR12-T2-GEN-05",
+      "description": "ABO blood group system (co-dominance and multiple alleles) and Rhesus factor",
+      "metadata": { "weekNumbers": [3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T2-GEN",
+      "title": "Genetic lineages and pedigree diagrams",
+      "code": "CAPS-LIFESCI-GR12-T2-GEN-06",
+      "description": "Interpretation and construction of pedigree diagrams to track inheritance across generations",
+      "metadata": { "weekNumbers": [3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T2-GEN",
+      "title": "Mutations",
+      "code": "CAPS-LIFESCI-GR12-T2-GEN-07",
+      "description": "Gene and chromosome mutations, causes (mutagens) and consequences",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 7
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T2-GEN",
+      "title": "Genetic engineering, paternity testing and genetic links",
+      "code": "CAPS-LIFESCI-GR12-T2-GEN-08",
+      "description": "Principles of genetic engineering; applications in paternity testing and identifying genetic relationships",
+      "metadata": { "weekNumbers": [4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 8
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR12-T2",
+      "title": "Responding to the Environment (Humans)",
+      "code": "CAPS-LIFESCI-GR12-T2-NERVHUM",
+      "description": "Human nervous system, reflex arc, human eye and human ear",
+      "metadata": { "weekNumbers": [5,6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T2-NERVHUM",
+      "title": "Human nervous system",
+      "code": "CAPS-LIFESCI-GR12-T2-NERVHUM-01",
+      "description": "Central nervous system (brain and spinal cord), peripheral nervous system and autonomic nervous system",
+      "metadata": { "weekNumbers": [5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T2-NERVHUM",
+      "title": "Nerve cell structure, reflex arc and disorders",
+      "code": "CAPS-LIFESCI-GR12-T2-NERVHUM-02",
+      "description": "Structure of a neuron; reflex arc; nerve impulse transmission; common nervous system disorders",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T2-NERVHUM",
+      "title": "Human eye",
+      "code": "CAPS-LIFESCI-GR12-T2-NERVHUM-03",
+      "description": "Structure and function of the human eye; accommodation; common eye defects and corrections",
+      "metadata": { "weekNumbers": [6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T2-NERVHUM",
+      "title": "Human ear",
+      "code": "CAPS-LIFESCI-GR12-T2-NERVHUM-04",
+      "description": "Structure and function of the human ear; hearing and balance; common ear disorders",
+      "metadata": { "weekNumbers": [7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR12-T2",
+      "title": "Human Endocrine System and Homeostasis",
+      "code": "CAPS-LIFESCI-GR12-T2-ENDO",
+      "description": "Endocrine and exocrine glands, hormones, negative feedback and homeostatic mechanisms",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T2-ENDO",
+      "title": "Endocrine and exocrine glands and hormones",
+      "code": "CAPS-LIFESCI-GR12-T2-ENDO-01",
+      "description": "Distinction between endocrine and exocrine glands; major endocrine glands, their hormones and functions",
+      "metadata": { "weekNumbers": [8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T2-ENDO",
+      "title": "Negative feedback: TSH/thyroxin and thyroid disorders",
+      "code": "CAPS-LIFESCI-GR12-T2-ENDO-02",
+      "description": "Negative feedback loop involving TSH and thyroxin; thyroid disorders such as goitre and cretinism",
+      "metadata": { "weekNumbers": [8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T2-ENDO",
+      "title": "Negative feedback: insulin/glucagon and diabetes mellitus",
+      "code": "CAPS-LIFESCI-GR12-T2-ENDO-03",
+      "description": "Regulation of blood glucose by insulin and glucagon; Type 1 and Type 2 diabetes mellitus",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T2-ENDO",
+      "title": "Homeostatic mechanisms",
+      "code": "CAPS-LIFESCI-GR12-T2-ENDO-04",
+      "description": "Regulation of blood glucose, CO2, water and salt balance (osmoregulation) and thermoregulation",
+      "metadata": { "weekNumbers": [9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR12-T2",
+      "title": "Responding to the Environment (Plants)",
+      "code": "CAPS-LIFESCI-GR12-T2-PLANTENV",
+      "description": "Plant hormones, tropisms and plant defence mechanisms",
+      "metadata": { "weekNumbers": [10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T2-PLANTENV",
+      "title": "Plant hormones and tropisms",
+      "code": "CAPS-LIFESCI-GR12-T2-PLANTENV-01",
+      "description": "Role of auxins, gibberellins, cytokinins, abscisic acid and ethylene; phototropism, gravitropism and thigmotropism",
+      "metadata": { "weekNumbers": [10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T2-PLANTENV",
+      "title": "Plant defence mechanisms",
+      "code": "CAPS-LIFESCI-GR12-T2-PLANTENV-02",
+      "description": "Physical and chemical defences in plants against herbivory and disease",
+      "metadata": { "weekNumbers": [10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFESCI-GR12",
+      "title": "Term 3",
+      "code": "CAPS-LIFESCI-GR12-T3",
+      "description": "SBA: Assignment and Trial Examination",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR12-T3",
+      "title": "Evolution",
+      "code": "CAPS-LIFESCI-GR12-T3-EVOL",
+      "description": "Evidence for evolution, theories, speciation, reproductive isolation, human evolution and Out of Africa hypothesis",
+      "metadata": { "weekNumbers": [1,2,3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T3-EVOL",
+      "title": "Introduction to biological evolution",
+      "code": "CAPS-LIFESCI-GR12-T3-EVOL-01",
+      "description": "Definitions of biological evolution, hypothesis and theory; distinction between fact, hypothesis and theory",
+      "metadata": { "weekNumbers": [1], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T3-EVOL",
+      "title": "Evidence for evolution and variation",
+      "code": "CAPS-LIFESCI-GR12-T3-EVOL-02",
+      "description": "Fossil record, comparative anatomy (homologous and analogous structures), embryology, molecular evidence and biogeography",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T3-EVOL",
+      "title": "Lamarckism, Darwinism and punctuated equilibrium",
+      "code": "CAPS-LIFESCI-GR12-T3-EVOL-03",
+      "description": "Lamarck's theory of acquired characteristics; Darwin's theory of natural selection; punctuated equilibrium vs gradualism",
+      "metadata": { "weekNumbers": [2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T3-EVOL",
+      "title": "Artificial selection and speciation",
+      "code": "CAPS-LIFESCI-GR12-T3-EVOL-04",
+      "description": "Selective breeding and artificial selection; allopatric and sympatric speciation",
+      "metadata": { "weekNumbers": [3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T3-EVOL",
+      "title": "Reproductive isolation mechanisms",
+      "code": "CAPS-LIFESCI-GR12-T3-EVOL-05",
+      "description": "Pre-zygotic and post-zygotic reproductive isolating mechanisms and their role in speciation",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T3-EVOL",
+      "title": "Evolution in present times",
+      "code": "CAPS-LIFESCI-GR12-T3-EVOL-06",
+      "description": "Examples of evolution currently observable: antibiotic resistance, pesticide resistance, industrial melanism",
+      "metadata": { "weekNumbers": [4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T3-EVOL",
+      "title": "Evidence of common ancestors for living hominids including humans",
+      "code": "CAPS-LIFESCI-GR12-T3-EVOL-07",
+      "description": "Comparative anatomy and molecular evidence supporting common ancestry of hominids; key hominid fossil species",
+      "metadata": { "weekNumbers": [4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 7
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR12-T3-EVOL",
+      "title": "Out of Africa hypothesis",
+      "code": "CAPS-LIFESCI-GR12-T3-EVOL-08",
+      "description": "Molecular and fossil evidence supporting the Out of Africa hypothesis for the origin and dispersal of modern Homo sapiens",
+      "metadata": { "weekNumbers": [5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 8
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR12-T3",
+      "title": "Revision",
+      "code": "CAPS-LIFESCI-GR12-T3-REV",
+      "description": "Revision of Term 1 and Term 2 content in preparation for Trial Examination",
+      "metadata": { "weekNumbers": [6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR12-T3",
+      "title": "Trial Examination",
+      "code": "CAPS-LIFESCI-GR12-T3-TRIAL",
+      "description": "Paper 1 (150 marks): Reproduction in vertebrates 8, Human reproduction 41, Responding to environment humans 54, Endocrine/homeostasis 34, Responding plants 13. Paper 2 (150 marks): DNA 27, Meiosis 21, Genetics/inheritance 48, Evolution 54",
+      "metadata": { "weekNumbers": [7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFESCI-GR12",
+      "title": "Term 4",
+      "code": "CAPS-LIFESCI-GR12-T4",
+      "description": "Final NSC Examination",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR12-T4",
+      "title": "Revision",
+      "code": "CAPS-LIFESCI-GR12-T4-REV",
+      "description": "Final revision of all Grade 12 content in preparation for NSC examinations",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR12-T4",
+      "title": "Study Leave",
+      "code": "CAPS-LIFESCI-GR12-T4-STUDY",
+      "description": "Dedicated study leave period for learners ahead of final NSC examinations",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR12-T4",
+      "title": "Final NSC Examination",
+      "code": "CAPS-LIFESCI-GR12-T4-EXAM",
+      "description": "National Senior Certificate final examinations for Life Sciences Grade 12",
+      "metadata": { "weekNumbers": [5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    }
+  ]
+}

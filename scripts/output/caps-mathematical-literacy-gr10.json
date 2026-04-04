@@ -1,0 +1,453 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "FET Phase",
+      "code": "CAPS-FET",
+      "description": "Further Education and Training Phase (Grades 10-12)",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 10",
+      "code": "CAPS-GR10",
+      "description": "",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 10
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR10",
+      "title": "Mathematical Literacy",
+      "code": "CAPS-MATHLIT-GR10",
+      "description": "Mathematical Literacy — Grade 10 — CAPS Curriculum",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHLIT-GR10",
+      "title": "Term 1",
+      "code": "CAPS-MATHLIT-GR10-T1",
+      "description": "SBA: Investigation and controlled test",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR10-T1",
+      "title": "Numbers and Calculations with Numbers",
+      "code": "CAPS-MATHLIT-GR10-T1-NUM",
+      "description": "Number formats, operations, rounding, ratio, rates and percentage",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR10-T1-NUM",
+      "title": "Number formats",
+      "code": "CAPS-MATHLIT-GR10-T1-NUM-01",
+      "description": "Decimal point, comma, thousand separators, positive/negative numbers, conversions between number formats",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR10-T1-NUM",
+      "title": "Operations",
+      "code": "CAPS-MATHLIT-GR10-T1-NUM-02",
+      "description": "Operations with whole numbers and decimals with/without calculator (BODMAS); square, cube and square root; operations with fractions",
+      "metadata": { "weekNumbers": [1,2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR10-T1-NUM",
+      "title": "Rounding, ratio, rates and percentage",
+      "code": "CAPS-MATHLIT-GR10-T1-NUM-03",
+      "description": "Rounding to specified decimal places and nearest whole number; ratios (situations, formats, calculations); rates (meaning, types, calculations); percentage notation and calculations; percentage increase and decrease",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR10-T1",
+      "title": "Patterns, Relationships and Representations",
+      "code": "CAPS-MATHLIT-GR10-T1-PAT",
+      "description": "Patterns and relationships, and their multiple representations",
+      "metadata": { "weekNumbers": [5,6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR10-T1-PAT",
+      "title": "Patterns and relationships",
+      "code": "CAPS-MATHLIT-GR10-T1-PAT-01",
+      "description": "Constant, direct proportion, and inverse proportion relationships; tables with input and output values",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR10-T1-PAT",
+      "title": "Representations",
+      "code": "CAPS-MATHLIT-GR10-T1-PAT-02",
+      "description": "Tables with dependent/independent values and variables; equations; graphs; interpretation of tables and graphs; determine dependent/independent values, variables, zero/min/max/missing values; write story from graph or draw graph from story",
+      "metadata": { "weekNumbers": [6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR10-T1",
+      "title": "Data Handling",
+      "code": "CAPS-MATHLIT-GR10-T1-DATA",
+      "description": "Developing questions, collecting, organising, summarising and analysing data",
+      "metadata": { "weekNumbers": [8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR10-T1-DATA",
+      "title": "Collecting and organising data",
+      "code": "CAPS-MATHLIT-GR10-T1-DATA-01",
+      "description": "Developing questions, collecting data, classifying and organising data",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR10-T1-DATA",
+      "title": "Summarising and analysing data",
+      "code": "CAPS-MATHLIT-GR10-T1-DATA-02",
+      "description": "Mean, median, mode and range; analyse data represented by these measures",
+      "metadata": { "weekNumbers": [9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR10-T1",
+      "title": "Revision",
+      "code": "CAPS-MATHLIT-GR10-T1-REV",
+      "description": "Revision of Numbers, Patterns and Data Handling",
+      "metadata": { "weekNumbers": [11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHLIT-GR10",
+      "title": "Term 2",
+      "code": "CAPS-MATHLIT-GR10-T2",
+      "description": "SBA: Assignment and mid-year exam",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR10-T2",
+      "title": "Finance",
+      "code": "CAPS-MATHLIT-GR10-T2-FIN",
+      "description": "Financial documents, tariff systems and their graphical representations",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR10-T2-FIN",
+      "title": "Financial documents",
+      "code": "CAPS-MATHLIT-GR10-T2-FIN-01",
+      "description": "Household bills, shopping documents, banking documents, household budget; relevant terminology",
+      "metadata": { "weekNumbers": [1], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR10-T2-FIN",
+      "title": "Tariff systems",
+      "code": "CAPS-MATHLIT-GR10-T2-FIN-02",
+      "description": "Municipal, telephone, transport tariffs and bank fees; calculate cost using tariff/formula; draw and interpret graphs of various tariff systems",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR10-T2",
+      "title": "Measurement",
+      "code": "CAPS-MATHLIT-GR10-T2-MEAS",
+      "description": "Unit conversions and measuring/estimating quantities",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR10-T2-MEAS",
+      "title": "Conversions",
+      "code": "CAPS-MATHLIT-GR10-T2-MEAS-01",
+      "description": "Metric system; conversion using factors and tables; time formats and conventions",
+      "metadata": { "weekNumbers": [3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR10-T2-MEAS",
+      "title": "Measuring and estimating",
+      "code": "CAPS-MATHLIT-GR10-T2-MEAS-02",
+      "description": "Length, distance, weight/mass, volume, temperature and time; calculate costs of products and services",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR10-T2",
+      "title": "Maps, Plans and Other Representations",
+      "code": "CAPS-MATHLIT-GR10-T2-MAPS",
+      "description": "Scale and map skills",
+      "metadata": { "weekNumbers": [5,6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR10-T2-MAPS",
+      "title": "Scale",
+      "code": "CAPS-MATHLIT-GR10-T2-MAPS-01",
+      "description": "Use scale in form 1:500 and bar scales to calculate actual distance and length",
+      "metadata": { "weekNumbers": [5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR10-T2-MAPS",
+      "title": "Maps",
+      "code": "CAPS-MATHLIT-GR10-T2-MAPS-02",
+      "description": "Describe position of objects, find location, follow and develop directions, direction indicators, house numbering, numbering systems for seating in sport stadiums",
+      "metadata": { "weekNumbers": [5,6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR10-T2",
+      "title": "Probability",
+      "code": "CAPS-MATHLIT-GR10-T2-PROB",
+      "description": "Expression of probability, prediction, relative frequency and theoretical probability, tree diagrams and two-way tables",
+      "metadata": { "weekNumbers": [8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR10-T2-PROB",
+      "title": "Expression of probability, events and outcomes",
+      "code": "CAPS-MATHLIT-GR10-T2-PROB-01",
+      "description": "Expression of probability, events and outcomes, prediction",
+      "metadata": { "weekNumbers": [8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR10-T2-PROB",
+      "title": "Relative frequency and theoretical probability",
+      "code": "CAPS-MATHLIT-GR10-T2-PROB-02",
+      "description": "Relative frequency and theoretical probability",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR10-T2-PROB",
+      "title": "Tree diagrams and two-way tables",
+      "code": "CAPS-MATHLIT-GR10-T2-PROB-03",
+      "description": "Tree diagrams and two-way tables",
+      "metadata": { "weekNumbers": [9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR10-T2",
+      "title": "Revision",
+      "code": "CAPS-MATHLIT-GR10-T2-REV",
+      "description": "Revision",
+      "metadata": { "weekNumbers": [11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHLIT-GR10",
+      "title": "Term 3",
+      "code": "CAPS-MATHLIT-GR10-T3",
+      "description": "SBA: Assignment and controlled test",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR10-T3",
+      "title": "Finance",
+      "code": "CAPS-MATHLIT-GR10-T3-FIN",
+      "description": "Income, expenditure, interest, taxation, banking, loans and investments",
+      "metadata": { "weekNumbers": [1,2,3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR10-T3-FIN",
+      "title": "Income, expenditure, profit and loss",
+      "code": "CAPS-MATHLIT-GR10-T3-FIN-01",
+      "description": "Perform calculations, identify fixed/variable/occasional income and expenditure, analyse and prepare income-and-expenditure statements and budgets",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR10-T3-FIN",
+      "title": "Interest",
+      "code": "CAPS-MATHLIT-GR10-T3-FIN-02",
+      "description": "Distinguish between interest rate and interest; calculate interest and interest rate without formulae",
+      "metadata": { "weekNumbers": [2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR10-T3-FIN",
+      "title": "Taxation",
+      "code": "CAPS-MATHLIT-GR10-T3-FIN-03",
+      "description": "Determine VAT in context of shop purchases, till slips and bills; calculate VAT inclusive and exclusive prices",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR10-T3-FIN",
+      "title": "Banking, loans and investments",
+      "code": "CAPS-MATHLIT-GR10-T3-FIN-04",
+      "description": "Understand terminology, determine bank charges for different account types, draw graphs from bank charges",
+      "metadata": { "weekNumbers": [4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR10-T3",
+      "title": "Measurement",
+      "code": "CAPS-MATHLIT-GR10-T3-MEAS",
+      "description": "Perimeter and area of 2D shapes",
+      "metadata": { "weekNumbers": [6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR10-T3-MEAS",
+      "title": "Perimeter and area",
+      "code": "CAPS-MATHLIT-GR10-T3-MEAS-01",
+      "description": "Calculate perimeter and area of rectangles, triangles, circles (quarter, semi, three-quarters) using provided formulae; cost of products",
+      "metadata": { "weekNumbers": [6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR10-T3",
+      "title": "Maps, Plans and Other Representations",
+      "code": "CAPS-MATHLIT-GR10-T3-MAPS",
+      "description": "Floor plans, assembly diagrams, models and packaging",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR10-T3-MAPS",
+      "title": "Floor plans and design",
+      "code": "CAPS-MATHLIT-GR10-T3-MAPS-01",
+      "description": "Understand symbols/notation, describe representations, analyse layout, determine actual length using scale, determine quantity of material needed, draw 2D floor plans",
+      "metadata": { "weekNumbers": [8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR10-T3-MAPS",
+      "title": "Assembly diagrams, models and packaging",
+      "code": "CAPS-MATHLIT-GR10-T3-MAPS-02",
+      "description": "Assembly diagrams, models, packaging for optimal use of space, cost-effective packaging",
+      "metadata": { "weekNumbers": [9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR10-T3",
+      "title": "Revision",
+      "code": "CAPS-MATHLIT-GR10-T3-REV",
+      "description": "Revision",
+      "metadata": { "weekNumbers": [10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHLIT-GR10",
+      "title": "Term 4",
+      "code": "CAPS-MATHLIT-GR10-T4",
+      "description": "No SBA task; Internal Examinations (Paper 1 75 marks 1.5h; Paper 2 75 marks 1.5h)",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR10-T4",
+      "title": "Data Handling",
+      "code": "CAPS-MATHLIT-GR10-T4-DATA",
+      "description": "Representing and analysing data using graphs",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR10-T4-DATA",
+      "title": "Representing data",
+      "code": "CAPS-MATHLIT-GR10-T4-DATA-01",
+      "description": "Pie chart (interpretation only), histogram, single bar graph, line and broken line graph",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR10-T4-DATA",
+      "title": "Analysing data from graphs",
+      "code": "CAPS-MATHLIT-GR10-T4-DATA-02",
+      "description": "Analyse data represented by pie charts, histograms, bar graphs, line and broken line graphs",
+      "metadata": { "weekNumbers": [2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR10-T4",
+      "title": "Revision",
+      "code": "CAPS-MATHLIT-GR10-T4-REV",
+      "description": "Revision of Finance, Data Handling, Probability, Measurement, Maps and Plans",
+      "metadata": { "weekNumbers": [3,4,5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR10-T4",
+      "title": "Internal Examinations",
+      "code": "CAPS-MATHLIT-GR10-T4-EXAM",
+      "description": "Paper 1: 75 marks, 1.5 hours (Finance, Data Handling, Probability integration); Paper 2: 75 marks, 1.5 hours (Maps/Plans, Measurements, Probability integration)",
+      "metadata": { "weekNumbers": [7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    }
+  ]
+}

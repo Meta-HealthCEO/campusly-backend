@@ -1,0 +1,527 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "FET Phase",
+      "code": "CAPS-FET",
+      "description": "Further Education and Training Phase (Grades 10-12)",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 12",
+      "code": "CAPS-GR12",
+      "description": "",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 12
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR12",
+      "title": "Physical Sciences",
+      "code": "CAPS-PHYSSCI-GR12",
+      "description": "Physical Sciences — Grade 12 — CAPS Curriculum",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-PHYSSCI-GR12",
+      "title": "Term 1",
+      "code": "CAPS-PHYSSCI-GR12-T1",
+      "description": "SBA: Control test",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T1",
+      "title": "Mechanics: Momentum and Impulse",
+      "code": "CAPS-PHYSSCI-GR12-T1-MOM",
+      "description": "Newton's second law in terms of momentum; impulse; conservation of linear momentum; collisions.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T1-MOM",
+      "title": "Momentum definition and vector nature",
+      "code": "CAPS-PHYSSCI-GR12-T1-MOM-01",
+      "description": "Define momentum and calculate momentum using p = mv. Understand the vector nature of momentum.",
+      "metadata": { "weekNumbers": [1], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T1-MOM",
+      "title": "Newton's second law in terms of momentum",
+      "code": "CAPS-PHYSSCI-GR12-T1-MOM-02",
+      "description": "Express Newton's second law as Fnet = dp/dt. Relate net force to change in momentum.",
+      "metadata": { "weekNumbers": [1], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T1-MOM",
+      "title": "Impulse and impulse-momentum theorem",
+      "code": "CAPS-PHYSSCI-GR12-T1-MOM-03",
+      "description": "Define impulse as Fnet·Δt = mΔv. Apply the impulse-momentum theorem. Discuss safety applications (e.g. crumple zones, airbags).",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T1-MOM",
+      "title": "Conservation of linear momentum and collisions",
+      "code": "CAPS-PHYSSCI-GR12-T1-MOM-04",
+      "description": "State and apply the law of conservation of linear momentum for isolated systems. Distinguish between elastic and inelastic collisions. Solve problems involving collisions and explosions.",
+      "metadata": { "weekNumbers": [2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T1",
+      "title": "Mechanics: Vertical Projectile Motion",
+      "code": "CAPS-PHYSSCI-GR12-T1-VPM",
+      "description": "Projectile motion in one dimension (vertical); equations of motion; graphical analysis.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T1-VPM",
+      "title": "Definition and equations of motion for vertical projectiles",
+      "code": "CAPS-PHYSSCI-GR12-T1-VPM-01",
+      "description": "Define a projectile. Use equations of motion to solve problems for objects in free fall, thrown vertically upward, thrown vertically downward, and bouncing objects.",
+      "metadata": { "weekNumbers": [3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T1-VPM",
+      "title": "Graphs of vertical projectile motion",
+      "code": "CAPS-PHYSSCI-GR12-T1-VPM-02",
+      "description": "Sketch and interpret position-time (x-t), velocity-time (v-t), and acceleration-time (a-t) graphs for free-falling objects, objects thrown upward, objects thrown downward, and bouncing objects. Derive position and velocity equations from graphs.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T1",
+      "title": "Matter and Materials: Organic Molecules",
+      "code": "CAPS-PHYSSCI-GR12-T1-ORG",
+      "description": "Functional groups; homologous series; IUPAC naming; structural isomers; physical properties; reactions of organic compounds.",
+      "metadata": { "weekNumbers": [5,6,7,8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T1-ORG",
+      "title": "Key definitions and terminology",
+      "code": "CAPS-PHYSSCI-GR12-T1-ORG-01",
+      "description": "Define: organic molecule, functional group, hydrocarbon, homologous series, saturated compound, unsaturated compound, structural isomer.",
+      "metadata": { "weekNumbers": [5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T1-ORG",
+      "title": "Homologous series: structures and formulae",
+      "code": "CAPS-PHYSSCI-GR12-T1-ORG-02",
+      "description": "Write condensed structural, structural (displayed), and molecular formulae (up to 8 carbon atoms) for: alkanes, alkenes, alkynes, alcohols, haloalkanes, carboxylic acids, aldehydes, ketones, and esters.",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T1-ORG",
+      "title": "IUPAC nomenclature",
+      "code": "CAPS-PHYSSCI-GR12-T1-ORG-03",
+      "description": "Apply IUPAC rules to name and draw organic compounds including alkyl substituents. Name and draw structural isomers: chain isomers, positional isomers, and functional isomers.",
+      "metadata": { "weekNumbers": [6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T1-ORG",
+      "title": "Physical properties and intermolecular forces",
+      "code": "CAPS-PHYSSCI-GR12-T1-ORG-04",
+      "description": "Relate physical properties (melting point, boiling point, vapour pressure, viscosity, density, solubility) to intermolecular forces, functional group, chain length, and branching.",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T1-ORG",
+      "title": "Reactions of organic compounds",
+      "code": "CAPS-PHYSSCI-GR12-T1-ORG-05",
+      "description": "Write equations for: combustion of alkanes; ester formation (condensation reaction); addition reactions (e.g. hydrogenation, halogenation, hydrohalogenation, hydration); elimination reactions (dehydrohalogenation, dehydration); substitution reactions (halogenation of alkanes, hydrolysis of halogenoalkanes).",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-PHYSSCI-GR12",
+      "title": "Term 2",
+      "code": "CAPS-PHYSSCI-GR12-T2",
+      "description": "SBA: June examination or control test",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T2",
+      "title": "Mechanics: Work, Energy and Power",
+      "code": "CAPS-PHYSSCI-GR12-T2-WEP",
+      "description": "Work done by a force; work-energy theorem; conservation of mechanical energy; power.",
+      "metadata": { "weekNumbers": [1,2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T2-WEP",
+      "title": "Work done by a force",
+      "code": "CAPS-PHYSSCI-GR12-T2-WEP-01",
+      "description": "Define work done by a force. Draw force and free-body diagrams. Calculate net work. Distinguish between positive and negative work.",
+      "metadata": { "weekNumbers": [1], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T2-WEP",
+      "title": "Work-energy theorem",
+      "code": "CAPS-PHYSSCI-GR12-T2-WEP-02",
+      "description": "State and apply the work-energy theorem: net work done on an object equals the change in kinetic energy.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T2-WEP",
+      "title": "Conservation of mechanical energy and non-conservative forces",
+      "code": "CAPS-PHYSSCI-GR12-T2-WEP-03",
+      "description": "Distinguish between conservative and non-conservative forces. State and apply the conservation of mechanical energy. Apply Wnc = ΔEk + ΔEp to solve problems involving friction and other non-conservative forces.",
+      "metadata": { "weekNumbers": [2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T2-WEP",
+      "title": "Power",
+      "code": "CAPS-PHYSSCI-GR12-T2-WEP-04",
+      "description": "Define power as P = W/Δt. Calculate average power using Pave = Fvave. Determine minimum power required for pumping liquids.",
+      "metadata": { "weekNumbers": [2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T2",
+      "title": "Waves, Sound and Light: Doppler Effect",
+      "code": "CAPS-PHYSSCI-GR12-T2-DOP",
+      "description": "Doppler effect for sound; applications; red-shift and the expanding universe.",
+      "metadata": { "weekNumbers": [4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T2-DOP",
+      "title": "Doppler effect — concept and change in pitch",
+      "code": "CAPS-PHYSSCI-GR12-T2-DOP-01",
+      "description": "State the Doppler effect. Explain the change in observed pitch as a source moves towards or away from a listener.",
+      "metadata": { "weekNumbers": [4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T2-DOP",
+      "title": "Doppler calculations and applications",
+      "code": "CAPS-PHYSSCI-GR12-T2-DOP-02",
+      "description": "Solve problems using fL = ((v ± vL)/(v ± vs)) × fs. Describe applications such as ultrasound in medicine. Explain red-shift as evidence for the expanding universe.",
+      "metadata": { "weekNumbers": [4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T2",
+      "title": "Chemical Change: Rate and Extent of Reaction",
+      "code": "CAPS-PHYSSCI-GR12-T2-RATE",
+      "description": "Reaction rate; factors affecting rate; collision theory; activation energy.",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T2-RATE",
+      "title": "Reaction rate definition and measurement",
+      "code": "CAPS-PHYSSCI-GR12-T2-RATE-01",
+      "description": "Define reaction rate. Calculate reaction rate from experimental data (change in concentration per unit time, or volume of gas produced per unit time).",
+      "metadata": { "weekNumbers": [5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T2-RATE",
+      "title": "Factors affecting reaction rate and collision theory",
+      "code": "CAPS-PHYSSCI-GR12-T2-RATE-02",
+      "description": "Explain how concentration, pressure, temperature, surface area, and catalysts affect reaction rate using collision theory. Interpret distribution of molecular energies (Maxwell-Boltzmann) graphs. Describe the role of a positive catalyst.",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T2",
+      "title": "Chemical Change: Chemical Equilibrium",
+      "code": "CAPS-PHYSSCI-GR12-T2-EQ",
+      "description": "Dynamic equilibrium; Le Chatelier's principle; equilibrium constant Kc.",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T2-EQ",
+      "title": "Open/closed systems and dynamic equilibrium",
+      "code": "CAPS-PHYSSCI-GR12-T2-EQ-01",
+      "description": "Distinguish between open and closed systems. Explain reversible reactions and dynamic equilibrium (forward rate = reverse rate, constant concentrations).",
+      "metadata": { "weekNumbers": [7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T2-EQ",
+      "title": "Le Chatelier's principle",
+      "code": "CAPS-PHYSSCI-GR12-T2-EQ-02",
+      "description": "State Le Chatelier's principle. Predict and explain shifts in equilibrium position due to changes in concentration, temperature, and pressure.",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T2-EQ",
+      "title": "Equilibrium constant Kc",
+      "code": "CAPS-PHYSSCI-GR12-T2-EQ-03",
+      "description": "Write the expression for the equilibrium constant Kc. Perform calculations using Kc. Interpret the significance of high and low Kc values in terms of extent of reaction.",
+      "metadata": { "weekNumbers": [8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T2",
+      "title": "Chemical Change: Acids and Bases",
+      "code": "CAPS-PHYSSCI-GR12-T2-ACID",
+      "description": "Acid-base theories; strength and concentration; conjugate pairs; neutralisation; pH; Ka/Kb; titrations.",
+      "metadata": { "weekNumbers": [9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T2-ACID",
+      "title": "Acid-base definitions and strength",
+      "code": "CAPS-PHYSSCI-GR12-T2-ACID-01",
+      "description": "Compare Arrhenius and Lowry-Brønsted definitions. Distinguish strong from weak acids and bases, and concentrated from dilute. Identify conjugate acid-base pairs.",
+      "metadata": { "weekNumbers": [9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T2-ACID",
+      "title": "Neutralisation and titrations",
+      "code": "CAPS-PHYSSCI-GR12-T2-ACID-02",
+      "description": "Write neutralisation reaction equations. Perform volumetric calculations from titration data. Choose an appropriate indicator for a given titration.",
+      "metadata": { "weekNumbers": [9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T2-ACID",
+      "title": "pH scale, Kw, Ka and Kb",
+      "code": "CAPS-PHYSSCI-GR12-T2-ACID-03",
+      "description": "Define and calculate pH. Explain auto-ionisation of water and the ion product constant Kw. Calculate [H3O+] and [OH-] from pH. Use Ka and Kb values to compare relative strengths of acids and bases. Explain pH of salt solutions (hydrolysis).",
+      "metadata": { "weekNumbers": [10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-PHYSSCI-GR12",
+      "title": "Term 3",
+      "code": "CAPS-PHYSSCI-GR12-T3",
+      "description": "SBA: Trial examination (Paper 1 and Paper 2)",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T3",
+      "title": "Electricity and Magnetism: Electric Circuits",
+      "code": "CAPS-PHYSSCI-GR12-T3-CIRC",
+      "description": "Series and parallel circuits with internal resistance; emf and terminal potential difference.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T3-CIRC",
+      "title": "Series and parallel circuits with internal resistance",
+      "code": "CAPS-PHYSSCI-GR12-T3-CIRC-01",
+      "description": "Solve problems involving series and parallel circuits with up to four resistors excluding internal resistance. Apply emf = IR_ext + Ir. Distinguish emf from terminal potential difference.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T3",
+      "title": "Electrodynamics",
+      "code": "CAPS-PHYSSCI-GR12-T3-EDYN",
+      "description": "Generators; motors; electromagnetic induction; AC vs DC; RMS values; average power.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T3-EDYN",
+      "title": "Generators and electromagnetic induction",
+      "code": "CAPS-PHYSSCI-GR12-T3-EDYN-01",
+      "description": "Explain how AC and DC generators work. Describe energy conversion in generators. State Faraday's law of electromagnetic induction. Identify components of AC and DC generators.",
+      "metadata": { "weekNumbers": [3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T3-EDYN",
+      "title": "Motors and the motor effect",
+      "code": "CAPS-PHYSSCI-GR12-T3-EDYN-02",
+      "description": "Explain how electric motors work. Describe the motor effect and identify the components of a motor. Compare advantages of AC and DC in transmission.",
+      "metadata": { "weekNumbers": [3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T3-EDYN",
+      "title": "AC graphs, RMS values and average power",
+      "code": "CAPS-PHYSSCI-GR12-T3-EDYN-03",
+      "description": "Interpret voltage-time (V-t) and current-time (I-t) graphs for AC. Calculate RMS values (Irms = Imax/√2; Vrms = Vmax/√2). Calculate average power using Pave = IrmsVrms = Irms²R = Vrms²/R.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T3",
+      "title": "Optical Phenomena and Properties of Materials",
+      "code": "CAPS-PHYSSCI-GR12-T3-OPT",
+      "description": "Photoelectric effect; work function; atomic emission and absorption spectra.",
+      "metadata": { "weekNumbers": [4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T3-OPT",
+      "title": "Photoelectric effect",
+      "code": "CAPS-PHYSSCI-GR12-T3-OPT-01",
+      "description": "Describe the photoelectric effect. Define threshold frequency and work function. Apply E = Wo + Ek(max). Explain the effect of intensity and frequency on photoelectron emission. Describe the particle nature of light (photons).",
+      "metadata": { "weekNumbers": [4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T3-OPT",
+      "title": "Atomic emission and absorption spectra",
+      "code": "CAPS-PHYSSCI-GR12-T3-OPT-02",
+      "description": "Explain the origin of atomic emission and absorption spectra in terms of electron energy level transitions. Interpret line spectra as evidence for quantised energy levels.",
+      "metadata": { "weekNumbers": [5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T3",
+      "title": "Electrochemical Reactions",
+      "code": "CAPS-PHYSSCI-GR12-T3-ECHEM",
+      "description": "Redox reactions; galvanic cells; standard electrode potentials; electrolytic cells.",
+      "metadata": { "weekNumbers": [6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T3-ECHEM",
+      "title": "Oxidation and reduction",
+      "code": "CAPS-PHYSSCI-GR12-T3-ECHEM-01",
+      "description": "Define oxidation and reduction in terms of electron transfer and change in oxidation number. Identify oxidising and reducing agents. Identify anode and cathode. Define electrolyte.",
+      "metadata": { "weekNumbers": [6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T3-ECHEM",
+      "title": "Galvanic cells",
+      "code": "CAPS-PHYSSCI-GR12-T3-ECHEM-02",
+      "description": "Describe the functioning of a galvanic cell (role of salt bridge, half-reactions, cell notation). Calculate cell emf using standard electrode potentials. Use the standard hydrogen electrode as reference. Predict how Vcell changes as reactants are consumed.",
+      "metadata": { "weekNumbers": [6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T3-ECHEM",
+      "title": "Electrolytic cells",
+      "code": "CAPS-PHYSSCI-GR12-T3-ECHEM-03",
+      "description": "Describe electrolysis of copper(II) chloride solution, electroplating, copper refining, and electrolysis of sodium chloride solution (chloro-alkali process). Write half-reactions and overall cell reactions for each process.",
+      "metadata": { "weekNumbers": [7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T3",
+      "title": "Trial Examination",
+      "code": "CAPS-PHYSSCI-GR12-T3-TRIAL",
+      "description": "Trial examination: Paper 1 (150 marks — Mechanics 65, Waves/Sound/Light 15, Electricity/Magnetism 55, Matter/Materials 15); Paper 2 (150 marks — Chemical Change 92, Matter/Materials 58).",
+      "metadata": { "weekNumbers": [8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-PHYSSCI-GR12",
+      "title": "Term 4",
+      "code": "CAPS-PHYSSCI-GR12-T4",
+      "description": "Revision and final NSC examination",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T4",
+      "title": "Revision",
+      "code": "CAPS-PHYSSCI-GR12-T4-REV",
+      "description": "Structured revision of all Grade 12 Physical Sciences content in preparation for the final NSC examination.",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR12-T4",
+      "title": "Final NSC Examination",
+      "code": "CAPS-PHYSSCI-GR12-T4-EXAM",
+      "description": "Final NSC examination: Paper 1 (150 marks — Mechanics 65, Waves/Sound/Light 15, Electricity/Magnetism 55, Matter/Materials 15); Paper 2 (150 marks — Chemical Change 92, Matter/Materials 58).",
+      "metadata": { "weekNumbers": [5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    }
+  ]
+}

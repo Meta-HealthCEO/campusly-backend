@@ -1,0 +1,608 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "FET Phase",
+      "code": "CAPS-FET",
+      "description": "Further Education and Training Phase (Grades 10-12)",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 10",
+      "code": "CAPS-GR10",
+      "description": "",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 10
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR10",
+      "title": "Mathematics",
+      "code": "CAPS-MATHEMATICS-GR10",
+      "description": "Mathematics — Grade 10 — CAPS Curriculum",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR10",
+      "title": "Term 1",
+      "code": "CAPS-MATHEMATICS-GR10-T1",
+      "description": "SBA: Investigation or project (15%) and Test (14%)",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T1",
+      "title": "Algebraic Expressions",
+      "code": "CAPS-MATHEMATICS-GR10-T1-ALG",
+      "description": "",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T1-ALG",
+      "title": "Rational and irrational numbers",
+      "code": "CAPS-MATHEMATICS-GR10-T1-ALG-01",
+      "description": "Understand that real numbers can be rational or irrational",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T1-ALG",
+      "title": "Surds between integers",
+      "code": "CAPS-MATHEMATICS-GR10-T1-ALG-02",
+      "description": "Establish between which two integers a given simple surd lies",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T1-ALG",
+      "title": "Rounding real numbers",
+      "code": "CAPS-MATHEMATICS-GR10-T1-ALG-03",
+      "description": "Round real numbers to an appropriate degree of accuracy",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T1-ALG",
+      "title": "Binomial by trinomial multiplication",
+      "code": "CAPS-MATHEMATICS-GR10-T1-ALG-04",
+      "description": "Multiplication of a binomial by a trinomial",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T1-ALG",
+      "title": "Factorisation",
+      "code": "CAPS-MATHEMATICS-GR10-T1-ALG-05",
+      "description": "Factorisation to include types taught in Grade 9 and: trinomials, grouping in pairs, sum and difference of two cubes",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T1-ALG",
+      "title": "Algebraic fractions",
+      "code": "CAPS-MATHEMATICS-GR10-T1-ALG-06",
+      "description": "Simplifying, adding and subtracting algebraic fractions using factorisation with denominators of cubes (limited to sum and difference of cubes)",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T1",
+      "title": "Exponents, Equations and Inequalities",
+      "code": "CAPS-MATHEMATICS-GR10-T1-EXP",
+      "description": "",
+      "metadata": { "weekNumbers": [5,6,7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T1-EXP",
+      "title": "Laws of exponents",
+      "code": "CAPS-MATHEMATICS-GR10-T1-EXP-01",
+      "description": "Revise laws of exponents learnt in Grade 9 where x, y > 0 and m, n are integers. Also by definition: x^(-n) = 1/x^n (x != 0) and x^0 = 1 (x != 0)",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T1-EXP",
+      "title": "Simplify expressions and solve equations using exponent laws",
+      "code": "CAPS-MATHEMATICS-GR10-T1-EXP-02",
+      "description": "Use the laws of exponents to simplify expressions and solve equations, accepting that the rules also hold for m, n in Q",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T1-EXP",
+      "title": "Linear equations",
+      "code": "CAPS-MATHEMATICS-GR10-T1-EXP-03",
+      "description": "Revise the solution of linear equations",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T1-EXP",
+      "title": "Quadratic equations",
+      "code": "CAPS-MATHEMATICS-GR10-T1-EXP-04",
+      "description": "Solve quadratic equations (by factorisation)",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T1-EXP",
+      "title": "Simultaneous linear equations",
+      "code": "CAPS-MATHEMATICS-GR10-T1-EXP-05",
+      "description": "Solve simultaneous linear equations in two unknowns",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T1-EXP",
+      "title": "Word problems",
+      "code": "CAPS-MATHEMATICS-GR10-T1-EXP-06",
+      "description": "Solve word problems involving linear, quadratic or simultaneous linear equations",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T1-EXP",
+      "title": "Literal equations",
+      "code": "CAPS-MATHEMATICS-GR10-T1-EXP-07",
+      "description": "Solve literal equations (changing the subject of a formula)",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 7
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T1-EXP",
+      "title": "Linear inequalities",
+      "code": "CAPS-MATHEMATICS-GR10-T1-EXP-08",
+      "description": "Solve linear inequalities (and show solution graphically). Interval notation must be known",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 8
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T1",
+      "title": "Trigonometry",
+      "code": "CAPS-MATHEMATICS-GR10-T1-TRIG",
+      "description": "",
+      "metadata": { "weekNumbers": [9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T1-TRIG",
+      "title": "Trigonometric ratios",
+      "code": "CAPS-MATHEMATICS-GR10-T1-TRIG-01",
+      "description": "Define the trigonometric ratios sin, cos and tan using the right-angled triangle",
+      "metadata": { "weekNumbers": [9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T1-TRIG",
+      "title": "Extended definitions",
+      "code": "CAPS-MATHEMATICS-GR10-T1-TRIG-02",
+      "description": "Extend the definitions of sin, cos and tan for 0 <= theta <= 360 degrees",
+      "metadata": { "weekNumbers": [9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T1-TRIG",
+      "title": "Reciprocal ratios",
+      "code": "CAPS-MATHEMATICS-GR10-T1-TRIG-03",
+      "description": "Define the reciprocal trigonometric ratios cosec, sec and cot using the right-angled triangle (examined in Grade 10 only)",
+      "metadata": { "weekNumbers": [9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T1-TRIG",
+      "title": "Special angles",
+      "code": "CAPS-MATHEMATICS-GR10-T1-TRIG-04",
+      "description": "Derive values of the trigonometric ratios for the special cases (without using a calculator) for theta in {0, 30, 45, 60, 90} degrees",
+      "metadata": { "weekNumbers": [9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T1-TRIG",
+      "title": "2D problems with right-angled triangles",
+      "code": "CAPS-MATHEMATICS-GR10-T1-TRIG-05",
+      "description": "Solve two-dimensional problems involving right-angled triangles",
+      "metadata": { "weekNumbers": [9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T1-TRIG",
+      "title": "Trigonometric equations",
+      "code": "CAPS-MATHEMATICS-GR10-T1-TRIG-06",
+      "description": "Solve simple trigonometric equations for angles between 0 and 90 degrees",
+      "metadata": { "weekNumbers": [9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T1-TRIG",
+      "title": "Diagram-based ratio values",
+      "code": "CAPS-MATHEMATICS-GR10-T1-TRIG-07",
+      "description": "Use a diagram to determine the numerical values of ratios for angles from 0 to 360 degrees",
+      "metadata": { "weekNumbers": [9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 7
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR10",
+      "title": "Term 2",
+      "code": "CAPS-MATHEMATICS-GR10-T2",
+      "description": "SBA: Assignment (15%) and mid-year exam (14%)",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T2",
+      "title": "Euclidean Geometry",
+      "code": "CAPS-MATHEMATICS-GR10-T2-GEOM",
+      "description": "",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T2-GEOM",
+      "title": "Revision of lines, angles and triangles",
+      "code": "CAPS-MATHEMATICS-GR10-T2-GEOM-01",
+      "description": "Revise basic results established in earlier grades regarding lines, angles and triangles, especially the similarity and congruence of triangles",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T2-GEOM",
+      "title": "Special quadrilaterals",
+      "code": "CAPS-MATHEMATICS-GR10-T2-GEOM-02",
+      "description": "Define the following special quadrilaterals: kite, parallelogram, rectangle, rhombus, square and trapezium. Investigate and make conjectures about the properties of the sides, angles, diagonals and areas of these quadrilaterals. Prove these conjectures",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T2-GEOM",
+      "title": "Midpoint theorem",
+      "code": "CAPS-MATHEMATICS-GR10-T2-GEOM-03",
+      "description": "Investigate line segment joining the midpoints of two sides of a triangle",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T2-GEOM",
+      "title": "Problems and riders",
+      "code": "CAPS-MATHEMATICS-GR10-T2-GEOM-04",
+      "description": "Solve problems and prove riders using the properties of parallel lines, triangles, quadrilaterals and midpoint theorem",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T2",
+      "title": "Analytical Geometry",
+      "code": "CAPS-MATHEMATICS-GR10-T2-ANAG",
+      "description": "",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T2-ANAG",
+      "title": "Distance, gradient and midpoint formulae",
+      "code": "CAPS-MATHEMATICS-GR10-T2-ANAG-01",
+      "description": "Represent quadrilaterals amongst other geometric figures on a Cartesian co-ordinate system. Derive and apply for any two points (x1,y1) and (x2,y2) the formulae for calculating the: distance between the two points, gradient of the line segment connecting the two points (and from that identify parallel and perpendicular lines), coordinates of the mid-point of the line segment joining the two points",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T2",
+      "title": "Functions and Graphs (including Trigonometric Functions)",
+      "code": "CAPS-MATHEMATICS-GR10-T2-FUNC",
+      "description": "",
+      "metadata": { "weekNumbers": [7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T2-FUNC",
+      "title": "Concept of a function",
+      "code": "CAPS-MATHEMATICS-GR10-T2-FUNC-01",
+      "description": "The concept of a function, where a certain quantity (output value) uniquely depends on another quantity (input value). Work with relationships between variables using tables, graphs, words and formulae. Convert flexibly between these representations",
+      "metadata": { "weekNumbers": [7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T2-FUNC",
+      "title": "Graph of y = x (revision)",
+      "code": "CAPS-MATHEMATICS-GR10-T2-FUNC-02",
+      "description": "The graph defined by y = x should be known from Grade 9",
+      "metadata": { "weekNumbers": [7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T2-FUNC",
+      "title": "Basic graph plotting",
+      "code": "CAPS-MATHEMATICS-GR10-T2-FUNC-03",
+      "description": "Point by point plotting of basic graphs defined by y = x^2, y = 1/x and y = b^x (b > 0, b != 1) to discover shape, domain (input values), range (output values), asymptotes, axes of symmetry, turning points and intercepts on the axes (where applicable)",
+      "metadata": { "weekNumbers": [7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T2-FUNC",
+      "title": "Effect of a and q on graphs",
+      "code": "CAPS-MATHEMATICS-GR10-T2-FUNC-04",
+      "description": "Investigate the effect of a and q on the graphs defined by y = a.f(x) + q, where f(x) = x, f(x) = x^2, f(x) = 1/x and f(x) = b^x (b > 0, b != 1)",
+      "metadata": { "weekNumbers": [7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T2-FUNC",
+      "title": "Trigonometric graphs plotting",
+      "code": "CAPS-MATHEMATICS-GR10-T2-FUNC-05",
+      "description": "Point by point plotting of basic graphs defined by y = sin(theta), y = cos(theta) and y = tan(theta) for theta in [0, 360] degrees",
+      "metadata": { "weekNumbers": [7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T2-FUNC",
+      "title": "Effect of a and q on trigonometric graphs",
+      "code": "CAPS-MATHEMATICS-GR10-T2-FUNC-06",
+      "description": "Study the effect of a and q on the graphs defined by: y = a sin(theta) + q, y = a cos(theta) + q, and y = a tan(theta) + q where a and q are rational and theta in [0, 360] degrees",
+      "metadata": { "weekNumbers": [7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T2-FUNC",
+      "title": "Sketch and interpret graphs",
+      "code": "CAPS-MATHEMATICS-GR10-T2-FUNC-07",
+      "description": "Sketch graphs, find the equations of given graphs and interpret graphs. Sketching must be based on the observation of the effects studied",
+      "metadata": { "weekNumbers": [7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 7
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR10",
+      "title": "Term 3",
+      "code": "CAPS-MATHEMATICS-GR10-T3",
+      "description": "SBA: Test (14%) and Test (14%)",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T3",
+      "title": "Trigonometry (2D)",
+      "code": "CAPS-MATHEMATICS-GR10-T3-TRIG2D",
+      "description": "",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T3-TRIG2D",
+      "title": "2D problems with right-angled triangles",
+      "code": "CAPS-MATHEMATICS-GR10-T3-TRIG2D-01",
+      "description": "Solve two-dimensional problems involving right-angled triangles",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T3-TRIG2D",
+      "title": "Problems in two dimensions",
+      "code": "CAPS-MATHEMATICS-GR10-T3-TRIG2D-02",
+      "description": "Problems in two dimensions",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T3",
+      "title": "Statistics",
+      "code": "CAPS-MATHEMATICS-GR10-T3-STAT",
+      "description": "",
+      "metadata": { "weekNumbers": [3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T3-STAT",
+      "title": "Measures of central tendency (ungrouped)",
+      "code": "CAPS-MATHEMATICS-GR10-T3-STAT-01",
+      "description": "Measures of central tendency in ungrouped data. Calculate the mean. Determine the median and the mode",
+      "metadata": { "weekNumbers": [3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T3-STAT",
+      "title": "Measures of central tendency (grouped)",
+      "code": "CAPS-MATHEMATICS-GR10-T3-STAT-02",
+      "description": "Measures of central tendency in grouped data: Calculation of mean estimate of grouped data and identification of modal interval and interval in which the median lies",
+      "metadata": { "weekNumbers": [3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T3-STAT",
+      "title": "Measures of dispersion",
+      "code": "CAPS-MATHEMATICS-GR10-T3-STAT-03",
+      "description": "Range as a measure of dispersion and extension to include percentiles, quartiles, inter-quartile and semi-inter-quartile range",
+      "metadata": { "weekNumbers": [3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T3-STAT",
+      "title": "Five number summary and box-and-whisker",
+      "code": "CAPS-MATHEMATICS-GR10-T3-STAT-04",
+      "description": "Five number summary (maximum, minimum and quartiles) and box and whisker diagram",
+      "metadata": { "weekNumbers": [3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T3-STAT",
+      "title": "Analyse and interpret data",
+      "code": "CAPS-MATHEMATICS-GR10-T3-STAT-05",
+      "description": "Use the statistical summaries (measures of central tendency and dispersion), and graphs to analyse and make meaningful comments on the context associated with the given data",
+      "metadata": { "weekNumbers": [3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T3-STAT",
+      "title": "Histogram",
+      "code": "CAPS-MATHEMATICS-GR10-T3-STAT-06",
+      "description": "Histogram",
+      "metadata": { "weekNumbers": [3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T3",
+      "title": "Probability",
+      "code": "CAPS-MATHEMATICS-GR10-T3-PROB",
+      "description": "",
+      "metadata": { "weekNumbers": [6,7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T3-PROB",
+      "title": "Probability models",
+      "code": "CAPS-MATHEMATICS-GR10-T3-PROB-01",
+      "description": "The use of probability models to compare the relative frequency of events with the theoretical probability",
+      "metadata": { "weekNumbers": [6,7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T3-PROB",
+      "title": "Venn diagrams and probability rules",
+      "code": "CAPS-MATHEMATICS-GR10-T3-PROB-02",
+      "description": "The use of Venn diagrams to solve probability problems, deriving and applying: P(A or B) = P(A) + P(B) - P(A and B); A and B are mutually exclusive if P(A and B) = 0; A and B are complementary if they are mutually exclusive and P(A) + P(B) = 1, then P(B) = P(not A) = 1 - P(A)",
+      "metadata": { "weekNumbers": [6,7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T3",
+      "title": "Finance and Growth",
+      "code": "CAPS-MATHEMATICS-GR10-T3-FIN",
+      "description": "",
+      "metadata": { "weekNumbers": [9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T3-FIN",
+      "title": "Simple and compound growth",
+      "code": "CAPS-MATHEMATICS-GR10-T3-FIN-01",
+      "description": "Use the simple and compound growth formulae [A = P(1 + in) and A = P(1 + i)^n] to solve problems, including interest, hire purchase, inflation, population growth and other real-life problems. Understand the implication of fluctuating foreign exchange rates (e.g., on the petrol price, imports, exports, overseas travel)",
+      "metadata": { "weekNumbers": [9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR10",
+      "title": "Term 4",
+      "code": "CAPS-MATHEMATICS-GR10-T4",
+      "description": "SBA: Test (14%). Final exam: Paper 1 (Algebra 30, Number patterns 15, Finance/growth 10, Functions and graphs 30, Probability 15) and Paper 2 (Statistics 15, Analytical Geometry 15, Trigonometry 40, Euclidean Geometry & Measurement 30)",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T4",
+      "title": "Measurement",
+      "code": "CAPS-MATHEMATICS-GR10-T4-MEAS",
+      "description": "",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T4-MEAS",
+      "title": "Volume and surface area of prisms and cylinders",
+      "code": "CAPS-MATHEMATICS-GR10-T4-MEAS-01",
+      "description": "Revise the volume and surface areas of right-prisms and cylinders",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T4-MEAS",
+      "title": "Effect of constant factor k",
+      "code": "CAPS-MATHEMATICS-GR10-T4-MEAS-02",
+      "description": "Study the effect on volume and surface area when multiplying any dimension by a constant factor k",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T4-MEAS",
+      "title": "Spheres, pyramids, cones and combinations",
+      "code": "CAPS-MATHEMATICS-GR10-T4-MEAS-03",
+      "description": "Calculate the volume and surface areas of spheres, right pyramids, right cones and combination of those objects (figures)",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T4",
+      "title": "Number Patterns",
+      "code": "CAPS-MATHEMATICS-GR10-T4-PATT",
+      "description": "",
+      "metadata": { "weekNumbers": [3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR10-T4-PATT",
+      "title": "Linear number patterns",
+      "code": "CAPS-MATHEMATICS-GR10-T4-PATT-01",
+      "description": "Investigate number patterns leading to those where there is a constant difference between consecutive terms, and the general term is therefore linear (without using a formula)",
+      "metadata": { "weekNumbers": [3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    }
+  ]
+}

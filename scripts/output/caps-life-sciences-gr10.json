@@ -1,0 +1,709 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "FET Phase",
+      "code": "CAPS-FET",
+      "description": "Further Education and Training Phase (Grades 10-12)",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 10",
+      "code": "CAPS-GR10",
+      "description": "",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 10
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR10",
+      "title": "Life Sciences",
+      "code": "CAPS-LIFESCI-GR10",
+      "description": "Life Sciences — Grade 10 — CAPS Curriculum",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFESCI-GR10",
+      "title": "Term 1",
+      "code": "CAPS-LIFESCI-GR10-T1",
+      "description": "SBA: Practical task (30 marks) and Formal test (50 marks)",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR10-T1",
+      "title": "Orientation to Life Sciences",
+      "code": "CAPS-LIFESCI-GR10-T1-ORIENT",
+      "description": "How science works, scientific skills and careers in Life Sciences",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T1-ORIENT",
+      "title": "How science works and scientific skills",
+      "code": "CAPS-LIFESCI-GR10-T1-ORIENT-01",
+      "description": "Nature of science; scientific skills; careers in Life Sciences",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T1-ORIENT",
+      "title": "Scientific method",
+      "code": "CAPS-LIFESCI-GR10-T1-ORIENT-02",
+      "description": "Planning steps of an investigation; identifying variables (independent, dependent, controlled); validity and reliability of investigations",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T1-ORIENT",
+      "title": "History of microscopy",
+      "code": "CAPS-LIFESCI-GR10-T1-ORIENT-03",
+      "description": "Development of the light microscope and electron microscope; contributions to cell biology",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T1-ORIENT",
+      "title": "Scientific diagrams and calculations",
+      "code": "CAPS-LIFESCI-GR10-T1-ORIENT-04",
+      "description": "Drawing scientific diagrams; calculations of actual size and magnification",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR10-T1",
+      "title": "The Chemistry of Life",
+      "code": "CAPS-LIFESCI-GR10-T1-CHEM",
+      "description": "Inorganic and organic compounds essential to life",
+      "metadata": { "weekNumbers": [3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T1-CHEM",
+      "title": "Inorganic compounds — Water",
+      "code": "CAPS-LIFESCI-GR10-T1-CHEM-01",
+      "description": "Properties and functions of water in living organisms",
+      "metadata": { "weekNumbers": [3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T1-CHEM",
+      "title": "Inorganic compounds — Minerals",
+      "code": "CAPS-LIFESCI-GR10-T1-CHEM-02",
+      "description": "Role of mineral ions: sodium (Na), potassium (K), calcium (Ca), phosphorus (P), iron (Fe), iodine (I); functions and deficiency diseases",
+      "metadata": { "weekNumbers": [3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T1-CHEM",
+      "title": "Carbohydrates",
+      "code": "CAPS-LIFESCI-GR10-T1-CHEM-03",
+      "description": "Monosaccharides, disaccharides and polysaccharides: structure, examples and functions",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T1-CHEM",
+      "title": "Lipids",
+      "code": "CAPS-LIFESCI-GR10-T1-CHEM-04",
+      "description": "Fats and oils; saturated vs unsaturated fatty acids; cholesterol; functions of lipids",
+      "metadata": { "weekNumbers": [4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T1-CHEM",
+      "title": "Proteins",
+      "code": "CAPS-LIFESCI-GR10-T1-CHEM-05",
+      "description": "Amino acids as building blocks; enzyme action (lock-and-key model); effects of temperature and pH on enzyme activity",
+      "metadata": { "weekNumbers": [4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T1-CHEM",
+      "title": "Nucleic acids",
+      "code": "CAPS-LIFESCI-GR10-T1-CHEM-06",
+      "description": "DNA and RNA — overview only, no structural detail required",
+      "metadata": { "weekNumbers": [5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T1-CHEM",
+      "title": "Vitamins",
+      "code": "CAPS-LIFESCI-GR10-T1-CHEM-07",
+      "description": "Fat-soluble vitamins A, D, E and water-soluble vitamins B, C: sources, functions and deficiency effects",
+      "metadata": { "weekNumbers": [5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 7
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR10-T1",
+      "title": "Cells: Basic Unit of Life",
+      "code": "CAPS-LIFESCI-GR10-T1-CELLS",
+      "description": "Cell structure, molecular make-up, membrane transport and cell types",
+      "metadata": { "weekNumbers": [6,7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T1-CELLS",
+      "title": "Cell membrane and membrane transport",
+      "code": "CAPS-LIFESCI-GR10-T1-CELLS-01",
+      "description": "Structure of the cell membrane; diffusion, osmosis and active transport",
+      "metadata": { "weekNumbers": [6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T1-CELLS",
+      "title": "Cell organelles",
+      "code": "CAPS-LIFESCI-GR10-T1-CELLS-02",
+      "description": "Structure and function of nucleus, cytoplasm, mitochondria, ribosomes, endoplasmic reticulum, Golgi body, plastids, vacuole and lysosomes",
+      "metadata": { "weekNumbers": [6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T1-CELLS",
+      "title": "Prokaryotes vs eukaryotes",
+      "code": "CAPS-LIFESCI-GR10-T1-CELLS-03",
+      "description": "Distinguishing features of prokaryotic and eukaryotic cells",
+      "metadata": { "weekNumbers": [7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T1-CELLS",
+      "title": "Plant vs animal cells",
+      "code": "CAPS-LIFESCI-GR10-T1-CELLS-04",
+      "description": "Comparison of plant and animal cell structure; cell specialisation",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR10-T1",
+      "title": "Cell Division: Mitosis",
+      "code": "CAPS-LIFESCI-GR10-T1-MITOSIS",
+      "description": "Chromosomes, cell cycle, mitosis phases and role of mitosis",
+      "metadata": { "weekNumbers": [9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T1-MITOSIS",
+      "title": "Chromosome structure",
+      "code": "CAPS-LIFESCI-GR10-T1-MITOSIS-01",
+      "description": "Chromosomes, chromatids and centromere; chromosome number",
+      "metadata": { "weekNumbers": [9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T1-MITOSIS",
+      "title": "Cell cycle and phases of mitosis",
+      "code": "CAPS-LIFESCI-GR10-T1-MITOSIS-02",
+      "description": "Interphase; prophase, metaphase, anaphase, telophase; cytokinesis; growth cycle",
+      "metadata": { "weekNumbers": [9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T1-MITOSIS",
+      "title": "Role of mitosis",
+      "code": "CAPS-LIFESCI-GR10-T1-MITOSIS-03",
+      "description": "Growth, repair of tissues and asexual reproduction",
+      "metadata": { "weekNumbers": [10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T1-MITOSIS",
+      "title": "Cancer",
+      "code": "CAPS-LIFESCI-GR10-T1-MITOSIS-04",
+      "description": "Uncontrolled cell division; causes and risk factors; treatment options; medical biotechnology applications",
+      "metadata": { "weekNumbers": [10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFESCI-GR10",
+      "title": "Term 2",
+      "code": "CAPS-LIFESCI-GR10-T2",
+      "description": "SBA: Assignment (50 marks) and June examination",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR10-T2",
+      "title": "Plant Tissues",
+      "code": "CAPS-LIFESCI-GR10-T2-PLANTTISS",
+      "description": "Cell differentiation and the types of plant tissue",
+      "metadata": { "weekNumbers": [1], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T2-PLANTTISS",
+      "title": "Cell differentiation",
+      "code": "CAPS-LIFESCI-GR10-T2-PLANTTISS-01",
+      "description": "Process of cell differentiation; meristematic vs permanent tissue",
+      "metadata": { "weekNumbers": [1], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T2-PLANTTISS",
+      "title": "Permanent plant tissues",
+      "code": "CAPS-LIFESCI-GR10-T2-PLANTTISS-02",
+      "description": "Epidermis (root hair cells, guard cells), parenchyma, collenchyma, sclerenchyma, xylem and phloem: structure and function",
+      "metadata": { "weekNumbers": [1], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR10-T2",
+      "title": "Plant Organs",
+      "code": "CAPS-LIFESCI-GR10-T2-PLANTORG",
+      "description": "Anatomy and function of dicot root, stem and leaf",
+      "metadata": { "weekNumbers": [2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T2-PLANTORG",
+      "title": "Anatomy of a dicot root",
+      "code": "CAPS-LIFESCI-GR10-T2-PLANTORG-01",
+      "description": "Transverse section of a dicot root showing epidermis, cortex, endodermis, pericycle, xylem and phloem arrangement",
+      "metadata": { "weekNumbers": [2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T2-PLANTORG",
+      "title": "Anatomy of a dicot stem",
+      "code": "CAPS-LIFESCI-GR10-T2-PLANTORG-02",
+      "description": "Transverse section of a dicot stem showing epidermis, cortex, vascular bundles, pith; comparison with root",
+      "metadata": { "weekNumbers": [2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T2-PLANTORG",
+      "title": "Leaf structure",
+      "code": "CAPS-LIFESCI-GR10-T2-PLANTORG-03",
+      "description": "Cross section of a leaf; adaptations for photosynthesis, gas exchange and transport",
+      "metadata": { "weekNumbers": [3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR10-T2",
+      "title": "Support and Transport Systems in Plants",
+      "code": "CAPS-LIFESCI-GR10-T2-PLANTTRANS",
+      "description": "Transpiration, water and mineral uptake, and translocation in plants",
+      "metadata": { "weekNumbers": [4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T2-PLANTTRANS",
+      "title": "Transpiration",
+      "code": "CAPS-LIFESCI-GR10-T2-PLANTTRANS-01",
+      "description": "Water loss through leaves; role of stomata; factors affecting transpiration rate: temperature, light intensity, wind and humidity",
+      "metadata": { "weekNumbers": [4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T2-PLANTTRANS",
+      "title": "Uptake of water and minerals",
+      "code": "CAPS-LIFESCI-GR10-T2-PLANTTRANS-02",
+      "description": "Absorption by root hair cells; pathway into xylem; role of osmosis and active transport",
+      "metadata": { "weekNumbers": [4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T2-PLANTTRANS",
+      "title": "Transport to leaves and translocation",
+      "code": "CAPS-LIFESCI-GR10-T2-PLANTTRANS-03",
+      "description": "Movement of water through xylem to leaves; translocation of organic solutes through phloem",
+      "metadata": { "weekNumbers": [5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR10-T2",
+      "title": "Animal Tissues",
+      "code": "CAPS-LIFESCI-GR10-T2-ANIMTISS",
+      "description": "The four types of animal tissue — structure and function",
+      "metadata": { "weekNumbers": [6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T2-ANIMTISS",
+      "title": "Epithelial tissue",
+      "code": "CAPS-LIFESCI-GR10-T2-ANIMTISS-01",
+      "description": "Types of epithelial tissue; structure and functions (protection, secretion, absorption)",
+      "metadata": { "weekNumbers": [6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T2-ANIMTISS",
+      "title": "Connective tissue",
+      "code": "CAPS-LIFESCI-GR10-T2-ANIMTISS-02",
+      "description": "Types of connective tissue (bone, cartilage, blood, adipose, fibrous); structure and functions",
+      "metadata": { "weekNumbers": [6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T2-ANIMTISS",
+      "title": "Muscle tissue",
+      "code": "CAPS-LIFESCI-GR10-T2-ANIMTISS-03",
+      "description": "Smooth, skeletal and cardiac muscle tissue; structure and functions",
+      "metadata": { "weekNumbers": [6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T2-ANIMTISS",
+      "title": "Nerve tissue",
+      "code": "CAPS-LIFESCI-GR10-T2-ANIMTISS-04",
+      "description": "Structure of neurons; function in impulse transmission",
+      "metadata": { "weekNumbers": [6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR10-T2",
+      "title": "Support System in Animals",
+      "code": "CAPS-LIFESCI-GR10-T2-SKELETAL",
+      "description": "Human skeleton — structure and functions",
+      "metadata": { "weekNumbers": [7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T2-SKELETAL",
+      "title": "Axial and appendicular skeleton",
+      "code": "CAPS-LIFESCI-GR10-T2-SKELETAL-01",
+      "description": "Divisions of the human skeleton: axial (skull, vertebral column, ribs) and appendicular (limb girdles and limbs)",
+      "metadata": { "weekNumbers": [7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T2-SKELETAL",
+      "title": "Functions of the skeleton",
+      "code": "CAPS-LIFESCI-GR10-T2-SKELETAL-02",
+      "description": "Movement, protection of organs, structural support, mineral storage and role in hearing",
+      "metadata": { "weekNumbers": [7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR10-T2",
+      "title": "Transport System in Animals",
+      "code": "CAPS-LIFESCI-GR10-T2-BLOODCIRC",
+      "description": "Blood circulation, heart structure and blood vessels in mammals",
+      "metadata": { "weekNumbers": [8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T2-BLOODCIRC",
+      "title": "Blood circulation overview",
+      "code": "CAPS-LIFESCI-GR10-T2-BLOODCIRC-01",
+      "description": "Double closed circulatory system; pulmonary and systemic circuits; direction of blood flow",
+      "metadata": { "weekNumbers": [8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T2-BLOODCIRC",
+      "title": "Heart structure and cardiac cycle",
+      "code": "CAPS-LIFESCI-GR10-T2-BLOODCIRC-02",
+      "description": "External and internal structure of the heart; chambers, valves, major vessels; cardiac cycle (systole and diastole)",
+      "metadata": { "weekNumbers": [8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T2-BLOODCIRC",
+      "title": "Blood vessels",
+      "code": "CAPS-LIFESCI-GR10-T2-BLOODCIRC-03",
+      "description": "Structure and function of arteries, veins and capillaries; adaptations to function",
+      "metadata": { "weekNumbers": [10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFESCI-GR10",
+      "title": "Term 3",
+      "code": "CAPS-LIFESCI-GR10-T3",
+      "description": "SBA: Practical task (30 marks) and Formal test (50 marks)",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR10-T3",
+      "title": "History of Life on Earth",
+      "code": "CAPS-LIFESCI-GR10-T3-HISTLIFE",
+      "description": "Changes in the biosphere through geological time, fossil evidence and mass extinctions",
+      "metadata": { "weekNumbers": [1,2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T3-HISTLIFE",
+      "title": "Changes in atmosphere and climate",
+      "code": "CAPS-LIFESCI-GR10-T3-HISTLIFE-01",
+      "description": "Evolution of Earth's atmosphere; climate changes including ice ages; geological events and continental movements",
+      "metadata": { "weekNumbers": [1], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T3-HISTLIFE",
+      "title": "Geological timescale",
+      "code": "CAPS-LIFESCI-GR10-T3-HISTLIFE-02",
+      "description": "Three eras of the geological timescale; Cambrian explosion and diversification of life",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T3-HISTLIFE",
+      "title": "Mass extinctions",
+      "code": "CAPS-LIFESCI-GR10-T3-HISTLIFE-03",
+      "description": "Mass extinction events (250 MYA and 65 MYA); possible causes; sixth mass extinction (current biodiversity crisis)",
+      "metadata": { "weekNumbers": [2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T3-HISTLIFE",
+      "title": "Fossil formation and dating",
+      "code": "CAPS-LIFESCI-GR10-T3-HISTLIFE-04",
+      "description": "How fossils form; relative and absolute dating methods",
+      "metadata": { "weekNumbers": [2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR10-T3",
+      "title": "Biosphere to Ecosystems",
+      "code": "CAPS-LIFESCI-GR10-T3-ECOSYS",
+      "description": "Organisation of the biosphere, ecosystems, energy flow and nutrient cycles",
+      "metadata": { "weekNumbers": [4,5,6,7,8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T3-ECOSYS",
+      "title": "Biosphere and its spheres",
+      "code": "CAPS-LIFESCI-GR10-T3-ECOSYS-01",
+      "description": "Concept of the biosphere; relationship with hydrosphere, lithosphere and atmosphere",
+      "metadata": { "weekNumbers": [4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T3-ECOSYS",
+      "title": "Biomes of South Africa",
+      "code": "CAPS-LIFESCI-GR10-T3-ECOSYS-02",
+      "description": "Terrestrial and aquatic biomes found in South Africa; characteristics and distribution",
+      "metadata": { "weekNumbers": [4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T3-ECOSYS",
+      "title": "Abiotic factors",
+      "code": "CAPS-LIFESCI-GR10-T3-ECOSYS-03",
+      "description": "Physiographic factors, soil, light, temperature, water availability, gases and wind as determinants of ecosystem structure",
+      "metadata": { "weekNumbers": [5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T3-ECOSYS",
+      "title": "Biotic factors and ecosystem structure",
+      "code": "CAPS-LIFESCI-GR10-T3-ECOSYS-04",
+      "description": "Producers, consumers and decomposers; ecosystem structure and functioning",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T3-ECOSYS",
+      "title": "Energy flow and trophic structure",
+      "code": "CAPS-LIFESCI-GR10-T3-ECOSYS-05",
+      "description": "Food chains, food webs, trophic levels; pyramids of numbers, biomass and energy",
+      "metadata": { "weekNumbers": [6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T3-ECOSYS",
+      "title": "Nutrient cycles",
+      "code": "CAPS-LIFESCI-GR10-T3-ECOSYS-06",
+      "description": "Water cycle, oxygen cycle, carbon cycle and nitrogen cycle; role of decomposers",
+      "metadata": { "weekNumbers": [7,8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 6
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR10-T3",
+      "title": "Biodiversity and Classification",
+      "code": "CAPS-LIFESCI-GR10-T3-BIODIV",
+      "description": "Classification schemes, history of classification and five-kingdom system",
+      "metadata": { "weekNumbers": [10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T3-BIODIV",
+      "title": "History and principles of classification",
+      "code": "CAPS-LIFESCI-GR10-T3-BIODIV-01",
+      "description": "Brief history of classification schemes; need for classification; binomial nomenclature (Linnaeus)",
+      "metadata": { "weekNumbers": [10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T3-BIODIV",
+      "title": "Five-kingdom system and prokaryotes vs eukaryotes",
+      "code": "CAPS-LIFESCI-GR10-T3-BIODIV-02",
+      "description": "Five-kingdom classification system; distinction between prokaryotes and eukaryotes as a basis for classification",
+      "metadata": { "weekNumbers": [10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFESCI-GR10",
+      "title": "Term 4",
+      "code": "CAPS-LIFESCI-GR10-T4",
+      "description": "SBA: End-of-year examination (Paper 1: 150 marks, Paper 2: 150 marks)",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR10-T4",
+      "title": "Biodiversity and Classification (continued)",
+      "code": "CAPS-LIFESCI-GR10-T4-BIODIV",
+      "description": "Diagnostic features of the five kingdoms",
+      "metadata": { "weekNumbers": [1], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T4-BIODIV",
+      "title": "Diagnostic features of kingdoms",
+      "code": "CAPS-LIFESCI-GR10-T4-BIODIV-01",
+      "description": "Distinguishing features of Bacteria (prokaryotes), Protista, Fungi, Plantae and Animalia",
+      "metadata": { "weekNumbers": [1], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR10-T4",
+      "title": "Revision",
+      "code": "CAPS-LIFESCI-GR10-T4-REVISION",
+      "description": "Consolidation of all Term 1–4 content in preparation for end-of-year examinations",
+      "metadata": { "weekNumbers": [2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T4-REVISION",
+      "title": "Paper 1 revision",
+      "code": "CAPS-LIFESCI-GR10-T4-REVISION-01",
+      "description": "Chemistry of life (33 marks), Cells (19 marks), Mitosis (19 marks), Plant and animal tissues (28 marks), Plant organs (9 marks), Support and transport in plants (23 marks), Support in animals (19 marks)",
+      "metadata": { "weekNumbers": [2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T4-REVISION",
+      "title": "Paper 2 revision",
+      "code": "CAPS-LIFESCI-GR10-T4-REVISION-02",
+      "description": "Transport in mammals (32 marks), Biosphere to ecosystems (54 marks), Biodiversity and classification (21 marks), History of life on Earth (43 marks)",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR10-T4",
+      "title": "End-of-Year Examinations",
+      "code": "CAPS-LIFESCI-GR10-T4-EXAM",
+      "description": "Paper 1 (150 marks) and Paper 2 (150 marks) end-of-year examinations",
+      "metadata": { "weekNumbers": [5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T4-EXAM",
+      "title": "Paper 1",
+      "code": "CAPS-LIFESCI-GR10-T4-EXAM-01",
+      "description": "150 marks — Chemistry of life, Cells, Mitosis, Plant and animal tissues, Plant organs, Support and transport in plants, Support in animals",
+      "metadata": { "weekNumbers": [5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR10-T4-EXAM",
+      "title": "Paper 2",
+      "code": "CAPS-LIFESCI-GR10-T4-EXAM-02",
+      "description": "150 marks — Transport in mammals, Biosphere to ecosystems, Biodiversity and classification, History of life on Earth",
+      "metadata": { "weekNumbers": [5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    }
+  ]
+}

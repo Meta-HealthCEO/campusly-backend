@@ -1,0 +1,421 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Further Education and Training (FET)",
+      "code": "CAPS-FET",
+      "description": "CAPS Further Education and Training Phase (Grades 10–12)",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 11",
+      "code": "CAPS-GR11",
+      "description": "CAPS Grade 11",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 11
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR11",
+      "title": "Physical Sciences",
+      "code": "CAPS-PHYSSCI-GR11",
+      "description": "Physical Sciences — Grade 11 — CAPS Curriculum",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-PHYSSCI-GR11",
+      "title": "Term 1",
+      "code": "CAPS-PHYSSCI-GR11-T1",
+      "description": "Term 1 — Mechanics and Electrostatics. Weeks 1–10. Formal assessment: Control test.",
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        "capsReference": "",
+        "assessmentStandards": ["Control test"],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR11-T1",
+      "title": "Vectors in Two Dimensions",
+      "code": "CAPS-PHYSSCI-GR11-T1-VEC2D",
+      "description": "Resultant of vectors using the component method on a Cartesian plane. Application of the Pythagoras theorem for magnitude and trigonometric ratios for direction. Tail-to-head and parallelogram methods. Resolving vectors into Rx and Ry components. Closed vector diagrams.",
+      "metadata": {
+        "weekNumbers": [1, 2, 3],
+        "capsReference": "Mechanics: Vectors in Two Dimensions",
+        "assessmentStandards": [
+          "Determine the resultant of vectors using the component method on a Cartesian plane",
+          "Apply Pythagoras theorem to calculate the magnitude of a resultant vector",
+          "Use trigonometric ratios to determine the direction of the resultant",
+          "Apply tail-to-head and parallelogram methods",
+          "Resolve vectors into Rx and Ry components",
+          "Identify and draw closed vector diagrams"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR11-T1",
+      "title": "Newton's Laws",
+      "code": "CAPS-PHYSSCI-GR11-T1-NEWT",
+      "description": "Normal force and frictional force. Static friction (fs_max = μsN) and kinetic friction (fk = μkN). Force diagrams and free-body diagrams. Resolving forces on inclined planes. Newton's first law (inertia, seatbelts). Newton's second law (Fnet = ma) for single objects on horizontal, inclined, and vertical surfaces, and two-body systems. Newton's third law (action-reaction pairs).",
+      "metadata": {
+        "weekNumbers": [3, 4, 5, 6, 7],
+        "capsReference": "Mechanics: Newton's Laws",
+        "assessmentStandards": [
+          "Define and distinguish normal force and frictional force",
+          "Apply fs_max = μsN for static friction and fk = μkN for kinetic friction",
+          "Draw force diagrams and free-body diagrams",
+          "Resolve forces on inclined planes",
+          "State Newton's first law and apply it to situations involving inertia (e.g. seatbelts)",
+          "Apply Newton's second law (Fnet = ma) to single objects on horizontal, inclined, and vertical surfaces",
+          "Apply Newton's second law to two-body systems",
+          "Identify Newton's third law action-reaction pairs"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR11-T1",
+      "title": "Newton's Universal Law of Gravitation",
+      "code": "CAPS-PHYSSCI-GR11-T1-GRAV",
+      "description": "Newton's Universal Law of Gravitation: F = Gm₁m₂/d². Gravitational acceleration g = GM/r². Weight vs mass. Concept of weightlessness.",
+      "metadata": {
+        "weekNumbers": [7],
+        "capsReference": "Mechanics: Newton's Universal Law of Gravitation",
+        "assessmentStandards": [
+          "State and apply Newton's Universal Law of Gravitation: F = Gm₁m₂/d²",
+          "Derive and apply gravitational acceleration: g = GM/r²",
+          "Distinguish between weight and mass",
+          "Explain the concept of weightlessness"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR11-T1",
+      "title": "Electrostatics",
+      "code": "CAPS-PHYSSCI-GR11-T1-ESTAT",
+      "description": "Coulomb's law F = kQ₁Q₂/r² applied to 1D and 2D right-angle problems. Electric field as a region of force. Field patterns for point charges, two charges, and a charged sphere. Electric field E = F/Q and E = kQ/r². Problems involving up to three charges in a line.",
+      "metadata": {
+        "weekNumbers": [8, 9, 10],
+        "capsReference": "Electrostatics",
+        "assessmentStandards": [
+          "State and apply Coulomb's law: F = kQ₁Q₂/r²",
+          "Solve 1D and 2D right-angle Coulomb's law problems",
+          "Define electric field as a region where a test charge experiences a force",
+          "Draw and interpret electric field patterns for point charges, two charges, and charged spheres",
+          "Apply E = F/Q and E = kQ/r²",
+          "Solve problems involving up to three charges in a line"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-PHYSSCI-GR11",
+      "title": "Term 2",
+      "code": "CAPS-PHYSSCI-GR11-T2",
+      "description": "Term 2 — Electromagnetism, Electric Circuits, Atomic Combinations, and Intermolecular Forces. Weeks 1–11. Formal assessment: Control test.",
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+        "capsReference": "",
+        "assessmentStandards": ["Control test"],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR11-T2",
+      "title": "Electromagnetism",
+      "code": "CAPS-PHYSSCI-GR11-T2-EMAG",
+      "description": "Magnetic field near a current-carrying wire. Right Hand Rule. Magnetic field patterns for a wire, loop, and solenoid. Magnetic flux (Φ = BAcosθ). Faraday's Law (emf = −NΔΦ/Δt). Direction of induced current.",
+      "metadata": {
+        "weekNumbers": [2, 3],
+        "capsReference": "Electromagnetism",
+        "assessmentStandards": [
+          "Describe the magnetic field near a current-carrying wire",
+          "Apply the Right Hand Rule to determine field direction",
+          "Draw and interpret field patterns for a wire, loop, and solenoid",
+          "Define magnetic flux and apply Φ = BAcosθ",
+          "State and apply Faraday's Law: emf = −NΔΦ/Δt",
+          "Determine the direction of induced current"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR11-T2",
+      "title": "Electric Circuits",
+      "code": "CAPS-PHYSSCI-GR11-T2-ECIRC",
+      "description": "Ohm's law. Ohmic and non-ohmic conductors. Series and parallel circuits with up to four resistors. Power formulae (P = W/Δt, P = VI, P = I²R, P = V²/R). Internal resistance (emf = IR_ext + Ir). Kilowatt-hour and electricity cost calculations.",
+      "metadata": {
+        "weekNumbers": [4, 5, 6],
+        "capsReference": "Electric Circuits",
+        "assessmentStandards": [
+          "State and apply Ohm's law",
+          "Distinguish between ohmic and non-ohmic conductors",
+          "Analyse series and parallel circuits with up to four resistors",
+          "Apply power formulae: P = W/Δt, P = VI, P = I²R, P = V²/R",
+          "Apply the internal resistance equation: emf = IR_ext + Ir",
+          "Calculate electricity costs using kilowatt-hour"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR11-T2",
+      "title": "Atomic Combinations",
+      "code": "CAPS-PHYSSCI-GR11-T2-ATCOMB",
+      "description": "Definition of a chemical bond. Lewis diagrams. Valence electrons. Covalent bonds (single, double, triple). Molecular shapes (linear, angular, pyramidal, tetrahedral). Bonding and lone pairs. Dative covalent bonds. Electronegativity. Polar and non-polar bonds. Bond energy and bond length.",
+      "metadata": {
+        "weekNumbers": [7, 8],
+        "capsReference": "Atomic Combinations",
+        "assessmentStandards": [
+          "Define a chemical bond",
+          "Draw Lewis diagrams for molecules",
+          "Identify valence electrons",
+          "Describe and distinguish single, double, and triple covalent bonds",
+          "Predict and explain molecular shapes: linear, angular, pyramidal, tetrahedral",
+          "Distinguish bonding pairs from lone pairs",
+          "Explain dative covalent bonds",
+          "Define electronegativity and use it to classify bonds as polar or non-polar",
+          "Relate bond energy and bond length"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR11-T2",
+      "title": "Intermolecular Forces",
+      "code": "CAPS-PHYSSCI-GR11-T2-IMF",
+      "description": "Distinction between intermolecular and interatomic forces. Van der Waals forces (London dispersion, dipole-dipole, dipole-induced dipole). Hydrogen bonding. Ion-dipole forces. Relationship between intermolecular forces and molecular mass. Effect on boiling point, melting point, vapour pressure, and solubility.",
+      "metadata": {
+        "weekNumbers": [9, 10],
+        "capsReference": "Intermolecular Forces",
+        "assessmentStandards": [
+          "Distinguish intermolecular forces from interatomic (intramolecular) forces",
+          "Describe London dispersion, dipole-dipole, and dipole-induced dipole forces",
+          "Explain hydrogen bonding and its origin",
+          "Describe ion-dipole forces",
+          "Relate the strength of intermolecular forces to molecular mass",
+          "Explain the effect of intermolecular forces on boiling point, melting point, vapour pressure, and solubility"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-PHYSSCI-GR11",
+      "title": "Term 3",
+      "code": "CAPS-PHYSSCI-GR11-T3",
+      "description": "Term 3 — Quantitative Aspects of Chemical Change, Energy and Change, Acids and Bases, and Ideal Gases. Weeks 1–11. Formal assessment: Control test.",
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+        "capsReference": "",
+        "assessmentStandards": ["Control test"],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR11-T3",
+      "title": "Quantitative Aspects of Chemical Change",
+      "code": "CAPS-PHYSSCI-GR11-T3-QACC",
+      "description": "The mole concept, Avogadro's number, and molar mass. Avogadro's law and molar gas volume. Mole calculations: n = m/M, n = V/Vm, n = particles/NA. Concentration c = n/V. Percentage composition. Empirical and molecular formulae. Stoichiometric calculations including limiting reagents. Percentage yield.",
+      "metadata": {
+        "weekNumbers": [2, 3, 4, 5],
+        "capsReference": "Quantitative Aspects of Chemical Change",
+        "assessmentStandards": [
+          "Define the mole, Avogadro's number, and molar mass",
+          "State and apply Avogadro's law and molar gas volume",
+          "Apply n = m/M, n = V/Vm, and n = particles/NA",
+          "Calculate concentration using c = n/V",
+          "Determine percentage composition of compounds",
+          "Determine empirical and molecular formulae",
+          "Perform stoichiometric calculations including identification of limiting reagents",
+          "Calculate percentage yield"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR11-T3",
+      "title": "Energy and Change",
+      "code": "CAPS-PHYSSCI-GR11-T3-ENERG",
+      "description": "Heat of reaction (ΔH). Exothermic and endothermic reactions. Activation energy and activated complex. Potential energy versus course of reaction graphs.",
+      "metadata": {
+        "weekNumbers": [6],
+        "capsReference": "Energy and Change",
+        "assessmentStandards": [
+          "Define heat of reaction (ΔH)",
+          "Distinguish between exothermic and endothermic reactions",
+          "Define activation energy and activated complex",
+          "Draw and interpret potential energy vs course of reaction graphs"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR11-T3",
+      "title": "Acids and Bases",
+      "code": "CAPS-PHYSSCI-GR11-T3-ACIDBASE",
+      "description": "Names and formulae of common acids and bases. Arrhenius and Brønsted-Lowry theories of acids and bases. Conjugate acid-base pairs. Amphiprotic substances. Acid-base indicators. Volumetric analysis and neutralisation reactions.",
+      "metadata": {
+        "weekNumbers": [7, 8],
+        "capsReference": "Types of Reactions: Acids and Bases",
+        "assessmentStandards": [
+          "Write names and formulae of common acids and bases",
+          "Describe the Arrhenius theory of acids and bases",
+          "Describe the Brønsted-Lowry theory of acids and bases",
+          "Identify conjugate acid-base pairs",
+          "Define and identify amphiprotic substances",
+          "Describe the function of acid-base indicators",
+          "Perform volumetric analysis calculations for neutralisation reactions"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR11-T3",
+      "title": "Ideal Gases",
+      "code": "CAPS-PHYSSCI-GR11-T3-IGAS",
+      "description": "Molecular motion, collisions, and average speeds. Ideal gas vs real gas. Boyle's law (V inversely proportional to P at constant T). Temperature as a measure of average kinetic energy. Pressure arising from molecular collisions.",
+      "metadata": {
+        "weekNumbers": [9, 10],
+        "capsReference": "Ideal Gases",
+        "assessmentStandards": [
+          "Describe molecular motion, collisions, and average speeds in a gas",
+          "Compare ideal and real gases",
+          "State and apply Boyle's law: V ∝ 1/P at constant temperature",
+          "Explain temperature as a measure of average kinetic energy of particles",
+          "Explain gas pressure in terms of molecular collisions"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-PHYSSCI-GR11",
+      "title": "Term 4",
+      "code": "CAPS-PHYSSCI-GR11-T4",
+      "description": "Term 4 — Types of Reactions (continued), Revision, and Final Examination. Weeks 1–10. Formal assessment: Final examination (Paper 1 Physics 150 marks, Paper 2 Chemistry 150 marks).",
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Final examination Paper 1: Physics (Vectors, Newton's laws, Electrostatics, Electromagnetism, Electric circuits) — 150 marks",
+          "Final examination Paper 2: Chemistry (Atomic combinations, Intermolecular forces, Ideal gases, Quantitative aspects, Energy and change, Types of reaction) — 150 marks"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR11-T4",
+      "title": "Types of Reactions (continued)",
+      "code": "CAPS-PHYSSCI-GR11-T4-RXNTYPES",
+      "description": "Acid-base reactions: neutralisation and salt preparation. Redox reactions: oxidation numbers, electron transfer, oxidising and reducing agents. pH scale and pH calculations. Balancing redox reactions using the half-reaction method.",
+      "metadata": {
+        "weekNumbers": [2, 3],
+        "capsReference": "Types of Reactions: Redox and pH",
+        "assessmentStandards": [
+          "Describe and perform acid-base reactions including neutralisation and salt preparation",
+          "Assign oxidation numbers in compounds and ions",
+          "Identify electron transfer, oxidising agents, and reducing agents in redox reactions",
+          "Explain and apply the pH scale",
+          "Perform pH calculations",
+          "Balance redox reactions using the half-reaction method"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR11-T4",
+      "title": "Revision and Final Examination",
+      "code": "CAPS-PHYSSCI-GR11-T4-REVEXAM",
+      "description": "Revision of all Term 1–4 content (weeks 4–7). Final examination weeks 8–10: Paper 1 Physics 150 marks (Vectors in 2D, Newton's laws, Electrostatics, Electromagnetism, Electric circuits). Paper 2 Chemistry 150 marks (Atomic combinations, Intermolecular forces, Ideal gases, Quantitative aspects of chemical change, Energy and change, Types of reactions).",
+      "metadata": {
+        "weekNumbers": [4, 5, 6, 7, 8, 9, 10],
+        "capsReference": "Revision and Final Examination",
+        "assessmentStandards": [
+          "Revise all physics and chemistry content from Terms 1–4",
+          "Final examination Paper 1 Physics — 150 marks: Vectors in Two Dimensions, Newton's Laws, Electrostatics, Electromagnetism, Electric Circuits",
+          "Final examination Paper 2 Chemistry — 150 marks: Atomic Combinations, Intermolecular Forces, Ideal Gases, Quantitative Aspects of Chemical Change, Energy and Change, Types of Reactions"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    }
+  ]
+}

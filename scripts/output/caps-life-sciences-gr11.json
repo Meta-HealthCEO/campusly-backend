@@ -1,0 +1,866 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "FET Phase",
+      "code": "CAPS-FET",
+      "description": "Further Education and Training Phase (Grades 10-12)",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 11",
+      "code": "CAPS-GR11",
+      "description": "",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 11
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR11",
+      "title": "Life Sciences",
+      "code": "CAPS-LIFESCI-GR11",
+      "description": "Life Sciences — Grade 11 — CAPS Curriculum",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFESCI-GR11",
+      "title": "Term 1",
+      "code": "CAPS-LIFESCI-GR11-T1",
+      "description": "SBA: Practical task and test. Weeks 1–11.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR11-T1",
+      "title": "Biodiversity and Classification of Micro-organisms",
+      "code": "CAPS-LIFESCI-GR11-T1-MICRO",
+      "description": "Basic structure, characteristics and roles of viruses, bacteria, protista and fungi; symbiotic relationships; disease management; immunity and drugs.",
+      "metadata": { "weekNumbers": [2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T1-MICRO",
+      "title": "Viruses — structure and characteristics",
+      "code": "CAPS-LIFESCI-GR11-T1-MICRO-01",
+      "description": "Basic structure and characteristics of viruses; non-cellular nature; lytic and lysogenic cycles (overview).",
+      "metadata": { "weekNumbers": [2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T1-MICRO",
+      "title": "Bacteria — structure and characteristics",
+      "code": "CAPS-LIFESCI-GR11-T1-MICRO-02",
+      "description": "Basic structure and characteristics of bacteria; prokaryotic cell; symbiotic relationships including nitrogen-fixing bacteria and E. coli.",
+      "metadata": { "weekNumbers": [2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T1-MICRO",
+      "title": "Protista — structure and characteristics",
+      "code": "CAPS-LIFESCI-GR11-T1-MICRO-03",
+      "description": "Basic structure and characteristics of protista; eukaryotic; roles in environment.",
+      "metadata": { "weekNumbers": [3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T1-MICRO",
+      "title": "Fungi — structure and characteristics",
+      "code": "CAPS-LIFESCI-GR11-T1-MICRO-04",
+      "description": "Basic structure and characteristics of fungi; saprophytic nutrition; roles in environment.",
+      "metadata": { "weekNumbers": [3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T1-MICRO",
+      "title": "Roles of micro-organisms in the environment",
+      "code": "CAPS-LIFESCI-GR11-T1-MICRO-05",
+      "description": "Decomposition, nitrogen fixation, food chains; positive and negative roles of micro-organisms in ecosystems.",
+      "metadata": { "weekNumbers": [3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T1-MICRO",
+      "title": "Symbiotic relationships",
+      "code": "CAPS-LIFESCI-GR11-T1-MICRO-06",
+      "description": "Symbiotic relationships involving micro-organisms: nitrogen-fixing bacteria in legume root nodules; E. coli in the human gut.",
+      "metadata": { "weekNumbers": [3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T1-MICRO",
+      "title": "Effect and management of disease",
+      "code": "CAPS-LIFESCI-GR11-T1-MICRO-07",
+      "description": "Effect and management of one disease caused by each group: viral, bacterial, protistan, and fungal diseases. Prevention and control strategies.",
+      "metadata": { "weekNumbers": [4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 7
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T1-MICRO",
+      "title": "Immunity, drugs, antibiotics and vaccinations",
+      "code": "CAPS-LIFESCI-GR11-T1-MICRO-08",
+      "description": "Concept of immunity; how antibiotics and vaccines work; antibiotic resistance; role of drugs in disease management.",
+      "metadata": { "weekNumbers": [4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 8
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T1-MICRO",
+      "title": "Micro-organisms in medicine and traditional technology",
+      "code": "CAPS-LIFESCI-GR11-T1-MICRO-09",
+      "description": "Beneficial uses of micro-organisms: production of antibiotics, vaccines, fermented foods, traditional medicines and biotechnology applications.",
+      "metadata": { "weekNumbers": [4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 9
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR11-T1",
+      "title": "Biodiversity of Plants",
+      "code": "CAPS-LIFESCI-GR11-T1-PLANTS",
+      "description": "Bryophytes, Pteridophytes, Gymnosperms and Angiosperms; vascular tissue, seeds/spores, fruit; asexual and sexual reproduction; flowers; pollination adaptations.",
+      "metadata": { "weekNumbers": [5,6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T1-PLANTS",
+      "title": "Bryophytes",
+      "code": "CAPS-LIFESCI-GR11-T1-PLANTS-01",
+      "description": "Characteristics of bryophytes: no vascular tissue, no true leaves or roots, reproduce by spores, high water dependence. Examples: mosses and liverworts.",
+      "metadata": { "weekNumbers": [5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T1-PLANTS",
+      "title": "Pteridophytes",
+      "code": "CAPS-LIFESCI-GR11-T1-PLANTS-02",
+      "description": "Characteristics of pteridophytes: vascular tissue present, true leaves and roots, reproduce by spores, still water dependent for fertilisation. Examples: ferns.",
+      "metadata": { "weekNumbers": [5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T1-PLANTS",
+      "title": "Gymnosperms",
+      "code": "CAPS-LIFESCI-GR11-T1-PLANTS-03",
+      "description": "Characteristics of gymnosperms: vascular tissue, true leaves and roots, naked seeds (no fruit), reduced water dependence. Examples: conifers, cycads.",
+      "metadata": { "weekNumbers": [6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T1-PLANTS",
+      "title": "Angiosperms",
+      "code": "CAPS-LIFESCI-GR11-T1-PLANTS-04",
+      "description": "Characteristics of angiosperms: vascular tissue, true leaves and roots, seeds enclosed in fruit, least water dependent. Monocots vs dicots.",
+      "metadata": { "weekNumbers": [6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T1-PLANTS",
+      "title": "Decreasing water dependence across plant groups",
+      "code": "CAPS-LIFESCI-GR11-T1-PLANTS-05",
+      "description": "Evolutionary trend from bryophytes to angiosperms: progressive reduction in dependence on water for reproduction and survival; adaptations to terrestrial life.",
+      "metadata": { "weekNumbers": [6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T1-PLANTS",
+      "title": "Asexual and sexual reproduction in plants",
+      "code": "CAPS-LIFESCI-GR11-T1-PLANTS-06",
+      "description": "Asexual reproduction methods (vegetative propagation, runners, tubers, bulbs, cuttings). Sexual reproduction involving alternation of generations (overview); gametophyte and sporophyte generations.",
+      "metadata": { "weekNumbers": [6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T1-PLANTS",
+      "title": "Flowers as reproductive structures",
+      "code": "CAPS-LIFESCI-GR11-T1-PLANTS-07",
+      "description": "Structure and function of flower parts: sepals, petals, stamens (anther, filament), carpel (stigma, style, ovary, ovule). Role in sexual reproduction.",
+      "metadata": { "weekNumbers": [7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 7
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T1-PLANTS",
+      "title": "Pollination adaptations",
+      "code": "CAPS-LIFESCI-GR11-T1-PLANTS-08",
+      "description": "Adaptations for wind, insect and bird pollination with South African examples. Structural features of flowers that attract specific pollinators.",
+      "metadata": { "weekNumbers": [7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 8
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR11-T1",
+      "title": "Biodiversity of Animals",
+      "code": "CAPS-LIFESCI-GR11-T1-ANIMALS",
+      "description": "Concept of phylum; six phyla: Porifera, Cnidaria, Platyhelminthes, Annelida, Arthropoda, Chordata; key features; role of invertebrates in agriculture and ecosystems.",
+      "metadata": { "weekNumbers": [8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T1-ANIMALS",
+      "title": "Concept of phylum and key classification features",
+      "code": "CAPS-LIFESCI-GR11-T1-ANIMALS-01",
+      "description": "Definition of phylum; key features used to classify animals: body symmetry, tissue layers, gut openings, coelom, blood systems.",
+      "metadata": { "weekNumbers": [8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T1-ANIMALS",
+      "title": "Phylum Porifera",
+      "code": "CAPS-LIFESCI-GR11-T1-ANIMALS-02",
+      "description": "Key features of sponges: no true tissues, asymmetry, filter feeders, water canal system. Examples and ecological roles.",
+      "metadata": { "weekNumbers": [8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T1-ANIMALS",
+      "title": "Phylum Cnidaria",
+      "code": "CAPS-LIFESCI-GR11-T1-ANIMALS-03",
+      "description": "Key features of cnidarians: radial symmetry, two tissue layers, one gut opening, cnidocytes. Examples: jellyfish, sea anemones, coral.",
+      "metadata": { "weekNumbers": [8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T1-ANIMALS",
+      "title": "Phylum Platyhelminthes",
+      "code": "CAPS-LIFESCI-GR11-T1-ANIMALS-04",
+      "description": "Key features of flatworms: bilateral symmetry, three tissue layers, acoelomate, one gut opening. Examples: tapeworms, flukes. Disease significance.",
+      "metadata": { "weekNumbers": [9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T1-ANIMALS",
+      "title": "Phylum Annelida",
+      "code": "CAPS-LIFESCI-GR11-T1-ANIMALS-05",
+      "description": "Key features of segmented worms: bilateral symmetry, three tissue layers, coelom, two gut openings, closed blood system. Examples: earthworms, leeches. Role in soil aeration.",
+      "metadata": { "weekNumbers": [9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T1-ANIMALS",
+      "title": "Phylum Arthropoda",
+      "code": "CAPS-LIFESCI-GR11-T1-ANIMALS-06",
+      "description": "Key features of arthropods: exoskeleton, jointed appendages, segmented body, open blood system. Classes: Insecta, Arachnida, Crustacea, Myriapoda. Agricultural and ecosystem roles.",
+      "metadata": { "weekNumbers": [9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T1-ANIMALS",
+      "title": "Phylum Chordata",
+      "code": "CAPS-LIFESCI-GR11-T1-ANIMALS-07",
+      "description": "Key features of chordates: notochord, dorsal hollow nerve cord, pharyngeal slits, post-anal tail. Overview of vertebrate classes: fish, amphibians, reptiles, birds, mammals.",
+      "metadata": { "weekNumbers": [10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 7
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T1-ANIMALS",
+      "title": "Role of invertebrates in agriculture and ecosystems",
+      "code": "CAPS-LIFESCI-GR11-T1-ANIMALS-08",
+      "description": "Beneficial roles: pollination, decomposition, soil aeration, food chains. Harmful roles: crop pests, disease vectors. Pest management strategies.",
+      "metadata": { "weekNumbers": [10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 8
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFESCI-GR11",
+      "title": "Term 2",
+      "code": "CAPS-LIFESCI-GR11-T2",
+      "description": "SBA: Assignment and June examination. Weeks 1–11.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR11-T2",
+      "title": "Photosynthesis",
+      "code": "CAPS-LIFESCI-GR11-T2-PHOTO",
+      "description": "Process of photosynthesis in words and symbols; raw materials, energy trapping, food formation, oxygen release; light and dark phases; factors affecting rate; ATP as energy carrier.",
+      "metadata": { "weekNumbers": [2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T2-PHOTO",
+      "title": "Overview of photosynthesis",
+      "code": "CAPS-LIFESCI-GR11-T2-PHOTO-01",
+      "description": "Overall process of photosynthesis expressed in words and chemical symbols: 6CO2 + 6H2O + light energy → C6H12O6 + 6O2. Raw materials: carbon dioxide, water, light. Products: glucose and oxygen.",
+      "metadata": { "weekNumbers": [2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T2-PHOTO",
+      "title": "Light phase and dark phase (overview)",
+      "code": "CAPS-LIFESCI-GR11-T2-PHOTO-02",
+      "description": "Light phase: light absorbed by chlorophyll, water photolysis, ATP and NADPH production, oxygen released. Dark phase (Calvin cycle): CO2 fixed, glucose synthesised using ATP and NADPH. Mention only — no biochemical detail required.",
+      "metadata": { "weekNumbers": [2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T2-PHOTO",
+      "title": "ATP as an energy carrier",
+      "code": "CAPS-LIFESCI-GR11-T2-PHOTO-03",
+      "description": "Role of ATP as the universal energy currency in cells; synthesis during light phase; release of energy during hydrolysis to ADP + Pi.",
+      "metadata": { "weekNumbers": [3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T2-PHOTO",
+      "title": "Importance of photosynthesis",
+      "code": "CAPS-LIFESCI-GR11-T2-PHOTO-04",
+      "description": "Foundation of most food chains; oxygen production; carbon dioxide removal; basis of fossil fuels; importance to life on Earth.",
+      "metadata": { "weekNumbers": [3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T2-PHOTO",
+      "title": "Factors affecting rate of photosynthesis",
+      "code": "CAPS-LIFESCI-GR11-T2-PHOTO-05",
+      "description": "Effects of light intensity, CO2 concentration, and temperature on the rate of photosynthesis. Limiting factors concept. Interpretation of graphs.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T2-PHOTO",
+      "title": "Greenhouse systems and controlled environments",
+      "code": "CAPS-LIFESCI-GR11-T2-PHOTO-06",
+      "description": "Use of greenhouse technology to optimise photosynthesis: manipulation of light, CO2, temperature and humidity for increased food production.",
+      "metadata": { "weekNumbers": [4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 6
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR11-T2",
+      "title": "Cellular Respiration",
+      "code": "CAPS-LIFESCI-GR11-T2-RESP",
+      "description": "Aerobic and anaerobic respiration; glycolysis, Krebs cycle, oxidative phosphorylation (overview); lactic acid fermentation; industrial applications; comparison of aerobic and anaerobic.",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T2-RESP",
+      "title": "Aerobic respiration — overview",
+      "code": "CAPS-LIFESCI-GR11-T2-RESP-01",
+      "description": "Overall equation for aerobic respiration: C6H12O6 + 6O2 → 6CO2 + 6H2O + energy (ATP). Occurs in mitochondria. Releases maximum ATP.",
+      "metadata": { "weekNumbers": [5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T2-RESP",
+      "title": "Glycolysis",
+      "code": "CAPS-LIFESCI-GR11-T2-RESP-02",
+      "description": "Glycolysis: glucose split into two pyruvate molecules in the cytoplasm; net gain of 2 ATP; no biochemical detail required.",
+      "metadata": { "weekNumbers": [5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T2-RESP",
+      "title": "Krebs cycle",
+      "code": "CAPS-LIFESCI-GR11-T2-RESP-03",
+      "description": "Krebs cycle: pyruvate converted to acetyl-CoA; entry into the citric acid cycle in the mitochondrial matrix; CO2 released; ATP and electron carriers produced. No biochemical detail required.",
+      "metadata": { "weekNumbers": [5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T2-RESP",
+      "title": "Oxidative phosphorylation",
+      "code": "CAPS-LIFESCI-GR11-T2-RESP-04",
+      "description": "Oxidative phosphorylation: electron transport chain on inner mitochondrial membrane; large ATP yield; oxygen as final electron acceptor; water produced. No biochemical detail required.",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T2-RESP",
+      "title": "Anaerobic respiration — lactic acid fermentation",
+      "code": "CAPS-LIFESCI-GR11-T2-RESP-05",
+      "description": "Anaerobic respiration in animals and some bacteria: pyruvate converted to lactic acid; small ATP yield; oxygen debt; muscle fatigue. Industrial uses: yoghurt production.",
+      "metadata": { "weekNumbers": [6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T2-RESP",
+      "title": "Anaerobic respiration — alcoholic fermentation and industrial use",
+      "code": "CAPS-LIFESCI-GR11-T2-RESP-06",
+      "description": "Alcoholic fermentation in yeast: pyruvate → ethanol + CO2; industrial applications in bread-making, brewing and biofuel production.",
+      "metadata": { "weekNumbers": [6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T2-RESP",
+      "title": "Comparison of aerobic and anaerobic respiration",
+      "code": "CAPS-LIFESCI-GR11-T2-RESP-07",
+      "description": "Comparison: location, oxygen requirement, ATP yield, end products, efficiency. Tabular comparison of aerobic vs anaerobic respiration.",
+      "metadata": { "weekNumbers": [6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 7
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR11-T2",
+      "title": "Animal Nutrition",
+      "code": "CAPS-LIFESCI-GR11-T2-NUTRI",
+      "description": "Dentition; human alimentary canal; ingestion, digestion, absorption, assimilation, egestion; chemical digestion enzymes; hepatic portal system; homeostatic control of blood sugar.",
+      "metadata": { "weekNumbers": [7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T2-NUTRI",
+      "title": "Dentition",
+      "code": "CAPS-LIFESCI-GR11-T2-NUTRI-01",
+      "description": "Types of teeth and dental formulae in herbivores, carnivores and omnivores. Relationship between tooth structure and diet. Comparison of dentition.",
+      "metadata": { "weekNumbers": [7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T2-NUTRI",
+      "title": "Structure of the human alimentary canal",
+      "code": "CAPS-LIFESCI-GR11-T2-NUTRI-02",
+      "description": "Organs of the alimentary canal: mouth, oesophagus, stomach, small intestine (duodenum, jejunum, ileum), large intestine, rectum, anus. Associated glands: salivary, liver, pancreas.",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T2-NUTRI",
+      "title": "Ingestion and mechanical digestion",
+      "code": "CAPS-LIFESCI-GR11-T2-NUTRI-03",
+      "description": "Ingestion: taking food into the mouth. Mechanical digestion: chewing, churning in stomach, peristalsis; increases surface area for enzymatic digestion.",
+      "metadata": { "weekNumbers": [8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T2-NUTRI",
+      "title": "Chemical digestion — enzymes",
+      "code": "CAPS-LIFESCI-GR11-T2-NUTRI-04",
+      "description": "Chemical digestion by enzymes: carbohydrases (amylase, maltase), proteases (pepsin, trypsin), lipases. Sites of action, substrates and products. Role of bile in emulsification.",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T2-NUTRI",
+      "title": "Absorption — structure of villi",
+      "code": "CAPS-LIFESCI-GR11-T2-NUTRI-05",
+      "description": "Absorption in the small intestine; structure and function of villi and microvilli; surface area adaptations; absorption of glucose, amino acids into blood; fatty acids and glycerol into lacteals.",
+      "metadata": { "weekNumbers": [9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T2-NUTRI",
+      "title": "Assimilation and egestion",
+      "code": "CAPS-LIFESCI-GR11-T2-NUTRI-06",
+      "description": "Assimilation: use of absorbed nutrients by body cells for energy, growth and repair. Egestion: removal of undigested material as faeces via the rectum and anus.",
+      "metadata": { "weekNumbers": [9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T2-NUTRI",
+      "title": "Hepatic portal system",
+      "code": "CAPS-LIFESCI-GR11-T2-NUTRI-07",
+      "description": "Hepatic portal vein carries absorbed nutrients from small intestine to the liver. Liver functions: regulation of blood glucose, deamination, detoxification, bile production, storage of glycogen.",
+      "metadata": { "weekNumbers": [10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 7
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T2-NUTRI",
+      "title": "Homeostatic control of blood sugar",
+      "code": "CAPS-LIFESCI-GR11-T2-NUTRI-08",
+      "description": "Role of insulin and glucagon in regulating blood glucose levels; glycogenesis and glycogenolysis; role of the pancreas and liver; diabetes mellitus (Type 1 and Type 2) as a disruption of homeostasis.",
+      "metadata": { "weekNumbers": [10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 8
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFESCI-GR11",
+      "title": "Term 3",
+      "code": "CAPS-LIFESCI-GR11-T3",
+      "description": "SBA: Practical task and test. Weeks 1–11.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR11-T3",
+      "title": "Gaseous Exchange",
+      "code": "CAPS-LIFESCI-GR11-T3-GASEX",
+      "description": "Distinction between cellular respiration, breathing and gas exchange; human ventilation system; gaseous exchange in alveoli and tissues; gas transport; homeostatic control of breathing.",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T3-GASEX",
+      "title": "Distinguishing cellular respiration, breathing and gas exchange",
+      "code": "CAPS-LIFESCI-GR11-T3-GASEX-01",
+      "description": "Cellular respiration: chemical process releasing energy from glucose. Breathing (ventilation): mechanical movement of air into and out of lungs. Gas exchange: diffusion of O2 and CO2 across respiratory surfaces.",
+      "metadata": { "weekNumbers": [1], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T3-GASEX",
+      "title": "Requirements for efficient gas exchange",
+      "code": "CAPS-LIFESCI-GR11-T3-GASEX-02",
+      "description": "Large surface area, thin membrane, moist surface, good blood supply, maintenance of concentration gradient.",
+      "metadata": { "weekNumbers": [1], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T3-GASEX",
+      "title": "Structure of the human ventilation system",
+      "code": "CAPS-LIFESCI-GR11-T3-GASEX-03",
+      "description": "Organs: nasal cavity, pharynx, larynx, trachea, bronchi, bronchioles, alveoli, lungs, diaphragm, intercostal muscles, pleural membranes. Structure and function of each.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T3-GASEX",
+      "title": "Mechanism of ventilation",
+      "code": "CAPS-LIFESCI-GR11-T3-GASEX-04",
+      "description": "Inhalation: diaphragm contracts and flattens, external intercostal muscles contract, thoracic volume increases, pressure decreases, air flows in. Exhalation: reverse process.",
+      "metadata": { "weekNumbers": [2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T3-GASEX",
+      "title": "Gaseous exchange in alveoli and tissues",
+      "code": "CAPS-LIFESCI-GR11-T3-GASEX-05",
+      "description": "Diffusion of O2 from alveoli into blood and CO2 from blood into alveoli. Diffusion of O2 from blood into tissues and CO2 from tissues into blood. Concentration gradient maintenance.",
+      "metadata": { "weekNumbers": [2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T3-GASEX",
+      "title": "Transport of oxygen and carbon dioxide in blood",
+      "code": "CAPS-LIFESCI-GR11-T3-GASEX-06",
+      "description": "Oxygen transport: oxyhaemoglobin formation in red blood cells. Carbon dioxide transport: dissolved in plasma, as bicarbonate ions, as carbaminohaemoglobin.",
+      "metadata": { "weekNumbers": [3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T3-GASEX",
+      "title": "Homeostatic control of breathing rate",
+      "code": "CAPS-LIFESCI-GR11-T3-GASEX-07",
+      "description": "Role of medulla oblongata (respiratory centre) in detecting CO2 levels in blood; feedback mechanism adjusting breathing rate; chemoreceptors.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 7
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR11-T3",
+      "title": "Excretion in Humans",
+      "code": "CAPS-LIFESCI-GR11-T3-EXCRET",
+      "description": "Excretory organs; urinary system; kidney structure and function; nephron processes; homeostatic control via ADH and aldosterone.",
+      "metadata": { "weekNumbers": [5,6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T3-EXCRET",
+      "title": "Excretory organs and their excretory products",
+      "code": "CAPS-LIFESCI-GR11-T3-EXCRET-01",
+      "description": "Lungs: CO2 and water vapour. Kidneys: urea, uric acid, salts, water. Liver: bile pigments (bilirubin). Skin: water, salts, urea via sweat. Alimentary canal: bile pigments in faeces.",
+      "metadata": { "weekNumbers": [5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T3-EXCRET",
+      "title": "Structure of the urinary system",
+      "code": "CAPS-LIFESCI-GR11-T3-EXCRET-02",
+      "description": "Organs: kidneys, ureters, bladder, urethra. Gross structure of the kidney: cortex, medulla, pelvis, renal artery, renal vein, ureter.",
+      "metadata": { "weekNumbers": [5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T3-EXCRET",
+      "title": "Structure of the nephron",
+      "code": "CAPS-LIFESCI-GR11-T3-EXCRET-03",
+      "description": "Parts of the nephron: Bowman's capsule, glomerulus, proximal convoluted tubule, loop of Henle, distal convoluted tubule, collecting duct. Associated blood supply.",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T3-EXCRET",
+      "title": "Ultrafiltration",
+      "code": "CAPS-LIFESCI-GR11-T3-EXCRET-04",
+      "description": "High pressure filtration in the glomerulus: water, glucose, urea, salts, amino acids forced into Bowman's capsule. Large molecules (proteins, blood cells) remain in blood.",
+      "metadata": { "weekNumbers": [6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T3-EXCRET",
+      "title": "Selective reabsorption",
+      "code": "CAPS-LIFESCI-GR11-T3-EXCRET-05",
+      "description": "Reabsorption of glucose, amino acids, water and some salts from proximal convoluted tubule and loop of Henle back into blood. Active transport and osmosis mechanisms.",
+      "metadata": { "weekNumbers": [6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T3-EXCRET",
+      "title": "Tubular secretion",
+      "code": "CAPS-LIFESCI-GR11-T3-EXCRET-06",
+      "description": "Active secretion of additional waste products (H+ ions, some drugs, creatinine) from blood into the tubule filtrate in the distal convoluted tubule.",
+      "metadata": { "weekNumbers": [6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T3-EXCRET",
+      "title": "Homeostatic control — ADH and aldosterone",
+      "code": "CAPS-LIFESCI-GR11-T3-EXCRET-07",
+      "description": "ADH (antidiuretic hormone): released by hypothalamus/posterior pituitary; increases water reabsorption in collecting duct; regulates blood osmolarity. Aldosterone: released by adrenal cortex; increases Na+ reabsorption; regulates blood volume and pressure.",
+      "metadata": { "weekNumbers": [7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 7
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR11-T3",
+      "title": "Population Ecology",
+      "code": "CAPS-LIFESCI-GR11-T3-POPECOL",
+      "description": "Population size factors; growth curves; population interactions; human population growth.",
+      "metadata": { "weekNumbers": [8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T3-POPECOL",
+      "title": "Factors affecting population size",
+      "code": "CAPS-LIFESCI-GR11-T3-POPECOL-01",
+      "description": "Natality (birth rate), mortality (death rate), immigration, emigration. Carrying capacity of the environment. Biotic and abiotic limiting factors.",
+      "metadata": { "weekNumbers": [8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T3-POPECOL",
+      "title": "Population growth curves",
+      "code": "CAPS-LIFESCI-GR11-T3-POPECOL-02",
+      "description": "Logistic (S-shaped/sigmoid) growth curve: lag, exponential and plateau phases; effect of carrying capacity. Geometric (J-shaped) growth curve: exponential growth without limiting factors. Interpretation and comparison.",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T3-POPECOL",
+      "title": "Predation",
+      "code": "CAPS-LIFESCI-GR11-T3-POPECOL-03",
+      "description": "Predator–prey relationships; cyclical fluctuations in population size; co-evolution of predator and prey adaptations. Examples from South African ecosystems.",
+      "metadata": { "weekNumbers": [9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T3-POPECOL",
+      "title": "Competition",
+      "code": "CAPS-LIFESCI-GR11-T3-POPECOL-04",
+      "description": "Intraspecific competition (within a species) and interspecific competition (between species) for food, space and mates. Competitive exclusion principle.",
+      "metadata": { "weekNumbers": [9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T3-POPECOL",
+      "title": "Specialisation",
+      "code": "CAPS-LIFESCI-GR11-T3-POPECOL-05",
+      "description": "Niche specialisation as a mechanism to reduce interspecific competition; resource partitioning; examples of niche differentiation in South African ecosystems.",
+      "metadata": { "weekNumbers": [9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T3-POPECOL",
+      "title": "Parasitism",
+      "code": "CAPS-LIFESCI-GR11-T3-POPECOL-06",
+      "description": "Parasitism: one organism (parasite) benefits at the expense of the host. Ectoparasites and endoparasites. Examples: ticks, tapeworms. Effect on host population.",
+      "metadata": { "weekNumbers": [10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T3-POPECOL",
+      "title": "Mutualism and commensalism",
+      "code": "CAPS-LIFESCI-GR11-T3-POPECOL-07",
+      "description": "Mutualism: both species benefit (e.g., oxpecker and rhino, clownfish and anemone). Commensalism: one species benefits, the other is unaffected. South African examples.",
+      "metadata": { "weekNumbers": [10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 7
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T3-POPECOL",
+      "title": "Human population growth",
+      "code": "CAPS-LIFESCI-GR11-T3-POPECOL-08",
+      "description": "Historical and projected human population growth; factors driving growth (medicine, agriculture, sanitation); demographic transition model; impact on resources and environment; sustainability.",
+      "metadata": { "weekNumbers": [10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 8
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFESCI-GR11",
+      "title": "Term 4",
+      "code": "CAPS-LIFESCI-GR11-T4",
+      "description": "SBA: End-of-year examination. Weeks 1–10.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR11-T4",
+      "title": "Human Impact on the Environment",
+      "code": "CAPS-LIFESCI-GR11-T4-IMPACT",
+      "description": "Atmosphere and climate change; water availability and quality; food security; loss of biodiversity; solid waste disposal.",
+      "metadata": { "weekNumbers": [1,2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T4-IMPACT",
+      "title": "Atmosphere and climate change",
+      "code": "CAPS-LIFESCI-GR11-T4-IMPACT-01",
+      "description": "Greenhouse effect: role of CO2, methane and other greenhouse gases; carbon footprint; global warming consequences. Ozone layer depletion: causes (CFCs) and effects (UV radiation increase).",
+      "metadata": { "weekNumbers": [1], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T4-IMPACT",
+      "title": "Water availability and quality",
+      "code": "CAPS-LIFESCI-GR11-T4-IMPACT-02",
+      "description": "Freshwater scarcity; pollution of water sources (industrial, agricultural, domestic); eutrophication; water purification; sustainable water use in South Africa.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T4-IMPACT",
+      "title": "Food security",
+      "code": "CAPS-LIFESCI-GR11-T4-IMPACT-03",
+      "description": "Global and South African food security challenges; causes of food insecurity (population growth, drought, conflict); sustainable agriculture; GMOs; food waste.",
+      "metadata": { "weekNumbers": [2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T4-IMPACT",
+      "title": "Loss of biodiversity — sixth extinction",
+      "code": "CAPS-LIFESCI-GR11-T4-IMPACT-04",
+      "description": "Current mass extinction event; causes: habitat destruction, invasive species, pollution, overexploitation, climate change. Consequences. Conservation strategies: protected areas, legislation, rehabilitation.",
+      "metadata": { "weekNumbers": [2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T4-IMPACT",
+      "title": "Solid waste disposal",
+      "code": "CAPS-LIFESCI-GR11-T4-IMPACT-05",
+      "description": "Types of solid waste (domestic, industrial, hazardous); landfill impacts; incineration; recycling and waste reduction (reduce, reuse, recycle); e-waste; sustainable waste management.",
+      "metadata": { "weekNumbers": [3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESCI-GR11-T4",
+      "title": "Revision and Final Examination",
+      "code": "CAPS-LIFESCI-GR11-T4-EXAM",
+      "description": "Revision week followed by end-of-year examination. Paper 1 (150 marks): Photosynthesis 32, Animal nutrition 32, Respiration 22, Gaseous exchange 32, Excretion 32. Paper 2 (150 marks): Biodiversity micro-organisms 29, Plants 29, Animals 18, Population ecology 37, Human impact 37.",
+      "metadata": { "weekNumbers": [4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T4-EXAM",
+      "title": "Revision",
+      "code": "CAPS-LIFESCI-GR11-T4-EXAM-01",
+      "description": "Structured revision of all Term 1–4 topics in preparation for the final examination.",
+      "metadata": { "weekNumbers": [4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T4-EXAM",
+      "title": "Paper 1 — Life Processes",
+      "code": "CAPS-LIFESCI-GR11-T4-EXAM-02",
+      "description": "End-of-year Paper 1 (150 marks): Photosynthesis (32), Animal nutrition (32), Cellular respiration (22), Gaseous exchange (32), Excretion in humans (32).",
+      "metadata": { "weekNumbers": [5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-LIFESCI-GR11-T4-EXAM",
+      "title": "Paper 2 — Biodiversity, Ecology and Environment",
+      "code": "CAPS-LIFESCI-GR11-T4-EXAM-03",
+      "description": "End-of-year Paper 2 (150 marks): Biodiversity of micro-organisms (29), Biodiversity of plants (29), Biodiversity of animals (18), Population ecology (37), Human impact on environment (37).",
+      "metadata": { "weekNumbers": [5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    }
+  ]
+}

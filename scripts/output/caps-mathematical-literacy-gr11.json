@@ -1,0 +1,425 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "FET Phase",
+      "code": "CAPS-FET",
+      "description": "Further Education and Training Phase (Grades 10–12)",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 11",
+      "code": "CAPS-GR11",
+      "description": "Grade 11",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 11
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR11",
+      "title": "Mathematical Literacy",
+      "code": "CAPS-MATHLIT-GR11",
+      "description": "Mathematical Literacy — Grade 11 — CAPS Curriculum",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHLIT-GR11",
+      "title": "Term 1",
+      "code": "CAPS-MATHLIT-GR11-T1",
+      "description": "Term 1 — SBA: Investigation and controlled test",
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+        "capsReference": "Mathematical Literacy Grade 11 Term 1",
+        "assessmentStandards": ["Investigation", "Controlled Test"],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR11-T1",
+      "title": "Patterns and Relationships",
+      "code": "CAPS-MATHLIT-GR11-T1-PAT",
+      "description": "Patterns and Relationships — exploring linear, inverse proportion, and constant ratio relationships; comparing tariff systems and banking options using multiple representations.",
+      "metadata": {
+        "weekNumbers": [1, 2, 3],
+        "capsReference": "Mathematical Literacy Grade 11 Term 1: Patterns and Relationships (Weeks 1–3)",
+        "assessmentStandards": [
+          "Identify and work with constant difference relationships (two relationships)",
+          "Identify and work with inverse proportion relationships (two relationships)",
+          "Identify constant ratio between consecutive terms",
+          "Work with combinations of any two relationship types",
+          "Represent relationships using equations and formulae",
+          "Distinguish between dependent and independent variables",
+          "Represent relationships using tables and graphs",
+          "Use formulae, equations, tables and graphs to compare different tariff systems, banking options, etc."
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR11-T1",
+      "title": "Measurements",
+      "code": "CAPS-MATHLIT-GR11-T1-MEAS",
+      "description": "Measurements — unit conversions, time, equivalent proportionality, measuring and estimating, and calculating perimeter, area, surface area and volume.",
+      "metadata": {
+        "weekNumbers": [4, 5, 6, 7, 8],
+        "capsReference": "Mathematical Literacy Grade 11 Term 1: Measurements (Weeks 4–8)",
+        "assessmentStandards": [
+          "Convert between metric and imperial units",
+          "Convert between Celsius and Fahrenheit temperatures",
+          "Calculate duration in hours and minutes (and vice versa)",
+          "Apply equivalent proportionality conversions (e.g., 5 litre paint covers 20 m²)",
+          "Measure and estimate length, distance, mass/weight, volume and temperature",
+          "Calculate perimeter of 2D shapes",
+          "Calculate area and surface area of 2D and 3D shapes",
+          "Calculate volume of 3D objects",
+          "Perform cost calculations related to measurements"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR11-T1",
+      "title": "Finance",
+      "code": "CAPS-MATHLIT-GR11-T1-FIN",
+      "description": "Finance — financial documents, personal and business income, and personal and business expenditure.",
+      "metadata": {
+        "weekNumbers": [9, 10],
+        "capsReference": "Mathematical Literacy Grade 11 Term 1: Finance (Weeks 9–10)",
+        "assessmentStandards": [
+          "Interpret financial document terminology and perform related calculations",
+          "Identify and calculate fixed, variable and occasional income",
+          "Calculate personal income including salaries, wages and commission",
+          "Calculate business income including sales, donations and grants",
+          "Identify and calculate personal expenditure including living expenses, personal tax and loan repayments",
+          "Identify and calculate business expenditure including taxes, salaries and running expenses"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR11-T1",
+      "title": "Revision",
+      "code": "CAPS-MATHLIT-GR11-T1-REV",
+      "description": "Revision of Term 1 content.",
+      "metadata": {
+        "weekNumbers": [11],
+        "capsReference": "Mathematical Literacy Grade 11 Term 1: Revision (Week 11)",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHLIT-GR11",
+      "title": "Term 2",
+      "code": "CAPS-MATHLIT-GR11-T2",
+      "description": "Term 2 — SBA: Assignment and mid-year examination",
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+        "capsReference": "Mathematical Literacy Grade 11 Term 2",
+        "assessmentStandards": ["Assignment", "Mid-Year Examination"],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR11-T2",
+      "title": "Finance",
+      "code": "CAPS-MATHLIT-GR11-T2-FIN",
+      "description": "Finance — taxation, tariff systems and comparing options using calculations and graphs.",
+      "metadata": {
+        "weekNumbers": [1, 2, 3],
+        "capsReference": "Mathematical Literacy Grade 11 Term 2: Finance (Weeks 1–3)",
+        "assessmentStandards": [
+          "Calculate and interpret VAT",
+          "Calculate and interpret UIF",
+          "Work with exchange rates",
+          "Interpret and apply municipal tariff systems",
+          "Interpret and apply telephone tariff systems",
+          "Interpret and apply transport tariff systems",
+          "Interpret and apply bank fees",
+          "Compare two financial options by performing calculations",
+          "Draw and interpret graphs to compare two financial options"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR11-T2",
+      "title": "Maps, Plans and Other Representations",
+      "code": "CAPS-MATHLIT-GR11-T2-MAPS",
+      "description": "Maps, Plans and Other Representations — scales, map types, and reading directions and point locations.",
+      "metadata": {
+        "weekNumbers": [4, 5],
+        "capsReference": "Mathematical Literacy Grade 11 Term 2: Maps, Plans and Other Representations (Weeks 4–5)",
+        "assessmentStandards": [
+          "Read and use number scales",
+          "Read and use bar scales",
+          "Read and interpret seating plans",
+          "Read and interpret layout plans",
+          "Read and interpret street maps",
+          "Read and interpret road and rail maps",
+          "Read and interpret residential maps",
+          "Determine directions and point locations from maps"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR11-T2",
+      "title": "Data Handling",
+      "code": "CAPS-MATHLIT-GR11-T2-DATA",
+      "description": "Data Handling — developing questions, collecting data, summarising, representing and interpreting data.",
+      "metadata": {
+        "weekNumbers": [6, 7, 8],
+        "capsReference": "Mathematical Literacy Grade 11 Term 2: Data Handling (Weeks 6–8)",
+        "assessmentStandards": [
+          "Develop appropriate questions for data collection",
+          "Identify populations and samples for data collection",
+          "Select appropriate data collection methods and instruments",
+          "Classify and organise data using tallies and frequency tables",
+          "Calculate mean, median, mode and range",
+          "Analyse data using measures of central tendency and spread",
+          "Represent data using multiple bar graphs",
+          "Represent data using line and broken line graphs",
+          "Represent data using scatter plots",
+          "Interpret and analyse multiple bar graphs, line graphs and scatter plots"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR11-T2",
+      "title": "Probability",
+      "code": "CAPS-MATHLIT-GR11-T2-PROB",
+      "description": "Probability — simple events (revision), relative frequency, theoretical probability, and compound events using tree diagrams and two-way tables.",
+      "metadata": {
+        "weekNumbers": [9],
+        "capsReference": "Mathematical Literacy Grade 11 Term 2: Probability (Week 9)",
+        "assessmentStandards": [
+          "Revise outcomes, events and the probability scale",
+          "Determine and interpret relative frequency",
+          "Determine and interpret theoretical probability",
+          "Use tree diagrams to determine outcomes and probabilities of compound events",
+          "Use two-way tables to determine outcomes and probabilities of compound events"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR11-T2",
+      "title": "Revision",
+      "code": "CAPS-MATHLIT-GR11-T2-REV",
+      "description": "Revision of Term 2 content.",
+      "metadata": {
+        "weekNumbers": [10, 11],
+        "capsReference": "Mathematical Literacy Grade 11 Term 2: Revision (Weeks 10–11)",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHLIT-GR11",
+      "title": "Term 3",
+      "code": "CAPS-MATHLIT-GR11-T3",
+      "description": "Term 3 — SBA: Assignment and controlled test",
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+        "capsReference": "Mathematical Literacy Grade 11 Term 3",
+        "assessmentStandards": ["Assignment", "Controlled Test"],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR11-T3",
+      "title": "Finance",
+      "code": "CAPS-MATHLIT-GR11-T3-FIN",
+      "description": "Finance — income and expenditure, cost and selling price, break-even analysis, interest, loans, banking and inflation.",
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5],
+        "capsReference": "Mathematical Literacy Grade 11 Term 3: Finance (Weeks 1–5)",
+        "assessmentStandards": [
+          "Calculate income, expenditures, profit and loss for large organisations and fundraising projects",
+          "Compare income and expenditure over two years",
+          "Work with projected vs actual budgets",
+          "Determine cost price and selling price for manufactured/produced goods",
+          "Determine an appropriate selling price based on cost of production",
+          "Calculate percentage profit on cost and selling price",
+          "Determine break-even values from formulae",
+          "Determine break-even values from graphs",
+          "Calculate interest for loans, investments and bank accounts (without formulae)",
+          "Distinguish between types of banking accounts: savings, cheque, fixed deposit, credit and debit",
+          "Calculate inflation rates",
+          "Calculate rate of increase/decrease due to inflation"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR11-T3",
+      "title": "Maps, Plans and Other Representations",
+      "code": "CAPS-MATHLIT-GR11-T3-MAPS",
+      "description": "Maps, Plans and Other Representations — scaled building plans and 3D models using packaging.",
+      "metadata": {
+        "weekNumbers": [6, 7, 8, 9],
+        "capsReference": "Mathematical Literacy Grade 11 Term 3: Maps, Plans and Other Representations (Weeks 6–9)",
+        "assessmentStandards": [
+          "Read and interpret housing/building plans drawn to scale",
+          "Read and interpret elevation plans",
+          "Read and interpret design drawings",
+          "Investigate and work with models using packaging (e.g., actual cans and boxes)",
+          "Relate 2D plans/nets to 3D models"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR11-T3",
+      "title": "Revision",
+      "code": "CAPS-MATHLIT-GR11-T3-REV",
+      "description": "Revision of Term 3 content.",
+      "metadata": {
+        "weekNumbers": [10, 11],
+        "capsReference": "Mathematical Literacy Grade 11 Term 3: Revision (Weeks 10–11)",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHLIT-GR11",
+      "title": "Term 4",
+      "code": "CAPS-MATHLIT-GR11-T4",
+      "description": "Term 4 — No SBA task; end-of-year examination",
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        "capsReference": "Mathematical Literacy Grade 11 Term 4",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR11-T4",
+      "title": "Maps, Plans and Other Representations",
+      "code": "CAPS-MATHLIT-GR11-T4-MAPS",
+      "description": "Maps, Plans and Other Representations — assembling objects by following step-by-step instructions.",
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "Mathematical Literacy Grade 11 Term 4: Maps, Plans and Other Representations (Weeks 1–2)",
+        "assessmentStandards": [
+          "Follow instructions to assemble plugs",
+          "Follow instructions to assemble plastic models",
+          "Follow instructions to assemble unassembled wooden furniture",
+          "Follow instructions to set up cell phones and electrical appliances",
+          "Follow instructions to assemble children's toys"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR11-T4",
+      "title": "Revision",
+      "code": "CAPS-MATHLIT-GR11-T4-REV",
+      "description": "Revision of all Grade 11 content in preparation for the end-of-year examination.",
+      "metadata": {
+        "weekNumbers": [3, 4, 5, 6],
+        "capsReference": "Mathematical Literacy Grade 11 Term 4: Revision (Weeks 3–6)",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR11-T4",
+      "title": "End of Year Examination",
+      "code": "CAPS-MATHLIT-GR11-T4-EXAM",
+      "description": "End-of-year examination: Paper 1 (100 marks, 2 hours — Finance, Data Handling, Probability) and Paper 2 (100 marks, 2 hours — Maps/Plans, Measurements, Probability).",
+      "metadata": {
+        "weekNumbers": [7, 8, 9, 10],
+        "capsReference": "Mathematical Literacy Grade 11 Term 4: End of Year Examination (Weeks 7–10)",
+        "assessmentStandards": [
+          "Paper 1 (100 marks, 2 hours): Finance, Data Handling, Probability",
+          "Paper 2 (100 marks, 2 hours): Maps, Plans and Other Representations, Measurements, Probability"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    }
+  ]
+}

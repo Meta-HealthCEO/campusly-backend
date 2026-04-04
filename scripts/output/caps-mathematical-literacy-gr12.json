@@ -1,0 +1,499 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "FET Phase",
+      "code": "CAPS-FET",
+      "description": "Further Education and Training Phase (Grades 10-12)",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 12",
+      "code": "CAPS-GR12",
+      "description": "",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 12
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR12",
+      "title": "Mathematical Literacy",
+      "code": "CAPS-MATHLIT-GR12",
+      "description": "Mathematical Literacy — Grade 12 — CAPS Curriculum",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHLIT-GR12",
+      "title": "Term 1",
+      "code": "CAPS-MATHLIT-GR12-T1",
+      "description": "SBA: Investigation and controlled test",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR12-T1",
+      "title": "Finance",
+      "code": "CAPS-MATHLIT-GR12-T1-FIN",
+      "description": "Financial documents, taxation, tariff systems, income and expenditure, cost and selling price, break-even analysis",
+      "metadata": { "weekNumbers": [1,2,3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T1-FIN",
+      "title": "Financial documents",
+      "code": "CAPS-MATHLIT-GR12-T1-FIN-01",
+      "description": "Tax documents (tax rate tables, IRP5, employee income tax); loan documents (bank statements, loan institutions)",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T1-FIN",
+      "title": "Taxation",
+      "code": "CAPS-MATHLIT-GR12-T1-FIN-02",
+      "description": "Personal income tax, taxable and non-taxable income, rebates, UIF (maximum amount), VAT (15%)",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T1-FIN",
+      "title": "Tariff systems",
+      "code": "CAPS-MATHLIT-GR12-T1-FIN-03",
+      "description": "Compare 2 or more tariff systems: electricity, telephone, municipal, bank, transport tariffs; tables, graphs, formulae",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T1-FIN",
+      "title": "Income, expenditure, profit and loss",
+      "code": "CAPS-MATHLIT-GR12-T1-FIN-04",
+      "description": "Income, expenditures, profit, loss for large organisations: comparison over two years, budgets (projected vs actual)",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T1-FIN",
+      "title": "Cost price and selling price",
+      "code": "CAPS-MATHLIT-GR12-T1-FIN-05",
+      "description": "Cost of producing/manufacturing, appropriate selling price, percentage profit",
+      "metadata": { "weekNumbers": [5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T1-FIN",
+      "title": "Break-even analysis",
+      "code": "CAPS-MATHLIT-GR12-T1-FIN-06",
+      "description": "Determine break-even values from formulae and graphs",
+      "metadata": { "weekNumbers": [5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 6
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR12-T1",
+      "title": "Data Handling",
+      "code": "CAPS-MATHLIT-GR12-T1-DATA",
+      "description": "Developing questions, collecting data, classifying and organising, summarising, representing, interpreting and analysing data",
+      "metadata": { "weekNumbers": [6,7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T1-DATA",
+      "title": "Developing questions and collecting data",
+      "code": "CAPS-MATHLIT-GR12-T1-DATA-01",
+      "description": "Developing questions around national and global issues; collecting data by developing and using instruments",
+      "metadata": { "weekNumbers": [6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T1-DATA",
+      "title": "Classifying and organising data",
+      "code": "CAPS-MATHLIT-GR12-T1-DATA-02",
+      "description": "Sort numerical and categorical data using categories, class intervals, tallies, and frequency tables",
+      "metadata": { "weekNumbers": [6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T1-DATA",
+      "title": "Summarising data",
+      "code": "CAPS-MATHLIT-GR12-T1-DATA-03",
+      "description": "Quartiles, inter-quartile range; calculate and analyse measures of central tendency and spread; percentiles",
+      "metadata": { "weekNumbers": [7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T1-DATA",
+      "title": "Representing, interpreting and analysing data",
+      "code": "CAPS-MATHLIT-GR12-T1-DATA-04",
+      "description": "Pie charts, histograms/bar graphs, line and broken line graphs, scatter plots, box and whisker plots",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR12-T1",
+      "title": "Probability",
+      "code": "CAPS-MATHLIT-GR12-T1-PROB",
+      "description": "Simple events and compound events, relative frequency and theoretical probability, tree diagrams and two-way tables",
+      "metadata": { "weekNumbers": [9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T1-PROB",
+      "title": "Simple events",
+      "code": "CAPS-MATHLIT-GR12-T1-PROB-01",
+      "description": "Dice, coin, lotteries, gambling, insurance risk assessment; relative frequency and theoretical probability",
+      "metadata": { "weekNumbers": [9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T1-PROB",
+      "title": "Compound events",
+      "code": "CAPS-MATHLIT-GR12-T1-PROB-02",
+      "description": "Tree diagrams and two-way tables",
+      "metadata": { "weekNumbers": [9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR12-T1",
+      "title": "Finance (continued)",
+      "code": "CAPS-MATHLIT-GR12-T1-FINCONT",
+      "description": "Interest and banking, inflation, exchange rates",
+      "metadata": { "weekNumbers": [10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T1-FINCONT",
+      "title": "Interest and banking",
+      "code": "CAPS-MATHLIT-GR12-T1-FINCONT-01",
+      "description": "Hire purchase, residual, balloon; loans; interest rate, interest, repayment; investments, insurance plans (interest, interest rate, charges, monthly payment)",
+      "metadata": { "weekNumbers": [10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T1-FINCONT",
+      "title": "Inflation",
+      "code": "CAPS-MATHLIT-GR12-T1-FINCONT-02",
+      "description": "Buying power over time, prices of items over time, interpret and analyse inflation graphs",
+      "metadata": { "weekNumbers": [11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T1-FINCONT",
+      "title": "Exchange rates",
+      "code": "CAPS-MATHLIT-GR12-T1-FINCONT-03",
+      "description": "Currency relationships and buying power across different currencies",
+      "metadata": { "weekNumbers": [11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHLIT-GR12",
+      "title": "Term 2",
+      "code": "CAPS-MATHLIT-GR12-T2",
+      "description": "SBA: Assignment and mid-year examinations",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR12-T2",
+      "title": "Measurement",
+      "code": "CAPS-MATHLIT-GR12-T2-MEAS",
+      "description": "Conversions, perimeter and area, volume and surface area",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T2-MEAS",
+      "title": "Conversions",
+      "code": "CAPS-MATHLIT-GR12-T2-MEAS-01",
+      "description": "Conversion factors and tables, metric to imperial, Celsius to Fahrenheit; time (timetables, transport, production, tide)",
+      "metadata": { "weekNumbers": [1], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T2-MEAS",
+      "title": "Perimeter and area",
+      "code": "CAPS-MATHLIT-GR12-T2-MEAS-02",
+      "description": "Length, distance, time, perimeter and area with cost calculations applied",
+      "metadata": { "weekNumbers": [2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T2-MEAS",
+      "title": "Volume and surface area",
+      "code": "CAPS-MATHLIT-GR12-T2-MEAS-03",
+      "description": "Surface area, volume, rate (speed, costing), mass/weight, BMI (formula, interpreting charts)",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR12-T2",
+      "title": "Maps, Plans and Other Representations",
+      "code": "CAPS-MATHLIT-GR12-T2-MAPS",
+      "description": "Scale, maps with grid references, compass directions and slope",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T2-MAPS",
+      "title": "Scale",
+      "code": "CAPS-MATHLIT-GR12-T2-MAPS-01",
+      "description": "Ratio/bar scale; determine actual lengths/distances; determine scale for drawings/models",
+      "metadata": { "weekNumbers": [5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T2-MAPS",
+      "title": "Maps",
+      "code": "CAPS-MATHLIT-GR12-T2-MAPS-02",
+      "description": "Grid reference, compass directions, slope on map",
+      "metadata": { "weekNumbers": [6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR12-T2",
+      "title": "Revision",
+      "code": "CAPS-MATHLIT-GR12-T2-REV",
+      "description": "Revision of Term 1 and Term 2 content in preparation for mid-year examinations",
+      "metadata": { "weekNumbers": [7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR12-T2",
+      "title": "Internal Examinations",
+      "code": "CAPS-MATHLIT-GR12-T2-EXAM",
+      "description": "Mid-year internal examinations: Paper 1 (100 marks, 2 hours) and Paper 2 (100 marks, 2 hours)",
+      "metadata": { "weekNumbers": [8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T2-EXAM",
+      "title": "Paper 1",
+      "code": "CAPS-MATHLIT-GR12-T2-EXAM-01",
+      "description": "100 marks, 2 hours",
+      "metadata": { "weekNumbers": [8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T2-EXAM",
+      "title": "Paper 2",
+      "code": "CAPS-MATHLIT-GR12-T2-EXAM-02",
+      "description": "100 marks, 2 hours",
+      "metadata": { "weekNumbers": [8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHLIT-GR12",
+      "title": "Term 3",
+      "code": "CAPS-MATHLIT-GR12-T3",
+      "description": "SBA: Controlled test and preparatory examination",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR12-T3",
+      "title": "Maps, Plans and Other Representations",
+      "code": "CAPS-MATHLIT-GR12-T3-MAPS",
+      "description": "Plans, models, solving packaging problems and 3D scale models",
+      "metadata": { "weekNumbers": [1,2,3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T3-MAPS",
+      "title": "Plans",
+      "code": "CAPS-MATHLIT-GR12-T3-MAPS-01",
+      "description": "Diagrams (assembly instructions); plans (symbols/notation, terminology, actual dimensions using scale, determine suitable scale, draw 2D floor and elevation plans)",
+      "metadata": { "weekNumbers": [1,2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T3-MAPS",
+      "title": "Models",
+      "code": "CAPS-MATHLIT-GR12-T3-MAPS-02",
+      "description": "Solving packaging problems, 3D scale models, 2D pictures (item arrangement, estimate material quantities)",
+      "metadata": { "weekNumbers": [4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR12-T3",
+      "title": "Revision",
+      "code": "CAPS-MATHLIT-GR12-T3-REV",
+      "description": "Revision of content in preparation for preparatory examinations",
+      "metadata": { "weekNumbers": [6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR12-T3",
+      "title": "Preparatory Examinations",
+      "code": "CAPS-MATHLIT-GR12-T3-PREPEXAM",
+      "description": "Preparatory examinations: Paper 1 (150 marks, 3 hours) and Paper 2 (150 marks, 3 hours)",
+      "metadata": { "weekNumbers": [8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T3-PREPEXAM",
+      "title": "Paper 1",
+      "code": "CAPS-MATHLIT-GR12-T3-PREPEXAM-01",
+      "description": "150 marks, 3 hours",
+      "metadata": { "weekNumbers": [8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T3-PREPEXAM",
+      "title": "Paper 2",
+      "code": "CAPS-MATHLIT-GR12-T3-PREPEXAM-02",
+      "description": "150 marks, 3 hours",
+      "metadata": { "weekNumbers": [8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHLIT-GR12",
+      "title": "Term 4",
+      "code": "CAPS-MATHLIT-GR12-T4",
+      "description": "No SBA task",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR12-T4",
+      "title": "Revision",
+      "code": "CAPS-MATHLIT-GR12-T4-REV",
+      "description": "Revision of all content areas: Finance, Data Handling, Measurements, Maps/Plans, Probability",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T4-REV",
+      "title": "Finance revision",
+      "code": "CAPS-MATHLIT-GR12-T4-REV-01",
+      "description": "Revision of all Finance topics: financial documents, taxation, tariff systems, income/expenditure, cost price, break-even, interest, inflation, exchange rates",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T4-REV",
+      "title": "Data Handling revision",
+      "code": "CAPS-MATHLIT-GR12-T4-REV-02",
+      "description": "Revision of all Data Handling topics: collecting, organising, summarising and representing data",
+      "metadata": { "weekNumbers": [2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T4-REV",
+      "title": "Measurement revision",
+      "code": "CAPS-MATHLIT-GR12-T4-REV-03",
+      "description": "Revision of all Measurement topics: conversions, perimeter, area, volume, surface area",
+      "metadata": { "weekNumbers": [3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T4-REV",
+      "title": "Maps and Plans revision",
+      "code": "CAPS-MATHLIT-GR12-T4-REV-04",
+      "description": "Revision of all Maps, Plans and Other Representations topics: scale, maps, plans and models",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T4-REV",
+      "title": "Probability revision",
+      "code": "CAPS-MATHLIT-GR12-T4-REV-05",
+      "description": "Revision of all Probability topics: simple events, compound events, relative frequency and theoretical probability",
+      "metadata": { "weekNumbers": [4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHLIT-GR12-T4",
+      "title": "Final Examination",
+      "code": "CAPS-MATHLIT-GR12-T4-FINALEXAM",
+      "description": "Final NSC examinations: Paper 1 (150 marks, 3 hours) — Finance, Data Handling, Probability; Paper 2 (150 marks, 3 hours) — Maps/Plans, Measurements, Probability",
+      "metadata": { "weekNumbers": [5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T4-FINALEXAM",
+      "title": "Paper 1",
+      "code": "CAPS-MATHLIT-GR12-T4-FINALEXAM-01",
+      "description": "150 marks, 3 hours — Finance, Data Handling, Probability",
+      "metadata": { "weekNumbers": [5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHLIT-GR12-T4-FINALEXAM",
+      "title": "Paper 2",
+      "code": "CAPS-MATHLIT-GR12-T4-FINALEXAM-02",
+      "description": "150 marks, 3 hours — Maps/Plans, Measurements, Probability",
+      "metadata": { "weekNumbers": [5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    }
+  ]
+}

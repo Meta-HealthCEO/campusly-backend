@@ -1,0 +1,473 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "FET Phase",
+      "code": "CAPS-FET",
+      "description": "Further Education and Training Phase (Grades 10-12)",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 12",
+      "code": "CAPS-GR12",
+      "description": "",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 12
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR12",
+      "title": "Mathematics",
+      "code": "CAPS-MATHEMATICS-GR12",
+      "description": "Mathematics — Grade 12 — CAPS Curriculum",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR12",
+      "title": "Term 1",
+      "code": "CAPS-MATHEMATICS-GR12-T1",
+      "description": "SBA: Investigation or project (15%) and Test (15%)",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T1",
+      "title": "Patterns, Sequences and Series",
+      "code": "CAPS-MATHEMATICS-GR12-T1-SEQ",
+      "description": "",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T1-SEQ",
+      "title": "Quadratic patterns (revision)",
+      "code": "CAPS-MATHEMATICS-GR12-T1-SEQ-01",
+      "description": "Revise number patterns leading to those where there is a constant second difference between consecutive terms and the general term is therefore quadratic",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T1-SEQ",
+      "title": "Arithmetic and geometric sequences and series",
+      "code": "CAPS-MATHEMATICS-GR12-T1-SEQ-02",
+      "description": "Number patterns, including arithmetic and geometric sequences and series",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T1-SEQ",
+      "title": "Sigma notation",
+      "code": "CAPS-MATHEMATICS-GR12-T1-SEQ-03",
+      "description": "Sigma notation",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T1-SEQ",
+      "title": "Sum formulae for arithmetic and geometric series",
+      "code": "CAPS-MATHEMATICS-GR12-T1-SEQ-04",
+      "description": "Derivation and application of the formulae for the sum of arithmetic series: Sn = n/2[2a + (n-1)d], Sn = n/2(a + l); geometric series: Sn = a(r^n - 1)/(r - 1) (r != 1); and sum to infinity: S_inf = a/(1 - r) (-1 < r < 1, r != 1)",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T1",
+      "title": "Functions: Formal Definition, Inverses, Exponential and Logarithmic",
+      "code": "CAPS-MATHEMATICS-GR12-T1-FUNC",
+      "description": "",
+      "metadata": { "weekNumbers": [5,6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T1-FUNC",
+      "title": "Definition of a function",
+      "code": "CAPS-MATHEMATICS-GR12-T1-FUNC-01",
+      "description": "Definition of a function",
+      "metadata": { "weekNumbers": [5,6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T1-FUNC",
+      "title": "Inverse of a function",
+      "code": "CAPS-MATHEMATICS-GR12-T1-FUNC-02",
+      "description": "General concept of the inverse of a function and how the domain may need to be restricted (to obtain a one-to-one function) to ensure that the inverse is a function",
+      "metadata": { "weekNumbers": [5,6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T1-FUNC",
+      "title": "Graphs of inverse functions",
+      "code": "CAPS-MATHEMATICS-GR12-T1-FUNC-03",
+      "description": "Determine and sketch graphs of the inverses of y = ax + q, y = ax^2, y = b^x (b > 0, b != 1). Focus on: domain and range, intercepts, turning points, minima, maxima, asymptotes, shape and symmetry, average gradient, intervals of increase/decrease",
+      "metadata": { "weekNumbers": [5,6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T1-FUNC",
+      "title": "Exponential function and laws (revision)",
+      "code": "CAPS-MATHEMATICS-GR12-T1-FUNC-04",
+      "description": "Revision of the exponential function and the exponential laws and graph of y = b^x where b > 0 and b != 0",
+      "metadata": { "weekNumbers": [5,6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T1-FUNC",
+      "title": "Definition of a logarithm",
+      "code": "CAPS-MATHEMATICS-GR12-T1-FUNC-05",
+      "description": "Understand the definition of a logarithm: y = log_b(x) <=> x = b^y where b > 0 and b != 1",
+      "metadata": { "weekNumbers": [5,6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T1-FUNC",
+      "title": "Graph of logarithmic function",
+      "code": "CAPS-MATHEMATICS-GR12-T1-FUNC-06",
+      "description": "The graph of y = log_b(x) for both cases 0 < b < 1 and b > 1",
+      "metadata": { "weekNumbers": [5,6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T1",
+      "title": "Trigonometry",
+      "code": "CAPS-MATHEMATICS-GR12-T1-TRIG",
+      "description": "",
+      "metadata": { "weekNumbers": [8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T1-TRIG",
+      "title": "Compound angle identities",
+      "code": "CAPS-MATHEMATICS-GR12-T1-TRIG-01",
+      "description": "Compound angle identities: sin(alpha +/- beta), cos(alpha +/- beta), sin(2alpha) = 2sin(alpha)cos(alpha), cos(2alpha) = cos^2(alpha) - sin^2(alpha) = 2cos^2(alpha) - 1 = 1 - 2sin^2(alpha)",
+      "metadata": { "weekNumbers": [8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T1-TRIG",
+      "title": "Sine, cosine and area rules (revision and proof)",
+      "code": "CAPS-MATHEMATICS-GR12-T1-TRIG-02",
+      "description": "Revise the proof of the sine, cosine and area rules",
+      "metadata": { "weekNumbers": [8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T1-TRIG",
+      "title": "2D and 3D problems",
+      "code": "CAPS-MATHEMATICS-GR12-T1-TRIG-03",
+      "description": "Solve problems in two and three dimensions applying the sine, cosine and area rules",
+      "metadata": { "weekNumbers": [8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR12",
+      "title": "Term 2",
+      "code": "CAPS-MATHEMATICS-GR12-T2",
+      "description": "SBA: Assignment (15%) and June exam/control test (15%)",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T2",
+      "title": "Euclidean Geometry",
+      "code": "CAPS-MATHEMATICS-GR12-T2-GEOM",
+      "description": "",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T2-GEOM",
+      "title": "Similarity conditions (revision)",
+      "code": "CAPS-MATHEMATICS-GR12-T2-GEOM-01",
+      "description": "Revise earlier work on the necessary and sufficient conditions for polygons to be similar",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T2-GEOM",
+      "title": "Proportionality and similarity theorems",
+      "code": "CAPS-MATHEMATICS-GR12-T2-GEOM-02",
+      "description": "Prove: a line drawn parallel to one side of a triangle divides the other two sides proportionally (and the Midpoint Theorem as special case); equiangular triangles are similar; triangles with sides in proportion are similar; the Pythagorean Theorem by similar triangles",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T2",
+      "title": "Analytical Geometry",
+      "code": "CAPS-MATHEMATICS-GR12-T2-ANAG",
+      "description": "",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T2-ANAG",
+      "title": "Revision of line equations and inclination",
+      "code": "CAPS-MATHEMATICS-GR12-T2-ANAG-01",
+      "description": "Revise: equation of a line through two given points; equation of a line through one point parallel or perpendicular to a given line; inclination (theta) of a line where m = tan(theta) (0 <= theta <= 180 degrees)",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T2-ANAG",
+      "title": "Equation of a circle",
+      "code": "CAPS-MATHEMATICS-GR12-T2-ANAG-02",
+      "description": "Apply the equation (x - a)^2 + (y - b)^2 = r^2 that defines a circle with radius r and centre (a, b)",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T2-ANAG",
+      "title": "Tangent to a circle",
+      "code": "CAPS-MATHEMATICS-GR12-T2-ANAG-03",
+      "description": "Determine the equation of a tangent to a given circle",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T2",
+      "title": "Differential Calculus, Including Polynomials",
+      "code": "CAPS-MATHEMATICS-GR12-T2-CALC",
+      "description": "",
+      "metadata": { "weekNumbers": [5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T2-CALC",
+      "title": "Factor and remainder theorems",
+      "code": "CAPS-MATHEMATICS-GR12-T2-CALC-01",
+      "description": "Factorise third-degree polynomials. Apply the remainder and factor theorems to polynomials of degree at most 3 (no proofs required)",
+      "metadata": { "weekNumbers": [5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T2-CALC",
+      "title": "Limit concept",
+      "code": "CAPS-MATHEMATICS-GR12-T2-CALC-02",
+      "description": "An intuitive understanding of the limit concept, in the context of approximating the rate of change or gradient of a function at a point",
+      "metadata": { "weekNumbers": [5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T2-CALC",
+      "title": "Definition of derivative using limits",
+      "code": "CAPS-MATHEMATICS-GR12-T2-CALC-03",
+      "description": "Use limits to define the derivative of a function f at any x: f'(x) = lim(h->0) [f(x+h) - f(x)]/h. Generalise to find the derivative function f'(x). Understand intuitively that f'(a) is the gradient of the tangent at point with x-coordinate a",
+      "metadata": { "weekNumbers": [5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T2-CALC",
+      "title": "Derivative from first principles",
+      "code": "CAPS-MATHEMATICS-GR12-T2-CALC-04",
+      "description": "Using the definition (first principle), determine f'(x) for: f(x) = ax^2 + bx + c, f(x) = ax^3, f(x) = a/x, and f(x) = c",
+      "metadata": { "weekNumbers": [5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T2-CALC",
+      "title": "Power rule and differentiation rules",
+      "code": "CAPS-MATHEMATICS-GR12-T2-CALC-05",
+      "description": "Use the formula d/dx(ax^n) = anx^(n-1) for any real n, together with rules for sum/difference and constant multiples",
+      "metadata": { "weekNumbers": [5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T2-CALC",
+      "title": "Equations of tangents",
+      "code": "CAPS-MATHEMATICS-GR12-T2-CALC-06",
+      "description": "Determine equations of tangents to graphs of functions",
+      "metadata": { "weekNumbers": [5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T2-CALC",
+      "title": "Second derivative and concavity",
+      "code": "CAPS-MATHEMATICS-GR12-T2-CALC-07",
+      "description": "Introduce the second derivative f''(x) = d/dx(f'(x)) and how it determines the concavity of a function",
+      "metadata": { "weekNumbers": [5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 7
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T2-CALC",
+      "title": "Cubic function sketching",
+      "code": "CAPS-MATHEMATICS-GR12-T2-CALC-08",
+      "description": "Sketch graphs of cubic polynomial functions using differentiation to determine coordinates of stationary points and points of inflection. Determine x-intercepts using the factor theorem and other techniques",
+      "metadata": { "weekNumbers": [5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 8
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T2-CALC",
+      "title": "Optimisation and rate of change",
+      "code": "CAPS-MATHEMATICS-GR12-T2-CALC-09",
+      "description": "Solve practical problems concerning optimisation and rate of change, including calculus of motion",
+      "metadata": { "weekNumbers": [5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 9
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR12",
+      "title": "Term 3",
+      "code": "CAPS-MATHEMATICS-GR12-T3",
+      "description": "SBA: Test (15%) and Trial examination (25%)",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T3",
+      "title": "Finance, Growth and Decay",
+      "code": "CAPS-MATHEMATICS-GR12-T3-FIN",
+      "description": "",
+      "metadata": { "weekNumbers": [1,2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T3-FIN",
+      "title": "Growth and decay formulae (revision)",
+      "code": "CAPS-MATHEMATICS-GR12-T3-FIN-01",
+      "description": "Revise and use simple and compound growth and decay formulae: A = P(1 +/- in) and A = P(1 +/- i)^n to solve problems (including straight line depreciation and depreciation on a reducing balance)",
+      "metadata": { "weekNumbers": [1,2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T3-FIN",
+      "title": "Present value and future value annuities",
+      "code": "CAPS-MATHEMATICS-GR12-T3-FIN-02",
+      "description": "Solve problems involving present value and future value annuities",
+      "metadata": { "weekNumbers": [1,2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T3-FIN",
+      "title": "Logarithms for time period",
+      "code": "CAPS-MATHEMATICS-GR12-T3-FIN-03",
+      "description": "Make use of logarithms to calculate the value of n (time period) in the equations A = P(1 + i)^n or A = P(1 - i)^n",
+      "metadata": { "weekNumbers": [1,2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T3-FIN",
+      "title": "Investment and loan analysis",
+      "code": "CAPS-MATHEMATICS-GR12-T3-FIN-04",
+      "description": "Critically analyse investment and loan options and make informed decisions as to best option(s) (including pyramid schemes)",
+      "metadata": { "weekNumbers": [1,2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T3",
+      "title": "Statistics",
+      "code": "CAPS-MATHEMATICS-GR12-T3-STAT",
+      "description": "",
+      "metadata": { "weekNumbers": [4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T3-STAT",
+      "title": "Revision of statistical representations",
+      "code": "CAPS-MATHEMATICS-GR12-T3-STAT-01",
+      "description": "Revise: histograms, frequency polygons, ogives (cumulative frequency curves), variance and standard deviation of ungrouped data, symmetric and skewed data, identification of outliers",
+      "metadata": { "weekNumbers": [4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T3-STAT",
+      "title": "Regression and correlation",
+      "code": "CAPS-MATHEMATICS-GR12-T3-STAT-02",
+      "description": "Use statistical summaries, scatterplots, regression (in particular the least squares regression line) and correlation to analyse and make meaningful comments on bivariate data, including interpolation, extrapolation and discussions on skewness",
+      "metadata": { "weekNumbers": [4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T3",
+      "title": "Counting and Probability",
+      "code": "CAPS-MATHEMATICS-GR12-T3-PROB",
+      "description": "",
+      "metadata": { "weekNumbers": [6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T3-PROB",
+      "title": "Probability rules (revision)",
+      "code": "CAPS-MATHEMATICS-GR12-T3-PROB-01",
+      "description": "Revise: addition rule P(A or B) = P(A) + P(B) - P(A and B); mutually exclusive events; complementary rule; independent events and product rule; Venn diagrams for three events A, B, C; tree diagrams for consecutive/simultaneous events",
+      "metadata": { "weekNumbers": [6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T3-PROB",
+      "title": "Fundamental counting principle",
+      "code": "CAPS-MATHEMATICS-GR12-T3-PROB-02",
+      "description": "Apply the fundamental counting principle to solve probability problems",
+      "metadata": { "weekNumbers": [6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-MATHEMATICS-GR12-T3-PROB",
+      "title": "Advanced probability problems",
+      "code": "CAPS-MATHEMATICS-GR12-T3-PROB-03",
+      "description": "Probability problems using Venn diagrams, tree diagrams, two-way contingency tables and the Fundamental Counting Principle to solve problems (where events are not necessarily independent)",
+      "metadata": { "weekNumbers": [6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR12",
+      "title": "Term 4",
+      "code": "CAPS-MATHEMATICS-GR12-T4",
+      "description": "Final examination. Paper 1 150 marks 3 hours (Algebraic expressions/equations/inequalities 25, Number patterns 25, Functions and graphs 35, Finance/growth/decay 15, Differential Calculus 35, Counting principle and probability 15). Paper 2 150 marks 3 hours (Statistics 20, Analytical Geometry 40, Euclidean Geometry 40, Trigonometry 50)",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    }
+  ]
+}

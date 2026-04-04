@@ -1,0 +1,535 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "FET Phase",
+      "code": "CAPS-FET",
+      "description": "Further Education and Training Phase (Grades 10-12)",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 10",
+      "code": "CAPS-GR10",
+      "description": "",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 10
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR10",
+      "title": "Physical Sciences",
+      "code": "CAPS-PHYSSCI-GR10",
+      "description": "Physical Sciences — Grade 10 — CAPS Curriculum",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-PHYSSCI-GR10",
+      "title": "Term 1",
+      "code": "CAPS-PHYSSCI-GR10-T1",
+      "description": "SBA: Control test",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T1",
+      "title": "Waves, Sound and Light",
+      "code": "CAPS-PHYSSCI-GR10-T1-WSL",
+      "description": "Physics strand: Waves, Sound and Light",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T1-WSL",
+      "title": "Transverse Pulses on a String or Spring",
+      "code": "CAPS-PHYSSCI-GR10-T1-WSL-01",
+      "description": "Pulse, amplitude, superposition principle, constructive and destructive interference of pulses on a string or spring.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T1-WSL",
+      "title": "Transverse Waves",
+      "code": "CAPS-PHYSSCI-GR10-T1-WSL-02",
+      "description": "Wavelength, frequency, period, amplitude, crest, trough, in phase and out of phase. Wave speed: v = f × λ.",
+      "metadata": { "weekNumbers": [2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T1-WSL",
+      "title": "Longitudinal Waves",
+      "code": "CAPS-PHYSSCI-GR10-T1-WSL-03",
+      "description": "Compressions and rarefactions. Wavelength and amplitude of longitudinal waves.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T1-WSL",
+      "title": "Sound",
+      "code": "CAPS-PHYSSCI-GR10-T1-WSL-04",
+      "description": "Sound as a longitudinal wave. Speed of sound in different media. Echoes. Pitch and frequency, loudness and amplitude, quality and waveform. Ultrasound and medical uses.",
+      "metadata": { "weekNumbers": [4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T1-WSL",
+      "title": "Electromagnetic Radiation",
+      "code": "CAPS-PHYSSCI-GR10-T1-WSL-05",
+      "description": "Wave-particle model. Source and propagation of EM waves. Speed c = 3 × 10⁸ m/s. Properties of EM waves. EM spectrum (order, uses of each type, penetrating ability, dangers). c = f × λ. Photon energy E = hf = hc/λ.",
+      "metadata": { "weekNumbers": [5,6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T1",
+      "title": "Electricity and Magnetism: Electrostatics",
+      "code": "CAPS-PHYSSCI-GR10-T1-ELSTAT",
+      "description": "Physics strand: Electrostatics",
+      "metadata": { "weekNumbers": [7,8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T1-ELSTAT",
+      "title": "Charge and Charging",
+      "code": "CAPS-PHYSSCI-GR10-T1-ELSTAT-01",
+      "description": "Positive and negative charges, neutral objects. Charging by contact (triboelectric effect). SI unit for charge (coulomb). Conservation of charge: Q = (Q₁ + Q₂)/2. Charge quantisation: Q = nq. Like and unlike charges. Polarisation of insulators.",
+      "metadata": { "weekNumbers": [7,8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T1",
+      "title": "Electricity and Magnetism: Electric Circuits (Introduction)",
+      "code": "CAPS-PHYSSCI-GR10-T1-ELCIRC",
+      "description": "Physics strand: Introduction to electric circuits",
+      "metadata": { "weekNumbers": [9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T1-ELCIRC",
+      "title": "Potential Difference, EMF and Current",
+      "code": "CAPS-PHYSSCI-GR10-T1-ELCIRC-01",
+      "description": "Potential difference V = W/Q. EMF and terminal potential difference. Current strength I = Q/Δt. The coulomb. Conventional current direction. Ammeter and voltmeter connection. Resistance.",
+      "metadata": { "weekNumbers": [9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-PHYSSCI-GR10",
+      "title": "Term 2",
+      "code": "CAPS-PHYSSCI-GR10-T2",
+      "description": "SBA: Control test",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T2",
+      "title": "Electric Circuits (Continued)",
+      "code": "CAPS-PHYSSCI-GR10-T2-ELCIRC",
+      "description": "Physics strand: Series and parallel circuits",
+      "metadata": { "weekNumbers": [2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T2-ELCIRC",
+      "title": "Series Circuits",
+      "code": "CAPS-PHYSSCI-GR10-T2-ELCIRC-01",
+      "description": "Same current throughout. Potential difference dividers. Total resistance: R_t = R₁ + R₂.",
+      "metadata": { "weekNumbers": [2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T2-ELCIRC",
+      "title": "Parallel Circuits",
+      "code": "CAPS-PHYSSCI-GR10-T2-ELCIRC-02",
+      "description": "Same voltage across branches. Current dividers. Parallel resistance: 1/R_p = 1/R₁ + 1/R₂. Solve circuit problems using R = V/I with up to 4 resistors.",
+      "metadata": { "weekNumbers": [2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T2",
+      "title": "Matter and Material: States of Matter and Kinetic Molecular Theory",
+      "code": "CAPS-PHYSSCI-GR10-T2-STATES",
+      "description": "Chemistry strand: Properties of matter and the kinetic molecular theory",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T2-STATES",
+      "title": "Properties of Matter and Classification",
+      "code": "CAPS-PHYSSCI-GR10-T2-STATES-01",
+      "description": "Physical properties: strength, brittle/malleable/ductile, density, melting and boiling points. Mixtures, pure substances, elements and compounds. Diffusion and Brownian motion.",
+      "metadata": { "weekNumbers": [3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T2-STATES",
+      "title": "Three States of Matter and Kinetic Molecular Theory",
+      "code": "CAPS-PHYSSCI-GR10-T2-STATES-02",
+      "description": "Solid, liquid and gas states. Freezing, melting and boiling points. Heating and cooling curves. Kinetic Molecular Theory explanation of state changes.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T2",
+      "title": "The Atom",
+      "code": "CAPS-PHYSSCI-GR10-T2-ATOM",
+      "description": "Chemistry strand: Atomic structure and electron configuration",
+      "metadata": { "weekNumbers": [4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T2-ATOM",
+      "title": "Atomic Structure",
+      "code": "CAPS-PHYSSCI-GR10-T2-ATOM-01",
+      "description": "Nucleus (protons and neutrons) and electrons. Atomic number, mass number, ions, isotopes, relative atomic mass. Standard notation for elements.",
+      "metadata": { "weekNumbers": [4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T2-ATOM",
+      "title": "Electron Configuration",
+      "code": "CAPS-PHYSSCI-GR10-T2-ATOM-02",
+      "description": "Aufbau diagrams. Electron configuration using spdf notation up to Z = 20. Atomic orbitals (s, p, d).",
+      "metadata": { "weekNumbers": [4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T2",
+      "title": "Periodic Table",
+      "code": "CAPS-PHYSSCI-GR10-T2-PERTAB",
+      "description": "Chemistry strand: The Periodic Table and periodicity",
+      "metadata": { "weekNumbers": [6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T2-PERTAB",
+      "title": "Names and Formulae of Compounds",
+      "code": "CAPS-PHYSSCI-GR10-T2-PERTAB-01",
+      "description": "Names and formulae of compounds using cation and anion tables. Metals, non-metals and metalloids. Conductors, semiconductors and insulators.",
+      "metadata": { "weekNumbers": [6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T2-PERTAB",
+      "title": "Periodicity Trends",
+      "code": "CAPS-PHYSSCI-GR10-T2-PERTAB-02",
+      "description": "Trends in atomic radius, ionisation energy, electron affinity and electronegativity across periods and down groups. Focus on Groups 1, 2, 17 and 18.",
+      "metadata": { "weekNumbers": [6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T2",
+      "title": "Chemical Bonding",
+      "code": "CAPS-PHYSSCI-GR10-T2-BOND",
+      "description": "Chemistry strand: Covalent, ionic and metallic bonding",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T2-BOND",
+      "title": "Lewis Dot Diagrams and Covalent Bonding",
+      "code": "CAPS-PHYSSCI-GR10-T2-BOND-01",
+      "description": "Lewis dot diagrams. Covalent bonds and molecule formation. Relative molecular mass.",
+      "metadata": { "weekNumbers": [7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T2-BOND",
+      "title": "Ionic and Metallic Bonding",
+      "code": "CAPS-PHYSSCI-GR10-T2-BOND-02",
+      "description": "Ionic bonding and formula units. Relative formula mass. Metallic bonding.",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T2",
+      "title": "Physical and Chemical Change",
+      "code": "CAPS-PHYSSCI-GR10-T2-CHANGE",
+      "description": "Chemistry strand: Physical vs chemical change and chemical equations",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T2-CHANGE",
+      "title": "Definitions and Examples",
+      "code": "CAPS-PHYSSCI-GR10-T2-CHANGE-01",
+      "description": "Definitions and examples of physical and chemical changes.",
+      "metadata": { "weekNumbers": [8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T2-CHANGE",
+      "title": "Word and Balanced Chemical Equations",
+      "code": "CAPS-PHYSSCI-GR10-T2-CHANGE-02",
+      "description": "Word equations and balanced chemical equations with state symbols. Conservation of atoms and mass. Law of constant composition.",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T2",
+      "title": "Representing Chemical Change / Quantitative Aspects (Introduction)",
+      "code": "CAPS-PHYSSCI-GR10-T2-QUANT",
+      "description": "Chemistry strand: The mole concept, Avogadro's number and molar volumes",
+      "metadata": { "weekNumbers": [9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 7
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T2-QUANT",
+      "title": "The Mole Concept",
+      "code": "CAPS-PHYSSCI-GR10-T2-QUANT-01",
+      "description": "The mole, relative atomic mass, Avogadro's number and molar mass. n = m/M.",
+      "metadata": { "weekNumbers": [9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T2-QUANT",
+      "title": "Molar Gas Volume",
+      "code": "CAPS-PHYSSCI-GR10-T2-QUANT-02",
+      "description": "Avogadro's law. Molar gas volume at STP. Volume relationships for gases in reactions.",
+      "metadata": { "weekNumbers": [9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-PHYSSCI-GR10",
+      "title": "Term 3",
+      "code": "CAPS-PHYSSCI-GR10-T3",
+      "description": "SBA: Control test",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T3",
+      "title": "Quantitative Aspects of Chemical Change (Continued)",
+      "code": "CAPS-PHYSSCI-GR10-T3-QUANT",
+      "description": "Chemistry strand: Concentration, empirical formulae and stoichiometry",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T3-QUANT",
+      "title": "Concentration",
+      "code": "CAPS-PHYSSCI-GR10-T3-QUANT-01",
+      "description": "Concentration: c = n/V. Percentage composition. Empirical formula. Water of crystallisation.",
+      "metadata": { "weekNumbers": [1], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T3-QUANT",
+      "title": "Stoichiometric Calculations and Yield",
+      "code": "CAPS-PHYSSCI-GR10-T3-QUANT-02",
+      "description": "Stoichiometric calculations. Theoretical yield and percentage yield.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T3",
+      "title": "Mechanics: Vectors and Scalars",
+      "code": "CAPS-PHYSSCI-GR10-T3-VECS",
+      "description": "Physics strand: Vectors and scalars",
+      "metadata": { "weekNumbers": [3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T3-VECS",
+      "title": "Vectors and Scalars",
+      "code": "CAPS-PHYSSCI-GR10-T3-VECS-01",
+      "description": "Physical quantities. Definitions of vector and scalar quantities. Graphical representation of vectors. Resultant using tail-to-head method for up to 4 force vectors in 1D.",
+      "metadata": { "weekNumbers": [3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T3",
+      "title": "Motion in One Dimension",
+      "code": "CAPS-PHYSSCI-GR10-T3-MOT1D",
+      "description": "Physics strand: Description of motion — position, displacement, velocity and acceleration",
+      "metadata": { "weekNumbers": [4,5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T3-MOT1D",
+      "title": "Frame of Reference and Position",
+      "code": "CAPS-PHYSSCI-GR10-T3-MOT1D-01",
+      "description": "Frame of reference. Position, distance and displacement.",
+      "metadata": { "weekNumbers": [4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T3-MOT1D",
+      "title": "Speed, Velocity and Acceleration",
+      "code": "CAPS-PHYSSCI-GR10-T3-MOT1D-02",
+      "description": "Average speed and average velocity. Acceleration: positive, negative and deceleration.",
+      "metadata": { "weekNumbers": [4,5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T3",
+      "title": "Instantaneous Speed/Velocity and Equations of Motion",
+      "code": "CAPS-PHYSSCI-GR10-T3-EOM",
+      "description": "Physics strand: Equations of motion and motion graphs",
+      "metadata": { "weekNumbers": [7,8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T3-EOM",
+      "title": "Instantaneous Velocity and Uniform Motion",
+      "code": "CAPS-PHYSSCI-GR10-T3-EOM-01",
+      "description": "Instantaneous velocity and speed. Distinction between uniform velocity and uniformly accelerated motion.",
+      "metadata": { "weekNumbers": [7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T3-EOM",
+      "title": "Motion Graphs",
+      "code": "CAPS-PHYSSCI-GR10-T3-EOM-02",
+      "description": "Position-time, velocity-time and acceleration-time graphs. Gradient and area interpretations for each graph type.",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T3-EOM",
+      "title": "Equations of Motion",
+      "code": "CAPS-PHYSSCI-GR10-T3-EOM-03",
+      "description": "v_f = v_i + aΔt; Δx = v_i·Δt + ½·a·Δt²; v_f² = v_i² + 2a·Δx. Applications including stopping distance problems.",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T3",
+      "title": "Energy (Introduction)",
+      "code": "CAPS-PHYSSCI-GR10-T3-ENERGY",
+      "description": "Physics strand: Gravitational potential energy and kinetic energy",
+      "metadata": { "weekNumbers": [10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T3-ENERGY",
+      "title": "Gravitational Potential Energy and Kinetic Energy",
+      "code": "CAPS-PHYSSCI-GR10-T3-ENERGY-01",
+      "description": "Gravitational potential energy: E_p = mgh. Kinetic energy: E_k = ½mv².",
+      "metadata": { "weekNumbers": [10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-PHYSSCI-GR10",
+      "title": "Term 4",
+      "code": "CAPS-PHYSSCI-GR10-T4",
+      "description": "Final examination: Paper 1 Physics (100 marks) and Paper 2 Chemistry (100 marks)",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T4",
+      "title": "Energy (Continued)",
+      "code": "CAPS-PHYSSCI-GR10-T4-ENERGY",
+      "description": "Physics strand: Mechanical energy and conservation of energy",
+      "metadata": { "weekNumbers": [2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T4-ENERGY",
+      "title": "Mechanical Energy and Conservation",
+      "code": "CAPS-PHYSSCI-GR10-T4-ENERGY-01",
+      "description": "Mechanical energy: E_M = E_k + E_p. Law of conservation of energy. Conservation of mechanical energy. Applications: dropped objects, pendulum, roller coasters, inclined planes.",
+      "metadata": { "weekNumbers": [2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T4",
+      "title": "Revision and Final Examination",
+      "code": "CAPS-PHYSSCI-GR10-T4-REVEXAM",
+      "description": "Revision of all Physics and Chemistry topics (wk 3–7). Final Exam: Paper 1 Physics 100 marks; Paper 2 Chemistry 100 marks (wk 8–10).",
+      "metadata": { "weekNumbers": [3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T4-REVEXAM",
+      "title": "Revision",
+      "code": "CAPS-PHYSSCI-GR10-T4-REVEXAM-01",
+      "description": "Consolidation and revision of all Grade 10 Physics and Chemistry content.",
+      "metadata": { "weekNumbers": [3,4,5,6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-PHYSSCI-GR10-T4-REVEXAM",
+      "title": "Final Examination",
+      "code": "CAPS-PHYSSCI-GR10-T4-REVEXAM-02",
+      "description": "Paper 1: Physics — all Physics topics (100 marks). Paper 2: Chemistry — all Chemistry topics (100 marks).",
+      "metadata": { "weekNumbers": [8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    }
+  ]
+}
