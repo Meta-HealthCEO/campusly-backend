@@ -99,7 +99,7 @@ questionSchema.index({ schoolId: 1, teacherId: 1 });
 questionSchema.index({ schoolId: 1, topicId: 1 });
 questionSchema.index({ tags: 1 });
 
-export const Question = mongoose.model<IQuestion>('Question', questionSchema);
+export const WorkbenchQuestion = mongoose.model<IQuestion>('WorkbenchQuestion', questionSchema);
 
 // ─── PaperMemo ────────────────────────────────────────────────────────────────
 
@@ -128,6 +128,7 @@ export interface IPaperMemo extends Document {
   sections: IMemoSection[];
   totalMarks: number;
   status: MemoStatus;
+  isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -167,6 +168,7 @@ const paperMemoSchema = new Schema<IPaperMemo>(
     sections: { type: [memoSectionSchema], default: [] },
     totalMarks: { type: Number, required: true },
     status: { type: String, enum: ['draft', 'final'], default: 'draft' },
+    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true },
 );
@@ -260,6 +262,7 @@ export interface IAssessmentPlan extends Document {
   term: number;
   year: number;
   plannedAssessments: IPlannedAssessment[];
+  isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -281,7 +284,7 @@ const plannedAssessmentSchema = new Schema<IPlannedAssessment>(
       enum: ['planned', 'created', 'completed'],
       default: 'planned',
     },
-    linkedPaperId: { type: Schema.Types.ObjectId, default: null },
+    linkedPaperId: { type: Schema.Types.ObjectId, ref: 'GeneratedPaper', default: null },
   },
   { _id: false },
 );
@@ -295,6 +298,7 @@ const assessmentPlanSchema = new Schema<IAssessmentPlan>(
     term: { type: Number, required: true, min: 1, max: 4 },
     year: { type: Number, required: true },
     plannedAssessments: { type: [plannedAssessmentSchema], default: [] },
+    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true },
 );

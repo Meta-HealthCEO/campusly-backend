@@ -6,7 +6,8 @@ export class SportController {
   // ─── Teams ────────────────────────────────────────────────────────────────
 
   static async createTeam(req: Request, res: Response): Promise<void> {
-    const team = await SportService.createTeam(req.body);
+    const schoolId = req.user!.schoolId!;
+    const team = await SportService.createTeam({ ...req.body, schoolId });
     res.status(201).json(apiResponse(true, team, 'Sport team created successfully'));
   }
 
@@ -24,24 +25,28 @@ export class SportController {
   }
 
   static async getTeam(req: Request, res: Response): Promise<void> {
-    const team = await SportService.getTeam(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const team = await SportService.getTeam(req.params.id as string, schoolId);
     res.json(apiResponse(true, team, 'Sport team retrieved successfully'));
   }
 
   static async updateTeam(req: Request, res: Response): Promise<void> {
-    const team = await SportService.updateTeam(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const team = await SportService.updateTeam(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, team, 'Sport team updated successfully'));
   }
 
   static async deleteTeam(req: Request, res: Response): Promise<void> {
-    await SportService.deleteTeam(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await SportService.deleteTeam(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Sport team deleted successfully'));
   }
 
   // ─── Fixtures ─────────────────────────────────────────────────────────────
 
   static async createFixture(req: Request, res: Response): Promise<void> {
-    const fixture = await SportService.createFixture(req.body);
+    const schoolId = req.user!.schoolId!;
+    const fixture = await SportService.createFixture({ ...req.body, schoolId });
     res.status(201).json(apiResponse(true, fixture, 'Sport fixture created successfully'));
   }
 
@@ -59,24 +64,28 @@ export class SportController {
   }
 
   static async getFixture(req: Request, res: Response): Promise<void> {
-    const fixture = await SportService.getFixture(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const fixture = await SportService.getFixture(req.params.id as string, schoolId);
     res.json(apiResponse(true, fixture, 'Sport fixture retrieved successfully'));
   }
 
   static async updateFixture(req: Request, res: Response): Promise<void> {
-    const fixture = await SportService.updateFixture(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const fixture = await SportService.updateFixture(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, fixture, 'Sport fixture updated successfully'));
   }
 
   static async deleteFixture(req: Request, res: Response): Promise<void> {
-    await SportService.deleteFixture(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await SportService.deleteFixture(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Sport fixture deleted successfully'));
   }
 
   // ─── Seasons ────────────────────────────────────────────────────────────
 
   static async createSeason(req: Request, res: Response): Promise<void> {
-    const season = await SportService.createSeason(req.body);
+    const schoolId = req.user!.schoolId!;
+    const season = await SportService.createSeason({ ...req.body, schoolId });
     res.status(201).json(apiResponse(true, season, 'Season created successfully'));
   }
 
@@ -94,17 +103,20 @@ export class SportController {
   }
 
   static async getSeason(req: Request, res: Response): Promise<void> {
-    const season = await SportService.getSeason(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const season = await SportService.getSeason(req.params.id as string, schoolId);
     res.json(apiResponse(true, season, 'Season retrieved successfully'));
   }
 
   static async updateSeason(req: Request, res: Response): Promise<void> {
-    const season = await SportService.updateSeason(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const season = await SportService.updateSeason(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, season, 'Season updated successfully'));
   }
 
   static async deleteSeason(req: Request, res: Response): Promise<void> {
-    await SportService.deleteSeason(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await SportService.deleteSeason(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Season deleted successfully'));
   }
 
@@ -124,31 +136,35 @@ export class SportController {
   // ─── Match Result ───────────────────────────────────────────────────────
 
   static async createMatchResult(req: Request, res: Response): Promise<void> {
-    const data = { ...req.body, fixtureId: req.params.fixtureId };
-    const result = await SportService.createMatchResult(data);
+    const schoolId = req.user!.schoolId!;
+    const data = { ...req.body, fixtureId: req.params.fixtureId, schoolId };
+    const result = await SportService.createMatchResult(data, schoolId);
     res.status(201).json(apiResponse(true, result, 'Match result created successfully'));
   }
 
   static async getMatchResult(req: Request, res: Response): Promise<void> {
-    const result = await SportService.getMatchResult(req.params.fixtureId as string);
+    const schoolId = req.user!.schoolId!;
+    const result = await SportService.getMatchResult(req.params.fixtureId as string, schoolId);
     res.json(apiResponse(true, result, 'Match result retrieved successfully'));
   }
 
   static async updateMatchResult(req: Request, res: Response): Promise<void> {
-    const result = await SportService.updateMatchResult(req.params.fixtureId as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const result = await SportService.updateMatchResult(req.params.fixtureId as string, schoolId, req.body);
     res.json(apiResponse(true, result, 'Match result updated successfully'));
   }
 
   // ─── Season Standings ───────────────────────────────────────────────────
 
   static async getSeasonStandings(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const recalculate = req.query.recalculate === 'true';
     let standings;
 
     if (recalculate) {
       standings = await SportService.recalculateStandings(req.params.seasonId as string);
     } else {
-      standings = await SportService.getSeasonStandings(req.params.seasonId as string);
+      standings = await SportService.getSeasonStandings(req.params.seasonId as string, schoolId);
     }
 
     res.json(apiResponse(true, standings, 'Season standings retrieved successfully'));

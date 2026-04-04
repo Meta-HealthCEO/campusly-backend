@@ -134,8 +134,9 @@ export class AchieverController {
   // ─── HousePointLog ────────────────────────────────────────────────────
 
   static async addHousePointLog(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const awardedBy = getUser(req).id;
-    const log = await AchieverService.addHousePointLog(req.body, awardedBy);
+    const log = await AchieverService.addHousePointLog(req.body, awardedBy, schoolId);
     res.status(201).json(apiResponse(true, log, 'House points awarded successfully'));
   }
 

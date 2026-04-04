@@ -19,6 +19,7 @@ export class PaymentService {
   static async recordPayment(
     invoiceId: string,
     data: RecordPaymentInput,
+    schoolId: string,
     recordedBy: string,
   ) {
     const session = await mongoose.startSession();
@@ -27,6 +28,7 @@ export class PaymentService {
     try {
       const invoice = await Invoice.findOne({
         _id: invoiceId,
+        schoolId,
         isDeleted: false,
       }).session(session);
 
@@ -85,8 +87,8 @@ export class PaymentService {
     }
   }
 
-  static async getPayments(invoiceId: string) {
-    return Payment.find({ invoiceId, isDeleted: false }).sort({ createdAt: -1 }).lean();
+  static async getPayments(invoiceId: string, schoolId: string) {
+    return Payment.find({ invoiceId, schoolId, isDeleted: false }).sort({ createdAt: -1 }).lean();
   }
 
   // ─── Late Fee Calculation ───────────────────────────────────────────────────
@@ -288,17 +290,17 @@ export class PaymentService {
     return { debitOrders, total, page: query.page ?? 1, limit };
   }
 
-  static async getDebitOrder(id: string) {
-    const debitOrder = await DebitOrder.findOne({ _id: id, isDeleted: false }).lean();
+  static async getDebitOrder(id: string, schoolId: string) {
+    const debitOrder = await DebitOrder.findOne({ _id: id, schoolId, isDeleted: false }).lean();
     if (!debitOrder) {
       throw new NotFoundError('Debit order not found');
     }
     return debitOrder;
   }
 
-  static async updateDebitOrder(id: string, data: UpdateDebitOrderInput) {
+  static async updateDebitOrder(id: string, schoolId: string, data: UpdateDebitOrderInput) {
     const debitOrder = await DebitOrder.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       data,
       { new: true },
     );
@@ -308,9 +310,9 @@ export class PaymentService {
     return debitOrder;
   }
 
-  static async deleteDebitOrder(id: string) {
+  static async deleteDebitOrder(id: string, schoolId: string) {
     const debitOrder = await DebitOrder.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { isDeleted: true },
       { new: true },
     );

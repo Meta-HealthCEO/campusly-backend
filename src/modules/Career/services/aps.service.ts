@@ -101,11 +101,10 @@ export class APSService {
   /**
    * Get the APS breakdown for a student's latest academic year.
    */
-  static async getAPS(studentId: string): Promise<APSResult> {
-    const portfolio = await StudentPortfolio.findOne({
-      studentId,
-      isDeleted: false,
-    }).lean();
+  static async getAPS(studentId: string, schoolId?: string): Promise<APSResult> {
+    const filter: Record<string, unknown> = { studentId, isDeleted: false };
+    if (schoolId) filter.schoolId = schoolId;
+    const portfolio = await StudentPortfolio.findOne(filter).lean();
 
     if (!portfolio || portfolio.academicHistory.length === 0) {
       throw new NotFoundError('No academic history found for student');
@@ -165,8 +164,9 @@ export class APSService {
   static async simulate(
     studentId: string,
     adjustments: { subjectId: string; hypotheticalPercentage: number }[],
+    schoolId?: string,
   ): Promise<SimulationResult> {
-    const currentResult = await APSService.getAPS(studentId);
+    const currentResult = await APSService.getAPS(studentId, schoolId);
     const currentAPS = currentResult.totalAPS;
 
     // Build adjusted subjects

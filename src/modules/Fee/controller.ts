@@ -23,17 +23,20 @@ export class FeeController {
   }
 
   static async getFeeType(req: Request, res: Response): Promise<void> {
-    const feeType = await FeeService.getFeeType(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const feeType = await FeeService.getFeeType(req.params.id as string, schoolId);
     res.json(apiResponse(true, feeType));
   }
 
   static async updateFeeType(req: Request, res: Response): Promise<void> {
-    const feeType = await FeeService.updateFeeType(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const feeType = await FeeService.updateFeeType(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, feeType, 'Fee type updated successfully'));
   }
 
   static async deleteFeeType(req: Request, res: Response): Promise<void> {
-    await FeeService.deleteFeeType(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await FeeService.deleteFeeType(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Fee type deleted successfully'));
   }
 
@@ -55,17 +58,20 @@ export class FeeController {
   }
 
   static async getFeeSchedule(req: Request, res: Response): Promise<void> {
-    const schedule = await FeeService.getFeeSchedule(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const schedule = await FeeService.getFeeSchedule(req.params.id as string, schoolId);
     res.json(apiResponse(true, schedule));
   }
 
   static async updateFeeSchedule(req: Request, res: Response): Promise<void> {
-    const schedule = await FeeService.updateFeeSchedule(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const schedule = await FeeService.updateFeeSchedule(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, schedule, 'Fee schedule updated successfully'));
   }
 
   static async deleteFeeSchedule(req: Request, res: Response): Promise<void> {
-    await FeeService.deleteFeeSchedule(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await FeeService.deleteFeeSchedule(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Fee schedule deleted successfully'));
   }
 
@@ -88,23 +94,27 @@ export class FeeController {
   }
 
   static async getInvoice(req: Request, res: Response): Promise<void> {
-    const invoice = await FeeService.getInvoice(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const invoice = await FeeService.getInvoice(req.params.id as string, schoolId);
     res.json(apiResponse(true, invoice));
   }
 
   // ─── Payment ───────────────────────────────────────────────────────────────
 
   static async recordPayment(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const result = await FeeService.recordPayment(
       req.params.id as string,
       req.body,
+      schoolId,
       getUser(req).id,
     );
     res.status(201).json(apiResponse(true, result, 'Payment recorded successfully'));
   }
 
   static async getPayments(req: Request, res: Response): Promise<void> {
-    const payments = await FeeService.getPayments(req.params.invoiceId as string);
+    const schoolId = req.user!.schoolId!;
+    const payments = await FeeService.getPayments(req.params.invoiceId as string, schoolId);
     res.json(apiResponse(true, payments));
   }
 
@@ -140,17 +150,20 @@ export class FeeController {
   }
 
   static async getDebitOrder(req: Request, res: Response): Promise<void> {
-    const debitOrder = await FeeService.getDebitOrder(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const debitOrder = await FeeService.getDebitOrder(req.params.id as string, schoolId);
     res.json(apiResponse(true, debitOrder));
   }
 
   static async updateDebitOrder(req: Request, res: Response): Promise<void> {
-    const debitOrder = await FeeService.updateDebitOrder(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const debitOrder = await FeeService.updateDebitOrder(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, debitOrder, 'Debit order updated successfully'));
   }
 
   static async deleteDebitOrder(req: Request, res: Response): Promise<void> {
-    await FeeService.deleteDebitOrder(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await FeeService.deleteDebitOrder(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Debit order deleted successfully'));
   }
 
@@ -169,7 +182,8 @@ export class FeeController {
   // ─── Collection Escalation ──────────────────────────────────────────────────
 
   static async escalateCollection(req: Request, res: Response): Promise<void> {
-    const result = await FeeService.escalateCollection(req.body, getUser(req).id);
+    const schoolId = req.user!.schoolId!;
+    const result = await FeeService.escalateCollection(req.body, schoolId, getUser(req).id);
     res.status(201).json(apiResponse(true, result, 'Collection escalated successfully'));
   }
 
@@ -230,14 +244,16 @@ export class FeeController {
   // ─── Write Off ──────────────────────────────────────────────────────────────
 
   static async writeOffDebt(req: Request, res: Response): Promise<void> {
-    const result = await FeeService.writeOffDebt(req.body, getUser(req).id);
+    const schoolId = req.user!.schoolId!;
+    const result = await FeeService.writeOffDebt(req.body, schoolId, getUser(req).id);
     res.json(apiResponse(true, result, 'Debt written off successfully'));
   }
 
   // ─── Discount ───────────────────────────────────────────────────────────────
 
   static async applyDiscount(req: Request, res: Response): Promise<void> {
-    const result = await FeeService.applyDiscount(req.body, getUser(req).id);
+    const schoolId = req.user!.schoolId!;
+    const result = await FeeService.applyDiscount(req.body, schoolId, getUser(req).id);
     res.json(apiResponse(true, result, 'Discount applied successfully'));
   }
 
@@ -271,14 +287,17 @@ export class FeeController {
   // ─── Credit Note ────────────────────────────────────────────────────────────
 
   static async createCreditNote(req: Request, res: Response): Promise<void> {
-    const creditNote = await FeeService.createCreditNote(req.body);
+    const schoolId = req.user!.schoolId!;
+    const creditNote = await FeeService.createCreditNote(req.body, schoolId);
     res.status(201).json(apiResponse(true, creditNote, 'Credit note created successfully'));
   }
 
   static async approveCreditNote(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const creditNote = await FeeService.approveCreditNote(
       req.params.id as string,
       req.body,
+      schoolId,
       getUser(req).id,
     );
     res.json(apiResponse(true, creditNote, 'Credit note updated successfully'));

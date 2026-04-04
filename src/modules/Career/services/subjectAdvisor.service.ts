@@ -93,12 +93,11 @@ function computeTrend(terms: { term: number; percentage: number }[]): 'improving
 // ─── Service ──────────────────────────────────────────────────────────────
 
 export class SubjectAdvisorService {
-  static async getAdvice(studentId: string): Promise<AdviceResult> {
+  static async getAdvice(studentId: string, schoolId?: string): Promise<AdviceResult> {
     // 1. Get student portfolio
-    const portfolio = await StudentPortfolio.findOne({
-      studentId,
-      isDeleted: false,
-    }).lean();
+    const portfolioFilter: Record<string, unknown> = { studentId, isDeleted: false };
+    if (schoolId) portfolioFilter.schoolId = schoolId;
+    const portfolio = await StudentPortfolio.findOne(portfolioFilter).lean();
 
     if (!portfolio || portfolio.academicHistory.length === 0) {
       throw new NotFoundError('No academic history found for student');
@@ -110,10 +109,9 @@ export class SubjectAdvisorService {
     const latest = sorted[0];
 
     // 2. Get aptitude results if available
-    const aptitude = await AptitudeResult.findOne({
-      studentId,
-      isDeleted: false,
-    }).lean();
+    const aptitudeFilter: Record<string, unknown> = { studentId, isDeleted: false };
+    if (schoolId) aptitudeFilter.schoolId = schoolId;
+    const aptitude = await AptitudeResult.findOne(aptitudeFilter).lean();
 
     const aptitudeTopCluster = aptitude?.clusters?.length
       ? [...aptitude.clusters].sort(

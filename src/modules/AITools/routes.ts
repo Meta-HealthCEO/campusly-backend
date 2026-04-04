@@ -10,6 +10,7 @@ import {
   gradeSubmissionSchema,
   bulkGradeSchema,
   reviewGradeSchema,
+  publishGradeParamsSchema,
 } from './validation.js';
 
 const router = express.Router();
@@ -101,6 +102,7 @@ router.post(
   '/grade/:jobId/publish',
   authenticate,
   authorize('teacher', 'school_admin', 'super_admin'),
+  validate({ params: publishGradeParamsSchema }),
   AIToolsController.publishGrade,
 );
 

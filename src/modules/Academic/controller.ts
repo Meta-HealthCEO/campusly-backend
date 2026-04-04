@@ -376,7 +376,8 @@ export class AcademicController {
   }
 
   static async getExamTimetable(req: Request, res: Response): Promise<void> {
-    const entry = await AcademicService.getExamTimetableById(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const entry = await AcademicService.getExamTimetableById(req.params.id as string, schoolId);
     res.json(apiResponse(true, entry, 'Exam timetable entry retrieved successfully'));
   }
 

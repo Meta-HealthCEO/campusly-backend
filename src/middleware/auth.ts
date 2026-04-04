@@ -10,6 +10,12 @@ interface JwtPayload {
   email: string;
   role: UserRole;
   schoolId?: string;
+  isSchoolPrincipal?: boolean;
+  isHOD?: boolean;
+  departmentId?: string | null;
+  isBursar?: boolean;
+  isReceptionist?: boolean;
+  isCounselor?: boolean;
 }
 
 export function authenticate(req: Request, _res: Response, next: NextFunction): void {
@@ -34,6 +40,12 @@ export function authenticate(req: Request, _res: Response, next: NextFunction): 
       email: decoded.email,
       role: decoded.role,
       schoolId: decoded.schoolId,
+      isSchoolPrincipal: decoded.isSchoolPrincipal ?? false,
+      isHOD: decoded.isHOD ?? false,
+      departmentId: decoded.departmentId ?? null,
+      isBursar: decoded.isBursar ?? false,
+      isReceptionist: decoded.isReceptionist ?? false,
+      isCounselor: decoded.isCounselor ?? false,
     };
 
     next();

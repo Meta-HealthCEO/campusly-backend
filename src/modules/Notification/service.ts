@@ -66,9 +66,9 @@ export class NotificationService {
     };
   }
 
-  static async markAsRead(id: string): Promise<INotification> {
+  static async markAsRead(id: string, recipientId: string): Promise<INotification> {
     const notification = await Notification.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, recipientId, isDeleted: false },
       { $set: { isRead: true, readAt: new Date() } },
       { new: true },
     );

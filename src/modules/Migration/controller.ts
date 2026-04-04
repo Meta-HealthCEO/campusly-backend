@@ -6,7 +6,8 @@ import { apiResponse } from '../../common/utils.js';
 
 export class MigrationController {
   static async upload(req: Request, res: Response): Promise<void> {
-    const { schoolId, sourceSystem, originalName, fileUrl, fileSize } = req.body;
+    const schoolId = req.user!.schoolId!;
+    const { sourceSystem, originalName, fileUrl, fileSize } = req.body;
     const job = await MigrationService.uploadFile(
       schoolId,
       sourceSystem,
@@ -17,30 +18,36 @@ export class MigrationController {
   }
 
   static async validate(req: Request, res: Response): Promise<void> {
-    const job = await MigrationService.validateData(req.params.jobId as string);
+    const schoolId = req.user!.schoolId!;
+    const job = await MigrationService.validateData(req.params.jobId as string, schoolId);
     res.json(apiResponse(true, job, 'Validation completed'));
   }
 
   static async preview(req: Request, res: Response): Promise<void> {
-    const preview = await MigrationService.getPreview(req.params.jobId as string);
+    const schoolId = req.user!.schoolId!;
+    const preview = await MigrationService.getPreview(req.params.jobId as string, schoolId);
     res.json(apiResponse(true, preview, 'Preview retrieved successfully'));
   }
 
   static async updateMapping(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const job = await MigrationService.updateMapping(
       req.params.jobId as string,
+      schoolId,
       req.body.mapping,
     );
     res.json(apiResponse(true, job, 'Mapping updated successfully'));
   }
 
   static async execute(req: Request, res: Response): Promise<void> {
-    const job = await MigrationService.executeImport(req.params.jobId as string);
+    const schoolId = req.user!.schoolId!;
+    const job = await MigrationService.executeImport(req.params.jobId as string, schoolId);
     res.json(apiResponse(true, job, 'Import executed successfully'));
   }
 
   static async getStatus(req: Request, res: Response): Promise<void> {
-    const job = await MigrationService.getJobStatus(req.params.jobId as string);
+    const schoolId = req.user!.schoolId!;
+    const job = await MigrationService.getJobStatus(req.params.jobId as string, schoolId);
     res.json(apiResponse(true, job, 'Job status retrieved'));
   }
 

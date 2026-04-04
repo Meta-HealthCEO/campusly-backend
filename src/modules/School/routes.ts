@@ -25,7 +25,7 @@ router.get(
 router.get(
   '/:id',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  authorize('super_admin', 'school_admin', 'teacher'),
   SchoolController.getById,
 );
 

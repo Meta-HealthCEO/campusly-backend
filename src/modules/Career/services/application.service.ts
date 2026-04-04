@@ -83,9 +83,10 @@ export class ApplicationService {
   /**
    * List applications for a student with pagination.
    */
-  static async listByStudent(studentId: string, query: ListQuery) {
+  static async listByStudent(studentId: string, query: ListQuery, schoolId?: string) {
     const { skip, limit } = paginationHelper(query.page, query.limit);
     const filter: Record<string, unknown> = { studentId, isDeleted: false };
+    if (schoolId) filter.schoolId = schoolId;
     if (query.status) filter.status = query.status;
 
     const [data, total] = await Promise.all([
@@ -109,14 +110,17 @@ export class ApplicationService {
   static async update(
     id: string,
     data: UpdateInput,
+    schoolId?: string,
   ): Promise<IApplication> {
     const updatePayload: Record<string, unknown> = { ...data };
     if (data.status === 'submitted') {
       updatePayload.submittedAt = new Date();
     }
 
+    const updateFilter: Record<string, unknown> = { _id: id, isDeleted: false };
+    if (schoolId) updateFilter.schoolId = schoolId;
     const application = await Application.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      updateFilter,
       updatePayload,
       { new: true },
     );
@@ -130,9 +134,12 @@ export class ApplicationService {
   static async addDocument(
     id: string,
     doc: DocumentInput,
+    schoolId?: string,
   ): Promise<IApplication> {
+    const docFilter: Record<string, unknown> = { _id: id, isDeleted: false };
+    if (schoolId) docFilter.schoolId = schoolId;
     const application = await Application.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      docFilter,
       {
         $push: {
           documents: { ...doc, uploadedAt: new Date() },
@@ -147,11 +154,10 @@ export class ApplicationService {
   /**
    * Get prefill data for an application (student info + programme).
    */
-  static async getPrefill(id: string) {
-    const application = await Application.findOne({
-      _id: id,
-      isDeleted: false,
-    })
+  static async getPrefill(id: string, schoolId?: string) {
+    const prefillFilter: Record<string, unknown> = { _id: id, isDeleted: false };
+    if (schoolId) prefillFilter.schoolId = schoolId;
+    const application = await Application.findOne(prefillFilter)
       .populate('programmeId')
       .populate('universityId', 'name shortName')
       .lean();
@@ -185,16 +191,18 @@ export class ApplicationService {
   /**
    * Get upcoming deadlines for a student across applications and bursaries.
    */
-  static async getDeadlines(studentId: string): Promise<DeadlineItem[]> {
+  static async getDeadlines(studentId: string, schoolId?: string): Promise<DeadlineItem[]> {
     const now = new Date();
     const deadlines: DeadlineItem[] = [];
 
     // Application deadlines from programmes
-    const applications = await Application.find({
+    const deadlineFilter: Record<string, unknown> = {
       studentId,
       isDeleted: false,
       status: { $in: ['draft', 'submitted'] },
-    })
+    };
+    if (schoolId) deadlineFilter.schoolId = schoolId;
+    const applications = await Application.find(deadlineFilter)
       .populate('programmeId', 'name applicationDeadline')
       .lean();
 

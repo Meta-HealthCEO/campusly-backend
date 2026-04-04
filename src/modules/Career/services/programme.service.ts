@@ -1,6 +1,6 @@
 import { Programme, University, type IProgramme } from '../model.js';
 import { NotFoundError } from '../../../common/errors.js';
-import { paginationHelper } from '../../../common/utils.js';
+import { paginationHelper, escapeRegex } from '../../../common/utils.js';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -45,7 +45,7 @@ export class ProgrammeService {
       filter.universityId = query.universityId;
     }
     if (query.faculty) {
-      filter.faculty = new RegExp(query.faculty, 'i');
+      filter.faculty = new RegExp(escapeRegex(query.faculty), 'i');
     }
     if (query.qualificationType) {
       filter.qualificationType = query.qualificationType;
@@ -54,10 +54,10 @@ export class ProgrammeService {
       filter.minimumAPS = { $lte: query.maxAPS };
     }
     if (query.field) {
-      filter.careerOutcomes = new RegExp(query.field, 'i');
+      filter.careerOutcomes = new RegExp(escapeRegex(query.field), 'i');
     }
     if (query.search) {
-      filter.name = new RegExp(query.search, 'i');
+      filter.name = new RegExp(escapeRegex(query.search), 'i');
     }
 
     const [programmes, total] = await Promise.all([

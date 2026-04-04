@@ -149,3 +149,9 @@ export type CreateRubricInput = z.infer<typeof createRubricSchema>;
 export type UpdateRubricInput = z.infer<typeof updateRubricSchema>;
 export type GradeWithRubricInput = z.infer<typeof gradeWithRubricSchema>;
 export type SubmitPeerReviewInput = z.infer<typeof submitPeerReviewSchema>;
+
+// ─── Request Revision (params only) ─────────────────────────────────────────
+
+export const requestRevisionParamsSchema = z.object({
+  id: objectIdSchema,
+}).strict();

@@ -34,6 +34,14 @@ export const BOLT_ON_MODULES = [
   'ai_tools',
   'teacher_workbench',
   'careers',
+  'staff_leave',
+  'conference_booking',
+  'visitor_management',
+  'admissions',
+  'incident_wellbeing',
+  'budget',
+  'payroll',
+  'asset_management',
 ] as const;
 
 export const ALL_MODULES = [...CORE_MODULES, ...BOLT_ON_MODULES] as const;
@@ -115,6 +123,22 @@ export const MODULE_PACKAGES: Record<string, { label: string; modules: readonly 
   teacher_workbench: {
     label: 'Teacher Workbench',
     modules: ['teacher_workbench'],
+  },
+  staff_leave: {
+    label: 'Staff Leave Management',
+    modules: ['staff_leave'],
+  },
+  conference_booking: {
+    label: 'Parent-Teacher Conferences',
+    modules: ['conference_booking'],
+  },
+  visitor_management: {
+    label: 'Visitor Management & Gate Pass',
+    modules: ['visitor_management'],
+  },
+  admissions: {
+    label: 'Admissions Pipeline',
+    modules: ['admissions'],
   },
 };
 

@@ -10,7 +10,6 @@ import { TransactionType } from '../../common/enums.js';
 interface ListMenuQuery {
   page?: number;
   limit?: number;
-  schoolId?: string;
   category?: string;
   isAvailable?: boolean;
 }
@@ -38,7 +37,7 @@ export class TuckShopService {
     return menuItem.save();
   }
 
-  static async listMenuItems(query: ListMenuQuery): Promise<{
+  static async listMenuItems(schoolId: string, query: ListMenuQuery): Promise<{
     items: IMenuItem[];
     total: number;
     page: number;
@@ -52,11 +51,7 @@ export class TuckShopService {
     );
     const skip = (page - 1) * limit;
 
-    const filter: Record<string, unknown> = { isDeleted: false };
-
-    if (query.schoolId) {
-      filter.schoolId = query.schoolId;
-    }
+    const filter: Record<string, unknown> = { schoolId, isDeleted: false };
 
     if (query.category) {
       filter.category = query.category;
@@ -80,8 +75,8 @@ export class TuckShopService {
     };
   }
 
-  static async getMenuItem(id: string): Promise<IMenuItem> {
-    const item = await MenuItem.findOne({ _id: id, isDeleted: false });
+  static async getMenuItem(id: string, schoolId: string): Promise<IMenuItem> {
+    const item = await MenuItem.findOne({ _id: id, schoolId, isDeleted: false });
 
     if (!item) {
       throw new NotFoundError('Menu item not found');
@@ -90,9 +85,9 @@ export class TuckShopService {
     return item;
   }
 
-  static async updateMenuItem(id: string, data: Partial<IMenuItem>): Promise<IMenuItem> {
+  static async updateMenuItem(id: string, schoolId: string, data: Partial<IMenuItem>): Promise<IMenuItem> {
     const item = await MenuItem.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     );
@@ -104,9 +99,9 @@ export class TuckShopService {
     return item;
   }
 
-  static async deleteMenuItem(id: string): Promise<IMenuItem> {
+  static async deleteMenuItem(id: string, schoolId: string): Promise<IMenuItem> {
     const item = await MenuItem.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -336,8 +331,8 @@ export class TuckShopService {
     }
   }
 
-  static async getOrder(id: string): Promise<ITuckShopOrder> {
-    const order = await TuckShopOrder.findOne({ _id: id, isDeleted: false })
+  static async getOrder(id: string, schoolId: string): Promise<ITuckShopOrder> {
+    const order = await TuckShopOrder.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('studentId')
       .populate('processedBy', 'firstName lastName email');
 
@@ -382,11 +377,11 @@ export class TuckShopService {
   }
 
   static async getDailySales(schoolId: string, date: string): Promise<DailySalesSummary> {
-    const startOfDay = new Date(date);
-    startOfDay.setUTCHours(0, 0, 0, 0);
+    const startOfDay = new Date(date + 'T00:00:00');
+    startOfDay.setHours(0, 0, 0, 0);
 
-    const endOfDay = new Date(date);
-    endOfDay.setUTCHours(23, 59, 59, 999);
+    const endOfDay = new Date(date + 'T00:00:00');
+    endOfDay.setHours(23, 59, 59, 999);
 
     const results = await TuckShopOrder.aggregate([
       {
@@ -421,9 +416,9 @@ export class TuckShopService {
     };
   }
 
-  static async updateStock(menuItemId: string, quantity: number): Promise<IMenuItem> {
+  static async updateStock(menuItemId: string, schoolId: string, quantity: number): Promise<IMenuItem> {
     const item = await MenuItem.findOneAndUpdate(
-      { _id: menuItemId, isDeleted: false },
+      { _id: menuItemId, schoolId, isDeleted: false },
       { $set: { stock: quantity } },
       { new: true, runValidators: true },
     );

@@ -403,9 +403,9 @@ export interface IAptitudeResult extends Document {
   schoolId: Types.ObjectId;
   answers: IAptitudeAnswer[];
   clusters: IClusterResult[];
-  personalityType: string;
+  personalityType?: string;
   suggestedCareers: string[];
-  completedAt: Date;
+  completedAt?: Date;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;

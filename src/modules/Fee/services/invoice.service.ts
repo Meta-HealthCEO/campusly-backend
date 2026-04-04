@@ -62,8 +62,8 @@ export class InvoiceService {
     return { invoices, total, page: query.page ?? 1, limit };
   }
 
-  static async getInvoice(id: string) {
-    const invoice = await Invoice.findOne({ _id: id, isDeleted: false })
+  static async getInvoice(id: string, schoolId: string) {
+    const invoice = await Invoice.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('studentId', 'admissionNumber userId gradeId classId')
       .populate('feeScheduleId', 'feeTypeId academicYear term dueDate')
       .lean();
@@ -187,12 +187,12 @@ export class InvoiceService {
 
   // ─── Apply Discount ─────────────────────────────────────────────────────────
 
-  static async applyDiscount(data: ApplyDiscountInput, performedBy: string) {
+  static async applyDiscount(data: ApplyDiscountInput, schoolId: string, performedBy: string) {
     const session = await mongoose.startSession();
     session.startTransaction();
 
     try {
-      const invoice = await Invoice.findOne({ _id: data.invoiceId, isDeleted: false }).session(session);
+      const invoice = await Invoice.findOne({ _id: data.invoiceId, schoolId, isDeleted: false }).session(session);
       if (!invoice) {
         throw new NotFoundError('Invoice not found');
       }
@@ -293,8 +293,8 @@ export class InvoiceService {
 
   // ─── Credit Note ────────────────────────────────────────────────────────────
 
-  static async createCreditNote(data: CreateCreditNoteInput) {
-    const invoice = await Invoice.findOne({ _id: data.invoiceId, isDeleted: false });
+  static async createCreditNote(data: CreateCreditNoteInput, schoolId: string) {
+    const invoice = await Invoice.findOne({ _id: data.invoiceId, schoolId, isDeleted: false });
     if (!invoice) {
       throw new NotFoundError('Invoice not found');
     }
@@ -311,12 +311,12 @@ export class InvoiceService {
     });
   }
 
-  static async approveCreditNote(id: string, data: ApproveCreditNoteInput, approvedBy: string) {
+  static async approveCreditNote(id: string, data: ApproveCreditNoteInput, schoolId: string, approvedBy: string) {
     const session = await mongoose.startSession();
     session.startTransaction();
 
     try {
-      const creditNote = await CreditNote.findOne({ _id: id, isDeleted: false }).session(session);
+      const creditNote = await CreditNote.findOne({ _id: id, schoolId, isDeleted: false }).session(session);
       if (!creditNote) {
         throw new NotFoundError('Credit note not found');
       }

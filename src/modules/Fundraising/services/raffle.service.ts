@@ -62,8 +62,8 @@ export class RaffleService {
     };
   }
 
-  static async createRaffle(data: CreateRaffleInput): Promise<IRaffle> {
-    const campaign = await Campaign.findOne({ _id: data.campaignId, isDeleted: false });
+  static async createRaffle(data: CreateRaffleInput, schoolId: string): Promise<IRaffle> {
+    const campaign = await Campaign.findOne({ _id: data.campaignId, schoolId, isDeleted: false });
 
     if (!campaign) {
       throw new NotFoundError('Campaign not found');

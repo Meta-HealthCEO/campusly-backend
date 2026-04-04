@@ -102,8 +102,8 @@ export class SportService {
     };
   }
 
-  static async getTeam(id: string): Promise<ISportTeam> {
-    const team = await SportTeam.findOne({ _id: id, isDeleted: false })
+  static async getTeam(id: string, schoolId: string): Promise<ISportTeam> {
+    const team = await SportTeam.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('coachId', 'firstName lastName email')
       .populate('playerIds');
 
@@ -114,9 +114,9 @@ export class SportService {
     return team;
   }
 
-  static async updateTeam(id: string, data: UpdateTeamInput): Promise<ISportTeam> {
+  static async updateTeam(id: string, schoolId: string, data: UpdateTeamInput): Promise<ISportTeam> {
     const team = await SportTeam.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     )
@@ -130,9 +130,9 @@ export class SportService {
     return team;
   }
 
-  static async deleteTeam(id: string): Promise<ISportTeam> {
+  static async deleteTeam(id: string, schoolId: string): Promise<ISportTeam> {
     const team = await SportTeam.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -194,8 +194,8 @@ export class SportService {
     };
   }
 
-  static async getFixture(id: string): Promise<ISportFixture> {
-    const fixture = await SportFixture.findOne({ _id: id, isDeleted: false })
+  static async getFixture(id: string, schoolId: string): Promise<ISportFixture> {
+    const fixture = await SportFixture.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('teamId', 'name sport');
 
     if (!fixture) {
@@ -205,9 +205,9 @@ export class SportService {
     return fixture;
   }
 
-  static async updateFixture(id: string, data: UpdateFixtureInput): Promise<ISportFixture> {
+  static async updateFixture(id: string, schoolId: string, data: UpdateFixtureInput): Promise<ISportFixture> {
     const fixture = await SportFixture.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     ).populate('teamId', 'name sport');
@@ -219,9 +219,9 @@ export class SportService {
     return fixture;
   }
 
-  static async deleteFixture(id: string): Promise<ISportFixture> {
+  static async deleteFixture(id: string, schoolId: string): Promise<ISportFixture> {
     const fixture = await SportFixture.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -286,8 +286,8 @@ export class SportService {
     };
   }
 
-  static async getSeason(id: string): Promise<ISeason> {
-    const season = await Season.findOne({ _id: id, isDeleted: false });
+  static async getSeason(id: string, schoolId: string): Promise<ISeason> {
+    const season = await Season.findOne({ _id: id, schoolId, isDeleted: false });
 
     if (!season) {
       throw new NotFoundError('Season not found');
@@ -296,9 +296,9 @@ export class SportService {
     return season;
   }
 
-  static async updateSeason(id: string, data: UpdateSeasonInput): Promise<ISeason> {
+  static async updateSeason(id: string, schoolId: string, data: UpdateSeasonInput): Promise<ISeason> {
     const season = await Season.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     );
@@ -310,9 +310,9 @@ export class SportService {
     return season;
   }
 
-  static async deleteSeason(id: string): Promise<ISeason> {
+  static async deleteSeason(id: string, schoolId: string): Promise<ISeason> {
     const season = await Season.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -358,8 +358,8 @@ export class SportService {
 
   // ─── Match Result ────────────────────────────────────────────────────────
 
-  static async createMatchResult(data: CreateMatchResultInput): Promise<IMatchResult> {
-    const existing = await MatchResult.findOne({ fixtureId: data.fixtureId, isDeleted: false });
+  static async createMatchResult(data: CreateMatchResultInput, schoolId: string): Promise<IMatchResult> {
+    const existing = await MatchResult.findOne({ fixtureId: data.fixtureId, schoolId, isDeleted: false });
 
     if (existing) {
       throw new BadRequestError('Match result already exists for this fixture');
@@ -369,8 +369,8 @@ export class SportService {
     return result;
   }
 
-  static async getMatchResult(fixtureId: string): Promise<IMatchResult> {
-    const result = await MatchResult.findOne({ fixtureId, isDeleted: false })
+  static async getMatchResult(fixtureId: string, schoolId: string): Promise<IMatchResult> {
+    const result = await MatchResult.findOne({ fixtureId, schoolId, isDeleted: false })
       .populate('scorers.studentId')
       .populate('manOfTheMatch')
       .populate('fixtureId');
@@ -382,9 +382,9 @@ export class SportService {
     return result;
   }
 
-  static async updateMatchResult(fixtureId: string, data: UpdateMatchResultInput): Promise<IMatchResult> {
+  static async updateMatchResult(fixtureId: string, schoolId: string, data: UpdateMatchResultInput): Promise<IMatchResult> {
     const result = await MatchResult.findOneAndUpdate(
-      { fixtureId, isDeleted: false },
+      { fixtureId, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     )
@@ -401,8 +401,10 @@ export class SportService {
 
   // ─── Season Standings ────────────────────────────────────────────────────
 
-  static async getSeasonStandings(seasonId: string): Promise<ISeasonStanding[]> {
-    const standings = await SeasonStanding.find({ seasonId, isDeleted: false })
+  static async getSeasonStandings(seasonId: string, schoolId?: string): Promise<ISeasonStanding[]> {
+    const filter: Record<string, unknown> = { seasonId, isDeleted: false };
+    if (schoolId) filter.schoolId = schoolId;
+    const standings = await SeasonStanding.find(filter)
       .populate('teamId', 'name sport')
       .sort({ points: -1, goalsFor: -1 });
 
@@ -507,7 +509,7 @@ export class SportService {
     await Promise.all(standingPromises);
 
     // Return updated standings sorted by points
-    return this.getSeasonStandings(seasonId);
+    return this.getSeasonStandings(seasonId, season.schoolId.toString());
   }
 
   // ─── MVP Voting ──────────────────────────────────────────────────────────

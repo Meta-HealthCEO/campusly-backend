@@ -222,7 +222,9 @@ export class AptitudeService {
     return result;
   }
 
-  static async getResults(studentId: string): Promise<IAptitudeResult | null> {
-    return AptitudeResult.findOne({ studentId, isDeleted: false }).lean();
+  static async getResults(studentId: string, schoolId?: string): Promise<IAptitudeResult | null> {
+    const filter: Record<string, unknown> = { studentId, isDeleted: false };
+    if (schoolId) filter.schoolId = schoolId;
+    return AptitudeResult.findOne(filter).lean();
   }
 }

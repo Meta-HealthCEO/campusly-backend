@@ -34,17 +34,17 @@ export class FeeTypeService {
     return { feeTypes, total, page: query.page ?? 1, limit };
   }
 
-  static async getFeeType(id: string) {
-    const feeType = await FeeType.findOne({ _id: id, isDeleted: false }).lean();
+  static async getFeeType(id: string, schoolId: string) {
+    const feeType = await FeeType.findOne({ _id: id, schoolId, isDeleted: false }).lean();
     if (!feeType) {
       throw new NotFoundError('Fee type not found');
     }
     return feeType;
   }
 
-  static async updateFeeType(id: string, data: UpdateFeeTypeInput) {
+  static async updateFeeType(id: string, schoolId: string, data: UpdateFeeTypeInput) {
     const feeType = await FeeType.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       data,
       { new: true },
     );
@@ -54,9 +54,9 @@ export class FeeTypeService {
     return feeType;
   }
 
-  static async deleteFeeType(id: string) {
+  static async deleteFeeType(id: string, schoolId: string) {
     const feeType = await FeeType.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { isDeleted: true },
       { new: true },
     );
@@ -99,8 +99,8 @@ export class FeeTypeService {
     return { schedules, total, page: query.page ?? 1, limit };
   }
 
-  static async getFeeSchedule(id: string) {
-    const schedule = await FeeSchedule.findOne({ _id: id, isDeleted: false }).populate(
+  static async getFeeSchedule(id: string, schoolId: string) {
+    const schedule = await FeeSchedule.findOne({ _id: id, schoolId, isDeleted: false }).populate(
       'feeTypeId',
     ).lean();
     if (!schedule) {
@@ -109,14 +109,14 @@ export class FeeTypeService {
     return schedule;
   }
 
-  static async updateFeeSchedule(id: string, data: UpdateFeeScheduleInput) {
+  static async updateFeeSchedule(id: string, schoolId: string, data: UpdateFeeScheduleInput) {
     const updateData: Record<string, unknown> = { ...data };
     if (data.dueDate) {
       updateData.dueDate = new Date(data.dueDate);
     }
 
     const schedule = await FeeSchedule.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       updateData,
       { new: true },
     );
@@ -126,9 +126,9 @@ export class FeeTypeService {
     return schedule;
   }
 
-  static async deleteFeeSchedule(id: string) {
+  static async deleteFeeSchedule(id: string, schoolId: string) {
     const schedule = await FeeSchedule.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { isDeleted: true },
       { new: true },
     );

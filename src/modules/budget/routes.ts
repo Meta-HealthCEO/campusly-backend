@@ -18,6 +18,7 @@ import {
   cashflowQuerySchema,
   comparisonQuerySchema,
   alertsQuerySchema,
+  uploadReceiptBodySchema,
 } from './validation.js';
 
 const router = Router();
@@ -144,6 +145,7 @@ router.post(
   '/expenses/upload-receipt',
   authorize('super_admin', 'school_admin', 'teacher', 'staff'),
   receiptUpload.single('receipt'),
+  validate(uploadReceiptBodySchema),
   BudgetController.uploadReceipt,
 );
 

@@ -16,7 +16,8 @@ export class PlannerController {
 
   static async createOrUpdatePlan(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    const plan = await PlannerService.createOrUpdatePlan(req.body, user.id);
+    const schoolId = user.schoolId!;
+    const plan = await PlannerService.createOrUpdatePlan({ ...req.body, schoolId }, user.id);
     res.json(apiResponse(true, plan, 'Assessment plan saved'));
   }
 

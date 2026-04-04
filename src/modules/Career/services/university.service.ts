@@ -1,6 +1,6 @@
 import { University, Programme, type IUniversity } from '../model.js';
 import { NotFoundError } from '../../../common/errors.js';
-import { paginationHelper } from '../../../common/utils.js';
+import { paginationHelper, escapeRegex } from '../../../common/utils.js';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -38,7 +38,7 @@ export class UniversityService {
       filter.province = query.province;
     }
     if (query.search) {
-      filter.name = new RegExp(query.search, 'i');
+      filter.name = new RegExp(escapeRegex(query.search), 'i');
     }
 
     const [universities, total] = await Promise.all([

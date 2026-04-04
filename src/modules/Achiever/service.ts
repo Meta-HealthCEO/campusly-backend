@@ -253,8 +253,9 @@ export class AchieverService {
   static async addHousePointLog(
     data: { studentId: string; houseId: string; points: number; reason: string },
     awardedBy: string,
+    schoolId: string,
   ): Promise<IHousePointLog> {
-    const house = await HousePoints.findOne({ _id: data.houseId, isDeleted: false });
+    const house = await HousePoints.findOne({ _id: data.houseId, schoolId, isDeleted: false });
     if (!house) throw new NotFoundError('House not found');
 
     const session = await mongoose.startSession();

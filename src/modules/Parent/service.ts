@@ -80,8 +80,8 @@ export class ParentService {
     return parent;
   }
 
-  static async getById(id: string): Promise<IParent> {
-    const parent = await Parent.findOne({ _id: id, isDeleted: false })
+  static async getById(id: string, schoolId: string): Promise<IParent> {
+    const parent = await Parent.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('userId', 'firstName lastName email phone profileImage')
       .populate({
         path: 'childrenIds',
@@ -96,9 +96,9 @@ export class ParentService {
     return parent;
   }
 
-  static async update(id: string, data: Partial<IParent>): Promise<IParent> {
+  static async update(id: string, schoolId: string, data: Partial<IParent>): Promise<IParent> {
     const parent = await Parent.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true, runValidators: true },
     )
@@ -115,9 +115,9 @@ export class ParentService {
     return parent;
   }
 
-  static async delete(id: string): Promise<IParent> {
+  static async delete(id: string, schoolId: string): Promise<IParent> {
     const parent = await Parent.findOneAndUpdate(
-      { _id: id, isDeleted: false },
+      { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
@@ -129,10 +129,10 @@ export class ParentService {
     return parent;
   }
 
-  static async linkChild(parentId: string, childId: string): Promise<IParent> {
+  static async linkChild(parentId: string, childId: string, schoolId: string): Promise<IParent> {
     const [parent, student] = await Promise.all([
-      Parent.findOne({ _id: parentId, isDeleted: false }),
-      Student.findOne({ _id: childId, isDeleted: false }),
+      Parent.findOne({ _id: parentId, schoolId, isDeleted: false }),
+      Student.findOne({ _id: childId, schoolId, isDeleted: false }),
     ]);
     if (!parent) {
       throw new NotFoundError('Parent not found');
@@ -168,10 +168,10 @@ export class ParentService {
     }
   }
 
-  static async unlinkChild(parentId: string, childId: string): Promise<IParent> {
+  static async unlinkChild(parentId: string, childId: string, schoolId: string): Promise<IParent> {
     const [parent, student] = await Promise.all([
-      Parent.findOne({ _id: parentId, isDeleted: false }),
-      Student.findOne({ _id: childId, isDeleted: false }),
+      Parent.findOne({ _id: parentId, schoolId, isDeleted: false }),
+      Student.findOne({ _id: childId, schoolId, isDeleted: false }),
     ]);
     if (!parent) {
       throw new NotFoundError('Parent not found');

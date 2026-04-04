@@ -33,3 +33,7 @@ export const schedulePublishSchema = z.object({
 export type CreateAnnouncementInput = z.infer<typeof createAnnouncementSchema>;
 export type UpdateAnnouncementInput = z.infer<typeof updateAnnouncementSchema>;
 export type SchedulePublishInput = z.infer<typeof schedulePublishSchema>;
+
+export const markReadParamsSchema = z.object({
+  id: objectIdSchema,
+}).strict();

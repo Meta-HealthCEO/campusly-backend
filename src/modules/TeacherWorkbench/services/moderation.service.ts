@@ -41,7 +41,7 @@ export class ModerationService {
   }
 
   static async getModerationStatus(paperId: string, schoolId: string): Promise<IPaperModeration> {
-    const moderation = await PaperModeration.findOne({ paperId, schoolId })
+    const moderation = await PaperModeration.findOne({ paperId, schoolId, isDeleted: false })
       .populate('submittedBy', 'firstName lastName email')
       .populate('moderatorId', 'firstName lastName email')
       .lean()
@@ -65,7 +65,7 @@ export class ModerationService {
     };
 
     const moderation = await PaperModeration.findOneAndUpdate(
-      { paperId, schoolId },
+      { paperId, schoolId, isDeleted: false },
       {
         $set: {
           status,

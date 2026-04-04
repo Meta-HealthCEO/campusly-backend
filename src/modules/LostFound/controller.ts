@@ -82,7 +82,8 @@ export class LostFoundController {
   }
 
   static async getAutoMatchSuggestions(req: Request, res: Response): Promise<void> {
-    const suggestions = await LostFoundService.autoMatchSuggestions(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const suggestions = await LostFoundService.autoMatchSuggestions(req.params.id as string, schoolId);
     res.json(apiResponse(true, suggestions, 'Match suggestions retrieved successfully'));
   }
 

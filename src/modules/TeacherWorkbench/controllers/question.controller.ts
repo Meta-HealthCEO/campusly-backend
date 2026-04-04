@@ -29,7 +29,8 @@ export class QuestionController {
 
   static async createQuestion(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    const question = await QuestionService.createQuestion(req.body, user.id);
+    const schoolId = user.schoolId!;
+    const question = await QuestionService.createQuestion({ ...req.body, schoolId }, user.id);
     res.status(201).json(apiResponse(true, question, 'Question created'));
   }
 

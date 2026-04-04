@@ -35,27 +35,32 @@ export class ParentController {
   }
 
   static async getById(req: Request, res: Response): Promise<void> {
-    const parent = await ParentService.getById(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const parent = await ParentService.getById(req.params.id as string, schoolId);
     res.json(apiResponse(true, parent, 'Parent retrieved successfully'));
   }
 
   static async update(req: Request, res: Response): Promise<void> {
-    const parent = await ParentService.update(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const parent = await ParentService.update(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, parent, 'Parent updated successfully'));
   }
 
   static async delete(req: Request, res: Response): Promise<void> {
-    await ParentService.delete(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await ParentService.delete(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Parent deleted successfully'));
   }
 
   static async linkChild(req: Request, res: Response): Promise<void> {
-    const parent = await ParentService.linkChild(req.params.id as string, req.body.childId);
+    const schoolId = req.user!.schoolId!;
+    const parent = await ParentService.linkChild(req.params.id as string, req.body.childId, schoolId);
     res.json(apiResponse(true, parent, 'Child linked successfully'));
   }
 
   static async unlinkChild(req: Request, res: Response): Promise<void> {
-    const parent = await ParentService.unlinkChild(req.params.id as string, req.body.childId);
+    const schoolId = req.user!.schoolId!;
+    const parent = await ParentService.unlinkChild(req.params.id as string, req.body.childId, schoolId);
     res.json(apiResponse(true, parent, 'Child unlinked successfully'));
   }
 }

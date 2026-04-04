@@ -17,6 +17,7 @@ import {
   submitFinalSchema,
   gradeWithRubricSchema,
   submitPeerReviewSchema,
+  requestRevisionParamsSchema,
 } from './validation.js';
 
 const router = Router();
@@ -206,6 +207,7 @@ router.post(
   '/submissions/:id/request-revision',
   authenticate,
   authorize('teacher', 'school_admin', 'super_admin'),
+  validate({ params: requestRevisionParamsSchema }),
   LearningController.requestRevision,
 );
 

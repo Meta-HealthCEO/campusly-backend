@@ -25,7 +25,7 @@ interface ListDonationQuery {
 
 export class DonationService {
   static async recordDonation(data: CreateDonationInput): Promise<IDonation> {
-    const campaign = await Campaign.findOne({ _id: data.campaignId, isDeleted: false });
+    const campaign = await Campaign.findOne({ _id: data.campaignId, schoolId: data.schoolId, isDeleted: false });
 
     if (!campaign) {
       throw new NotFoundError('Campaign not found');
@@ -261,13 +261,13 @@ export class DonationService {
   // ─── Donor Wall ─────────────────────────────────────────────────────────
 
   static async addDonorWallEntry(data: AddDonorWallInput): Promise<IDonorWall> {
-    const campaign = await Campaign.findOne({ _id: data.campaignId, isDeleted: false });
+    const campaign = await Campaign.findOne({ _id: data.campaignId, schoolId: data.schoolId, isDeleted: false });
 
     if (!campaign) {
       throw new NotFoundError('Campaign not found');
     }
 
-    const donation = await Donation.findOne({ _id: data.donationId, isDeleted: false });
+    const donation = await Donation.findOne({ _id: data.donationId, schoolId: data.schoolId, isDeleted: false });
 
     if (!donation) {
       throw new NotFoundError('Donation not found');
@@ -313,7 +313,7 @@ export class DonationService {
   // ─── Recurring Donation ─────────────────────────────────────────────────
 
   static async createRecurringDonation(data: CreateRecurringDonationInput): Promise<IRecurringDonation> {
-    const campaign = await Campaign.findOne({ _id: data.campaignId, isDeleted: false });
+    const campaign = await Campaign.findOne({ _id: data.campaignId, schoolId: data.schoolId, isDeleted: false });
 
     if (!campaign) {
       throw new NotFoundError('Campaign not found');

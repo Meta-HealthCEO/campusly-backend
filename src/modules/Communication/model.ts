@@ -1,17 +1,26 @@
-import mongoose, { Schema, Document, Types } from 'mongoose';
+import mongoose, { Schema, type Document, type Types } from 'mongoose';
 
 // ─── Message Template ───────────────────────────────────────────────────────
 
 export type TemplateType = 'fee_reminder' | 'absence' | 'general' | 'event' | 'emergency';
-export type ChannelType = 'email' | 'sms' | 'whatsapp' | 'all';
+export type TemplateCategory = 'attendance' | 'fees' | 'academic' | 'events' | 'general' | 'emergency';
+export type ChannelType = 'email' | 'sms' | 'whatsapp' | 'push' | 'all';
 
 export interface IMessageTemplate extends Document {
   schoolId: Types.ObjectId;
   name: string;
+  description?: string;
   type: TemplateType;
+  channel: ChannelType;
+  category: TemplateCategory;
   subject: string;
   body: string;
-  channel: ChannelType;
+  htmlBody?: string;
+  variables: string[];
+  isDefault: boolean;
+  isActive: boolean;
+  usageCount: number;
+  createdBy?: Types.ObjectId;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -20,19 +29,31 @@ export interface IMessageTemplate extends Document {
 const messageTemplateSchema = new Schema<IMessageTemplate>(
   {
     schoolId: { type: Schema.Types.ObjectId, ref: 'School', required: true },
-    name: { type: String, required: true, trim: true },
+    name: { type: String, required: true, trim: true, minlength: 3, maxlength: 100 },
+    description: { type: String, maxlength: 500 },
     type: {
       type: String,
       enum: ['fee_reminder', 'absence', 'general', 'event', 'emergency'],
       required: true,
     },
-    subject: { type: String, required: true },
-    body: { type: String, required: true },
     channel: {
       type: String,
-      enum: ['email', 'sms', 'whatsapp', 'all'],
+      enum: ['email', 'sms', 'whatsapp', 'push', 'all'],
       default: 'all',
     },
+    category: {
+      type: String,
+      enum: ['attendance', 'fees', 'academic', 'events', 'general', 'emergency'],
+      default: 'general',
+    },
+    subject: { type: String, required: true },
+    body: { type: String, required: true },
+    htmlBody: { type: String },
+    variables: { type: [String], default: [] },
+    isDefault: { type: Boolean, default: false },
+    isActive: { type: Boolean, default: true },
+    usageCount: { type: Number, default: 0 },
+    createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
     isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true },
@@ -40,6 +61,8 @@ const messageTemplateSchema = new Schema<IMessageTemplate>(
 
 messageTemplateSchema.index({ schoolId: 1, isDeleted: 1 });
 messageTemplateSchema.index({ schoolId: 1, type: 1 });
+messageTemplateSchema.index({ schoolId: 1, channel: 1, category: 1 });
+messageTemplateSchema.index({ schoolId: 1, name: 1 }, { unique: true });
 
 export const MessageTemplate = mongoose.model<IMessageTemplate>('MessageTemplate', messageTemplateSchema);
 
@@ -101,7 +124,7 @@ const bulkMessageSchema = new Schema<IBulkMessage>(
     body: { type: String, required: true },
     channel: {
       type: String,
-      enum: ['email', 'sms', 'whatsapp', 'all'],
+      enum: ['email', 'sms', 'whatsapp', 'push', 'all'],
       default: 'all',
     },
     sentBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },

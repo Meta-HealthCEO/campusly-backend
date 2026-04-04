@@ -184,3 +184,9 @@ export const addDocumentSchema = z.object({
 }).strict();
 
 export type AddDocumentInput = z.infer<typeof addDocumentSchema>;
+
+// ---------------------------------------------------------------------------
+// 9. CSV Import (programmes / bursaries)
+// ---------------------------------------------------------------------------
+
+export const importFileSchema = z.object({}).strict();

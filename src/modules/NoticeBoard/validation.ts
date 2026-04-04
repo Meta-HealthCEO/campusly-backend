@@ -23,3 +23,17 @@ export const updatePostSchema = z.object({
 
 export type CreatePostInput = z.infer<typeof createPostSchema>;
 export type UpdatePostInput = z.infer<typeof updatePostSchema>;
+
+// ─── Query Schemas ──────────────────────────────────────────────────────────
+
+export const myFeedQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+}).strict();
+
+export const listPostsQuerySchema = z.object({
+  scope: z.enum(['class', 'grade', 'school'], { message: 'scope must be class, grade, or school' }),
+  scopeId: z.string().min(1, 'scopeId is required'),
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+}).strict();

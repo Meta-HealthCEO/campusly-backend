@@ -16,9 +16,11 @@ export class WalletController {
   }
 
   static async loadMoney(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const { amount, description } = req.body;
     const wallet = await WalletService.loadMoney(
       req.params.walletId as string,
+      schoolId,
       amount,
       description,
       getUser(req).id,
@@ -27,9 +29,11 @@ export class WalletController {
   }
 
   static async deductMoney(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const { amount, description } = req.body;
     const wallet = await WalletService.deductMoney(
       req.params.walletId as string,
+      schoolId,
       amount,
       description,
       getUser(req).id,
@@ -38,7 +42,8 @@ export class WalletController {
   }
 
   static async getTransactions(req: Request, res: Response): Promise<void> {
-    const result = await WalletService.getTransactions(req.params.walletId as string, {
+    const schoolId = req.user!.schoolId!;
+    const result = await WalletService.getTransactions(req.params.walletId as string, schoolId, {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
     });
@@ -56,8 +61,10 @@ export class WalletController {
   }
 
   static async updateDailyLimit(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const wallet = await WalletService.updateDailyLimit(
       req.params.walletId as string,
+      schoolId,
       req.body.dailyLimit,
     );
     res.json(apiResponse(true, wallet, 'Daily limit updated successfully'));

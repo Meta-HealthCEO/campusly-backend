@@ -101,3 +101,9 @@ export const reviewGradeSchema = z.object({
 }).strict();
 
 export type ReviewGradeInput = z.infer<typeof reviewGradeSchema>;
+
+// ─── Publish Grade (params only) ─────────────────────────────────────────────
+
+export const publishGradeParamsSchema = z.object({
+  jobId: objectIdSchema,
+}).strict();

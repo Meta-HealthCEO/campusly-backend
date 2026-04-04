@@ -132,8 +132,8 @@ export class MigrationService {
   }
 
   // ─── Validate Data ────────────────────────────────────────────────────
-  static async validateData(jobId: string): Promise<IMigrationJob> {
-    const job = await MigrationJob.findOne({ _id: jobId, isDeleted: false });
+  static async validateData(jobId: string, schoolId: string): Promise<IMigrationJob> {
+    const job = await MigrationJob.findOne({ _id: jobId, schoolId, isDeleted: false });
     if (!job) throw new NotFoundError('Migration job not found');
 
     if (job.status !== 'pending' && job.status !== 'validating') {
@@ -187,8 +187,9 @@ export class MigrationService {
   // ─── Preview ──────────────────────────────────────────────────────────
   static async getPreview(
     jobId: string,
+    schoolId: string,
   ): Promise<{ mapping: Record<string, string>; sampleRows: Record<string, string>[] }> {
-    const job = await MigrationJob.findOne({ _id: jobId, isDeleted: false });
+    const job = await MigrationJob.findOne({ _id: jobId, schoolId, isDeleted: false });
     if (!job) throw new NotFoundError('Migration job not found');
 
     // In production: parse first 10 rows of uploaded file and apply mapping
@@ -207,10 +208,11 @@ export class MigrationService {
   // ─── Update Mapping ──────────────────────────────────────────────────
   static async updateMapping(
     jobId: string,
+    schoolId: string,
     mapping: Record<string, string>,
   ): Promise<IMigrationJob> {
     const job = await MigrationJob.findOneAndUpdate(
-      { _id: jobId, isDeleted: false, status: { $in: ['pending', 'validated'] } },
+      { _id: jobId, schoolId, isDeleted: false, status: { $in: ['pending', 'validated'] } },
       { $set: { mapping } },
       { new: true, runValidators: true },
     );
@@ -220,8 +222,8 @@ export class MigrationService {
   }
 
   // ─── Execute Import ──────────────────────────────────────────────────
-  static async executeImport(jobId: string): Promise<IMigrationJob> {
-    const job = await MigrationJob.findOne({ _id: jobId, isDeleted: false });
+  static async executeImport(jobId: string, schoolId: string): Promise<IMigrationJob> {
+    const job = await MigrationJob.findOne({ _id: jobId, schoolId, isDeleted: false });
     if (!job) throw new NotFoundError('Migration job not found');
 
     if (job.status !== 'pending' && job.status !== 'validated') {
@@ -258,8 +260,8 @@ export class MigrationService {
   }
 
   // ─── Job Status ───────────────────────────────────────────────────────
-  static async getJobStatus(jobId: string): Promise<IMigrationJob> {
-    const job = await MigrationJob.findOne({ _id: jobId, isDeleted: false })
+  static async getJobStatus(jobId: string, schoolId: string): Promise<IMigrationJob> {
+    const job = await MigrationJob.findOne({ _id: jobId, schoolId, isDeleted: false })
       .populate('performedBy', 'firstName lastName email');
 
     if (!job) throw new NotFoundError('Migration job not found');

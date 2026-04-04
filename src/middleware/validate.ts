@@ -56,7 +56,8 @@ export function validate(schemas: ValidationSchemas | ZodTypeAny) {
         });
         return;
       }
-      (req as Request).query = result.data as typeof req.query;
+      // Express 5: req.query is read-only, so merge parsed data onto it
+      Object.assign(req.query, result.data);
     }
 
     if (multi.params) {
@@ -69,7 +70,7 @@ export function validate(schemas: ValidationSchemas | ZodTypeAny) {
         });
         return;
       }
-      req.params = result.data as typeof req.params;
+      Object.assign(req.params, result.data);
     }
 
     next();

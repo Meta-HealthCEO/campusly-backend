@@ -4,6 +4,7 @@ export enum UserRole {
   TEACHER = 'teacher',
   PARENT = 'parent',
   STUDENT = 'student',
+  SGB_MEMBER = 'sgb_member',
 }
 
 export enum AttendanceStatus {

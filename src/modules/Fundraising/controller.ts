@@ -86,7 +86,8 @@ export class FundraisingController {
   }
 
   static async createRaffle(req: Request, res: Response): Promise<void> {
-    const raffle = await FundraisingService.createRaffle(req.body);
+    const schoolId = req.user!.schoolId!;
+    const raffle = await FundraisingService.createRaffle(req.body, schoolId);
     res.status(201).json(apiResponse(true, raffle, 'Raffle created successfully'));
   }
 

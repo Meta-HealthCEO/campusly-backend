@@ -28,7 +28,7 @@ export class NotificationController {
   }
 
   static async markAsRead(req: Request, res: Response): Promise<void> {
-    const notification = await NotificationService.markAsRead(req.params.id as string);
+    const notification = await NotificationService.markAsRead(req.params.id as string, getUser(req).id);
     res.json(apiResponse(true, notification, 'Notification marked as read'));
   }
 

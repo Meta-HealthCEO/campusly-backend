@@ -20,8 +20,10 @@ function parseCSV(file: Express.Multer.File): Record<string, string>[] {
 }
 
 // ─── Student resolver ─────────────────────────────────────────────────────────
-async function resolveStudentId(userId: string): Promise<string> {
-  const student = await Student.findOne({ userId, isDeleted: false }).lean();
+async function resolveStudentId(userId: string, schoolId?: string): Promise<string> {
+  const filter: Record<string, unknown> = { userId, isDeleted: false };
+  if (schoolId) filter.schoolId = schoolId;
+  const student = await Student.findOne(filter).lean();
   if (!student) throw new Error('Student record not found for current user');
   return String(student._id);
 }
@@ -33,7 +35,8 @@ export class CareerController {
 
   static async getPortfolio(req: Request, res: Response): Promise<void> {
     const studentId = req.params.studentId as string;
-    const result = await CareerModuleService.getPortfolio(studentId);
+    const schoolId = req.user?.schoolId;
+    const result = await CareerModuleService.getPortfolio(studentId, schoolId);
     res.json(apiResponse(true, result));
   }
 
@@ -73,7 +76,8 @@ export class CareerController {
   static async getTranscript(req: Request, res: Response): Promise<void> {
     // Keep as JSON for now — PDF generation will be added with PDFKit
     const studentId = req.params.studentId as string;
-    const result = await CareerModuleService.generateTranscript(studentId);
+    const schoolId = req.user?.schoolId;
+    const result = await CareerModuleService.generateTranscript(studentId, schoolId);
     res.json(apiResponse(true, result, 'Transcript data generated'));
   }
 
@@ -83,13 +87,15 @@ export class CareerController {
 
   static async getAPS(req: Request, res: Response): Promise<void> {
     const studentId = req.params.studentId as string;
-    const result = await CareerModuleService.getAPS(studentId);
+    const schoolId = req.user?.schoolId;
+    const result = await CareerModuleService.getAPS(studentId, schoolId);
     res.json(apiResponse(true, result));
   }
 
   static async simulateAPS(req: Request, res: Response): Promise<void> {
     const studentId = req.params.studentId as string;
-    const result = await CareerModuleService.simulateAPS(studentId, req.body.adjustments);
+    const schoolId = req.user?.schoolId;
+    const result = await CareerModuleService.simulateAPS(studentId, req.body.adjustments, schoolId);
     res.json(apiResponse(true, result));
   }
 
@@ -177,13 +183,14 @@ export class CareerController {
 
   static async matchProgrammes(req: Request, res: Response): Promise<void> {
     const studentId = req.params.studentId as string;
+    const schoolId = req.user?.schoolId;
     const result = await CareerModuleService.matchProgrammes(studentId, {
       status: req.query.status as 'eligible' | 'close' | 'not_eligible' | undefined,
       universityId: req.query.universityId as string | undefined,
       field: req.query.field as string | undefined,
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
-    });
+    }, schoolId);
     res.json(apiResponse(true, result));
   }
 
@@ -193,8 +200,8 @@ export class CareerController {
 
   static async createApplication(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    const studentId = await resolveStudentId(user.id);
     const schoolId = user.schoolId as string;
+    const studentId = await resolveStudentId(user.id, schoolId);
     const result = await CareerModuleService.createApplication(studentId, schoolId, {
       programmeId: req.body.programmeId,
       notes: req.body.notes,
@@ -204,17 +211,19 @@ export class CareerController {
 
   static async listApplications(req: Request, res: Response): Promise<void> {
     const studentId = req.params.studentId as string;
+    const schoolId = req.user?.schoolId;
     const result = await CareerModuleService.listApplications(studentId, {
       status: req.query.status as ApplicationStatus | undefined,
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
-    });
+    }, schoolId);
     res.json(apiResponse(true, result));
   }
 
   static async updateApplication(req: Request, res: Response): Promise<void> {
     const id = req.params.id as string;
-    const result = await CareerModuleService.updateApplication(id, req.body);
+    const schoolId = req.user?.schoolId;
+    const result = await CareerModuleService.updateApplication(id, req.body, schoolId);
     res.json(apiResponse(true, result, 'Application updated successfully'));
   }
 
@@ -225,23 +234,26 @@ export class CareerController {
       return;
     }
     const id = req.params.id as string;
+    const schoolId = req.user?.schoolId;
     const result = await CareerModuleService.addApplicationDocument(id, {
       name: req.body.name as string,
       type: req.body.type as 'id_copy' | 'transcript' | 'proof_of_payment' | 'motivation_letter' | 'other',
       url: multerReq.file.originalname,
-    });
+    }, schoolId);
     res.status(201).json(apiResponse(true, result, 'Document added successfully'));
   }
 
   static async getApplicationPrefill(req: Request, res: Response): Promise<void> {
     const id = req.params.id as string;
-    const result = await CareerModuleService.getApplicationPrefill(id);
+    const schoolId = req.user?.schoolId;
+    const result = await CareerModuleService.getApplicationPrefill(id, schoolId);
     res.json(apiResponse(true, result));
   }
 
   static async getDeadlines(req: Request, res: Response): Promise<void> {
     const studentId = req.params.studentId as string;
-    const result = await CareerModuleService.getDeadlines(studentId);
+    const schoolId = req.user?.schoolId;
+    const result = await CareerModuleService.getDeadlines(studentId, schoolId);
     res.json(apiResponse(true, result));
   }
 
@@ -256,15 +268,16 @@ export class CareerController {
 
   static async submitAptitude(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    const studentId = await resolveStudentId(user.id);
     const schoolId = user.schoolId as string;
+    const studentId = await resolveStudentId(user.id, schoolId);
     const result = await CareerModuleService.submitAptitude(studentId, schoolId, req.body.answers);
     res.status(201).json(apiResponse(true, result, 'Aptitude test submitted successfully'));
   }
 
   static async getAptitudeResults(req: Request, res: Response): Promise<void> {
     const studentId = req.params.studentId as string;
-    const result = await CareerModuleService.getAptitudeResults(studentId);
+    const schoolId = req.user?.schoolId;
+    const result = await CareerModuleService.getAptitudeResults(studentId, schoolId);
     res.json(apiResponse(true, result));
   }
 
@@ -286,7 +299,8 @@ export class CareerController {
 
   static async getSubjectAdvice(req: Request, res: Response): Promise<void> {
     const studentId = req.params.studentId as string;
-    const result = await CareerModuleService.getSubjectAdvice(studentId);
+    const schoolId = req.user?.schoolId;
+    const result = await CareerModuleService.getSubjectAdvice(studentId, schoolId);
     res.json(apiResponse(true, result));
   }
 
@@ -313,7 +327,8 @@ export class CareerController {
 
   static async matchBursaries(req: Request, res: Response): Promise<void> {
     const studentId = req.params.studentId as string;
-    const result = await CareerModuleService.matchBursaries(studentId);
+    const schoolId = req.user?.schoolId;
+    const result = await CareerModuleService.matchBursaries(studentId, schoolId);
     res.json(apiResponse(true, result));
   }
 

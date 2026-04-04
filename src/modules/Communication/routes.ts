@@ -3,9 +3,43 @@ import { authenticate } from '../../middleware/auth.js';
 import { authorize } from '../../middleware/rbac.js';
 import { validate } from '../../middleware/validate.js';
 import { CommunicationController } from './controller.js';
-import { createTemplateSchema, updateTemplateSchema, sendBulkMessageSchema, scheduleMessageSchema } from './validation.js';
+import {
+  createTemplateSchema,
+  updateTemplateSchema,
+  sendBulkMessageSchema,
+  scheduleMessageSchema,
+  previewTemplateSchema,
+  updateConfigSchema,
+  testChannelSchema,
+  registerDeviceSchema,
+} from './validation.js';
 
 const router = Router();
+
+// ─── Channel Configuration ──────────────────────────────────────────────────
+
+router.get(
+  '/config',
+  authenticate,
+  authorize('school_admin', 'super_admin'),
+  CommunicationController.getConfig,
+);
+
+router.put(
+  '/config',
+  authenticate,
+  authorize('school_admin', 'super_admin'),
+  validate(updateConfigSchema),
+  CommunicationController.updateConfig,
+);
+
+router.post(
+  '/config/test',
+  authenticate,
+  authorize('school_admin', 'super_admin'),
+  validate(testChannelSchema),
+  CommunicationController.testChannel,
+);
 
 // ─── Template Routes ────────────────────────────────────────────────────────
 
@@ -44,6 +78,14 @@ router.delete(
   authenticate,
   authorize('school_admin', 'super_admin'),
   CommunicationController.deleteTemplate,
+);
+
+router.post(
+  '/templates/:id/preview',
+  authenticate,
+  authorize('school_admin', 'super_admin'),
+  validate(previewTemplateSchema),
+  CommunicationController.previewTemplate,
 );
 
 // ─── Schedule Route ─────────────────────────────────────────────────────────
@@ -103,7 +145,7 @@ router.get(
   CommunicationController.getReadReceiptStats,
 );
 
-// ─── Delivery Stats ─────────────────────────────────────────────────────────
+// ─── Per-Message Delivery Stats ─────────────────────────────────────────────
 
 router.get(
   '/messages/:id/stats',
@@ -117,6 +159,44 @@ router.get(
   authenticate,
   authorize('school_admin', 'super_admin'),
   CommunicationController.getMessageLogs,
+);
+
+// ─── Global Delivery Log + Stats ────────────────────────────────────────────
+
+router.get(
+  '/delivery-log',
+  authenticate,
+  authorize('school_admin', 'super_admin'),
+  CommunicationController.getDeliveryLog,
+);
+
+router.get(
+  '/delivery-stats',
+  authenticate,
+  authorize('school_admin', 'super_admin'),
+  CommunicationController.getDeliveryStatsGlobal,
+);
+
+router.post(
+  '/delivery-log/:id/retry',
+  authenticate,
+  authorize('school_admin', 'super_admin'),
+  CommunicationController.retryDelivery,
+);
+
+// ─── Device Registration ────────────────────────────────────────────────────
+
+router.post(
+  '/devices',
+  authenticate,
+  validate(registerDeviceSchema),
+  CommunicationController.registerDevice,
+);
+
+router.delete(
+  '/devices/:token',
+  authenticate,
+  CommunicationController.unregisterDevice,
 );
 
 export default router;

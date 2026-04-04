@@ -17,6 +17,12 @@ export interface IUser extends Document {
   lastLoginAt?: Date;
   passwordResetToken?: string;
   passwordResetExpires?: Date;
+  isSchoolPrincipal: boolean;
+  isHOD: boolean;
+  departmentId?: Types.ObjectId | null;
+  isBursar: boolean;
+  isReceptionist: boolean;
+  isCounselor: boolean;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -83,6 +89,31 @@ const userSchema = new Schema<IUser>(
     passwordResetExpires: {
       type: Date,
     },
+    isSchoolPrincipal: {
+      type: Boolean,
+      default: false,
+    },
+    isHOD: {
+      type: Boolean,
+      default: false,
+    },
+    departmentId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Subject',
+      default: null,
+    },
+    isBursar: {
+      type: Boolean,
+      default: false,
+    },
+    isReceptionist: {
+      type: Boolean,
+      default: false,
+    },
+    isCounselor: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true },
 );
@@ -90,6 +121,9 @@ const userSchema = new Schema<IUser>(
 userSchema.index({ email: 1 });
 userSchema.index({ schoolId: 1, role: 1 });
 userSchema.index({ email: 1, isDeleted: 1 });
+userSchema.index({ schoolId: 1, isHOD: 1 });
+userSchema.index({ schoolId: 1, isSchoolPrincipal: 1 });
+userSchema.index({ schoolId: 1, isCounselor: 1 });
 
 userSchema.pre('save', async function () {
   if (!this.isModified('password')) return;

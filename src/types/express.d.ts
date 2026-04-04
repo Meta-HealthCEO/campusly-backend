@@ -8,6 +8,12 @@ declare global {
         email: string;
         role: UserRole;
         schoolId?: string;
+        isSchoolPrincipal?: boolean;
+        isHOD?: boolean;
+        departmentId?: string | null;
+        isBursar?: boolean;
+        isReceptionist?: boolean;
+        isCounselor?: boolean;
       };
       requestId?: string;
       schoolId?: string;

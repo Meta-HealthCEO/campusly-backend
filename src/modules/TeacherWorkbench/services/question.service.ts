@@ -1,4 +1,4 @@
-import { Question, IQuestion } from '../model.assessment.js';
+import { WorkbenchQuestion, IQuestion } from '../model.assessment.js';
 import type { QuestionType, Difficulty, CognitiveLevel } from '../model.js';
 import { GeneratedPaper } from '../../AITools/model.js';
 import { NotFoundError } from '../../../common/errors.js';
@@ -87,13 +87,13 @@ export class QuestionService {
     }
 
     const [data, total] = await Promise.all([
-      Question.find(query)
+      WorkbenchQuestion.find(query)
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(pageLimit)
         .lean()
         .exec(),
-      Question.countDocuments(query),
+      WorkbenchQuestion.countDocuments(query),
     ]);
 
     return {
@@ -109,12 +109,12 @@ export class QuestionService {
     data: Record<string, unknown>,
     teacherId: string,
   ): Promise<IQuestion> {
-    const question = new Question({ ...data, teacherId });
+    const question = new WorkbenchQuestion({ ...data, teacherId });
     return question.save();
   }
 
   static async getQuestion(id: string, schoolId: string): Promise<IQuestion> {
-    const question = await Question.findOne({ _id: id, schoolId, isDeleted: false })
+    const question = await WorkbenchQuestion.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('topicId', 'name term')
       .populate('subjectId', 'name code')
       .lean()
@@ -128,7 +128,7 @@ export class QuestionService {
     data: Record<string, unknown>,
     schoolId: string,
   ): Promise<IQuestion> {
-    const question = await Question.findOneAndUpdate(
+    const question = await WorkbenchQuestion.findOneAndUpdate(
       { _id: id, schoolId, isDeleted: false },
       { $set: data },
       { new: true },
@@ -138,7 +138,7 @@ export class QuestionService {
   }
 
   static async deleteQuestion(id: string, schoolId: string): Promise<void> {
-    const result = await Question.findOneAndUpdate(
+    const result = await WorkbenchQuestion.findOneAndUpdate(
       { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
     );
@@ -151,7 +151,7 @@ export class QuestionService {
     schoolId: string,
     frameworkId: string,
   ): Promise<IQuestion[]> {
-    const paper = await GeneratedPaper.findOne({ _id: paperId, isDeleted: false }).lean().exec();
+    const paper = await GeneratedPaper.findOne({ _id: paperId, schoolId, isDeleted: false }).lean().exec();
     if (!paper) throw new NotFoundError('Paper not found');
 
     const questionDocs: Record<string, unknown>[] = [];
@@ -184,7 +184,7 @@ export class QuestionService {
     }
 
     if (questionDocs.length === 0) return [];
-    const result = await Question.insertMany(questionDocs);
+    const result = await WorkbenchQuestion.insertMany(questionDocs);
     return result as unknown as IQuestion[];
   }
 }

@@ -56,6 +56,26 @@ export const config = {
     apiKey: getEnv('ANTHROPIC_API_KEY', ''),
     model: getEnv('ANTHROPIC_MODEL', 'claude-sonnet-4-20250514'),
   },
+
+  resend: {
+    apiKey: getEnv('RESEND_API_KEY', ''),
+  },
+
+  twilio: {
+    accountSid: getEnv('TWILIO_ACCOUNT_SID', ''),
+    authToken: getEnv('TWILIO_AUTH_TOKEN', ''),
+    phoneNumber: getEnv('TWILIO_PHONE_NUMBER', ''),
+  },
+
+  firebase: {
+    projectId: getEnv('FIREBASE_PROJECT_ID', ''),
+    clientEmail: getEnv('FIREBASE_CLIENT_EMAIL', ''),
+    privateKey: getEnv('FIREBASE_PRIVATE_KEY', ''),
+  },
+
+  email: {
+    from: getEnv('EMAIL_FROM', 'Campusly <noreply@campusly.co.za>'),
+  },
 } as const;
 
 export type Config = typeof config;

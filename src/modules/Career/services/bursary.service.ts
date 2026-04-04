@@ -142,11 +142,11 @@ export class BursaryService {
    */
   static async matchForStudent(
     studentId: string,
+    schoolId?: string,
   ): Promise<IBursary[]> {
-    const portfolio = await StudentPortfolio.findOne({
-      studentId,
-      isDeleted: false,
-    }).lean();
+    const portfolioFilter: Record<string, unknown> = { studentId, isDeleted: false };
+    if (schoolId) portfolioFilter.schoolId = schoolId;
+    const portfolio = await StudentPortfolio.findOne(portfolioFilter).lean();
 
     if (!portfolio || portfolio.academicHistory.length === 0) {
       throw new NotFoundError('No academic history found for student');

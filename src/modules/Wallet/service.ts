@@ -40,6 +40,7 @@ export class WalletService {
 
   static async loadMoney(
     walletId: string,
+    schoolId: string,
     amount: number,
     description: string | undefined,
     performedBy: string,
@@ -49,7 +50,7 @@ export class WalletService {
 
     try {
       const wallet = await Wallet.findOneAndUpdate(
-        { _id: walletId, isDeleted: false, isActive: true },
+        { _id: walletId, schoolId, isDeleted: false, isActive: true },
         { $inc: { balance: amount } },
         { new: true, session },
       );
@@ -84,16 +85,18 @@ export class WalletService {
 
   static async deductMoney(
     walletId: string,
+    schoolId: string,
     amount: number,
     description: string,
     performedBy: string,
   ) {
     const session = await mongoose.startSession();
-    session.startTransaction();
+    session.startTransaction({ readConcern: { level: 'snapshot' } });
 
     try {
       const wallet = await Wallet.findOne({
         _id: walletId,
+        schoolId,
         isDeleted: false,
         isActive: true,
       }).session(session);
@@ -106,7 +109,9 @@ export class WalletService {
         throw new BadRequestError('Insufficient funds');
       }
 
-      // Check daily limit — sum of today's purchases (within transaction session for consistency)
+      // Check daily limit — sum of today's purchases
+      // With readConcern 'snapshot', this read is consistent with the balance read above
+      // and protected against concurrent transactions committing in between.
       const startOfDay = new Date();
       startOfDay.setHours(0, 0, 0, 0);
 
@@ -137,13 +142,13 @@ export class WalletService {
 
       // Atomic balance deduction with balance check to prevent race conditions
       const updatedWallet = await Wallet.findOneAndUpdate(
-        { _id: walletId, balance: { $gte: amount } },
+        { _id: walletId, schoolId, isDeleted: false, isActive: true, balance: { $gte: amount } },
         { $inc: { balance: -amount } },
         { new: true, session },
       );
 
       if (!updatedWallet) {
-        throw new BadRequestError('Insufficient funds');
+        throw new BadRequestError('Insufficient funds (concurrent modification)');
       }
 
       await WalletTransaction.create(
@@ -172,8 +177,15 @@ export class WalletService {
 
   static async getTransactions(
     walletId: string,
+    schoolId: string,
     query: { page?: number; limit?: number },
   ) {
+    // Verify the wallet belongs to this school
+    const wallet = await Wallet.findOne({ _id: walletId, schoolId, isDeleted: false }).lean();
+    if (!wallet) {
+      throw new NotFoundError('Wallet not found');
+    }
+
     const { skip, limit } = paginationHelper(query.page, query.limit);
 
     const filter = { walletId, isDeleted: false };
@@ -256,9 +268,9 @@ export class WalletService {
     return wristband;
   }
 
-  static async updateDailyLimit(walletId: string, dailyLimit: number) {
+  static async updateDailyLimit(walletId: string, schoolId: string, dailyLimit: number) {
     const wallet = await Wallet.findOneAndUpdate(
-      { _id: walletId, isDeleted: false },
+      { _id: walletId, schoolId, isDeleted: false },
       { dailyLimit },
       { new: true },
     );

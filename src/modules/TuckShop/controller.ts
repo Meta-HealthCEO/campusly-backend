@@ -13,29 +13,32 @@ export class TuckShopController {
   }
 
   static async listMenuItems(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const query = {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
-      schoolId: req.query.schoolId as string | undefined,
       category: req.query.category as string | undefined,
     };
 
-    const result = await TuckShopService.listMenuItems(query);
+    const result = await TuckShopService.listMenuItems(schoolId, query);
     res.json(apiResponse(true, result, 'Menu items retrieved successfully'));
   }
 
   static async getMenuItem(req: Request, res: Response): Promise<void> {
-    const item = await TuckShopService.getMenuItem(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const item = await TuckShopService.getMenuItem(req.params.id as string, schoolId);
     res.json(apiResponse(true, item, 'Menu item retrieved successfully'));
   }
 
   static async updateMenuItem(req: Request, res: Response): Promise<void> {
-    const item = await TuckShopService.updateMenuItem(req.params.id as string, req.body);
+    const schoolId = req.user!.schoolId!;
+    const item = await TuckShopService.updateMenuItem(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, item, 'Menu item updated successfully'));
   }
 
   static async deleteMenuItem(req: Request, res: Response): Promise<void> {
-    await TuckShopService.deleteMenuItem(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    await TuckShopService.deleteMenuItem(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Menu item deleted successfully'));
   }
 
@@ -47,7 +50,8 @@ export class TuckShopController {
   }
 
   static async getOrder(req: Request, res: Response): Promise<void> {
-    const order = await TuckShopService.getOrder(req.params.id as string);
+    const schoolId = req.user!.schoolId!;
+    const order = await TuckShopService.getOrder(req.params.id as string, schoolId);
     res.json(apiResponse(true, order, 'Order retrieved successfully'));
   }
 
@@ -82,6 +86,7 @@ export class TuckShopController {
   }
 
   static async updateStock(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
     const id = req.params.id as string;
     const { stock } = req.body;
 
@@ -90,7 +95,7 @@ export class TuckShopController {
       return;
     }
 
-    const item = await TuckShopService.updateStock(id, stock);
+    const item = await TuckShopService.updateStock(id, schoolId, stock);
     res.json(apiResponse(true, item, 'Stock updated successfully'));
   }
 }

@@ -183,8 +183,8 @@ export class LostFoundService {
     return { lostItem, foundItem };
   }
 
-  static async autoMatchSuggestions(itemId: string): Promise<ILostItem[]> {
-    const item = await LostItem.findOne({ _id: itemId, isDeleted: false });
+  static async autoMatchSuggestions(itemId: string, schoolId: string): Promise<ILostItem[]> {
+    const item = await LostItem.findOne({ _id: itemId, schoolId, isDeleted: false });
 
     if (!item) {
       throw new NotFoundError('Lost & found item not found');

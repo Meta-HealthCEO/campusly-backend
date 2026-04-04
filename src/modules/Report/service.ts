@@ -7,6 +7,7 @@ export { DashboardReportService } from './services/dashboard.service.js';
 export { FinancialReportService } from './services/financial.service.js';
 export { AcademicReportService } from './services/academic.service.js';
 export { Student360Service } from './services/student360.service.js';
+export { SchoolBenchmark } from './models/SchoolBenchmark.js';
 
 /**
  * Unified facade so existing consumers (`import { ReportService }`)

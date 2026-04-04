@@ -13,7 +13,8 @@ export class CurriculumController {
 
   static async createFramework(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    const framework = await CurriculumService.createFramework(req.body, user.id);
+    const schoolId = user.schoolId!;
+    const framework = await CurriculumService.createFramework({ ...req.body, schoolId }, user.id);
     res.status(201).json(apiResponse(true, framework, 'Framework created'));
   }
 

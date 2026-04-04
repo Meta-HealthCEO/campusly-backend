@@ -518,7 +518,7 @@ export class EventService {
     uploadedBy: string,
     data: UploadGalleryInput,
   ): Promise<IEventGallery> {
-    const event = await Event.findOne({ _id: eventId, isDeleted: false });
+    const event = await Event.findOne({ _id: eventId, schoolId: data.schoolId, isDeleted: false });
 
     if (!event) {
       throw new NotFoundError('Event not found');

@@ -3,7 +3,7 @@ import { authenticate } from '../../middleware/auth.js';
 import { authorize } from '../../middleware/rbac.js';
 import { validate } from '../../middleware/validate.js';
 import { AnnouncementController } from './controller.js';
-import { createAnnouncementSchema, updateAnnouncementSchema, schedulePublishSchema } from './validation.js';
+import { createAnnouncementSchema, updateAnnouncementSchema, schedulePublishSchema, markReadParamsSchema } from './validation.js';
 
 const router = Router();
 
@@ -80,6 +80,7 @@ router.get(
 router.patch(
   '/:id/mark-read',
   authenticate,
+  validate({ params: markReadParamsSchema }),
   AnnouncementController.markAnnouncementRead,
 );
 

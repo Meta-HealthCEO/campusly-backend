@@ -1,11 +1,14 @@
 import { logger } from '../common/logger.js';
 import { EmailService } from './email.service.js';
 import { SmsService } from './sms.service.js';
+import { PushService } from './push.service.js';
+import { DeviceRegistration } from '../modules/Communication/delivery-model.js';
 
 interface NotificationPayload {
   type: 'email' | 'sms' | 'push' | 'in_app' | 'whatsapp';
   recipientEmail?: string;
   recipientPhone?: string;
+  recipientUserId?: string;
   schoolId?: string;
   title: string;
   message: string;
@@ -23,30 +26,42 @@ export class NotificationDispatchService {
             notification.message,
           );
         } else {
-          logger.warn('[NotificationDispatch] Email notification skipped - no recipient email');
+          logger.warn('NotificationDispatch: Email skipped — no recipient email');
         }
         break;
 
       case 'sms':
         if (notification.recipientPhone) {
-          await SmsService.sendSms(
-            notification.recipientPhone,
-            notification.message,
-          );
+          await SmsService.sendSms(notification.recipientPhone, notification.message);
         } else {
-          logger.warn('[NotificationDispatch] SMS notification skipped - no recipient phone');
+          logger.warn('NotificationDispatch: SMS skipped — no recipient phone');
         }
         break;
 
-      case 'push':
-        // Push notification integration (e.g., Firebase Cloud Messaging)
-        logger.info(`[NotificationDispatch] Push notification: ${notification.title}`);
-        logger.info(`  Message: ${notification.message}`);
+      case 'push': {
+        const userId = notification.recipientUserId;
+        if (!userId) {
+          logger.warn('NotificationDispatch: Push skipped — no recipientUserId');
+          break;
+        }
+        const devices = await DeviceRegistration.find({ userId, isActive: true });
+        if (devices.length === 0) {
+          logger.info({ userId }, 'NotificationDispatch: No devices for push');
+          break;
+        }
+        const tokens = devices.map((d) => d.deviceToken);
+        const bodyText = notification.message.replace(/<[^>]+>/g, '');
+        await PushService.sendPushBatch(
+          tokens,
+          notification.title,
+          bodyText,
+          notification.data ? { payload: JSON.stringify(notification.data) } : undefined,
+        );
         break;
+      }
 
       case 'in_app':
-        // In-app notifications are already stored in the database
-        logger.info(`[NotificationDispatch] In-app notification stored: ${notification.title}`);
+        logger.info({ title: notification.title }, 'NotificationDispatch: In-app notification stored');
         break;
 
       case 'whatsapp':
@@ -60,15 +75,15 @@ export class NotificationDispatchService {
             });
           } catch (err: unknown) {
             const reason = err instanceof Error ? err.message : 'Unknown error';
-            logger.warn(`[NotificationDispatch] WhatsApp notification failed: ${reason}`);
+            logger.warn({ err: reason }, 'NotificationDispatch: WhatsApp failed');
           }
         } else {
-          logger.warn('[NotificationDispatch] WhatsApp notification skipped - no phone or schoolId');
+          logger.warn('NotificationDispatch: WhatsApp skipped — no phone or schoolId');
         }
         break;
 
       default:
-        logger.warn(`[NotificationDispatch] Unknown notification type: ${notification.type}`);
+        logger.warn({ type: notification.type }, 'NotificationDispatch: Unknown type');
     }
   }
 }

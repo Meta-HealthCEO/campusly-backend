@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { Question } from '../model.assessment.js';
+import { WorkbenchQuestion } from '../model.assessment.js';
 import { PaperModeration } from '../model.assessment.js';
 import { CurriculumCoverage } from '../model.js';
 import { Homework, HomeworkSubmission } from '../../Homework/model.js';
@@ -84,7 +84,7 @@ export class AggregationService {
       pendingMarkingItems,
       recentActivity,
     ] = await Promise.all([
-      Question.countDocuments({ schoolId, teacherId, isDeleted: false }),
+      WorkbenchQuestion.countDocuments({ schoolId, teacherId, isDeleted: false }),
       PaperModeration.countDocuments({ schoolId, status: 'pending', isDeleted: false }),
       CurriculumCoverage.aggregate([
         { $match: { schoolId: new mongoose.Types.ObjectId(schoolId), teacherId: new mongoose.Types.ObjectId(teacherId) } },
@@ -103,7 +103,7 @@ export class AggregationService {
         mark: { $exists: false },
         isDeleted: false,
       }),
-      Question.find({ schoolId, teacherId, isDeleted: false })
+      WorkbenchQuestion.find({ schoolId, teacherId, isDeleted: false })
         .sort({ createdAt: -1 })
         .limit(10)
         .lean()
@@ -145,7 +145,7 @@ export class AggregationService {
       {
         $match: {
           homeworkId: { $in: homeworkIds },
-          schoolId,
+          schoolId: new mongoose.Types.ObjectId(schoolId),
           isDeleted: false,
           mark: { $exists: false },
         },

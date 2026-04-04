@@ -84,9 +84,10 @@ export class DebtorService {
 
   static async escalateCollection(
     data: EscalateCollectionInput,
+    schoolId: string,
     performedBy: string,
   ) {
-    const invoice = await Invoice.findOne({ _id: data.invoiceId, isDeleted: false });
+    const invoice = await Invoice.findOne({ _id: data.invoiceId, schoolId, isDeleted: false });
     if (!invoice) {
       throw new NotFoundError('Invoice not found');
     }
@@ -111,12 +112,12 @@ export class DebtorService {
 
   // ─── Write Off Debt ─────────────────────────────────────────────────────────
 
-  static async writeOffDebt(data: WriteOffDebtInput, performedBy: string) {
+  static async writeOffDebt(data: WriteOffDebtInput, schoolId: string, performedBy: string) {
     const session = await mongoose.startSession();
     session.startTransaction();
 
     try {
-      const invoice = await Invoice.findOne({ _id: data.invoiceId, isDeleted: false }).session(session);
+      const invoice = await Invoice.findOne({ _id: data.invoiceId, schoolId, isDeleted: false }).session(session);
       if (!invoice) {
         throw new NotFoundError('Invoice not found');
       }

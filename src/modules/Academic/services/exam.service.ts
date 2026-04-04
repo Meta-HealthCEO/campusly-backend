@@ -101,8 +101,8 @@ export class ExamService {
     return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
-  static async getExamTimetableById(id: string): Promise<IExamTimetable> {
-    const entry = await ExamTimetable.findOne({ _id: id, isDeleted: false })
+  static async getExamTimetableById(id: string, schoolId: string): Promise<IExamTimetable> {
+    const entry = await ExamTimetable.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('subjectId', 'name code')
       .populate('gradeId', 'name')
       .populate('invigilator', 'firstName lastName email')

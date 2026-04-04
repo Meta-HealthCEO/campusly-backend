@@ -84,11 +84,11 @@ export class MemoService {
     teacherId: string,
     schoolId: string,
   ): Promise<IPaperMemo> {
-    const paper = await GeneratedPaper.findOne({ _id: paperId, isDeleted: false }).lean().exec();
+    const paper = await GeneratedPaper.findOne({ _id: paperId, schoolId, isDeleted: false }).lean().exec();
     if (!paper) throw new NotFoundError('Paper not found');
 
-    // Delete any existing memo for this paper before regenerating
-    await PaperMemo.deleteOne({ paperId });
+    // Soft-delete any existing memo for this paper before regenerating
+    await PaperMemo.updateOne({ paperId, schoolId }, { $set: { isDeleted: true } });
 
     const systemPrompt = buildMemoSystemPrompt();
     const userPrompt = buildMemoUserPrompt(
@@ -143,7 +143,7 @@ export class MemoService {
     const memo = await PaperMemo.findOne({ _id: memoId, schoolId }).exec();
     if (!memo) throw new NotFoundError('Memo not found');
 
-    const paper = await GeneratedPaper.findOne({ _id: memo.paperId, isDeleted: false }).lean().exec();
+    const paper = await GeneratedPaper.findOne({ _id: memo.paperId, schoolId, isDeleted: false }).lean().exec();
     if (!paper) throw new NotFoundError('Paper not found');
 
     // Locate the question in the paper

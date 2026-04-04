@@ -17,6 +17,7 @@ import {
   createBursarySchema,
   updateBursarySchema,
   addDocumentSchema,
+  importFileSchema,
 } from './validation.js';
 
 const router = Router();
@@ -134,6 +135,7 @@ router.post(
   authenticate,
   authorize('super_admin'),
   upload.single('file'),
+  validate(importFileSchema),
   CareerController.importProgrammes,
 );
 
@@ -285,6 +287,7 @@ router.post(
   authenticate,
   authorize('super_admin'),
   upload.single('file'),
+  validate(importFileSchema),
   CareerController.importBursaries,
 );
 

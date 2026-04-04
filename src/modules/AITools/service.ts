@@ -126,8 +126,9 @@ Include a mix of question types (multiple choice, short answer, long answer, str
     sectionIndex: number,
     questionIndex: number,
     teacherId: string,
+    schoolId: string,
   ): Promise<IGeneratedPaper> {
-    const paper = await GeneratedPaper.findOne({ _id: paperId, isDeleted: false });
+    const paper = await GeneratedPaper.findOne({ _id: paperId, schoolId, isDeleted: false });
 
     if (!paper) throw new NotFoundError('Paper not found');
     if (!paper.sections[sectionIndex]) throw new BadRequestError('Invalid section index');
@@ -241,9 +242,10 @@ The question must be different from: "${oldQuestion.questionText}"`;
 
   static async reviewGrade(
     jobId: string,
+    schoolId: string,
     teacherOverride: { finalMark: number; teacherNotes: string },
   ): Promise<IGradingJob> {
-    const job = await GradingJob.findOne({ _id: jobId, isDeleted: false });
+    const job = await GradingJob.findOne({ _id: jobId, schoolId, isDeleted: false });
 
     if (!job) throw new NotFoundError('Grading job not found');
     if (job.status !== 'completed') {
@@ -257,8 +259,8 @@ The question must be different from: "${oldQuestion.questionText}"`;
     return job;
   }
 
-  static async publishGrade(jobId: string): Promise<IGradingJob> {
-    const job = await GradingJob.findOne({ _id: jobId, isDeleted: false });
+  static async publishGrade(jobId: string, schoolId: string): Promise<IGradingJob> {
+    const job = await GradingJob.findOne({ _id: jobId, schoolId, isDeleted: false });
 
     if (!job) throw new NotFoundError('Grading job not found');
     if (job.status !== 'completed' && job.status !== 'reviewed') {
@@ -344,8 +346,8 @@ The question must be different from: "${oldQuestion.questionText}"`;
     return { papers, total };
   }
 
-  static async getPaperById(id: string): Promise<IGeneratedPaper> {
-    const paper = await GeneratedPaper.findOne({ _id: id, isDeleted: false }).populate(
+  static async getPaperById(id: string, schoolId: string): Promise<IGeneratedPaper> {
+    const paper = await GeneratedPaper.findOne({ _id: id, schoolId, isDeleted: false }).populate(
       'teacherId',
       'firstName lastName email',
     );
@@ -356,9 +358,10 @@ The question must be different from: "${oldQuestion.questionText}"`;
 
   static async updatePaper(
     id: string,
+    schoolId: string,
     updates: Record<string, unknown>,
   ): Promise<IGeneratedPaper> {
-    const paper = await GeneratedPaper.findOne({ _id: id, isDeleted: false });
+    const paper = await GeneratedPaper.findOne({ _id: id, schoolId, isDeleted: false });
 
     if (!paper) throw new NotFoundError('Paper not found');
 
@@ -404,8 +407,8 @@ The question must be different from: "${oldQuestion.questionText}"`;
     return { jobs, total };
   }
 
-  static async getGradingJobById(id: string): Promise<IGradingJob> {
-    const job = await GradingJob.findOne({ _id: id, isDeleted: false })
+  static async getGradingJobById(id: string, schoolId: string): Promise<IGradingJob> {
+    const job = await GradingJob.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('teacherId', 'firstName lastName email')
       .populate('studentId', 'firstName lastName');
 

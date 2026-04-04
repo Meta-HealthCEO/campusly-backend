@@ -33,11 +33,10 @@ export class PortfolioService {
   /**
    * Get a student's portfolio. Returns null if none exists.
    */
-  static async getPortfolio(studentId: string): Promise<IStudentPortfolio | null> {
-    const portfolio = await StudentPortfolio.findOne({
-      studentId,
-      isDeleted: false,
-    })
+  static async getPortfolio(studentId: string, schoolId?: string): Promise<IStudentPortfolio | null> {
+    const filter: Record<string, unknown> = { studentId, isDeleted: false };
+    if (schoolId) filter.schoolId = schoolId;
+    const portfolio = await StudentPortfolio.findOne(filter)
       .populate('studentId', 'firstName lastName grade')
       .lean();
 
@@ -181,17 +180,16 @@ export class PortfolioService {
    * Generate a transcript object for the student.
    * TODO: Add PDFKit integration for actual PDF generation.
    */
-  static async generateTranscript(studentId: string): Promise<{
+  static async generateTranscript(studentId: string, schoolId?: string): Promise<{
     student: unknown;
     academicHistory: IAcademicYear[];
     extracurriculars: IStudentPortfolio['extracurriculars'];
     communityService: IStudentPortfolio['communityService'];
     generatedAt: Date;
   }> {
-    const portfolio = await StudentPortfolio.findOne({
-      studentId,
-      isDeleted: false,
-    })
+    const transcriptFilter: Record<string, unknown> = { studentId, isDeleted: false };
+    if (schoolId) transcriptFilter.schoolId = schoolId;
+    const portfolio = await StudentPortfolio.findOne(transcriptFilter)
       .populate('studentId', 'firstName lastName grade dateOfBirth idNumber')
       .lean();
 

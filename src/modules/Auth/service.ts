@@ -24,6 +24,12 @@ export class AuthService {
       email: user.email,
       role: user.role,
       schoolId: user.schoolId?.toString(),
+      isSchoolPrincipal: user.isSchoolPrincipal ?? false,
+      isHOD: user.isHOD ?? false,
+      departmentId: user.departmentId?.toString() ?? null,
+      isBursar: user.isBursar ?? false,
+      isReceptionist: user.isReceptionist ?? false,
+      isCounselor: user.isCounselor ?? false,
     };
 
     const accessToken = jwt.sign(payload, config.jwt.accessSecret, {
