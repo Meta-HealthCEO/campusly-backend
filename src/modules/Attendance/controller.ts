@@ -2,6 +2,7 @@ import type { Request } from 'express';
 import { Response } from 'express';
 import { getUser } from '../../types/authenticated-request.js';
 import { AttendanceService } from './service.js';
+import { AttendanceStatsService } from './service-stats.js';
 import { ChronicAbsenceService } from './chronic-absence.service.js';
 import { apiResponse } from '../../common/utils.js';
 
@@ -257,5 +258,27 @@ export class AttendanceController {
     const schoolId = req.user!.schoolId!;
     await AttendanceService.deleteSubstitute(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Substitute record deleted successfully'));
+  }
+
+  // ─── Attendance Stats ────────────────────────────────────────────────────────
+
+  static async getStudentStats(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const studentId = req.params.studentId as string;
+    const stats = await AttendanceStatsService.getStudentStats(studentId, schoolId);
+    res.json(apiResponse(true, stats, 'Student attendance stats retrieved successfully'));
+  }
+
+  static async getClassStats(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const classId = req.params.classId as string;
+    const stats = await AttendanceStatsService.getClassStats(classId, schoolId);
+    res.json(apiResponse(true, stats, 'Class attendance stats retrieved successfully'));
+  }
+
+  static async getStatsChronicAbsentees(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const absentees = await AttendanceStatsService.getChronicAbsentees(schoolId);
+    res.json(apiResponse(true, absentees, 'Chronic absentees retrieved successfully'));
   }
 }

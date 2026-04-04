@@ -19,6 +19,29 @@ import {
 
 const router = Router();
 
+// ─── Attendance Stats ────────────────────────────────────────────────────────
+
+router.get(
+  '/stats/student/:studentId',
+  authenticate,
+  requireParentOwnership('studentId'),
+  AttendanceController.getStudentStats,
+);
+
+router.get(
+  '/stats/class/:classId',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  AttendanceController.getClassStats,
+);
+
+router.get(
+  '/stats/chronic-absentees',
+  authenticate,
+  authorize('school_admin', 'super_admin'),
+  AttendanceController.getStatsChronicAbsentees,
+);
+
 // ─── CSV Export ─────────────────────────────────────────────────────────────
 
 router.get(

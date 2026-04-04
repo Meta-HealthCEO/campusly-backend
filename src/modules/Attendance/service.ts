@@ -6,6 +6,7 @@ import {
   LessonPlan, ILessonPlan,
   SubstituteTeacher, ISubstituteTeacher,
 } from './model.js';
+import { AttendanceStatsService } from './service-stats.js';
 import { NotFoundError } from '../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../common/constants.js';
 
@@ -121,6 +122,12 @@ export class AttendanceService {
       period: data.period,
       isDeleted: false,
     }).lean();
+
+    // Fire-and-forget stats update — does not block the response
+    const studentIds = data.records.map((r) => r.studentId);
+    AttendanceStatsService.updateStatsForStudents(studentIds, data.schoolId).catch((err: unknown) => {
+      console.error('Failed to update attendance stats:', err);
+    });
 
     return records;
   }
