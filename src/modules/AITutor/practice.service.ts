@@ -4,7 +4,7 @@ import { AIService } from '../../services/ai.service.js';
 import { NotFoundError, BadRequestError } from '../../common/errors.js';
 import type { GeneratePracticeInput, SubmitPracticeInput } from './validation.js';
 
-const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514';
+const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6-20250514';
 
 interface AIGeneratedQuestion {
   questionText: string;

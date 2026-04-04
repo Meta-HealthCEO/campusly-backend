@@ -7,7 +7,7 @@ import { AIUsageLog } from '../AITools/model.js';
 import { AIService } from '../../services/ai.service.js';
 import type { GenerateReportCommentsInput } from './validation.js';
 
-const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514';
+const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6-20250514';
 
 interface ReportComment {
   studentId: string;

@@ -11,7 +11,7 @@ import { BadRequestError, NotFoundError } from '../../common/errors.js';
 import { paginationHelper } from '../../common/utils.js';
 import { aiGradingQueue } from '../../jobs/queues.js';
 
-const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514';
+const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6-20250514';
 
 interface PaperFilters {
   subject?: string;

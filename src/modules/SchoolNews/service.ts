@@ -198,7 +198,7 @@ export class SchoolNewsService {
       teacherId: userId,
       type: 'news_generation',
       tokensUsed: { input: usage.input_tokens, output: usage.output_tokens },
-      aiModel: process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514',
+      aiModel: process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6-20250514',
     });
 
     const article = new NewsArticle({
