@@ -64,6 +64,7 @@ export class AssessmentService {
       Assessment.find(filter)
         .populate('subjectId', 'name code')
         .populate('classId', 'name gradeId')
+        .populate('paperId', 'title')
         .sort(sortField)
         .skip(skip)
         .limit(limit)
@@ -79,6 +80,7 @@ export class AssessmentService {
     const assessment = await Assessment.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('subjectId', 'name code')
       .populate('classId', 'name gradeId')
+      .populate('paperId', 'title')
       .lean();
     if (!assessment) throw new NotFoundError('Assessment not found');
     return assessment;
@@ -144,12 +146,14 @@ export class AssessmentService {
     const assessment = await Assessment.findById(assessmentId).lean();
     if (!assessment) throw new NotFoundError('Assessment not found');
 
-    const classStudents = await Student.find({ classId: assessment.classId, schoolId, isDeleted: false }).select('_id').lean();
-    const validStudentIds = new Set(classStudents.map((s) => s._id.toString()));
+    if (assessment.classId) {
+      const classStudents = await Student.find({ classId: assessment.classId, schoolId, isDeleted: false }).select('_id').lean();
+      const validStudentIds = new Set(classStudents.map((s) => s._id.toString()));
 
-    for (const mark of marks) {
-      if (!validStudentIds.has(mark.studentId.toString())) {
-        throw new BadRequestError(`Student ${mark.studentId} is not in this class`);
+      for (const mark of marks) {
+        if (!validStudentIds.has(mark.studentId.toString())) {
+          throw new BadRequestError(`Student ${mark.studentId} is not in this class`);
+        }
       }
     }
 

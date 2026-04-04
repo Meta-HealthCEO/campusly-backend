@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { AssessmentPaper, Question } from './model.js';
+import { Assessment } from '../Academic/model.js';
 import { NotFoundError, ForbiddenError, BadRequestError } from '../../common/errors.js';
 import { paginationHelper } from '../../common/utils.js';
 import { ComplianceService } from './service-compliance.js';
@@ -345,6 +346,40 @@ export class PapersService {
     paper.capsCompliance = compliance;
     paper.status = 'finalised';
     await paper.save();
+
+    // Auto-create a linked Assessment record (idempotent — skip if one already exists)
+    const existing = await Assessment.findOne({ paperId: paper._id, isDeleted: false }).lean();
+    if (!existing) {
+      const PAPER_TYPE_TO_ASSESSMENT_TYPE: Record<string, 'test' | 'exam' | 'assignment'> = {
+        class_test: 'test',
+        assignment: 'assignment',
+        mid_year: 'exam',
+        trial: 'exam',
+        final: 'exam',
+        custom: 'test',
+      };
+      const assessmentType = PAPER_TYPE_TO_ASSESSMENT_TYPE[paper.paperType] ?? 'test';
+
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, '0');
+      const d = String(now.getDate()).padStart(2, '0');
+      const todayDate = new Date(`${y}-${m}-${d}`);
+
+      await Assessment.create({
+        name: paper.title,
+        subjectId: paper.subjectId,
+        classId: null,
+        schoolId: paper.schoolId,
+        type: assessmentType,
+        totalMarks: paper.totalMarks,
+        weight: 0,
+        term: paper.term,
+        academicYear: paper.year,
+        date: todayDate,
+        paperId: paper._id,
+      });
+    }
 
     return paper.toObject();
   }

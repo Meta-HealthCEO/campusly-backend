@@ -230,7 +230,7 @@ export type AssessmentType = 'test' | 'exam' | 'assignment' | 'practical' | 'pro
 export interface IAssessment extends Document {
   name: string;
   subjectId: Types.ObjectId;
-  classId: Types.ObjectId;
+  classId: Types.ObjectId | null;
   schoolId: Types.ObjectId;
   type: AssessmentType;
   totalMarks: number;
@@ -238,6 +238,7 @@ export interface IAssessment extends Document {
   term: number;
   academicYear: number;
   date: Date;
+  paperId: Types.ObjectId | null;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -258,7 +259,7 @@ const assessmentSchema = new Schema<IAssessment>(
     classId: {
       type: Schema.Types.ObjectId,
       ref: 'Class',
-      required: true,
+      default: null,
     },
     schoolId: {
       type: Schema.Types.ObjectId,
@@ -292,6 +293,11 @@ const assessmentSchema = new Schema<IAssessment>(
       type: Date,
       required: true,
     },
+    paperId: {
+      type: Schema.Types.ObjectId,
+      ref: 'AssessmentPaper',
+      default: null,
+    },
     isDeleted: {
       type: Boolean,
       default: false,
@@ -302,6 +308,7 @@ const assessmentSchema = new Schema<IAssessment>(
 
 assessmentSchema.index({ classId: 1, subjectId: 1, term: 1 });
 assessmentSchema.index({ schoolId: 1, isDeleted: 1, createdAt: -1 });
+assessmentSchema.index({ paperId: 1 }, { sparse: true });
 
 export const Assessment = mongoose.model<IAssessment>('Assessment', assessmentSchema);
 
