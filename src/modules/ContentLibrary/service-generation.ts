@@ -61,7 +61,7 @@ export class GenerationService {
       tags: [],
       status: 'draft',
       createdBy: new mongoose.Types.ObjectId(userId),
-      aiModel: process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6-20250514',
+      aiModel: process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514',
       aiPrompt: userPrompt,
       difficulty: data.difficulty,
       estimatedMinutes: 0,
