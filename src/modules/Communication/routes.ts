@@ -111,7 +111,7 @@ router.post(
 router.get(
   '/messages',
   authenticate,
-  authorize('school_admin', 'super_admin'),
+  authorize('school_admin', 'super_admin', 'teacher'),
   CommunicationController.listMessages,
 );
 

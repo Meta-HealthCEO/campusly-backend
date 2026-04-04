@@ -22,7 +22,7 @@ router.post(
 router.get(
   '/',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  authorize('super_admin', 'school_admin', 'teacher'),
   ParentController.list,
 );
 
