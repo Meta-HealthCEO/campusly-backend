@@ -185,7 +185,10 @@ app.use('/api/question-bank', authenticate, questionBankRoutes);
 app.use('/api/textbooks', authenticate, textbookRoutes);
 
 // Static file serving — uploaded assets
-app.use('/uploads', express.static('uploads'));
+app.use('/uploads', (_req, res, next) => {
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  next();
+}, express.static('uploads'));
 
 // 404 handler
 app.use((_req, res) => {
