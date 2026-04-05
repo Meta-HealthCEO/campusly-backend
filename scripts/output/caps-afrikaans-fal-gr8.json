@@ -1,0 +1,131 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Senior Phase",
+      "code": "CAPS-SP",
+      "description": "Senior Phase covering Grades 7 to 9",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-SP",
+      "title": "Grade 8",
+      "code": "CAPS-GR8",
+      "description": "Grade 8",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR8",
+      "title": "Afrikaans Eerste Addisionele Taal",
+      "code": "CAPS-AFRIKAANSFAL-GR8",
+      "description": "Afrikaans Eerste Addisionele Taal vir Graad 8 met vier vaardigheidstrome: Luister en Praat, Lees en Kyk, Skryf en Aanbied, en Taalstrukture en -konvensies.",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-AFRIKAANSFAL-GR8",
+      "title": "Kwartaal 1",
+      "code": "CAPS-AFRIKAANSFAL-GR8-T1",
+      "description": "Kwartaal 1: Strooibiljet/gedig, e-pos/volksverhaal, jeugroman/verhalende-reflekterende opstel, koerantberig/redaksioneel/joernalistieke verslag, toespraak/volksverhaal. FAT1: Mondeling — hardoplees (20 punte, begin K1, teken punte K2). FAT2: Skryf — verhalende/beskrywende/reflekterende opstel (30 punte, weke 7-8). FAT3: Respons op tekste (60 punte).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSFAL-GR8-T1",
+      "title": "Strooibiljet, Gedig en E-pos — Kwartaal 1",
+      "code": "CAPS-AFRIKAANSFAL-GR8-T1-STROOIBILJET",
+      "description": "Luister en Praat: luister na en bespreek 'n strooibiljet of advertensie; identifiseer doel, gehoor, oorredingstegnieke; begin voorbereide hardoplees (FAT1, 20 punte, begin K1 voltooi K2). Lees en Kyk: strooibiljet — doel, formaat, visuele elemente, taalgebruik; gedig — struktuur, beeldspraak, tema, klankpatrone. Skryf en Aanbied: skryf 'n strooibiljet vir 'n skoolevent; e-pos — formele en informele register; formaat en konvensies. Taalstrukture en -konvensies: selfstandige naamwoorde en adjektiewe; voornaamwoorde; teenswoordige en verlede tyd; woordeskat: idiome en figuurlike taalgebruik; interpunksie en spelling.",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSFAL-GR8-T1",
+      "title": "Jeugroman, Opstel en Joernalistieke Tekste — Kwartaal 1",
+      "code": "CAPS-AFRIKAANSFAL-GR8-T1-ROMAN",
+      "description": "Luister en Praat: luister na 'n verhaal of monoloog; volksverhaal — kenmerke van mondelinge oorlewering, karakterisering, moraal. Lees en Kyk: jeugroman — karakterisering, plot, konflik, tema, narratiewe stem; koerantberig: formaat, feite vs menings, perspektief, gehoor; redaksioneel/joernalistieke verslag. Skryf en Aanbied: verhalende/reflekterende opstel (FAT2, 30 punte, weke 7-8); koerantberig en joernalistieke verslag — formaat, styl. Taalstrukture en -konvensies: lydende vorm; indirekte rede; komplekse sinne; paragraafstruktuur; formele vs informele taal; toespraakteks (FAT1 voorbereide hardoplees).",
+      "metadata": { "weekNumbers": [5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-AFRIKAANSFAL-GR8",
+      "title": "Kwartaal 2",
+      "code": "CAPS-AFRIKAANSFAL-GR8-T2",
+      "description": "Kwartaal 2: Roman/beskrywende opstel, dialoog/sosiale kwessie/gedig, niefiksie-teks/resensie, advertensie/plakkaat, Junie-kontroletoets. FAT4: Transaksionele skryftaak (10 punte). FAT5: Junie-kontroletoets — respons op tekste (60 punte).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSFAL-GR8-T2",
+      "title": "Roman, Dialoog en Niefiksie-tekste — Kwartaal 2",
+      "code": "CAPS-AFRIKAANSFAL-GR8-T2-ROMAN",
+      "description": "Luister en Praat: luister na en bespreek 'n dialoog; bespreek sosiale kwessie — standpunt, motivering, debatvoering. Lees en Kyk: roman — beskrywende lees: karakterisering, agtergrond, konflik; dialoog: konvensies, doel, taalgebruik; gedig — struktuur, tema, toon; niefiksie-teks — feite, menings, skrywer se perspektief. Skryf en Aanbied: beskrywende opstel — kenmerke en konvensies; resensie van 'n boek, film of musiekproduksie — formaat, keurings, aanbevelings. Taalstrukture en -konvensies: adjektiewe en bywoorde; voegwoorde; sinsvariasie; woordkeuse vir beskrywende en kritiese skryf.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSFAL-GR8-T2",
+      "title": "Advertensie, Plakkaat en Junie-kontroletoets — Kwartaal 2",
+      "code": "CAPS-AFRIKAANSFAL-GR8-T2-ADVERTENSIE",
+      "description": "Luister en Praat: luister na en ontleed 'n advertensie of plakkaat; evalueer oorredingstegnieke, beeldgebruik, teikengehoor. Lees en Kyk: advertensie — visuele en talige elemente, doel, publiek; plakkaat — ontwerp, kleur, tipografie, boodskap; hersiening van alle teksoorte vir Junie-kontroletoets. Skryf en Aanbied: transaksionele skryftaak (FAT4, 10 punte) — advertensie of plakkaat in korrekte formaat. Taalstrukture en -konvensies: hersien taalstrukture; voornaamwoorde en verwysingswoorde; formele taalkonvensies; FAT5 Junie-kontroletoets (60 punte) — literêre teks, visuele teks, opsomming, taalstrukture en -konvensies.",
+      "metadata": { "weekNumbers": [7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-AFRIKAANSFAL-GR8",
+      "title": "Kwartaal 3",
+      "code": "CAPS-AFRIKAANSFAL-GR8-T3",
+      "description": "Kwartaal 3: Kreatiewe Skryfprojek (KSP) — navorsing, skryf en mondelinge aanbieding; kortverhaal, drama, dagboekinskrywing, multimedia. FAT6: KSP Stap 1 — navorsing (20 punte, weke 3-4); KSP Stap 2 — skryf (30 punte, weke 5-6). FAT7: KSP Mondeling (20 punte, begin K3 voltooi K4). FAT8: Respons op tekste (30 punte).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSFAL-GR8-T3",
+      "title": "Kreatiewe Skryfprojek — Navorsing en Skryf",
+      "code": "CAPS-AFRIKAANSFAL-GR8-T3-KSP",
+      "description": "Luister en Praat: luister na 'n kortverhaal of monoloog (weke 1-2); begin KSP mondelinge aanbieding voorberei (FAT7, 20 punte, begin K3 voltooi K4). Lees en Kyk: kortverhaal — literêre ontleding: narratiewe struktuur, karakterisering, tema; drama — toneel, dialoog, konflik, dramatiese elemente; lees vir KSP-navorsing; visuele tekste en multimedia. Skryf en Aanbied: KSP Stap 1 — navorsing (FAT6, 20 punte, weke 3-4): navorsingnotas, bibliografie, grafiese organiseerders; KSP Stap 2 — skryfproduk (FAT6, 30 punte, weke 5-6): eindproduk in gekose genre (gedigte/volksverhale/kortverhale/drama/roman). FAT8 Respons op tekste (30 punte): poësie (10 punte), roman of drama (10 punte), kortverhale of volksverhale (10 punte). Taalstrukture en -konvensies: genre-spesifieke taalgebruik; kritiese woordeskat; gevorderde woordeskat vir gekose onderwerp.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSFAL-GR8-T3",
+      "title": "Dagboekinskrywing, Mondelinge Aanbieding en Multimedia — Kwartaal 3",
+      "code": "CAPS-AFRIKAANSFAL-GR8-T3-DAGBOEK",
+      "description": "Luister en Praat: mondelinge aanbieding van KSP (FAT7, weke 7-8 begin); gestruktureerde bespreking en portuurassessering. Lees en Kyk: dagboekinskrywing — konvensies, persoonlike toon, chronologiese volgorde; multimedia-tekste: video, webblaaie, sosialemedia-plasings — ontleding van boodskap, gehoor, formaat. Skryf en Aanbied: dagboekinskrywing in korrekte formaat — persoonlike refleksie, emotiewe taal; notas vir mondelinge aanbieding. Taalstrukture en -konvensies: metataal vir ontleding; woordeskat vir mondelinge aanbiedings; eerste persoon narratief; informele en formele register onderskeid.",
+      "metadata": { "weekNumbers": [7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-AFRIKAANSFAL-GR8",
+      "title": "Kwartaal 4",
+      "code": "CAPS-AFRIKAANSFAL-GR8-T4",
+      "description": "Kwartaal 4: Voltooi KSP mondeling (FAT7); aanwysings/instruksies, koerantberig, drama, vorms/vraelys, hersiening, FAT9 transaksionele skryftaak (10 punte), eindeksamen.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSFAL-GR8-T4",
+      "title": "Transaksionele Tekste, KSP Mondeling en Eindeksamen — Kwartaal 4",
+      "code": "CAPS-AFRIKAANSFAL-GR8-T4-EKSAMEN",
+      "description": "Luister en Praat: voltooi FAT7 KSP mondelinge aanbiedings (weke 3-4); portuurassessering; luisterbegriptoets. Lees en Kyk: aanwysings/instruksies: formaat, taalgebruik, duidelikheid; koerantberig — feite, perspektief, styl; drama — dramatiese elemente; vorms/vraelys — formaat en taalgebruik; hersiening van alle genres en teksoorte. Skryf en Aanbied: aanwysings/instruksies in korrekte formaat (weke 1-2); koerantberig skryf; vorms/vraelys ontwerp; FAT9 transaksionele skryftaak (10 punte, week 7); hersiening van alle skryfoorte. Taalstrukture en -konvensies: omvattende hersiening van alle grammatika, woordeskat, interpunksie en spelling; eindeksamen — Vraestel 1: Begripstoets, Opsomming en Taalstrukture; Vraestel 2: Respons op Tekste.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    }
+  ]
+}

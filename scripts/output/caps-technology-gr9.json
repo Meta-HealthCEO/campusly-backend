@@ -1,0 +1,108 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Senior Phase",
+      "code": "CAPS-SP",
+      "description": "Senior Phase covering Grades 7 to 9",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-SP",
+      "title": "Grade 9",
+      "code": "CAPS-GR9",
+      "description": "Grade 9",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR9",
+      "title": "Technology",
+      "code": "CAPS-TECHNOLOGY-GR9",
+      "description": "Technology for Grade 9 covering orthographic projection, mechanical systems, electrical/electronic systems, and processing through IDMEC methodology",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-TECHNOLOGY-GR9",
+      "title": "Term 1",
+      "code": "CAPS-TECHNOLOGY-GR9-T1",
+      "description": "Term 1: Design Skills (first angle orthographic projection), Structures, Making Skills, Budgeting. PAT 1 scenario: Staircase and wheelchair ramp.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TECHNOLOGY-GR9-T1",
+      "title": "Design Skills: Orthographic Projection; Structures and Making (Staircase and Ramp)",
+      "code": "CAPS-TECHNOLOGY-GR9-T1-ORTHOGRAPHIC",
+      "description": "Baseline assessment revision of Grade 8 content. Design skills: flight of stairs and wheelchair ramp (design brief specifying steps, riser height, ramp width/gradient, handrail). Line types: dark, feint, dashed, wavy, chain; scale and dimensions. First angle orthographic projection: 3D objects on flat paper; concept of three different views (front, top, side); simple cubes; draw plan for stair and ramp using first angle orthographic projection; more complex 3D objects drawn in orthographic projection with instruments. PAT 1 scenario: IDMEC – investigate problem situation and possible structures; analysis of existing products (fitness-for-purpose, suitability of materials, safety, costs). Design brief with specifications; sketch two possible ideas; evaluate and adapt (groups evaluate and develop idea further, produce evaluation instrument, use instrument to evaluate solutions). Working drawings using first angle orthographic projection with scale, line types and dimensions; flow chart. Structures: forces (static/dynamic, even/uneven loads), strength of materials under forces (metal cross-sections), tension, compression, bending of beams, torsion (internal cross-bracing); properties of construction materials (mass/density, hardness, stiffness, flexibility, corrosion resistance). Make model of viable solution (neatly to scale, intelligent use of materials, safe working practices). Budget: practical exercise, costing of real-life solution (correct materials and labour costs for ramp and staircase). Team presentations (tender bid – sketches, plans, budget and model). SBA: PAT 1 – Investigate (15 marks, week 4), Design (20 marks, weeks 5/6), Make (35 marks, weeks 7/8); Total 70 marks.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "Technology Term 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-TECHNOLOGY-GR9",
+      "title": "Term 2",
+      "code": "CAPS-TECHNOLOGY-GR9-T2",
+      "description": "Term 2: Mechanical Systems and Control (hydraulics, pneumatics, Pascal's principle, pulleys, gear systems). Mid-year examination: 40 marks.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TECHNOLOGY-GR9-T2",
+      "title": "Mechanical Systems and Control: Hydraulics, Pneumatics, Pulleys, Gear Systems",
+      "code": "CAPS-TECHNOLOGY-GR9-T2-MECHSYSTEMS",
+      "description": "Revise syringe mechanics: force transfer with compressed air (pneumatic) and water (hydraulic); two different-sized syringes (force multiplication or force division). Gases are compressible; liquids are incompressible. Pascal's principle: pressure exerted on one part of a hydraulic system is transferred equally without loss in all directions; equal volumes of liquid moved result in different extensions depending on syringe sizes (MA > 1, MA < 1). Hydraulic press (including simple calculations); hydraulic jack. Investigate design considerations (fitness-for-purpose): who it is for, what for, will it do the job, material, cost-effectiveness, aesthetics, ergonomics, safety; draw systems diagram for hydraulic jack function. Pulleys: single fixed pulley (MA = 1), single moveable pulley (MA > 0), pulley block system/block and tackle (relationship between load-bearing ropes on moveable pulley wheels and MA). Mechanical control systems: ratchet and pawl, disc brake, bicycle brake, cleat. Gear systems: spur gears (equal size counter-rotating, unequal size – velocity/force relationships, idler for synchronised rotation); bevel gears (equal size – axis of rotation 90°, unequal size – velocity/force relationships); rack-and-pinion gear system; worm gear system (large reduction in speed, increase in force). Investigate and design: investigate situation, design brief (specifications and constraints), sketch two possible designs, decide on final solution, working drawings (first angle orthographic projection). Consolidation: compressed air, hydraulic system, Pascal's principle, hydraulic press, pulleys, mechanical control systems, gear systems. SBA: Mid-year examination (40 marks).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "Technology Term 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-TECHNOLOGY-GR9",
+      "title": "Term 3",
+      "code": "CAPS-TECHNOLOGY-GR9-T3",
+      "description": "Term 3: Electrical Systems and Control (Ohm's law quantitatively, diodes, LED, resistor colour codes, transistors, sensors, capacitors, simple electronic circuits). PAT 2 scenario: Electronic device.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TECHNOLOGY-GR9-T3",
+      "title": "Electrical and Electronic Systems and Control: Ohm's Law, Sensors, Transistors, Electronic Circuits",
+      "code": "CAPS-TECHNOLOGY-GR9-T3-ELECTRONICS",
+      "description": "PAT 2 scenario: investigate situation to choose appropriate circuit solving a given problem; incorporate circuit into design of a device. Revise component symbols: cells in series/parallel, lamps in series/parallel, switches in series (AND logic) and parallel (OR logic), conventional current direction. Revise simple circuits: one cell/switch/two lamps in series; two cells in series/switch/two lamps in series. Diodes and LED: diode allows current in one direction only; LED allows current in one direction and gives off light (used as indicator). Resistor colour codes: low-value resistors with numbers; higher-value resistors with coloured bands (first three bands give value in ohms, fourth band is accuracy rating). Design brief: specifications and constraints; circuit diagram; 3D sketch of device; team decision on final solution. Ohm's law quantitatively: as voltage increases, current increases (resistance constant); action research testing Ohm's law (measure voltage and current for one, two, three cells with same resistor); plot graph of voltage vs current; calculate values using V = IR, R = V/I, I = V/R. Manual switches: SPST, SPDT, DPDT. Transistors (NPN type only): acts as a switch; can amplify a small current. Sensors (input devices): LDR (resistance decreases with light), thermistor (+t and -t types), touch or moisture detector, capacitors (store and release electrical energy). Simple electronic circuits: LED/470Ω resistor/switch/4.5V battery; LDR/buzzer/3V battery; NPN transistor circuit with buzzer/bell/thermistor/variable resistor/1kΩ resistor/6V battery/LED/470Ω resistor/1000μF capacitor/switch. 3D assembly drawing in exploded view. Make prototype/working model (safe working practices, to scale, neat, intelligent use of materials). Team presentations. SBA: PAT 2 – Investigate (15 marks, week 1), Design (20 marks, weeks 3/8), Make (35 marks, week 9); Total 70 marks.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "Technology Term 3", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-TECHNOLOGY-GR9",
+      "title": "Term 4",
+      "code": "CAPS-TECHNOLOGY-GR9-T4",
+      "description": "Term 4: Processing – Preserving Metals and Food, Plastics (types, properties, recycling, design). End-of-year examination: 40 marks.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TECHNOLOGY-GR9-T4",
+      "title": "Processing: Preserving Metals and Food; Plastics",
+      "code": "CAPS-TECHNOLOGY-GR9-T4-PROCESSING",
+      "description": "Preserving metals (first two theoretically): painting, galvanising, electroplating; practical investigation – preserving metals by electroplating. Preserving food (first two theoretically): storing grain, pickling, drying and/or salting; practical investigation – preserving food by drying and salting (process takes time, evaluated when completed). Types of plastics and their uses: identification of plastic (identifying codes and sorting for recycling), properties of plastics, reduce-reuse-recycle; case study: remanufacturing waste plastic into pellets for re-use; systems diagram for a plastics recycling project; case study: moulding recycled plastic pellets into products; problem identification (learners identify a need or want that can be satisfied by making a plastic item); case study: plastics used on modern motor cars; case study: plastics used around the home. Design: plan for plastic item using first angle orthographic projection. Consolidation and revision of Term 3 and 4 content. SBA: End-of-year examination (40 marks).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "Technology Term 4", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    }
+  ]
+}

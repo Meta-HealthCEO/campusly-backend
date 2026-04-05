@@ -1,0 +1,320 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Senior Phase",
+      "code": "CAPS-SP",
+      "description": "Senior Phase (Grades 7-9) of the South African CAPS curriculum.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-SP",
+      "title": "Grade 7",
+      "code": "CAPS-GR7",
+      "description": "Grade 7 of the South African CAPS curriculum.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR7",
+      "title": "Natural Sciences",
+      "code": "CAPS-NATSCIENCES-GR7",
+      "description": "Natural Sciences for Grade 7 as per the South African CAPS curriculum.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-NATSCIENCES-GR7",
+      "title": "Term 1 — Life and Living",
+      "code": "CAPS-NATSCIENCES-GR7-T1",
+      "description": "Grade 7 Natural Sciences Term 1: Life and Living — The Biosphere, Biodiversity, Sexual Reproduction, Variation.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR7-T1",
+      "title": "The Biosphere",
+      "code": "CAPS-NATSCIENCES-GR7-T1-BIO",
+      "description": "The biosphere includes the lithosphere (soil and rocks), hydrosphere (water) and atmosphere (gases), all living organisms and dead organic matter. All living things carry out seven life processes: nutrition, growth, reproduction, respiration, excretion, sensitivity and movement. Requirements for sustaining life: living things need energy, gases, water, soil and favourable temperatures; organisms are adapted to their environments.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [1],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR7-T1",
+      "title": "Biodiversity",
+      "code": "CAPS-NATSCIENCES-GR7-T1-BIODIV",
+      "description": "Classification of living things: five kingdoms (Bacteria, Protista, Fungi, Plants, Animals); classification hierarchy (Kingdom, Phylum/Division, Class, Family, Order, Genus, Species). Diversity of animals: vertebrates (fish, amphibians, reptiles, birds, mammals) and invertebrates (arthropods — insects, arachnids, crustaceans; molluscs). Diversity of plants: plants with and without seeds; Angiosperms (dicotyledons and monocotyledons) and Gymnosperms.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [2, 3, 4, 5],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR7-T1",
+      "title": "Sexual Reproduction",
+      "code": "CAPS-NATSCIENCES-GR7-T1-SEXREP",
+      "description": "Sexual reproduction in Angiosperms: components of a flower (stamens, stigma, style, ovary, petals, sepals); pollination and fertilisation; seed and fruit formation; seed dispersal. Human reproduction: puberty; male and female reproductive organs; fertilisation, menstruation, pregnancy and contraception (including HIV/AIDS prevention).",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [5, 6, 7, 8],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR7-T1",
+      "title": "Variation",
+      "code": "CAPS-NATSCIENCES-GR7-T1-VAR",
+      "description": "Variations exist within a species: a species is a category within the classification system; individuals of the same species can reproduce; differences between living things of the same species is called variation; variation amongst humans can be inherited (e.g. height and tongue-rolling).",
+      "order": 4,
+      "metadata": {
+        "weekNumbers": [9],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-NATSCIENCES-GR7",
+      "title": "Term 2 — Matter and Materials",
+      "code": "CAPS-NATSCIENCES-GR7-T2",
+      "description": "Grade 7 Natural Sciences Term 2: Matter and Materials — Introduction to the Periodic Table, Properties of Materials, Separating Mixtures, Acids/Bases/Neutrals.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR7-T2",
+      "title": "Introduction to the Periodic Table of Elements",
+      "code": "CAPS-NATSCIENCES-GR7-T2-PT",
+      "description": "The Periodic Table is a classification system for elements: devised by Dmitri Mendeleev in the 1860s; elements arranged into three categories — metals (left side), non-metals (far right) and semi-metals (between). Each element has its own name, symbol, atomic number and position. Some properties of metals, semi-metals and non-metals.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR7-T2",
+      "title": "Properties of Materials",
+      "code": "CAPS-NATSCIENCES-GR7-T2-PM",
+      "description": "Physical properties of materials determine suitability for particular use: boiling and melting points, electrical conductivity, heat conductivity. Impact on the environment: production and/or use of materials such as metals, plastics and fuels.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [2, 3, 4, 5],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR7-T2",
+      "title": "Separating Mixtures",
+      "code": "CAPS-NATSCIENCES-GR7-T2-SM",
+      "description": "A mixture is made up of two or more substances with different physical properties. Methods of physical separation: hand sorting, sieving, filtration, using a magnet, evaporation, distillation and chromatography. Sorting and recycling materials: responsible waste disposal; recycling of metals, plastics and glass; negative consequences of poor waste management.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [5, 6, 7],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR7-T2",
+      "title": "Acids, Bases and Neutrals",
+      "code": "CAPS-NATSCIENCES-GR7-T2-ABN",
+      "description": "Tastes of substances: salty, sweet, sour and bitter. Properties of acids (taste sour, feel rough, corrosive), bases (taste bitter, feel slippery, corrosive; soluble bases are alkaline) and neutrals. Acid-base indicators: red and blue litmus paper; red litmus paper stays red in acid and neutral, turns blue in base; blue litmus paper stays blue in base and neutral, turns red in acid.",
+      "order": 4,
+      "metadata": {
+        "weekNumbers": [8, 9],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-NATSCIENCES-GR7",
+      "title": "Term 3 — Energy and Change",
+      "code": "CAPS-NATSCIENCES-GR7-T3",
+      "description": "Grade 7 Natural Sciences Term 3: Energy and Change — Sources of Energy, Potential and Kinetic Energy, Heat Transfer, Insulation and Energy Saving.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR7-T3",
+      "title": "Sources of Energy",
+      "code": "CAPS-NATSCIENCES-GR7-T3-SE",
+      "description": "Renewable and non-renewable sources of energy: non-renewable sources (fossil fuels — coal, oil, natural gas; nuclear fuels) cannot be replenished once used; renewable sources (hydro power, wind, sunlight, biofuel) are continually replenished.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [1],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR7-T3",
+      "title": "Potential and Kinetic Energy",
+      "code": "CAPS-NATSCIENCES-GR7-T3-PKE",
+      "description": "Potential energy is stored energy. Kinetic energy is energy a body has due to movement. Potential and kinetic energy in mechanical, thermal, electrical and biological systems. Law of conservation of energy: energy cannot be created or destroyed but can be converted from one form to another.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [2, 3],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR7-T3",
+      "title": "Heat Transfer",
+      "code": "CAPS-NATSCIENCES-GR7-T3-HT",
+      "description": "Heating is the transfer of energy from a hotter body to a cooler body. Three ways heat is transferred: conduction (transfer between solid objects in direct physical contact), convection (transfer by movement of liquid or gas particles) and radiation (transfer without physical contact or movement of particles). Good and poor conductors.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [3, 4, 5],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR7-T3",
+      "title": "Insulation and Energy Saving",
+      "code": "CAPS-NATSCIENCES-GR7-T3-IES",
+      "description": "Heat can be lost through conduction, convection and radiation from bodies and objects such as geysers. Insulating materials slow down heat loss or gain through conduction, convection and radiation. Conservation of heat energy in homes and buildings by minimising heat loss in winter and heat gain in summer. Energy transfer to surroundings: useful and wasted energy; output energy in a system is always less than input energy.",
+      "order": 4,
+      "metadata": {
+        "weekNumbers": [6, 7, 8],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-NATSCIENCES-GR7",
+      "title": "Term 4 — Planet Earth and Beyond",
+      "code": "CAPS-NATSCIENCES-GR7-T4",
+      "description": "Grade 7 Natural Sciences Term 4: Planet Earth and Beyond — Relationship of the Sun to the Earth, Relationship of the Moon to the Earth.",
+      "order": 4,
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR7-T4",
+      "title": "Relationship of the Sun to the Earth",
+      "code": "CAPS-NATSCIENCES-GR7-T4-SUN",
+      "description": "Solar energy and Earth's seasons: the Earth receives energy from the Sun in the form of heat and light; Earth spins on its axis once per day; Earth's tilted axis causes the four seasons through differing intensities of solar energy. Solar energy and life on Earth: all plants and animals depend on this process for energy. Stored solar energy: fossil fuels (coal, oil and gas) form from dead plants and animals over millions of years.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR7-T4",
+      "title": "Relationship of the Moon to the Earth",
+      "code": "CAPS-NATSCIENCES-GR7-T4-MOON",
+      "description": "Relative positions: the Moon revolves around the Earth in its orbit. Gravity: the tendency of all objects to attract each other; the pull of gravity depends on mass and distance. Tides: the predictable, repeated rise and fall of sea and ocean levels caused mainly by the gravity of the Moon; spring tides at Full Moon and New Moon; tides sustain unique shoreline ecosystems.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [4, 5, 6, 7, 8],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    }
+  ]
+}

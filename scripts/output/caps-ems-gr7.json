@@ -1,0 +1,108 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Senior Phase",
+      "code": "CAPS-SP",
+      "description": "Senior Phase covering Grades 7 to 9",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-SP",
+      "title": "Grade 7",
+      "code": "CAPS-GR7",
+      "description": "Grade 7",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR7",
+      "title": "Economic and Management Sciences",
+      "code": "CAPS-EMS-GR7",
+      "description": "Economic and Management Sciences for Grade 7 covering The Economy, Financial Literacy and Entrepreneurship",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-EMS-GR7",
+      "title": "Term 1",
+      "code": "CAPS-EMS-GR7-T1",
+      "description": "Term 1: The Economy – history of money, needs and wants, goods and services, inequality and poverty. SBA: Assignment 50 marks (week 6), March controlled test 50 marks (week 10).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-EMS-GR7-T1",
+      "title": "The Economy: History of Money, Needs and Wants, Goods and Services, Inequality and Poverty",
+      "code": "CAPS-EMS-GR7-T1-ECONOMY",
+      "description": "History of money: barter system (meaning, advantages and disadvantages), commodity money (shells, beads, cattle), metal coins (why suitable – durable, divisible, scarce, portable, acceptable), paper money (promissory notes, representative money, fiat money), electronic money (debit/credit cards, EFT, online banking). Needs and wants: difference between needs and wants; basic human needs (food, clothing, shelter, education, healthcare); unlimited wants vs limited resources; choice and opportunity cost. Goods and services: meaning and examples of goods (consumer goods, capital goods, durable/non-durable); meaning and examples of services (personal, commercial, professional); difference between goods and services. Economic problem: unlimited wants, scarce resources; choice and opportunity cost; factors of production (land/natural resources, labour, capital, entrepreneurship). Inequality and poverty: meaning of inequality and poverty; causes (unemployment, lack of education, lack of resources); effects on communities; role of government and NGOs in addressing poverty. SBA: Assignment 50 marks (week 6); March controlled test 50 marks (week 10). Cognitive levels: LO 30%, MO 50%, HO 20%.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "EMS Term 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-EMS-GR7",
+      "title": "Term 2",
+      "code": "CAPS-EMS-GR7-T2",
+      "description": "Term 2: Financial Literacy – Accounting Concepts (capital, assets, liability, income, expenses, profit, losses, budgets, savings, banking, financial records, transactions). SBA: Mid-year controlled test 100 marks (week 12, T1 30% + T2 70%).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-EMS-GR7-T2",
+      "title": "Financial Literacy: Accounting Concepts, Personal Finances, Budgets and Banking",
+      "code": "CAPS-EMS-GR7-T2-FINLITERACY",
+      "description": "Accounting concepts: capital (meaning, owner's investment in a business), assets (items owned by a person/business – fixed/current assets), liability (amounts owed to others – fixed/current liabilities), income (money received from selling goods/services), expenses (costs incurred in running a business), profit (income minus expenses, positive result), losses (expenses exceed income, negative result). Personal finances: personal income and personal expenses; personal budget (definition, importance, drawing up a personal budget); personal statement of net worth (assets minus liabilities). Savings: meaning and importance of saving; types of savings accounts; benefits of saving regularly; distinguishing between saving and investing. Banking: role of banks; types of accounts (savings account, current/cheque account); banking services (deposits, withdrawals, EFT, debit orders); reading a bank statement. Financial records: importance of keeping financial records; types of simple financial records; recording of personal income and expenses in a cash book; analysing transactions (effect on assets, liabilities, capital). Business income and expenses: simple income and expense statement for a small business; concept of a budget for a business; difference between a personal and business budget. SBA: Mid-year controlled test 100 marks (week 12, 90 minutes; T1 contributes 30%, T2 contributes 70%). Cognitive levels: LO 30%, MO 50%, HO 20%.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "EMS Term 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-EMS-GR7",
+      "title": "Term 3",
+      "code": "CAPS-EMS-GR7-T3",
+      "description": "Term 3: Entrepreneurship – The Entrepreneur and Starting a Business (definition, characteristics, skills, formal/informal businesses, SWOT analysis, advertising, budgeting for Entrepreneur's Day). SBA: Project 50 marks (weeks 9–10).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-EMS-GR7-T3",
+      "title": "Entrepreneurship: The Entrepreneur, Starting a Business, Advertising and Budgeting",
+      "code": "CAPS-EMS-GR7-T3-ENTREPRENEUR",
+      "description": "The entrepreneur: definition of an entrepreneur; characteristics of successful entrepreneurs (creativity, risk-taking, self-motivation, perseverance, problem-solving, leadership); skills required (communication, financial management, decision-making, time management). Types of businesses: formal businesses (registered, pay taxes, complies with legislation) vs informal businesses (unregistered, small scale, flexible); buying and selling business; producing/manufacturing business. Starting a business: identifying a need/want in the community; business idea generation; feasibility of the business idea; resources needed to start a business. SWOT analysis: definition of SWOT (Strengths, Weaknesses, Opportunities, Threats); application of SWOT to a business idea; how SWOT informs business decisions. Goal setting: difference between needs and wants; setting SMART goals; steps to achieving business goals. Advertising: concept of advertising (informing, persuading, reminding); advertising media (TV, radio, social media, newspapers, posters, leaflets); advertising principles – AIDA (Attention, Interest, Desire, Action); creating a simple advertisement. Budgeting for Entrepreneur's Day: drawing up a simple budget for a school business activity; fixed costs (rent, salaries) vs variable costs (raw materials, electricity); cost price calculation; selling price and profit. SBA: Project 50 marks (weeks 9–10). Cognitive levels: LO 30%, MO 50%, HO 20%.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "EMS Term 3", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-EMS-GR7",
+      "title": "Term 4",
+      "code": "CAPS-EMS-GR7-T4",
+      "description": "Term 4: The Economy – Production Process; Financial Literacy – Savings (personal savings, role of banks, savings account, community savings schemes). SBA: Year-end examination 100 marks (weeks 7–8, 90 minutes).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-EMS-GR7-T4",
+      "title": "The Economy: Production Process; Financial Literacy: Savings",
+      "code": "CAPS-EMS-GR7-T4-PRODUCTION",
+      "description": "The Economy – Production Process: definition of production (transformation of inputs into outputs/goods and services); inputs (natural resources/land, labour, capital, entrepreneurship); outputs (goods and services); sustainable use of resources in the production process (reducing waste, recycling, renewable energy); meaning of economic growth (increase in the production of goods and services over time); productivity (output per unit of input); role of technology in improving productivity and production. Financial Literacy – Savings: personal savings (meaning, importance of saving regularly, reasons to save: emergencies, future goals, investments); difference between saving and spending wisely; role of banks in encouraging and managing savings (savings accounts, interest earned); steps to opening a savings account (identity document, initial deposit, completing forms); community savings schemes (stokvels – meaning, types: grocery stokvel, savings stokvel, investment stokvel; advantages and disadvantages; how stokvels work). SBA: Year-end examination 100 marks (weeks 7–8, 90 minutes). Cognitive levels: LO 30%, MO 50%, HO 20%.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "EMS Term 4", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    }
+  ]
+}

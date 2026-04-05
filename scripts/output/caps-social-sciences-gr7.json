@@ -1,0 +1,144 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Senior Phase",
+      "code": "CAPS-SP",
+      "description": "Senior Phase covering Grades 7 to 9",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-SP",
+      "title": "Grade 7",
+      "code": "CAPS-GR7",
+      "description": "Grade 7",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR7",
+      "title": "Social Sciences",
+      "code": "CAPS-SOCIALSCIENCES-GR7",
+      "description": "Social Sciences for Grade 7, covering Geography and History",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR7",
+      "title": "Term 1",
+      "code": "CAPS-SOCIALSCIENCES-GR7-T1",
+      "description": "Term 1: Geography – Map Skills (Focus: the world); History – The Kingdom of Mali and the City of Timbuktu",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR7-T1",
+      "title": "Map Skills (Focus: the world)",
+      "code": "CAPS-SOCIALSCIENCES-GR7-T1-MAPSKILLS",
+      "description": "Map skills covering orientation, compass directions, local/street maps, sketching maps and explaining routes, distance and scale. Includes orientation for Grade 7, revising compass points and lat/long, using street guides, Google Maps, line and word scales, small and large-scale maps, calculating direct and indirect distances. SBA: Project – Local maps (50 marks).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "Geography Term 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR7-T1",
+      "title": "The Kingdom of Mali and the City of Timbuktu (14th Century)",
+      "code": "CAPS-SOCIALSCIENCES-GR7-T1-MALI",
+      "description": "Focus: The development of a rich economy and a learning centre of the kingdom of Mali long ago. Topics include trade across the Sahara Desert (camel caravans, goods exchanged), spread of Islam, the kingdom of Mali under Mansa Musa, construction of the Great Mosque, Leo Africanus' travels, Timbuktu as a trade and learning centre, Timbuktu manuscripts project, World Heritage Site. SBA: Test – Source-based questions and paragraph writing (50 marks).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "History Term 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR7",
+      "title": "Term 2",
+      "code": "CAPS-SOCIALSCIENCES-GR7-T2",
+      "description": "Term 2: Geography – Volcanoes, Earthquakes and Floods; History – The Transatlantic Slave Trade",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR7-T2",
+      "title": "Volcanoes, Earthquakes and Floods",
+      "code": "CAPS-SOCIALSCIENCES-GR7-T2-VOLCANOS",
+      "description": "Structure of the earth (core, mantle, crust), tectonic plates and plate movements, location and causes of volcanoes, location and causes of earthquakes (effects including injury, disease, displacement, tsunamis; reducing impact), causes and effects of floods (heavy rain, environmental factors, tsunamis), case study of a selected flood, reducing flood impact. SBA: Controlled test – Term 1: 15 marks, Term 2: 35 marks; map skills, source-based and paragraph writing (50 marks total).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "Geography Term 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR7-T2",
+      "title": "The Transatlantic Slave Trade",
+      "code": "CAPS-SOCIALSCIENCES-GR7-T2-SLAVETRADE",
+      "description": "Focus: The nature and impact of the slave trade between West Africa and the American South. Topics: West Africa before the European slave trade, nature of slavery in West Africa, plantations (tobacco, rice, sugar cane, cotton), reasons for slave labour, capture/transport/slave markets, slave culture and resistance (individual responses, rebellions – Nat Turner 1831, Joseph Cinque/Amistad Mutiny 1839, the Underground Railroad, Harriet Tubman, John Brown). SBA: Controlled test – Term 1: 15 marks, Term 2: 35 marks; no essay writing (50 marks total).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "History Term 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR7",
+      "title": "Term 3",
+      "code": "CAPS-SOCIALSCIENCES-GR7-T3",
+      "description": "Term 3: Geography – Population Growth and Change; History – Colonisation of the Cape 17th–18th Centuries",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR7-T3",
+      "title": "Population Growth and Change",
+      "code": "CAPS-SOCIALSCIENCES-GR7-T3-POPGROWTH",
+      "description": "Population concepts (birth rates, death rates, population growth rates, infant mortality rates, life expectancy), world population growth from 1 AD to present (line graph), developments affecting population growth (HIV/AIDS, TB, malaria, diarrhoea, Spanish flu pandemic vs COVID-19, economic status, conflict and wars, scientific developments, improved healthcare, sanitation, refrigeration). SBA: Test – data-handling, case study and paragraph writing (50 marks).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "Geography Term 3", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR7-T3",
+      "title": "Colonisation of the Cape 17th–18th Centuries",
+      "code": "CAPS-SOCIALSCIENCES-GR7-T3-CAPECOL",
+      "description": "Focus: Colonisation, expanding frontiers of Dutch settlement and immediate consequences at the Cape. Topics: Indigenous inhabitants, VOC (DEIC) at the Cape 1652, Dutch slave trade at the Cape (why/where/how slaves were brought, life as a slave, slave legacy including Islam and Afrikaans language, slave resistance), free burghers, Dutch and French Huguenot immigration, expanding European frontiers, trekboers, land dispossession, Genadendal 1738, William Bleek and Lucy Lloyd. SBA: Test – source-based questions, paragraph and essay writing (50 marks).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "History Term 3", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR7",
+      "title": "Term 4",
+      "code": "CAPS-SOCIALSCIENCES-GR7-T4",
+      "description": "Term 4: Geography – Natural Resources and Conservation in South Africa; History – Co-operation and Conflict on the Frontiers of the Cape Colony in the Early 19th Century",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR7-T4",
+      "title": "Natural Resources and Conservation in South Africa",
+      "code": "CAPS-SOCIALSCIENCES-GR7-T4-NATRESOURCES",
+      "description": "Natural resources on earth (water, air, soil), use and abuse of resources, concept of conservation, conservation areas including marine reserves (purpose, location, case study), community conservation projects, eco-tourism, water in South Africa (pie chart of users, availability and requirement, river health and catchment areas). SBA: End-of-year examination – Term 3: 15 marks, Term 4: 35 marks; source-based and paragraph writing (50 marks total).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "Geography Term 4", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR7-T4",
+      "title": "Co-operation and Conflict on the Frontiers of the Cape Colony in the Early 19th Century",
+      "code": "CAPS-SOCIALSCIENCES-GR7-T4-CAPEFRONTIER",
+      "description": "Focus: Colonisation, expanding frontiers of British settlement and immediate consequences at the Cape in the early 19th century. Topics: Arrival of the British, frontier wars on the eastern frontier, case study – Chief Maqoma (1798–1873) and Xhosa resistance, British immigration, abolition of slavery 1836, expanding trade on the northern frontier, the Kora and Griqua, Tswana trade, missionaries and traders, case study – Robert Moffat (1795–1883) at Kuruman. SBA: End-of-year examination – Term 3: 15 marks, Term 4: 35 marks (50 marks total).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "History Term 4", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    }
+  ]
+}

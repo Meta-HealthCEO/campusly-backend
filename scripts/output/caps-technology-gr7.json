@@ -1,0 +1,108 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Senior Phase",
+      "code": "CAPS-SP",
+      "description": "Senior Phase covering Grades 7 to 9",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-SP",
+      "title": "Grade 7",
+      "code": "CAPS-GR7",
+      "description": "Grade 7",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR7",
+      "title": "Technology",
+      "code": "CAPS-TECHNOLOGY-GR7",
+      "description": "Technology for Grade 7 covering design process, mechanical systems and control, structures, electrical systems, and processing through IDMEC methodology",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-TECHNOLOGY-GR7",
+      "title": "Term 1",
+      "code": "CAPS-TECHNOLOGY-GR7-T1",
+      "description": "Term 1: Design Process Skills, Mechanical Systems and Control (levers, linkages, pneumatics/hydraulics), Communication Skills (graphical communication), Making Skills. PAT 1 scenario: Jaws-of-Life rescue device.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TECHNOLOGY-GR7-T1",
+      "title": "Design Process Skills and Mechanical Systems and Control: Levers, Linkages, Pneumatics and Hydraulics",
+      "code": "CAPS-TECHNOLOGY-GR7-T1-MECHSYSTEMS",
+      "description": "PAT 1 scenario: Jaws-of-Life system for emergency rescue. IDMEC methodology. Simple mechanisms – Levers: mechanical advantage (quantitative, no moments), relationship between load, effort and pivot distance; first-class levers (characteristics, MA > 1, MA = 1, MA < 1); second-class levers (always give MA); third-class levers (never give MA); practical investigation – linked levers (scissors, pliers, office punch, nutcrackers, staplers, tweezers, complex linkages). Pneumatics and hydraulics: force transfer between equal and unequal syringes with air and water. Design skills: design brief, specifications, constraints, initial idea sketches, best design selection, materials, fitness-for-purpose (ergonomics, aesthetics, society, environment). Graphical communication: purpose of graphics, conventions (outlines, construction lines, hidden detail), free-hand sketching, working drawings (2D, one face), 3D oblique projection at 45°. Making: working model of hydraulic-syringe powered linked-lever rescue device (at minimum representing the Jaws-of-Life machine using plastic tubing, syringe(s) and cardboard). SBA: PAT 1 – Investigate (15 marks, weeks 4/5), Design (20 marks, week 7), Make (35 marks, weeks 8/9); Total 70 marks.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "Technology Term 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-TECHNOLOGY-GR7",
+      "title": "Term 2",
+      "code": "CAPS-TECHNOLOGY-GR7-T2",
+      "description": "Term 2: Structures (cell phone tower scenario), Design Skills, Evaluation Skills, Making Skills. Mid-year examination: 30 marks.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TECHNOLOGY-GR7-T2",
+      "title": "Structures",
+      "code": "CAPS-TECHNOLOGY-GR7-T2-STRUCTURES",
+      "description": "Scenario: cell phone towers built for stability, strength and rigidity. Definition and purpose of structures (contain, protect, support, span); classification: natural and man-made; types: shell, frame, solid. Case study: cell phone tower frame structures strengthened by triangulation (pylons, windmills, mine headgear); study photographs noting structural elements, reinforcing techniques, visual pollution, stability, base size, centre of gravity; class discussion on society and environment. Case studies 1 and 2: examining existing designs (school desk, FM radio/cell phone) and writing design briefs with specifications. Evaluate: advantages/disadvantages of landline vs mobile telephone. Action research: stiffening materials/structures (tubing, folding, triangulation). Design brief and initial idea sketches for a new cell phone tower (at minimum made of found materials like elephant grass or rolled paper dowels; must show triangular webs, gussets, internal cross-bracing; one design idea must disguise the tower to blend with environment). Evaluate: learners in groups evaluate individual design ideas; individual learners adapt their own designs. Making: working drawings (one face in 2D), choosing materials and tools, listing resources. Revision and consolidation. SBA: Mid-year examination (30 marks).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "Technology Term 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-TECHNOLOGY-GR7",
+      "title": "Term 3",
+      "code": "CAPS-TECHNOLOGY-GR7-T3",
+      "description": "Term 3: Electrical Systems and Control (electromagnet crane), Mechanical Systems and Control (cranks and pulleys). PAT 2 scenario: Scrap-metal dealer using electromagnetic crane.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TECHNOLOGY-GR7-T3",
+      "title": "Electrical Systems and Control: Electromagnet Crane; Mechanical Systems: Cranks and Pulleys",
+      "code": "CAPS-TECHNOLOGY-GR7-T3-ELECTROSYSTEMS",
+      "description": "PAT 2 scenario: scrap-metal dealer sorting magnetic and non-magnetic metals using a crane with an electromagnet. Investigate: magnetism (permanent magnets – bar and horseshoe, magnetic and non-magnetic metals), case study: recycling scrap metals. Simple electric circuits: energy source, switch, conductor, light bulb/buzzer; circuit symbols; practical circuit construction; circuit diagrams. Electromagnet: winding insulated copper wire around an iron nail (solenoid), magnetic field amplified by iron core, switching off causes field to fade. Design brief, specifications and constraints for crane with electromagnet; sketch two possible designs; circuit diagram (with indicator light). Mechanical Systems – cranks and pulleys: the crank (adaptation of second-class lever), the pulley (wheel and axle), mechanical advantage revision, strengthening frame structures. Drawing: 3D oblique technique, line types, scale, dimensions; flow chart of manufacture sequence. Making: working model crane (minimum – simple materials like elephant grass or rolled paper dowels; must show reinforcing techniques; mechanisms must function; crane should pivot or raise/lower arm; electromagnet: switch, indicator light, strong enough to pick up steel paper clips/coins/nails). Evaluate: learners develop rubrics; teams evaluate other teams' models; presentations. SBA: PAT 2 – Investigate (15 marks, weeks 1/2), Design (20 marks, weeks 6/7), Make (35 marks, weeks 8/9); Total 70 marks.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "Technology Term 3", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-TECHNOLOGY-GR7",
+      "title": "Term 4",
+      "code": "CAPS-TECHNOLOGY-GR7-T4",
+      "description": "Term 4: Processing (food, clothing, emergency shelters), Investigation Skills, Impact of Technology, Indigenous Technology. End-of-year examination: 30 marks.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TECHNOLOGY-GR7-T4",
+      "title": "Processing: Food, Clothing Materials and Emergency Shelters; Impact of Technology and Indigenous Technology",
+      "code": "CAPS-TECHNOLOGY-GR7-T4-PROCESSING",
+      "description": "Investigate emergency situations leading to refugees: situations causing refugees, initial problems, needs for shelter, food and water. Processing food – Emergency food: types of food for a refugee camp, design brief for food for 100 refugees, design and make a nutritious meal, evaluate for flavour, texture and nutritional value. Investigate clothing: textiles used by emergency services (fire department, NSRI). Scenario: emergency shelters for disaster victims (sturdy, waterproof, easy to erect, house family of six for a month). Design and make a simple emergency shelter; health and safety. Indigenous technology: investigate materials and building techniques used by indigenous people in rural South Africa (readily available, appropriate, environmentally friendly). Investigate: chemicals that waterproof canvas; burning characteristics of various textiles. Design brief for textile for emergency shelter; sketch design ideas for an emergency shelter that can be transported and erected. SBA: End-of-year examination (30 marks).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "Technology Term 4", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    }
+  ]
+}

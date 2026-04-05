@@ -1,0 +1,144 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Senior Phase",
+      "code": "CAPS-SP",
+      "description": "Senior Phase covering Grades 7 to 9",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-SP",
+      "title": "Grade 8",
+      "code": "CAPS-GR8",
+      "description": "Grade 8",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR8",
+      "title": "Social Sciences",
+      "code": "CAPS-SOCIALSCIENCES-GR8",
+      "description": "Social Sciences for Grade 8, covering Geography and History",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR8",
+      "title": "Term 1",
+      "code": "CAPS-SOCIALSCIENCES-GR8-T1",
+      "description": "Term 1: Geography – Maps and Globes; History – The Industrial Revolution in Britain and Southern Africa from 1860",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR8-T1",
+      "title": "Maps and Globes",
+      "code": "CAPS-SOCIALSCIENCES-GR8-T1-MAPSGLOBES",
+      "description": "Maps and atlases: kinds of scale (world, regional, local), line/word/ratio scales, calculating distances (global and South Africa), locating current events on a map. The globe: latitude and longitude (degrees and minutes), atlas index, hemispheres, earth's rotation (day and night), world time zones and international date line, South African Standard Time, earth's revolution (equinox, solstice, angle of midday sun, seasonal changes). Satellite images: how used, appearance, information (water, vegetation, land use, cloud patterns). SBA: Test – map skills (50 marks). Cognitive levels: LO 30%, MO 50%, HO 20%.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "Geography Term 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR8-T1",
+      "title": "The Industrial Revolution in Britain and Southern Africa from 1860",
+      "code": "CAPS-SOCIALSCIENCES-GR8-T1-INDREV",
+      "description": "Focus: Changes during the Industrial Revolution in Britain and the beginning of the Industrial Revolution in South Africa brought about by diamond mining. Topics: types of revolutions, economy before the Industrial Revolution, social changes (urbanisation, working class, mines/factories, child labour, labour resistance, trade unions), increased power of Britain/Western Europe; Southern Africa before 1860 (map, indentured labour from India to Natal, passenger Indians); diamond mining in Kimberley from 1867 (British takeover of Griqualand West, monopoly development, black claim-owners, Cecil John Rhodes and Barnato, regulating supply). SBA: Test – source-based questions and paragraph writing (50 marks). No essay writing. LO 30%, MO 50%, HO 20%.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "History Term 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR8",
+      "title": "Term 2",
+      "code": "CAPS-SOCIALSCIENCES-GR8-T2",
+      "description": "Term 2: Geography – Climate Regions; History – The Mineral Revolution in South Africa",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR8-T2",
+      "title": "Climate Regions",
+      "code": "CAPS-SOCIALSCIENCES-GR8-T2-CLIMATE",
+      "description": "Factors influencing temperature and rainfall and South Africa's climate: distance from equator (latitude), distance from sea, altitude, ocean currents, mountains (relief); comparing cities (Mbombela/George, Johannesburg/Cape Town, Umtata/Durban, Durban/Port Nolloth). Differences between weather and climate; elements of weather (temperature, humidity, winds, precipitation). Climate regions of the world: tropical, subtropical, temperate, desert, semi-desert, continental, polar, Mediterranean, tundra, high mountain; bar and line graphs; links between climate regions and factors. SBA: Controlled test – Term 1: 25 marks, Term 2: 50 marks; map skills, source-based questions, paragraph and essay writing (75 marks total). LO 30%, MO 50%, HO 20%.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "Geography Term 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR8-T2",
+      "title": "The Mineral Revolution in South Africa",
+      "code": "CAPS-SOCIALSCIENCES-GR8-T2-MINERALREV",
+      "description": "Focus: Changing balance of power in South Africa brought about by gold-mining and the foundations of racial segregation. Topics: Britain/diamond-mining/increasing labour control (migrant labour, close compounds), further land dispossession and defeat of African kingdoms (Xhosa 1878, Pedi and Zulu 1879); deep-level gold-mining on the Witwatersrand 1886 (Randlords and Chamber of Mines, impact of migrant labour on families, skilled/unskilled white workers, anti-Indian legislation, forms of labour resistance, city of Johannesburg); mineral revolution as turning point (defeat of Boer Republics 1902, APO 1902, TIC 1903, Bambatha Rebellion 1906, Union 1910, SANNC formation 1912, Satyagraha Campaign 1913–1914, Land Act 1913). SBA: Controlled test – Term 1: 35 marks, Term 2: 40 marks; source-based questions, paragraph and essay writing (75 marks total). LO 30%, MO 50%, HO 20%.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "History Term 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR8",
+      "title": "Term 3",
+      "code": "CAPS-SOCIALSCIENCES-GR8-T3",
+      "description": "Term 3: Geography – Settlement; History – The Scramble for Africa",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR8-T3",
+      "title": "Settlement",
+      "code": "CAPS-SOCIALSCIENCES-GR8-T3-SETTLEMENT",
+      "description": "Rural settlements (isolated farmsteads, hamlet, village; economic activities: farming, mining, forestry, fishing). Urban settlements (land use zones: CBD, light/heavy industry, residential areas – high/middle/low income, shopping centres, services, recreation). Land use on aerial photographs and large-scale maps (oblique and vertical aerial photographs, natural and constructed features, identifying land uses). Urbanisation (push and pull forces of migration in Africa with focus on South Africa, review from Grade 6, overview including apartheid population controls, social issues: housing, service provision, healthcare, education). SBA: Project (50 marks).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "Geography Term 3", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR8-T3",
+      "title": "The Scramble for Africa",
+      "code": "CAPS-SOCIALSCIENCES-GR8-T3-SCRAMBLE",
+      "description": "Focus: Causes and results of European colonisation of the African continent, with special focus on the Ashanti kingdom (colonised by the British as the Gold Coast, today Ghana). Topics: European colonisation of Africa in the late 19th century (Berlin Conference 1884, map of Africa showing colonising countries, causes of colonisation, patterns, why European powers colonised quickly, results of colonisation); case study: the Ashanti Kingdom (early contact with European traders, British colonisation of the Gold Coast, results for Ashanti and Britain). SBA: Test – source-based questions and paragraph writing (30 marks), essay writing (20 marks); 50 marks total. LO 30%, MO 50%, HO 20%.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "History Term 3", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR8",
+      "title": "Term 4",
+      "code": "CAPS-SOCIALSCIENCES-GR8-T4",
+      "description": "Term 4: Geography – Transport and Trade; History – World War I (1914–1918)",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR8-T4",
+      "title": "Transport and Trade",
+      "code": "CAPS-SOCIALSCIENCES-GR8-T4-TRANSPORT",
+      "description": "Trade and transport around the world: reasons for trade, links between trade and transport, different modes of transport (sea, air, road, rail, pipelines). Trade and transport in South Africa: major roads/railways/airports/harbours (map), case study of a selected South African harbour (reasons for location, main exports/imports, specialised ships, links with other transport). People and transport in urban areas: advantages/disadvantages of road and rail, requirements for future transport networks, public transport systems (buses, trains, minibus taxis), private modes (cars, bicycles), transport issues (cost, congestion, pollution), public transit strategies (rapid transport, subsidised public transport, bus/cycle lanes, park and ride, car-free zones). SBA: End-of-year examination – Term 3: 35 marks, Term 4: 40 marks; source-based questions, paragraph and essay writing (75 marks total). LO 30%, MO 50%, HO 20%.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "Geography Term 4", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR8-T4",
+      "title": "World War I (1914–1918)",
+      "code": "CAPS-SOCIALSCIENCES-GR8-T4-WWI",
+      "description": "Focus: Causes of World War I and aspects of people's experience at home and at war. Topics: Reasons for WWI (nationalism, industrial economies, control of seas, colonisation and empires); immediate cause (assassination of Archduke of Austria at Sarajevo); Allied powers vs Central powers; conscription and propaganda in Britain; conscientious objectors; trench warfare on the Western Front; music and poetry; WWI and South Africa (Battle of Delville Wood 1919, Sinking of Mendi 1917); women in Britain during WWI (changing roles in the workplace, Emmeline Pankhurst and campaign for women's vote); defeat of Germany and Treaty of Versailles. SBA: End-of-year examination – Term 3: 35 marks (source-based questions 27 marks, paragraph writing 8 marks), Term 4: 40 marks (source-based 20 marks, essay writing 20 marks); 75 marks total. LO 30%, MO 50%, HO 20%.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "History Term 4", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    }
+  ]
+}

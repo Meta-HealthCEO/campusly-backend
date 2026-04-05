@@ -1,0 +1,320 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Senior Phase",
+      "code": "CAPS-SP",
+      "description": "Senior Phase (Grades 7-9) of the South African CAPS curriculum.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-SP",
+      "title": "Grade 8",
+      "code": "CAPS-GR8",
+      "description": "Grade 8 of the South African CAPS curriculum.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR8",
+      "title": "Natural Sciences",
+      "code": "CAPS-NATSCIENCES-GR8",
+      "description": "Natural Sciences for Grade 8 as per the South African CAPS curriculum.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-NATSCIENCES-GR8",
+      "title": "Term 1 — Life and Living",
+      "code": "CAPS-NATSCIENCES-GR8-T1",
+      "description": "Grade 8 Natural Sciences Term 1: Life and Living — Photosynthesis and Respiration, Interactions and Interdependence within the Environment, Micro-organisms.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR8-T1",
+      "title": "Photosynthesis and Respiration",
+      "code": "CAPS-NATSCIENCES-GR8-T1-PR",
+      "description": "Photosynthesis: plants use carbon dioxide (from air), water (from soil) and energy from the Sun to produce glucose through chemical reactions; equation: carbon dioxide + water (with chlorophyll and sunlight) → glucose + oxygen. Plants change glucose into starch, cellulose and other chemical compounds for growth and reproduction. Respiration: the process by which energy is released from food in all living organisms; equation: glucose + oxygen → energy + carbon dioxide + water.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR8-T1",
+      "title": "Interactions and Interdependence within the Environment",
+      "code": "CAPS-NATSCIENCES-GR8-T1-IIE",
+      "description": "Introduction to ecology: study of interactions among organisms and the physical and chemical environment at populations, communities, ecosystem and biosphere levels. Ecosystems: defined by network of interactions among organisms and their environment. Feeding relationships: producers, consumers (herbivores, carnivores, omnivores, scavengers, insectivores), decomposers. Energy flow: food chains and food webs; trophic levels; energy transfer and loss at each level. Balance in an ecosystem: natural and human factors causing imbalance. Adaptations: structural, functional and behavioural characteristics enabling survival. Conservation of the ecosystem.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [2, 3, 4, 5, 6, 7],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR8-T1",
+      "title": "Micro-organisms",
+      "code": "CAPS-NATSCIENCES-GR8-T1-MO",
+      "description": "Types of micro-organisms: Viruses, Bacteria, Protista and Fungi — too small to see with the naked eye. Harmful micro-organisms: cause diseases such as TB (bacteria), AIDS (virus), malaria (protist); disease-causing organisms found almost everywhere; waterborne diseases. Prevention of spread: washing hands and sterilising. Useful micro-organisms: play essential role in ecosystems by decomposing dead plant and animal matter; used in making foods (yoghurt) and medicines (penicillin); contributions of Louis Pasteur.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [7, 8, 9],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-NATSCIENCES-GR8",
+      "title": "Term 2 — Matter and Materials",
+      "code": "CAPS-NATSCIENCES-GR8-T2",
+      "description": "Grade 8 Natural Sciences Term 2: Matter and Materials — Introduction to the Periodic Table, Atoms, Particle Model of Matter, Chemical Reactions.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR8-T2",
+      "title": "Introduction to the Periodic Table of Elements",
+      "code": "CAPS-NATSCIENCES-GR8-T2-PT",
+      "description": "Arrangement of elements: Periodic Table is a classification system; elements arranged into metals, semi-metals and non-metals. Properties of metals, semi-metals and non-metals.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [1],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR8-T2",
+      "title": "Atoms",
+      "code": "CAPS-NATSCIENCES-GR8-T2-ATOM",
+      "description": "Atoms — building blocks of matter: all matter made up of tiny particles called atoms; an element is made up of atoms of the same kind; sub-atomic particles (protons, neutrons, electrons); the nucleus contains protons and neutrons; electrons move around the nucleus. Pure substances: elements (one kind of atom) and compounds. Elements and compounds: elements listed on the Periodic Table; compounds formed by chemical bonding of two or more different elements in a fixed ratio; compounds can be decomposed by heating or electrolysis. Mixtures of elements and compounds: separated by physical means; compounds separated by chemical means.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [1, 2, 3],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR8-T2",
+      "title": "Particle Model of Matter",
+      "code": "CAPS-NATSCIENCES-GR8-T2-PMM",
+      "description": "The particle model of matter explains that all matter (solids, liquids and gases) is made up of particles. Arrangement of particles in solids (closely packed, regular, strong forces), liquids (loosely arranged, can move, weaker forces) and gases (no particular arrangement, move very fast, extremely weak forces). Diffusion: particles in liquids and gases spread from high- to low-concentration areas. Change of state: heating and cooling cause phase changes. Density, mass and volume: density describes amount of mass in a given volume; gases less dense than liquids, liquids less dense than solids (water exception). Expansion and contraction of materials. Pressure in gases.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [3, 4, 5, 6, 7],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR8-T2",
+      "title": "Chemical Reactions",
+      "code": "CAPS-NATSCIENCES-GR8-T2-CR",
+      "description": "Reactants and products: substances that react are reactants; substances produced are products; re-arrangement of atoms takes place; chemical bonds break and new bonds form. Examples of chemical reactions: fermentation in brewing (producing carbon dioxide and ethanol).",
+      "order": 4,
+      "metadata": {
+        "weekNumbers": [8],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-NATSCIENCES-GR8",
+      "title": "Term 3 — Energy and Change",
+      "code": "CAPS-NATSCIENCES-GR8-T3",
+      "description": "Grade 8 Natural Sciences Term 3: Energy and Change — Static Electricity, Energy Transfer in Electrical Systems, Series and Parallel Circuits, Visible Light.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR8-T3",
+      "title": "Static Electricity",
+      "code": "CAPS-NATSCIENCES-GR8-T3-SE",
+      "description": "Friction (rubbing) between certain materials transfers electrons between materials; negative charge on one surface and positive on the other; like charges repel, unlike charges attract; discharge of electrons causes sparks and shocks of static electricity.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [1],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR8-T3",
+      "title": "Energy Transfer in Electrical Systems",
+      "code": "CAPS-NATSCIENCES-GR8-T3-ETES",
+      "description": "Circuits and current electricity: a circuit is a system for transferring electrical energy; components include conducting wires, switches, cells/batteries, resistors; resistors resist/oppose flow of electrical current; effects of electric current including heating, magnetism and electrolysis. Effects of electric current: heating effect; electromagnetic effect (electromagnets); electrolysis (breaking down copper(II) chloride solution).",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [2, 3, 4],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR8-T3",
+      "title": "Series and Parallel Circuits",
+      "code": "CAPS-NATSCIENCES-GR8-T3-SPC",
+      "description": "Series circuits: provide only one pathway for current; current is the same everywhere; adding resistors in series decreases overall current. Parallel circuits: provide two or more pathways for current; overall current increases when more resistors are added in parallel.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [4, 5],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR8-T3",
+      "title": "Visible Light",
+      "code": "CAPS-NATSCIENCES-GR8-T3-VL",
+      "description": "Radiation of light: light emitted from luminous objects; travels in straight lines at 300 000 km/s. Spectrum of visible light: white light consists of violet, indigo, blue, green, yellow, orange and red. Opaque and transparent substances; shadows. Absorption of light: absorbed differently by different materials; colour perception. Reflection of light: angle of incidence equals angle of reflection; smooth vs rough surfaces. Seeing light. Refraction of light: light changes direction when entering transparent substances; triangular prism disperses white light; lens focuses light.",
+      "order": 4,
+      "metadata": {
+        "weekNumbers": [5, 6, 7, 8],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-NATSCIENCES-GR8",
+      "title": "Term 4 — Planet Earth and Beyond",
+      "code": "CAPS-NATSCIENCES-GR8-T4",
+      "description": "Grade 8 Natural Sciences Term 4: Planet Earth and Beyond — The Solar System, Beyond the Solar System, Looking into Space.",
+      "order": 4,
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR8-T4",
+      "title": "The Solar System",
+      "code": "CAPS-NATSCIENCES-GR8-T4-SS",
+      "description": "The Sun: produces large amounts of heat and light through nuclear reactions where hydrogen changes to helium. Objects around the Sun: eight planets and their moons, rocky asteroids, outer dwarf planets, icy objects in the Kuiper Belt and Oort Cloud; all planets and objects orbit the Sun in the same direction. Earth's position: third planet from the Sun; only planet known to support life due to ideal temperature range, liquid water and sunlight for energy. The Milky Way Galaxy: our Solar System is in the Milky Way Galaxy; a galaxy is a collection of stars held together by their mutual gravity; the Milky Way is spiral-shaped.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [1, 2, 3],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR8-T4",
+      "title": "Beyond the Solar System",
+      "code": "CAPS-NATSCIENCES-GR8-T4-BSS",
+      "description": "Our nearest star: Alpha Centauri is 4.2 light years away. Light years, light hours and light minutes: used to measure distances to stars and other objects beyond the Solar System. Beyond the Milky Way Galaxy: our Milky Way Galaxy is one of billions of galaxies; the observable Universe is estimated to be about 28 billion light years; galaxies have various shapes and sizes.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [3, 4, 5],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR8-T4",
+      "title": "Looking into Space",
+      "code": "CAPS-NATSCIENCES-GR8-T4-LS",
+      "description": "Early viewing of space: stars and constellations visible in night sky; different cultures have named constellations. Telescopes: people can see more details with a telescope; different types include optical telescopes (SALT, Hubble Space Telescope) using lenses or mirrors, and radio telescopes (SKA) receiving radio waves; good conditions for looking into space include cloudless skies with limited light and air pollution.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [6, 7],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    }
+  ]
+}

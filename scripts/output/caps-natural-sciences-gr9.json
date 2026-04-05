@@ -1,0 +1,425 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Senior Phase",
+      "code": "CAPS-SP",
+      "description": "Senior Phase (Grades 7-9) of the South African CAPS curriculum.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-SP",
+      "title": "Grade 9",
+      "code": "CAPS-GR9",
+      "description": "Grade 9 of the South African CAPS curriculum.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR9",
+      "title": "Natural Sciences",
+      "code": "CAPS-NATSCIENCES-GR9",
+      "description": "Natural Sciences for Grade 9 as per the South African CAPS curriculum.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-NATSCIENCES-GR9",
+      "title": "Term 1 — Life and Living",
+      "code": "CAPS-NATSCIENCES-GR9-T1",
+      "description": "Grade 9 Natural Sciences Term 1: Life and Living — Cells as Basic Units of Life, Overview of Systems in the Human Body, Human Reproduction System, Digestive System.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR9-T1",
+      "title": "Cells as Basic Units of Life",
+      "code": "CAPS-NATSCIENCES-GR9-T1-CELL",
+      "description": "Cell structure: the cell is the basic structural and functional unit of all living organisms; plant and animal cells have a cell membrane, cytoplasm, nucleus and organelles such as mitochondria, vacuoles and chloroplasts; the cell membrane, cytoplasm, nucleus (with DNA) and mitochondria and their functions. Differences between plant and animal cells: plant cells have rigid cellulose cell walls, large vacuoles and chloroplasts. Cells in tissues, organs and systems: cells adapted to specific functions form tissues; tissues form organs; organs form systems; stem cells.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR9-T1",
+      "title": "Overview of Systems in the Human Body",
+      "code": "CAPS-NATSCIENCES-GR9-T1-BODY",
+      "description": "Body systems: musculoskeletal system (muscles produce movement, skeleton provides support), excretory system (removes waste from blood, regulates body fluids; kidneys, bladder, ureters), nervous system (receives and helps the body respond to stimuli; brain, spinal cord, nerves). Blood circulatory system: circulates blood between heart and lungs and rest of body; arteries, veins, capillaries. Respiratory system: supplies oxygen and removes carbon dioxide; breathing, gaseous exchange (diffusion), respiration. Breathing, gaseous exchange, blood circulation and respiration described.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [2, 3, 4],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR9-T1",
+      "title": "Human Reproduction System",
+      "code": "CAPS-NATSCIENCES-GR9-T1-HREP",
+      "description": "Reproductive system: produces sex cells for continuation of the species; processes include growth, cell division, maturation, ovulation, menstruation, fertilisation and implantation; health issues include infertility and STDs. Purpose of puberty: hormones trigger sexual organ maturation; testosterone and oestrogen cause secondary sexual characteristics. Reproductive organs: male (penis, vas deferens, testes, urethra) and female (vagina, uterus, ovaries, oviducts). Stages of reproduction: ovulation, uterus preparation, menstruation or fertilisation, pregnancy (40 weeks), contraception and HIV/AIDS prevention.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [4, 5],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR9-T1",
+      "title": "Digestive System",
+      "code": "CAPS-NATSCIENCES-GR9-T1-DIG",
+      "description": "Digestive system: breaks down food into dissolved nutrients absorbed into the blood stream; processes include ingestion, digestion, absorption and egestion; alimentary canal (mouth, oesophagus, stomach, intestines, liver, rectum, anus). Healthy diet: different components including proteins, carbohydrates, fats, vitamins, minerals and fibre. Digestion: mechanical (physical breaking of food) and chemical (mixing food with digestive enzymes and hydrochloric acid). Health issues: ulcers, anorexia nervosa, diarrhoea and liver cirrhosis.",
+      "order": 4,
+      "metadata": {
+        "weekNumbers": [6, 7],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-NATSCIENCES-GR9",
+      "title": "Term 2 — Matter and Materials",
+      "code": "CAPS-NATSCIENCES-GR9-T2",
+      "description": "Grade 9 Natural Sciences Term 2: Matter and Materials — Compounds, Chemical Reactions, Reaction of Metals with Oxygen, Reactions of Non-metals with Oxygen, Acids and Bases.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR9-T2",
+      "title": "Compounds",
+      "code": "CAPS-NATSCIENCES-GR9-T2-COMP",
+      "description": "Revise and review concepts from Grade 8 focusing on compounds. The Periodic Table: elements classified into metals, non-metals and semi-metals; elements in groups have similar chemical properties; each element has atomic number, mass number and symbol; formulae/ratios of compounds. Names of compounds: named according to their elements (e.g. sodium chloride, carbon dioxide). Chemical equations to represent reactions: models and symbols; balanced equations; conservation of atoms.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [1],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR9-T2",
+      "title": "Chemical Reactions",
+      "code": "CAPS-NATSCIENCES-GR9-T2-CR",
+      "description": "Chemical equations to represent reactions: chemical reactions represented by models and symbols; balanced chemical equations (e.g. C + O₂ → CO₂, 2H₂ + O₂ → 2H₂O); the total number and type of atoms of the reactants is the same as in the products; examples include formation of iron oxide (4Fe + 3O₂ → 2Fe₂O₃) and magnesium oxide (2Mg + O₂ → 2MgO) and copper oxide (2Cu + O₂ → 2CuO).",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [1],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR9-T2",
+      "title": "Reaction of Metals with Oxygen",
+      "code": "CAPS-NATSCIENCES-GR9-T2-RMO",
+      "description": "General reaction of metals with oxygen: metal + oxygen → metal oxide. Reaction of iron with oxygen: iron + oxygen → iron oxide (Fe + O₂ → Fe₂O₃). Reaction of magnesium with oxygen: magnesium + oxygen → magnesium oxide (Mg + O₂ → MgO). Formation of rust: slow chemical reaction of iron, oxygen and moisture to form iron oxide; ways to prevent rusting (painting, electroplating with chromium or zinc).",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [2, 3],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR9-T2",
+      "title": "Reactions of Non-metals with Oxygen",
+      "code": "CAPS-NATSCIENCES-GR9-T2-RNMO",
+      "description": "General reaction of non-metals with oxygen: non-metal + oxygen → non-metal oxide. Reaction of carbon with oxygen: carbon + oxygen → carbon dioxide (C + O₂ → CO₂). Reaction of sulfur with oxygen: sulfur + oxygen → sulfur dioxide (S + O₂ → SO₂).",
+      "order": 4,
+      "metadata": {
+        "weekNumbers": [3],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR9-T2",
+      "title": "Acids, Bases and pH Value",
+      "code": "CAPS-NATSCIENCES-GR9-T2-ABP",
+      "description": "pH value: measures how acidic or basic a substance is on a scale of 1 to 14; acids have pH 1 to 7; bases have pH 7 to 14; neutral substances have pH 7. Indicators: universal indicator, litmus paper, red cabbage water, turmeric water, bromothymol blue, phenolphthalein. Neutralisation and pH: acids and bases react together (neutralisation); non-metal oxides tend to be acidic; bases include metal oxides, metal hydroxides and metal carbonates. Reactions of acids with bases Part I (neutralisation) and Part II (acid + metal oxide → salt + water; e.g. HCl + MgO → MgCl₂ + H₂O). Applications: acid rain; limestone used in agriculture.",
+      "order": 5,
+      "metadata": {
+        "weekNumbers": [3, 4, 5],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-NATSCIENCES-GR9",
+      "title": "Term 3 — Energy and Change",
+      "code": "CAPS-NATSCIENCES-GR9-T3",
+      "description": "Grade 9 Natural Sciences Term 3: Energy and Change — Forces, Electric Cells as Energy Systems, Resistance, Series and Parallel Circuits, Safety with Electricity, Energy and the National Electricity Grid, Cost of Electrical Power.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR9-T3",
+      "title": "Forces",
+      "code": "CAPS-NATSCIENCES-GR9-T3-FORCE",
+      "description": "Types of forces: a force is a push or pull (or twist) measured in newtons (N); contact forces and field forces (non-contact forces). Gravitational force: force of attraction between objects with mass; decreases as distance increases; weight measured in newtons; measured differently at different locations. Magnetic force: magnets attract magnetic substances (iron, steel, cobalt, nickel); opposite poles attract, same poles repel; Earth has a magnetic field. Electrostatic force: caused by loss or gain of electrons during rubbing; like charges repel, unlike charges attract; lightning is a massive discharge of charge.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR9-T3",
+      "title": "Electric Cells as Energy Systems",
+      "code": "CAPS-NATSCIENCES-GR9-T3-CELLS",
+      "description": "A cell is a system in which chemical reactions cause the flow of electricity through an external circuit. Cells are a source of electricity. A battery is a group of cells connected together.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [2],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR9-T3",
+      "title": "Resistance",
+      "code": "CAPS-NATSCIENCES-GR9-T3-RES",
+      "description": "Uses of resistors: conductors heat up when current passes; a resistor controls current or provides useful energy transfer. Factors affecting resistance: type of material, thickness (thinner wires have more resistance), length (longer wires have more resistance), temperature (hotter metals have higher resistance).",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [2, 3, 4],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR9-T3",
+      "title": "Series and Parallel Circuits",
+      "code": "CAPS-NATSCIENCES-GR9-T3-SPC",
+      "description": "Series circuits: cells connected in series — total voltage is sum of individual voltages; resistors connected in series — total voltage across battery equals sum of voltages across resistors; current is the same at any point; total current decreases with each resistor added. Parallel circuits: cells of same voltage connected in parallel — voltage is the same as one cell; resistors connected in parallel — voltage is same across each resistor; total current through battery equals sum of currents through resistors; total current increases with each resistor added in parallel.",
+      "order": 4,
+      "metadata": {
+        "weekNumbers": [4, 5],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR9-T3",
+      "title": "Safety with Electricity",
+      "code": "CAPS-NATSCIENCES-GR9-T3-SAFE",
+      "description": "Safety practices: circuit breakers, fuses and earth leakage systems are safety devices; 3-pin plug has live wire, neutral wire and earth wire; earth wire safely discharges charge if a fault occurs; illegal connections to ESKOM mains are dangerous and regarded as energy theft.",
+      "order": 5,
+      "metadata": {
+        "weekNumbers": [5],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR9-T3",
+      "title": "Energy and the National Electricity Grid",
+      "code": "CAPS-NATSCIENCES-GR9-T3-GRID",
+      "description": "Electricity generation: power stations use coal, nuclear fuel, wind, hydroelectricity or other sources to boil water; steam turns turbines which turn generators. Nuclear power in South Africa: Koeberg uses radioactive fuel; nuclear fission produces heat; spent nuclear fuel remains radioactive for many years. National electricity grid: a network of interacting parts; power stations feed electricity at high voltages into grid; transformers step down voltage for local distribution; 15% energy wasted due to heating.",
+      "order": 6,
+      "metadata": {
+        "weekNumbers": [5, 6],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR9-T3",
+      "title": "Cost of Electrical Power",
+      "code": "CAPS-NATSCIENCES-GR9-T3-COST",
+      "description": "Electrical power is the rate of electrical energy supply measured in watts (W) or kilowatts (kW). Consumers pay for the quantity of power they use measured in kilowatt hours (kWh); cost = power rating × number of hours × unit price. Energy consumption of different appliances varies; alternative systems such as solar heating panels.",
+      "order": 7,
+      "metadata": {
+        "weekNumbers": [6, 7],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-NATSCIENCES-GR9",
+      "title": "Term 4 — Planet Earth and Beyond",
+      "code": "CAPS-NATSCIENCES-GR9-T4",
+      "description": "Grade 9 Natural Sciences Term 4: Planet Earth and Beyond — The Earth as a System, Lithosphere, Mining of Mineral Resources, Atmosphere, Birth/Life/Death of Stars.",
+      "order": 4,
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR9-T4",
+      "title": "The Earth as a System",
+      "code": "CAPS-NATSCIENCES-GR9-T4-EAS",
+      "description": "Spheres of the Earth: the Earth is a complex system where all parts (spheres) interact; four spheres interact on or near the Earth's surface — lithosphere (solid rock and soil), hydrosphere (water in all forms), atmosphere (layer of gases) and biosphere (all living plants and animals and their interactions with rocks, soil, air and water).",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [1],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR9-T4",
+      "title": "Lithosphere",
+      "code": "CAPS-NATSCIENCES-GR9-T4-LITH",
+      "description": "The Earth consists of four concentric layers: inner core, outer core, mantle and crust. The lithosphere has three layers: solid outermost part of mantle, the crust and the soil. Different combinations of elements and compounds form minerals. The rock cycle: continuous process in which rocks form, are broken down and re-form over long periods; three rock types — igneous, sedimentary and metamorphic; explained in steps from magma through cooling, weathering, erosion, sedimentation and metamorphism.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [1, 2, 3],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR9-T4",
+      "title": "Mining of Mineral Resources",
+      "code": "CAPS-NATSCIENCES-GR9-T4-MIN",
+      "description": "Extracting ores: people extract valuable minerals from the lithosphere; rock with high concentrations of a valuable mineral is called an ore; ore is removed by mining; some minerals can be used in their natural form (sand, potash, diamonds). Refining minerals: some require chemical or physical processes to extract the required material; iron and copper extraction. Mining in South Africa: large scale mining activity; significant environmental impacts including creation of mine dumps, pollution of water resources, damage to cultural and heritage sites.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [3, 4],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR9-T4",
+      "title": "Atmosphere",
+      "code": "CAPS-NATSCIENCES-GR9-T4-ATM",
+      "description": "The atmosphere is a mixture of gases (air: 78% nitrogen, 21% oxygen, less than 1% carbon dioxide, water vapour and other gases). Four layers: troposphere (sea level to about 10 km, where weather occurs and all animals and plants live), stratosphere (10–50 km, includes ozone layer absorbing UV radiation), mesosphere (50–80 km, burning rocks form shooting stars), thermosphere (above 80 km). The greenhouse effect: natural phenomenon warming the atmosphere; greenhouse gases (CO₂, water vapour, methane) trap ultraviolet radiation; global warming leads to climate change, rising sea levels, food shortages and mass extinctions.",
+      "order": 4,
+      "metadata": {
+        "weekNumbers": [4, 5, 6],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NATSCIENCES-GR9-T4",
+      "title": "Birth, Life and Death of Stars",
+      "code": "CAPS-NATSCIENCES-GR9-T4-STARS",
+      "description": "Birth of a star: stars form inside huge clouds of gas and dust called nebulae; nebulae collapse under gravity; as they contract, temperature rises until nuclear fusion reaction begins, changing hydrogen to helium and radiating energy. Life of a star: stars change their appearance over billions of years; blue stars are hotter and younger than red stars; our Sun is about halfway through its life cycle — a medium-sized yellow star with a lifespan of about 9 billion years; stars change hydrogen to helium for most of their life. Death of a star: when nuclear fuel runs out, stars like the Sun swell into a red giant then contract into a white dwarf; outer gases ejected into space form a planetary nebula.",
+      "order": 5,
+      "metadata": {
+        "weekNumbers": [6, 7],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    }
+  ]
+}

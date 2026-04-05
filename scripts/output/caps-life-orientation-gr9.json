@@ -1,0 +1,167 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Senior Phase",
+      "code": "CAPS-SP",
+      "description": "Senior Phase covering Grades 7 to 9",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-SP",
+      "title": "Grade 9",
+      "code": "CAPS-GR9",
+      "description": "Grade 9",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR9",
+      "title": "Life Orientation",
+      "code": "CAPS-LIFEORIENTATION-GR9",
+      "description": "Life Orientation for Grade 9 covering personal wellbeing, social and environmental responsibility, democracy and human rights, physical education, and career planning.",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFEORIENTATION-GR9",
+      "title": "Term 1",
+      "code": "CAPS-LIFEORIENTATION-GR9-T1",
+      "description": "Term 1: Development of the Self; Citizenship Education; Physical Education.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR9-T1",
+      "title": "Development of the Self in Society",
+      "code": "CAPS-LIFEORIENTATION-GR9-T1-SELF",
+      "description": "Identity and diversity: cultural identity, gender identity, sexual orientation; intersectionality; stereotypes and prejudice; managing conflict and diversity; building inclusive communities; planning for personal growth and future. Formal Assessment Task 1: Research task on identity and diversity.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR9-T1",
+      "title": "Democracy and Active Citizenship",
+      "code": "CAPS-LIFEORIENTATION-GR9-T1-CITIZENSHIP",
+      "description": "Active citizenship: voting, community participation, advocacy; South African government structures; accountability and transparency; media literacy and evaluating information; social justice and human rights activism; international human rights frameworks.",
+      "metadata": { "weekNumbers": [7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR9-T1",
+      "title": "Physical Education — Sport and Movement Skills",
+      "code": "CAPS-LIFEORIENTATION-GR9-T1-PE",
+      "description": "Advanced sport skills and tactics in team games; leadership roles in sport; physical fitness testing and recording; sport and nutrition; career paths in sport and physical education.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFEORIENTATION-GR9",
+      "title": "Term 2",
+      "code": "CAPS-LIFEORIENTATION-GR9-T2",
+      "description": "Term 2: Health and Reproductive Health; Environmental Responsibility; Physical Education.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR9-T2",
+      "title": "Reproductive Health and Responsible Decision Making",
+      "code": "CAPS-LIFEORIENTATION-GR9-T2-HEALTH",
+      "description": "Reproductive health: menstruation, conception, pregnancy; contraception and family planning; STIs and HIV prevention; abstinence and responsible sexual behaviour; teenage pregnancy: consequences and support; accessing health services. Formal Assessment Task 2: Project on reproductive health.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR9-T2",
+      "title": "Environmental and Social Responsibility",
+      "code": "CAPS-LIFEORIENTATION-GR9-T2-ENVIRONMENT",
+      "description": "Global environmental challenges: climate change, biodiversity loss, ocean pollution; South Africa's environmental challenges; activism and environmental movements; sustainable development and green economy; personal carbon footprint and reduction strategies.",
+      "metadata": { "weekNumbers": [7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR9-T2",
+      "title": "Physical Education — Athletics and Aquatics",
+      "code": "CAPS-LIFEORIENTATION-GR9-T2-PE",
+      "description": "Athletics events and techniques; personal best improvement strategies; aquatics / water safety; recreational activities for long-term health; physical activity and mental wellbeing connection.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFEORIENTATION-GR9",
+      "title": "Term 3",
+      "code": "CAPS-LIFEORIENTATION-GR9-T3",
+      "description": "Term 3: Safety and Security; Career and Study Choices; Physical Education.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR9-T3",
+      "title": "Safety, Security and Crime Prevention",
+      "code": "CAPS-LIFEORIENTATION-GR9-T3-SAFETY",
+      "description": "Crime in South Africa: types and causes; online safety and cybercrime; gender-based violence: GBV statistics, laws and support; community safety initiatives; personal safety planning; role of SAPS and justice system. Formal Assessment Task 3: Awareness project on GBV or community safety.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR9-T3",
+      "title": "Career and Study Planning for the Future",
+      "code": "CAPS-LIFEORIENTATION-GR9-T3-CAREERS",
+      "description": "Subject choices for Grade 10-12 and their implications for career paths; TVET colleges vs universities; bursaries and funding; writing a CV and cover letter; interview skills; entrepreneurship and self-employment; future of work in the digital age.",
+      "metadata": { "weekNumbers": [7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR9-T3",
+      "title": "Physical Education — Gymnastics and Dance",
+      "code": "CAPS-LIFEORIENTATION-GR9-T3-PE",
+      "description": "Gymnastics sequences and routines; dance forms and choreography; physical expression and creativity; group performance and collaboration; appreciating diverse movement cultures.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFEORIENTATION-GR9",
+      "title": "Term 4",
+      "code": "CAPS-LIFEORIENTATION-GR9-T4",
+      "description": "Term 4: Exam Preparation and Transition to FET; Physical Education.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR9-T4",
+      "title": "Exam Preparation and Transition to FET Phase",
+      "code": "CAPS-LIFEORIENTATION-GR9-T4-TRANSITION",
+      "description": "Preparing for Grade 10: subject selection, study skills for FET; managing the transition from junior to senior secondary school; coping with change and new environments; support systems and seeking help; reflection on personal growth throughout Senior Phase. Formal Assessment Task 4: End-of-year test.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR9-T4",
+      "title": "Physical Education — Consolidation and Personal Fitness",
+      "code": "CAPS-LIFEORIENTATION-GR9-T4-PE",
+      "description": "Personal fitness planning: designing a personal fitness programme; health-related fitness assessment; reflection on physical development throughout the year; lifetime physical activity and wellness habits.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    }
+  ]
+}

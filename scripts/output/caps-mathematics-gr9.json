@@ -1,0 +1,365 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Senior Phase",
+      "code": "CAPS-SP",
+      "description": "Senior Phase (Grades 7-9) of the South African CAPS curriculum.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-SP",
+      "title": "Grade 9",
+      "code": "CAPS-GR9",
+      "description": "Grade 9 of the South African CAPS curriculum.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR9",
+      "title": "Mathematics",
+      "code": "CAPS-MATHEMATICS-GR9",
+      "description": "Mathematics for Grade 9 as per the South African CAPS curriculum.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR9",
+      "title": "Term 1",
+      "code": "CAPS-MATHEMATICS-GR9-T1",
+      "description": "Grade 9 Mathematics Term 1: Whole Numbers, Integers, Exponents, Numeric and Geometric Patterns, Functions and Relationships, Algebraic Expressions.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR9-T1",
+      "title": "Whole Numbers",
+      "code": "CAPS-MATHEMATICS-GR9-T1-WN",
+      "description": "Describe the real number system by recognising, defining and distinguishing properties of natural numbers, whole numbers, integers, rational numbers and irrational numbers; use prime factorisation to find LCM and HCF; solve problems involving ratio, rate, direct and indirect proportion; financial contexts including profit/loss/discount/VAT, budgets, accounts, loans, simple interest, hire purchase, exchange rates, commission, rentals and compound interest.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 7,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR9-T1",
+      "title": "Integers",
+      "code": "CAPS-MATHEMATICS-GR9-T1-INT",
+      "description": "Revise calculations involving all four operations with integers including squares, cubes, square roots and cube roots of integers; revise commutative, associative and distributive properties of addition and multiplication for integers; additive and multiplicative inverses; solve problems involving multiple operations with integers.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [3],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 4.5,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR9-T1",
+      "title": "Exponents",
+      "code": "CAPS-MATHEMATICS-GR9-T1-EXP",
+      "description": "Revise compare and represent integers and numbers in exponential form and in scientific notation; extend scientific notation to include negative exponents; revise general laws of exponents: aᵐ × aⁿ = aᵐ⁺ⁿ, aᵐ ÷ aⁿ = aᵐ⁻ⁿ (if m > n), (aᵐ)ⁿ = aᵐˣⁿ, (a × t)ⁿ = aⁿ × tⁿ, a⁰ = 1; extend to integer exponents: a⁻ᵐ = 1/aᵐ; perform calculations involving all four operations using numbers in exponential form using laws of exponents; solve problems involving exponential form including scientific notation.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [4, 5],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 9,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR9-T1",
+      "title": "Numeric and Geometric Patterns",
+      "code": "CAPS-MATHEMATICS-GR9-T1-NGP",
+      "description": "Investigate and extend numeric and geometric patterns looking for relationships between numbers including patterns in physical or diagram form, not limited to constant difference or ratio, of learner's own creation, represented in tables and represented algebraically; describe and justify general rules for observed relationships in own words or algebraic language.",
+      "order": 4,
+      "metadata": {
+        "weekNumbers": [6, 7],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 7,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR9-T1",
+      "title": "Functions and Relationships",
+      "code": "CAPS-MATHEMATICS-GR9-T1-FR",
+      "description": "Determine input values, output values or rules for patterns and relationships using flow diagrams, tables, formulae and equations; determine, interpret and justify equivalence of different descriptions of the same relationship or rule presented verbally, in flow diagrams, in tables, by formulae, by equations and by graphs on a Cartesian plane.",
+      "order": 5,
+      "metadata": {
+        "weekNumbers": [8],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 4.5,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR9-T1",
+      "title": "Algebraic Expressions",
+      "code": "CAPS-MATHEMATICS-GR9-T1-AE",
+      "description": "Revise conventions for writing algebraic expressions; identify and classify like and unlike terms; recognise and identify coefficients and exponents; recognise and differentiate between monomials, binomials and trinomials.",
+      "order": 6,
+      "metadata": {
+        "weekNumbers": [9],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 4.5,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR9",
+      "title": "Term 2",
+      "code": "CAPS-MATHEMATICS-GR9-T2",
+      "description": "Grade 9 Mathematics Term 2: Algebraic Expressions, Algebraic Equations, Graphs, Geometry of Straight Lines.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR9-T2",
+      "title": "Algebraic Expressions",
+      "code": "CAPS-MATHEMATICS-GR9-T2-AE",
+      "description": "Expand and simplify algebraic expressions using commutative, associative, distributive laws for rational numbers and laws of exponents: add and subtract like terms; multiply integers and monomials by monomials, binomials and trinomials; divide monomials, binomials and trinomials by integers or monomials; simplify expressions; determine squares, cubes, square roots and cube roots of single or like algebraic terms; determine numerical value by substitution. Extend to: multiply integers and monomials by polynomials; divide polynomials by integers or monomials; product of two binomials; square of a binomial. Factorize algebraic expressions: common factors; difference of two squares; trinomials of the form x² + bx + c and ax² + bx + c where a is a common factor. Simplify algebraic fractions using factorisation.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [1, 2, 3],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 11.5,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR9-T2",
+      "title": "Algebraic Equations",
+      "code": "CAPS-MATHEMATICS-GR9-T2-AEQN",
+      "description": "Revise setting up equations to describe problem situations; analyse and interpret equations; solve equations by inspection; using additive and multiplicative inverses; using laws of exponents; determine numerical value by substitution; use substitution in equations to generate tables of ordered pairs; extend solving equations to include using factorisation and equations of the form: a product of factors = 0.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [4, 5],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 9,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR9-T2",
+      "title": "Graphs",
+      "code": "CAPS-MATHEMATICS-GR9-T2-GR",
+      "description": "Interpreting graphs: revise analysing and interpreting global graphs with special focus on linear/non-linear, constant/increasing/decreasing, maximum/minimum, discrete/continuous features; extend focus on features of linear graphs including x-intercept, y-intercept and gradient. Drawing graphs: revise drawing global graphs from given descriptions; draw linear graphs from given equations; determine equations from given linear graphs; use tables of ordered pairs to plot points and draw graphs on the Cartesian plane.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [6, 7],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 9,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR9-T2",
+      "title": "Geometry of Straight Lines",
+      "code": "CAPS-MATHEMATICS-GR9-T2-GSL",
+      "description": "Revise and write clear descriptions of the relationship between angles formed by perpendicular lines, intersecting lines and parallel lines cut by a transversal; solve geometric problems using the relationships between pairs of angles.",
+      "order": 4,
+      "metadata": {
+        "weekNumbers": [8, 9],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 9,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR9",
+      "title": "Term 3",
+      "code": "CAPS-MATHEMATICS-GR9-T3",
+      "description": "Grade 9 Mathematics Term 3: Geometry of 2D Shapes, Area and Perimeter, Collect/Organise/Summarise Data, Probability.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR9-T3",
+      "title": "Geometry of 2D Shapes",
+      "code": "CAPS-MATHEMATICS-GR9-T3-2DS",
+      "description": "Revise properties and definitions of triangles (equilateral, isosceles, right-angled) and quadrilaterals (parallelogram, rectangle, square, rhombus, trapezium, kite) in terms of sides, angles and diagonals; investigate properties using construction including exterior angle of a triangle and diagonals of quadrilaterals; explore sum of interior angles of polygons; similar and congruent triangles: establish minimum conditions for congruent triangles through investigation; solve geometric problems using known properties.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 9,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR9-T3",
+      "title": "Area and Perimeter",
+      "code": "CAPS-MATHEMATICS-GR9-T3-AP",
+      "description": "Use appropriate formulae and conversions between SI units to solve problems and calculate perimeter and area of polygons and circles; investigate how doubling any or all of the dimensions of a 2D figure affects its perimeter and area.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [3, 4],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 4.5,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR9-T3",
+      "title": "Collect, Organise and Summarise Data",
+      "code": "CAPS-MATHEMATICS-GR9-T3-DH",
+      "description": "Collect data: pose questions relating to social, economic and environmental issues; select and justify appropriate sources and methods; distinguish between samples and populations. Organise and summarise data: organise numerical data to determine measures of central tendency and measures of dispersion including extremes and outliers; organise data according to more than one criteria. Represent data: draw bar graphs, double bar graphs, histograms (given and own intervals), pie charts, broken-line graphs and scatter plots. Interpret, analyse and report data: critically read and interpret data; critically compare two data sets; critically analyse data by answering questions related to collection methods, summary and sources of bias; report data in short paragraphs.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [5, 6, 7],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 10.5,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR9-T3",
+      "title": "Probability",
+      "code": "CAPS-MATHEMATICS-GR9-T3-PROB",
+      "description": "Consider situations with equally probable outcomes: determine probabilities for compound events using two-way tables and tree diagrams; determine the probability for outcomes of events and predict their relative frequency in simple experiments; compare relative frequency with probability and explain possible differences.",
+      "order": 4,
+      "metadata": {
+        "weekNumbers": [8],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 4.5,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR9",
+      "title": "Term 4",
+      "code": "CAPS-MATHEMATICS-GR9-T4",
+      "description": "Grade 9 Mathematics Term 4: Geometry of 3D Objects, Surface Area and Volume of 3D Objects, Transformation Geometry.",
+      "order": 4,
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR9-T4",
+      "title": "Geometry of 3D Objects",
+      "code": "CAPS-MATHEMATICS-GR9-T4-3DO",
+      "description": "Revise properties and definitions of the 5 Platonic solids in terms of shape and number of faces, number of vertices and number of edges; recognise and describe properties of spheres and cylinders; use nets to make models of geometric solids including cubes, prisms, pyramids and cylinders.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 4.5,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR9-T4",
+      "title": "Surface Area and Volume of 3D Objects",
+      "code": "CAPS-MATHEMATICS-GR9-T4-SAV",
+      "description": "Use appropriate formulae and conversions between SI units to solve problems and calculate surface area, volume and capacity of cubes, rectangular prisms, triangular prisms and cylinders; investigate how doubling any or all dimensions of right prisms and cylinders affects their volume; describe the interrelationship between surface area and volume; convert between SI units (mm² ↔ cm² ↔ m² ↔ km², mm³ ↔ cm³ ↔ m³, ml (cm³) ↔ l ↔ kl).",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [3],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 4.5,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR9-T4",
+      "title": "Transformation Geometry",
+      "code": "CAPS-MATHEMATICS-GR9-T4-TG",
+      "description": "Recognise, describe and perform transformations with points, line segments and simple geometric figures on a co-ordinate plane: reflection in x-axis or y-axis, translation within and across quadrants, reflection in the line y = x, rotation around a given point; identify the transformation of a point given the co-ordinates of its image. Enlargements and reductions: use proportion to describe the effect of enlargement or reduction on area and perimeter; investigate co-ordinates of vertices of figures enlarged or reduced by a given scale factor.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [4, 5],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 9,
+        "cognitiveWeighting": null
+      }
+    }
+  ]
+}

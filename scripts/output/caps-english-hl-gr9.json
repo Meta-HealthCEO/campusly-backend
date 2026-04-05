@@ -1,0 +1,122 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Senior Phase",
+      "code": "CAPS-SP",
+      "description": "Senior Phase covering Grades 7 to 9",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-SP",
+      "title": "Grade 9",
+      "code": "CAPS-GR9",
+      "description": "Grade 9",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR9",
+      "title": "English Home Language",
+      "code": "CAPS-ENGLISHHL-GR9",
+      "description": "English Home Language for Grade 9 covering Listening and Speaking, Reading and Viewing, Writing and Presenting, and Language Structures and Conventions across four terms.",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-ENGLISHHL-GR9",
+      "title": "Term 1",
+      "code": "CAPS-ENGLISHHL-GR9-T1",
+      "description": "Term 1: Novel, drama, short story, informational texts. FAT1: Oral — prepared reading (20 pts). FAT2: Essay — argumentative/discursive (40 pts). FAT3: Response to texts (70 pts).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR9-T1",
+      "title": "Novel and Short Story",
+      "code": "CAPS-ENGLISHHL-GR9-T1-NOVEL",
+      "description": "Listening and Speaking: prepared oral reading (FAT1, 20 pts) — tone, voice, pace, expression, eye contact; listen and respond to a novel/drama extract; critical listening for argument and bias. Reading and Viewing: novel — in-depth character development, theme exploration, setting, narrative voice, irony; short story — plot structure: exposition, rising action, climax, falling action, resolution; literary devices: imagery, symbolism, allusion. Writing and Presenting: argumentative/discursive essay (FAT2, 40 pts, weeks 7-8) — structure: introduction, body paragraphs with topic sentences, counterargument, conclusion; logical argumentation, evidence, formal register. Language Structures and Conventions: complex sentence structures; subordination and coordination; reported speech nuances; vocabulary: connotation, denotation, register.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR9-T1",
+      "title": "Drama and Informational Texts",
+      "code": "CAPS-ENGLISHHL-GR9-T1-DRAMA",
+      "description": "Listening and Speaking: group discussion or debate on issues from drama; listening to a speech; identifying rhetorical devices. Reading and Viewing: drama — dramatic conventions: soliloquy, aside, dramatic irony, symbolism; newspaper feature or magazine article; reading comprehension strategies: skimming, scanning, detailed reading; fact vs opinion; writer's purpose and bias. Writing and Presenting: transactional — report or summary; informational writing conventions; web journal or blog post. Language Structures and Conventions: modal verbs; impersonal passive; sentence variety; paragraph cohesion; formal punctuation: semi-colon, colon, dash.",
+      "metadata": { "weekNumbers": [7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-ENGLISHHL-GR9",
+      "title": "Term 2",
+      "code": "CAPS-ENGLISHHL-GR9-T2",
+      "description": "Term 2: Poetry, folk tale, novel, non-fiction texts. FAT4: Transactional writing (20 pts). FAT5: Mid-year exam — Response to texts (70 pts).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR9-T2",
+      "title": "Poetry and Folk Tale",
+      "code": "CAPS-ENGLISHHL-GR9-T2-POETRY",
+      "description": "Listening and Speaking: oral presentation on a poem or storytelling (folk tale performance); voice, intonation, body language; peer critique. Reading and Viewing: poetry — advanced analysis: extended metaphor, paradox, irony, allusion, tone shifts; comparing poems; folk tale — oral tradition features: moral, symbolism, cultural context, characterisation, plot. Writing and Presenting: creative response to poetry or folk tale; descriptive or narrative essay connecting to literature. Language Structures and Conventions: language of comparison and analysis; complex figurative language; etymology; formal literary vocabulary.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR9-T2",
+      "title": "Non-Fiction and Transactional Texts",
+      "code": "CAPS-ENGLISHHL-GR9-T2-NONFICTION",
+      "description": "Listening and Speaking: panel discussion or interview; active listening and note-taking; summarise and evaluate arguments. Reading and Viewing: non-fiction texts: biography, autobiography, article; visual text: infographic or political cartoon; critical reading for bias, propaganda, stereotyping. Writing and Presenting: transactional texts (FAT4, 20 pts): formal letter, report, or précis; conventions of professional writing; summary writing. Language Structures and Conventions: tense consistency; active/passive voice advanced use; nominalization; concord rules; formal register vocabulary.",
+      "metadata": { "weekNumbers": [7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-ENGLISHHL-GR9",
+      "title": "Term 3",
+      "code": "CAPS-ENGLISHHL-GR9-T3",
+      "description": "Term 3: Creative Writing Project. FAT6: CWP Research (20 pts) + Write-up (30 pts) = 50 pts. FAT7: Oral — CWP Presentation (20 pts, begin T3 conclude T4). FAT8: Response to Literature (30 pts).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR9-T3",
+      "title": "Creative Writing Project — Research, Writing and Oral",
+      "code": "CAPS-ENGLISHHL-GR9-T3-CWP",
+      "description": "Listening and Speaking: oral preparation for CWP presentation (FAT7, 20 pts); group discussions and feedback. Reading and Viewing: research reading — variety of texts and sources; literary texts from all three prescribed genres (novel/drama, poetry, short story/folk tale); analytical reading for CWP. Writing and Presenting: CWP Phase 1 Research (FAT6, 20 pts, weeks 3-4): research notes, bibliography, graphic organiser; CWP Phase 2 Write-up (FAT6, 30 pts, weeks 5-6): final written product in chosen genre; FAT8 Response to Literature (30 pts): poetry (compulsory), novel or drama, short story or folk tale. Language Structures and Conventions: advanced stylistic choices; genre conventions mastery; argument structure in creative non-fiction; critical vocabulary.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-ENGLISHHL-GR9",
+      "title": "Term 4",
+      "code": "CAPS-ENGLISHHL-GR9-T4",
+      "description": "Term 4: Conclude oral (FAT7); transactional texts; revision; end-of-year exam (FAT9 transactional 20 pts + FAT10 Paper 2 Response to texts 70 pts).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR9-T4",
+      "title": "Transactional Texts, Revision and Examination",
+      "code": "CAPS-ENGLISHHL-GR9-T4-EXAM",
+      "description": "Listening and Speaking: conclude FAT7 oral presentations; final peer assessment. Reading and Viewing: transactional texts — cover letter, CV, e-mail, minutes, memorandum; revision of all literary genres and text types; past examination papers. Writing and Presenting: cover letter and CV writing; transactional texts for FAT9 (20 pts, exam preparation); FAT10 end-of-year examination Paper 2 — Response to texts (70 pts): novel/drama, poetry, short story/folk tale. Language Structures and Conventions: comprehensive revision of all Grade 9 language structures; grammatical analysis and correction; vocabulary consolidation.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    }
+  ]
+}

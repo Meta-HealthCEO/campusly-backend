@@ -1,0 +1,140 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Senior Phase",
+      "code": "CAPS-SP",
+      "description": "Senior Phase covering Grades 7 to 9",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-SP",
+      "title": "Grade 8",
+      "code": "CAPS-GR8",
+      "description": "Grade 8",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR8",
+      "title": "Creative Arts: Visual Arts",
+      "code": "CAPS-VISUALARTS-GR8",
+      "description": "Visual Arts for Grade 8 with deeper exploration of media and techniques, art history spanning African and European traditions, critical analysis and independent creative expression.",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-VISUALARTS-GR8",
+      "title": "Term 1",
+      "code": "CAPS-VISUALARTS-GR8-T1",
+      "description": "Term 1: Perspective drawing and spatial representation; Impressionism and Post-Impressionism.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-VISUALARTS-GR8-T1",
+      "title": "Drawing — Perspective and Space",
+      "code": "CAPS-VISUALARTS-GR8-T1-DRAWING",
+      "description": "Linear perspective: one-point and two-point perspective; vanishing point, horizon line; drawing interior and exterior architectural spaces; foreshortening; depth and spatial illusion. Art history: Renaissance perspective — Brunelleschi, Da Vinci; comparing to flat African pictorial space. Practical task: architectural or environmental drawing using perspective.",
+      "metadata": { "weekNumbers": [1,2,3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-VISUALARTS-GR8-T1",
+      "title": "Painting — Impressionism and Colour",
+      "code": "CAPS-VISUALARTS-GR8-T1-PAINTING",
+      "description": "Impressionist techniques: broken colour, visible brushwork, capturing light; outdoor painting from observation; atmospheric perspective; colour temperature and mood. Art history: Monet, Renoir, Pissarro — Impressionism; Irma Stern as South African Expressionist. Practical task: landscape or still-life painting in an Impressionist style.",
+      "metadata": { "weekNumbers": [6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-VISUALARTS-GR8",
+      "title": "Term 2",
+      "code": "CAPS-VISUALARTS-GR8-T2",
+      "description": "Term 2: Figure drawing and the human form; African and global sculptural traditions.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-VISUALARTS-GR8-T2",
+      "title": "Drawing — The Human Figure",
+      "code": "CAPS-VISUALARTS-GR8-T2-FIGURE",
+      "description": "Human proportion and anatomy basics; gesture drawing and movement; observational figure drawing; portrait drawing: proportions of the face, features, expression; figure in context and narrative. Art history: figurative art across cultures — Egyptian, Greek, African. Practical task: figure drawing or portrait study.",
+      "metadata": { "weekNumbers": [1,2,3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-VISUALARTS-GR8-T2",
+      "title": "3D Art — Sculpture and Modelling",
+      "code": "CAPS-VISUALARTS-GR8-T2-SCULPTURE",
+      "description": "Sculpture techniques: modelling in clay or papier-mâché; additive and subtractive methods; texture, form and surface treatment; mask-making; African sculptural traditions — Yoruba, Benin bronzes, Makonde. Contemporary South African sculptors: Willie Bester, Andries Botha. Practical task: sculptural mask or figure using clay or papier-mâché.",
+      "metadata": { "weekNumbers": [6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-VISUALARTS-GR8",
+      "title": "Term 3",
+      "code": "CAPS-VISUALARTS-GR8-T3",
+      "description": "Term 3: Printmaking and screen printing; Cubism and abstraction in 20th century art.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-VISUALARTS-GR8-T3",
+      "title": "Printmaking — Monoprint and Screen Printing",
+      "code": "CAPS-VISUALARTS-GR8-T3-PRINTMAKING",
+      "description": "Monoprint techniques: painted plate, transfer methods; introduction to screen printing concepts; stencil printing; colour registration in multi-colour prints; texture and surface in printmaking. Art history: Andy Warhol — Pop Art screen printing; South African printmakers: Judith Mason. Practical task: monoprint or stencil print series.",
+      "metadata": { "weekNumbers": [1,2,3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-VISUALARTS-GR8-T3",
+      "title": "Painting — Abstraction and Cubism",
+      "code": "CAPS-VISUALARTS-GR8-T3-ABSTRACTION",
+      "description": "Abstract art: non-representational art; Cubism — multiple viewpoints, fragmented forms, Picasso, Braque; geometric abstraction; abstract expressionism; interpreting and creating abstract compositions. South African abstract artists. Practical task: abstract composition inspired by Cubist principles.",
+      "metadata": { "weekNumbers": [6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-VISUALARTS-GR8",
+      "title": "Term 4",
+      "code": "CAPS-VISUALARTS-GR8-T4",
+      "description": "Term 4: Digital art and photography; contemporary and street art; portfolio exhibition.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-VISUALARTS-GR8-T4",
+      "title": "Photography and Digital Art",
+      "code": "CAPS-VISUALARTS-GR8-T4-DIGITAL",
+      "description": "Photography as art: composition, framing, light; camera phone photography; basic photo editing and manipulation; digital collage; graphic design using free digital tools. Photojournalism and documentary photography — David Goldblatt, Jodi Bieber. Practical task: photo essay or digital artwork on a social theme.",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-VISUALARTS-GR8-T4",
+      "title": "Street Art, Murals and Portfolio Exhibition",
+      "code": "CAPS-VISUALARTS-GR8-T4-STREETART",
+      "description": "Street art and murals as public art; graffiti art and its social messages; community mural projects; analysing street art for meaning and technique. Portfolio compilation and exhibition: selecting best work, writing artist statements, presenting work; peer and self-evaluation.",
+      "metadata": { "weekNumbers": [5,6,7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    }
+  ]
+}

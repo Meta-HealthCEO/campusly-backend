@@ -1,0 +1,140 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Senior Phase",
+      "code": "CAPS-SP",
+      "description": "Senior Phase covering Grades 7 to 9",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-SP",
+      "title": "Grade 9",
+      "code": "CAPS-GR9",
+      "description": "Grade 9",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR9",
+      "title": "Creative Arts: Visual Arts",
+      "code": "CAPS-VISUALARTS-GR9",
+      "description": "Visual Arts for Grade 9 with advanced artistic practice, independent project development, critical art history analysis, and preparation for FET Visual Arts.",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-VISUALARTS-GR9",
+      "title": "Term 1",
+      "code": "CAPS-VISUALARTS-GR9-T1",
+      "description": "Term 1: Advanced drawing techniques and observational study; Surrealism and symbolic art.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-VISUALARTS-GR9-T1",
+      "title": "Drawing — Advanced Observation and Rendering",
+      "code": "CAPS-VISUALARTS-GR9-T1-DRAWING",
+      "description": "Advanced observational drawing: tonal values, shading techniques (hatching, cross-hatching, blending); still life in graphite, charcoal or mixed media; texture rendering; expressive drawing; developing a personal drawing style. Art history: Käthe Kollwitz — expressive drawing; South African draughtsmen. Practical task: complex still life or expressive observational drawing.",
+      "metadata": { "weekNumbers": [1,2,3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-VISUALARTS-GR9-T1",
+      "title": "Painting — Surrealism and Symbolism",
+      "code": "CAPS-VISUALARTS-GR9-T1-SURREALISM",
+      "description": "Surrealism: dream imagery, juxtaposition, unexpected combinations; symbolic art and personal symbolism; narrative painting; creating layered meaning in imagery. Art history: Salvador Dalí, René Magritte — Surrealism; Frida Kahlo — autobiographical symbolism. South African symbolic artists. Practical task: symbolic or surrealist painting expressing personal narrative.",
+      "metadata": { "weekNumbers": [6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-VISUALARTS-GR9",
+      "title": "Term 2",
+      "code": "CAPS-VISUALARTS-GR9-T2",
+      "description": "Term 2: Printmaking — etching and digital prints; Post-Apartheid South African art.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-VISUALARTS-GR9-T2",
+      "title": "Printmaking — Advanced Techniques",
+      "code": "CAPS-VISUALARTS-GR9-T2-PRINTMAKING",
+      "description": "Advanced printmaking: dry-point etching on plastic or aluminium foil; intaglio principles; multi-colour reduction linocut; developing a series of prints with a unified theme; editioning and signing prints. South African printmakers: William Kentridge — charcoal drawings and animation; Bonnie Ntshalintshali. Practical task: small editional print series on a social or personal theme.",
+      "metadata": { "weekNumbers": [1,2,3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-VISUALARTS-GR9-T2",
+      "title": "Post-Apartheid South African Art and Identity",
+      "code": "CAPS-VISUALARTS-GR9-T2-SA_ART",
+      "description": "Post-1994 South African art: themes of identity, memory, reconciliation, transformation; land and place in art; gender and the body; political and social commentary through art; museums and public art in South Africa. Artists: Zanele Muholi, Marlene Dumas, Kendell Geers. Practical task: artwork responding to a South African social issue of the learner's choice.",
+      "metadata": { "weekNumbers": [6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-VISUALARTS-GR9",
+      "title": "Term 3",
+      "code": "CAPS-VISUALARTS-GR9-T3",
+      "description": "Term 3: Independent project development; installation, performance and video art.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-VISUALARTS-GR9-T3",
+      "title": "Independent Creative Project — Research and Development",
+      "code": "CAPS-VISUALARTS-GR9-T3-PROJECT",
+      "description": "Self-directed creative project: choosing a theme or concept; research and inspiration gathering; visual diary / sketchbook development; creating preparatory studies and experiments; working across media; iterative creative process. Formal Assessment: project process portfolio (research, development, studies). Practical task: in-progress studio work and process documentation.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-VISUALARTS-GR9-T3",
+      "title": "Installation, Performance and New Media Art",
+      "code": "CAPS-VISUALARTS-GR9-T3-NEWMEDIA",
+      "description": "Contemporary art forms: installation art, performance art, video art, new media; art that uses space and the viewer's body; interactive art; art and technology. South African new media artists: Minnette Vári, Candice Breitz. Critical analysis of contemporary artworks — intent, materials, audience response. Optional: small-scale installation or video art piece.",
+      "metadata": { "weekNumbers": [7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-VISUALARTS-GR9",
+      "title": "Term 4",
+      "code": "CAPS-VISUALARTS-GR9-T4",
+      "description": "Term 4: Completing independent project; portfolio exhibition; art careers and pathways.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-VISUALARTS-GR9-T4",
+      "title": "Independent Project — Final Artwork and Presentation",
+      "code": "CAPS-VISUALARTS-GR9-T4-FINALWORK",
+      "description": "Completing final artwork for independent project; refining and finishing; mounting and presentation; writing an artist statement; presenting work to peers and audience; giving and receiving constructive critique. Formal Assessment: final artwork with portfolio and artist statement.",
+      "metadata": { "weekNumbers": [1,2,3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-VISUALARTS-GR9-T4",
+      "title": "Art Careers and Pathways into FET",
+      "code": "CAPS-VISUALARTS-GR9-T4-CAREERS",
+      "description": "Careers in the visual arts and creative industries: fine art, graphic design, architecture, fashion, film, animation, art education; tertiary study options; building a portfolio for further study; reflecting on personal artistic development through the Senior Phase; introduction to Visual Arts in FET.",
+      "metadata": { "weekNumbers": [6,7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    }
+  ]
+}

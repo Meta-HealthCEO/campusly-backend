@@ -1,0 +1,108 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Senior Phase",
+      "code": "CAPS-SP",
+      "description": "Senior Phase covering Grades 7 to 9",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-SP",
+      "title": "Grade 8",
+      "code": "CAPS-GR8",
+      "description": "Grade 8",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR8",
+      "title": "Economic and Management Sciences",
+      "code": "CAPS-EMS-GR8",
+      "description": "Economic and Management Sciences for Grade 8 covering The Economy, Financial Literacy and Entrepreneurship",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-EMS-GR8",
+      "title": "Term 1",
+      "code": "CAPS-EMS-GR8-T1",
+      "description": "Term 1: The Economy – Government, National Budget, Standard of Living; Financial Literacy – Accounting Concepts and Source Documents. SBA: Data response 50 marks (week 7), March controlled test 50 marks (week 10).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-EMS-GR8-T1",
+      "title": "The Economy: Government, National Budget and Standard of Living; Financial Literacy: Accounting Concepts and Source Documents",
+      "code": "CAPS-EMS-GR8-T1-GOVTECONOMY",
+      "description": "The Economy – Government: meaning of government (body that governs a country); different levels of government (national, provincial, local/municipal); roles of government in respect of households (providing public services: education, health, security, infrastructure) and businesses (regulating business, providing infrastructure, creating a conducive environment). National Budget: government revenue (taxes: direct tax – personal income tax, company tax; indirect tax – VAT, customs duties, excise duties); government expenditure (social services, infrastructure, defence, public debt); the national budget as a tool to promote economic growth and redress historical inequalities; surplus vs deficit budget; impact of budget on households and businesses. Standard of living: meaning of standard of living; comparison of lifestyles in modern urban and rural societies; indicators of standard of living (income, education, healthcare, housing); impact of development and economic growth on the environment; unemployment (definition, causes, consequences, solutions); productive use of resources to improve standard of living. Financial Literacy – Accounting Concepts: revision and extension of Grade 7 concepts; sole trader (meaning, characteristics); debit and credit (rules of double entry); capital (initial and additional capital, drawings); owner's equity; income; expenses; profit and losses; transactions (definition, source documents as evidence); liability; assets (fixed and current); banking (role of banks, types of accounts, EFT, debit orders). Accounting equation: A = OE + L (assets equal owner's equity plus liabilities); effect of transactions on the accounting equation. Source Documents: till slips (information, purpose); receipts (official, purpose); deposit slips (information, completing a deposit slip); EFT (meaning, advantages, security); bank statements (reading and interpreting); cash invoices (information, purpose, difference from credit invoice). SBA: Data response 50 marks (week 7); March controlled test 50 marks (week 10). Cognitive levels: LO 30%, MO 50%, HO 20%.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "EMS Term 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-EMS-GR8",
+      "title": "Term 2",
+      "code": "CAPS-EMS-GR8-T2",
+      "description": "Term 2: Financial Literacy – Accounting Cycle overview, Cash Receipts Journal of service business; Entrepreneurship – Factors of Production. SBA: Mid-year controlled test 100 marks (weeks 9–10, 90 minutes).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-EMS-GR8-T2",
+      "title": "Financial Literacy: Accounting Cycle and Cash Receipts Journal; Entrepreneurship: Factors of Production",
+      "code": "CAPS-EMS-GR8-T2-ACCOUNTING",
+      "description": "Financial Literacy – Overview of the accounting cycle: steps in the accounting cycle (transactions → source documents → subsidiary journals → general ledger → trial balance → income statement → balance sheet); purpose of each step; flow of information through the accounting cycle. Accounting Equation (revision and application): A = OE + L; effect of various transactions on the accounting equation; assets, owner's equity, liabilities. Cash Receipts Journal (CRJ) of a service business: definition and purpose of the CRJ; format and columns of the CRJ (date, details, folio, bank, capital, income, sundry accounts); source documents for the CRJ (receipts, till slips, deposit slips, bank statements); entering transactions into the CRJ; closing off the CRJ (totalling columns, cross-casting); effect of cash receipts transactions on the accounting equation; posting totals from CRJ to the general ledger (overview). Entrepreneurship – Factors of Production: capital (borrowed capital – loans from banks, bonds, overdraft; own capital – owner's investment, retained income); labour (types: unskilled, semi-skilled, skilled labour; fair employment practices, minimum wage, basic conditions of employment); natural resources (land, raw materials, energy – sustainable use); remuneration of the four factors of production (rent for land, wages/salaries for labour, interest for capital, profit for entrepreneurship). SBA: Mid-year controlled test 100 marks (weeks 9–10, 90 minutes). Cognitive levels: LO 30%, MO 50%, HO 20%.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "EMS Term 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-EMS-GR8",
+      "title": "Term 3",
+      "code": "CAPS-EMS-GR8-T3",
+      "description": "Term 3: Entrepreneurship – Forms of Ownership; Financial Literacy – Cash Payments Journal, Accounting Equation; The Economy – Markets. SBA: Project/case study 50 marks (weeks 8–9).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-EMS-GR8-T3",
+      "title": "Entrepreneurship: Forms of Ownership; Financial Literacy: Cash Payments Journal; The Economy: Markets",
+      "code": "CAPS-EMS-GR8-T3-OWNERSHIP",
+      "description": "Entrepreneurship – Forms of Ownership: sole trader (meaning, characteristics, advantages and disadvantages, unlimited liability, easy to start); partnership (meaning, characteristics, Partnership Act, advantages and disadvantages, unlimited liability, dissolution); private company (Pty Ltd: meaning, limited liability, shareholders, minimum 1 maximum 50 shareholders, not listed on stock exchange); public company (Ltd: minimum 7 shareholders, listed on stock exchange, stringent reporting requirements); comparison of forms of ownership (liability, continuity, number of owners, capital); role of different forms of ownership in sustainable job creation and economic development. Financial Literacy – Cash Payments Journal (CPJ): definition and purpose; format and columns (date, details, folio, bank, capital and drawings, expenses, sundry accounts); source documents for the CPJ (cheque counterfoils, cash invoices, till slips for cash purchases, EFT confirmations); entering transactions into the CPJ; closing off the CPJ; effect of cash payments on the accounting equation; combined accounting equation with CRJ and CPJ transactions. The Economy – Markets: factor market (labour market: demand and supply of labour, wages as the price of labour; financial/capital market: demand and supply of capital, interest as the price of capital); goods and services market (demand for goods/services by households and government; supply by businesses; price determination). SBA: Project/case study 50 marks (weeks 8–9). Cognitive levels: LO 30%, MO 50%, HO 20%.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "EMS Term 3", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-EMS-GR8",
+      "title": "Term 4",
+      "code": "CAPS-EMS-GR8-T4",
+      "description": "Term 4: Entrepreneurship – Levels and Functions of Management (POLC); Financial Literacy – General Ledger, Trial Balance of service business. SBA: Year-end controlled test 100 marks two papers (weeks 7–8).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-EMS-GR8-T4",
+      "title": "Entrepreneurship: Levels and Functions of Management; Financial Literacy: General Ledger and Trial Balance",
+      "code": "CAPS-EMS-GR8-T4-MANAGEMENT",
+      "description": "Entrepreneurship – Levels and Functions of Management: different levels of management (top/strategic management: sets overall direction; middle/tactical management: implements strategy; lower/operational management: supervises day-to-day activities); functions of management using POLC framework (Planning: setting goals and deciding how to achieve them – strategic, tactical and operational planning; Organising: allocating tasks and resources, organisational structure; Leading/directing: motivating and guiding employees, leadership styles; Controlling: monitoring performance against targets, corrective action); characteristics of good management (good communication, decision-making skills, ability to delegate, motivating staff, ethical conduct). Financial Literacy – General Ledger: purpose and format of the general ledger; T-accounts (debit side left, credit side right); double-entry principle (every transaction has a debit and credit entry of equal amounts); opening ledger accounts; posting from the Cash Receipts Journal to the general ledger; posting from the Cash Payments Journal to the general ledger; balancing ledger accounts. Trial Balance of a service business: purpose of the trial balance (to check arithmetic accuracy of the double-entry system); format (list of all ledger accounts with debit or credit balances); preparing the trial balance from ledger accounts; identifying errors using the trial balance. SBA: Year-end controlled test 100 marks (two papers, weeks 7–8). Cognitive levels: LO 30%, MO 50%, HO 20%.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "EMS Term 4", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    }
+  ]
+}

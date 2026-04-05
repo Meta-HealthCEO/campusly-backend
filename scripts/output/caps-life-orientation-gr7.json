@@ -1,0 +1,176 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Senior Phase",
+      "code": "CAPS-SP",
+      "description": "Senior Phase covering Grades 7 to 9",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-SP",
+      "title": "Grade 7",
+      "code": "CAPS-GR7",
+      "description": "Grade 7",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR7",
+      "title": "Life Orientation",
+      "code": "CAPS-LIFEORIENTATION-GR7",
+      "description": "Life Orientation for Grade 7 covering personal wellbeing, social and environmental responsibility, democracy and human rights, recreational activities, and careers.",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFEORIENTATION-GR7",
+      "title": "Term 1",
+      "code": "CAPS-LIFEORIENTATION-GR7-T1",
+      "description": "Term 1: Development of the self; Constitution and Human Rights; Physical Education.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR7-T1",
+      "title": "Development of the Self in Society",
+      "code": "CAPS-LIFEORIENTATION-GR7-T1-SELF",
+      "description": "Personal identity and self-concept; factors that influence self-concept (family, peers, media, culture); emotional intelligence; managing emotions; self-motivation; goal setting and personal development plans. Formal Assessment Task 1: Research task on self-concept factors.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR7-T1",
+      "title": "Democracy and Human Rights",
+      "code": "CAPS-LIFEORIENTATION-GR7-T1-RIGHTS",
+      "description": "The South African Constitution and Bill of Rights; rights and responsibilities of citizens; democratic values: equality, dignity, freedom; examples of human rights violations and ways to address them.",
+      "metadata": { "weekNumbers": [7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR7-T1",
+      "title": "Physical Education — Games and Sport",
+      "code": "CAPS-LIFEORIENTATION-GR7-T1-PE",
+      "description": "Participation in physical activities and sports; rules and fair play; warming up and cooling down; health-related fitness: cardiovascular endurance, muscular strength and flexibility. Integrated into each week as a practical component.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFEORIENTATION-GR7",
+      "title": "Term 2",
+      "code": "CAPS-LIFEORIENTATION-GR7-T2",
+      "description": "Term 2: Social and Environmental Responsibility; Healthy Living; Physical Education.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR7-T2",
+      "title": "Social and Environmental Responsibility",
+      "code": "CAPS-LIFEORIENTATION-GR7-T2-SOCIAL",
+      "description": "Belonging to social groups; peer pressure and peer influence; community involvement and social responsibility; environmental awareness: pollution, conservation, recycling; sustainable living practices. Formal Assessment Task 2: Project on environmental responsibility.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR7-T2",
+      "title": "Healthy Living",
+      "code": "CAPS-LIFEORIENTATION-GR7-T2-HEALTH",
+      "description": "Nutrition and balanced diet; substance abuse — alcohol, tobacco, drugs; effects on physical and mental health; making responsible choices; saying no to peer pressure around substance use.",
+      "metadata": { "weekNumbers": [7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR7-T2",
+      "title": "Physical Education — Athletics and Movement",
+      "code": "CAPS-LIFEORIENTATION-GR7-T2-PE",
+      "description": "Athletics: running, jumping, throwing; movement concepts and strategies; physical fitness testing; team and individual activities promoting cooperation and healthy competition.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFEORIENTATION-GR7",
+      "title": "Term 3",
+      "code": "CAPS-LIFEORIENTATION-GR7-T3",
+      "description": "Term 3: Safety, Security and Violence; Careers and Career Choices; Physical Education.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR7-T3",
+      "title": "Safety, Security and Violence Prevention",
+      "code": "CAPS-LIFEORIENTATION-GR7-T3-SAFETY",
+      "description": "Types of violence: physical, emotional, sexual, cyber-bullying; consequences of violence; ways to prevent and report violence; personal safety strategies; dangerous situations and how to respond; community support structures.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR7-T3",
+      "title": "Careers and Career Choices",
+      "code": "CAPS-LIFEORIENTATION-GR7-T3-CAREERS",
+      "description": "World of work: different career fields and pathways; factors influencing career choices; interests, aptitudes and abilities; subject choices and future careers; role models in different careers. Formal Assessment Task 3: Career research presentation.",
+      "metadata": { "weekNumbers": [7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR7-T3",
+      "title": "Physical Education — Gymnastics and Rhythmic Activities",
+      "code": "CAPS-LIFEORIENTATION-GR7-T3-PE",
+      "description": "Gymnastics: balancing, rolling, jumping; rhythmic activities: movement to music, dance sequences; cooperative group movement activities; body awareness and coordination.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFEORIENTATION-GR7",
+      "title": "Term 4",
+      "code": "CAPS-LIFEORIENTATION-GR7-T4",
+      "description": "Term 4: Study Skills and Exam Preparation; Recreational Activities; Physical Education.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR7-T4",
+      "title": "Study Skills and Exam Preparation",
+      "code": "CAPS-LIFEORIENTATION-GR7-T4-STUDY",
+      "description": "Effective study methods; time management and study timetables; managing exam stress; test-taking strategies; mind mapping and note-taking; setting personal academic goals. Formal Assessment Task 4: Test on study skills and LO content.",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR7-T4",
+      "title": "Recreational Activities and Leisure",
+      "code": "CAPS-LIFEORIENTATION-GR7-T4-RECREATION",
+      "description": "Value of recreational activities for physical and mental health; different types of leisure activities; planning and participating in recreational activities; balance between work and leisure; community recreational facilities.",
+      "metadata": { "weekNumbers": [5,6,7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR7-T4",
+      "title": "Physical Education — Water Activities and Outdoor Education",
+      "code": "CAPS-LIFEORIENTATION-GR7-T4-PE",
+      "description": "Water safety and swimming (where facilities available); outdoor education activities; orienteering; environmental awareness through outdoor activities; consolidation of physical education concepts from the year.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    }
+  ]
+}

@@ -1,0 +1,380 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Senior Phase",
+      "code": "CAPS-SP",
+      "description": "Senior Phase (Grades 7-9) of the South African CAPS curriculum.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-SP",
+      "title": "Grade 8",
+      "code": "CAPS-GR8",
+      "description": "Grade 8 of the South African CAPS curriculum.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR8",
+      "title": "Mathematics",
+      "code": "CAPS-MATHEMATICS-GR8",
+      "description": "Mathematics for Grade 8 as per the South African CAPS curriculum.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR8",
+      "title": "Term 1",
+      "code": "CAPS-MATHEMATICS-GR8-T1",
+      "description": "Grade 8 Mathematics Term 1: Whole Numbers, Integers, Common Fractions, Decimal Fractions, Numeric and Geometric Patterns.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR8-T1",
+      "title": "Whole Numbers",
+      "code": "CAPS-MATHEMATICS-GR8-T1-WN",
+      "description": "Revise commutative, associative and distributive properties; identity elements for addition and multiplication; division property of 0; prime factors, LCM and HCF of numbers to at least 3-digit whole numbers; solve problems involving ratio, rate, direct proportion, profit/loss/discount/VAT, budgets, accounts, loans, simple interest, hire purchase and exchange rates.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 7,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR8-T1",
+      "title": "Integers",
+      "code": "CAPS-MATHEMATICS-GR8-T1-INT",
+      "description": "Revise counting, ordering and comparing integers; revise addition and subtraction with integers; multiply and divide with integers; perform calculations involving all four operations with integers including squares, cubes, square roots and cube roots of integers; recognise and use commutative, associative and distributive properties; additive and multiplicative inverses; solve problems involving multiple operations with integers.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [3, 4],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 9,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR8-T1",
+      "title": "Common Fractions",
+      "code": "CAPS-MATHEMATICS-GR8-T1-CF",
+      "description": "Revise addition and subtraction of common fractions including mixed numbers; finding fractions of whole numbers; multiplication of common fractions including mixed numbers; divide whole numbers and common fractions by common fractions; calculate squares, cubes, square roots and cube roots of common fractions; use knowledge of multiples, factors and equivalent fractions; solve problems involving common fractions; percentage calculations including finding, calculating increase/decrease, calculating amounts given percentage increase/decrease; revise equivalent forms.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [5, 6],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 9,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR8-T1",
+      "title": "Decimal Fractions",
+      "code": "CAPS-MATHEMATICS-GR8-T1-DF",
+      "description": "Revise ordering, comparing and place value of decimal fractions to at least 3 decimal places; rounding off to at least 2 decimal places; multiplication of decimal fractions by decimal fractions not limited to one decimal place; division of decimal fractions by decimal fractions; calculate squares, cubes, square roots and cube roots of decimal fractions; revise calculation techniques; solve problems in context; revise equivalent forms.",
+      "order": 4,
+      "metadata": {
+        "weekNumbers": [8],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 4.5,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR8-T1",
+      "title": "Numeric and Geometric Patterns",
+      "code": "CAPS-MATHEMATICS-GR8-T1-NGP",
+      "description": "Revise investigating and extending numeric and geometric patterns looking for relationships between numbers including patterns in physical or diagram form, not limited to constant difference or ratio, of learner's own creation, and represented in tables; extend to include patterns represented algebraically; describe and justify general rules in own words or in algebraic language.",
+      "order": 5,
+      "metadata": {
+        "weekNumbers": [9, 10],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 9,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR8",
+      "title": "Term 2",
+      "code": "CAPS-MATHEMATICS-GR8-T2",
+      "description": "Grade 8 Mathematics Term 2: Exponents, Algebraic Expressions, Algebraic Equations, Functions and Relationships, Graphs.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR8-T2",
+      "title": "Exponents",
+      "code": "CAPS-MATHEMATICS-GR8-T2-EXP",
+      "description": "Revise comparing and representing whole numbers and integers in exponential form; compare and represent numbers in scientific notation limited to positive exponents; establish general laws of exponents: aᵐ × aⁿ = aᵐ⁺ⁿ, aᵐ ÷ aⁿ = aᵐ⁻ⁿ, (at)ⁿ = aⁿ × tⁿ, a⁰ = 1; recognise and use appropriate laws; perform calculations involving all four operations with numbers involving exponents and square and cube roots; calculate squares, cubes, square roots and cube roots of rational numbers; solve problems involving numbers in exponential form.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 9,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR8-T2",
+      "title": "Algebraic Expressions",
+      "code": "CAPS-MATHEMATICS-GR8-T2-AE",
+      "description": "Algebraic language: recognise and interpret rules or relationships in symbolic form; identify variables and constants; recognise conventions for writing algebraic expressions; identify and classify like and unlike terms; recognise and identify coefficients and exponents. Expand and simplify algebraic expressions using commutative, associative and distributive laws and laws of exponents: add and subtract like terms; multiply integers and monomials by monomials, binomials and trinomials; divide monomials, binomials and trinomials by integers or monomials; determine squares, cubes, square roots and cube roots of single or like algebraic terms; determine numerical value by substitution.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [3, 4, 5],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 13.5,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR8-T2",
+      "title": "Algebraic Equations",
+      "code": "CAPS-MATHEMATICS-GR8-T2-AEQN",
+      "description": "Set up equations to describe problem situations; analyse and interpret equations that describe a given situation; solve equations by inspection; determine the numerical value of an equation by substitution; identify variables and constants in formulae or equations; use substitution in equations to generate tables of ordered pairs; extend solving equations to include using additive and multiplicative inverses and using laws of exponents.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [6, 7],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 9,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR8-T2",
+      "title": "Functions and Relationships",
+      "code": "CAPS-MATHEMATICS-GR8-T2-FR",
+      "description": "Revise determining input values, output values or rules for patterns and relationships using flow diagrams, tables and formulae; extend to determine input values, output values or rules using equations; revise and extend determining, interpreting and justifying equivalence of different descriptions of the same relationship or rule presented verbally, in flow diagrams, in tables, by formulae, by number sentences and by equations.",
+      "order": 4,
+      "metadata": {
+        "weekNumbers": [8],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 4.5,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR8-T2",
+      "title": "Graphs",
+      "code": "CAPS-MATHEMATICS-GR8-T2-GR",
+      "description": "Interpreting graphs: analyse and interpret global graphs of problem situations with special focus on linear or non-linear, constant/increasing/decreasing, maximum or minimum, discrete or continuous features. Drawing graphs: draw global graphs from given descriptions; use tables or ordered pairs to plot points and draw graphs on the Cartesian plane.",
+      "order": 5,
+      "metadata": {
+        "weekNumbers": [9, 10],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 6,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR8",
+      "title": "Term 3",
+      "code": "CAPS-MATHEMATICS-GR8-T3",
+      "description": "Grade 8 Mathematics Term 3: Data Handling, Probability, Geometry of Straight Lines, Geometry of 2D Shapes.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR8-T3",
+      "title": "Data Handling",
+      "code": "CAPS-MATHEMATICS-GR8-T3-DH",
+      "description": "Collect data: pose questions relating to social, economic and environmental issues; select appropriate sources; distinguish between samples and populations; design questionnaires with multiple choice responses. Organise and summarise data using tally marks, tables, stem-and-leaf displays; group data into intervals; summarise data using measures of central tendency (mean, median, mode) and measures of dispersion (range, extremes).",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 11.5,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR8-T3",
+      "title": "Probability",
+      "code": "CAPS-MATHEMATICS-GR8-T3-PROB",
+      "description": "Consider simple situations with equally likely outcomes that can be described using probability: list all possible outcomes; determine the probability of each possible outcome; predict with reasons the relative frequency of possible outcomes; compare relative frequency with probability and explain differences.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR8-T3",
+      "title": "Geometry of Straight Lines",
+      "code": "CAPS-MATHEMATICS-GR8-T3-GSL",
+      "description": "Recognise and describe pairs of angles formed by perpendicular lines, intersecting lines and parallel lines cut by a transversal; solve geometric problems using the relationships between pairs of angles.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [3, 4, 5],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 9,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR8-T3",
+      "title": "Geometry of 2D Shapes",
+      "code": "CAPS-MATHEMATICS-GR8-T3-2DS",
+      "description": "Classifying 2D shapes: identify and write clear definitions of triangles (equilateral, isosceles, right-angled) and quadrilaterals (parallelogram, rectangle, square, rhombus, trapezium, kite) in terms of sides and angles. Investigate properties of triangles and quadrilaterals using accurately constructed figures. Identify properties of congruent and similar shapes. Solve geometric problems involving unknown sides and angles using known properties and definitions.",
+      "order": 4,
+      "metadata": {
+        "weekNumbers": [6, 7],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 9,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR8",
+      "title": "Term 4",
+      "code": "CAPS-MATHEMATICS-GR8-T4",
+      "description": "Grade 8 Mathematics Term 4: Theorem of Pythagoras, Transformation Geometry, Area and Perimeter of 2D Shapes, Surface Area and Volume of 3D Objects.",
+      "order": 4,
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR8-T4",
+      "title": "Theorem of Pythagoras",
+      "code": "CAPS-MATHEMATICS-GR8-T4-PYT",
+      "description": "Investigate the relationship between the lengths of the sides of a right-angled triangle to develop the Theorem of Pythagoras; determine whether a triangle is right-angled if the lengths of the three sides are known; use the Theorem of Pythagoras to calculate the missing length in a right-angled triangle, leaving irrational answers in surd form.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 9,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR8-T4",
+      "title": "Transformation Geometry",
+      "code": "CAPS-MATHEMATICS-GR8-T4-TG",
+      "description": "Recognise, describe and perform transformations with points on a co-ordinate plane: reflecting a point in the x-axis or y-axis, translating a point within and across quadrants, reflection in the line y = x, rotation around a given point. Perform transformations with triangles on a co-ordinate plane focusing on co-ordinates of vertices when reflecting, translating and rotating. Enlargements and reductions: use proportion to describe the effect of enlargement or reduction on area and perimeter; investigate co-ordinates of vertices of figures enlarged or reduced by a given scale factor.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [3, 4],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 4.5,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR8-T4",
+      "title": "Area and Perimeter of 2D Shapes",
+      "code": "CAPS-MATHEMATICS-GR8-T4-AP",
+      "description": "Use appropriate formulae to calculate perimeter and area of squares, rectangles, triangles and circles; calculate the areas of polygons to at least 2 decimal places by decomposing them into rectangles and/or triangles; use and describe the relationship between the radius, diameter and circumference of a circle; use and describe the relationship between the radius and area of a circle; use the irrational number pi (π); solve problems involving perimeter and area to at least 2 decimal places; convert between appropriate SI units (mm² ↔ cm² ↔ m² ↔ km²).",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [5, 6],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 8,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR8-T4",
+      "title": "Surface Area and Volume of 3D Objects",
+      "code": "CAPS-MATHEMATICS-GR8-T4-SAV",
+      "description": "Revise use of appropriate formulae to calculate surface area, volume and capacity of cubes and rectangular prisms; extend to calculate surface area, volume and capacity of triangular prisms; describe the interrelationship between surface area and volume; solve problems involving surface area, volume and capacity; convert between appropriate SI units (mm² ↔ cm² ↔ m² ↔ km², mm³ ↔ cm³ ↔ m³, ml (cm³) ↔ l ↔ kl).",
+      "order": 4,
+      "metadata": {
+        "weekNumbers": [7],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 4.5,
+        "cognitiveWeighting": null
+      }
+    }
+  ]
+}

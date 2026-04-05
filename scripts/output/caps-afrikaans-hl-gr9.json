@@ -1,0 +1,131 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Senior Phase",
+      "code": "CAPS-SP",
+      "description": "Senior Phase covering Grades 7 to 9",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-SP",
+      "title": "Grade 9",
+      "code": "CAPS-GR9",
+      "description": "Grade 9",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR9",
+      "title": "Afrikaans Huistaal",
+      "code": "CAPS-AFRIKAANSHL-GR9",
+      "description": "Afrikaans Huistaal vir Graad 9 wat Luister en Praat, Lees en Kyk, Skryf en Aanbied, en Taalstrukture en -konvensies oor vier kwartale dek.",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-AFRIKAANSHL-GR9",
+      "title": "Kwartaal 1",
+      "code": "CAPS-AFRIKAANSHL-GR9-T1",
+      "description": "Kwartaal 1: Advertensie/opstel, jeugroman/kortverhaal/drama, koerantberig/webjoernaal/blog, dialoog/agenda/notule, kontrak/gedig/verslag. FAT1: Mondeling — Hardoplees (20 punte). FAT2: Skryf — Opstel (40 punte). FAT3: Respons op tekste (70 punte).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSHL-GR9-T1",
+      "title": "Advertensie, Opstel en Literêre Tekste",
+      "code": "CAPS-AFRIKAANSHL-GR9-T1-ADVERTENSIE",
+      "description": "Luister en Praat: weke 1-2 — luister- en praatstrategieë: gesprekvoering deur onderwyser gelei; luister/kyk na 'n advertensie en bespreek; toon, tempo, emotiewe en manipulerende taalgebruik, skrifgrootte, liggaamstaal, AIDA-beginsel. Weke 3-4 — luister- en praatstrategieë: luister na die lees van 'n teks; identifiseer en lewer kommentaar op gebruik van stem, gebruik van intonasie en tempo, gebruik van leestekens in lees, begin en slot, bespreek bogenoemde kenmerke; voorbereide hardoplees (FAT1 begin K1, voltooi K2). Lees en Kyk: weke 1-2 — lees en soek na begrip in 'n visuele teks soos 'n advertensie/plakkaat/strokiesprent; leesstrategieë; gebruik van leestekens en lettertipe. Weke 3-4 — literêre teks soos 'n jeugroman/kortverhaal/drama: algemene bespreking van die belangrikste kenmerke soos karakter, karakterisering, intrige, konflik, agtergrond, ruimte, verteller en tema. Skryf en Aanbied: weke 1-2 — transaksionele tekste, bv. advertensie/plakkaat; korrekte formaat, doel en teikengroep, kenmerke van die teks, taalgebruik, register. Weke 3-4 — skryf 'n verhalende/beskrywende/reflekterende/argumenterende opstel (FAT2, 40 punte, gedurende die kwartaal); woordkeuse, persoonlike stem en styl, lewendige beskrywing, toon, kern- en ondersteunende gedagtes. Taalstrukture: enkelvoud, meervoud, byvoeglike naamwoorde, selfstandige naamwoorde; sinstruktuur, selfstandige naamwoorde, byvoeglike naamwoorde, tye van die werkwoord; spelling en punktuasie, spelpatrone, afkortings; woordeskat in konteks.",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSHL-GR9-T1",
+      "title": "Koerantberig/Blog, Dialoog/Agenda/Notule en Kontrak/Gedig/Verslag",
+      "code": "CAPS-AFRIKAANSHL-GR9-T1-KOERANTBERIG",
+      "description": "Luister en Praat: weke 5-6 — luister na 'n koerantberig; struktuur, kenmerke, taalgebruik, toon, register, inleiding en afsluiting; mondelinge aanbieding oor die berig. Weke 7-8 — luister na 'n dialoog; luister met begrip na 'n vergadering waarvan kennis gegee en notules geneem word; kies 'n gepaste onderwerp; organiseer inligting op samehangende wyse; identifiseer korrekte woordeskat en taalstruktuur. Weke 9-10 — luister na 'n telefoongesprek/dialoog tussen 'n inbel-agent en kliënt aangaande 'n dispuut oor 'n kontrak; voorbereide hardoplees. Lees en Kyk: weke 5-6 — lees 'n koerantberig/tydskrifartikelverslag; poësie: kenmerke van 'n gedig (interne struktuur, uiterlike bou); lees en kyk vir begrip (gebruik koerant). Weke 7-8 — luister na 'n dialoog/agenda/notule; lees met begrip na 'n dialoog: letterkundige teks soos kortverhaal, jeugroman, roman, drama. Weke 9-10 — lees 'n kontrak tussen 'n koper en verkoper: formaat, taalgebruik, kontraktaal, handtekening; poësie. Skryf en Aanbied: weke 5-6 — transaksionele tekste soos 'n webjoernaal/blog deur die skryfproses te volg. Weke 7-8 — transaksionele teks: agenda en notule; woordkeuse, persoonlike stem en styl, lewendige beskrywing, toon, kern- en ondersteunende gedagtes. Weke 9-10 — transaksionele teks: skryf 'n verslag oor die bevindinge van 'n dispuut tussen 'n verkoper en 'n koper. Taalstrukture: werkwoorde, voornaamwoorde: aanwysend, persoonlik, besitlik, en vriend; sinstruktuur, sinsoorte, vraagvorme, lydende en bedrywende vorm; idiomatiese uitdrukkings en spreekwoorde; spelpatrone en spelreëls, afkortings, verkortings, akronieme, hoofletters.",
+      "metadata": { "weekNumbers": [5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-AFRIKAANSHL-GR9",
+      "title": "Kwartaal 2",
+      "code": "CAPS-AFRIKAANSHL-GR9-T2",
+      "description": "Kwartaal 2: Volksverhaal/roman, biografie, koerantberig/tydskrifartikel, verslag. FAT4: Transaksionele skryf (20 punte). FAT5: Junie-kontroletoets — Respons op tekste (70 punte).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSHL-GR9-T2",
+      "title": "Volksverhaal/Roman, Biografie en Koerantberig",
+      "code": "CAPS-AFRIKAANSHL-GR9-T2-VOLKSVERHAAL",
+      "description": "Luister en Praat: weke 1-2 — luister vir begrip: luister na 'n storie; identifiseer kern- en ondersteunende idees, taalgebruik, register, beantwoord vrae, hervertel die storie; voorbereide mondelinge aanbieding (FAT1 K2 voltooi). Weke 3-4 — luister vir begrip na 'n biografie/opname van 'n mondelinge aanbieding; verduidelik die strategieë van die luisterproses; skriftelike beantwoording van vrae; onvoorbereide lees; gepaste gebruik van stem, toon en tempo. Lees en Kyk: weke 1-2 — lees 'n letterkundige teks, bv. 'n volksverhaal/roman; leesstrategieë; tekskenmerke, bv. intrige, karakter, ruimte, verteller, atmosfeer, tema en vertellersperspektief; taalstruktuur en styl. Weke 3-4 — lees 'n teks, bv. 'n drama/kortverhaal/volksverhaal; spesifieke fokus op letterkundige tekskenmerke; lees en kyk na tekste soos koerantberigte/tydskrifartikels vir inligting en begrip. Skryf en Aanbied: weke 1-2 — transaksionele tekste: formele brief; kenmerke van die teks en tekstipe, identifiseer die doel, teikengroep en formaat, woordkeuse; skryf 'n formele brief deur die skryfproses te volg. Weke 3-4 — lang transaksionele teks, bv. 'n koerantberig/tydskrifartikel; skryf 'n koerantberig/tydskrifartikel. Taalstrukture: basisvorme, voorvoegsels en agtervoegsels, voornaamwoorde; sinsoorte, veralgemenings, direkte en indirekte rede, teenwoordige tyd, verlede tyd, toekomende tyd; idiomatiese uitdrukkings en spreekwoorde, letterlike en figuurlike betekenis; spelpatrone en spelreëls, aanhalingstekens, afkortings.",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSHL-GR9-T2",
+      "title": "Roman/Volksverhaal, Verslag en Junie-Kontroletoets",
+      "code": "CAPS-AFRIKAANSHL-GR9-T2-VERSLAG",
+      "description": "Luister en Praat: weke 5-6 — luister na mondelinge teks soos onderhoud/mondelinge aanbieding/storievertelling om begrip te demonstreer; maak aantekeninge gedurende luister; luister krities; groep-/paneelbespreking; gebruik gesprekskonvensies. Weke 7-8 — luister- en praatstrategieë: luister na 'n koerantberig; struktuur, kenmerke, taalgebruik, toon, register, inleiding en afsluiting; mondelinge aanbieding van 'n artikel. Lees en Kyk: weke 5-6 — lees 'n letterkundige teks, bv. roman/kortverhaal; spesifieke fokus op letterkundige tekskenmerke; toon begrip van die ontwikkeling van intrige en konflik; lees en kyk vir begrip (geskrewe en/of visuele teks soos strokiesprente); hersien die struktuur van 'n opsomming. Weke 7-8 — lees 'n koerantberig/tydskrifartikel; leesstrategieë; begrip van 'n teksgedeelte in die handboek; poësie: kenmerke van 'n gedig. Skryf en Aanbied: weke 5-6 — transaksionele tekste: 'n verslag; kenmerke van die teks en tekstipe; gepaste taalgebruik, identifiseer die doel, teikengroep en formaat, woordkeuse. Weke 7-8 — FAT4: transaksionele skryf (20 punte): 2 kort of 1 lank; word voor die Junie-kontroletoets geskryf; skryf 'n koerantberig/tydskrifartikel. Weke 9-10 — FAT5: Junie-kontroletoets — Respons op tekste (70 punte): Vraag 1: Literêre/nie-literêre teks (25 punte); Vraag 2: Visuele teks (15 punte); Vraag 3: Opsomming (10 punte); Vraag 4: Taalstrukture en -konvensies binne konteks (20 punte). Taalstrukture: byvoeglike naamwoorde, afkortings, voorsetsels en agtervoegsels; inleidende paragraaf, omskrywende paragraaf, slotparagraaf, sinstruktuur, sinsoorte; idiomatiese uitdrukkings en spreekwoorde, letterlike en figuurlike betekenis, alliterasie, assonansie; spelpatrone en spelreëls, aanhalingstekens, afkaptekens.",
+      "metadata": { "weekNumbers": [5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-AFRIKAANSHL-GR9",
+      "title": "Kwartaal 3",
+      "code": "CAPS-AFRIKAANSHL-GR9-T3",
+      "description": "Kwartaal 3: Dialoog/onderhandelinge, projek navorsing en skryf, opstel/digitale produk, e-pos/drama. FAT6: Kreatiewe Skryfprojek Stap 1 Navorsing (20 punte) + Stap 2 Skryf (30 punte) = 50 punte. FAT7: Mondelinge aanbieding (20 punte, begin K3 voltooi K4). FAT8: Respons op tekste (30 punte).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSHL-GR9-T3",
+      "title": "Dialoog, Projek Navorsing en Skryf",
+      "code": "CAPS-AFRIKAANSHL-GR9-T3-PROJEK",
+      "description": "Luister en Praat: weke 1-2 — luister- en praatstrategieë: dialoog/onderhandelinge; luister na 'n onderhandelingsgesprek tussen twee mense (dialoog) en bespreek (word deur onderwyser gelei); strukturering en ontwikkeling van idees; gebruik onderhandelingsvaardighede om konsensus te bereik; taalstyl; gesprekvoering (gepaste gebruik van stem, toon en tempo, liggaamstaal, kontak met die gehoor). Weke 3-4 — luister na en neem deel aan 'n bespreking oor die projekwerk gebaseer op literatuurstudie; luister hoe om navorsing te doen; metodologie, proses, doel, instruksies; verskillende stappe in projekwerk; deel idees; beantwoord vrae. Weke 5-6 — bespreking oor die projek: onderwerpondersteuning, leidende vraag, hipotese; luister na inligting oor die onderwerp(e); neem notas af; vra en beantwoord vrae; verstaan die verwagtinge en uitkomste van die projek. Lees en Kyk: weke 1-2 — lees 'n letterkundige teks, bv. 'n drama; toon begrip van die ontwikkeling van intrige en konflik, karakterisering, keerpunt, agtergrond/milieu, rol van verteller, tema, afsluiting en slot. Weke 3-4 — lees vir inligting gebaseer op die onderwerpe wat vir die projek gekies is; leesstrategieë; stel 'n bibliografie van hulpbronne op. Weke 5-6 — lees 'n letterkundige teks oor die projek, bv. 'n roman/kortverhaal/volksverhaal; lees en kyk na verskillende hulpbronne; reageer op die onderwerp/leidende vraag/hipotese in die beplanning en neerlê van die eerste konsep. Skryf en Aanbied: weke 1-2 — transaksionele tekste: 'n dialoog; korrekte formaat, doel, kern- en ondersteunende gedagtes, taalgebruik, register, logiese opeenvolging van sinne, gebruik verbindingswoorde. Weke 3-4 — FAT6 Stap 1: Navorsing (20 punte): gebruik verskillende soorte grafiese organiseerders om die navorsingsafdeling van die projek te organiseer; kies en skep 'n toepaslike skryfraam vir die soort skryfteks/produk wat gelewer moet word. Weke 5-6 — FAT6 Stap 2: Skryf (30 punte): gebruik die notas van die navorsing om die eerste konsep te ontwikkel (skryf); die volgende is belangrik: beplanning (navorsing), eerste weergawe/konsep (bly binne die struktuur), redigering, aanbieding. Taalstrukture: konkrete en abstrakte voornaamwoorde; direkte en indirekte rede, tyd, sinsoorte, paragraafoorte, bysinne en bepalings; homonieme, homofone, polisemie; spelpatrone en spelreëls.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSHL-GR9-T3",
+      "title": "Opstel/Digitale Produk, Mondelinge Aanbieding, E-pos en FAT8",
+      "code": "CAPS-AFRIKAANSHL-GR9-T3-MONDELING",
+      "description": "Luister en Praat: weke 7-8 — voorbereide mondelinge aanbieding (FAT7, 20 punte, begin K3 voltooi K4): taalgebruik, toon, aanbiedingskonvensies, liggaamstaal, inleiding en afsluiting. Weke 9-10 — luister- en praatstrategieë: storievertelling; voorbereide hardoplees; gebruik relevante praatvaardighede soos toon, volume, tempo, stemprojeksie, uitspraak, vlotheid. Lees en Kyk: weke 7-8 — lees en kyk vir begrip (visuele en geskrewe tekste): leesstrategieë (vluglees vir kerngedagtes, soeklees vir ondersteunende besonderhede, aandagtige lees); maak van voorspellings; lei die betekenis van onbekende woorde en beelde af; kern en ondersteunende gedagtes; die effek van keuse en weglating op betekenis. Weke 9-10 — lees letterkundige tekste, bv. drama; poësie: kenmerke van 'n gedig. Skryf en Aanbied: weke 7-8 — skryf 'n opstel of genereer 'n digitale produk gebaseer op die letterkunde genre wat bestudeer is: verhalende/beskrywende/reflekterende/argumenterende opstel/plakkaat/brosjure ens. Weke 9-10 — transaksionele tekste, bv. e-pos: korrekte formaat, doel, kern- en ondersteunende gedagtes, taalgebruik, register, logiese opeenvolging van sinne. FAT8: Respons op tekste (30 punte): Vraag 1: (Verpligtend) Gedig (10 punte); Vraag 2: Roman of drama (10 punte); Vraag 3: Kortverhale of Volksverhale (10 punte). Taalstrukture: byvoeglike naamwoorde: attributief; beskrywende paragraaf, keuse paragraaf, klassifiseringsparagraaf; een woord vir 'n omskrywing; spelpatrone en spelreëls.",
+      "metadata": { "weekNumbers": [7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-AFRIKAANSHL-GR9",
+      "title": "Kwartaal 4",
+      "code": "CAPS-AFRIKAANSHL-GR9-T4",
+      "description": "Kwartaal 4: Dekbrief/CV, aanwysings/instruksies, huldeblyk/beëdigde verklaring. FAT7 voltooi. FAT9: Transaksionele skryf (20 punte). Hersiening. Eindeksamen: FAT10 Vraestel 2 — Respons op tekste (70 punte).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSHL-GR9-T4",
+      "title": "Dekbrief/CV, Aanwysings, Huldeblyk en Eindeksamen",
+      "code": "CAPS-AFRIKAANSHL-GR9-T4-EKSAMEN",
+      "description": "Luister en Praat: weke 1-2 — luister en praat: luister vir begripstoets; reageer krities op 'n verskeidenheid tekste; luister vir spesifieke inligting; luister en geniet fabels en mites; beantwoord vrae; gesprekvoering: CV en dekbrief (doel, formaat/struktuur, teikengehoor, doel en konteks, woordkeuse). Weke 3-4 — luister met begrip (gebruik 'n opname van 'n dialoog): luister na 'n dialoog, maak aantekeninge oor taalkonvensies, toon, atmosfeer, inleiding en afsluiting; mondelinge bespreking: aanwysings/instruksies; forum-/besprekingskonvensies; neem beurte; taalgebruik. Weke 5-6 — voorbereide hardoplees; gebruik relevante praatvaardighede soos toon, volume, tempo, stemprojeksie, uitspraak en vlotheid; mondelinge bespreking van beëdigde verklaring. Lees en Kyk: weke 1-2 — lees literêre tekste soos 'n kortverhaal/jeugroman/roman/drama; poësie: kenmerke. Weke 3-4 — lees 'n teks, bv. 'n kortverhaal/jeugroman/roman; lees en kyk met begrip (visuele of multimediateks soos strokiesprent of advertensie); lees 'n teks, bv. 'n drama/kortverhaal/volksverhaal. Weke 5-6 — lees 'n teks, bv. 'n drama/kortverhaal/volksverhaal: spesifieke fokus op letterkundige tekskenmerke; lees en kyk na 'n teks, bv. 'n koerantberig/tydskrifartikel vir inligting en begrip; leesstrategieë; begrip van 'n teksgedeelte in die handboek. Skryf en Aanbied: weke 1-2 — transaksionele teks, bv. dekbrief en CV: vereistes t.o.v. formaat en styl, teikengroep en konteks, woordkeuse, figuurlike taal, simbole, kleur en plek; sinstruktuur, -lengtes en -tipes; seleksie van visuele en ontwerpelemente. Weke 3-4 — transaksionele teks, bv. aanwysings/instruksies: gebruik korrekte formaat; organiseer inhoud (breinkaart); logiese opeenvolging van paragrawe om samehang te verseker; voegwoorde vir samehang. Weke 5-6 — transaksionele tekste, bv. 'n huldeblyk of beëdigde verklaring: korrekte formaat, doel, kern- en ondersteunende gedagtes. FAT7: voltooi mondelinge aanbieding projek (20 punte, K3 begin — K4 voltooi). FAT9: transaksionele skryf (20 punte, weke 7-8 — word voor die jaareindeksamen geskryf). Weke 7-8 — hersiening. Weke 9-10 — FAT10: Eindeksamen — Vraestel 2 Respons op tekste (70 punte): Vraag 1: Literêre/nie-literêre teks (25 punte); Vraag 2: Visuele teks (15 punte); Vraag 3: Opsomming (10 punte); Vraag 4: Taalstrukture en -konvensies binne konteks (20 punte). Taalstrukture: werkwoorde, selfstandige naamwoorde: samevoegings; metataal vir prosedures, logiese opeenvolging van idees, volgorde van belangrikheid, slotparagraaf; gebruik van gevoelstaal, stereotipering, partydigheid, vooroordeel; spelpatrone en spelreëls, afkortings, verkortings en akronieme, hoofletters.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    }
+  ]
+}

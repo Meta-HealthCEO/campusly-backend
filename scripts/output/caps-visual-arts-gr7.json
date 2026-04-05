@@ -1,0 +1,140 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Senior Phase",
+      "code": "CAPS-SP",
+      "description": "Senior Phase covering Grades 7 to 9",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-SP",
+      "title": "Grade 7",
+      "code": "CAPS-GR7",
+      "description": "Grade 7",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR7",
+      "title": "Creative Arts: Visual Arts",
+      "code": "CAPS-VISUALARTS-GR7",
+      "description": "Visual Arts for Grade 7 covering two-dimensional and three-dimensional art, art history and appreciation, and visual literacy through the four streams: Drawing, Painting, Printmaking, and three-dimensional art.",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-VISUALARTS-GR7",
+      "title": "Term 1",
+      "code": "CAPS-VISUALARTS-GR7-T1",
+      "description": "Term 1: 2D and 3D art focusing on pattern, texture and form; introduction to South African art and artists.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-VISUALARTS-GR7-T1",
+      "title": "Drawing and Pattern — Elements of Art",
+      "code": "CAPS-VISUALARTS-GR7-T1-DRAWING",
+      "description": "Elements of art: line, shape, form, colour, texture, value, space; principles of design: pattern, repetition, contrast; observational drawing from life; contour drawing; drawing natural forms and patterns found in South African flora and fauna. Art history: introduction to San rock art — symbols, patterns and storytelling. Practical task: detailed observational drawing using patterns from nature.",
+      "metadata": { "weekNumbers": [1,2,3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-VISUALARTS-GR7-T1",
+      "title": "Painting — Colour Theory and Expression",
+      "code": "CAPS-VISUALARTS-GR7-T1-PAINTING",
+      "description": "Colour theory: colour wheel, primary/secondary/tertiary colours, warm/cool colours, complementary colours; colour mixing; painting techniques: washes, blending, dry brush; expressive use of colour. South African artists: Gerard Sekoto, George Pemba — social realism and colour. Practical task: expressive painting exploring colour relationships.",
+      "metadata": { "weekNumbers": [6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-VISUALARTS-GR7",
+      "title": "Term 2",
+      "code": "CAPS-VISUALARTS-GR7-T2",
+      "description": "Term 2: Printmaking and 3D construction; African art traditions and craft.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-VISUALARTS-GR7-T2",
+      "title": "Printmaking — Relief Printing",
+      "code": "CAPS-VISUALARTS-GR7-T2-PRINTMAKING",
+      "description": "Introduction to printmaking: relief printing processes; linocut, foam plate or polystyrene printing; positive/negative space; creating a printing plate; inking and printing; multi-colour printing; repetition and pattern in prints. African textile patterns and Ndebele geometric design as inspiration. Practical task: relief print incorporating African pattern motifs.",
+      "metadata": { "weekNumbers": [1,2,3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-VISUALARTS-GR7-T2",
+      "title": "3D Art — Construction and Assemblage",
+      "code": "CAPS-VISUALARTS-GR7-T2-3D",
+      "description": "Three-dimensional art: form, volume, space, texture in 3D; construction methods using cardboard, wire, clay or found objects; assemblage and collage; African sculpture and craft — Zulu beadwork, pottery, weaving. Visual literacy: analysing 3D artworks from different cultures. Practical task: 3D construction or assemblage inspired by African craft traditions.",
+      "metadata": { "weekNumbers": [6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-VISUALARTS-GR7",
+      "title": "Term 3",
+      "code": "CAPS-VISUALARTS-GR7-T3",
+      "description": "Term 3: Mixed media and typography; global and contemporary art.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-VISUALARTS-GR7-T3",
+      "title": "Mixed Media and Collage",
+      "code": "CAPS-VISUALARTS-GR7-T3-MIXEDMEDIA",
+      "description": "Mixed media art: combining drawing, painting, collage, printmaking; found materials and textures; photomontage; layering and composition; identity and self-portrait through mixed media. Art history: Romare Bearden — African-American collage art; David Koloane — South African collage. Practical task: mixed media self-portrait or identity artwork.",
+      "metadata": { "weekNumbers": [1,2,3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-VISUALARTS-GR7-T3",
+      "title": "Visual Communication and Typography",
+      "code": "CAPS-VISUALARTS-GR7-T3-VISUAL",
+      "description": "Visual communication: posters, logos, branding; typography: letterforms, font selection, layout; composition and visual hierarchy; colour in graphic design; analysing advertisements and visual media. Global artists: commercial and graphic designers. Practical task: poster or logo design for a school event or community campaign.",
+      "metadata": { "weekNumbers": [6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-VISUALARTS-GR7",
+      "title": "Term 4",
+      "code": "CAPS-VISUALARTS-GR7-T4",
+      "description": "Term 4: Environmental art and sculpture; portfolio review and art appreciation.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-VISUALARTS-GR7-T4",
+      "title": "Environmental and Land Art",
+      "code": "CAPS-VISUALARTS-GR7-T4-ENVIRONMENTAL",
+      "description": "Environmental art: art made from or in nature; land art and sculpture using natural materials; environmental themes in contemporary art; recycled and upcycled art; art as social commentary on environmental issues. Andy Goldsworthy — land art; South African environmental artists. Practical task: small-scale environmental art using natural or recycled materials.",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-VISUALARTS-GR7-T4",
+      "title": "Portfolio Review and Art Appreciation",
+      "code": "CAPS-VISUALARTS-GR7-T4-PORTFOLIO",
+      "description": "Compiling and presenting a portfolio of work from the year; artist statement writing; self-evaluation and peer critique; art gallery visit or virtual tour; consolidating visual arts vocabulary and critical analysis skills; celebration of creative work.",
+      "metadata": { "weekNumbers": [5,6,7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    }
+  ]
+}

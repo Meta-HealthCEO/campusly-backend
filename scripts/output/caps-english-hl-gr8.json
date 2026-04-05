@@ -1,0 +1,131 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Senior Phase",
+      "code": "CAPS-SP",
+      "description": "Senior Phase covering Grades 7 to 9",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-SP",
+      "title": "Grade 8",
+      "code": "CAPS-GR8",
+      "description": "Grade 8",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR8",
+      "title": "English Home Language",
+      "code": "CAPS-ENGLISHHL-GR8",
+      "description": "English Home Language for Grade 8 covering Listening and Speaking, Reading and Viewing, Writing and Presenting, and Language Structures and Conventions across four terms.",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-ENGLISHHL-GR8",
+      "title": "Term 1",
+      "code": "CAPS-ENGLISHHL-GR8-T1",
+      "description": "Term 1: Short story, novel, speech, editorial. FAT1: Oral — prepared reading (20 pts). FAT2: Written essay — narrative/reflective (30 pts). FAT3: Response to texts (60 pts).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR8-T1",
+      "title": "Short Story and Novel",
+      "code": "CAPS-ENGLISHHL-GR8-T1-SHORTSTORY",
+      "description": "Listening and Speaking: listen to a short story; identify core ideas, supporting details; take notes; retell; discuss themes. Prepared oral reading (FAT1, 20 pts). Reading and Viewing: literary text — short story; key features: character, characterisation, plot, conflict, setting, point of view, theme; reading strategies: pre-reading, during reading, post-reading; comprehension and inference. Novel introduction: character, structure, parts of a book. Writing and Presenting: narrative/reflective essay (FAT2, 30 pts, weeks 7-8); writing process: brainstorm, plan, draft, revise, edit, proofread; paragraph conventions; coherence and cohesion. Language Structures and Conventions: word classes review; complex sentences; relative clauses; punctuation: colon, semicolon; vocabulary: idioms, metaphors.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR8-T1",
+      "title": "Newspaper/Editorial and Transactional Writing",
+      "code": "CAPS-ENGLISHHL-GR8-T1-EDITORIAL",
+      "description": "Listening and Speaking: interview or oral report; evaluate language use, register, tone; summarise. Reading and Viewing: non-fiction: newspaper article, editorial, report; features: headline, byline, lead paragraph, inverted pyramid; fact vs opinion; bias and point of view; persuasive language. Writing and Presenting: transactional — investigative report or editorial (factual writing); formal register, audience, purpose. Language Structures and Concerns: passive voice; reported speech; conditionals; paragraph types; formal vs informal language; spelling conventions.",
+      "metadata": { "weekNumbers": [7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-ENGLISHHL-GR8",
+      "title": "Term 2",
+      "code": "CAPS-ENGLISHHL-GR8-T2",
+      "description": "Term 2: Novel, poetry, drama, folk tale, transactional texts. FAT4: Transactional writing short task (10 pts). FAT5: Mid-year exam — Response to texts (60 pts).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR8-T2",
+      "title": "Novel and Poetry",
+      "code": "CAPS-ENGLISHHL-GR8-T2-NOVEL_POETRY",
+      "description": "Listening and Speaking: listen to a novel extract; make notes; summarise; participate in group discussion. Reading and Viewing: novel — deeper character analysis, theme development, writer's craft, symbolism; poetry — literary features: metre, imagery, figures of speech, tone, mood; analysing poem structure and meaning; visual text: comic strip or graphic novel. Writing and Presenting: descriptive essay or creative response to literature; summary writing from a novel chapter. Language Structures and Conventions: sentence variety; subordinate clauses; figures of speech in context; punctuation review; etymology and word formation.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR8-T2",
+      "title": "Drama and Transactional Texts",
+      "code": "CAPS-ENGLISHHL-GR8-T2-DRAMA",
+      "description": "Listening and Speaking: drama reading; role play; discussion on social issues raised in drama. Reading and Viewing: drama text — dramatic conventions, soliloquy, stage directions; folk tale — narrative structure, themes, cultural context; non-fiction: advertisement or review. Writing and Presenting: transactional — formal letter or review (FAT4 short transactional, 10 pts); paragraph writing conventions. Language Structures and Conventions: concord; tense consistency; prepositions; conjunctions; formal letter format; spelling and punctuation rules.",
+      "metadata": { "weekNumbers": [7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-ENGLISHHL-GR8",
+      "title": "Term 3",
+      "code": "CAPS-ENGLISHHL-GR8-T3",
+      "description": "Term 3: Creative Writing Project (CWP). FAT6: CWP Research (20 pts) + Write-up (30 pts) = 50 pts. FAT7: Oral — CWP Presentation (20 pts, begin T3, conclude T4). FAT8: Response to Literature (30 pts).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR8-T3",
+      "title": "Creative Writing Project — Research and Writing",
+      "code": "CAPS-ENGLISHHL-GR8-T3-CWP",
+      "description": "Listening and Speaking: oral discussions on project topics; peer collaboration; begin preparing oral presentation (FAT7, 20 pts). Reading and Viewing: research reading from various sources; literary texts — short story, folk tale, drama extract; reading comprehension strategies for non-fiction; bibliography compilation. Writing and Presenting: CWP Phase 1 — Research (FAT6, 20 pts, weeks 3-4): research notes, mind maps, graphic organisers, bibliography; CWP Phase 2 — Write-up (FAT6, 30 pts, week 6): produce final written product according to chosen genre, format, conventions. FAT8 Response to Literature (30 pts): poetry (compulsory), novel/drama, short story/folk tale. Language Structures and Conventions: genre-specific language conventions; essay structure; critical language; word choice and style.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR8-T3",
+      "title": "Information Texts and Visual Literacy",
+      "code": "CAPS-ENGLISHHL-GR8-T3-VISUAL",
+      "description": "Reading and Viewing: visual and multi-media texts — infographic, graph, diagram, magazine layout; analysing visual elements: colour, font, image, composition; interpreting data visuals; comparing written and visual texts. Writing and Presenting: transactional writing — diary entry or e-mail related to project content. Language Structures and Conventions: text types and their conventions; language for analysis and interpretation; vocabulary extension.",
+      "metadata": { "weekNumbers": [7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-ENGLISHHL-GR8",
+      "title": "Term 4",
+      "code": "CAPS-ENGLISHHL-GR8-T4",
+      "description": "Term 4: Conclude CWP oral (FAT7); transactional and revision; end-of-year exam.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR8-T4",
+      "title": "Transactional Texts, Oral Completion and Revision",
+      "code": "CAPS-ENGLISHHL-GR8-T4-REVISION",
+      "description": "Listening and Speaking: complete FAT7 oral presentations (CWP oral); peer assessment; group discussions. Reading and Viewing: information and transactional texts — questionnaires, forms; drama extract for comprehension; revision of all text types and literature genres. Writing and Presenting: transactional texts — questionnaire or instructions; FAT9 (transactional, exam preparation). Language Structures and Conventions: comprehensive revision of grammar, vocabulary, punctuation, spelling; end-of-year examination preparation; past paper practice.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    }
+  ]
+}

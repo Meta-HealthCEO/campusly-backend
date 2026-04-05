@@ -1,0 +1,108 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Senior Phase",
+      "code": "CAPS-SP",
+      "description": "Senior Phase covering Grades 7 to 9",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-SP",
+      "title": "Grade 8",
+      "code": "CAPS-GR8",
+      "description": "Grade 8",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR8",
+      "title": "Technology",
+      "code": "CAPS-TECHNOLOGY-GR8",
+      "description": "Technology for Grade 8 covering mechanical systems, structures, processing, electrical systems and control through IDMEC methodology",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-TECHNOLOGY-GR8",
+      "title": "Term 1",
+      "code": "CAPS-TECHNOLOGY-GR8-T1",
+      "description": "Term 1: Mechanical Systems and Control (gears, cams, cranks), Structures (frame structures, beams, bridges, arches, cantilevers, structural failure). PAT 1 scenario: Electrical pylon structure with mechanisms.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TECHNOLOGY-GR8-T1",
+      "title": "Mechanical Systems and Control; Structures",
+      "code": "CAPS-TECHNOLOGY-GR8-T1-MECHSTRUCTURES",
+      "description": "Revision of Grade 7 content / baseline assessment. Mechanical Systems: revision of mechanical advantage; wedge (inclined plane, door wedge, knife blade); wheel and axle (bicycle, shopping trolley); gears (spur gears, counter-rotation, idler gear synchronises rotation, gear ratios, velocity ratio and force ratio); cam (converts rotary to reciprocating motion, eccentric wheel, snail cam); crank (adaptation of second-class lever). Graphic skills: artist's impression of cam and crank. PAT 1 scenario: IDMEC – structure utilising structural components and mechanisms. Case study: electrical pylons (variety of designs, internal cross-bracing, triangulation). Evaluate: advantages/disadvantages of complex structures. Structures: tension/compression (worksheet); frame structures (definition, structural members in wood and steel roof trusses – king/queen post, strut, tie, rafter, tie beam; identifying members and forces: shear, torsion, tension, compression); structures spanning over space (steel I-beams, concrete lintels, beam-and-column bridge, suspension bridges, cable-stayed bridges, arches, cantilevers); structural failure (fracture/lack of strength, bending/buckling/lack of stiffness, toppling/lack of stability). Design brief and initial idea sketches; graphic conventions (thick/dark outlines, feint construction lines, dashed hidden detail, chain centre lines, dimensioning in mm); 2D working drawing; 3D isometric projection using isometric grid; make structure housing mechanisms (safe working practices); evaluate; communicate. SBA: PAT 1 – Investigate (15 marks, week 4), Design (25 marks, week 6), Make (35 marks, week 7); Total 70 marks.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "Technology Term 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-TECHNOLOGY-GR8",
+      "title": "Term 2",
+      "code": "CAPS-TECHNOLOGY-GR8-T2",
+      "description": "Term 2: Processing (impact of plastics on environment, recycling, packaging), Investigation Skills, Design Skills, Structures/Processing. Mid-year examination: 40 marks.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TECHNOLOGY-GR8-T2",
+      "title": "Processing: Environmental Impact of Technology; Materials and Forces",
+      "code": "CAPS-TECHNOLOGY-GR8-T2-PROCESSING",
+      "description": "Positive impact of technology: natural materials replaced by new/improved materials; biodegradable materials. Case study 1: investigate impact of plastic shopping bags on the environment; write report evaluating effectiveness of biodegradable plastic bags. Case study 2: technology with positive impact – investigate how waste paper/cardboard are recycled for packaging; draw development of an opened container; practical activity: design and make packaging for a product. Case study 3: technological products with negative impact on society; class discussion on solutions to counteract negative impact. Revise forces acting on materials: tension, compression, bending, torsion, shear; adapting materials to withstand forces (reinforcing concrete, plywood); selecting metal sections (I-beam, angle iron, T-bar) to withstand forces and save material. Design: sketch two possible solutions; 3D isometric projection of chosen solution. Make: model/prototype/product. Evaluate: in terms of effectiveness, objectivity, fairness, accuracy and scope. Communicate: present plans, model and evaluation. Revise challenging topics: developments, types of forces, negative impact of materials on environment. SBA: Mid-year examination (40 marks).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "Technology Term 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-TECHNOLOGY-GR8",
+      "title": "Term 3",
+      "code": "CAPS-TECHNOLOGY-GR8-T3",
+      "description": "Term 3: Mechanical Advantage (gear calculations), Mechanical Systems and Control (gear systems), Structures with a Mechanism (mine shaft headgear), Impact/Indigenous/Bias in Technology. PAT 2 scenario: Mine shaft headgear.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TECHNOLOGY-GR8-T3",
+      "title": "Mechanical Advantage Calculations; Gear Systems; Structure with a Mechanism (Mine Shaft Headgear); Impact and Indigenous Technology",
+      "code": "CAPS-TECHNOLOGY-GR8-T3-GEARS",
+      "description": "PAT 2 scenario: mine shaft headgear for a platinum mining company in South Africa. Investigate gear systems: concepts (counter rotation, idler, velocity ratio, force multiplication); two spur gears of unequal size (counter rotation and velocity ratio, velocity and force ratios); two spur gears via an idler (synchronised rotation, idler material considerations); two bevel gears transferring axis of rotation through 90°. Calculate mechanical advantage (MA): levers (LOAD/EFFORT, load arm/effort arm – do NOT use moments); gears (tooth ratios, gear wheel diameters, velocity ratios). Represent gear systems graphically: counter rotation, same direction (idler), faster/slower driven gear. Systems diagrams: analyse mechanical system (input-process-output); draw systems diagrams for gear systems. Structure with mechanism: investigate lifting mechanisms (wire rope-driven mine headgear); design brief, specifications, constraints; initial idea sketches of mine shaft headgear; 2D working drawing; simulation – teams form mechanical engineering companies, evaluate individual sketches, select best idea; budget (realistic costs of real mine shaft headgear – materials and labour); make working scale model (safe working practices, list tools/materials/steps); communicate – present tender proposal. Impact, bias and indigenous knowledge: INVESTIGATE one of: bias in technology (gender bias in mining careers), impact of mining on the environment (acid mine drainage or dust pollution from mine dumps), iron age technology (indigenous mining of iron before the modern era). SBA: PAT 2 – Investigate and Design (week 4), Make (weeks 7/8); Investigate 15 marks, Design 25 marks, Make 35 marks; Total 70 marks.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "Technology Term 3", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-TECHNOLOGY-GR8",
+      "title": "Term 4",
+      "code": "CAPS-TECHNOLOGY-GR8-T4",
+      "description": "Term 4: Electrical Systems and Control (circuit components, power generation, Ohm's law qualitatively, logic gates), Design Skills. End-of-year examination: 40 marks.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TECHNOLOGY-GR8-T4",
+      "title": "Electrical Systems and Control: Circuit Components, Power Generation, Ohm's Law, Logic Gates",
+      "code": "CAPS-TECHNOLOGY-GR8-T4-ELECTRICAL",
+      "description": "Revise: simple circuit components; input devices (electrochemical cell, generator, solar panel); output devices (resistor, lamp, heater, buzzer, motor); control device (switches); correct connections, short circuits, electrical components and accepted symbols; drawing electrical circuits using accepted symbols; set up circuits using a range of components. Energy: heating, lighting and cooking in rural/informal settlements; energy from illegal connections (ethical issues, safety); equitable sharing of resources (industry, schools). Electrochemical cells: advantages/disadvantages of series and parallel batteries. Photovoltaic cells: advantages and disadvantages of solar cells. Generate electricity for the nation: thermal power stations (coal, gas, nuclear, sun), hydroelectric power stations (including pumped storage), wind-driven turbines. Alternating current: step-up and step-down transformers; national grid. Ohm's law (qualitative, no calculations): effect of increasing cells in series on lamp brightness; practical – connect circuits with resistors in series and parallel. Logic gates: AND logic gate (investigation and simple cases), OR logic gate (investigation and simple cases), truth tables for AND and OR logic conditions. Design brief: panic button system (circuit diagram using correct symbol conventions, truth table, advertising poster). SBA: End-of-year examination (40 marks).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "Technology Term 4", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    }
+  ]
+}

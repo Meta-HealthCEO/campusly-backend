@@ -1,0 +1,144 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Senior Phase",
+      "code": "CAPS-SP",
+      "description": "Senior Phase covering Grades 7 to 9",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-SP",
+      "title": "Grade 9",
+      "code": "CAPS-GR9",
+      "description": "Grade 9",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR9",
+      "title": "Social Sciences",
+      "code": "CAPS-SOCIALSCIENCES-GR9",
+      "description": "Social Sciences for Grade 9, covering Geography and History",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR9",
+      "title": "Term 1",
+      "code": "CAPS-SOCIALSCIENCES-GR9-T1",
+      "description": "Term 1: Geography – Map Skills (topographic and orthophoto maps); History – Events Leading up to and World War II: 1919–1945",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR9-T1",
+      "title": "Map Skills (Focus: Topographic and Orthophoto Maps)",
+      "code": "CAPS-SOCIALSCIENCES-GR9-T1-MAPSKILLS",
+      "description": "1:50 000 topographic maps: reading map symbols (natural and constructed features), contour lines (height clues, concept, steep/gentle slopes, contour patterns showing river valleys, hills, mountains, ridges and spurs), scale and measuring distance (line and ratio scales), co-ordinates to locate features. 1:10 000 orthophoto maps: vertical aerial photographs (review Grade 8), orthophoto images made from aerial photographs, how height is shown on orthophoto maps, contour lines on orthophoto maps and identifying features. SBA: Test – map skills questions on topographic and orthophoto maps (50 marks).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "Geography Term 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR9-T1",
+      "title": "Events Leading up to and World War II: 1919–1945",
+      "code": "CAPS-SOCIALSCIENCES-GR9-T1-WWII",
+      "description": "Topics: Rise of Nazi Germany (end of WWI, Weimar Republic, Treaty of Versailles 1919, Hitler and the Nazis in the 1920s, Great Depression 1929, reasons for public support/1932 and 1933 elections, Enabling Act 1933/dictatorship/concentration camps, Nuremberg Laws 1935/loss of Jewish rights, persecution of political opponents, Jehovah's Witnesses, Roma, homosexuals, Slavs, black people, disabled people, Nazi Germany as fascist state, expansionist foreign policy/lebensraum); World War II in Europe (Axis vs Allies, extermination camps/genocide/Holocaust/Final Solution, resistance – Warsaw Ghetto Uprising, end of WWII in Europe); World War II in the Pacific (America vs Japan/Pearl Harbour, Japanese American internment camps, Japanese prisoner-of-war camps for Allied soldiers). SBA: Test – source-based questions and paragraph writing (50 marks). LO 30%, MO 50%, HO 20%.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "History Term 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR9",
+      "title": "Term 2",
+      "code": "CAPS-SOCIALSCIENCES-GR9-T2",
+      "description": "Term 2: Geography – Development Issues; History – The Nuclear Age and the Cold War",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR9-T2",
+      "title": "Development Issues",
+      "code": "CAPS-SOCIALSCIENCES-GR9-T2-DEVELOPMENT",
+      "description": "Development: meaning (economic, social and environmental aspects), ways of measuring development, Human Development Index (HDI: life expectancy, education, GDP per capita). Factors affecting development: historical (colonialism), trade imbalances (unfair trade), technology and industrialisation, health and welfare, education, political stability. Opportunities for development: alternative development (particularly alternatives to industrialisation), sustainable development (economic, social and environmental factors). SBA: Controlled test – Term 1: 35 marks, Term 2: 40 marks; source-based questions and paragraph writing (75 marks total). LO 30%, MO 50%, HO 20%.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "Geography Term 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR9-T2",
+      "title": "The Nuclear Age and the Cold War",
+      "code": "CAPS-SOCIALSCIENCES-GR9-T2-COLDWAR",
+      "description": "Topics: WWII in the Pacific (end of WWII in Europe, increasing tension between Allies, USSR communism vs USA/West capitalism, atomic bombs/beginning of nuclear age, when/where/why/how WWII ended in the Pacific, why did the USA drop the bombs, was it justified); definition of superpowers and the meaning of 'Cold War'; areas of conflict and competition between superpowers (arms race, space race); division of Germany 1946 and building of the Berlin Wall; end of the Cold War 1989 (fall of the Berlin Wall 1989, fall of the Soviet Union 1991). SBA: Controlled test – Term 1: 35 marks, Term 2: 40 marks; source-based questions, paragraph writing (8 marks), essay writing (20 marks); 75 marks total. LO 30%, MO 50%, HO 20%.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "History Term 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR9",
+      "title": "Term 3",
+      "code": "CAPS-SOCIALSCIENCES-GR9-T3",
+      "description": "Term 3: Geography – Surface Forces that Shape the Earth; History – Turning Points in Modern South African History since 1948",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR9-T3",
+      "title": "Surface Forces that Shape the Earth",
+      "code": "CAPS-SOCIALSCIENCES-GR9-T3-SURFACEFORCES",
+      "description": "Weathering: concept of weathering (physical, chemical, biological), difference between weathering, erosion and deposition, impact of human activities on weathering. Erosion and deposition: rivers – features along a river course (waterfalls and rapids, gorges and canyons, meanders, oxbow lakes, levees and deltas). Impact of people on soil erosion: human contributions through agriculture, construction and mining; case study – agriculture as a contributor to erosion. SBA: Test – Term 3 content; source-based questions and paragraph writing (50 marks). LO 30%, MO 50%, HO 20%.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "Geography Term 3", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR9-T3",
+      "title": "Turning Points in Modern South African History since 1948",
+      "code": "CAPS-SOCIALSCIENCES-GR9-T3-APARTHEID",
+      "description": "Topics: Universal Declaration of Human Rights after WWII; 1948 National Party and apartheid (main apartheid laws in broad outline, case study – Group Areas Act/Sophiatown forced removal); 1950s – repression and non-violent resistance to apartheid (SACP banned, ANC programme of action, Albert Luthuli, Defiance Campaign, Freedom Charter, Treason Trial, Women's March, Helen Joseph and/or Lillian Ngoyi); 1960 – Formation of PAC 1959, Sharpeville Massacre and Langa March (causes, leaders, events, short-term and longer-term consequences). Also includes oral history and research project (suggested topic: how apartheid affected people's lives and how people responded). SBA: Project (50 marks).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "History Term 3", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR9",
+      "title": "Term 4",
+      "code": "CAPS-SOCIALSCIENCES-GR9-T4",
+      "description": "Term 4: Geography – Resource Use and Sustainability; History – Turning Points in South African History in 1960, 1976 and 1990",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR9-T4",
+      "title": "Resource Use and Sustainability",
+      "code": "CAPS-SOCIALSCIENCES-GR9-T4-RESOURCES",
+      "description": "Resources use: uses of natural resources (renewable and non-renewable), effects of unwise use (over-fishing the oceans). Sustainable use of resources: ways resources may be used sustainably (sustainable fishing), role of individuals in choosing more sustainable resource use (reducing pressure on resources, lowering carbon footprint). Food resources: concept of food security, role of science and technology in food production, factory farming (raising livestock at high density), genetic modification of crops, appropriate technologies and farming techniques. SBA: End-of-year examination – Term 3: 35 marks, Term 4: 40 marks; source-based and paragraph writing (75 marks total). LO 30%, MO 50%, HO 20%.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "Geography Term 4", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR9-T4",
+      "title": "Turning Points in South African History in 1960, 1976 and 1990",
+      "code": "CAPS-SOCIALSCIENCES-GR9-T4-SA1960TO1994",
+      "description": "Topics: 1976 – Soweto uprising (causes, leaders, events of 16 June, spiralling events throughout the country, longer-term consequences for resistance and repression); 1990 – Release of Nelson Mandela and the unbanning of liberation movements (events leading to 1994 election in broad outline, internal resistance and repression during the 1980s, external pressure on the apartheid regime during the 1980s, unbanning of political movements 1990, release of Mandela and other political prisoners 1990, negotiations and violence 1990–1994, democratic election 1994). SBA: End-of-year examination – Term 3: 35 marks (source-based questions, paragraph writing 8 marks, essay writing 20 marks), Term 4: 40 marks; 75 marks total. LO 30%, MO 50%, HO 20%.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "History Term 4", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    }
+  ]
+}

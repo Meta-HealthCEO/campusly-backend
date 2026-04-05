@@ -1,0 +1,108 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Senior Phase",
+      "code": "CAPS-SP",
+      "description": "Senior Phase covering Grades 7 to 9",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-SP",
+      "title": "Grade 9",
+      "code": "CAPS-GR9",
+      "description": "Grade 9",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR9",
+      "title": "Economic and Management Sciences",
+      "code": "CAPS-EMS-GR9",
+      "description": "Economic and Management Sciences for Grade 9 covering The Economy, Financial Literacy and Entrepreneurship",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-EMS-GR9",
+      "title": "Term 1",
+      "code": "CAPS-EMS-GR9-T1",
+      "description": "Term 1: The Economy – Economic Systems, Circular Flow; Financial Literacy – CRJ and CPJ of a trading business. SBA: Assignment 50 marks (week 3), March controlled test 50 marks (week 11).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-EMS-GR9-T1",
+      "title": "The Economy: Economic Systems and Circular Flow; Financial Literacy: CRJ and CPJ of a Trading Business",
+      "code": "CAPS-EMS-GR9-T1-ECONOMICSYSTEMS",
+      "description": "The Economy – Economic Systems: planned/command economy (origin in communist states, government makes all economic decisions, advantages – equality and full employment, disadvantages – inefficiency and lack of incentives, characteristics – state ownership, centralised planning); market/capitalist economy (origin in liberal democratic states, market forces determine production and distribution, advantages – efficiency and innovation, disadvantages – inequality and market failures, characteristics – private ownership, price mechanism); mixed economy (combination of planned and market elements, origin – most modern economies including South Africa, advantages – balance between efficiency and equity, disadvantages – government failure/market failure coexist, characteristics – private and public sectors coexist); global economy (meaning, interdependence of countries, trade, globalisation). Circular Flow: factors of production (land, labour, capital, entrepreneurship) and their rewards (rent, wages, interest, profit); types of markets (factor markets, goods and services markets); participants in the circular flow (households, businesses, government, foreign sector); flow of goods/services, money, and factors of production in the circular flow diagram; drawing and interpreting a circular flow diagram; role of government in the circular flow (taxation, government spending, public goods). Financial Literacy – CRJ and CPJ of a trading business: revision of accounting equation (A = OE + L); cash transactions of a trading business (buying and selling of goods for cash); completing transactions in the CRJ (including cost of sales/trading stock column) and CPJ; classification of accounts (asset, liability, owner's equity, income, expense accounts); posting from CRJ and CPJ to the general ledger (T-accounts); preparing a trial balance of a trading business. SBA: Assignment 50 marks (week 3); March controlled test 50 marks (week 11). Cognitive levels: LO 30%, MO 50%, HO 20%.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "EMS Term 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-EMS-GR9",
+      "title": "Term 2",
+      "code": "CAPS-EMS-GR9-T2",
+      "description": "Term 2: The Economy – Price Theory (demand and supply); Entrepreneurship – Sectors of the Economy; Financial Literacy – Credit Transactions and Debtors. SBA: Mid-year controlled test 100 marks (weeks 9–10).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-EMS-GR9-T2",
+      "title": "The Economy: Price Theory; Entrepreneurship: Sectors of the Economy; Financial Literacy: Credit Transactions and Debtors",
+      "code": "CAPS-EMS-GR9-T2-PRICETHEORY",
+      "description": "The Economy – Price Theory: demand (meaning, law of demand – inverse relationship between price and quantity demanded, demand schedule, graphical demand curve – downward-sloping, factors that shift the demand curve: income, tastes/preferences, prices of related goods, number of buyers); supply (meaning, law of supply – direct relationship between price and quantity supplied, supply schedule, graphical supply curve – upward-sloping, factors that shift the supply curve: input costs, technology, number of sellers, government policy); demand-and-supply together (plotting demand and supply on the same graph, equilibrium price and equilibrium quantity – where demand curve intersects supply curve, effect of shifts in demand/supply on equilibrium price and quantity). Entrepreneurship – Sectors of the Economy: primary sector (meaning, examples: agriculture, mining, fishing, forestry; types of businesses; extracting natural resources); secondary sector (meaning, examples: manufacturing, construction, processing; types of businesses; converting raw materials into finished goods); tertiary sector (meaning, examples: retail, finance, education, healthcare, transport; types of businesses; providing services); interrelationships between sectors (interdependence, linkages); sustainable use of resources across sectors; role of each sector in the economy; types of skills required in each sector (primary: physical/manual; secondary: technical/artisan; tertiary: professional/service). Financial Literacy – Credit Transactions (Debtors): meaning of credit sales (selling goods on credit, customer pays later); debtors (definition: businesses or individuals who owe money); National Credit Act (NCA: purpose, protecting consumers, credit agreements, reckless lending); accounting cycle for credit sales (transaction → source document [credit invoice] → subsidiary journal [debtors journal/DJ] → debtors ledger → general ledger); effect of credit transactions on the accounting equation; recording credit sales in the debtors journal; posting from the DJ to the debtors ledger (individual debtor accounts) and general ledger (debtors control account). SBA: Mid-year controlled test 100 marks (weeks 9–10). Cognitive levels: LO 30%, MO 50%, HO 20%.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "EMS Term 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-EMS-GR9",
+      "title": "Term 3",
+      "code": "CAPS-EMS-GR9-T3",
+      "description": "Term 3: Entrepreneurship – Functions of the Business, Business Plan; Financial Literacy – Debtors and Creditors journals. SBA: Individual project 50 marks (weeks 6–9).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-EMS-GR9-T3",
+      "title": "Entrepreneurship: Functions of the Business and Business Plan; Financial Literacy: Debtors and Creditors",
+      "code": "CAPS-EMS-GR9-T3-BUSINESSPLAN",
+      "description": "Entrepreneurship – Functions of the Business: administration function (record keeping, communication, office management); purchasing function (procurement, supplier selection, stock management); marketing function (market research, promotion, pricing, distribution); financing function (sourcing of funds, financial management, budgeting); public relations function (managing image, community relations, stakeholder communication); human resources function (recruiting, training, remuneration, labour relations); production function (manufacturing process, quality control, capacity planning); general management function (coordination of all functions, strategic leadership); risk management function (identifying, assessing and managing business risks). Business Plan: concepts and importance of a business plan (roadmap for the business, required for finance); components of a business plan (executive summary, business description, market analysis, organisational structure, product/service description, marketing plan, operational/production plan, financial plan, appendices); conducting a SWOT analysis for the business plan; description of product or service (features, benefits, target market); production plan (how the product/service will be produced, inputs required, production process); marketing plan (target market, marketing mix: product, price, place, promotion); management plan (ownership structure, management team, organisational chart); financial plan (start-up costs, projected income statement, projected cash flow). Financial Literacy – Debtors and Creditors: recording cash and credit transactions of a sole trader in subsidiary journals (CRJ, CPJ, DJ); posting from DJ to debtors ledger and general ledger. Creditors (credit purchases): meaning of credit purchases; creditors (definition: businesses owed money by the firm); accounting cycle for credit purchases (transaction → source document [credit invoice from supplier] → creditors journal/CJ → creditors ledger → general ledger); effect of credit purchase transactions on the accounting equation; recording credit purchases in the creditors journal; posting from CJ to the creditors ledger (individual creditor accounts) and general ledger (creditors control account); recording payments to creditors in the CPJ; posting payments from CPJ to general ledger and creditors ledger. SBA: Individual project 50 marks (weeks 6–9). Cognitive levels: LO 30%, MO 50%, HO 20%.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "EMS Term 3", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-EMS-GR9",
+      "title": "Term 4",
+      "code": "CAPS-EMS-GR9-T4",
+      "description": "Term 4: The Economy – Trade Unions; Financial Literacy – Cash and Credit journals, posting to general ledger, debtors/creditors ledgers and trial balance. SBA: Final year-end examination 150 marks (weeks 7–8): Paper 1 Financial literacy 70 marks; Paper 2 The economy 25 marks + Entrepreneurship 55 marks.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-EMS-GR9-T4",
+      "title": "The Economy: Trade Unions; Financial Literacy: Cash and Credit Transactions, Ledgers and Trial Balance",
+      "code": "CAPS-EMS-GR9-T4-TRADEUNIONS",
+      "description": "The Economy – Trade Unions: concept of a trade union (definition, meaning, purpose – representing workers' interests); effect of trade unions on businesses (wage negotiations, working conditions, strike action, collective bargaining agreements, impact on production costs and competitiveness); contribution of trade unions to sustainable economic growth (protecting workers' rights, fair wages, skills development, labour stability); examples of major South African trade unions (COSATU, FEDUSA, NACTU); NEDLAC (National Economic Development and Labour Council – role as social partner in economic policy). Financial Literacy – Cash and Credit (comprehensive revision and consolidation): effect of cash and credit transactions on the accounting equation (A = OE + L); cash journals: Cash Receipts Journal (CRJ) and Cash Payments Journal (CPJ) – format, columns, source documents, entering transactions, closing off; credit journals: Debtors Journal (DJ) for credit sales and Creditors Journal (CJ) for credit purchases – format, columns, source documents, entering transactions; posting from all four journals to the general ledger (T-accounts, debits and credits); posting from the DJ to the debtors ledger (individual debtor accounts) and the debtors control account in the general ledger; posting from the CJ to the creditors ledger (individual creditor accounts) and the creditors control account in the general ledger; preparing a comprehensive trial balance of a trading business from all ledger accounts; identifying errors using the trial balance. SBA: Final year-end examination 150 marks (weeks 7–8); Paper 1: Financial literacy 70 marks; Paper 2: The economy 25 marks, Entrepreneurship 55 marks. Cognitive levels: LO 30%, MO 50%, HO 20%.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "EMS Term 4", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    }
+  ]
+}

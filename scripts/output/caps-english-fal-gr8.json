@@ -1,0 +1,131 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Senior Phase",
+      "code": "CAPS-SP",
+      "description": "Senior Phase covering Grades 7 to 9",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-SP",
+      "title": "Grade 8",
+      "code": "CAPS-GR8",
+      "description": "Grade 8",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR8",
+      "title": "English First Additional Language",
+      "code": "CAPS-ENGLISHFAL-GR8",
+      "description": "English First Additional Language for Grade 8 covering Listening and Speaking, Reading and Viewing, Writing and Presenting, and Language Structures and Conventions.",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-ENGLISHFAL-GR8",
+      "title": "Term 1",
+      "code": "CAPS-ENGLISHFAL-GR8-T1",
+      "description": "Term 1: Short story, poem, novel, speech, newspaper article. FAT1: Oral — prepared reading (10 pts). FAT2: Essay — narrative/reflective (30 pts). FAT3: Literature and language test (60 pts).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR8-T1",
+      "title": "Short Story, Novel and Poetry",
+      "code": "CAPS-ENGLISHFAL-GR8-T1-STORY_NOVEL",
+      "description": "Listening and Speaking: listen to a short story or novel extract; identify main and supporting ideas; make notes; summarise; discuss. Oral reading preparation (FAT1 begins). Reading and Viewing: short story — literary features: character, plot, conflict, setting, theme, point of view; novel — introduction, parts of a book, character analysis; poem — structure, imagery, figures of speech, tone, mood. Writing and Presenting: narrative/reflective essay (FAT2, 30 pts, weeks 7-8); paragraph writing: topic sentence, body, concluding sentence; writing process. Language Structures and Conventions: word classes revision; complex sentences; tense review; punctuation; idioms; vocabulary building.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR8-T1",
+      "title": "Newspaper Article and Transactional Writing",
+      "code": "CAPS-ENGLISHFAL-GR8-T1-NEWSPAPER",
+      "description": "Listening and Speaking: formal speech listening — identify purpose, tone, audience; summarise key points; evaluate effectiveness. Reading and Viewing: newspaper/magazine article — features: headline, byline, lead paragraph, inverted pyramid structure; editorial/opinion column; fact vs opinion; bias; persuasive language devices. Writing and Presenting: transactional — investigative newspaper article or editorial; formal register. Language Structures and Conventions: passive voice; reported speech; conditional sentences; formal language conventions; spelling rules.",
+      "metadata": { "weekNumbers": [7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-ENGLISHFAL-GR8",
+      "title": "Term 2",
+      "code": "CAPS-ENGLISHFAL-GR8-T2",
+      "description": "Term 2: Novel, drama, folk tale, advertisement/poster. FAT4: Transactional short task (10 pts). FAT5: Mid-year exam — literature/language test (60 pts).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR8-T2",
+      "title": "Novel and Drama",
+      "code": "CAPS-ENGLISHFAL-GR8-T2-NOVEL_DRAMA",
+      "description": "Listening and Speaking: drama reading; role play or panel discussion on social issues; group discussion. Reading and Viewing: novel — deeper character, theme, writer's craft, symbolism; drama text — dramatic conventions, stage directions, dialogue, conflict; folk tale — oral tradition, moral, cultural context. Writing and Presenting: descriptive essay or creative response; summary writing; recount. Language Structures and Concerns: relative clauses; conditional sentences; sentence variety; paragraph cohesion; figurative language; punctuation.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR8-T2",
+      "title": "Visual Texts and Transactional Writing",
+      "code": "CAPS-ENGLISHFAL-GR8-T2-VISUAL",
+      "description": "Listening and Speaking: listen to an advertisement or visual presentation; identify purpose, target audience; evaluate effectiveness. Reading and Viewing: visual text — advertisement or poster: visual elements, language, AIDA model, persuasive techniques; folk tale analysis. Writing and Presenting: transactional — design/write an advertisement or review (FAT4 short transactional, 10 pts). Language Structures and Conventions: modal verbs; language of persuasion; formal and informal register; vocabulary extension; spelling conventions.",
+      "metadata": { "weekNumbers": [7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-ENGLISHFAL-GR8",
+      "title": "Term 3",
+      "code": "CAPS-ENGLISHFAL-GR8-T3",
+      "description": "Term 3: Short story, Creative Writing Project. FAT6: CWP Research (20 pts) + Write-up (30 pts). FAT7: Oral — CWP Presentation (20 pts, begin T3 conclude T4). FAT8: Response to Literature (30 pts).",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR8-T3",
+      "title": "Short Story and Creative Writing Project",
+      "code": "CAPS-ENGLISHFAL-GR8-T3-CWP",
+      "description": "Listening and Speaking: listen to a short story/information text; note taking; begin preparing CWP oral presentation (FAT7, 20 pts). Reading and Viewing: literary text — short story or drama; research reading for CWP; visual texts for comprehension. Writing and Presenting: CWP Phase 1 Research (FAT6, 20 pts, weeks 3-4): research notes, bibliography, graphic organisers; CWP Phase 2 Write-up (FAT6, 30 pts, week 6): produce final product in chosen genre. FAT8 Response to Literature (30 pts): poetry (compulsory), novel/drama, short story/folk tale. Language Structures and Conventions: genre-specific language; vocabulary for chosen genre; essay structure; critical language.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR8-T3",
+      "title": "Diary Entry, Multimedia and Oral Preparation",
+      "code": "CAPS-ENGLISHFAL-GR8-T3-DIARY",
+      "description": "Listening and Speaking: prepare and practice oral presentation (CWP); peer feedback and discussion. Reading and Viewing: diary entry or multimedia text — features, format, personal and emotive language; visual comprehension. Writing and Presenting: diary entry or personal journal connected to project content; notes for oral presentation. Language Structures and Conventions: personal and reflective language; first person writing; emotional and descriptive vocabulary.",
+      "metadata": { "weekNumbers": [7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-ENGLISHFAL-GR8",
+      "title": "Term 4",
+      "code": "CAPS-ENGLISHFAL-GR8-T4",
+      "description": "Term 4: Conclude oral (FAT7); instructions, forms/questionnaires; FAT9 transactional (10 pts); revision; end-of-year exam.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR8-T4",
+      "title": "Transactional Texts, Oral Completion and Revision",
+      "code": "CAPS-ENGLISHFAL-GR8-T4-REVISION",
+      "description": "Listening and Speaking: conclude FAT7 oral presentations; peer assessment. Reading and Viewing: information texts — instructions, newspaper article; forms and questionnaires — features, format, purpose; revision of all genres and text types. Writing and Presenting: instructions; questionnaire/form; FAT9 transactional short task (10 pts, for exam). Language Structures and Conventions: comprehensive revision of all grammar, vocabulary, punctuation and spelling; end-of-year examination practice; past papers.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    }
+  ]
+}

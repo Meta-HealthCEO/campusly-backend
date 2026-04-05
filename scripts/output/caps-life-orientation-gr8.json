@@ -1,0 +1,176 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Senior Phase",
+      "code": "CAPS-SP",
+      "description": "Senior Phase covering Grades 7 to 9",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-SP",
+      "title": "Grade 8",
+      "code": "CAPS-GR8",
+      "description": "Grade 8",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR8",
+      "title": "Life Orientation",
+      "code": "CAPS-LIFEORIENTATION-GR8",
+      "description": "Life Orientation for Grade 8 covering personal wellbeing, social and environmental responsibility, democracy and human rights, physical education, and careers.",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFEORIENTATION-GR8",
+      "title": "Term 1",
+      "code": "CAPS-LIFEORIENTATION-GR8-T1",
+      "description": "Term 1: Development of the Self; Human Rights and the Law; Physical Education.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR8-T1",
+      "title": "Development of the Self in Society",
+      "code": "CAPS-LIFEORIENTATION-GR8-T1-SELF",
+      "description": "Adolescent development: physical, emotional, cognitive and social changes; influences on identity formation; self-esteem and self-worth; resilience and coping skills; managing change and transition; positive relationships with family and peers. Formal Assessment Task 1: Research task on adolescent development.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR8-T1",
+      "title": "Human Rights, Democracy and the Law",
+      "code": "CAPS-LIFEORIENTATION-GR8-T1-RIGHTS",
+      "description": "Human rights in South Africa and internationally; the relationship between rights and responsibilities; case studies on human rights violations; democratic participation; the role of courts and law in protecting rights; xenophobia and discrimination.",
+      "metadata": { "weekNumbers": [7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR8-T1",
+      "title": "Physical Education — Sport and Movement",
+      "code": "CAPS-LIFEORIENTATION-GR8-T1-PE",
+      "description": "Participation in team and individual sports; physical fitness components: strength, endurance, flexibility, speed; warm-up and cool-down routines; sports ethics, fair play and teamwork; health benefits of regular physical activity.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFEORIENTATION-GR8",
+      "title": "Term 2",
+      "code": "CAPS-LIFEORIENTATION-GR8-T2",
+      "description": "Term 2: Health and Wellbeing; Social and Environmental Responsibility; Physical Education.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR8-T2",
+      "title": "Health and Wellbeing — Disease and HIV/AIDS",
+      "code": "CAPS-LIFEORIENTATION-GR8-T2-HEALTH",
+      "description": "HIV/AIDS: transmission, prevention, treatment; stigma and discrimination around HIV/AIDS; responsible sexual behaviour; contraception and reproductive health; communicable and non-communicable diseases; mental health and wellbeing. Formal Assessment Task 2: Project on HIV/AIDS awareness.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR8-T2",
+      "title": "Social and Environmental Responsibility",
+      "code": "CAPS-LIFEORIENTATION-GR8-T2-SOCIAL",
+      "description": "Environmental challenges: climate change, water scarcity, deforestation; individual and collective responsibility; community action and activism; global citizenship; sustainable development goals; social entrepreneurship.",
+      "metadata": { "weekNumbers": [7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR8-T2",
+      "title": "Physical Education — Athletics",
+      "code": "CAPS-LIFEORIENTATION-GR8-T2-PE",
+      "description": "Athletics: track events (sprints, middle distance), field events (long jump, high jump, shot put); correct technique and form; fitness testing and recording results; setting personal improvement goals.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFEORIENTATION-GR8",
+      "title": "Term 3",
+      "code": "CAPS-LIFEORIENTATION-GR8-T3",
+      "description": "Term 3: Violence, Abuse and Bullying; Careers and Career Choices; Physical Education.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR8-T3",
+      "title": "Violence, Abuse and Bullying",
+      "code": "CAPS-LIFEORIENTATION-GR8-T3-VIOLENCE",
+      "description": "Forms of abuse: physical, emotional, sexual, neglect; gender-based violence; cyberbullying and online safety; reporting abuse and accessing support; assertiveness skills; support networks and counselling services. Formal Assessment Task 3: Awareness campaign on bullying prevention.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR8-T3",
+      "title": "Careers and Career Choices",
+      "code": "CAPS-LIFEORIENTATION-GR8-T3-CAREERS",
+      "description": "Career exploration: different sectors and industries; education pathways and qualifications; entrepreneurship as a career; financial literacy basics; managing money and budgeting; the future world of work and 4IR.",
+      "metadata": { "weekNumbers": [7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR8-T3",
+      "title": "Physical Education — Gymnastics",
+      "code": "CAPS-LIFEORIENTATION-GR8-T3-PE",
+      "description": "Gymnastic movements and sequences; partner and group balancing; rhythmic gymnastics with apparatus; developing coordination, balance and body control; creative movement and expression.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFEORIENTATION-GR8",
+      "title": "Term 4",
+      "code": "CAPS-LIFEORIENTATION-GR8-T4",
+      "description": "Term 4: Study Skills and Lifelong Learning; Recreational Activities; Physical Education.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR8-T4",
+      "title": "Study Skills and Lifelong Learning",
+      "code": "CAPS-LIFEORIENTATION-GR8-T4-STUDY",
+      "description": "Advanced study techniques; exam preparation strategies; managing academic pressure and stress; growth mindset and motivation; setting SMART goals; reflection on personal progress and learning. Formal Assessment Task 4: Portfolio and test.",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR8-T4",
+      "title": "Recreational Activities and Sport",
+      "code": "CAPS-LIFEORIENTATION-GR8-T4-RECREATION",
+      "description": "Benefits of sport and recreational activities; participating in different leisure activities; organising and leading recreational activities; community sport and recreation facilities; promoting active and healthy lifestyles.",
+      "metadata": { "weekNumbers": [5,6,7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR8-T4",
+      "title": "Physical Education — Invasion Games",
+      "code": "CAPS-LIFEORIENTATION-GR8-T4-PE",
+      "description": "Invasion games: soccer, basketball, netball, rugby; tactics and strategies; rules and officiating; teamwork, communication and leadership; consolidation of physical education fitness concepts for the year.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    }
+  ]
+}

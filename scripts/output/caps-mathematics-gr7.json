@@ -1,0 +1,305 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Senior Phase",
+      "code": "CAPS-SP",
+      "description": "Senior Phase (Grades 7-9) of the South African CAPS curriculum.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-SP",
+      "title": "Grade 7",
+      "code": "CAPS-GR7",
+      "description": "Grade 7 of the South African CAPS curriculum.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR7",
+      "title": "Mathematics",
+      "code": "CAPS-MATHEMATICS-GR7",
+      "description": "Mathematics for Grade 7 as per the South African CAPS curriculum.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR7",
+      "title": "Term 1",
+      "code": "CAPS-MATHEMATICS-GR7-T1",
+      "description": "Grade 7 Mathematics Term 1: Whole Numbers, Common Fractions, Decimal Fractions.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR7-T1",
+      "title": "Whole Numbers",
+      "code": "CAPS-MATHEMATICS-GR7-T1-WN",
+      "description": "Ordering, comparing and properties of whole numbers; calculation techniques including long division, estimation, rounding; multiples and factors including prime factors, LCM and HCF; solving problems involving ratio, rate, sharing, profit/loss, discount, budgets, accounts, loans and simple interest.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 13.5,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR7-T1",
+      "title": "Common Fractions",
+      "code": "CAPS-MATHEMATICS-GR7-T1-CF",
+      "description": "Ordering, comparing and simplifying common fractions extending to thousandths; addition and subtraction including mixed numbers where one denominator is not a multiple of the other; multiplication of common fractions including mixed numbers; calculation techniques including converting mixed numbers and using equivalent fractions; percentages; solving problems in contexts.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [5, 6],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 9,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR7-T1",
+      "title": "Decimal Fractions",
+      "code": "CAPS-MATHEMATICS-GR7-T1-DF",
+      "description": "Ordering and comparing decimal fractions to at least 3 decimal places; place value; rounding; addition, subtraction, multiplication and division of decimal fractions; calculation techniques using place value and rounding; solving problems in context; recognising equivalence between common fractions, decimal fractions and percentages.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [7, 8, 9],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 11.5,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR7",
+      "title": "Term 2",
+      "code": "CAPS-MATHEMATICS-GR7-T2",
+      "description": "Grade 7 Mathematics Term 2: Exponents, Integers, Numeric and Geometric Patterns, Functions and Relationships.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR7-T2",
+      "title": "Exponents",
+      "code": "CAPS-MATHEMATICS-GR7-T2-EXP",
+      "description": "Determine squares to at least 12² and square roots; cubes to at least 6³ and cube roots; compare and represent whole numbers in exponential form; recognise and use laws of operations with numbers involving exponents; calculations using all four operations with numbers in exponential form, limited to exponents up to 5 and square and cube roots.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 4.5,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR7-T2",
+      "title": "Integers",
+      "code": "CAPS-MATHEMATICS-GR7-T2-INT",
+      "description": "Count forwards and backwards in integers for any interval; recognise, order and compare integers; add and subtract with integers; recognise and use commutative and associative properties of addition for integers.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [3, 4, 5],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 9,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR7-T2",
+      "title": "Numeric and Geometric Patterns",
+      "code": "CAPS-MATHEMATICS-GR7-T2-NGP",
+      "description": "Investigate and extend numeric and geometric patterns looking for relationships between numbers, including patterns represented in physical or diagram form, not limited to constant difference or ratio, of learner's own creation, and represented in tables; describe and justify the general rules for observed relationships in own words.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [6, 7],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 9,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR7-T2",
+      "title": "Functions and Relationships",
+      "code": "CAPS-MATHEMATICS-GR7-T2-FR",
+      "description": "Determine input values, output values or rules for patterns and relationships using flow diagrams, tables and formulae; determine, interpret and justify equivalence of different descriptions of the same relationship or rule presented verbally, in flow diagrams, in tables, by formulae and by number sentences.",
+      "order": 4,
+      "metadata": {
+        "weekNumbers": [8, 9],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 9,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR7",
+      "title": "Term 3",
+      "code": "CAPS-MATHEMATICS-GR7-T3",
+      "description": "Grade 7 Mathematics Term 3: Construction of Geometric Figures, Geometry of Straight Lines, Geometry of 2D Shapes, Transformation Geometry.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR7-T3",
+      "title": "Construction of Geometric Figures",
+      "code": "CAPS-MATHEMATICS-GR7-T3-CGF",
+      "description": "Accurately use a protractor to measure and classify angles (acute, right, obtuse, straight, reflex); accurately construct angles, parallel lines and perpendicular lines using compass, ruler and protractor; describe and name parts of a circle; define line segment, ray, straight line, parallel and perpendicular lines.",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 13.5,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR7-T3",
+      "title": "Geometry of 2D Shapes",
+      "code": "CAPS-MATHEMATICS-GR7-T3-2DS",
+      "description": "Describe, sort, name and compare triangles (equilateral, isosceles, right-angled) and quadrilaterals in terms of sides and angles; recognise and describe similar and congruent figures by comparing shape and size; solve simple geometric problems involving unknown sides and angles using known properties.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [5, 6, 7],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 9,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR7-T3",
+      "title": "Transformation Geometry",
+      "code": "CAPS-MATHEMATICS-GR7-T3-TG",
+      "description": "Recognise, describe and perform translations, reflections and rotations with geometric figures on squared paper; identify and draw lines of symmetry; draw enlargements and reductions of geometric figures on squared paper and compare them in terms of shape and size.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [7, 8, 9],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 9,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR7",
+      "title": "Term 4",
+      "code": "CAPS-MATHEMATICS-GR7-T4",
+      "description": "Grade 7 Mathematics Term 4: Area and Perimeter of 2D Shapes, Surface Area and Volume of 3D Objects, Data Handling.",
+      "order": 4,
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR7-T4",
+      "title": "Area and Perimeter of 2D Shapes",
+      "code": "CAPS-MATHEMATICS-GR7-T4-AP",
+      "description": "Calculate the perimeter of regular and irregular polygons; use appropriate formulae to calculate perimeter and area of squares, rectangles and triangles; solve problems involving perimeter and area; calculate to at least 1 decimal place; convert between SI units (mm² ↔ cm², cm² ↔ m²).",
+      "order": 1,
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 8,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR7-T4",
+      "title": "Surface Area and Volume of 3D Objects",
+      "code": "CAPS-MATHEMATICS-GR7-T4-SAV",
+      "description": "Use appropriate formulae to calculate surface area, volume and capacity of cubes and rectangular prisms; describe the interrelationship between surface area and volume; solve problems involving surface area, volume and capacity; convert between appropriate SI units including mm², cm², m², mm³, cm³, m³; use equivalences 1 cm³ = 1 ml and 1 m³ = 1 kl.",
+      "order": 2,
+      "metadata": {
+        "weekNumbers": [3, 4],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 9,
+        "cognitiveWeighting": null
+      }
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR7-T4",
+      "title": "Data Handling",
+      "code": "CAPS-MATHEMATICS-GR7-T4-DH",
+      "description": "Collect data: pose questions, select sources, distinguish samples and populations, design questionnaires; organise data using tally marks, tables, stem-and-leaf displays; group data into intervals; determine mean, median, mode and range; represent data using bar graphs, double bar graphs, histograms and pie charts; interpret and critically analyse data; report data in short paragraphs including conclusions, predictions, bias and appropriate summary statistics.",
+      "order": 3,
+      "metadata": {
+        "weekNumbers": [5, 6, 7],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 9,
+        "cognitiveWeighting": null
+      }
+    }
+  ]
+}
