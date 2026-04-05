@@ -113,7 +113,7 @@ export class ContentLibraryController {
       return;
     }
     const canReview = ['super_admin', 'school_admin', 'principal', 'hod'].includes(user.role)
-      || (user as Record<string, unknown>).isSchoolPrincipal === true;
+      || (user as unknown as Record<string, unknown>).isSchoolPrincipal === true;
     if (!canReview) {
       res.status(403).json({ success: false, error: 'You do not have permission to review content. Submit for review instead.' });
       return;

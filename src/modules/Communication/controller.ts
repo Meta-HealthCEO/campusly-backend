@@ -106,13 +106,13 @@ export class CommunicationController {
   // ─── Delivery Stats ───────────────────────────────────────────────────────
 
   static async getDeliveryStats(req: Request, res: Response): Promise<void> {
-    const schoolId = getUser(req).schoolId;
+    const schoolId = getUser(req).schoolId ?? '';
     const stats = await CommunicationModuleService.getDeliveryStats(req.params.id as string, schoolId);
     res.json(apiResponse(true, stats, 'Delivery stats retrieved successfully'));
   }
 
   static async getMessageLogs(req: Request, res: Response): Promise<void> {
-    const schoolId = getUser(req).schoolId;
+    const schoolId = getUser(req).schoolId ?? '';
     const logs = await CommunicationModuleService.getMessageLogs(req.params.id as string, schoolId, {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
