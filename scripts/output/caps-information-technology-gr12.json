@@ -1,0 +1,509 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "FET Phase",
+      "code": "CAPS-FET",
+      "description": "Further Education and Training Phase (Grades 10-12)",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 12",
+      "code": "CAPS-GR12",
+      "description": "",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 12
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR12",
+      "title": "Information Technology",
+      "code": "CAPS-IT-GR12",
+      "description": "Information Technology — Grade 12 — CAPS Curriculum",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-IT-GR12",
+      "title": "Term 1",
+      "code": "CAPS-IT-GR12-T1",
+      "description": "Information Technology Grade 12 Term 1 covering Database Design and Concepts, Object-Oriented Programming (OOP), Hardware, Database Management, SQL, Social Implications and PAT.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 44,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR12-T1",
+      "title": "Database Design and Concepts",
+      "code": "CAPS-IT-GR12-T1-DBDESIGN",
+      "description": "Relational database design, normalisation, transaction processing, characteristics of a good database design, caring for and managing data, hacking through data, data collection, location-based data, data warehousing and mining, problems with databases, split tables and relations.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          5,
+          6,
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Explain and motivate relational database design",
+          "Normalisation",
+          "Transaction processing",
+          "Characteristics of a good database design",
+          "Caring for and managing data",
+          "Hacking through data",
+          "Data collection: overview and examples",
+          "Location-based data",
+          "Data warehousing and mining",
+          "Problems with databases",
+          "Split tables and create relations",
+          "Example of basic relationship enabled by the utilisation of key fields"
+        ],
+        "notionalHours": 16,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR12-T1",
+      "title": "Object-Oriented Programming (OOP)",
+      "code": "CAPS-IT-GR12-T1-OOP",
+      "description": "Reinforce past programming skills, parameterised and non-parameterised constructors, private and public attributes, accessor, mutator and auxiliary methods, ToString method, instantiation of objects, correct use of methods of various objects as part of problem solving.",
+      "metadata": {
+        "weekNumbers": [
+          2,
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Reinforce past programming skills (methods)",
+          "OOP - Parameterised and non-parameterised constructors",
+          "Correct use of private and public attributes, accessor, mutator and auxiliary methods",
+          "The use of the ToString method and accessor methods to provide output",
+          "Correct instantiation of objects",
+          "Correct use of methods of various objects as part of problem solving"
+        ],
+        "notionalHours": 8,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR12-T1",
+      "title": "Hardware",
+      "code": "CAPS-IT-GR12-T1-HARDWARE",
+      "description": "Mobile technologies, factors influencing performance of a computer, motivate a typical computer system in respect of user requirements.",
+      "metadata": {
+        "weekNumbers": [
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Mobile technologies",
+          "Overview of factors influencing performance of a computer",
+          "Motivate a typical computer system in respect of user requirements"
+        ],
+        "notionalHours": 4,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR12-T1",
+      "title": "SQL",
+      "code": "CAPS-IT-GR12-T1-SQL",
+      "description": "Design and develop a solution incorporating SQL, SELECT all or some fields (FROM).",
+      "metadata": {
+        "weekNumbers": [
+          8
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Design and develop a solution incorporating SQL",
+          "SELECT all or some fields (FROM)"
+        ],
+        "notionalHours": 4,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR12-T1",
+      "title": "Social Implications",
+      "code": "CAPS-IT-GR12-T1-SOCIALIMPL",
+      "description": "Advantages and disadvantages of how mobile technology impacts on privacy (personal and business), IoT technologies enabling the IoT and their impact on society.",
+      "metadata": {
+        "weekNumbers": [
+          9
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Discuss the advantages and disadvantages how mobile technology impacts on privacy (personal and business)",
+          "IoT - technologies enabling the IoT and their impact on society"
+        ],
+        "notionalHours": 4,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-IT-GR12",
+      "title": "Term 2",
+      "code": "CAPS-IT-GR12-T2",
+      "description": "Information Technology Grade 12 Term 2 covering Systems Technologies, SQL (advanced queries, joins, aggregate functions), Solution Development (2D arrays), Social Implications and Mid-Year Examination.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 28,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR12-T2",
+      "title": "Systems Technologies",
+      "code": "CAPS-IT-GR12-T2-SYSTECH",
+      "description": "Factors influencing computer management, cloud computing, virtual reality, augmented reality, virtualisation.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          3,
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Factors influencing computer management",
+          "Overview of cloud computing",
+          "Overview of virtual reality",
+          "Overview of augmented reality",
+          "Overview of virtualisation"
+        ],
+        "notionalHours": 6,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR12-T2",
+      "title": "SQL - Advanced",
+      "code": "CAPS-IT-GR12-T2-SQL",
+      "description": "DISTINCT and ORDER BY, calculated fields (AS), ROUND, INT, LENGTH, LEFT, RIGHT, MID, concatenating fields, WHERE clause with operators, wildcards, date queries, INSERT, DELETE, UPDATE, aggregate functions, create join queries.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "DISTINCT and ORDER BY",
+          "SELECT with calculated fields (AS)",
+          "ROUND, INT, LENGTH",
+          "LEFT, RIGHT, MID",
+          "Concatenating fields",
+          "WHERE with >, >=, <, <=, =, LIKE, BETWEEN, AND, OR, NOT, IS NULL, NULL, IN",
+          "Wild cards",
+          "#date#",
+          "Insert, delete, update ONE and then multiple records",
+          "Functions and aggregate functions",
+          "Create a join query (single joins) using 'Where'",
+          "Date functions (day, month, year, date)",
+          "Queries with parameters where the user input is given",
+          "Modify data in a table"
+        ],
+        "notionalHours": 16,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR12-T2",
+      "title": "Solution Development - 2D Arrays",
+      "code": "CAPS-IT-GR12-T2-ARRAYS2D",
+      "description": "Arrays as a data structure (2-dimensional).",
+      "metadata": {
+        "weekNumbers": [
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Arrays as a data structure (2-dimensional)"
+        ],
+        "notionalHours": 2,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR12-T2",
+      "title": "Solution Development - Problem Solving",
+      "code": "CAPS-IT-GR12-T2-SOLDEV",
+      "description": "Consolidate and reinforce content, concepts and skills, design and develop solutions for a variety of problems including computational thinking and applying software engineering principles.",
+      "metadata": {
+        "weekNumbers": [
+          6,
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Consolidate and reinforce content, concepts and skills",
+          "Design and develop solutions for a variety of problems that include computational thinking and applying software engineering principles"
+        ],
+        "notionalHours": 4,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR12-T2",
+      "title": "Social Implications",
+      "code": "CAPS-IT-GR12-T2-SOCIALIMPL",
+      "description": "Computer criminals and computer crime.",
+      "metadata": {
+        "weekNumbers": [
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Computer criminals and computer crime"
+        ],
+        "notionalHours": 2,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-IT-GR12",
+      "title": "Term 3",
+      "code": "CAPS-IT-GR12-T3",
+      "description": "Information Technology Grade 12 Term 3 covering Software Engineering, Internet Services Technologies, Communication Technologies, Social Implications, Solution Development consolidation and Trial Examination.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 32,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR12-T3",
+      "title": "Software Engineering",
+      "code": "CAPS-IT-GR12-T3-SOFTENG",
+      "description": "Reinforce software engineering principles.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Reinforce software engineering principles"
+        ],
+        "notionalHours": 8,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR12-T3",
+      "title": "Internet Services Technologies",
+      "code": "CAPS-IT-GR12-T3-INTERNET",
+      "description": "Improve searching, online applications, role of SQL and scripting languages, formatting output.",
+      "metadata": {
+        "weekNumbers": [
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Improve searching",
+          "Online applications",
+          "Role of SQL, scripting languages",
+          "Formatting output"
+        ],
+        "notionalHours": 4,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR12-T3",
+      "title": "Communication Technologies",
+      "code": "CAPS-IT-GR12-T3-COMMTECH",
+      "description": "Essential parts to link nodes, connecting to the Internet, sharing concepts, online services, remote access, overview of security concepts.",
+      "metadata": {
+        "weekNumbers": [
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Essential parts to link nodes",
+          "Connecting to the Internet",
+          "Sharing concepts",
+          "Online services",
+          "Remote access",
+          "Overview of security concepts"
+        ],
+        "notionalHours": 4,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR12-T3",
+      "title": "Social Implications",
+      "code": "CAPS-IT-GR12-T3-SOCIALIMPL",
+      "description": "Explain how computers provide solutions to issues.",
+      "metadata": {
+        "weekNumbers": [
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Explain how computers provide solutions to issues"
+        ],
+        "notionalHours": 2,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR12-T3",
+      "title": "Solution Development - Consolidation",
+      "code": "CAPS-IT-GR12-T3-SOLDEV",
+      "description": "Consolidate and reinforce content, concepts and skills, design and develop solutions for a variety of problems including computational thinking and applying software engineering principles.",
+      "metadata": {
+        "weekNumbers": [
+          5,
+          6,
+          7,
+          8
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Consolidate and reinforce content, concepts, and skills",
+          "Design and develop solutions for a variety of problems that include computational thinking and applying software engineering principles"
+        ],
+        "notionalHours": 14,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-IT-GR12",
+      "title": "Term 4",
+      "code": "CAPS-IT-GR12-T4",
+      "description": "Information Technology Grade 12 Term 4 covering content consolidation using case studies across all topics and Final NSC Examination.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 8,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR12-T4",
+      "title": "Consolidation Using Case Studies",
+      "code": "CAPS-IT-GR12-T4-CONSOLIDATION",
+      "description": "Content using case studies across all topics to prepare for the Final NSC Examination.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Content using case studies - all topics"
+        ],
+        "notionalHours": 7,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    }
+  ]
+}

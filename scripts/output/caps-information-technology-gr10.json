@@ -1,0 +1,617 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "FET Phase",
+      "code": "CAPS-FET",
+      "description": "Further Education and Training Phase (Grades 10-12)",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 10",
+      "code": "CAPS-GR10",
+      "description": "",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 10
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR10",
+      "title": "Information Technology",
+      "code": "CAPS-IT-GR10",
+      "description": "Information Technology — Grade 10 — CAPS Curriculum",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-IT-GR10",
+      "title": "Term 1",
+      "code": "CAPS-IT-GR10-T1",
+      "description": "Information Technology Grade 10 Term 1 covering Basic Concepts of Computing, Data Representation, Algorithms, Solution Development and Social Implications.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 40,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR10-T1",
+      "title": "Basic Concepts of Computing",
+      "code": "CAPS-IT-GR10-T1-BASICCONCEPTS",
+      "description": "Introduction to computers, digital technologies, information technology, general model of a computer, components of a computer system, types of computers, data and information, ICT systems, and overview of data, information and knowledge.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Explain what a computer is and basic usage",
+          "Identify basic risks and impact",
+          "Define information technology and digital technologies",
+          "Overview of a general model of a computer",
+          "Overview of main components of a computer system",
+          "Overview of types of computers (purpose and uses)",
+          "Overview of data and information",
+          "What is an ICT system?",
+          "Overview and link between data, information, and knowledge"
+        ],
+        "notionalHours": 6,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR10-T1",
+      "title": "Data Representation and Storage",
+      "code": "CAPS-IT-GR10-T1-DATAREP",
+      "description": "Number systems and conversion, digital character representation (ASCII, Unicode), data types and their storage, data structures and collections of data storage.",
+      "metadata": {
+        "weekNumbers": [
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Overview of number systems",
+          "Conversion between number systems",
+          "Overview of digital character representation (ASCII, Unicode)",
+          "Overview of data types and their storage",
+          "Overview of data structures and collections of data storage"
+        ],
+        "notionalHours": 4,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR10-T1",
+      "title": "Algorithms",
+      "code": "CAPS-IT-GR10-T1-ALGORITHMS",
+      "description": "Basic concepts of algorithms, IPO tables and flow charts, producing and tracing algorithms, comparing algorithms in terms of sequence, precision and efficiency.",
+      "metadata": {
+        "weekNumbers": [
+          4,
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Basic concepts of an algorithm",
+          "Basic IPO table and flow charts",
+          "Produce an algorithm to solve a problem",
+          "Trace an algorithm to determine the outcome using trace table",
+          "Compare algorithms in terms of sequence, precision and efficiency"
+        ],
+        "notionalHours": 8,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR10-T1",
+      "title": "Solution Development",
+      "code": "CAPS-IT-GR10-T1-SOLDEV",
+      "description": "Introduction to programming concepts including output, input, variables, operators, remainders, comparison operators, logical comparisons, functions, basic calculations, conditional constructs, string concatenation, casting, formatting of output, event handling, console and GUI programming.",
+      "metadata": {
+        "weekNumbers": [
+          7,
+          8,
+          9,
+          10
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Introduction to output, input, variables, operators",
+          "Retrieving remainders, comparison operators and performing logical comparisons",
+          "Functions, basic calculations, basic conditional constructs",
+          "Basic string concatenation",
+          "Introduction to components (input, output)",
+          "Casting",
+          "Formatting of output (fixed, currency)",
+          "Event handling (click)",
+          "Introduction to console programming, basic terms and development environment",
+          "Introduction to the programming tool (IDE, GUI, basic terms and development environment)"
+        ],
+        "notionalHours": 14,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR10-T1",
+      "title": "Social Implications",
+      "code": "CAPS-IT-GR10-T1-SOCIALIMPL",
+      "description": "Software licence agreements, piracy, copyright, copyleft, digital divide, economic reasons for using computers, social, ethical and legal issues pertaining to ICTs.",
+      "metadata": {
+        "weekNumbers": [
+          9
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Software licence agreements, piracy, copyright, copyleft",
+          "Digital divide",
+          "Economic reasons for using computers",
+          "Social, ethical, and legal issues pertaining to ICTs"
+        ],
+        "notionalHours": 2,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-IT-GR10",
+      "title": "Term 2",
+      "code": "CAPS-IT-GR10-T2",
+      "description": "Information Technology Grade 10 Term 2 covering Systems Technologies, Software Engineering Principles, Solution Development, Communication Technologies and Social Implications.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 44,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR10-T2",
+      "title": "Systems Technologies",
+      "code": "CAPS-IT-GR10-T2-SYSTECH",
+      "description": "Extended hardware concepts including input, output, storage, system unit, ports and connectors; differentiate primary vs secondary memory; compare devices of desktop and mobile devices; system software, utility programs, device drivers.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Extend hardware concepts (input, output, storage, input+output, system unit, ports and connectors and categorising)",
+          "Differentiate primary memory vs secondary memory",
+          "Compare input, processing, output, storage devices of a desktop computer with a small mobile device",
+          "Describe system software",
+          "Extend system software concepts",
+          "Utility programs",
+          "Device drivers"
+        ],
+        "notionalHours": 6,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR10-T2",
+      "title": "Software Engineering Principles",
+      "code": "CAPS-IT-GR10-T2-SOFTENG",
+      "description": "Problem solving steps and techniques, applying problem solving techniques, use of appropriate tools and techniques used in software analysis.",
+      "metadata": {
+        "weekNumbers": [
+          2,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "What is problem solving?",
+          "Problem solving steps",
+          "Apply problem solving techniques",
+          "Use appropriate tools and techniques used in software analysis"
+        ],
+        "notionalHours": 10,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR10-T2",
+      "title": "Solution Development",
+      "code": "CAPS-IT-GR10-T2-SOLDEV",
+      "description": "Conditional constructs (if, if-then-else, nested ifs, CASE statement), relational operators, string comparisons, basic validation techniques, events, debugging techniques and trace tables.",
+      "metadata": {
+        "weekNumbers": [
+          2,
+          3,
+          4,
+          5,
+          7,
+          8
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Comparison operators and performing logical comparisons: conditional constructs (if and if-then-else)",
+          "Nested ifs (three levels in the nesting)",
+          "CASE statement",
+          "Extend the use of variables, relational operators (and or not, IN)",
+          "String comparisons (basics)",
+          "Basic validation techniques (input and processing)",
+          "Events - form create activate",
+          "Debugging techniques",
+          "Debugging using trace tables"
+        ],
+        "notionalHours": 18,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR10-T2",
+      "title": "Communication Technologies",
+      "code": "CAPS-IT-GR10-T2-COMMTECH",
+      "description": "Networks fundamentals, network components, communication media, network types (PAN, HAN, LAN, WLAN, WAN), Internet as a WAN, client-server vs peer-to-peer, electronic communication and e-mail.",
+      "metadata": {
+        "weekNumbers": [
+          8
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Describe a network",
+          "Reasons for using networks",
+          "Advantages and disadvantages of networks",
+          "List the essential basic network components: nodes, NIC, communication media, switch, router, NOS",
+          "Overview of different communication media",
+          "PAN, HAN, LAN, WLAN, WAN",
+          "Internet as a WAN",
+          "Differentiate between client-server and peer-to-peer networks",
+          "Describe electronic communication",
+          "Overview of applications and tools to facilitate e-communication",
+          "E-mail as a form of e-communication"
+        ],
+        "notionalHours": 4,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR10-T2",
+      "title": "Social Implications",
+      "code": "CAPS-IT-GR10-T2-SOCIALIMPL",
+      "description": "Ergonomics, green computing, health issues, e-communication accuracy, time, distance, communication costs and speed, how to use email best practices.",
+      "metadata": {
+        "weekNumbers": [
+          9
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Ergonomics, green computing issues, health issues",
+          "E-communication in terms of accuracy, time, distance, communication costs, speed",
+          "How to use email (best practices)"
+        ],
+        "notionalHours": 4,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-IT-GR10",
+      "title": "Term 3",
+      "code": "CAPS-IT-GR10-T3",
+      "description": "Information Technology Grade 10 Term 3 covering Internet Technologies, Solution Development (loops, string handling, application development), Computer Management, Social Implications and PAT.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 44,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR10-T3",
+      "title": "Internet Technologies",
+      "code": "CAPS-IT-GR10-T3-INTERNET",
+      "description": "Overview of the internet, connecting to the internet, overview of the World Wide Web (WWW), browsing and searching.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Overview of the internet",
+          "What is needed to connect to the internet",
+          "Overview of the World Wide Web (WWW)",
+          "Browsing and searching"
+        ],
+        "notionalHours": 3,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR10-T3",
+      "title": "Solution Development",
+      "code": "CAPS-IT-GR10-T3-SOLDEV",
+      "description": "Iteration and loops (For-loop, While-loop, Repeat-Until), string handling from first principles, applying string methods, implementing algorithms, developing simple applications with timer objects, animations.",
+      "metadata": {
+        "weekNumbers": [
+          2,
+          3,
+          4,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Iteration - Loops: For-loop structure",
+          "Iteration - loops: While-loop structure",
+          "Iteration - loops: Repeat until structure",
+          "String handling from first principles",
+          "Apply string methods to string handling",
+          "Implement algorithms to solve computing problems",
+          "Develop simple applications incorporating concepts covered",
+          "Make use of a timer object for simple animations"
+        ],
+        "notionalHours": 22,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR10-T3",
+      "title": "Computer Management",
+      "code": "CAPS-IT-GR10-T3-COMPUTERMGMT",
+      "description": "Overview of computer management, purpose of various management tasks and operating system utilities, general housekeeping tasks.",
+      "metadata": {
+        "weekNumbers": [
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Describe computer management",
+          "Overview and purpose of various management tasks and operating system utilities",
+          "General housekeeping tasks"
+        ],
+        "notionalHours": 2,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR10-T3",
+      "title": "Social Implications",
+      "code": "CAPS-IT-GR10-T3-SOCIALIMPL",
+      "description": "Fake news, e-mail threats and issues, safe email and internet use, responsible communication styles and netiquette, online threats, POPIA.",
+      "metadata": {
+        "weekNumbers": [
+          9
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Fake news",
+          "E-mail threats and issues",
+          "Safe email and internet use",
+          "Responsible communication styles and netiquette",
+          "Online threats",
+          "POPIA"
+        ],
+        "notionalHours": 2,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR10-T3",
+      "title": "Application Development (PAT)",
+      "code": "CAPS-IT-GR10-T3-APPDEV",
+      "description": "Practical Assessment Task (PAT) phases including task description and analysis, task definition and user story, acceptance tests, navigation and flow between screens, screen design, IPO data and validation, creating and coding screens.",
+      "metadata": {
+        "weekNumbers": [
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "PAT: Task description and analysis of requirements",
+          "PAT: Task definition and user story",
+          "PAT: Acceptance tests",
+          "PAT: Navigation, flow between screens",
+          "PAT: Design a screen",
+          "PAT: IPO, data and validation"
+        ],
+        "notionalHours": 14,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-IT-GR10",
+      "title": "Term 4",
+      "code": "CAPS-IT-GR10-T4",
+      "description": "Information Technology Grade 10 Term 4 covering Internet Services Technologies, Solution Development consolidation, Application Development and PAT completion, Final Examination.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 24,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR10-T4",
+      "title": "Internet Technologies",
+      "code": "CAPS-IT-GR10-T4-INTERNET",
+      "description": "Internet services technologies overview.",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "What are Internet services technologies?"
+        ],
+        "notionalHours": 1,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR10-T4",
+      "title": "Solution Development",
+      "code": "CAPS-IT-GR10-T4-SOLDEV",
+      "description": "Consolidation and reinforcement of content, concepts and skills from Terms 1-3. Developing simple applications.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Develop simple applications",
+          "Consolidate and reinforce content, concepts, and skills"
+        ],
+        "notionalHours": 10,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR10-T4",
+      "title": "PAT Completion",
+      "code": "CAPS-IT-GR10-T4-PAT",
+      "description": "PAT tasks including creating screens, developing code, input and output using text file, testing and data validation, documentation, and hand-in.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "PAT: Create screen 1",
+          "PAT: Create screen 2",
+          "PAT: Develop the code",
+          "PAT: Input and output using text file (for PAT only)",
+          "PAT: Testing and data validation",
+          "PAT: Documentation",
+          "PAT: Hand in"
+        ],
+        "notionalHours": 10,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    }
+  ]
+}

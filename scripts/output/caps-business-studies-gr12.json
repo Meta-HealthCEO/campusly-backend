@@ -1,0 +1,666 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Further Education and Training Phase",
+      "code": "CAPS-FET",
+      "description": "CAPS FET Phase covering Grades 10 to 12",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 12",
+      "code": "CAPS-GR12",
+      "description": "Grade 12 FET Phase",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR12",
+      "title": "Business Studies Grade 12",
+      "code": "CAPS-BUSINESSSTUDIES-GR12",
+      "description": "CAPS Business Studies for Grade 12",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12",
+      "title": "Impacts of Recent Legislation",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T1-LEGISLATION",
+      "description": "Skills Development Act; Labour Relations Act; Employment Equity Act; Basic Conditions of Employment Act; Compensation for Occupational Injuries and Diseases Act; Broad Based Black Economic Empowerment Act; National Credit Act and Consumer Protection Act.",
+      "metadata": {
+        "weekNumbers": [1, 2, 3, 4],
+        "capsReference": "Term 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12-T1-LEGISLATION",
+      "title": "Skills Development Act, LRA, Employment Equity Act and BCEA",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T1-LEGISLATION-01",
+      "description": "Skills Development Act including the role of SETAs in supporting this Act; Labour Relations Act including the rights of employers and employees according to this Act; Employment Equity Act; Basic Conditions of Employment Act including the provisions of the Act; Compensation for Occupational Injuries and Diseases Act.",
+      "metadata": {
+        "weekNumbers": [1],
+        "capsReference": "Term 1, Week 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12-T1-LEGISLATION",
+      "title": "BBBEE, National Credit Act and Consumer Protection Act",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T1-LEGISLATION-02",
+      "description": "Broad Based Black Economic Empowerment Act; differences between BEE and BBBEE; application of the five BBBEE pillars; National Credit Act and Consumer Protection Act including the rights of consumers in terms of these Acts.",
+      "metadata": {
+        "weekNumbers": [2, 3, 4],
+        "capsReference": "Term 1, Weeks 2-4",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12",
+      "title": "Human Resources Function",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T1-HUMANRES",
+      "description": "Recruitment, selection, induction, placement, salary determination, fringe benefits/perks; implications of the LRA/BCEA/EEA/SDA on the human resources function.",
+      "metadata": {
+        "weekNumbers": [5, 6],
+        "capsReference": "Term 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12-T1-HUMANRES",
+      "title": "Recruitment, Selection, Induction and Placement",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T1-HUMANRES-01",
+      "description": "Recruitment, selection, induction, placement.",
+      "metadata": {
+        "weekNumbers": [5],
+        "capsReference": "Term 1, Week 5",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12-T1-HUMANRES",
+      "title": "Salary Determination, Benefits and Legislative Implications",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T1-HUMANRES-02",
+      "description": "Salary determination, fringe benefits/perks; implications of the LRA/BCEA/EEA/SDA on the human resources function.",
+      "metadata": {
+        "weekNumbers": [6],
+        "capsReference": "Term 1, Week 6",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12",
+      "title": "Professionalism and Ethics",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T1-ETHICS",
+      "description": "Ethical and unethical behaviour; professional and unprofessional behaviour; application of three King Code principles; types of unethical and unprofessional business practices; strategies to deal with unethical and unprofessional business practices.",
+      "metadata": {
+        "weekNumbers": [7],
+        "capsReference": "Term 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12",
+      "title": "Creative Thinking and Problem Solving",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T1-CREATIVE",
+      "description": "Problem solving and decision making; steps in problem solving; application and impact of four problem-solving techniques; application of creative thinking and advantages of creative thinking.",
+      "metadata": {
+        "weekNumbers": [8],
+        "capsReference": "Term 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12",
+      "title": "Macro-Environment: Business Strategies",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T1-STRATEGIES",
+      "description": "Steps in developing a strategy; strategic management process to solve business-related problems; SWOT analysis; Porter's Five Forces model; PESTLE analysis; different types of business strategies; advantages of each business strategy; activities; steps in strategy evaluation.",
+      "metadata": {
+        "weekNumbers": [9, 10],
+        "capsReference": "Term 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12-T1-STRATEGIES",
+      "title": "Strategic Management Process and SWOT Analysis",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T1-STRATEGIES-01",
+      "description": "Steps in developing a strategy; strategic management process to solve business-related problems; application of the industrial analysis tools: SWOT analysis.",
+      "metadata": {
+        "weekNumbers": [9],
+        "capsReference": "Term 1, Week 9",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12-T1-STRATEGIES",
+      "title": "Porter's Five Forces, PESTLE and Business Strategy Types",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T1-STRATEGIES-02",
+      "description": "Application of industrial analysis tools: Porter's Five Forces model and PESTLE analysis; different types of business strategies to address business challenges; advantages of each type of business strategy; activities; steps in strategy evaluation.",
+      "metadata": {
+        "weekNumbers": [10],
+        "capsReference": "Term 1, Week 10",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12",
+      "title": "Business Sectors and Their Environments",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T2-SECTORS",
+      "description": "Three types of business sectors; classification of challenges according to the three business environments.",
+      "metadata": {
+        "weekNumbers": [1],
+        "capsReference": "Term 2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 6
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12",
+      "title": "Quality of Performance",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T2-QUALITY",
+      "description": "Quality concepts and differences; benefits of a good quality management system; contribution of quality of performance to the success and/or failure of each business function; quality indicators of each business function; meaning of TQM; impact of five TQM elements; importance of quality circles; PDCA model; impact of poor TQM implementation; ways TQM can reduce cost of quality.",
+      "metadata": {
+        "weekNumbers": [2, 3],
+        "capsReference": "Term 2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 7
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12-T2-QUALITY",
+      "title": "Quality Concepts and Business Function Quality Indicators",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T2-QUALITY-01",
+      "description": "Quality concepts and differences; benefits of a good quality management system; contribution of quality of performance to the success and/or failure of each business function; quality indicators of each business function.",
+      "metadata": {
+        "weekNumbers": [2],
+        "capsReference": "Term 2, Week 2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12-T2-QUALITY",
+      "title": "Total Quality Management (TQM)",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T2-QUALITY-02",
+      "description": "Meaning of TQM; impact of five TQM elements on large businesses; importance of quality circles; application of a PDCA model; impact of TQM if poorly implemented by businesses; ways in which TQM can reduce the cost of quality.",
+      "metadata": {
+        "weekNumbers": [3],
+        "capsReference": "Term 2, Week 3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12",
+      "title": "Management and Leadership",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T2-LEADERSHIP",
+      "description": "Differences between management and leadership; application of five leadership styles; impact of democratic, autocratic, laissez-faire/free reign, charismatic and transactional leadership styles; leadership theories; role of personal attitude in success and leadership.",
+      "metadata": {
+        "weekNumbers": [4, 5],
+        "capsReference": "Term 2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 8
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12-T2-LEADERSHIP",
+      "title": "Differences Between Management and Leadership and Leadership Styles",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T2-LEADERSHIP-01",
+      "description": "Differences between management and leadership; application of five leadership styles; impact of democratic and autocratic leadership styles.",
+      "metadata": {
+        "weekNumbers": [4],
+        "capsReference": "Term 2, Week 4",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12-T2-LEADERSHIP",
+      "title": "Leadership Theories and Personal Attitude",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T2-LEADERSHIP-02",
+      "description": "Impact of laissez-faire/free reign, charismatic and transactional leadership styles; leadership theories; role of personal attitude in success and leadership.",
+      "metadata": {
+        "weekNumbers": [5],
+        "capsReference": "Term 2, Week 5",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12",
+      "title": "Investment: Securities",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T2-SECURITIES",
+      "description": "Functions of the JSE; investment decisions factors; types of investment opportunities and risk factors; impact of four forms of investment; types of preference shares; differences between ordinary and preference shares; four investment concepts; differences between simple and compound interest; calculations of simple and compound interest; recommend types/forms of investment based on calculations.",
+      "metadata": {
+        "weekNumbers": [6, 7],
+        "capsReference": "Term 2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 9
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12-T2-SECURITIES",
+      "title": "JSE, Investment Types and Shares",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T2-SECURITIES-01",
+      "description": "Functions of the JSE; investment decisions factors; types of investment opportunities and risk factors of each; impact of the four forms of investment; types of preference shares; differences between ordinary and preference shares.",
+      "metadata": {
+        "weekNumbers": [6],
+        "capsReference": "Term 2, Week 6",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12-T2-SECURITIES",
+      "title": "Investment Concepts and Interest Calculations",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T2-SECURITIES-02",
+      "description": "Meaning of four investment concepts; differences between simple and compound interest; calculations of simple and compound interest; recommend types/forms of investment based on the calculations.",
+      "metadata": {
+        "weekNumbers": [7],
+        "capsReference": "Term 2, Week 7",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12",
+      "title": "Investment: Insurance",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T2-INSURANCE",
+      "description": "Non-compulsory and compulsory insurance; meaning of four insurance concepts; insurable and non-insurable risk; four principles of insurance; calculations of the average clause; advantages of insurance for businesses; types of compulsory insurance; types of benefits paid by the UIF; differences between compulsory and non-compulsory insurance.",
+      "metadata": {
+        "weekNumbers": [8],
+        "capsReference": "Term 2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 10
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12-T2-INSURANCE",
+      "title": "Non-Compulsory Insurance",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T2-INSURANCE-01",
+      "description": "Meaning of non-compulsory insurance; meaning of four insurance concepts, differences and examples; insurable and non-insurable risk; four principles of insurance; calculations of the average clause; advantages of insurance for businesses.",
+      "metadata": {
+        "weekNumbers": [8],
+        "capsReference": "Term 2, Week 8",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12-T2-INSURANCE",
+      "title": "Compulsory Insurance",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T2-INSURANCE-02",
+      "description": "Meaning of compulsory insurance; types of compulsory insurance; types of benefits paid by the UIF; differences between compulsory and non-compulsory insurance.",
+      "metadata": {
+        "weekNumbers": [8],
+        "capsReference": "Term 2, Week 8",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12",
+      "title": "Team Performance and Conflict Management",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T2-TEAMCONFLICT",
+      "description": "Four criteria and characteristics for successful teams; five stages of team development; importance of team dynamics theories; causes of conflict; conflict resolution techniques/steps; dealing with grievances and difficult people; differences between grievance and conflict; dealing with six types of difficult personalities; dealing with difficult employees in the workplace.",
+      "metadata": {
+        "weekNumbers": [9],
+        "capsReference": "Term 2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 11
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12-T2-TEAMCONFLICT",
+      "title": "Team Performance Assessment",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T2-TEAMCONFLICT-01",
+      "description": "Four criteria and characteristics for successful teams; five stages of team development; importance of team dynamics theories.",
+      "metadata": {
+        "weekNumbers": [9],
+        "capsReference": "Term 2, Week 9",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12-T2-TEAMCONFLICT",
+      "title": "Conflict Resolution and Difficult People",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T2-TEAMCONFLICT-02",
+      "description": "Causes of conflict; conflict resolution techniques/steps; dealing with grievances and difficult people; differences between grievance and conflict; dealing with six types of difficult personalities; dealing with difficult employees in the workplace.",
+      "metadata": {
+        "weekNumbers": [9],
+        "capsReference": "Term 2, Week 9",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12",
+      "title": "Human Rights, Inclusivity and Environmental Issues",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T3-HUMANRIGHTS",
+      "description": "Six human rights in the workplace; economic and social rights of employees; cultural rights in the workplace; diversity (meaning, seven diversity issues, benefits); environmental factors; responsibilities of employers and employees in promoting health and safety; roles of health and safety representatives; strategies to protect the environment and human health.",
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "Term 3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 12
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12-T3-HUMANRIGHTS",
+      "title": "Human Rights and Diversity in the Workplace",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T3-HUMANRIGHTS-01",
+      "description": "Dealing with six human rights in the workplace; economic rights of employees in the workplace; social rights of employees in the workplace and how they can be promoted; dealing with cultural rights in the workplace; meaning of diversity; dealing with seven diversity issues in the workplace; benefits of diversity in the workplace.",
+      "metadata": {
+        "weekNumbers": [1],
+        "capsReference": "Term 3, Week 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12-T3-HUMANRIGHTS",
+      "title": "Environmental Factors and Health and Safety",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T3-HUMANRIGHTS-02",
+      "description": "Environmental factors; responsibilities of employers and employees in promoting human health and safety in the workplace; roles of the health and safety representatives in protecting the workplace environment; strategies businesses may use to protect the environment and human health.",
+      "metadata": {
+        "weekNumbers": [2],
+        "capsReference": "Term 3, Week 2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12",
+      "title": "Social Responsibility",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T3-SOCIALRESP",
+      "description": "Meaning of social responsibility; relationship/link between social responsibility and triple bottom line; ways in which a business project can contribute towards the community; identification of three socio-economic issues; ways businesses can deal with socio-economic issues; ways businesses can contribute to improving the well-being of employees and communities.",
+      "metadata": {
+        "weekNumbers": [3],
+        "capsReference": "Term 3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 13
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12",
+      "title": "Corporate Social Responsibility and Corporate Social Investment",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T3-CSRCSI",
+      "description": "CSR: meaning, purpose, components, impact on businesses and communities. CSI: meaning, purpose, focus areas, differences between CSR and CSI, impact on businesses and communities.",
+      "metadata": {
+        "weekNumbers": [4],
+        "capsReference": "Term 3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 14
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12-T3-CSRCSI",
+      "title": "Corporate Social Responsibility (CSR)",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T3-CSRCSI-01",
+      "description": "Meaning of CSR; purpose of CSR; components of CSR; impact of CSR on businesses and communities.",
+      "metadata": {
+        "weekNumbers": [4],
+        "capsReference": "Term 3, Week 4",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12-T3-CSRCSI",
+      "title": "Corporate Social Investment (CSI)",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T3-CSRCSI-02",
+      "description": "Meaning of CSI; purpose of CSI; CSI focus areas; differences between CSR and CSI; impact of CSI on businesses and communities.",
+      "metadata": {
+        "weekNumbers": [4],
+        "capsReference": "Term 3, Week 4",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12",
+      "title": "Presentation and Data Response",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T3-PRESDATA",
+      "description": "Factors that must be considered before, during and after the presentation; responding to questions after a presentation in a non-aggressive and professional manner; areas of improvement; designing a multimedia presentation; examples of non-verbal presentations; impact/effectiveness of each visual aid.",
+      "metadata": {
+        "weekNumbers": [5],
+        "capsReference": "Term 3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 15
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12-T3-PRESDATA",
+      "title": "Presentation Skills",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T3-PRESDATA-01",
+      "description": "Factors that must be considered before, during and after the presentation; responding to questions after a presentation in a non-aggressive and professional manner; areas of improvement in the next presentation.",
+      "metadata": {
+        "weekNumbers": [5],
+        "capsReference": "Term 3, Week 5",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12-T3-PRESDATA",
+      "title": "Data Response and Visual Aids",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T3-PRESDATA-02",
+      "description": "Designing a multimedia presentation; examples of non-verbal presentations; impact/effectiveness of each visual aid.",
+      "metadata": {
+        "weekNumbers": [5],
+        "capsReference": "Term 3, Week 5",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12",
+      "title": "Forms of Ownership",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T3-OWNERSHIP",
+      "description": "Characteristics of each form of ownership; meaning of limited liability and unlimited liability; impact of the different forms of ownership; how the six criteria could contribute to the success and/or failure of each form of ownership.",
+      "metadata": {
+        "weekNumbers": [6, 7],
+        "capsReference": "Term 3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 16
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12-T3-OWNERSHIP",
+      "title": "Characteristics and Liability",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T3-OWNERSHIP-01",
+      "description": "Characteristics of each form of ownership; meaning of limited liability and unlimited liability; impact of the different forms of ownership.",
+      "metadata": {
+        "weekNumbers": [6],
+        "capsReference": "Term 3, Week 6",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR12-T3-OWNERSHIP",
+      "title": "Six Criteria and Success or Failure of Forms of Ownership",
+      "code": "CAPS-BUSINESSSTUDIES-GR12-T3-OWNERSHIP-02",
+      "description": "How the six criteria could contribute to the success and/or failure of each form of ownership.",
+      "metadata": {
+        "weekNumbers": [7],
+        "capsReference": "Term 3, Week 7",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    }
+  ]
+}

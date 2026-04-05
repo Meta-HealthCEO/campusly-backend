@@ -1,0 +1,476 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "FET Phase",
+      "code": "CAPS-FET",
+      "description": "Further Education and Training Phase (Grades 10-12)",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 12",
+      "code": "CAPS-GR12",
+      "description": "",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 12
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR12",
+      "title": "History",
+      "code": "CAPS-HISTORY-GR12",
+      "description": "History — Grade 12 — CAPS Curriculum",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-HISTORY-GR12",
+      "title": "Term 1",
+      "code": "CAPS-HISTORY-GR12-T1",
+      "description": "Extension of the Cold War, Independent Africa, Civil Society Protests 1950s–1990s",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-HISTORY-GR12-T1",
+      "title": "Topic 1: Extension of the Cold War",
+      "code": "CAPS-HISTORY-GR12-T1-COLDWAR",
+      "description": "The origins of the Cold War in Europe and the Cold War case study of Vietnam.",
+      "metadata": {
+        "weekNumbers": [
+          2,
+          3,
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR12-T1-COLDWAR",
+      "title": "Origins of the Cold War in Europe",
+      "code": "CAPS-HISTORY-GR12-T1-COLDWAR-01",
+      "description": "End of the Second World War (introduction) and why a Cold War developed; USSR and USA creation of spheres of interest (installation of Soviet-friendly governments in satellite states); USA's policy of containment: Truman Doctrine, Marshall Plan, the Berlin Crisis 1949–1961, NATO and the Warsaw Pact; who was to blame for the Cold War? [Source-based focus]",
+      "metadata": {
+        "weekNumbers": [
+          2,
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR12-T1-COLDWAR",
+      "title": "Cold War Case Study: Vietnam",
+      "code": "CAPS-HISTORY-GR12-T1-COLDWAR-02",
+      "description": "1957–1965: struggle in Vietnam between the South Vietnamese army and communist-trained rebels (Viet Cong); 1965–1969: North Vietnamese–USA struggle including the nature of the Vietnamese war against the USA; the war from Vietnamese and USA perspectives; the war as a global issue; 1969–1975: USA withdrawal from Vietnam and impact on USA politics including student movements. [Essay focus]",
+      "metadata": {
+        "weekNumbers": [
+          3,
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-HISTORY-GR12-T1",
+      "title": "Topic 2: Independent Africa",
+      "code": "CAPS-HISTORY-GR12-T1-INDAFRICA",
+      "description": "Africa in the Cold War with a case study on Angola, and how independence was realised in Africa in the 1960s and 1970s with a case study on the Congo.",
+      "metadata": {
+        "weekNumbers": [
+          5,
+          6,
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR12-T1-INDAFRICA",
+      "title": "Africa in the Cold War: Case Study – Angola",
+      "code": "CAPS-HISTORY-GR12-T1-INDAFRICA-01",
+      "description": "Angola: colonialism and independence; outbreak of civil war in 1974 (MPLA, FNLA and UNITA); reasons for and nature of involvement in Angola (USSR, USA, Cuba, China, South Africa) and impact on regional stability; significance of the Battle of Cuito Cuanavale 1987 and 1988; changing nature of international relationships. [Source-based focus]",
+      "metadata": {
+        "weekNumbers": [
+          5,
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR12-T1-INDAFRICA",
+      "title": "How Independence was Realised in Africa: Case Study – The Congo",
+      "code": "CAPS-HISTORY-GR12-T1-INDAFRICA-02",
+      "description": "What were the ideas that influenced the Congo? Political factors: type of leader, legacies of colonialism, type of government, political stability and instability; economic factors: type of economy; social and cultural successes and challenges (benefits of independence, education, Africanisation). [Essay focus]",
+      "metadata": {
+        "weekNumbers": [
+          6,
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-HISTORY-GR12-T1",
+      "title": "Topic 3: Civil Society Protests 1950s–1990s",
+      "code": "CAPS-HISTORY-GR12-T1-CIVPROT",
+      "description": "The US Civil Rights Movement and the Black Power Movement.",
+      "metadata": {
+        "weekNumbers": [
+          8,
+          9,
+          10
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR12-T1-CIVPROT",
+      "title": "The US Civil Rights Movement",
+      "code": "CAPS-HISTORY-GR12-T1-CIVPROT-01",
+      "description": "Reasons and origins of the Civil Rights Movement in the USA; role, impact and influence of Martin Luther King Jr; forms of protest through civil disobedience: Montgomery bus boycott, sit-ins, marches including to Lincoln Memorial, Birmingham campaign and Selma-Montgomery marches; school desegregation case study: Little Rock, Arkansas; short-term and long-term gains. [Source-based focus]",
+      "metadata": {
+        "weekNumbers": [
+          8,
+          9
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR12-T1-CIVPROT",
+      "title": "The Black Power Movement",
+      "code": "CAPS-HISTORY-GR12-T1-CIVPROT-02",
+      "description": "Reasons for the movement; formation of the Black Panther Party; roles of Malcolm X, Stokely Carmichael, Huey Newton and other African American activists; short-term and long-term gains. [Essay focus]",
+      "metadata": {
+        "weekNumbers": [
+          9,
+          10
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-HISTORY-GR12",
+      "title": "Term 2",
+      "code": "CAPS-HISTORY-GR12-T2",
+      "description": "Civil Resistance in South Africa 1970s–1980s, Coming of Democracy to South Africa, End of the Cold War, June examinations",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-HISTORY-GR12-T2",
+      "title": "Topic 4: Civil Resistance in South Africa – 1970s to 1980s",
+      "code": "CAPS-HISTORY-GR12-T2-CIVRES",
+      "description": "The challenge of Black Consciousness to the Apartheid state and the crisis of Apartheid through internal resistance.",
+      "metadata": {
+        "weekNumbers": [
+          2,
+          3,
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR12-T2-CIVRES",
+      "title": "The Challenge of Black Consciousness to the Apartheid State",
+      "code": "CAPS-HISTORY-GR12-T2-CIVRES-01",
+      "description": "The nature and aims of Black Consciousness; the role of Steve Biko; the Black Consciousness Movement (BCM); the challenge posed by the ideas of Black Consciousness to the state; the 1976 Soweto uprising (briefly, relating to BCM influence on students); the legacy of Black Consciousness on South African politics. [Essay focus]",
+      "metadata": {
+        "weekNumbers": [
+          2,
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR12-T2-CIVRES",
+      "title": "The Crisis of Apartheid: Internal Resistance",
+      "code": "CAPS-HISTORY-GR12-T2-CIVRES-02",
+      "description": "Government attempts to reform apartheid; the 1982 Urban Bantu Authorities Act; the Tricameral system; internal resistance to reforms; growing power of the trade union movement from 1973; response to Botha's 'reforms': new methods of mobilisation including labour's rolling mass action, roles of civics, UDF, Mass Democratic Movement, End Conscription Campaign and Black Sash. [Source-based focus]",
+      "metadata": {
+        "weekNumbers": [
+          3,
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-HISTORY-GR12-T2",
+      "title": "Topic 5: The Coming of Democracy to South Africa and Coming to Terms with the Past",
+      "code": "CAPS-HISTORY-GR12-T2-DEMSA",
+      "description": "The Truth and Reconciliation Commission and the negotiated settlement leading to the Government of National Unity.",
+      "metadata": {
+        "weekNumbers": [
+          5,
+          6,
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR12-T2-DEMSA",
+      "title": "The Truth and Reconciliation Commission (TRC)",
+      "code": "CAPS-HISTORY-GR12-T2-DEMSA-01",
+      "description": "Reasons for the TRC hearings; focus on various case studies of victims and perpetrators; the debates concerning the TRC; positive aspects of the TRC; amnesty – focus on human rights of the 1980s; reparations; responses of political parties to the TRC and the final report; focus on various case studies of victims and perpetrators. [Source-based focus]",
+      "metadata": {
+        "weekNumbers": [
+          5,
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR12-T2-DEMSA",
+      "title": "Negotiated Settlement and the Government of National Unity",
+      "code": "CAPS-HISTORY-GR12-T2-DEMSA-02",
+      "description": "Beginning of negotiations 1990–1991; breakdown of negotiations; multi-party negotiation process resumes; ongoing violence; final road to democracy 1994 (27 April 1994 election, the Government of National Unity). [Essay focus]",
+      "metadata": {
+        "weekNumbers": [
+          6,
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-HISTORY-GR12-T2",
+      "title": "Topic 6: The End of the Cold War and New World Order",
+      "code": "CAPS-HISTORY-GR12-T2-ENDCW",
+      "description": "The end of the Cold War, the events of 1989 and the new world order.",
+      "metadata": {
+        "weekNumbers": [
+          7,
+          8
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR12-T2-ENDCW",
+      "title": "The End of the Cold War and the Events of 1989",
+      "code": "CAPS-HISTORY-GR12-T2-ENDCW-01",
+      "description": "Gorbachev's reforms in the Soviet Union (glasnost, perestroika); Eastern Europe in broad outline: events in Poland, significance of these events on Soviet influence in Eastern Europe, Germany and the fall of the Berlin Wall; the disintegration of the Soviet Union; turning point in South Africa: the collapse of the Soviet Union and its impact on South Africa. [Essay focus]",
+      "metadata": {
+        "weekNumbers": [
+          7,
+          8
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-HISTORY-GR12",
+      "title": "Term 3",
+      "code": "CAPS-HISTORY-GR12-T3",
+      "description": "A New Global World Order (Globalisation), revision of all Paper 1 and Paper 2 topics, preparatory examination",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-HISTORY-GR12-T3",
+      "title": "Topic 6 (continued): A New Global World Order – Globalisation",
+      "code": "CAPS-HISTORY-GR12-T3-GLOBAL",
+      "description": "Defining globalisation; balance of power and impact on Africa; dominance of global capitalism; emerging economies and different forms of capitalism (BRICS); responses to globalisation. [Source-based focus]",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR12-T3-GLOBAL",
+      "title": "Globalisation and the New World Order",
+      "code": "CAPS-HISTORY-GR12-T3-GLOBAL-01",
+      "description": "Defining globalisation; balance of power and impact on Africa; dominance of global capitalism; emerging economies and different forms of capitalism including BRICS; responses to globalisation.",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    }
+  ]
+}

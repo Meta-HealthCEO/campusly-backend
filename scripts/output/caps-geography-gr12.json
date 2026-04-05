@@ -1,0 +1,1090 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "FET Phase",
+      "code": "CAPS-FET",
+      "description": "Further Education and Training Phase (Grades 10-12)",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 12",
+      "code": "CAPS-GR12",
+      "description": "",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 12
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR12",
+      "title": "Geography",
+      "code": "CAPS-GEOGRAPHY-GR12",
+      "description": "Geography — Grade 12 — CAPS Curriculum",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-GEOGRAPHY-GR12",
+      "title": "Term 1",
+      "code": "CAPS-GEOGRAPHY-GR12-T1",
+      "description": "Climate and Weather (Weeks 1-6) and Geomorphology: Drainage Systems and Fluvial Processes (Weeks 7-11).",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T1",
+      "title": "Mid-Latitude Cyclones",
+      "code": "CAPS-GEOGRAPHY-GR12-T1-MIDLATCYC",
+      "description": "Frontal depressions and extra tropical cyclones: general characteristics, areas of formation, conditions necessary for formation, stages of development, cross-section, related weather conditions, and identification on synoptic weather maps and satellite images.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T1-MIDLATCYC",
+      "title": "Characteristics and Formation of Mid-Latitude Cyclones",
+      "code": "CAPS-GEOGRAPHY-GR12-T1-MIDLATCYC-01",
+      "description": "Consolidation of Grade 11 Climatology: Global air circulation. General characteristics, areas of formation, and conditions necessary for the formation of mid-latitude cyclones.",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T1-MIDLATCYC",
+      "title": "Development, Weather and Impact of Mid-Latitude Cyclones",
+      "code": "CAPS-GEOGRAPHY-GR12-T1-MIDLATCYC-02",
+      "description": "Stages of development. Cross-section through a mid-latitude cyclone. Related weather conditions associated with cold, warm, and occluded fronts. Impact on human activities and the environment. Possible precautionary and management strategies. Identification on synoptic weather maps and satellite images.",
+      "metadata": {
+        "weekNumbers": [
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T1",
+      "title": "Tropical Cyclones",
+      "code": "CAPS-GEOGRAPHY-GR12-T1-TROPCYC",
+      "description": "General characteristics, areas of formation, factors necessary for formation, stages of development, associated weather patterns, cross-section, impact, precautionary and management strategies, identification on synoptic weather maps, and a case study of one recent tropical cyclone that affected southern Africa.",
+      "metadata": {
+        "weekNumbers": [
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T1-TROPCYC",
+      "title": "Formation and Characteristics of Tropical Cyclones",
+      "code": "CAPS-GEOGRAPHY-GR12-T1-TROPCYC-01",
+      "description": "General characteristics. Areas of formation and associated terms in different parts of the world. Factors necessary for their formation. Stages of development. Associated weather patterns. Cross-section through a tropical cyclone (interpretation).",
+      "metadata": {
+        "weekNumbers": [
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T1-TROPCYC",
+      "title": "Impact and Case Study of Tropical Cyclones",
+      "code": "CAPS-GEOGRAPHY-GR12-T1-TROPCYC-02",
+      "description": "Impact of tropical cyclones on environment and human activities. Precautionary and management strategies. Identification on synoptic weather maps and satellite images. Case study of ONE recent tropical cyclone that affected southern Africa.",
+      "metadata": {
+        "weekNumbers": [
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T1",
+      "title": "Subtropical Anticyclones and Associated Weather Conditions",
+      "code": "CAPS-GEOGRAPHY-GR12-T1-ANTICYC",
+      "description": "Location and identification of the three high-pressure cells affecting South Africa, their general characteristics, influence on SA's weather and climate, travelling and moving disturbances associated with anticyclonic circulation, and reading and interpretation of synoptic weather maps.",
+      "metadata": {
+        "weekNumbers": [
+          4,
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T1-ANTICYC",
+      "title": "High-Pressure Cells Affecting South Africa",
+      "code": "CAPS-GEOGRAPHY-GR12-T1-ANTICYC-01",
+      "description": "Location and identification of the THREE high-pressure cells: South Atlantic high-pressure cell, South Indian high-pressure cell, Kalahari high pressure cell. General characteristics. Influence of anticyclones on South Africa's weather and climate including integration with plateau, inversion layer, ocean currents and ridging: summer and winter position.",
+      "metadata": {
+        "weekNumbers": [
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T1-ANTICYC",
+      "title": "Travelling Disturbances and Anticyclonic Weather",
+      "code": "CAPS-GEOGRAPHY-GR12-T1-ANTICYC-02",
+      "description": "Development of travelling, moving disturbances associated with anticyclonic circulation: moisture front and line thunderstorms, coastal low pressure, SA berg wind. Resultant weather and impact (strategies to reduce the impact). Identification of travelling, moving disturbances on synoptic weather maps and satellite images.",
+      "metadata": {
+        "weekNumbers": [
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T1",
+      "title": "Valley Climates and Urban Climates",
+      "code": "CAPS-GEOGRAPHY-GR12-T1-LOCALCLIM",
+      "description": "Valley climates including slope aspect, anabatic and katabatic winds, inversions, thermal belt, frost pockets, radiation fog, and influence on human activities. Urban climates including reasons for differences between rural and urban climates, urban heat islands, and pollution domes.",
+      "metadata": {
+        "weekNumbers": [
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T1-LOCALCLIM",
+      "title": "Valley Climates",
+      "code": "CAPS-GEOGRAPHY-GR12-T1-LOCALCLIM-01",
+      "description": "Slope aspect: definition and effect on distribution of temperature in a valley. Definition and development of: anabatic winds, katabatic winds, inversions, thermal belt, frost pockets, radiation fog. Influence on human activities: settlement and farming.",
+      "metadata": {
+        "weekNumbers": [
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T1-LOCALCLIM",
+      "title": "Urban Climates",
+      "code": "CAPS-GEOGRAPHY-GR12-T1-LOCALCLIM-02",
+      "description": "Reasons for differences between rural and urban climates. Urban heat islands: definition, causes, effects (economic, social, environmental), strategies to reduce the urban heat island effect. Pollution dome: definition, causes, effects (economic, social, environmental), strategies to reduce the pollution dome effect.",
+      "metadata": {
+        "weekNumbers": [
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T1",
+      "title": "Drainage Systems in South Africa",
+      "code": "CAPS-GEOGRAPHY-GR12-T1-DRAINAGE",
+      "description": "Drainage basin concepts, types of rivers, drainage patterns, factors influencing drainage density, stream order, discharge, river profiles, and laminar versus turbulent flow.",
+      "metadata": {
+        "weekNumbers": [
+          7,
+          8
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T1-DRAINAGE",
+      "title": "Drainage Basin Concepts, River Types and Drainage Patterns",
+      "code": "CAPS-GEOGRAPHY-GR12-T1-DRAINAGE-01",
+      "description": "Concepts: drainage basin, catchment area, river system, tributary, confluence, watershed, interfluve, source, river mouth, surface run-off, infiltration, groundwater, water table. Types of rivers: permanent, periodic, episodic, exotic. Drainage patterns: dendritic, trellis, rectangular, radial, centripetal, deranged, parallel. Factors influencing drainage density.",
+      "metadata": {
+        "weekNumbers": [
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T1-DRAINAGE",
+      "title": "Stream Order, Discharge and River Profiles",
+      "code": "CAPS-GEOGRAPHY-GR12-T1-DRAINAGE-02",
+      "description": "Determining stream order. Discharge of a river. Laminar flow and turbulent flow. River profiles: cross/transverse profile, longitudinal profile, plan view of both profiles, relationship of both profiles to the stages of a river (upper, middle, lower course).",
+      "metadata": {
+        "weekNumbers": [
+          8
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T1",
+      "title": "Fluvial Processes",
+      "code": "CAPS-GEOGRAPHY-GR12-T1-FLUVIAL",
+      "description": "Identification, description, formation, significance and impact of fluvial landforms and features, river grading, and GIS concepts related to remote sensing.",
+      "metadata": {
+        "weekNumbers": [
+          9,
+          10
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 6
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T1-FLUVIAL",
+      "title": "Fluvial Landforms and Features",
+      "code": "CAPS-GEOGRAPHY-GR12-T1-FLUVIAL-01",
+      "description": "Identification, description, formation, significance and impact of fluvial landforms and features: meanders, undercut and slip-off slope, oxbow lakes, braided streams, floodplain, natural levee, waterfall, rapids, delta.",
+      "metadata": {
+        "weekNumbers": [
+          9
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T1-FLUVIAL",
+      "title": "River Grading and GIS Concepts",
+      "code": "CAPS-GEOGRAPHY-GR12-T1-FLUVIAL-02",
+      "description": "River grading: definition (graded and ungraded rivers), processes involved in a river becoming graded, base level of erosion (temporary and permanent). GIS concepts: remote sensing, resolution, pixels.",
+      "metadata": {
+        "weekNumbers": [
+          10
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-GEOGRAPHY-GR12",
+      "title": "Term 2",
+      "code": "CAPS-GEOGRAPHY-GR12-T2",
+      "description": "Fluvial Processes continued and Settlement Geography: river rejuvenation, river capture, catchment management, study of settlements, rural and urban settlements, and urban issues.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T2",
+      "title": "Fluvial Processes: River Rejuvenation and Capture",
+      "code": "CAPS-GEOGRAPHY-GR12-T2-RIVERCAP",
+      "description": "River rejuvenation including features and significance, river capture and stream piracy, superimposed and antecedent drainage patterns, and catchment and river management.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T2-RIVERCAP",
+      "title": "River Rejuvenation",
+      "code": "CAPS-GEOGRAPHY-GR12-T2-RIVERCAP-01",
+      "description": "River rejuvenation: definition, reasons, features (knickpoint, terraces, valley in a valley, incised and entrenched meanders), and significance of rejuvenated landscapes. River capture and stream piracy: concepts, features (captor stream, captured stream, misfit stream, elbow of capture, wind gap), impact and implications.",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T2-RIVERCAP",
+      "title": "Catchment and River Management",
+      "code": "CAPS-GEOGRAPHY-GR12-T2-RIVERCAP-02",
+      "description": "Superimposed and antecedent drainage patterns. Definition of river management. Causes of poor river management. Importance of managing drainage basins and catchment areas. Impact of people on drainage basins (river pollution, overgrazing, deforestation, human settlement). Strategies to manage drainage basins. Case study of one catchment management strategy in South Africa.",
+      "metadata": {
+        "weekNumbers": [
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T2",
+      "title": "Study of Settlements and Rural Settlements",
+      "code": "CAPS-GEOGRAPHY-GR12-T2-RURALSETT",
+      "description": "Definition of settlement, site and situation; classification of settlements; rural settlements: location factors, classification by pattern and function, different shapes of rural settlements, and land use.",
+      "metadata": {
+        "weekNumbers": [
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T2-RURALSETT",
+      "title": "Settlement Concepts and Classification",
+      "code": "CAPS-GEOGRAPHY-GR12-T2-RURALSETT-01",
+      "description": "Definition of settlement, site and situation. Rural and urban settlements. Classification of settlements according to size and complexity, pattern, and function.",
+      "metadata": {
+        "weekNumbers": [
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T2-RURALSETT",
+      "title": "Rural Settlement Patterns, Functions and Land Use",
+      "code": "CAPS-GEOGRAPHY-GR12-T2-RURALSETT-02",
+      "description": "How site and situation affect the location of rural settlements. Classification of rural settlements according to pattern (identification of different patterns, advantages and disadvantages) and function. Identification and reasons for different shapes: round, linear, T-shaped, crossroad. Land use in rural settlements: farming, forestry, and conservation.",
+      "metadata": {
+        "weekNumbers": [
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T2",
+      "title": "Rural Settlement Issues",
+      "code": "CAPS-GEOGRAPHY-GR12-T2-RURALISSUES",
+      "description": "Rural-urban migration, push and pull factors, rural depopulation, social justice issues associated with rural settlements, access to resources, and land reform.",
+      "metadata": {
+        "weekNumbers": [
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T2-RURALISSUES",
+      "title": "Rural-Urban Migration and Depopulation",
+      "code": "CAPS-GEOGRAPHY-GR12-T2-RURALISSUES-01",
+      "description": "Rural-urban migration: push and pull factors. Definition of rural depopulation. Causes and consequences of rural depopulation on people and economy. Strategies to address rural depopulation. Case study that illustrates effects of rural depopulation and strategies to address them.",
+      "metadata": {
+        "weekNumbers": [
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T2-RURALISSUES",
+      "title": "Social Justice and Land Reform",
+      "code": "CAPS-GEOGRAPHY-GR12-T2-RURALISSUES-02",
+      "description": "Social justice issues associated with rural settlements: definition, purpose, challenges in implementation, success stories. Access to resources (natural: water; human-made: limited investment and lack of infrastructure). Land reform: land tenure, redistribution, and restitution.",
+      "metadata": {
+        "weekNumbers": [
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T2",
+      "title": "Urban Settlements",
+      "code": "CAPS-GEOGRAPHY-GR12-T2-URBANSETT",
+      "description": "Origin and development of urban settlement, urbanisation of the world population, urbanisation concepts, how site and situation affect the location of urban settlements, and classification of urban settlements according to function.",
+      "metadata": {
+        "weekNumbers": [
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T2-URBANSETT",
+      "title": "Urbanisation Concepts and Urban Location",
+      "code": "CAPS-GEOGRAPHY-GR12-T2-URBANSETT-01",
+      "description": "Origin and development of urban settlement. Urbanisation of the world population. Concepts: urbanisation, urban growth, urban expansion, urban sprawl, rate of urbanisation, level of urbanisation, counter-urbanisation. How site and situation affect the location of urban settlements.",
+      "metadata": {
+        "weekNumbers": [
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T2-URBANSETT",
+      "title": "Classification of Urban Settlements",
+      "code": "CAPS-GEOGRAPHY-GR12-T2-URBANSETT-02",
+      "description": "Classification of urban settlements according to function. Central places. Trade and transport towns (break of bulk points, junction towns, gateway, gap towns). Specialised towns and cities.",
+      "metadata": {
+        "weekNumbers": [
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T2",
+      "title": "Urban Hierarchies and Urban Structure",
+      "code": "CAPS-GEOGRAPHY-GR12-T2-URBANHIER",
+      "description": "Urban hierarchies, urban structure and patterns, land use zones, morphological structure of a city, urban profile, and models of urban structure.",
+      "metadata": {
+        "weekNumbers": [
+          6,
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T2-URBANHIER",
+      "title": "Urban Hierarchies and Land Use Zones",
+      "code": "CAPS-GEOGRAPHY-GR12-T2-URBANHIER-01",
+      "description": "Urban hierarchy, central place, threshold population, sphere of influence, range of goods, lower and higher order functions, lower and higher order centres. Land use zones (commercial, residential, industrial, transition zone, rural-urban fringe) including reasons for location, purposes, and characteristics.",
+      "metadata": {
+        "weekNumbers": [
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T2-URBANHIER",
+      "title": "Urban Structure Models",
+      "code": "CAPS-GEOGRAPHY-GR12-T2-URBANHIER-02",
+      "description": "Factors influencing the morphological structure of a city. Street pattern (plan). Urban profile: concept, definition, and reasons for shape. Models of urban structure: Multiple-nuclei model (Harris and Ullman), Modern American-western city, The third world city, South African city. Changing urban patterns and land use in South African cities.",
+      "metadata": {
+        "weekNumbers": [
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T2",
+      "title": "Urban Settlement Issues",
+      "code": "CAPS-GEOGRAPHY-GR12-T2-URBANISSUES",
+      "description": "Recent urbanisation patterns in SA, urban issues related to rapid urbanisation, informal settlements, strategies to address urban issues, case studies, and injustice issues in urban areas.",
+      "metadata": {
+        "weekNumbers": [
+          8,
+          9
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 6
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T2-URBANISSUES",
+      "title": "Rapid Urbanisation and Informal Settlements",
+      "code": "CAPS-GEOGRAPHY-GR12-T2-URBANISSUES-01",
+      "description": "Recent urbanisation patterns in SA. Urban issues related to rapid urbanisation: pollution, urban blight, traffic congestion, lack of planning, urban sprawl, overcrowding, housing shortage, service provision, social challenges. Informal settlements: concept, growth, associated issues, and strategies to address them.",
+      "metadata": {
+        "weekNumbers": [
+          8
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T2-URBANISSUES",
+      "title": "Urban Injustice Issues and Case Studies",
+      "code": "CAPS-GEOGRAPHY-GR12-T2-URBANISSUES-02",
+      "description": "Case studies from South Africa and the world on managing urban challenges. Injustice issues in urban areas: environmental concerns (air pollution, noise pollution, destruction of ecosystems), economic concerns (poverty, poor public transport), social concerns (unequal access to services and resources).",
+      "metadata": {
+        "weekNumbers": [
+          9
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-GEOGRAPHY-GR12",
+      "title": "Term 3",
+      "code": "CAPS-GEOGRAPHY-GR12-T3",
+      "description": "Economic Geography of South Africa: structure of the economy, agriculture, mining, secondary and tertiary sectors, industrial regions, industrial development strategies, and tertiary activities.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T3",
+      "title": "Structure of the Economy",
+      "code": "CAPS-GEOGRAPHY-GR12-T3-ECONSTRUCT",
+      "description": "Economic sectors (primary, secondary, tertiary, quaternary), contribution of economic sectors to the South African economy including GNP, GDP, and employment, and use and interpretation of statistical and graphical information.",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T3-ECONSTRUCT",
+      "title": "Economic Sectors and Contribution to SA Economy",
+      "code": "CAPS-GEOGRAPHY-GR12-T3-ECONSTRUCT-01",
+      "description": "Economic sectors: primary, secondary, tertiary, quaternary. Contribution of economic sectors to the South African economy: GNP, GDP, employment (linked to different sectors). Interpretation of statistical and graphical information.",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T3",
+      "title": "Agriculture",
+      "code": "CAPS-GEOGRAPHY-GR12-T3-AGRICULTURE",
+      "description": "Contribution of agriculture to the South African economy, small-scale and large-scale farming, main products, a case study of maize, and food security in South Africa.",
+      "metadata": {
+        "weekNumbers": [
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T3-AGRICULTURE",
+      "title": "Farming Types and Maize Case Study",
+      "code": "CAPS-GEOGRAPHY-GR12-T3-AGRICULTURE-01",
+      "description": "Contribution of agriculture to the South African economy. Small-scale farming and large-scale farming: definition, characteristics, and interpretation. Main products produced: home market and export market. A case study of maize: areas of production on a map, factors that favour and hinder agriculture in SA applied to maize, and contribution of maize to the SA economy.",
+      "metadata": {
+        "weekNumbers": [
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T3-AGRICULTURE",
+      "title": "Food Security",
+      "code": "CAPS-GEOGRAPHY-GR12-T3-AGRICULTURE-02",
+      "description": "Definition of food security and food insecurity. Importance of food security in South Africa. Factors influencing food security in South Africa. Strategies to improve food security in South Africa. Case studies related to food security and food insecurity in South Africa.",
+      "metadata": {
+        "weekNumbers": [
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T3",
+      "title": "Mining",
+      "code": "CAPS-GEOGRAPHY-GR12-T3-MINING",
+      "description": "Contribution of mining to the South African economy, significance of mining to the development of South Africa, and a case study of platinum.",
+      "metadata": {
+        "weekNumbers": [
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T3-MINING",
+      "title": "Mining Contribution and Platinum Case Study",
+      "code": "CAPS-GEOGRAPHY-GR12-T3-MINING-01",
+      "description": "Contribution of mining to the South African economy. Significance of mining to the development of South Africa. A case study of platinum: location on a map, factors that favour and hinder mining in SA applied to platinum, and contribution of platinum to the SA economy.",
+      "metadata": {
+        "weekNumbers": [
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T3",
+      "title": "Secondary and Tertiary Sectors",
+      "code": "CAPS-GEOGRAPHY-GR12-T3-SECONDARY",
+      "description": "Contribution of secondary sector to the South African economy, types of industries, factors influencing and hindering industrial development in South Africa.",
+      "metadata": {
+        "weekNumbers": [
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T3-SECONDARY",
+      "title": "Secondary Sector: Types of Industries and Factors",
+      "code": "CAPS-GEOGRAPHY-GR12-T3-SECONDARY-01",
+      "description": "Contribution of secondary sector to the South African economy. Types of industries: heavy and light, raw material orientated, market orientated, footloose, ubiquitous, bridge industries. Factors influencing industrial development: raw materials, labour supply, water supply, energy supply, transport, political intervention, competition, trade. Factors hindering industrial development.",
+      "metadata": {
+        "weekNumbers": [
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T3",
+      "title": "SA Industrial Regions",
+      "code": "CAPS-GEOGRAPHY-GR12-T3-INDREGIONS",
+      "description": "South Africa's core and main industrial regions, the four core industrial regions, and detailed study of the two prescribed industrial regions (Gauteng and Port Elizabeth-Uitenhage).",
+      "metadata": {
+        "weekNumbers": [
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T3-INDREGIONS",
+      "title": "Core Industrial Regions and Prescribed Case Studies",
+      "code": "CAPS-GEOGRAPHY-GR12-T3-INDREGIONS-01",
+      "description": "South Africa's core, main industrial regions: Gauteng (PWV), Durban-Pinetown, Port Elizabeth-Uitenhage, South-Western Cape. Prescribed industrial regions: Gauteng (PWV) and Port Elizabeth-Uitenhage. For each: map showing location, factors influencing location, main industrial activities, factors that favour and hinder continued success, economic and social impacts, and case studies.",
+      "metadata": {
+        "weekNumbers": [
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T3",
+      "title": "Strategies for Industrial Development",
+      "code": "CAPS-GEOGRAPHY-GR12-T3-INDSTRAT",
+      "description": "Overview of apartheid industrial development strategy, post-apartheid development strategies, Industrial Development Zones (IDZs) and Spatial Development Initiatives (SDIs), and industrial centralisation and decentralisation.",
+      "metadata": {
+        "weekNumbers": [
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 6
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T3-INDSTRAT",
+      "title": "Development Strategies: RDP, GEAR, IDZs and SDIs",
+      "code": "CAPS-GEOGRAPHY-GR12-T3-INDSTRAT-01",
+      "description": "Overview of apartheid industrial development strategy (Good Hope Plan). Post-apartheid strategies: RDP and GEAR. IDZs and SDIs: prescribed case studies are Coega (IDZ) and Wild Coast (SDI). For each: definition and difference, maps, factors influencing location, main activities, factors favouring and hindering development, economic and social impacts, and case studies.",
+      "metadata": {
+        "weekNumbers": [
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T3-INDSTRAT",
+      "title": "Industrial Centralisation and Decentralisation",
+      "code": "CAPS-GEOGRAPHY-GR12-T3-INDSTRAT-02",
+      "description": "Industrial centralisation and decentralisation: definition, causes, advantages, disadvantages, and solutions.",
+      "metadata": {
+        "weekNumbers": [
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T3",
+      "title": "Tertiary Activities and Informal Sector",
+      "code": "CAPS-GEOGRAPHY-GR12-T3-TERTIARY",
+      "description": "Contribution of tertiary activities to the South African economy, the role of trade and transport in economic development, and informal sector employment.",
+      "metadata": {
+        "weekNumbers": [
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 7
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T3-TERTIARY",
+      "title": "Tertiary Sector: Trade and Transport",
+      "code": "CAPS-GEOGRAPHY-GR12-T3-TERTIARY-01",
+      "description": "Contribution of tertiary activities to the South African economy. Definition and examples of tertiary activities. The role of trade (local and international) in economic development: balance of trade and trade agreements. The role of transport (public, private) in economic development. Interpretation of graphs and tables on tertiary activities.",
+      "metadata": {
+        "weekNumbers": [
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T3-TERTIARY",
+      "title": "Informal Sector",
+      "code": "CAPS-GEOGRAPHY-GR12-T3-TERTIARY-02",
+      "description": "Concept of informal sector employment. Characteristics of informal sector employment. Reasons for high informal sector employment in South Africa. Challenges facing South Africa's informal sector. Strategies for strengthening the informal sector. Case studies in the South African context.",
+      "metadata": {
+        "weekNumbers": [
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-GEOGRAPHY-GR12",
+      "title": "Term 4",
+      "code": "CAPS-GEOGRAPHY-GR12-T4",
+      "description": "Revision and consolidation of all content: climate and weather, geomorphology, settlement geography, economic geography of South Africa, and map work skills and techniques in preparation for the Final NSC Examination.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T4",
+      "title": "Revision and Examination Preparation",
+      "code": "CAPS-GEOGRAPHY-GR12-T4-REVISION",
+      "description": "Revision and consolidation of all content covered across Terms 1-3: climate and weather, geomorphology, settlement geography, economic geography of South Africa, and map work skills and techniques.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR12-T4-REVISION",
+      "title": "Content and Map Skills Consolidation",
+      "code": "CAPS-GEOGRAPHY-GR12-T4-REVISION-01",
+      "description": "Revision and consolidation of all content completed in Grade 12. Final NSC Examination preparation: Paper 1 (Climate and weather, Geomorphology, Mapwork) and Paper 2 (Rural and urban settlements, Economic geography of South Africa, Mapwork).",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    }
+  ]
+}

@@ -1,0 +1,615 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "FET Phase",
+      "code": "CAPS-FET",
+      "description": "Further Education and Training Phase (Grades 10-12)",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 10",
+      "code": "CAPS-GR10",
+      "description": "",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 10
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR10",
+      "title": "History",
+      "code": "CAPS-HISTORY-GR10",
+      "description": "History — Grade 10 — CAPS Curriculum",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-HISTORY-GR10",
+      "title": "Term 1",
+      "code": "CAPS-HISTORY-GR10-T1",
+      "description": "World around 1600, European expansion and conquests, Heritage",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-HISTORY-GR10-T1",
+      "title": "Topic 1: World around 1600",
+      "code": "CAPS-HISTORY-GR10-T1-WAC1600",
+      "description": "An exploration of major world civilisations around 1600, including the Songhai Empire (compulsory) and a choice between Ming China and Mughal India.",
+      "metadata": {
+        "weekNumbers": [
+          2,
+          3,
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR10-T1-WAC1600",
+      "title": "Songhai: An African Empire in the 15th and 16th centuries (compulsory)",
+      "code": "CAPS-HISTORY-GR10-T1-WAC1600-01",
+      "description": "The Songhai Empire under Sonni Ali: government and society; travel and trade at the height of its power (Arab, Italian and Jewish merchants at Timbuktu); learning and culture; fall of the Empire through the Moroccan invasion of 1591.",
+      "metadata": {
+        "weekNumbers": [
+          2,
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR10-T1-WAC1600",
+      "title": "Ming (China): A world power in the 14th and 15th centuries (choice)",
+      "code": "CAPS-HISTORY-GR10-T1-WAC1600-02",
+      "description": "The Ming Dynasty: government and society; travel and trade including shipbuilding, navigation (compass), and Chinese mariners mapping world trade along Asian sea routes; treasure fleet expeditions of Zheng He from 1405 to 1433; scientific and cultural achievements; China looks inwards after 1433.",
+      "metadata": {
+        "weekNumbers": [
+          3,
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR10-T1-WAC1600",
+      "title": "Mughal (India) 1526 to 1858 (choice)",
+      "code": "CAPS-HISTORY-GR10-T1-WAC1600-03",
+      "description": "The Mughal Empire: government and society; trade in the Indian Ocean and Islamic world; astronomy and technology (seamless celestial globe); architecture in the 16th and 17th centuries including the Taj Mahal; Britain and the end of the Mughal Empire.",
+      "metadata": {
+        "weekNumbers": [
+          3,
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-HISTORY-GR10-T1",
+      "title": "Topic 2: European Expansion and Conquests during the 15th to 18th Centuries",
+      "code": "CAPS-HISTORY-GR10-T1-EUREXP",
+      "description": "European expansion and colonialism through one of three case studies: Spanish conquest of America, Portugal and the destruction of the Indian Ocean trade, or the Dutch East India Company. Covers processes of conquest, colonialism, slavery and its impact on indigenous societies.",
+      "metadata": {
+        "weekNumbers": [
+          5,
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR10-T1-EUREXP",
+      "title": "America: Spanish conquest (case study choice)",
+      "code": "CAPS-HISTORY-GR10-T1-EUREXP-01",
+      "description": "The processes of conquest and colonialism in the Americas; how colonisation led to the practice of slavery; the impact of slave trading on societies; consequences for indigenous societies and in the world.",
+      "metadata": {
+        "weekNumbers": [
+          5,
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR10-T1-EUREXP",
+      "title": "Africa: Portugal and the destruction of the Indian Ocean trade (case study choice)",
+      "code": "CAPS-HISTORY-GR10-T1-EUREXP-02",
+      "description": "The processes of conquest and colonialism in Africa; how colonisation led to the practice of slavery; the impact of slave trading on societies; consequences for indigenous societies and the world.",
+      "metadata": {
+        "weekNumbers": [
+          5,
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR10-T1-EUREXP",
+      "title": "The Dutch East India Company (case study choice)",
+      "code": "CAPS-HISTORY-GR10-T1-EUREXP-03",
+      "description": "The processes of conquest and colonialism via the Dutch East India Company; how colonisation led to the practice of slavery; the impact of slave trading on societies; consequences for indigenous societies and the world.",
+      "metadata": {
+        "weekNumbers": [
+          5,
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-HISTORY-GR10-T1",
+      "title": "Heritage Investigation",
+      "code": "CAPS-HISTORY-GR10-T1-HERITAGE",
+      "description": "What is meant by heritage and public representations; memory and oral histories as heritage; the importance of the conservation of heritage sites, monuments and memorials; debates around heritage issues and the way in which the past is represented.",
+      "metadata": {
+        "weekNumbers": [
+          7,
+          8
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-HISTORY-GR10",
+      "title": "Term 2",
+      "code": "CAPS-HISTORY-GR10-T2",
+      "description": "French Revolution, Transformations in Southern Africa after 1750, Heritage submission",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-HISTORY-GR10-T2",
+      "title": "Topic 3: The French Revolution",
+      "code": "CAPS-HISTORY-GR10-T2-FRREV",
+      "description": "Causes, course and impact of the French Revolution of 1789, including conditions in France, revolutionary ideas of liberty, equality and fraternity, the role of ordinary people, and the impact on the rest of the world.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR10-T2-FRREV",
+      "title": "France in 1789: Causes of the French Revolution",
+      "code": "CAPS-HISTORY-GR10-T2-FRREV-01",
+      "description": "What is a revolution? The conditions in France that made a revolution probable by 1789; casting off the ancient regime; the new ideas of liberty, equality, fraternity and individual freedom, and the meaning of these in the context of the late 18th century.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR10-T2-FRREV",
+      "title": "Course and Impact of the French Revolution",
+      "code": "CAPS-HISTORY-GR10-T2-FRREV-02",
+      "description": "The significant events during the revolution; the role of ordinary people in the revolution; the impact of the revolutionary ideas on the rest of the world.",
+      "metadata": {
+        "weekNumbers": [
+          3,
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-HISTORY-GR10-T2",
+      "title": "Topic 4: Transformations in Southern Africa after 1750",
+      "code": "CAPS-HISTORY-GR10-T2-TRANSSA",
+      "description": "Political changes in Southern Africa from 1750 to the 1830s, including the rise of various kingdoms, political revolution, and the Legacy of Shaka.",
+      "metadata": {
+        "weekNumbers": [
+          5,
+          6,
+          7,
+          8
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR10-T2-TRANSSA",
+      "title": "Political changes from 1750 to 1820 (one case study)",
+      "code": "CAPS-HISTORY-GR10-T2-TRANSSA-01",
+      "description": "What was South Africa like in 1750? One case study chosen from: expansion of southern Tswana chiefdoms, or the rise of the Ndwandwe kingdom under Zwide.",
+      "metadata": {
+        "weekNumbers": [
+          5,
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR10-T2-TRANSSA",
+      "title": "Political Revolution 1820–1835 (two case studies)",
+      "code": "CAPS-HISTORY-GR10-T2-TRANSSA-02",
+      "description": "Two case studies from: break-up of the Ndwandwe kingdom and rise of the Zulu state under Dingane or Legacy of Shaka; rise of the Ndebele kingdom under Mzilikazi; rise of the Basotho under Moshoeshoe (1820–1835); the role of Boer, Kora and Griqua raiders; other states: Gaza, Swazi, Pedi, Mpondo (broad outline).",
+      "metadata": {
+        "weekNumbers": [
+          6,
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR10-T2-TRANSSA",
+      "title": "Legacy of Shaka",
+      "code": "CAPS-HISTORY-GR10-T2-TRANSSA-03",
+      "description": "How has Shaka been remembered? How Shaka has been portrayed – past and present (representations of Shaka); sources and evidence for histories of Shaka; why was Shaka portrayed in this way?",
+      "metadata": {
+        "weekNumbers": [
+          7,
+          8
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-HISTORY-GR10",
+      "title": "Term 3",
+      "code": "CAPS-HISTORY-GR10-T3",
+      "description": "Colonial expansion after 1750, South African War and Union",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-HISTORY-GR10-T3",
+      "title": "Topic 5: Colonial Expansion after 1750",
+      "code": "CAPS-HISTORY-GR10-T3-COLEXP",
+      "description": "How colonial expansion into the interior transformed South Africa, including British control of the Cape, the Zulu kingdom and Natal, and cooperation and conflict on the Highveld.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR10-T3-COLEXP",
+      "title": "Britain takes control of the Cape",
+      "code": "CAPS-HISTORY-GR10-T3-COLEXP-01",
+      "description": "Indigenous population driven out or drawn into labour force; changing labour patterns: ending of slave trade (1807) and slavery (1834) at the Cape and control of labour; expanding frontiers and trade; Boer response to British control: trekking into the interior; Xhosa responses: co-operation and conflict, including cattle killing.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR10-T3-COLEXP",
+      "title": "The Zulu kingdom and the colony of Natal",
+      "code": "CAPS-HISTORY-GR10-T3-COLEXP-02",
+      "description": "The need for a controlled labour force: indentured Indian labourers (sugar), labourers for railways and coal; the Anglo-Zulu war. (Choose ONE subtopic for essay.)",
+      "metadata": {
+        "weekNumbers": [
+          2,
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR10-T3-COLEXP",
+      "title": "Co-operation and conflict on the Highveld",
+      "code": "CAPS-HISTORY-GR10-T3-COLEXP-03",
+      "description": "The Boer Republics and the Basotho kingdom under Moshoeshoe as a case study.",
+      "metadata": {
+        "weekNumbers": [
+          3,
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-HISTORY-GR10-T3",
+      "title": "Topic 6: South African War and Union",
+      "code": "CAPS-HISTORY-GR10-T3-SAWUNION",
+      "description": "The background to the South African War, the war itself (1899–1902), and the experiences of women and black South Africans in the war.",
+      "metadata": {
+        "weekNumbers": [
+          5,
+          6,
+          7,
+          8
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR10-T3-SAWUNION",
+      "title": "Background to the South African War: Mining Capitalism",
+      "code": "CAPS-HISTORY-GR10-T3-SAWUNION-01",
+      "description": "Mining capitalism (brief); influx of capital and development of mining companies, stock exchange and technologies; emergence of classes: capitalists, the middle class and workers; creation of a racially divided industrial labour force – legislation of job reservation and low black wages, creating structural insecurity for white workers and breeding racism.",
+      "metadata": {
+        "weekNumbers": [
+          5,
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR10-T3-SAWUNION",
+      "title": "The South African War from 1899 to 1902",
+      "code": "CAPS-HISTORY-GR10-T3-SAWUNION-02",
+      "description": "South Africa on the eve of the war; Britain's increasing interest in South Africa with the discovery of minerals; political and economic struggle for control of the goldfields; end of the war and peace negotiations; role and experiences of women in the war; role and experiences of black South Africans in the war.",
+      "metadata": {
+        "weekNumbers": [
+          6,
+          7,
+          8
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-HISTORY-GR10",
+      "title": "Term 4",
+      "code": "CAPS-HISTORY-GR10-T4",
+      "description": "Native Land Act of 1913, revision and final examination",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-HISTORY-GR10-T4",
+      "title": "Topic 7: The Native Land Act of 1913",
+      "code": "CAPS-HISTORY-GR10-T4-NLA1913",
+      "description": "The economic and social impact of the Native Land Act of 1913, including the role of Sol Plaatje; the Act as a precursor of the Apartheid pattern.",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR10-T4-NLA1913",
+      "title": "Economic and social impact of the Native Land Act",
+      "code": "CAPS-HISTORY-GR10-T4-NLA1913-01",
+      "description": "Economic and social impact of the Native Land Act of 1913; the role of Sol Plaatje in documenting its effects; the Act as the precursor of the Apartheid pattern.",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    }
+  ]
+}

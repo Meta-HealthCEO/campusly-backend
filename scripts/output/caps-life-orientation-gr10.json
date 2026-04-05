@@ -1,0 +1,361 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "FET Phase",
+      "code": "CAPS-FET",
+      "description": "Further Education and Training Phase (Grades 10-12)",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 10",
+      "code": "CAPS-GR10",
+      "description": "",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 10
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR10",
+      "title": "Life Orientation",
+      "code": "CAPS-LIFEORIENTATION-GR10",
+      "description": "Life Orientation — Grade 10 — CAPS Curriculum",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFEORIENTATION-GR10",
+      "title": "Term 1",
+      "code": "CAPS-LIFEORIENTATION-GR10-T1",
+      "description": "Development of the self in society, careers and career choices, and democracy and human rights",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Source-based task",
+          "PET"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR10-T1",
+      "title": "Development of the Self in Society: Self-Awareness and Power Relations",
+      "code": "CAPS-LIFEORIENTATION-GR10-T1-SELFDEV",
+      "description": "Self-awareness and self-esteem: identify factors that may influence self-awareness and self-esteem (including the media), strategies to enhance self-awareness and self-development, develop strategies to build confidence in self and others, acknowledge and respect the uniqueness of self and others (race, gender, individual abilities, personal preferences). Power and power relations: concepts (power, power relations, masculinity, femininity, gender), differences between a man and a woman (reproduction, roles, stereotypical views of gender roles, gender differences in participation in physical activities). Gender inequality: analyse and evaluate the influence of gender inequality on relationships and general well-being (sexual abuse, teenage pregnancy, violence, STIs including HIV and AIDS). Value of participation in exercise programmes that promote fitness: cardiovascular fitness, muscular strength, endurance, flexibility. Relationship between physical and mental health.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR10-T1",
+      "title": "Careers and Career Choices",
+      "code": "CAPS-LIFEORIENTATION-GR10-T1-CAREERS",
+      "description": "Career decision-making: knowledge about self in relation to own subjects, career fields and study choices. Identify own interests, abilities, talents and strengths. Differentiate between a career field, occupation, career and job. Develop a career portfolio (use Khetha Booklet). Research NSC requirements: various subjects and career options, steps in choosing subjects and the career decision-making process. Socio-economic factors to consider when making career and/or study choices: community needs, availability of finances, affordability, stereotyping, accessibility.",
+      "metadata": {
+        "weekNumbers": [
+          4,
+          5,
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR10-T1",
+      "title": "Democracy and Human Rights",
+      "code": "CAPS-LIFEORIENTATION-GR10-T1-DEMOCRACY",
+      "description": "Discrimination and violations of human rights: concepts, prohibition of discrimination based on race, religion, language, gender, sexual orientation (LGBTQI+), HIV/Aids status and other. Importance of the Bill of Rights, Convention on the Rights of the Child, and CEDAW. Types of discriminating behaviour and violations in SA and globally: xenophobia, human trafficking, gender-based violence (GBV), homophobia, corrective rape. Nature and source of bias, prejudice, discriminating and oppressing behaviour. Impact on individuals and society. Challenging prejudice and discrimination. Significant contributions by individuals (Desmond Tutu, Sophie de Bruin, Charlotte Maxeke, Beyers Naude, Albi Sachs, Helen Suzman, Imtiaz Sooliman and others). Contemporary events showcasing transforming South Africa: campaigns (16 Days of Activism, 67 minutes for Mandela, Heritage Day, Reconciliation Day, Brand Proudly SA). One's own position, actions and contribution to address discrimination and human rights violations.",
+      "metadata": {
+        "weekNumbers": [
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFEORIENTATION-GR10",
+      "title": "Term 2",
+      "code": "CAPS-LIFEORIENTATION-GR10-T2",
+      "description": "Social and environmental responsibility, and study skills",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Controlled test"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR10-T2",
+      "title": "Social and Environmental Responsibility",
+      "code": "CAPS-LIFEORIENTATION-GR10-T2-SOCIALENV",
+      "description": "Contemporary social issues impacting negatively on local and global communities: concepts (social and environmental justice). Research incidences of social issues: crime, violence, poverty, safety and security, unequal access to basic resources, lack of basic services and resources (water and health services). Evaluate the harmful effects of these issues on personal and community health. Skills necessary to participate in civic life: distinguish between social thinking skills, constructive thinking skills and critical thinking skills. Social responsibilities: knowledge and skills required to make informed decisions and take appropriate action to address social issues. Research youth service development: youth and civic organisations, community services, projects, volunteerism. Purpose and contribution of youth services. Report on own contribution: a group or individual project to address a contemporary social issue.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR10-T2",
+      "title": "Study Skills",
+      "code": "CAPS-LIFEORIENTATION-GR10-T2-STUDYSKILLS",
+      "description": "Study skills: listening, reading, comprehension, concentration, memory, organisation and time management. Study methods: note-taking, mind-mapping, summarising, selecting important concepts. Apply own study skills and methods. Define and discuss: critical thinking skills, creative thinking skills, problem-solving skills. Analyse own performance in assessment tasks (internal and external). Develop a study plan: organisation of activities, time management.",
+      "metadata": {
+        "weekNumbers": [
+          6,
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFEORIENTATION-GR10",
+      "title": "Term 3",
+      "code": "CAPS-LIFEORIENTATION-GR10-T3",
+      "description": "Development of the self in society (adolescence to adulthood) and careers in economic sectors",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Project",
+          "PET"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR10-T3",
+      "title": "Life Roles and Adolescence to Adulthood",
+      "code": "CAPS-LIFEORIENTATION-GR10-T3-LIFEROLES",
+      "description": "Life roles: identify and analyse life roles and responsibilities as student, member of a family, friend, partner, employee, employer, leader and follower. Determine the changing nature of each life role and explain how role changes affect relationships. How society and culture influence each life role. Adolescence to adulthood: physical changes (hormonal, rapid physical growth, secondary sex characteristics, growth and maturing of genital organs, skin problems, increase in body odour). Emotional changes: maturing personality, depth of emotions, mood swings, feelings of insecurity, challenge authority, changing needs in beliefs, values and sexual interest. Social changes in relationships with family, social groups, need for acceptance by peer group. Behaviour that could lead to sexual intercourse, teenage pregnancy, sexual abuse and rape. Values and strategies for responsible decisions regarding sexuality and lifestyle (respect, abstinence, self-control, right to privacy, right to protect oneself, right to say No, taking responsibility). Skills required: self-awareness, critical thinking, decision-making, problem solving, assertiveness, negotiation and communication. Benefits of positive coping strategies for long-term resilience and wellbeing. Respect for diversity (sex, gender, sexual orientation, LGBTQI+). Role of nutrition in health and physical activities.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR10-T3",
+      "title": "Careers in Economic Sectors",
+      "code": "CAPS-LIFEORIENTATION-GR10-T3-ECONOMICSECTORS",
+      "description": "Diversity in jobs: research careers in the economic sectors — primary (raw materials), secondary (finished products or goods), tertiary (infrastructure and providing services). Work settings: research careers in indoors and outdoors workplace environments and conditions. Investigate activities involved in designing, assembling and growing. Gather information and analyse skills and competencies required in jobs that entail designing, assembly and growing. Opportunities within different career fields including work in recreation, fitness and sport industries: skills required, salary package, promotion possibilities and further study prospects.",
+      "metadata": {
+        "weekNumbers": [
+          8,
+          9,
+          10
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFEORIENTATION-GR10",
+      "title": "Term 4",
+      "code": "CAPS-LIFEORIENTATION-GR10-T4",
+      "description": "Awareness of trends and demands in the job market, living in a multi-religious society, and sport coverage",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Final examinations"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR10-T4",
+      "title": "Trends and Demands in the Job Market and Lifelong Learning",
+      "code": "CAPS-LIFEORIENTATION-GR10-T4-JOBMARKET",
+      "description": "Awareness of trends and demands in the job market: research emerging demands or changing patterns of careers and scarce skills, reading the market for trends and identifying niches, growth and decline of various occupations and fields of work and competencies linked to jobs. South African Qualifications Authority (SAQA), National Qualifications Framework (NQF) and Recognition of Prior Learning (RPL). Need for lifelong learning: ability to change, re-train, flexibility and ongoing development of the self. Different kinds of learning: formal, informal and non-formal.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR10-T4",
+      "title": "Living in a Multi-Religious Society",
+      "code": "CAPS-LIFEORIENTATION-GR10-T4-RELIGION",
+      "description": "Understanding ethical teachings and/or religious laws of major religions in South Africa: African traditional religions, Baha'i Faith, Buddhism, Christianity, Hinduism, Islam and Judaism. Indigenous belief systems in South Africa: origins and practices.",
+      "metadata": {
+        "weekNumbers": [
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR10-T4",
+      "title": "Coverage of Sport",
+      "code": "CAPS-LIFEORIENTATION-GR10-T4-SPORTCOVERAGE",
+      "description": "Research incidence of gender, race and stereotyping and explain how they contribute towards bias in sporting codes. Elaborate on ways to redress biases within sporting codes. Discuss unfair, corrupt and illegal practices in sports: drug-taking, match-fixing, subjective umpiring and mal-administration in sport. Analysis and critical evaluation of sport coverage.",
+      "metadata": {
+        "weekNumbers": [
+          5,
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    }
+  ]
+}

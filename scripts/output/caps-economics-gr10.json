@@ -1,0 +1,601 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Further Education and Training (FET)",
+      "code": "CAPS-FET",
+      "description": "Grades 10-12 Further Education and Training phase under CAPS",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 10",
+      "code": "CAPS-GR10",
+      "description": "Grade 10 curriculum under the FET phase",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR10",
+      "title": "Economics Grade 10",
+      "code": "CAPS-ECONOMICS-GR10",
+      "description": "CAPS Economics for Grade 10 covering Macroeconomics, Microeconomics, Economic Pursuits and Contemporary Economic Issues",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR10",
+      "title": "Economics: Basic Concepts and Basic Economic Problem",
+      "code": "CAPS-ECONOMICS-GR10-T1-BASICCONCEPTS",
+      "description": "Introduction to economics covering elements, branches, methods of economics and the basic economic problem including scarcity, basic processes and human rights",
+      "metadata": {
+        "weekNumbers": [1, 2, 3],
+        "capsReference": "Term 1, Weeks 1-3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR10-T1-BASICCONCEPTS",
+      "title": "Elements, Branches and Methods of Economics",
+      "code": "CAPS-ECONOMICS-GR10-T1-BASICCONCEPTS-01",
+      "description": "Elements of Economics; Branches of Economics; Methods of Economics; Setting of Economics within the field and relationship with other sciences",
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "Term 1, Weeks 1-2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR10-T1-BASICCONCEPTS",
+      "title": "The Basic Economic Problem",
+      "code": "CAPS-ECONOMICS-GR10-T1-BASICCONCEPTS-02",
+      "description": "The scarcity problem; the basic processes; promotion or violation of human rights and the environment",
+      "metadata": {
+        "weekNumbers": [3],
+        "capsReference": "Term 1, Week 3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR10",
+      "title": "Circular Flow and Quantitative Elements",
+      "code": "CAPS-ECONOMICS-GR10-T1-CIRCULARFLOW",
+      "description": "The circular flow diagram, participants in the economy, markets, flows of variables, leakages and injections, GDP and GNI",
+      "metadata": {
+        "weekNumbers": [4, 5, 6],
+        "capsReference": "Term 1, Weeks 4-6",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR10-T1-CIRCULARFLOW",
+      "title": "Circular Flow Diagram and Participants",
+      "code": "CAPS-ECONOMICS-GR10-T1-CIRCULARFLOW-01",
+      "description": "Circular flow diagram; participants in an economy; closed economy and open economy; markets",
+      "metadata": {
+        "weekNumbers": [4, 5],
+        "capsReference": "Term 1, Weeks 4-5",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR10-T1-CIRCULARFLOW",
+      "title": "Flows, Leakages, Injections and National Aggregates",
+      "code": "CAPS-ECONOMICS-GR10-T1-CIRCULARFLOW-02",
+      "description": "Flows of the variables; leakages and injections; GDP and GNI",
+      "metadata": {
+        "weekNumbers": [5, 6],
+        "capsReference": "Term 1, Weeks 5-6",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR10",
+      "title": "Business Cycles",
+      "code": "CAPS-ECONOMICS-GR10-T1-BUSCYCLES",
+      "description": "The phenomenon of business cycles, indicators, SA business cycles, time series composition, cyclical patterns, exogenous and endogenous reasons and effects of business cycles",
+      "metadata": {
+        "weekNumbers": [7, 8, 9],
+        "capsReference": "Term 1, Weeks 7-9",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR10-T1-BUSCYCLES",
+      "title": "Phenomenon, Indicators and SA Business Cycles",
+      "code": "CAPS-ECONOMICS-GR10-T1-BUSCYCLES-01",
+      "description": "The phenomenon of business cycles; indicators; SA business cycles",
+      "metadata": {
+        "weekNumbers": [7, 8],
+        "capsReference": "Term 1, Weeks 7-8",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR10-T1-BUSCYCLES",
+      "title": "Time Series, Patterns, Causes and Effects",
+      "code": "CAPS-ECONOMICS-GR10-T1-BUSCYCLES-02",
+      "description": "Time series composition; cyclical patterns; exogenous and endogenous reasons; effects of business cycles",
+      "metadata": {
+        "weekNumbers": [8, 9],
+        "capsReference": "Term 1, Weeks 8-9",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR10",
+      "title": "Dynamics of the Market",
+      "code": "CAPS-ECONOMICS-GR10-T2-MARKETDYN",
+      "description": "Value, price and utility; perfect and imperfect markets; world markets; supply and demand; price formation; functions of markets",
+      "metadata": {
+        "weekNumbers": [1, 2, 3],
+        "capsReference": "Term 2, Weeks 1-3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR10-T2-MARKETDYN",
+      "title": "Value, Price and Utility",
+      "code": "CAPS-ECONOMICS-GR10-T2-MARKETDYN-01",
+      "description": "Value, price and utility concepts in economics",
+      "metadata": {
+        "weekNumbers": [1],
+        "capsReference": "Term 2, Week 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR10-T2-MARKETDYN",
+      "title": "Perfect and Imperfect Markets",
+      "code": "CAPS-ECONOMICS-GR10-T2-MARKETDYN-02",
+      "description": "Perfect markets; imperfect markets; world markets and the effects of electronics",
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "Term 2, Weeks 1-2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR10-T2-MARKETDYN",
+      "title": "Supply, Demand, Price Formation and Functions of Markets",
+      "code": "CAPS-ECONOMICS-GR10-T2-MARKETDYN-03",
+      "description": "Supply and demand; price formation; functions of markets",
+      "metadata": {
+        "weekNumbers": [2, 3],
+        "capsReference": "Term 2, Weeks 2-3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR10",
+      "title": "Public Sector Intervention",
+      "code": "CAPS-ECONOMICS-GR10-T2-PUBSECTOR",
+      "description": "Methods of government involvement including indirect taxes, subsidies, welfare, maximum and minimum prices, production and minimum wages",
+      "metadata": {
+        "weekNumbers": [4, 5, 6],
+        "capsReference": "Term 2, Weeks 4-6",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR10-T2-PUBSECTOR",
+      "title": "Indirect Taxes and Subsidies",
+      "code": "CAPS-ECONOMICS-GR10-T2-PUBSECTOR-01",
+      "description": "Indirect taxes; subsidies as methods of government involvement in the economy",
+      "metadata": {
+        "weekNumbers": [4],
+        "capsReference": "Term 2, Week 4",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR10-T2-PUBSECTOR",
+      "title": "Welfare, Price Controls, Production and Minimum Wages",
+      "code": "CAPS-ECONOMICS-GR10-T2-PUBSECTOR-02",
+      "description": "Welfare; maximum and minimum prices; production; minimum wages",
+      "metadata": {
+        "weekNumbers": [5, 6],
+        "capsReference": "Term 2, Weeks 5-6",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR10",
+      "title": "Production Possibility Curve",
+      "code": "CAPS-ECONOMICS-GR10-T2-PPC",
+      "description": "Phenomenon of the PPC; choice; scarcity; PPC determined by internal and external factors; consequences of inefficiencies",
+      "metadata": {
+        "weekNumbers": [7, 8, 9],
+        "capsReference": "Term 2, Weeks 7-9",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 6
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR10-T2-PPC",
+      "title": "PPC Phenomenon, Choice and Scarcity",
+      "code": "CAPS-ECONOMICS-GR10-T2-PPC-01",
+      "description": "Phenomenon of the PPC; choice; scarcity",
+      "metadata": {
+        "weekNumbers": [7, 8],
+        "capsReference": "Term 2, Weeks 7-8",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR10-T2-PPC",
+      "title": "PPC Determinants and Inefficiencies",
+      "code": "CAPS-ECONOMICS-GR10-T2-PPC-02",
+      "description": "PPC determined by internal and external factors; consequences of inefficiencies",
+      "metadata": {
+        "weekNumbers": [8, 9],
+        "capsReference": "Term 2, Weeks 8-9",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR10",
+      "title": "Growth, Development and Globalisation",
+      "code": "CAPS-ECONOMICS-GR10-T3-GROWTHDEVEL",
+      "description": "Early economic development, emergence of trade, evolution of markets, governments and regulation of markets, industrial development",
+      "metadata": {
+        "weekNumbers": [1, 2, 3],
+        "capsReference": "Term 3, Weeks 1-3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 7
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR10-T3-GROWTHDEVEL",
+      "title": "Early Economic Development and Emergence of Trade",
+      "code": "CAPS-ECONOMICS-GR10-T3-GROWTHDEVEL-01",
+      "description": "Self-sufficiency and dependence on agriculture; barter; trade and emergence of money",
+      "metadata": {
+        "weekNumbers": [1],
+        "capsReference": "Term 3, Week 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR10-T3-GROWTHDEVEL",
+      "title": "Evolution of Markets",
+      "code": "CAPS-ECONOMICS-GR10-T3-GROWTHDEVEL-02",
+      "description": "Surplus production, trade and transport; specialisation of labour; mercantile law and development of business forms; technological progress; growth of money and forms of saving",
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "Term 3, Weeks 1-2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR10-T3-GROWTHDEVEL",
+      "title": "Governments, Regulation of Markets and Industrial Development",
+      "code": "CAPS-ECONOMICS-GR10-T3-GROWTHDEVEL-03",
+      "description": "State involvement in trade, taxation and mobilisation of finance; industrial development including manufacturing, technological progress, mobilisation of energy and mechanisation",
+      "metadata": {
+        "weekNumbers": [2, 3],
+        "capsReference": "Term 3, Weeks 2-3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR10",
+      "title": "Population and Labour Force",
+      "code": "CAPS-ECONOMICS-GR10-T3-POPLAB",
+      "description": "Population size, growth, natural growth rate, demographic cycle, projected growth, migration; SA labour force age distribution, numbers, unemployment and geographic distribution",
+      "metadata": {
+        "weekNumbers": [4, 5, 6],
+        "capsReference": "Term 3, Weeks 4-6",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 8
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR10-T3-POPLAB",
+      "title": "Population Size and Growth",
+      "code": "CAPS-ECONOMICS-GR10-T3-POPLAB-01",
+      "description": "Population size; population growth; natural growth rate; demographic cycle; projected population growth rate; migration",
+      "metadata": {
+        "weekNumbers": [4, 5],
+        "capsReference": "Term 3, Weeks 4-5",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR10-T3-POPLAB",
+      "title": "South African Labour Force",
+      "code": "CAPS-ECONOMICS-GR10-T3-POPLAB-02",
+      "description": "Age distribution; numbers; unemployment; geographic distribution of the South African labour force",
+      "metadata": {
+        "weekNumbers": [5, 6],
+        "capsReference": "Term 3, Weeks 5-6",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR10",
+      "title": "Labour Relations",
+      "code": "CAPS-ECONOMICS-GR10-T3-LABREL",
+      "description": "Labour force demand and supply, Labour Relations Act, collective bargaining process, CCMA and labour courts",
+      "metadata": {
+        "weekNumbers": [7, 8, 9],
+        "capsReference": "Term 3, Weeks 7-9",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 9
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR10-T3-LABREL",
+      "title": "Demand and Supply for Labour",
+      "code": "CAPS-ECONOMICS-GR10-T3-LABREL-01",
+      "description": "Interaction of demand and supply for labour; concepts and roles in labour relations and the labour market",
+      "metadata": {
+        "weekNumbers": [7],
+        "capsReference": "Term 3, Week 7",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR10-T3-LABREL",
+      "title": "Labour Relations Act and Rights",
+      "code": "CAPS-ECONOMICS-GR10-T3-LABREL-02",
+      "description": "Labour Relations Act; self-government; majorification; consultation; labour rights and conventions: BCEA, LRA, COIDA",
+      "metadata": {
+        "weekNumbers": [7, 8],
+        "capsReference": "Term 3, Weeks 7-8",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR10-T3-LABREL",
+      "title": "Collective Bargaining and Labour Courts",
+      "code": "CAPS-ECONOMICS-GR10-T3-LABREL-03",
+      "description": "Collective bargaining process; bargaining councils; labour unions; CCMA; labour courts: powers and representation",
+      "metadata": {
+        "weekNumbers": [8, 9],
+        "capsReference": "Term 3, Weeks 8-9",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR10",
+      "title": "Unemployment",
+      "code": "CAPS-ECONOMICS-GR10-T4-UNEMPLOY",
+      "description": "Nature of unemployment, numbers, unemployment rate, characteristics, causes, consequences and approaches to solving unemployment",
+      "metadata": {
+        "weekNumbers": [1, 2, 3],
+        "capsReference": "Term 4, Weeks 1-3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 10
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR10-T4-UNEMPLOY",
+      "title": "Nature, Characteristics and Causes of Unemployment",
+      "code": "CAPS-ECONOMICS-GR10-T4-UNEMPLOY-01",
+      "description": "Nature of unemployment; numbers; unemployment rate; characteristics of South African unemployment; causes of unemployment",
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "Term 4, Weeks 1-2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR10-T4-UNEMPLOY",
+      "title": "Consequences and Approaches to Solve Unemployment",
+      "code": "CAPS-ECONOMICS-GR10-T4-UNEMPLOY-02",
+      "description": "Consequences of unemployment; approaches to solve unemployment: growth of production, public works programmes, unemployment insurance; economically marginalised groups",
+      "metadata": {
+        "weekNumbers": [2, 3],
+        "capsReference": "Term 4, Weeks 2-3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR10",
+      "title": "Economic Redress",
+      "code": "CAPS-ECONOMICS-GR10-T4-REDRESS",
+      "description": "Economically marginalised groups; redress and reconstruction; democratisation of economic procedures; macro-economic adaptations",
+      "metadata": {
+        "weekNumbers": [4, 5, 6],
+        "capsReference": "Term 4, Weeks 4-6",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 11
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR10-T4-REDRESS",
+      "title": "Redress and Reconstruction",
+      "code": "CAPS-ECONOMICS-GR10-T4-REDRESS-01",
+      "description": "Economically marginalised groups; redress and reconstruction: factors of production",
+      "metadata": {
+        "weekNumbers": [4, 5],
+        "capsReference": "Term 4, Weeks 4-5",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR10-T4-REDRESS",
+      "title": "Democratisation and Macro-Economic Adaptations",
+      "code": "CAPS-ECONOMICS-GR10-T4-REDRESS-02",
+      "description": "Democratisation of economic procedures: labour legislation, public hearing, NEDLAC, self-regulating bodies; macro-economic adaptations: economic performance, employment, income inequality, poverty, stability",
+      "metadata": {
+        "weekNumbers": [5, 6],
+        "capsReference": "Term 4, Weeks 5-6",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    }
+  ]
+}

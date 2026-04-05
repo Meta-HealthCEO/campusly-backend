@@ -1,0 +1,407 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "FET Phase",
+      "code": "CAPS-FET",
+      "description": "Further Education and Training Phase (Grades 10-12)",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 12",
+      "code": "CAPS-GR12",
+      "description": "",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 12
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR12",
+      "title": "Life Orientation",
+      "code": "CAPS-LIFEORIENTATION-GR12",
+      "description": "Life Orientation — Grade 12 — CAPS Curriculum",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFEORIENTATION-GR12",
+      "title": "Term 1",
+      "code": "CAPS-LIFEORIENTATION-GR12-T1",
+      "description": "Development of self in society (stress, conflict resolution, relationships, adapting to change), study skills, and careers and career choices (job applications, unemployment, entrepreneurship, fraud and corruption)",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Source-based task",
+          "PET"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR12-T1",
+      "title": "Stress, Conflict Resolution and Relationships",
+      "code": "CAPS-LIFEORIENTATION-GR12-T1-STRESSCONFLICT",
+      "description": "Stress: apply a range of life skills required to adapt to change as part of ongoing healthy lifestyle choices. Identify and define stress and stressors: physical, emotional, social and environmental factors (abuse, vocation, life crises, personality and social pressure). Assess levels of stress: signs and symptoms of stress, positive and negative stress. Evaluate own ability to prevent stress. Stress management: coping mechanisms and/or management techniques, develop and implement own strategy. Conflict resolution skills: distinguish between interpersonal conflict and intrapersonal conflict. Conflict resolution methods: conflict avoidance, competing, compromising, accommodating, collaboration. Relationships: discuss the importance of initiating, building and sustaining positive relationships. Importance of communication: understanding others, communicating feelings, beliefs and attitudes. Factors that influence effective communication: personality, attitudes and values, acceptance of responsibilities, appropriate expression of views and feelings, respect for the feelings of others. Adapting to growth and change: change in circumstances (personal, social, work), transition between school and post-school destination. Research and locate accommodation and travel arrangements and determine possible challenges. Discuss positive and negative aspects of change.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR12-T1",
+      "title": "Study Skills for NSC",
+      "code": "CAPS-LIFEORIENTATION-GR12-T1-STUDYSKILLS",
+      "description": "Develop a study plan to ensure obtaining of the National Senior Certificate (NSC). Revise own study skills, strategies, styles, time management and examination writing skills (read the question, plan the response, answer the questions, etc.).",
+      "metadata": {
+        "weekNumbers": [
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR12-T1",
+      "title": "Skills for Final Action: Job, Course and Financial Aid Applications",
+      "code": "CAPS-LIFEORIENTATION-GR12-T1-JOBAPPLICATIONS",
+      "description": "Research and locate appropriate work or study opportunities from various sources (online and other). Research admission requirements for degree, diploma or higher certificate. Research and locate appropriate funding opportunities from various sources (online and other). Develop a career portfolio (use Khetha Booklet). Discuss the purpose of National Benchmark Tests (NBT). Apply to write the NBT.",
+      "metadata": {
+        "weekNumbers": [
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR12-T1",
+      "title": "Unemployment and Entrepreneurship",
+      "code": "CAPS-LIFEORIENTATION-GR12-T1-ENTREPRENEUR",
+      "description": "Unemployment: discuss reasons for and impact of unemployment (social, economic, psychological). Explore innovative solutions to counteract unemployment: volunteering, part-time jobs, community work, informal jobs. Entrepreneurship as an innovative strategy to counteract unemployment: characteristics of an entrepreneur, finding a niche in the job market, benefits and challenges of entrepreneurship. Explore opportunities in the following ventures: small businesses, social entrepreneurship, e-businesses, innovative entrepreneurship, cultural entrepreneurship. Financial viability of entrepreneurship and other employment options including awareness of South African Revenue Service (SARS) tax obligations.",
+      "metadata": {
+        "weekNumbers": [
+          8,
+          9,
+          10
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR12-T1",
+      "title": "Fraud and Corruption",
+      "code": "CAPS-LIFEORIENTATION-GR12-T1-FRAUD",
+      "description": "Related concepts: embezzlement, cronyism, nepotism, bribery. Causes of fraud and corruption. Impact of corruption and fraud on the individual, company, community and country. Strategies to prevent fraud and corruption.",
+      "metadata": {
+        "weekNumbers": [
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFEORIENTATION-GR12",
+      "title": "Term 2",
+      "code": "CAPS-LIFEORIENTATION-GR12-T2",
+      "description": "Democracy and human rights (media, sport and nation building) and social and environmental responsibility (government responsibility)",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Project",
+          "PET"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR12-T2",
+      "title": "Democracy: Discrimination, Media and Human Rights",
+      "code": "CAPS-LIFEORIENTATION-GR12-T2-MEDIADEMOCRACY",
+      "description": "Discrimination and violation of human rights: evaluate own position when dealing with discrimination and human rights violations, taking into account the Bill of Rights. Select and assess a project, campaign or event which addresses discrimination and human rights violations. Evaluation regarding outcomes of campaigns and events. The media: analyse and debate the role of the media in a democratic society, distinguish between print and electronic media. Social media platforms: social media footprint, dangers of use and abuse of social media, cyber wellness, cyber safety, cyber bullying, being cyber savvy. Discuss the extent to which media reporting reflects a democratic society: topics covered, positions taken by editors, space allocated to topics, geographical distribution (accessibility of information to different groups). Freedom of expression and limitations. Critical analysis of media campaigns regarding discrimination and human rights violations.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR12-T2",
+      "title": "Sports and Nation Building",
+      "code": "CAPS-LIFEORIENTATION-GR12-T2-SPORT",
+      "description": "Critically discuss the coverage of sport, sports personalities and recreational activities by the media. Evaluate the ideologies, beliefs and worldviews on recreational and physical activity across cultures and genders.",
+      "metadata": {
+        "weekNumbers": [
+          6,
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR12-T2",
+      "title": "Responsibility of Government and Community for Safe and Healthy Living",
+      "code": "CAPS-LIFEORIENTATION-GR12-T2-GOVTRESPONSIBILITY",
+      "description": "Responsibility of different levels of government: elaborate on responsibilities to create and amend laws, regulations and rules; provide community services to promote safe and healthy living environments. Critically discuss the community's responsibility to ensure environments and services that promote safe and healthy living. Elaborate on educational and intervention programmes that address environments and services that promote safe and healthy living. Evaluate impact studies that relate to projects addressing social and environmental issues. Formulate a personal mission and vision statement for life based on: personal views, values, belief system, religion, ideologies, lifestyle (physical and emotional well-being), environmental responsibility, goals for studies and career choices. Impact of vision on own actions and behaviour in life.",
+      "metadata": {
+        "weekNumbers": [
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFEORIENTATION-GR12",
+      "title": "Term 3",
+      "code": "CAPS-LIFEORIENTATION-GR12-T3",
+      "description": "Development of self in society (human factors and lifestyle diseases) and careers and career choices (job contract, labour laws, equity and work ethics)",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Controlled test"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR12-T3",
+      "title": "Human Factors, Lifestyle Diseases and Intervention",
+      "code": "CAPS-LIFEORIENTATION-GR12-T3-LIFESTYLEDISEASES",
+      "description": "Investigate human factors that cause ill-health, accidents, crises and disasters: psychological, social, religious, cultural practices and different knowledge perspectives. Factors that contribute to lifestyle diseases: identify, define and discuss poor eating habits, lack of exercise, smoking, substance abuse and unsafe sexual behaviour. Lifestyle diseases: cancer, tuberculosis, hypertension, diseases of the heart and circulatory system, sexually transmitted infections (STIs), HIV and AIDS. Recommend intervention strategies to deal with lifestyle diseases. Discuss prevention and control, early detection, treatment, care and support for people suffering from lifestyle diseases. Develop action plan for treatment, care and support. Critically discuss the need to commit to physical activities for long-term engagement to prevent lifestyle diseases. Discuss the benefits of long-term participation: improves physical, mental, social and emotional well-being.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR12-T3",
+      "title": "Job Contract and Labour Laws",
+      "code": "CAPS-LIFEORIENTATION-GR12-T3-LABOURLAWS",
+      "description": "The job contract: investigate and report on the core elements of a job contract, discuss worker rights and obligations, elaborate on conditions of service, explain how the job contract provides protection to employer and employees. Labour laws: identify, define and discuss the Labour Relations Act (LRA), Employment Equity Act (EEA), Basic Conditions of Employment Act (BCEA). How do the labour laws provide protection to employers and employees?",
+      "metadata": {
+        "weekNumbers": [
+          3,
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR12-T3",
+      "title": "Equity, Redress and Work Ethics",
+      "code": "CAPS-LIFEORIENTATION-GR12-T3-WORKETHICS",
+      "description": "Equity and redress: elaborate on the principles of equity and redress. Recruitment process: general trends and practices. Discuss the functions of trade unions and organised labour. Work ethics: work ethics and societal expectations. The value of work: how work gives meaning to life.",
+      "metadata": {
+        "weekNumbers": [
+          5,
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFEORIENTATION-GR12",
+      "title": "Term 4",
+      "code": "CAPS-LIFEORIENTATION-GR12-T4",
+      "description": "Study skills, careers and career choices (career portfolio and post-school plans), and NSC examinations",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Final NSC examination"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR12-T4",
+      "title": "Study Skills for Final Examinations",
+      "code": "CAPS-LIFEORIENTATION-GR12-T4-STUDYSKILLS",
+      "description": "Preparing for success: strategies to follow in order to succeed in the Grade 12 examination. Revision of own study skills. Revision of examination writing skills.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR12-T4",
+      "title": "Career Portfolio and Post-School Plans",
+      "code": "CAPS-LIFEORIENTATION-GR12-T4-CAREERPORTFOLIO",
+      "description": "Refinement of portfolio of plans for life after school: record of plans and progress towards achievement of those plans. Update curriculum vitae (CV): applications for part-time or full-time employment and/or bursaries. Consider and apply for alternative job or study opportunities. Manage responses regarding employment, study or bursary opportunities.",
+      "metadata": {
+        "weekNumbers": [
+          3,
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    }
+  ]
+}

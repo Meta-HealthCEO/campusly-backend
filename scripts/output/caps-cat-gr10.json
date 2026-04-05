@@ -1,0 +1,866 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "FET Phase",
+      "code": "CAPS-FET",
+      "description": "Further Education and Training Phase (Grades 10-12)",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 10",
+      "code": "CAPS-GR10",
+      "description": "",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 10
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR10",
+      "title": "Computer Applications Technology",
+      "code": "CAPS-CAT-GR10",
+      "description": "Computer Applications Technology — Grade 10 — CAPS Curriculum",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-CAT-GR10",
+      "title": "Term 1",
+      "code": "CAPS-CAT-GR10-T1",
+      "description": "Computer Applications Technology Grade 10 Term 1 covering Systems Technologies (introduction to computers, computer management, hardware, software), Social Implications and Solution Development (Word Processing).",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 44,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR10-T1",
+      "title": "Systems Technologies: Introduction to Computers",
+      "code": "CAPS-CAT-GR10-T1-INTRO",
+      "description": "Explanation of what a computer is, overview of different types of computing devices, definitions and examples of main components of a computer system, ICTs used in everyday life, concepts of data and information.",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Explain what a computer is",
+          "Overview of the different types of computing devices",
+          "Overview and concepts of the main components of a computer system",
+          "ICTs used in everyday life",
+          "Concepts of data and information"
+        ],
+        "notionalHours": 2,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR10-T1",
+      "title": "Systems Technologies: Computer Management",
+      "code": "CAPS-CAT-GR10-T1-COMPUTERMGMT",
+      "description": "Start-up, desktop GUI, accessing apps, keyboard layout, enhancing keyboarding skills, drills, posture, ergonomics, file organisation (drives, folders, files, file specification, file manager, organise, copy, rename, delete, restore, move, search, view and sort files and folders).",
+      "metadata": {
+        "weekNumbers": [
+          2,
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Start-up: switch on the computer, log on (concept of access control)",
+          "Desktop (GUI): First looks, icons and shortcuts",
+          "Introduce the desktop (GUI)",
+          "Accessing apps",
+          "Introduction and layout of keyboard",
+          "Enhancing keyboarding skills",
+          "Drills, posture and ergonomics",
+          "Basic concepts and introduction to file organisation: Drives, folders, and files",
+          "File specification: Drive, path, filename and file extension",
+          "Files: File naming, conventions and properties - types and size",
+          "File manager, e.g. This PC, hierarchy",
+          "Organise, copy, rename, delete, restore, move, search, view and sort files and folders"
+        ],
+        "notionalHours": 8,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR10-T1",
+      "title": "Systems Technologies: Hardware",
+      "code": "CAPS-CAT-GR10-T1-HARDWARE",
+      "description": "Overview of basic hardware concepts: input, output, storage, definition of peripheral devices, methods for connecting peripheral devices (cabled and wireless).",
+      "metadata": {
+        "weekNumbers": [
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "What is hardware?",
+          "Overview of basic concepts relating to hardware: Input, Output, Storage",
+          "Definition of peripheral devices",
+          "Methods for connecting peripheral devices (cabled and wireless)"
+        ],
+        "notionalHours": 2,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR10-T1",
+      "title": "Systems Technologies: Software",
+      "code": "CAPS-CAT-GR10-T1-SOFTWARE",
+      "description": "Overview of basic software concepts: system software vs application software, basic accessories, features for computing devices, application software overview, system software overview, basic security.",
+      "metadata": {
+        "weekNumbers": [
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Overview of the basic concepts and introduction to software used on computing devices",
+          "What is software? (GUI), minimising, restoring, resizing, moving and closing windows",
+          "System software vs. application software",
+          "Basic accessories, features for computing devices",
+          "Application software (apps) - overview of basic concepts and introduction",
+          "System software - overview of basic concepts and introduction",
+          "Basic security (PC, laptop, tablet, smartphone)"
+        ],
+        "notionalHours": 2,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR10-T1",
+      "title": "Social Implications",
+      "code": "CAPS-CAT-GR10-T1-SOCIALIMPL",
+      "description": "Social issues linked to term content: Ergonomics, green computing, health (posture), authentication, economic reasons for using computers.",
+      "metadata": {
+        "weekNumbers": [
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Ergonomics, green computing, health (posture) and authentication",
+          "Economic reasons for using computers"
+        ],
+        "notionalHours": 2,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR10-T1",
+      "title": "Solution Development: Word Processing",
+      "code": "CAPS-CAT-GR10-T1-WORDPROC",
+      "description": "Introduction to word processing, workspace features, document structure, file management, text editing, basic punctuation, formatting marks, editing (cut, copy, paste, find and replace), font formatting, paragraph formatting, quick styles, reviewing, proofing, page layout, document layout, illustrations, text boxes.",
+      "metadata": {
+        "weekNumbers": [
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "What is word processing used for?",
+          "First looks: Workspace features such as ribbons, tabs and menus",
+          "Structure of the Word processing documents: pages, sections, paragraphs, lines, text and objects",
+          "File management in word processor: Open new and existing documents, close, save, save as and print",
+          "Select data using keyboard and/or mouse",
+          "Text: Entering, editing, and deleting text, special characters (symbols)",
+          "Basic punctuation: One space after all punctuation, including full stops",
+          "Formatting marks",
+          "Editing: Cut, copy, paste, find and replace",
+          "Font type, style, size, colour, highlight and effects",
+          "Paragraph: Spacing (paragraph and line), alignment, borders, shading and indents (simple, increase and decrease)",
+          "Using existing quick styles in gallery (simple)",
+          "Reviewing: Proofing, spelling, and grammar",
+          "Autocorrect and basic Word processing typography: Quotes, dashes, and emphasis",
+          "Page layout: Page setup, margins, orientation, size, and page border",
+          "Document layout: Page numbers and page breaks",
+          "View options - print layout and preview",
+          "Insert and manipulate illustrations and text",
+          "Objects: Pictures, shapes, WordArt, basic SmartArt, screenshot, charts",
+          "Text box"
+        ],
+        "notionalHours": 22,
+        "cognitiveWeighting": null
+      },
+      "order": 6
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-CAT-GR10",
+      "title": "Term 2",
+      "code": "CAPS-CAT-GR10-T2",
+      "description": "Computer Applications Technology Grade 10 Term 2 covering Systems Technologies (hardware, software, device management), Network Technologies, Social Implications, Solution Development (Word Processing, Spreadsheets) and Information Management.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 44,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR10-T2",
+      "title": "Systems Technologies: Hardware",
+      "code": "CAPS-CAT-GR10-T2-HARDWARE",
+      "description": "Extended hardware concepts: input devices (pointing, scanning, video, audio, biometric), output devices, storage media and devices (memory cards, card readers), processing concepts.",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Input: basic concepts, features and uses - Pointing devices, Scanning and reading devices, Video input, Audio input: Microphone, Biometric input",
+          "Output: basic concepts, features and uses - Audio output, Other output",
+          "Storage media and devices: Memory cards, Card reader",
+          "Processing: Overview and introduction to basic processing concepts"
+        ],
+        "notionalHours": 2,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR10-T2",
+      "title": "Systems Technologies: Software and Device Management",
+      "code": "CAPS-CAT-GR10-T2-SOFTWAREDEV",
+      "description": "Categories of software, licensing and licensing agreements, system software (drivers, auto configuration), utility programs, device management (creating shortcuts, adding peripherals, pairing devices, changing default printer, basic printing, compressing and decompressing files).",
+      "metadata": {
+        "weekNumbers": [
+          2,
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Categories of software",
+          "Licensing and licensing agreements",
+          "System software: Drivers, Auto configuration",
+          "Utility programs",
+          "Creating shortcuts",
+          "Adding new peripherals",
+          "Pairing devices",
+          "Changing the default printer",
+          "Basic printing and printer queue management on computing devices",
+          "Compressing, decompressing files and folders"
+        ],
+        "notionalHours": 4,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR10-T2",
+      "title": "Network Technologies: Networks",
+      "code": "CAPS-CAT-GR10-T2-NETWORKS",
+      "description": "Overview of networks: what is a network, aims and objectives, facilitating communications, sharing hardware, software, data and information, basic security and privacy issues, examples of networks (Internet, LAN, HAN).",
+      "metadata": {
+        "weekNumbers": [
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "What is a network?",
+          "Aims and objectives of networks",
+          "Facilitating communications and sharing hardware, software, data and information",
+          "Basic security and privacy issues",
+          "Examples of networks: Internet, LAN, HAN"
+        ],
+        "notionalHours": 2,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR10-T2",
+      "title": "Social Implications",
+      "code": "CAPS-CAT-GR10-T2-SOCIALIMPL",
+      "description": "Ethical use of content covered, software piracy, licensing, copyright and intellectual property.",
+      "metadata": {
+        "weekNumbers": [
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Ethical use of content covered (hardware, software, computer management and networks)",
+          "Software piracy, licensing, copyright and intellectual property"
+        ],
+        "notionalHours": 2,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR10-T2",
+      "title": "Solution Development: Word Processing",
+      "code": "CAPS-CAT-GR10-T2-WORDPROC",
+      "description": "Paragraphs (bullets, numbering, indents), tabs, view options, document and page layout (customising margins, headers and footers, cover page), tables (insert, design, layout, cells, text alignment, sorting, formulae).",
+      "metadata": {
+        "weekNumbers": [
+          5,
+          6,
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Paragraphs: Bullets and numbering, Indents",
+          "Tabs",
+          "View options: Work with more than one document, window, zoom; Document views: Draft and read mode",
+          "Document and page layout: Customising margins, Headers and footers, Insert cover page",
+          "Tables: Insert, table tools, table design, table properties",
+          "Design: Table styles, borders and shading",
+          "Layout: Rows and columns, header rows",
+          "Cells: Size, distribution, merging and splitting",
+          "Text alignment and direction",
+          "Table: Split, autofit, gridlines",
+          "Working with data: Sorting, convert to text and working with formulae (sum and average)"
+        ],
+        "notionalHours": 12,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR10-T2",
+      "title": "Solution Development: Spreadsheets",
+      "code": "CAPS-CAT-GR10-T2-SPREADSHEETS",
+      "description": "Overview of spreadsheets, workspace, cell references, cell ranges, basic calculations, data types, format cells, formatting rows/columns/sheets, file options, formulae vs functions, basic functions (SUM, AVERAGE, COUNT, MIN, MAX), error indicators.",
+      "metadata": {
+        "weekNumbers": [
+          8,
+          9
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Overview of the basic skills and core concepts of spreadsheets",
+          "Uses of spreadsheet",
+          "First looks: Workspace",
+          "Cell reference",
+          "Cell ranges: Range names",
+          "Basic calculations using basic operators",
+          "Data types",
+          "Format cells",
+          "Formatting rows, columns and sheets",
+          "Reinforce generic, common concepts as in word processor",
+          "File options: Open, save, save as, new and print",
+          "Formulae vs. functions",
+          "Basic functions (SUM, AVERAGE, COUNT, MIN, MAX)",
+          "Error indicators: #######, #NAME!, #DIV,0!, #REF!, #VALUE!, #NUM!"
+        ],
+        "notionalHours": 8,
+        "cognitiveWeighting": null
+      },
+      "order": 6
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR10-T2",
+      "title": "Information Management",
+      "code": "CAPS-CAT-GR10-T2-INFOMGMT",
+      "description": "Data vs information, understanding the problem and task, problem-solving steps, role of questions and questioning, information sources and data gathering tools (electronic reference works, printed media, surveys, questionnaires, interviews).",
+      "metadata": {
+        "weekNumbers": [
+          10
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Data vs information",
+          "Understand the problem, task",
+          "Problem-solving steps",
+          "Role of questions and questioning to determine information needs",
+          "Information sources and data gathering tools (including advantages and disadvantages)",
+          "Electronic reference works - Wikipedia and internet articles",
+          "Printed media - books",
+          "Surveys: Questionnaires, interviews"
+        ],
+        "notionalHours": 2,
+        "cognitiveWeighting": null
+      },
+      "order": 7
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-CAT-GR10",
+      "title": "Term 3",
+      "code": "CAPS-CAT-GR10-T3",
+      "description": "Computer Applications Technology Grade 10 Term 3 covering Network Technologies, Internet Technologies, Communication, Social Implications, Solution Development (Spreadsheets, Word Processing, Presentations, HTML/Web Design) and Information Management (PAT).",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 44,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR10-T3",
+      "title": "Network Technologies: Networks",
+      "code": "CAPS-CAT-GR10-T3-NETWORKS",
+      "description": "Personal area network, Home Area Network (HAN), network device functions (modem, switch, router), communication channel and media, obtaining internet access, ISP definition and purpose.",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Personal area network, Home Area Network (HAN)",
+          "Network device: Function of modem, switch and router",
+          "Communication channel, media",
+          "Obtaining internet access",
+          "ISP - definition and purpose"
+        ],
+        "notionalHours": 2,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR10-T3",
+      "title": "Internet Technologies: Internet and WWW",
+      "code": "CAPS-CAT-GR10-T3-INTERNET",
+      "description": "What is the internet, internet addresses, overview of WWW, browsers, search engines, concept of downloading and uploading, ISP.",
+      "metadata": {
+        "weekNumbers": [
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "What is the internet?",
+          "Internet addresses",
+          "Overview of the World Wide Web (WWW)",
+          "Browsers",
+          "Search engines",
+          "Concept of downloading and uploading",
+          "ISP"
+        ],
+        "notionalHours": 2,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR10-T3",
+      "title": "Internet Technologies: Communication",
+      "code": "CAPS-CAT-GR10-T3-ECOMM",
+      "description": "E-communication using computing devices, applications to facilitate e-communications, e-mail as a form of e-communication, scan to e-mail, netiquette rules, basic use of the internet and e-mail, hyperlinks, applying netiquette, basic e-mailing, attachments.",
+      "metadata": {
+        "weekNumbers": [
+          2,
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "What is e-communication?",
+          "What is a communication device?",
+          "Overview of applications to facilitate e-communications",
+          "E-mail as a form of e-communication",
+          "Scan to e-mail",
+          "Netiquette rules with regards to e-mail and social media platform",
+          "Basic use of the internet, e-mail and social platforms",
+          "Hyperlinks",
+          "Apply netiquette rules",
+          "Basic e-mailing",
+          "Attachments"
+        ],
+        "notionalHours": 4,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR10-T3",
+      "title": "Social Implications",
+      "code": "CAPS-CAT-GR10-T3-SOCIALIMPL",
+      "description": "Digital citizenship (social issues, digital footprint, POPI Act), recognise and acknowledge ownership of electronic material, appropriate communication etiquette, safe e-mail and internet use.",
+      "metadata": {
+        "weekNumbers": [
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Digital citizenship (what it is): Social issues, Digital footprint, POPI Act",
+          "Recognise and acknowledge the ownership of electronic material",
+          "Appropriate communication etiquette",
+          "Safe e-mail and internet use"
+        ],
+        "notionalHours": 2,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR10-T3",
+      "title": "Solution Development: Spreadsheets",
+      "code": "CAPS-CAT-GR10-T3-SPREADSHEETS",
+      "description": "Extended use of functions (TODAY, RANDBETWEEN, MODE, MEDIAN, COUNTA, COUNTBLANK, COUNTIF, relational operators), reduce decimal places, basic sorting, work with sheets (rename, tab colour, hide/unhide), headers and footers, basic printing.",
+      "metadata": {
+        "weekNumbers": [
+          5,
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Extend the use of basic functions: TODAY, RANDBETWEEN, MODE, MEDIAN, COUNTA, COUNTBLANK, COUNTIF",
+          "Use of relational operators (>, <, <=, >=, <>, =)",
+          "Reduce the number of decimal places using cell formatting",
+          "Basic sorting",
+          "Work with sheets: Rename, tab colour, hide, unhide",
+          "Headers and footers",
+          "Basic printing"
+        ],
+        "notionalHours": 6,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR10-T3",
+      "title": "Solution Development: Word Processing",
+      "code": "CAPS-CAT-GR10-T3-WORDPROC",
+      "description": "Reviewing, styles (basic) linked to table of contents, referencing (basic), document layout (page setup, columns, hyphenation, watermark, page colour, integration - hyperlinks).",
+      "metadata": {
+        "weekNumbers": [
+          6,
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Reviewing",
+          "Styles (basic) linked to table of contents",
+          "Referencing (basic)",
+          "Document layout: Page setup, Columns (line between), Hyphenation, Watermark, page colour",
+          "Integration - hyperlinks"
+        ],
+        "notionalHours": 6,
+        "cognitiveWeighting": null
+      },
+      "order": 6
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR10-T3",
+      "title": "Solution Development: Presentations",
+      "code": "CAPS-CAT-GR10-T3-PRESENTATIONS",
+      "description": "Uses of presentations, first look, basic skills and core concepts, rules and best practice for creating a presentation, design ideas, slides (insert, delete, numbers, headers and footers), view options, integration techniques, custom animations, slide transitions, hyperlinks, adding videos and voice recordings, printing options, set up slide show, saving options.",
+      "metadata": {
+        "weekNumbers": [
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Uses of presentations",
+          "First look",
+          "Basic skills and core concepts",
+          "Rules, best practice for creating a presentation",
+          "Design ideas from the application (built-in)",
+          "Slides: Insert, delete, numbers, headers and footers",
+          "View options",
+          "Integration techniques",
+          "Custom animations",
+          "Slide transitions",
+          "Hyperlinks",
+          "Adding videos, voice recordings, etc.",
+          "Printing options",
+          "Set up slide show",
+          "Saving options"
+        ],
+        "notionalHours": 4,
+        "cognitiveWeighting": null
+      },
+      "order": 7
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR10-T3",
+      "title": "Solution Development: HTML and Web Design",
+      "code": "CAPS-CAT-GR10-T3-HTML",
+      "description": "Websites, web pages, hyperlinks and URLs; what is HTML; what is an HTML editor; HTML syntax, order of tags; basic HTML tags (opening and closing tags); plain text and text formatting; attributes as a concept; font tag, face, colour and size attributes; width and size of (hr); body background colour; structure and design of a simple HTML page.",
+      "metadata": {
+        "weekNumbers": [
+          8
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Reinforce the concepts: Websites, web pages, hyperlinks and URLs",
+          "What is HTML?",
+          "What is an HTML editor?",
+          "HTML syntax, order of tags",
+          "Basic HTML tags: Opening tag and closing tag",
+          "Plain text and text formatting",
+          "Attributes as a concept",
+          "Font tag, face, colour and size attribute",
+          "Width and size of (hr)",
+          "Body background colour",
+          "Structure and design of a simple HTML page"
+        ],
+        "notionalHours": 4,
+        "cognitiveWeighting": null
+      },
+      "order": 8
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR10-T3",
+      "title": "Information Management and PAT",
+      "code": "CAPS-CAT-GR10-T3-INFOMGMT",
+      "description": "Information vs knowledge, finding and accessing information and data, sifting information. PAT phases 1 and 2.",
+      "metadata": {
+        "weekNumbers": [
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Information vs. knowledge",
+          "Find and access information and data",
+          "Sifting information",
+          "PAT phase 1 commences",
+          "PAT phase 1 completed",
+          "PAT phase 2 commences"
+        ],
+        "notionalHours": 10,
+        "cognitiveWeighting": null
+      },
+      "order": 9
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-CAT-GR10",
+      "title": "Term 4",
+      "code": "CAPS-CAT-GR10-T4",
+      "description": "Computer Applications Technology Grade 10 Term 4 covering Solution Development (Spreadsheets), Information Management and PAT Phase 2, Social Implications, Word Processing, Documents, Content using Case Studies and Final Examination.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 24,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR10-T4",
+      "title": "Solution Development: Spreadsheets",
+      "code": "CAPS-CAT-GR10-T4-SPREADSHEETS",
+      "description": "Charts and graphs (pie, line, column and bar), purpose of each, when to use, create, format and edit; interpretation of information in a graph; basic integration techniques; solve problems using spreadsheets; troubleshoot basic spreadsheet problems.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Charts, graphs: create, insert, format",
+          "Pie, line, column and bar charts",
+          "Purpose of each, when to use",
+          "Create, format and edit",
+          "Interpretation of information presented in a graph",
+          "Basic integration techniques",
+          "Solve problems using spreadsheets",
+          "Troubleshoot basic spreadsheet problems"
+        ],
+        "notionalHours": 6,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR10-T4",
+      "title": "Information Management and PAT",
+      "code": "CAPS-CAT-GR10-T4-INFOMGMT",
+      "description": "Knowledge vs insight, decision making, manipulating information, processing data, presentation of information (tables, graphs), report writing (introduction, body, conclusion, bibliography, references, copyright, plagiarism, intellectual property), summarising information. PAT Phase 2 completion.",
+      "metadata": {
+        "weekNumbers": [
+          3,
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Knowledge vs insight, decision making",
+          "Manipulating information (extract core meaning and summarise using own words)",
+          "Processing data",
+          "Presentation of information in presentation software: Tables, graphs, techniques and tools in applications",
+          "Report writing - elements of a report: Introduction, body, conclusion, bibliography, references, copyright, plagiarism issues and intellectual property",
+          "Summarising information, report",
+          "Continue working on PAT Phase 2",
+          "Finalise PAT phase 2"
+        ],
+        "notionalHours": 8,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR10-T4",
+      "title": "Social Implications",
+      "code": "CAPS-CAT-GR10-T4-SOCIALIMPL",
+      "description": "Impact on society, computer crime types (information theft, data theft and identity theft).",
+      "metadata": {
+        "weekNumbers": [
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Impact on society",
+          "Computer crime - types: information theft, data theft and identity theft"
+        ],
+        "notionalHours": 2,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR10-T4",
+      "title": "Solution Development: Word Processing and Documents",
+      "code": "CAPS-CAT-GR10-T4-WORDPROC",
+      "description": "Accessing online/offline help, integration techniques, troubleshoot basic Word processing problems, reproduce and create documents, use templates, support communication with appropriate features, integrate text and graphics, balance text and graphics, use media and visual literacy skills.",
+      "metadata": {
+        "weekNumbers": [
+          5,
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Accessing online, offline help including FAQs",
+          "Integration techniques (e.g., hyperlink files, copy and paste between applications)",
+          "Troubleshoot basic Word processing problems",
+          "Reproduce and create documents",
+          "Use templates",
+          "Support communication with appropriate features such as images and symbols",
+          "Integrate text and graphics",
+          "Balance text and graphics",
+          "Use media, visual literacy and technology skills to create products that express understanding"
+        ],
+        "notionalHours": 4,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR10-T4",
+      "title": "Content Using Case Studies",
+      "code": "CAPS-CAT-GR10-T4-CASESTUDIES",
+      "description": "Identify basic hardware configuration, understand computers and their uses, understand how technology helps operate more efficiently and effectively, use computers as tools to access information and communicate, make better buying decisions, fix ordinary computer problems, use the internet and e-mail.",
+      "metadata": {
+        "weekNumbers": [
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Identify the basic hardware configuration of a computer",
+          "Understand computers and their uses",
+          "Understand how technology helps one to operate more efficiently, effectively and more accurately",
+          "Know how to use computers as tools to access information and to communicate with others around the world",
+          "Make better, informed buying decisions",
+          "Know how to fix ordinary computer problems and deal with challenges that arise from utilising computers",
+          "Know how to use the internet and e-mail"
+        ],
+        "notionalHours": 2,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    }
+  ]
+}

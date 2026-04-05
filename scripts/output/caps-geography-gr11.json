@@ -1,0 +1,1015 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "FET Phase",
+      "code": "CAPS-FET",
+      "description": "Further Education and Training Phase (Grades 10-12)",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 11",
+      "code": "CAPS-GR11",
+      "description": "",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 11
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR11",
+      "title": "Geography",
+      "code": "CAPS-GEOGRAPHY-GR11",
+      "description": "Geography — Grade 11 — CAPS Curriculum",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-GEOGRAPHY-GR11",
+      "title": "Term 1",
+      "code": "CAPS-GEOGRAPHY-GR11-T1",
+      "description": "The Atmosphere: Earth's energy balance, global air circulation, Africa's weather and climate, and droughts and desertification.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T1",
+      "title": "Earth's Energy Balance",
+      "code": "CAPS-GEOGRAPHY-GR11-T1-ENERGYBAL",
+      "description": "Consolidation of Climatology from Grade 10, unequal heating of the atmosphere (latitudinal and seasonal), significance of the earth's axis and revolution around the sun, and transfer of energy and energy balance.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T1-ENERGYBAL",
+      "title": "Unequal Heating of the Atmosphere",
+      "code": "CAPS-GEOGRAPHY-GR11-T1-ENERGYBAL-01",
+      "description": "Consolidation of Climatology from Grade 10. Unequal heating of the atmosphere: latitudinal and seasonal.",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T1-ENERGYBAL",
+      "title": "Energy Transfer and Balance",
+      "code": "CAPS-GEOGRAPHY-GR11-T1-ENERGYBAL-02",
+      "description": "Significance of the earth's axis and revolution around the sun. Transfer of energy and energy balance.",
+      "metadata": {
+        "weekNumbers": [
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T1",
+      "title": "Global Air Circulation",
+      "code": "CAPS-GEOGRAPHY-GR11-T1-AIRCIRC",
+      "description": "Global air circulation as a response to unequal heating of the atmosphere, world pressure belts, tri-cellular circulation, relationships between air temperature, air pressure and wind, pressure gradient, Coriolis force and geostrophic flow, winds, air masses, and monsoon and Föhn winds.",
+      "metadata": {
+        "weekNumbers": [
+          3,
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T1-AIRCIRC",
+      "title": "Pressure Belts and Tri-Cellular Circulation",
+      "code": "CAPS-GEOGRAPHY-GR11-T1-AIRCIRC-01",
+      "description": "Global air circulation as a response to unequal heating of the atmosphere. World pressure belts. Tri-cellular circulation. The relationships between air temperature, air pressure and wind.",
+      "metadata": {
+        "weekNumbers": [
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T1-AIRCIRC",
+      "title": "Winds, Air Masses and Regional Movements",
+      "code": "CAPS-GEOGRAPHY-GR11-T1-AIRCIRC-02",
+      "description": "Pressure gradient, Coriolis force and geostrophic flow. Winds related to global air circulation (westerlies, tropical easterlies and polar easterlies). Air masses characteristics. Winds related to regional and local air movements. Monsoons and Föhn winds.",
+      "metadata": {
+        "weekNumbers": [
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T1",
+      "title": "Africa's Weather and Climate",
+      "code": "CAPS-GEOGRAPHY-GR11-T1-AFRICACLIM",
+      "description": "Subsidence and convergence linked to rainfall, the role of oceans in climate control in Africa, El Niño and La Niña (basic knowledge), and reading and interpreting synoptic weather maps.",
+      "metadata": {
+        "weekNumbers": [
+          5,
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T1-AFRICACLIM",
+      "title": "Subsidence, Convergence and Ocean Role",
+      "code": "CAPS-GEOGRAPHY-GR11-T1-AFRICACLIM-01",
+      "description": "Subsidence and convergence: link to rainfall. The role of oceans in climate control in Africa.",
+      "metadata": {
+        "weekNumbers": [
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T1-AFRICACLIM",
+      "title": "El Niño and La Niña",
+      "code": "CAPS-GEOGRAPHY-GR11-T1-AFRICACLIM-02",
+      "description": "El Niño and La Niña (basic knowledge: link to weather conditions, not for examination purposes). Reading and interpreting synoptic weather maps.",
+      "metadata": {
+        "weekNumbers": [
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T1",
+      "title": "Droughts and Desertification",
+      "code": "CAPS-GEOGRAPHY-GR11-T1-DROUGHTS",
+      "description": "Causes of droughts, causes of desertification, effects of droughts and desertification on people and the environment, and management strategies using case studies.",
+      "metadata": {
+        "weekNumbers": [
+          7,
+          8,
+          9
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T1-DROUGHTS",
+      "title": "Causes of Droughts and Desertification",
+      "code": "CAPS-GEOGRAPHY-GR11-T1-DROUGHTS-01",
+      "description": "Causes of droughts. Causes of desertification. GIS: satellite images and application of GIS to climatology.",
+      "metadata": {
+        "weekNumbers": [
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T1-DROUGHTS",
+      "title": "Effects and Management of Droughts and Desertification",
+      "code": "CAPS-GEOGRAPHY-GR11-T1-DROUGHTS-02",
+      "description": "Effects of droughts and desertification on people and the environment. Management strategies with case studies.",
+      "metadata": {
+        "weekNumbers": [
+          8,
+          9
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-GEOGRAPHY-GR11",
+      "title": "Term 2",
+      "code": "CAPS-GEOGRAPHY-GR11-T2",
+      "description": "Geomorphology: Horizontally layered rocks, inclined/tilted rock strata, massive igneous rocks, slopes, and mass movement.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T2",
+      "title": "Horizontally Layered Rocks",
+      "code": "CAPS-GEOGRAPHY-GR11-T2-HORIZROCKS",
+      "description": "Characteristics and processes associated with the development of hilly landscapes and basaltic plateaux, concept of scarp retreat and back wasting, and characteristics and processes of canyon landscape and Karoo landscape.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T2-HORIZROCKS",
+      "title": "Hilly Landscapes and Basaltic Plateaux",
+      "code": "CAPS-GEOGRAPHY-GR11-T2-HORIZROCKS-01",
+      "description": "Characteristics and processes associated with the development of hilly landscapes and basaltic plateaux. Concept of scarp retreat and back wasting.",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T2-HORIZROCKS",
+      "title": "Canyon and Karoo Landscapes",
+      "code": "CAPS-GEOGRAPHY-GR11-T2-HORIZROCKS-02",
+      "description": "Characteristics and processes of canyon landscape and Karoo landscape.",
+      "metadata": {
+        "weekNumbers": [
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T2",
+      "title": "Inclined and Tilted Rock Strata",
+      "code": "CAPS-GEOGRAPHY-GR11-T2-TILTEDROCKS",
+      "description": "Characteristics and processes associated with the development of a scarp slope, dip slope, cuesta, homoclinal ridge, hogsback, cuesta basin and cuesta dome.",
+      "metadata": {
+        "weekNumbers": [
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T2-TILTEDROCKS",
+      "title": "Scarp Slopes, Cuestas and Associated Landforms",
+      "code": "CAPS-GEOGRAPHY-GR11-T2-TILTEDROCKS-01",
+      "description": "Characteristics and processes associated with the development of a scarp slope, a dip slope, a cuesta, homoclinal ridge, hogsback, cuesta basin and cuesta dome.",
+      "metadata": {
+        "weekNumbers": [
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T2",
+      "title": "Massive Igneous Rocks",
+      "code": "CAPS-GEOGRAPHY-GR11-T2-IGNEOUSROCKS",
+      "description": "Identification of batholiths, laccoliths, lopoliths, dykes and sills, and characteristics and processes associated with the development of granite domes and tors.",
+      "metadata": {
+        "weekNumbers": [
+          4,
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T2-IGNEOUSROCKS",
+      "title": "Intrusive Igneous Features",
+      "code": "CAPS-GEOGRAPHY-GR11-T2-IGNEOUSROCKS-01",
+      "description": "Identification of batholiths, laccoliths, lopoliths, dykes and sills.",
+      "metadata": {
+        "weekNumbers": [
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T2-IGNEOUSROCKS",
+      "title": "Granite Domes and Tors",
+      "code": "CAPS-GEOGRAPHY-GR11-T2-IGNEOUSROCKS-02",
+      "description": "Characteristics and processes associated with the development of granite domes and tors.",
+      "metadata": {
+        "weekNumbers": [
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T2",
+      "title": "Slopes",
+      "code": "CAPS-GEOGRAPHY-GR11-T2-SLOPES",
+      "description": "Overview of SA topography, types of slopes, slope elements (crest, cliff, talus, pediment), characteristics of slope elements, and the concept of slope retreat.",
+      "metadata": {
+        "weekNumbers": [
+          6,
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T2-SLOPES",
+      "title": "Types of Slopes and Slope Elements",
+      "code": "CAPS-GEOGRAPHY-GR11-T2-SLOPES-01",
+      "description": "Overview of SA topography. Types of slopes. Slope elements: crest, cliff (scarp slope, free face), talus (debris, scree slope), pediment.",
+      "metadata": {
+        "weekNumbers": [
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T2-SLOPES",
+      "title": "Slope Retreat",
+      "code": "CAPS-GEOGRAPHY-GR11-T2-SLOPES-02",
+      "description": "Characteristics of the slope elements and the concept of slope retreat.",
+      "metadata": {
+        "weekNumbers": [
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T2",
+      "title": "Mass Movement",
+      "code": "CAPS-GEOGRAPHY-GR11-T2-MASSMOVE",
+      "description": "Concept of mass movement, kinds of mass movement (soil creep, solifluction, landslide, rock falls, mud flows, slumps), the impact of mass movements on people and the environment, and strategies to prevent or minimise effects using South African case studies.",
+      "metadata": {
+        "weekNumbers": [
+          8,
+          9
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T2-MASSMOVE",
+      "title": "Types of Mass Movement",
+      "code": "CAPS-GEOGRAPHY-GR11-T2-MASSMOVE-01",
+      "description": "Concept of mass movement. Kinds of mass movement: soil creep, solifluction, landslide, rock falls and mud flows, slumps.",
+      "metadata": {
+        "weekNumbers": [
+          8
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T2-MASSMOVE",
+      "title": "Impact and Management of Mass Movement",
+      "code": "CAPS-GEOGRAPHY-GR11-T2-MASSMOVE-02",
+      "description": "The impact of mass movements on people and the environment. Strategies to prevent or minimise the effects of mass movement: South African case studies.",
+      "metadata": {
+        "weekNumbers": [
+          9
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-GEOGRAPHY-GR11",
+      "title": "Term 3",
+      "code": "CAPS-GEOGRAPHY-GR11-T3",
+      "description": "Development Geography: Development concepts, framework for development, trade and development, development issues and challenges, and the role of development aid.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T3",
+      "title": "Development",
+      "code": "CAPS-GEOGRAPHY-GR11-T3-DEVELOP",
+      "description": "Terminology associated with development, the concept of development, developed, developing, MEDCs, LEDCs and industrial countries.",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T3-DEVELOP",
+      "title": "Development Concepts and Terminology",
+      "code": "CAPS-GEOGRAPHY-GR11-T3-DEVELOP-01",
+      "description": "Terminology associated with development. The concept of development. Developed, developing, MEDCs, LEDCs and industrial countries.",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T3",
+      "title": "Framework for Development",
+      "code": "CAPS-GEOGRAPHY-GR11-T3-DEVFRAME",
+      "description": "The concept of economic, social, sustainable, appropriate scale and spatial aspects of development. Economic, social and demographic indicators of development. Examples to illustrate differences in development from local, regional and global contexts.",
+      "metadata": {
+        "weekNumbers": [
+          2,
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T3-DEVFRAME",
+      "title": "Development Indicators",
+      "code": "CAPS-GEOGRAPHY-GR11-T3-DEVFRAME-01",
+      "description": "The concept of economic, social, sustainable, appropriate scale and spatial aspects. Economic, social and demographic indicators of development: GNP, GDP, HDI, GINI-coefficient, life expectancy and infant mortality.",
+      "metadata": {
+        "weekNumbers": [
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T3-DEVFRAME",
+      "title": "Factors Affecting Development",
+      "code": "CAPS-GEOGRAPHY-GR11-T3-DEVFRAME-02",
+      "description": "Factors that affect development, including access to resources, energy, history, trade imbalances, population growth, education and training, natural resources limitations and environmental degradation. Community-based development including approaches to rural and urban development (case studies).",
+      "metadata": {
+        "weekNumbers": [
+          3,
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T3",
+      "title": "Trade and Development",
+      "code": "CAPS-GEOGRAPHY-GR11-T3-TRADE",
+      "description": "International trade and world markets, commodities traded and terms of trade, types of trading relationships, the concept of globalisation and its impact on development, and export-led development critically examined with examples.",
+      "metadata": {
+        "weekNumbers": [
+          5,
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T3-TRADE",
+      "title": "International Trade and World Markets",
+      "code": "CAPS-GEOGRAPHY-GR11-T3-TRADE-01",
+      "description": "International trade and world markets. Commodities traded and terms of trade. Types of trading relationships.",
+      "metadata": {
+        "weekNumbers": [
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T3-TRADE",
+      "title": "Globalisation and Export-Led Development",
+      "code": "CAPS-GEOGRAPHY-GR11-T3-TRADE-02",
+      "description": "The concept of globalisation and its impact on development. Export-led development: critically examined with examples from around the world. The effect of development on the environment.",
+      "metadata": {
+        "weekNumbers": [
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T3",
+      "title": "Development Issues and Challenges",
+      "code": "CAPS-GEOGRAPHY-GR11-T3-DEVISSUES",
+      "description": "Development issues and challenges relating to the effect of development on the environment.",
+      "metadata": {
+        "weekNumbers": [
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T3-DEVISSUES",
+      "title": "Effect of Development on the Environment",
+      "code": "CAPS-GEOGRAPHY-GR11-T3-DEVISSUES-01",
+      "description": "The effect of development on the environment.",
+      "metadata": {
+        "weekNumbers": [
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T3",
+      "title": "Role of Development Aid",
+      "code": "CAPS-GEOGRAPHY-GR11-T3-DEVAID",
+      "description": "Concept of development aid and development co-operation, types of development aid (technical, conditional, humanitarian), and the impact of aid on development including case studies of positive and negative examples.",
+      "metadata": {
+        "weekNumbers": [
+          8,
+          9
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T3-DEVAID",
+      "title": "Types of Development Aid",
+      "code": "CAPS-GEOGRAPHY-GR11-T3-DEVAID-01",
+      "description": "Concept of development aid and development co-operation. Types of development: technical, conditional, humanitarian.",
+      "metadata": {
+        "weekNumbers": [
+          8
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T3-DEVAID",
+      "title": "Impact of Aid on Development",
+      "code": "CAPS-GEOGRAPHY-GR11-T3-DEVAID-02",
+      "description": "Impact of aid on development including case studies of development aid: positive and negative.",
+      "metadata": {
+        "weekNumbers": [
+          9
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-GEOGRAPHY-GR11",
+      "title": "Term 4",
+      "code": "CAPS-GEOGRAPHY-GR11-T4",
+      "description": "Resources and Sustainability: Soil and soil erosion, conventional energy sources, non-conventional energy sources, and energy management in South Africa.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T4",
+      "title": "Soil and Soil Erosion",
+      "code": "CAPS-GEOGRAPHY-GR11-T4-SOILEROSION",
+      "description": "Causes of soil erosion (human, animal, physical, past and present), evidence of soil erosion in South Africa, effects of soil erosion on people and the environment, and management strategies to prevent and control soil erosion.",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T4-SOILEROSION",
+      "title": "Causes and Evidence of Soil Erosion",
+      "code": "CAPS-GEOGRAPHY-GR11-T4-SOILEROSION-01",
+      "description": "Causes of soil erosion: human, animal, physical, and past and present. Evidence of soil erosion in South Africa.",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T4-SOILEROSION",
+      "title": "Effects and Management of Soil Erosion",
+      "code": "CAPS-GEOGRAPHY-GR11-T4-SOILEROSION-02",
+      "description": "Effects of soil erosion on people and the environment. Management strategies to prevent and control soil erosion.",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T4",
+      "title": "Conventional Energy Sources",
+      "code": "CAPS-GEOGRAPHY-GR11-T4-CONVEN-ENERGY",
+      "description": "Maps and graphs to show thermal and hydro-energy production in South Africa, thermal electricity generation using coal, the impact of coal mining and thermal power stations, SA's potential to meet long-term energy needs using conventional sources, and a case study of nuclear energy.",
+      "metadata": {
+        "weekNumbers": [
+          2,
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T4-CONVEN-ENERGY",
+      "title": "Thermal and Hydro Energy",
+      "code": "CAPS-GEOGRAPHY-GR11-T4-CONVEN-ENERGY-01",
+      "description": "Maps and graphs to show thermal and hydro-energy production in South Africa. Thermal electricity generation using coal: outline of principles and processes.",
+      "metadata": {
+        "weekNumbers": [
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T4-CONVEN-ENERGY",
+      "title": "Coal Mining, Nuclear Energy and SA Energy Potential",
+      "code": "CAPS-GEOGRAPHY-GR11-T4-CONVEN-ENERGY-02",
+      "description": "The impact of coal mining and thermal power stations: advantages and disadvantages. SA's potential to meet long-term energy needs using conventional sources. Case study of nuclear energy.",
+      "metadata": {
+        "weekNumbers": [
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T4",
+      "title": "Non-Conventional Energy Sources",
+      "code": "CAPS-GEOGRAPHY-GR11-T4-NONCON-ENERGY",
+      "description": "Solar energy and wind energy with examples from South Africa and the world, the future of non-conventional energy in South Africa, and possible effects of using more non-conventional energy on the South African economy and environment.",
+      "metadata": {
+        "weekNumbers": [
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T4-NONCON-ENERGY",
+      "title": "Solar and Wind Energy",
+      "code": "CAPS-GEOGRAPHY-GR11-T4-NONCON-ENERGY-01",
+      "description": "Solar energy: examples from South Africa and the world. Wind energy: examples from South Africa and the world.",
+      "metadata": {
+        "weekNumbers": [
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T4-NONCON-ENERGY",
+      "title": "Future of Non-Conventional Energy in SA",
+      "code": "CAPS-GEOGRAPHY-GR11-T4-NONCON-ENERGY-02",
+      "description": "The future of non-conventional energy in South Africa. Possible effects of using more non-conventional energy on the South African economy and the environment.",
+      "metadata": {
+        "weekNumbers": [
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T4",
+      "title": "Energy Management in South Africa",
+      "code": "CAPS-GEOGRAPHY-GR11-T4-ENERGYMGMT",
+      "description": "Energy management towards greener economies and sustainable lifestyles: responsibilities of government, businesses and individuals.",
+      "metadata": {
+        "weekNumbers": [
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR11-T4-ENERGYMGMT",
+      "title": "Greener Economies and Sustainable Lifestyles",
+      "code": "CAPS-GEOGRAPHY-GR11-T4-ENERGYMGMT-01",
+      "description": "Energy management towards greener economies and sustainable lifestyles. Responsibilities of government, businesses and individuals.",
+      "metadata": {
+        "weekNumbers": [
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    }
+  ]
+}

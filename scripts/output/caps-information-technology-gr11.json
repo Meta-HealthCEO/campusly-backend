@@ -1,0 +1,624 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "FET Phase",
+      "code": "CAPS-FET",
+      "description": "Further Education and Training Phase (Grades 10-12)",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 11",
+      "code": "CAPS-GR11",
+      "description": "",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 11
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR11",
+      "title": "Information Technology",
+      "code": "CAPS-IT-GR11",
+      "description": "Information Technology — Grade 11 — CAPS Curriculum",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-IT-GR11",
+      "title": "Term 1",
+      "code": "CAPS-IT-GR11-T1",
+      "description": "Information Technology Grade 11 Term 1 covering Solution Development, Systems Technologies, Networks, Computer Management and Social Implications.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 44,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR11-T1",
+      "title": "Solution Development",
+      "code": "CAPS-IT-GR11-T1-SOLDEV",
+      "description": "Revision of Grade 10 problem solving steps and techniques, nested loops, 1-dimensional arrays, sorting and searching algorithms, parallel arrays, string manipulation, date and time objects.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          4,
+          5,
+          6,
+          8,
+          9,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "User accounts, logging in, file management",
+          "Revision: Using problem solving steps, tools, techniques from grade 10",
+          "Revision grade 10 loops",
+          "Nested loops (structure and algorithms)",
+          "Explain the concept of a 1-dimensional array",
+          "Arrays as a data structure (1D)",
+          "Loop through items",
+          "Basic mathematical operations in an array",
+          "Search using the linear and binary search algorithm",
+          "Sorting an array (bubble and selection sort)",
+          "Parallel arrays",
+          "String manipulation using string methods: inserting and deleting characters, determine position of a character, find a character/substring, determine the length of a string",
+          "Date and time objects: Changing the date and time, formatting date and time, date calculations, date methods (time to string, date to string, test for leap year)"
+        ],
+        "notionalHours": 22,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR11-T1",
+      "title": "Systems Technologies",
+      "code": "CAPS-IT-GR11-T1-SYSTECH",
+      "description": "Motherboard components, expansion cards, data flow between components, cache memory, types of OS, programming language compilers and interpreters, processing techniques, virtual memory and virtualisation.",
+      "metadata": {
+        "weekNumbers": [
+          2,
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Describe the motherboard",
+          "Purpose and role of the motherboard",
+          "Components as part of the motherboard",
+          "Purpose and role of the expansion cards",
+          "Flow and transfer of data between components",
+          "Purpose and role of cache memory and caching",
+          "Memory as part of a computer system",
+          "Computer performance",
+          "Types of OS's: cost, size, hardware, platform",
+          "Programming language compilers, interpreters",
+          "Overview of processing techniques",
+          "Virtual memory (role and purpose)",
+          "Overview of virtualisation"
+        ],
+        "notionalHours": 8,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR11-T1",
+      "title": "Networks",
+      "code": "CAPS-IT-GR11-T1-NETWORKS",
+      "description": "Physical aspects of a network, communication technologies (Wi-Fi, WiMAX, 5G, LTE), data transmission, network innovation, VoIP, Internet vs intranet vs extranet, VPN, location-based computing.",
+      "metadata": {
+        "weekNumbers": [
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Overview of physical aspects of a network",
+          "Communication (Wi-Fi, WiMAX, 5G, LTE)",
+          "Data transmission",
+          "Overview of network innovation (role and purpose)",
+          "Voice over Internet Protocol (VoIP)",
+          "Internet vs intranet vs extranet",
+          "Virtual Private Networks (VPN)",
+          "Location-based computing"
+        ],
+        "notionalHours": 4,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR11-T1",
+      "title": "Computer Management and Social Implications",
+      "code": "CAPS-IT-GR11-T1-MGMTSOCIAL",
+      "description": "Safeguarding against threats (physical, hardware, network), remedies, social implications of location-based computing, ethical and legal issues of network use, capabilities and limitations of ICTs.",
+      "metadata": {
+        "weekNumbers": [
+          10
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Safeguarding against threats: Safety and security",
+          "Threats: Physical, hardware, network",
+          "Remedies",
+          "Social issues applicable to term 1 content",
+          "The social implications of location-based computing",
+          "Ethical and legal issues of network use policies and practices",
+          "Capabilities and limitations of ICTs"
+        ],
+        "notionalHours": 4,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-IT-GR11",
+      "title": "Term 2",
+      "code": "CAPS-IT-GR11-T2",
+      "description": "Information Technology Grade 11 Term 2 covering Electronic Communication, Solution Development (text files, user-defined methods), Software Engineering Principles, Data and Information Management, Social Implications and PAT.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 44,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR11-T2",
+      "title": "Electronic Communication",
+      "code": "CAPS-IT-GR11-T2-ECOMM",
+      "description": "Mobile, wireless and e-communication, use of mobile technology, wireless technologies, protocols and data security.",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Mobile, wireless, e-communication",
+          "Use of mobile technology",
+          "Use of wireless technologies",
+          "Protocols",
+          "Data security"
+        ],
+        "notionalHours": 4,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR11-T2",
+      "title": "Solution Development - Text Files",
+      "code": "CAPS-IT-GR11-T2-TEXTFILES",
+      "description": "Introduction to text files, reading from and writing to text files, exception handling, string handling functions in application exercises, generating text-based reports.",
+      "metadata": {
+        "weekNumbers": [
+          2,
+          3,
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "What is a text file?",
+          "Physical file vs logical file name",
+          "Layout of data in a text file: end of line, end of file characters",
+          "Text file procedures to read and write",
+          "Exception handling",
+          "Checking whether file exists",
+          "Reading one line at a time",
+          "Reading multiple lines",
+          "Displaying information from a text file",
+          "Use of string handling functions in application exercises",
+          "Write to a file using overwrite or append mode",
+          "Display the updated text file",
+          "Generating a text-based report with correctly formatted data"
+        ],
+        "notionalHours": 12,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR11-T2",
+      "title": "Software Engineering Principles",
+      "code": "CAPS-IT-GR11-T2-SOFTENG",
+      "description": "What is software development, planning and implementing a solution.",
+      "metadata": {
+        "weekNumbers": [
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "What is software development?",
+          "Planning and implementing a solution"
+        ],
+        "notionalHours": 4,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR11-T2",
+      "title": "Data and Information Management",
+      "code": "CAPS-IT-GR11-T2-DATAMGMT",
+      "description": "Relationship between data, information, knowledge and decision making, characteristics of quality data, accessing and manipulating data, DBMS, database types, database-related careers.",
+      "metadata": {
+        "weekNumbers": [
+          6,
+          7,
+          8
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Relationship between data, information, knowledge, and decision making",
+          "Characteristics of quality data",
+          "Accessing and manipulating data",
+          "Grouping data",
+          "Qualities of valuable information to build knowledge and make decisions",
+          "How to generate information",
+          "Describe database management software (DBMS)",
+          "Examples of DBMS software",
+          "Database types according to usage requirements (size and accessibility)",
+          "Overview of database-related careers and roles of people involved"
+        ],
+        "notionalHours": 12,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR11-T2",
+      "title": "Solution Development - User-Defined Methods",
+      "code": "CAPS-IT-GR11-T2-METHODS",
+      "description": "Introduction to user-defined methods, procedures and functions, purpose and types, differentiating between procedures and functions, parameter passing.",
+      "metadata": {
+        "weekNumbers": [
+          9,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Consolidate text files and user-defined methods",
+          "Introduction to user-defined methods: Purpose and types (functions and procedures)",
+          "Differentiate between procedures and functions",
+          "User-defined methods with and without parameter passing"
+        ],
+        "notionalHours": 8,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR11-T2",
+      "title": "Social Implications",
+      "code": "CAPS-IT-GR11-T2-SOCIALIMPL",
+      "description": "Effects of digitalisation, how to protect your online identity.",
+      "metadata": {
+        "weekNumbers": [
+          10
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Effects of digitalisation",
+          "How to protect your online identity"
+        ],
+        "notionalHours": 2,
+        "cognitiveWeighting": null
+      },
+      "order": 6
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-IT-GR11",
+      "title": "Term 3",
+      "code": "CAPS-IT-GR11-T3",
+      "description": "Information Technology Grade 11 Term 3 covering Solution Development (procedures, functions, database programming), Data and Information Management, Social Implications and PAT.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 44,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR11-T3",
+      "title": "Solution Development - Procedures and Functions",
+      "code": "CAPS-IT-GR11-T3-PROCFUNC",
+      "description": "Review user-defined methods, procedures and functions structure, calling statements and method signatures, arguments vs parameters, value parameters, input validation using code constructs.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Review user-defined methods with and without parameter passing",
+          "Procedures and functions: Structure, calling statement and method signature",
+          "Arguments vs parameters",
+          "Value parameters only",
+          "Using methods in problems",
+          "Basic input validation techniques",
+          "Input validation using code constructs"
+        ],
+        "notionalHours": 8,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR11-T3",
+      "title": "Data and Information Management - Database",
+      "code": "CAPS-IT-GR11-T3-DATABASE",
+      "description": "Creating simple databases, designing tables, maintaining data (insert, add, import, delete, edit), processing, sorting, querying databases, setting up relationships between tables.",
+      "metadata": {
+        "weekNumbers": [
+          3,
+          10
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Create a simple database without relationships",
+          "Design the table(s)",
+          "Maintain data: insert, add, import, delete, edit",
+          "Process, sort, query (generating information from a database)",
+          "Set up relationships between tables",
+          "Create a query to extract information from a database using a relationship on a maximum of two tables with multiple criteria"
+        ],
+        "notionalHours": 8,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR11-T3",
+      "title": "Social Implications",
+      "code": "CAPS-IT-GR11-T3-SOCIALIMPL",
+      "description": "Effects of computer and human error, effects of cybercrime.",
+      "metadata": {
+        "weekNumbers": [
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Discuss the effect of computer and human error",
+          "Discuss the effect of cybercrime"
+        ],
+        "notionalHours": 4,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR11-T3",
+      "title": "Solution Development - Database Programming",
+      "code": "CAPS-IT-GR11-T3-DBPROG",
+      "description": "Using good programming principles, accessing a database through programming language constructs, connecting to a database, multi-form GUI development, database transactions, navigating and modifying datasets, applying algorithms as part of solutions.",
+      "metadata": {
+        "weekNumbers": [
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Using good programming principles and algorithms",
+          "Accessing a database through programming language constructs",
+          "Set up a connection or connect to a database (single table) by providing path in code statements",
+          "Develop a multi-form, multi-screen GUI incorporating simple controls",
+          "Use programming language constructs in the execution of various simple database transactions",
+          "Access fields and records within a dataset with code constructs and applicable methods",
+          "Navigate the records of a dataset",
+          "Modify individual fields and records within a dataset with code constructs and applicable methods",
+          "Manipulate a dataset object and records with code constructs and apply all changes",
+          "Reinforce concepts such as iteration and conditions",
+          "Apply simple parameter passing and return values using class methods",
+          "Design and develop solutions for specific problems",
+          "Apply generic algorithms as part of the solution",
+          "Incorporate database transactions managed by methods or events",
+          "Devise a specific algorithm where applicable",
+          "Motivate the use of a specific algorithm",
+          "Reinforce problem-solving steps",
+          "Reinforce software engineering principles"
+        ],
+        "notionalHours": 24,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-IT-GR11",
+      "title": "Term 4",
+      "code": "CAPS-IT-GR11-T4",
+      "description": "Information Technology Grade 11 Term 4 covering Internet and WWW, Internet Services, Social Implications, Revision and Final Examination.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 20,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR11-T4",
+      "title": "Internet and WWW",
+      "code": "CAPS-IT-GR11-T4-INTERNET",
+      "description": "Evolution of the Internet, software and applications, big data concepts, overview of multimedia as part of Internet technologies.",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Overview of the evolution of the Internet",
+          "Software and applications (definition)",
+          "Big data concepts",
+          "Overview of multimedia as part of Internet technologies",
+          "Media"
+        ],
+        "notionalHours": 4,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR11-T4",
+      "title": "Internet Services",
+      "code": "CAPS-IT-GR11-T4-INTERNETSVCS",
+      "description": "Overview of internet services technologies, types of websites, supporting technologies and security services, internet-related careers.",
+      "metadata": {
+        "weekNumbers": [
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Overview of internet services technologies",
+          "Types of websites (what they offer)",
+          "Overview of supporting technologies: Security services (purpose, advantages, and limitations)",
+          "Internet-related careers"
+        ],
+        "notionalHours": 4,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR11-T4",
+      "title": "Social Implications",
+      "code": "CAPS-IT-GR11-T4-SOCIALIMPL",
+      "description": "Social issues applicable to term 4 content, social implications of big data, globalisation and fourth industrial revolution (4IR).",
+      "metadata": {
+        "weekNumbers": [
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Social issues applicable to term 4 content",
+          "Discuss the social implications of big data",
+          "Describe the influences of globalisation and fourth industrial revolution (4IR)"
+        ],
+        "notionalHours": 4,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-IT-GR11-T4",
+      "title": "Revision and PAT Completion",
+      "code": "CAPS-IT-GR11-T4-REVISION",
+      "description": "Content using case studies covering all topics, PAT completion including coding, testing and data validation, documentation, finalisation.",
+      "metadata": {
+        "weekNumbers": [
+          4,
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Content using case studies - all topics",
+          "PAT: Coding",
+          "PAT: Testing and data validation",
+          "PAT: Documentation",
+          "PAT: Finalisation"
+        ],
+        "notionalHours": 8,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    }
+  ]
+}

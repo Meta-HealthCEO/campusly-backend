@@ -1,0 +1,561 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "FET Phase",
+      "code": "CAPS-FET",
+      "description": "Further Education and Training Phase (Grades 10-12)",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 11",
+      "code": "CAPS-GR11",
+      "description": "",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 11
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR11",
+      "title": "History",
+      "code": "CAPS-HISTORY-GR11",
+      "description": "History — Grade 11 — CAPS Curriculum",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-HISTORY-GR11",
+      "title": "Term 1",
+      "code": "CAPS-HISTORY-GR11-T1",
+      "description": "Communism in Russia 1900–1940, Capitalism in USA 1900–1940, Research project planning",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-HISTORY-GR11-T1",
+      "title": "Topic 1: Communism in Russia 1900–1940",
+      "code": "CAPS-HISTORY-GR11-T1-COMRUS",
+      "description": "The development of communism in Russia from the 1917 revolutions through Lenin's consolidation of power, the NEP, and Stalin's policies including collectivisation, industrialisation, political terror and the coming of World War 2.",
+      "metadata": {
+        "weekNumbers": [
+          2,
+          3,
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR11-T1-COMRUS",
+      "title": "Introduction to Communism and the 1917 Revolutions",
+      "code": "CAPS-HISTORY-GR11-T1-COMRUS-01",
+      "description": "What is Communism? The writings of Karl Marx (background only); the February and October 1917 revolutions (for concept and background).",
+      "metadata": {
+        "weekNumbers": [
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR11-T1-COMRUS",
+      "title": "Lenin's Consolidation of Power",
+      "code": "CAPS-HISTORY-GR11-T1-COMRUS-02",
+      "description": "The Civil War and war communism (in detail); Lenin seizes control (in detail); Marxism–Leninism and the NEP (in detail); death of Lenin and the power struggle (background). [Source-based focus]",
+      "metadata": {
+        "weekNumbers": [
+          2,
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR11-T1-COMRUS",
+      "title": "Stalin's Policies and their Impact",
+      "code": "CAPS-HISTORY-GR11-T1-COMRUS-03",
+      "description": "Stalin's interpretation of Marxism-Leninism (in detail): collectivisation and industrialisation; the effect of Stalin's policies on the Soviet people; women under Stalin; political terror and purges; the coming of World War 2 (background). [Essay focus]",
+      "metadata": {
+        "weekNumbers": [
+          3,
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-HISTORY-GR11-T1",
+      "title": "Topic 2: Capitalism in USA 1900–1940",
+      "code": "CAPS-HISTORY-GR11-T1-CAPUSA",
+      "description": "The capitalist boom of the 1920s, the Wall Street Crash of 1929, the New Deal under FDR, and the impact of and responses to the crisis of capitalism.",
+      "metadata": {
+        "weekNumbers": [
+          5,
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR11-T1-CAPUSA",
+      "title": "The Wall Street Crash and the Great Depression",
+      "code": "CAPS-HISTORY-GR11-T1-CAPUSA-01",
+      "description": "The American dream of individual possibilities (background); the capitalist boom of the 1920s (background); the Wall Street Crash of 1929 (in detail). [Source-based focus]",
+      "metadata": {
+        "weekNumbers": [
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR11-T1-CAPUSA",
+      "title": "The New Deal and Responses to the Crisis of Capitalism",
+      "code": "CAPS-HISTORY-GR11-T1-CAPUSA-02",
+      "description": "Election of FDR and the New Deal (in detail); analysis of the New Deal (in detail); assessment of the New Deal (background); outbreak of World War 2 (background); impact of and responses to the crisis of capitalism (in detail). [Essay focus]",
+      "metadata": {
+        "weekNumbers": [
+          5,
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-HISTORY-GR11-T1",
+      "title": "Research Project Planning",
+      "code": "CAPS-HISTORY-GR11-T1-RESEARCH",
+      "description": "Planning and launching the research investigation: research topic given to learners; understanding the key question; criteria for assessment; learner's research plan; monitoring by teacher; formulation of research questions; undertaking interviews; presentation of findings in essay form; self-reflection and recommendations.",
+      "metadata": {
+        "weekNumbers": [
+          7,
+          8
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-HISTORY-GR11",
+      "title": "Term 2",
+      "code": "CAPS-HISTORY-GR11-T2",
+      "description": "Ideas of Race, Nationalisms (four case studies), Research task submission, Mid-year examination",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-HISTORY-GR11-T2",
+      "title": "Topic 3: Ideas of Race",
+      "code": "CAPS-HISTORY-GR11-T2-IDRACE",
+      "description": "Understanding the concept of racism to contextualise Apartheid. Theories and practice of race in the 19th century, eugenics, modern understanding of race (human genome project), and practices of race and eugenics in the USA, Australia, Namibia and South Africa.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR11-T2-IDRACE",
+      "title": "Case Study: Australia and Indigenous Australians",
+      "code": "CAPS-HISTORY-GR11-T2-IDRACE-01",
+      "description": "Colonisation of Australia; race theories in Australia in the early 20th century: debates around 'racial suicide' and 'racial decay'; white immigration policies and children from Britain sent to Australia after World War 2; the stolen generation. [Source-based and essay]",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR11-T2-IDRACE",
+      "title": "Case Study: Nazi Germany and the Holocaust",
+      "code": "CAPS-HISTORY-GR11-T2-IDRACE-02",
+      "description": "Hitler's consolidation of power from 1933; Nazi racial ideology; the creation of a racial state in Germany; groups targeted by the Nazis; choices that people made. [Source-based and essay]",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-HISTORY-GR11-T2",
+      "title": "Topic 4: Nationalisms",
+      "code": "CAPS-HISTORY-GR11-T2-NATION",
+      "description": "Understanding nationalism: origins, initiation of nationalist movements (Italy and Germany), theory of nationalism as an imagined community. Provinces choose any two of four case studies.",
+      "metadata": {
+        "weekNumbers": [
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR11-T2-NATION",
+      "title": "Case Study 1: The Rise of African Nationalism",
+      "code": "CAPS-HISTORY-GR11-T2-NATION-01",
+      "description": "Establishment of the APO; formation of the SANNC (ANC) and call to unite African people due to the Union of SA and the Land Act; the role of professionals and traditional leaders; influence of World War 2, the Atlantic Charter and AB Xuma's African Claims, and returning soldiers; different types of African nationalism and the split of the ANC and the PAC. [Source-based and essay]",
+      "metadata": {
+        "weekNumbers": [
+          3,
+          4,
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR11-T2-NATION",
+      "title": "Case Study 2: Afrikaner Nationalism",
+      "code": "CAPS-HISTORY-GR11-T2-NATION-02",
+      "description": "Reasons for the rise of Afrikaner nationalism; the Afrikaans language movement, social and cultural movements; FAK, Broederbond, media and programme of economic affirmative action in the 1920s and 1930s; definition of the Volk, its relation to class and race issues in education, labour and religion; nationalism in power – towards Apartheid. [Source-based and essay]",
+      "metadata": {
+        "weekNumbers": [
+          4,
+          5,
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR11-T2-NATION",
+      "title": "Case Study 3: The Middle East",
+      "code": "CAPS-HISTORY-GR11-T2-NATION-03",
+      "description": "Origins of Arab and Jewish nationalism (Zionism); the Balfour Declaration; establishment of the state of Israel and the 1948 War; Palestinian and Israeli perspectives on the 1948 War; broader Arab nationalism; the question of Palestine; the Arab-Israeli conflict: refugees, Six-Day War 1967, Yom Kippur War 1973, occupation of the West Bank, Intifada and suppression. [Source-based and essay]",
+      "metadata": {
+        "weekNumbers": [
+          6,
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR11-T2-NATION",
+      "title": "Case Study 4: From 'Gold Coast' to Ghana",
+      "code": "CAPS-HISTORY-GR11-T2-NATION-04",
+      "description": "Early nationalism, resistance tactics and trade unionism in Ghana; the influence of World War 2 on nationalism; mass-based movements after World War 2; Kwame Nkrumah, Pan-Africanism and African Socialism; the Convention People's Party and independence; Ghana's beginning as an independent nation. [Source-based and essay]",
+      "metadata": {
+        "weekNumbers": [
+          7,
+          8
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-HISTORY-GR11",
+      "title": "Term 3",
+      "code": "CAPS-HISTORY-GR11-T3",
+      "description": "Apartheid South Africa – how unique was Apartheid?",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-HISTORY-GR11-T3",
+      "title": "Topic 5: Apartheid South Africa – How Unique was Apartheid?",
+      "code": "CAPS-HISTORY-GR11-T3-APART",
+      "description": "Global pervasiveness of racism and segregation in the 1920s and 1930s; segregation after the formation of the Union of SA; how segregation laid the foundation of Apartheid; the National Party victory of 1948; legalising Apartheid.",
+      "metadata": {
+        "weekNumbers": [
+          2,
+          3,
+          4,
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR11-T3-APART",
+      "title": "Segregation in South Africa in the 1920s and 1930s and the NP Victory of 1948",
+      "code": "CAPS-HISTORY-GR11-T3-APART-01",
+      "description": "Global pervasiveness of racism and segregation in the 1920s and 1930s; segregation after the formation of the Union of SA; how did segregation lay the foundation of Apartheid?; challenges experienced by Indians; coloured resistance; black resistance; the National Party victory of 1948. [Source-based focus]",
+      "metadata": {
+        "weekNumbers": [
+          2,
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR11-T3-APART",
+      "title": "Legalising Apartheid",
+      "code": "CAPS-HISTORY-GR11-T3-APART-02",
+      "description": "What was Apartheid? How did Apartheid differ from segregation? Why did the NP adopt a policy of Apartheid? Creation of the Apartheid state; laws against multiracial labour; banning of the CPSA. [Source-based and essay]",
+      "metadata": {
+        "weekNumbers": [
+          4,
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-HISTORY-GR11",
+      "title": "Term 4",
+      "code": "CAPS-HISTORY-GR11-T4",
+      "description": "Overcoming (resistance to) Apartheid, revision and final examination",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-HISTORY-GR11-T4",
+      "title": "Topic 5 (continued): Overcoming (Resistance to) Apartheid",
+      "code": "CAPS-HISTORY-GR11-T4-OVERCOME",
+      "description": "Programme of Action; mass mobilisation; alliances; the Apartheid state's response to resistance (repression); the Sharpeville massacre and its impact; the Rivonia Trial and its consequences.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR11-T4-OVERCOME",
+      "title": "Resistance to Apartheid: Mass Mobilisation and Alliances",
+      "code": "CAPS-HISTORY-GR11-T4-OVERCOME-01",
+      "description": "Programme of Action; mass mobilisation; alliances; the Apartheid state's response to resistance (repression). [Source-based focus]",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-HISTORY-GR11-T4-OVERCOME",
+      "title": "Sharpeville Massacre and Rivonia Trial",
+      "code": "CAPS-HISTORY-GR11-T4-OVERCOME-02",
+      "description": "The Sharpeville massacre and its impact; the Rivonia Trial and its consequences; Apartheid state's escalating repression.",
+      "metadata": {
+        "weekNumbers": [
+          2,
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    }
+  ]
+}

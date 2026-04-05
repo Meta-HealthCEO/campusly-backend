@@ -1,0 +1,450 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "FET Phase",
+      "code": "CAPS-FET",
+      "description": "Further Education and Training Phase covering Grades 10 to 12 under the Curriculum and Assessment Policy Statement.",
+      "metadata": { "weekNumbers": [], "capsReference": "CAPS FET", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 12",
+      "code": "CAPS-GR12",
+      "description": "Grade 12 Accounting — FET Phase.",
+      "metadata": { "weekNumbers": [], "capsReference": "CAPS FET Grade 12", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR12",
+      "title": "Accounting",
+      "code": "CAPS-ACCOUNTING-GR12",
+      "description": "Accounting for Grade 12 covering companies, inventory valuation, fixed assets, cost accounting, reconciliations, VAT, and budgeting.",
+      "metadata": { "weekNumbers": [], "capsReference": "CAPS FET Accounting Grade 12", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-ACCOUNTING-GR12",
+      "title": "Term 1",
+      "code": "CAPS-ACCOUNTING-GR12-T1",
+      "description": "Term 1 covers companies: unique transactions, final accounts and financial statements, and analysis and interpretation of company financial statements.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "CAPS FET Accounting Grade 12 Term 1", "assessmentStandards": ["Task 1: Written Report (50 marks)", "Task 2: Control Test 1 (100 marks, 1.5 hours)"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T1",
+      "title": "Companies: Unique Transactions",
+      "code": "CAPS-ACCOUNTING-GR12-T1-COMPANIES",
+      "description": "Define and explain accounting concepts unique to companies. Define/explain IFRS and GAAP principles. Accounting cycle for a company. Company-specific transactions.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "CAPS FET Accounting Grade 12 Term 1 Weeks 1-2", "assessmentStandards": ["Task 1: Written Report (50 marks)"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T1-COMPANIES",
+      "title": "Company Concepts",
+      "code": "CAPS-ACCOUNTING-GR12-T1-COMPANIES-01",
+      "description": "Define and explain accounting concepts unique to companies: public and private companies, Companies Act 71 of 2008, Registrar of companies/CIPRO, registration certificate, MOI, income tax/provisional income tax, dividends, shares, earnings, shareholders, limited liability, separation of ownership from control. Directors, auditors, retained income, authorised and issued share capital, JSE.",
+      "metadata": { "weekNumbers": [1], "capsReference": "Companies Act 71 of 2008", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T1-COMPANIES",
+      "title": "IFRS, GAAP and Accounting Cycle",
+      "code": "CAPS-ACCOUNTING-GR12-T1-COMPANIES-02",
+      "description": "Define/explain International Financial Reporting Standards (IFRS) and Generally Accepted Accounting Practice (GAAP), and their application. Define/explain specific GAAP principles: historical cost, prudence, materiality, business entity rule, going concern, matching. Accounting cycle for a company: journals, ledger accounts, trial balance.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T1-COMPANIES",
+      "title": "Company-Specific Transactions",
+      "code": "CAPS-ACCOUNTING-GR12-T1-COMPANIES-03",
+      "description": "Transactions include: issuing of shares at issue price (no par value and share premium), buying back of shares, loans and interest (interest on mortgage loan is capitalised), income tax, dividends, directors fees, audit fees.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T1",
+      "title": "Companies: Final Accounts and Financial Statements",
+      "code": "CAPS-ACCOUNTING-GR12-T1-COMPANYFINST",
+      "description": "Prepare final accounts and detailed financial statements of a company taking into account year-end adjustments. Includes income statement, balance sheet and cash flow statement.",
+      "metadata": { "weekNumbers": [3,4,5,6,7], "capsReference": "CAPS FET Accounting Grade 12 Term 1 Weeks 3-7", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T1-COMPANYFINST",
+      "title": "Year-End Adjustments (Companies)",
+      "code": "CAPS-ACCOUNTING-GR12-T1-COMPANYFINST-01",
+      "description": "Year-end adjustments: trading stock deficit/surplus, consumable stores on hand, depreciation (on cost and diminishing balance), bad debts, bad debts recovered (incl. insolvent estate), correction of errors/omissions, accrued income (receivable), income received in advance (deferred), prepaid expenses, accrued expenses (payable), provision for bad debts, adjustments related to income tax, adjustments related to the payment and declaration of dividends.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T1-COMPANYFINST",
+      "title": "Final Accounts",
+      "code": "CAPS-ACCOUNTING-GR12-T1-COMPANYFINST-02",
+      "description": "Trading account, profit and loss account, appropriation account. Reversal of certain adjustments (accruals, income received in advance and prepaid expenses). Analysis and indication of the effect of transactions on the accounting equation of a company.",
+      "metadata": { "weekNumbers": [4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T1-COMPANYFINST",
+      "title": "Financial Statements and Notes",
+      "code": "CAPS-ACCOUNTING-GR12-T1-COMPANYFINST-03",
+      "description": "Income statement (statement of comprehensive income), balance sheet (statement of financial position), cash flow statement. Integration of reporting and control of fixed assets, ethical considerations, internal auditing and control relating to companies, roles of shareholders and directors, manipulation of share prices, corporate governance.",
+      "metadata": { "weekNumbers": [5,6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T1",
+      "title": "Companies: Analysis and Interpretation of Financial Statements",
+      "code": "CAPS-ACCOUNTING-GR12-T1-COMPANYANALYSIS",
+      "description": "Analysis and interpretation of income statement, balance sheet and notes. Revise financial indicators from Grades 10 and 11. Introduce company-specific financial indicators.",
+      "metadata": { "weekNumbers": [8,9,10], "capsReference": "CAPS FET Accounting Grade 12 Term 1 Weeks 8-10", "assessmentStandards": ["Task 2: Control Test 1 (100 marks, 1.5 hours) Week 11"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T1-COMPANYANALYSIS",
+      "title": "Revised Financial Indicators",
+      "code": "CAPS-ACCOUNTING-GR12-T1-COMPANYANALYSIS-01",
+      "description": "Revise: gross profit on sales, gross profit on cost of sales, net profit on sales, operating expenses on sales, operating profit on sales. Current ratio, acid test ratio, stock turnover rate, stock holding period, average debtors collection period, average creditors payment period, solvency ratio, debt-equity ratio.",
+      "metadata": { "weekNumbers": [8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T1-COMPANYANALYSIS",
+      "title": "Company-Specific Financial Indicators",
+      "code": "CAPS-ACCOUNTING-GR12-T1-COMPANYANALYSIS-02",
+      "description": "Introduce and cover: return on shareholders equity (ROSHE), return on total capital employed (ROTCE), net asset value per share (NAV), dividends per share (DPS), earnings per share (EPS), dividend payout rate.",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T1-COMPANYANALYSIS",
+      "title": "Published Financial Statements and Annual Reports",
+      "code": "CAPS-ACCOUNTING-GR12-T1-COMPANYANALYSIS-03",
+      "description": "Analysis of published financial statements and annual reports consisting of: directors report, independent auditors report, abridged income statement, balance sheet, cash flow statement, together with additional information relating to governance and the company's activities.",
+      "metadata": { "weekNumbers": [9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-ACCOUNTING-GR12",
+      "title": "Term 2",
+      "code": "CAPS-ACCOUNTING-GR12-T2",
+      "description": "Term 2 covers inventory valuation, fixed assets and internal control, cost accounting for manufacturing, reconciliations, and the controlled test/June examination.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "CAPS FET Accounting Grade 12 Term 2", "assessmentStandards": ["Task 3: Research Project (100 marks) Published financial statements and external audit reports", "Task 4: Controlled Test (150 marks, 2 hours) or June Examination (300 marks, 2 papers of 150 marks each)"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T2",
+      "title": "Inventory Valuation",
+      "code": "CAPS-ACCOUNTING-GR12-T2-INVVAL",
+      "description": "Validation, valuation and calculation of inventories of businesses using perpetual and periodic inventory systems. Methods: specific identification, first in first out (FIFO), weighted average. Integration of GAAP principles, ethical issues, internal audit and control processes relating to inventories.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "CAPS FET Accounting Grade 12 Term 2 Weeks 1-2", "assessmentStandards": ["Task 3: Research Project (100 marks)"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T2-INVVAL",
+      "title": "Inventory Valuation Methods",
+      "code": "CAPS-ACCOUNTING-GR12-T2-INVVAL-01",
+      "description": "Validation, valuation and calculation of inventories using the perpetual and periodic inventory systems. Methods: specific identification (of cost price per unit), first in first out (FIFO), weighted average.",
+      "metadata": { "weekNumbers": [1], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T2-INVVAL",
+      "title": "GAAP, Ethics and Internal Audit (Inventory)",
+      "code": "CAPS-ACCOUNTING-GR12-T2-INVVAL-02",
+      "description": "Integration of GAAP principles and ethical issues. Application of internal audit and control processes relating to inventories.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T2",
+      "title": "Fixed Assets and Internal Control",
+      "code": "CAPS-ACCOUNTING-GR12-T2-FIXEDASSETS",
+      "description": "Interpretation and reporting on movement of assets. Application of internal control and internal audit processes. Understand the difference between roles of internal and external auditors.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "CAPS FET Accounting Grade 12 Term 2 Weeks 3-4", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T2-FIXEDASSETS",
+      "title": "Asset Movement and Reporting",
+      "code": "CAPS-ACCOUNTING-GR12-T2-FIXEDASSETS-01",
+      "description": "Interpretation and reporting on movement of assets: age of assets, replacement rate, lifespan of assets. Integrate GAAP principles and ethical issues.",
+      "metadata": { "weekNumbers": [3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T2-FIXEDASSETS",
+      "title": "Internal Control and Internal Audit",
+      "code": "CAPS-ACCOUNTING-GR12-T2-FIXEDASSETS-02",
+      "description": "Application of internal control and internal audit processes: means of gathering audit evidence, basis for gathering audit samples, basic sampling techniques, internal audit reports, accountable management of resources. Understand the difference between roles of internal and external auditors. Integration of internal control and auditing.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T2",
+      "title": "Cost Accounting (Manufacturing)",
+      "code": "CAPS-ACCOUNTING-GR12-T2-COSTACC",
+      "description": "Definition and explanation of accounting concepts unique to a manufacturing business. Preparation, presentation, analysis, interpretation and reporting on cost information for manufacturing businesses.",
+      "metadata": { "weekNumbers": [5,6,7], "capsReference": "CAPS FET Accounting Grade 12 Term 2 Weeks 5-7", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T2-COSTACC",
+      "title": "Production Cost Statement",
+      "code": "CAPS-ACCOUNTING-GR12-T2-COSTACC-01",
+      "description": "Preparation of a production cost statement with notes for manufacturing costs. An abridged income statement with notes for administration cost and selling and distribution cost.",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T2-COSTACC",
+      "title": "Cost Calculations and Breakeven",
+      "code": "CAPS-ACCOUNTING-GR12-T2-COSTACC-02",
+      "description": "Calculations of: gross profit on finished goods sold, variable and fixed costs, cost of a product using variable and fixed costs, cost per unit, breakeven point, total cost of production.",
+      "metadata": { "weekNumbers": [6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T2-COSTACC",
+      "title": "Ethics and Internal Control (Manufacturing)",
+      "code": "CAPS-ACCOUNTING-GR12-T2-COSTACC-03",
+      "description": "Integration of ethical issues relating to manufacturing: product quality, product age, raw materials, support for local products, price fixing, theft, fraud, etc. Integration of internal audit and control processes relating to manufacturing.",
+      "metadata": { "weekNumbers": [6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T2",
+      "title": "Reconciliations",
+      "code": "CAPS-ACCOUNTING-GR12-T2-RECON",
+      "description": "Analysis and interpretation of bank, debtors and creditors reconciliations. Analyse and interpret debtors age analysis. Analyse and interpret bank statements and bank reconciliation statements.",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "CAPS FET Accounting Grade 12 Term 2 Weeks 8-9", "assessmentStandards": ["Task 4: Controlled Test or June Examination Week 10-11"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T2-RECON",
+      "title": "Creditors Reconciliation",
+      "code": "CAPS-ACCOUNTING-GR12-T2-RECON-01",
+      "description": "Reconcile creditors statements with creditors ledger accounts. Reconcile creditors lists with control accounts.",
+      "metadata": { "weekNumbers": [8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T2-RECON",
+      "title": "Debtors Reconciliation and Age Analysis",
+      "code": "CAPS-ACCOUNTING-GR12-T2-RECON-02",
+      "description": "Reconcile debtors lists with control accounts. Analyse and interpret debtors age analysis.",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T2-RECON",
+      "title": "Bank Reconciliation",
+      "code": "CAPS-ACCOUNTING-GR12-T2-RECON-03",
+      "description": "Analyse and interpret bank statements and bank reconciliation statements. Integration of ethical, internal audit and control issues relating to cash, debtors and creditors, e.g., payment periods, interest, credit rating, fraud, etc.",
+      "metadata": { "weekNumbers": [9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-ACCOUNTING-GR12",
+      "title": "Term 3",
+      "code": "CAPS-ACCOUNTING-GR12-T3",
+      "description": "Term 3 covers VAT (Grade 12 level), budgeting and projected financial statements, revision, and the trial examination.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "CAPS FET Accounting Grade 12 Term 3", "assessmentStandards": ["Task 5: Case Study (50 marks) Budgeting or any Term 3 topic", "Task 6: Trial Exam (300 marks, 2 papers of 150 marks each, 2 hours each)"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T3",
+      "title": "Value Added Tax (VAT)",
+      "code": "CAPS-ACCOUNTING-GR12-T3-VAT",
+      "description": "VAT calculations (Grade 11 revision). Calculate the amount payable to or receivable from SARS. Completion of the VAT control ledger account as an additional method to calculate the amount payable or receivable.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "CAPS FET Accounting Grade 12 Term 3 Weeks 1-2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T3-VAT",
+      "title": "VAT Calculations and SARS Payment",
+      "code": "CAPS-ACCOUNTING-GR12-T3-VAT-01",
+      "description": "VAT calculations (Grade 11 content revision). Calculate the amount payable to or receivable from SARS (SA Revenue Services).",
+      "metadata": { "weekNumbers": [1], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T3-VAT",
+      "title": "VAT Control Ledger Account",
+      "code": "CAPS-ACCOUNTING-GR12-T3-VAT-02",
+      "description": "Completion of the VAT control ledger account as an additional method to calculate the amount payable or receivable. Integration of ethical issues, internal audit and control processes.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T3",
+      "title": "Budgeting",
+      "code": "CAPS-ACCOUNTING-GR12-T3-BUDGET",
+      "description": "Prepare and present a projected income statement with projected revenue and expenditure. Analyse, interpret and compare projected income statements and cash budgets for sole traders or companies. Integration of ethical issues and internal audit and control processes relating to budget and projections.",
+      "metadata": { "weekNumbers": [3,4,5,6], "capsReference": "CAPS FET Accounting Grade 12 Term 3 Weeks 3-6", "assessmentStandards": ["Task 5: Case Study (50 marks) Week 4-5"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T3-BUDGET",
+      "title": "Projected Income Statement",
+      "code": "CAPS-ACCOUNTING-GR12-T3-BUDGET-01",
+      "description": "Prepare and present a projected income statement (statement of comprehensive income) with projected revenue and expenditure (Grade 11 content). Emphasise differences between a projected income statement and cash budgets. Analysis, interpretation and comparison of projected income statements for sole traders or companies. Projected income statement depicting sales, cost of sales, expenses, income, profits.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T3-BUDGET",
+      "title": "Cash Budget",
+      "code": "CAPS-ACCOUNTING-GR12-T3-BUDGET-02",
+      "description": "Analysis, interpretation and comparison of cash budgets for sole traders or companies. Cash budgets indicating receipts, payments, debtors collection, creditors payment, cash balances. Integration of ethical issues relating to budgeting and projections.",
+      "metadata": { "weekNumbers": [4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T3-BUDGET",
+      "title": "Budget vs Actual and Internal Audit",
+      "code": "CAPS-ACCOUNTING-GR12-T3-BUDGET-03",
+      "description": "Integration of internal audit and control processes relating to budget and projections by comparing budgeted to actual figures. Use budgets as planning/forecasting tools in businesses.",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T3",
+      "title": "Revision and Trial Examination",
+      "code": "CAPS-ACCOUNTING-GR12-T3-REVISION",
+      "description": "Revision of all Grade 12 topics and prior knowledge from Grades 10 and 11 applicable to Grade 12 content. Trial examination: two papers of 150 marks each (2 hours each).",
+      "metadata": { "weekNumbers": [7,8,9,10,11], "capsReference": "CAPS FET Accounting Grade 12 Term 3 Weeks 7-11", "assessmentStandards": ["Task 6: Trial Exam (300 marks, 2 papers of 150 marks each, 2 hours each)"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T3-REVISION",
+      "title": "Revision of All Grade 12 Topics",
+      "code": "CAPS-ACCOUNTING-GR12-T3-REVISION-01",
+      "description": "Revision of all topics covered in Grade 12 and prior knowledge from Grades 10 and 11 applicable to Grade 12 content.",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T3-REVISION",
+      "title": "Trial Examination",
+      "code": "CAPS-ACCOUNTING-GR12-T3-REVISION-02",
+      "description": "Trial Examination: Paper 1 (150 marks, 2 hours) — Discipline 1: Financial reporting and evaluation. Paper 2 (150 marks, 2 hours) — Discipline 2: Managerial accounting, internal auditing and control. Cognitive levels: 30% basic thinking (45 marks), 40% moderately high thinking (60 marks), 30% higher-order thinking (45 marks). 10-15% problem solving type questions. Levels of difficulty: 30% easy, 40% moderate, 30% difficult.",
+      "metadata": { "weekNumbers": [9,10,11], "capsReference": "2020 exam guidelines", "assessmentStandards": ["Paper 1: 150 marks, 2 hours", "Paper 2: 150 marks, 2 hours"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-ACCOUNTING-GR12",
+      "title": "Term 4",
+      "code": "CAPS-ACCOUNTING-GR12-T4",
+      "description": "Term 4 covers revision of all CAPS topics and the final NCS examination.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "CAPS FET Accounting Grade 12 Term 4", "assessmentStandards": ["Final NCS Exam: 2 papers of 150 marks each = 300 marks. Formula sheets will be provided."], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T4",
+      "title": "Revision of All CAPS Topics",
+      "code": "CAPS-ACCOUNTING-GR12-T4-REVISION",
+      "description": "Revision of all 2023/24 CAPS topics covered in Grade 12 across all four terms.",
+      "metadata": { "weekNumbers": [1,2,3], "capsReference": "CAPS FET Accounting Grade 12 Term 4 Weeks 1-3", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T4-REVISION",
+      "title": "Comprehensive Revision",
+      "code": "CAPS-ACCOUNTING-GR12-T4-REVISION-01",
+      "description": "Revision of all 2023/24 CAPS topics: companies, inventory valuation, fixed assets, cost accounting, reconciliations, VAT, budgeting, and all prior Grades 10 and 11 content applicable to Grade 12.",
+      "metadata": { "weekNumbers": [1,2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T4",
+      "title": "Final NCS Examination",
+      "code": "CAPS-ACCOUNTING-GR12-T4-FINALEXAM",
+      "description": "Final NCS Examination: two papers on different days. 150 marks each (2 hours each) = 300 marks total. Formula sheets will be provided.",
+      "metadata": { "weekNumbers": [4,5,6,7,8,9], "capsReference": "CAPS FET Accounting Grade 12 Term 4 Weeks 4-9", "assessmentStandards": ["Paper 1: 150 marks, 2 hours", "Paper 2: 150 marks, 2 hours"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T4-FINALEXAM",
+      "title": "Final NCS Exam: Paper 1 and Paper 2",
+      "code": "CAPS-ACCOUNTING-GR12-T4-FINALEXAM-01",
+      "description": "Final NCS Examination: Paper 1 (150 marks, 2 hours) — Discipline 1: Financial reporting and evaluation. Paper 2 (150 marks, 2 hours) — Discipline 2: Managerial accounting, internal auditing and control. Two papers written on different days. Formula sheets provided with each question paper.",
+      "metadata": { "weekNumbers": [4,5,6,7,8,9], "capsReference": "", "assessmentStandards": ["Paper 1: 150 marks, 2 hours", "Paper 2: 150 marks, 2 hours"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T4",
+      "title": "Planning for 2024/25",
+      "code": "CAPS-ACCOUNTING-GR12-T4-PLANNING",
+      "description": "Planning for the 2024/25 academic year.",
+      "metadata": { "weekNumbers": [10], "capsReference": "CAPS FET Accounting Grade 12 Term 4 Week 10", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR12-T4-PLANNING",
+      "title": "2024/25 Academic Year Planning",
+      "code": "CAPS-ACCOUNTING-GR12-T4-PLANNING-01",
+      "description": "Planning and preparation activities for the 2024/25 academic year.",
+      "metadata": { "weekNumbers": [10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    }
+  ]
+}

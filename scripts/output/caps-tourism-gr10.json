@@ -1,0 +1,436 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "FET Phase",
+      "code": "CAPS-FET",
+      "description": "Further Education and Training Phase (Grades 10-12)",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 10",
+      "code": "CAPS-GR10",
+      "description": "",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 10
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR10",
+      "title": "Tourism",
+      "code": "CAPS-TOURISM-GR10",
+      "description": "Tourism — Grade 10 — CAPS Curriculum",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-TOURISM-GR10",
+      "title": "Term 1",
+      "code": "CAPS-TOURISM-GR10-T1",
+      "description": "Tourism sectors and introduction to the South African tourism industry structure",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "p. 13-15",
+        "assessmentStandards": [
+          "Tourism skills assessment task",
+          "March controlled test"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR10-T1",
+      "title": "Introduction to Tourism",
+      "code": "CAPS-TOURISM-GR10-T1-INTRO",
+      "description": "Baseline assessment, Grade 10 Tourism content map, programme of assessment and PAT. What is tourism? Difference between inbound and outbound tourism. Concepts: domestic, regional and international tourism. What is a tourist? Why do people travel (reasons), their needs, preferences and expectations.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "p. 13",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR10-T1",
+      "title": "Types of Tourists and Tourist Profiles",
+      "code": "CAPS-TOURISM-GR10-T1-TOURISTTYPES",
+      "description": "Focus on types of tourists: VFR, leisure, adventure, business, shopping, health, eco, cultural, religion, sport and recreation, education, special interest tourists (SIT), incentive, backpacking, youth travel, gap year. Drawing up a tourist profile.",
+      "metadata": {
+        "weekNumbers": [
+          3
+        ],
+        "capsReference": "p. 13",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR10-T1",
+      "title": "Modes of Transport",
+      "code": "CAPS-TOURISM-GR10-T1-TRANSPORT",
+      "description": "Different modes of transport with relevant examples: Road (car, bus, coach, shuttle bus, metered taxi, minibus taxis, motor cycles), Air (aeroplanes, helicopters, microlights), Rail (trains, trams), Water (luxury cruise liners, chartered boats, yachts), Extraordinary (camels, donkey carts, hot air balloons, bicycles). Compare modes in terms of comfort, cost, safety, carrying capacity, speed, reliability. Advantages and disadvantages of each mode.",
+      "metadata": {
+        "weekNumbers": [
+          4
+        ],
+        "capsReference": "p. 13",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR10-T1",
+      "title": "Accommodation Establishments",
+      "code": "CAPS-TOURISM-GR10-T1-ACCOMMODATION",
+      "description": "Types: Formal service (hotels, lodges and game lodges), Guest accommodation (country houses, guest houses, B&Bs), Self-catering (chalets, houses, cottages, apartments), Caravan and camping, Backpacker accommodation and hostels. Facilities and services offered by each type. SA grading system (star grading overview). Concepts and terminology: double room, twin room, family room, suite, penthouse, per person, per person sharing, en suite, fully inclusive, single supplement, continental breakfast, English breakfast, buffet, à la carte, room service. Abbreviations: pp, pps, pppn, pppd. In-room technology for entertainment, information, safety, comfort, work and environmental responsibility. Role of TGCSA. Benefits of grading. Procedure and logos for grading.",
+      "metadata": {
+        "weekNumbers": [
+          5
+        ],
+        "capsReference": "p. 13",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR10-T1",
+      "title": "Food and Beverage Establishments and Attraction Sector",
+      "code": "CAPS-TOURISM-GR10-T1-FBATTRACTIONS",
+      "description": "Food and beverage concepts: full-service restaurants (fine-dining, family), coffee shops, fast food, quick-service, pubs, bars, dessert and ice-cream stores, taverns, shebeens, street stalls and markets. Attraction sector concepts: attractions, subsectors (gaming and lotteries, leisure, conservation, sport and recreation, events and conferences). Types: man-made and natural. Primary and secondary tourist attractions. Activities at tourist attractions. Linking attraction type to tourist type appeal.",
+      "metadata": {
+        "weekNumbers": [
+          6
+        ],
+        "capsReference": "p. 14",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR10-T1",
+      "title": "Structure of the South African Tourism Industry",
+      "code": "CAPS-TOURISM-GR10-T1-SAINDUSTRY",
+      "description": "Basic knowledge of the organogram. Tourism as a partnership between public sector, private sector and communities. Public sector (basic knowledge — one page fact sheet): Department of Tourism, other government departments, state-owned enterprises (parastatals), partly state-owned agencies, public entities. Private sector (basic knowledge — one page fact sheet): product owners, local communities, organisations and professional associations, international communities.",
+      "metadata": {
+        "weekNumbers": [
+          7,
+          8
+        ],
+        "capsReference": "p. 15",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 6
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-TOURISM-GR10",
+      "title": "Term 2",
+      "code": "CAPS-TOURISM-GR10-T2",
+      "description": "Map work and tour planning, domestic and regional tourism statistics and payment technology",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "p. 16-18",
+        "assessmentStandards": [
+          "PAT (marks carried over to Term 4)",
+          "Mid-year examination"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR10-T2",
+      "title": "Map Work: Terminology, Types and SA Map",
+      "code": "CAPS-TOURISM-GR10-T2-MAPWORK",
+      "description": "Map terminology and symbols: scale, direction, distance indicators, legends, grid references, equator, hemispheres, North/South pole, latitude, longitude, time zones, UTC, IDL. Different types of maps in a tourism context (with examples, explanations and uses). Electronic maps. Location on a colour map of South Africa: borders, provinces, capital cities, international airports, harbours, national highways, gateways, major mountains, rivers and dams. Location on a colour world map: South Africa and SADC countries, seven continents, three oceans, island groups.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3
+        ],
+        "capsReference": "p. 17",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR10-T2",
+      "title": "Distance Indicators and Payment Technology",
+      "code": "CAPS-TOURISM-GR10-T2-DISTPAYMENT",
+      "description": "Distance indicators on maps to determine travel distances. Distance tables to determine distances between towns and cities in your province. SA's major cities. Link between distance and time spent travelling. Technology used for payment: Internet payments, ATM payments, cell phone payments, speed point machines (fixed and portable), credit cards (Visa, MasterCard, American Express, Diners Club), debit cards (SA travel card). Advantages and disadvantages. Identifying and selecting the most appropriate payment form based on situation.",
+      "metadata": {
+        "weekNumbers": [
+          4,
+          5
+        ],
+        "capsReference": "p. 17",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR10-T2",
+      "title": "Domestic Tourism",
+      "code": "CAPS-TOURISM-GR10-T2-DOMESTIC",
+      "description": "Benefits of domestic tourism for South Africa (economy, people and environment). The Sho't Left campaign to promote domestic tourism. Domestic tourism statistics: concepts (statistics, intra-provincial vs inter-provincial travel). Interpretation of statistics: purpose of trips, most visited provinces, length of stay, average expenditure per tourist, seasonality, activities undertaken.",
+      "metadata": {
+        "weekNumbers": [
+          6,
+          7
+        ],
+        "capsReference": "p. 16, 18",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-TOURISM-GR10",
+      "title": "Term 3",
+      "code": "CAPS-TOURISM-GR10-T3",
+      "description": "Tourist attractions, sustainable and responsible tourism, and marketing",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "p. 19-20",
+        "assessmentStandards": [
+          "Data handling task",
+          "September controlled test"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR10-T3",
+      "title": "Tourist Attractions in South Africa",
+      "code": "CAPS-TOURISM-GR10-T3-ATTRACTIONS",
+      "description": "World Heritage sites. SA tourist information: climate, rainfall, capital cities, main languages, airports and harbours. Tourist attractions in provinces (own province plus any 2 others) under headings: location (proximity to nearest city or town) and short description (main focus and points of interest). South African fauna and flora as tourist attraction: concepts (biodiversity, environment, ecosystem, species, fauna and flora, wildlife, habitat, endangered, red data list, extinct, indigenous, alien, threatened, culling, poaching, legal hunting, mass tourism, over-consumption).",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "capsReference": "p. 19",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR10-T3",
+      "title": "Sustainable and Responsible Tourism",
+      "code": "CAPS-TOURISM-GR10-T3-SUSTAINABLE",
+      "description": "Sustainable tourism: concept, sustainable practices in tourism businesses. Three pillars (planet, people, profit): environmental impact on natural environment, social impact on local communities, economic impact on local communities. Responsible tourism: responsible tourist behaviour towards the environment, rules for tourist behaviour in the natural environment, good environmental practices (litter control, conservation of energy, water and scarce resources). Global warming and the tourism industry: concepts (global warming, carbon footprint), causes, consequences of climate change on tourism, how accommodation establishments can minimise their carbon footprint.",
+      "metadata": {
+        "weekNumbers": [
+          5,
+          6,
+          7
+        ],
+        "capsReference": "p. 20",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR10-T3",
+      "title": "Marketing of Tourism",
+      "code": "CAPS-TOURISM-GR10-T3-MARKETING",
+      "description": "Marketing of tourism products, services and sites. Concepts: marketing, market research, target markets, market share, competitive edge, core and niche markets. The purpose of marketing tourism products and services.",
+      "metadata": {
+        "weekNumbers": [
+          8
+        ],
+        "capsReference": "p. 20",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-TOURISM-GR10",
+      "title": "Term 4",
+      "code": "CAPS-TOURISM-GR10-T4",
+      "description": "Culture and heritage, communication technology and customer care",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "capsReference": "p. 21",
+        "assessmentStandards": [
+          "PAT",
+          "November examination"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR10-T4",
+      "title": "Culture and Heritage",
+      "code": "CAPS-TOURISM-GR10-T4-CULTURE",
+      "description": "Concepts: culture, heritage, cultural diversity. Elements of culture: arts and crafts, cuisine, music and dance. Importance and value of conserving heritage for future generations. Heritage sites in South Africa. Examples of heritage sites in own province.",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "p. 21",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR10-T4",
+      "title": "Communication Technology",
+      "code": "CAPS-TOURISM-GR10-T4-COMMTECH",
+      "description": "Types of equipment and technology used to communicate in a tourism business: landline telephones, cell phones, fax machine, photocopying machine, printers and computer (including email, video conferencing and teleconferencing). Functions, advantages and disadvantages of each. Written and verbal communication. Tourism road and information signs as communication in the tourism industry.",
+      "metadata": {
+        "weekNumbers": [
+          2,
+          3
+        ],
+        "capsReference": "p. 21",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR10-T4",
+      "title": "Service Excellence",
+      "code": "CAPS-TOURISM-GR10-T4-SERVICE",
+      "description": "Concepts: service, service excellence. Importance and value for a tourism business to provide quality service. Advantages of excellent service delivery for a business and for a tourist.",
+      "metadata": {
+        "weekNumbers": [
+          4
+        ],
+        "capsReference": "p. 21",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    }
+  ]
+}

@@ -1,0 +1,522 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "FET Phase",
+      "code": "CAPS-FET",
+      "description": "Further Education and Training Phase covering Grades 10 to 12 under the Curriculum and Assessment Policy Statement.",
+      "metadata": { "weekNumbers": [], "capsReference": "CAPS FET", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 10",
+      "code": "CAPS-GR10",
+      "description": "Grade 10 Accounting — FET Phase.",
+      "metadata": { "weekNumbers": [], "capsReference": "CAPS FET Grade 10", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR10",
+      "title": "Accounting",
+      "code": "CAPS-ACCOUNTING-GR10",
+      "description": "Accounting for Grade 10 covering bookkeeping of a sole trader, financial statements, cost accounting and budgeting.",
+      "metadata": { "weekNumbers": [], "capsReference": "CAPS FET Accounting Grade 10", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-ACCOUNTING-GR10",
+      "title": "Term 1",
+      "code": "CAPS-ACCOUNTING-GR10-T1",
+      "description": "Term 1 covers prior knowledge assessment, informal/indigenous bookkeeping, internal control, ethics, GAAP, and bookkeeping of a sole trader including cash and credit transactions.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "CAPS FET Accounting Grade 10 Term 1", "assessmentStandards": ["Task 1: Presentation (50 marks)", "Task 2: Control Test 1 (100 marks, 1.5 hours)"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T1",
+      "title": "Assess Prior Knowledge: Grade 8 & 9 / Informal and Indigenous Bookkeeping / Internal Control, Ethics, GAAP",
+      "code": "CAPS-ACCOUNTING-GR10-T1-PRIORKNOW",
+      "description": "Assessing work covered in Grades 8 and 9. Comparing informal vs formal sector bookkeeping. Internal control processes, code of ethics, and GAAP principles.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "CAPS FET Accounting Grade 10 Term 1 Weeks 1-2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T1-PRIORKNOW",
+      "title": "Prior Knowledge Assessment (Grades 8 & 9)",
+      "code": "CAPS-ACCOUNTING-GR10-T1-PRIORKNOW-01",
+      "description": "Assessing prior knowledge: concepts and basic bookkeeping from Grades 8 and 9. Capital, fixed assets, stock, cost price, labour cost, selling price, income, expenses, profit. Management of resources.",
+      "metadata": { "weekNumbers": [1], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T1-PRIORKNOW",
+      "title": "Informal and Indigenous Bookkeeping",
+      "code": "CAPS-ACCOUNTING-GR10-T1-PRIORKNOW-02",
+      "description": "Comparing bookkeeping systems of informal vs formal sectors. Relating current procedures with indigenous practices.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T1-PRIORKNOW",
+      "title": "Internal Control",
+      "code": "CAPS-ACCOUNTING-GR10-T1-PRIORKNOW-03",
+      "description": "Define and explain internal control. Identify and explain basic internal control processes: control environment, risk assessment, control activity, information system and communication, monitoring performance. Process of determining selling prices, cost of sales, labour costs, income and expenses.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T1-PRIORKNOW",
+      "title": "Code of Ethics",
+      "code": "CAPS-ACCOUNTING-GR10-T1-PRIORKNOW-04",
+      "description": "Explain code of ethics applicable to all parties in the financial environment.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T1-PRIORKNOW",
+      "title": "GAAP Principles",
+      "code": "CAPS-ACCOUNTING-GR10-T1-PRIORKNOW-05",
+      "description": "Basic GAAP principles: leadership, discipline, transparency, accountability, fairness, sustainability and responsible management. Define and explain: historical cost, prudence, materiality, business entity rule, going concern and matching.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T1-PRIORKNOW",
+      "title": "Accounting Concepts",
+      "code": "CAPS-ACCOUNTING-GR10-T1-PRIORKNOW-06",
+      "description": "Define and explain accounting concepts up to financial statements: sole trader, debit, credit, equity, capital, assets, liabilities, ledger, journal, profit, loss, income/revenue, expenses, discounts (allowed and received), final accounts, financial statements, accounting cycle, financial accounting, managerial accounting, perpetual inventory system.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T1",
+      "title": "Bookkeeping of a Sole Trader: Cash Transactions",
+      "code": "CAPS-ACCOUNTING-GR10-T1-CASHJRNLS",
+      "description": "Accounting cycle based on perpetual inventory system. Source documents, journals (CRJ, CPJ, PCJ), double entry system in the ledger, trial balance, accounting equation.",
+      "metadata": { "weekNumbers": [3,4,5], "capsReference": "CAPS FET Accounting Grade 10 Term 1 Weeks 3-5", "assessmentStandards": ["Task 1: Presentation (50 marks) Week 5-6"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T1-CASHJRNLS",
+      "title": "Source Documents and Journals (CRJ, CPJ, PCJ)",
+      "code": "CAPS-ACCOUNTING-GR10-T1-CASHJRNLS-01",
+      "description": "Collect used/blank source documents. Complete CRJ (Cash Receipts Journal), CPJ (Cash Payments Journal) and PCJ (Petty Cash Journal) using templates in the correct format. Note: payment method shifted from cheques to EFT in CPJ.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T1-CASHJRNLS",
+      "title": "General Ledger and Trial Balance",
+      "code": "CAPS-ACCOUNTING-GR10-T1-CASHJRNLS-02",
+      "description": "Post to relevant general ledger accounts (balance sheet accounts section and nominal accounts section). Draw up trial balance in the correct format.",
+      "metadata": { "weekNumbers": [3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T1-CASHJRNLS",
+      "title": "Accounting Equation (Cash Transactions)",
+      "code": "CAPS-ACCOUNTING-GR10-T1-CASHJRNLS-03",
+      "description": "Indicate the effect of various cash transactions on the accounting equation.",
+      "metadata": { "weekNumbers": [3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T1",
+      "title": "Bookkeeping of a Sole Trader: Credit Transactions",
+      "code": "CAPS-ACCOUNTING-GR10-T1-CREDITJRNLS",
+      "description": "Credit transactions: Debtors Journal (DJ), Debtors Allowances Journal (DAJ), Creditors Journal (CJ), Creditors Allowances Journal (CAJ). Posting to general, debtors and creditors ledgers. Trial balance and accounting equation.",
+      "metadata": { "weekNumbers": [6,7], "capsReference": "CAPS FET Accounting Grade 10 Term 1 Weeks 6-7", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T1-CREDITJRNLS",
+      "title": "Credit Journals (DJ, DAJ, CJ, CAJ)",
+      "code": "CAPS-ACCOUNTING-GR10-T1-CREDITJRNLS-01",
+      "description": "Assess bookkeeping concepts from Grade 8 & 9. Credit transactions: Debtors Journal, Creditors Journal, Debtors Allowances Journal, Creditors Allowances Journal.",
+      "metadata": { "weekNumbers": [6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T1-CREDITJRNLS",
+      "title": "Debtors and Creditors Ledgers",
+      "code": "CAPS-ACCOUNTING-GR10-T1-CREDITJRNLS-02",
+      "description": "Posting to general ledger, debtors ledger (DL) and creditors ledger (CL). Prepare the trial balance. Indicate the effect of transactions on the accounting equation of a sole trader.",
+      "metadata": { "weekNumbers": [6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T1",
+      "title": "Bookkeeping of a Sole Trader: Combined Cash and Credit Transactions",
+      "code": "CAPS-ACCOUNTING-GR10-T1-COMBINED",
+      "description": "Preparing all journals (CRJ, CPJ, DJ, DAJ, CJ, CAJ) from given information. Introduce Fictitious Journal (FJ) including bad debts, interest on overdue accounts, correction of errors. Posting to GL, DL and CL. Preparing trial balance. Analysing control accounts.",
+      "metadata": { "weekNumbers": [8,9,10], "capsReference": "CAPS FET Accounting Grade 10 Term 1 Weeks 8-10", "assessmentStandards": ["Task 2: Control Test 1 (100 marks, 1.5 hours) Week 11"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T1-COMBINED",
+      "title": "All Journals Combined",
+      "code": "CAPS-ACCOUNTING-GR10-T1-COMBINED-01",
+      "description": "Preparing all journals (CRJ, CPJ, DJ, DAJ, CJ, CAJ) from given information/activities. Introduce Fictitious Journal (FJ) including bad debts, interest on overdue accounts, corrections of errors.",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T1-COMBINED",
+      "title": "Posting to Ledgers and Trial Balance",
+      "code": "CAPS-ACCOUNTING-GR10-T1-COMBINED-02",
+      "description": "Posting to the General Ledger, Debtors Ledger and Creditors Ledger. Preparing trial balance. Analysing control accounts (debtors and creditors). Analysing transactions in terms of the accounting equation.",
+      "metadata": { "weekNumbers": [9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-ACCOUNTING-GR10",
+      "title": "Term 2",
+      "code": "CAPS-ACCOUNTING-GR10-T2",
+      "description": "Term 2 covers combined bookkeeping, debtors and creditors reconciliation, salaries and wages, and year-end accounting procedures including pre- and post-adjustment trial balance and final accounts.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "CAPS FET Accounting Grade 10 Term 2", "assessmentStandards": ["Task 3: Project (50 marks)", "Task 4: June Examination (300 marks, 2 papers of 150 marks each)"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T2",
+      "title": "Bookkeeping of a Sole Trader: Combined Cash and Credit Transactions",
+      "code": "CAPS-ACCOUNTING-GR10-T2-COMBINED",
+      "description": "Competency in dealing with combined activities including cash and credit transactions. Completing relevant journals, posting to subsidiary ledger and general ledger, extracting trial balance, effect on accounting equation. Relevant internal control and ethics integrated.",
+      "metadata": { "weekNumbers": [1,2,3], "capsReference": "CAPS FET Accounting Grade 10 Term 2 Weeks 1-3", "assessmentStandards": ["Task 3: Project (50 marks) Week 4-5"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T2-COMBINED",
+      "title": "Combined Journals and Ledger Posting",
+      "code": "CAPS-ACCOUNTING-GR10-T2-COMBINED-01",
+      "description": "Completing relevant journals from given information. Posting to subsidiary ledger and general ledger. Extracting trial balance in correct format.",
+      "metadata": { "weekNumbers": [1,2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T2-COMBINED",
+      "title": "Accounting Equation and Internal Control",
+      "code": "CAPS-ACCOUNTING-GR10-T2-COMBINED-02",
+      "description": "Indicate effect of transactions on accounting equation of a sole trader. Relevant internal control and ethics integrated: handling stock, debtors, creditors and cash. Identification of ethical scenarios (accountability and transparency).",
+      "metadata": { "weekNumbers": [1,2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T2",
+      "title": "Debtors and Creditors Reconciliation",
+      "code": "CAPS-ACCOUNTING-GR10-T2-RECON",
+      "description": "Analyse control accounts (debtors and creditors) and compare with list of debtors/creditors. Prepare debtors and creditors lists to reconcile with control accounts. Identify errors and omissions.",
+      "metadata": { "weekNumbers": [4,5], "capsReference": "CAPS FET Accounting Grade 10 Term 2 Weeks 4-5", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T2-RECON",
+      "title": "Debtors Reconciliation",
+      "code": "CAPS-ACCOUNTING-GR10-T2-RECON-01",
+      "description": "Ability to analyse the debtors control account and compare with list of debtors. Preparation of debtors lists to reconcile with the debtors control account. Identifying errors and omissions.",
+      "metadata": { "weekNumbers": [4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T2-RECON",
+      "title": "Creditors Reconciliation",
+      "code": "CAPS-ACCOUNTING-GR10-T2-RECON-02",
+      "description": "Ability to analyse the creditors control account and compare with list of creditors. Preparation of creditors lists to reconcile with the creditors control account. Identifying errors and omissions.",
+      "metadata": { "weekNumbers": [4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T2",
+      "title": "Salaries and Wages",
+      "code": "CAPS-ACCOUNTING-GR10-T2-SALWAGES",
+      "description": "Explanation and discussion of concepts related to salaries and wages. Calculations using salary and/or wage scales, notches, increases and deductions. Recording in Salaries Journal (SJ) and Wages Journal (WJ), and recording payments in CPJ.",
+      "metadata": { "weekNumbers": [6,7], "capsReference": "CAPS FET Accounting Grade 10 Term 2 Weeks 6-7", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T2-SALWAGES",
+      "title": "Salary and Wage Calculations",
+      "code": "CAPS-ACCOUNTING-GR10-T2-SALWAGES-01",
+      "description": "Calculations using salary and/or wage scales, notches and increases. Normal time/overtime calculations.",
+      "metadata": { "weekNumbers": [6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T2-SALWAGES",
+      "title": "Deductions and Employer Contributions",
+      "code": "CAPS-ACCOUNTING-GR10-T2-SALWAGES-02",
+      "description": "Employee deductions: PAYE, pension fund, Unemployment Insurance Fund (UIF), medical aid, union membership. Employer contributions: pension fund, UIF, medical aid, skills development levy.",
+      "metadata": { "weekNumbers": [6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T2-SALWAGES",
+      "title": "Salary Journal and Wages Journal",
+      "code": "CAPS-ACCOUNTING-GR10-T2-SALWAGES-03",
+      "description": "Recording salary and wages in specialised journals (SJ and WJ). Recording payments in CPJ. Can be done manually or on computerised spreadsheet. Ethical conduct related to salaries and wages, contracts, nepotism, role of trade unions.",
+      "metadata": { "weekNumbers": [7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T2",
+      "title": "Year-End Accounting Procedures, Pre- and Post-Adjustment Trial Balance, Final Accounts",
+      "code": "CAPS-ACCOUNTING-GR10-T2-YEAREND",
+      "description": "Emphasis on accounting cycle. Discussion on year-end processes before financial statements. Related concepts and application of GAAP. Preparation of final accounts, introducing adjustments including depreciation.",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "CAPS FET Accounting Grade 10 Term 2 Weeks 8-9", "assessmentStandards": ["Task 4: June Examination (300 marks) Week 10-11"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T2-YEAREND",
+      "title": "Year-End Processes and GAAP",
+      "code": "CAPS-ACCOUNTING-GR10-T2-YEAREND-01",
+      "description": "Emphasis on accounting cycle. Discussion on year-end processes before financial statements. Related concepts and application of GAAP.",
+      "metadata": { "weekNumbers": [8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T2-YEAREND",
+      "title": "Pre-Adjustment Trial Balance and Depreciation",
+      "code": "CAPS-ACCOUNTING-GR10-T2-YEAREND-02",
+      "description": "Preparation of final accounts, introducing adjustments to complete final accounts. Pre-adjustment trial balance adjustments. Depreciation: methods (straight line and diminishing balance), rate, additions during the year, asset register.",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-ACCOUNTING-GR10",
+      "title": "Term 3",
+      "code": "CAPS-ACCOUNTING-GR10-T3",
+      "description": "Term 3 covers continuation of year-end accounting procedures, preparation of financial statements, and analysis and interpretation of financial statements.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "CAPS FET Accounting Grade 10 Term 3", "assessmentStandards": ["Task 5: Case Study (50 marks) Financial statements of sole trader", "Task 6: Control Test (100 marks, 1.5 hours)"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T3",
+      "title": "Year-End Accounting Procedures: Adjustments, Post-Adjustment Trial Balance, Final Accounts",
+      "code": "CAPS-ACCOUNTING-GR10-T3-YEAREND",
+      "description": "Continuation of year-end procedures from Term 2. Full range of adjustments, post-adjustment trial balance, final accounts showing gross and net profit, and post-closing trial balance.",
+      "metadata": { "weekNumbers": [1,2,3], "capsReference": "CAPS FET Accounting Grade 10 Term 3 Weeks 1-3", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T3-YEAREND",
+      "title": "Year-End Adjustments",
+      "code": "CAPS-ACCOUNTING-GR10-T3-YEAREND-01",
+      "description": "Adjustments after depreciation: trading stock deficit/surplus, consumable stores on hand, accrued income (income receivable), accrued expenses (expenses payable), prepaid expenses, income received in advance (deferred income), interest capitalised, correction of errors and omissions such as bad debts and salaries.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T3-YEAREND",
+      "title": "Post-Adjustment Trial Balance and Final Accounts",
+      "code": "CAPS-ACCOUNTING-GR10-T3-YEAREND-02",
+      "description": "Extracting a post-adjustment trial balance in the correct format. Completing the final accounts to show gross and net profit. Preparation of post-closing trial balance.",
+      "metadata": { "weekNumbers": [2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T3",
+      "title": "Preparation of Financial Statements",
+      "code": "CAPS-ACCOUNTING-GR10-T3-FINSTATEMENTS",
+      "description": "Preparation of Statement of Comprehensive Income and Statement of Financial Position for a sole trader, including notes to the financial statements, in relation to applicable GAAP principles.",
+      "metadata": { "weekNumbers": [4,5,6,7], "capsReference": "CAPS FET Accounting Grade 10 Term 3 Weeks 4-7", "assessmentStandards": ["Task 5: Case Study (50 marks) Week 7-8"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T3-FINSTATEMENTS",
+      "title": "Statement of Comprehensive Income (Income Statement)",
+      "code": "CAPS-ACCOUNTING-GR10-T3-FINSTATEMENTS-01",
+      "description": "Format and arrangement, recognise and deal with nominal accounts. Explanation of headings and sub-headings. Dealing with adjustments in the acceptable procedures (showing workings in brackets). Apply GAAP. Integrate indigenous bookkeeping.",
+      "metadata": { "weekNumbers": [4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T3-FINSTATEMENTS",
+      "title": "Statement of Financial Position (Balance Sheet)",
+      "code": "CAPS-ACCOUNTING-GR10-T3-FINSTATEMENTS-02",
+      "description": "Format and arrangement, recognise and deal with balance sheet accounts as opposed to nominal accounts. Headings and sub-headings explained. Effect of adjustments to balance sheet sub-headings (trade and other receivables, trade and other payables).",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T3-FINSTATEMENTS",
+      "title": "Notes to the Financial Statements",
+      "code": "CAPS-ACCOUNTING-GR10-T3-FINSTATEMENTS-03",
+      "description": "Notes: interest, fixed assets, inventory, trade and other receivables, cash and cash equivalents, owner's equity, trade and other payables. Relate to applicable GAAP principles.",
+      "metadata": { "weekNumbers": [6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T3",
+      "title": "Analysis and Interpretation of Financial Statements",
+      "code": "CAPS-ACCOUNTING-GR10-T3-ANALYSIS",
+      "description": "Introduction and relevance of financial statements. Calculation and discussion of financial indicators: profitability, liquidity, solvency and return ratios. Interpretation and comparison of percentages and ratios.",
+      "metadata": { "weekNumbers": [8,9,10], "capsReference": "CAPS FET Accounting Grade 10 Term 3 Weeks 8-10", "assessmentStandards": ["Task 6: Control Test (100 marks, 1.5 hours) Week 11"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T3-ANALYSIS",
+      "title": "Profitability Indicators",
+      "code": "CAPS-ACCOUNTING-GR10-T3-ANALYSIS-01",
+      "description": "Gross profit on sales, gross profit on cost of sales, net profit on sales, operating expenses on sales, operating profit on sales.",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T3-ANALYSIS",
+      "title": "Liquidity and Solvency Indicators",
+      "code": "CAPS-ACCOUNTING-GR10-T3-ANALYSIS-02",
+      "description": "Liquidity: current ratio, acid-test ratio. Solvency: solvency ratio.",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T3-ANALYSIS",
+      "title": "Return Indicators and Interpretation",
+      "code": "CAPS-ACCOUNTING-GR10-T3-ANALYSIS-03",
+      "description": "Return on owner's equity. Interpretation: explanations of comparing percentages and ratios to provide meaningful comments and analysis. Reference to formula sheet.",
+      "metadata": { "weekNumbers": [9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-ACCOUNTING-GR10",
+      "title": "Term 4",
+      "code": "CAPS-ACCOUNTING-GR10-T4",
+      "description": "Term 4 covers cost accounting concepts for manufacturing businesses, budgeting concepts, revision, and the final examination.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "CAPS FET Accounting Grade 10 Term 4", "assessmentStandards": ["Task 7: Final Exam (Two papers of 150 marks, 2 hours each)"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T4",
+      "title": "Cost Accounting",
+      "code": "CAPS-ACCOUNTING-GR10-T4-COSTACC",
+      "description": "Explanation of unique concepts related to the manufacturing environment. Direct and indirect material, direct and indirect labour, factory overheads, prime costs, fixed and variable costs, work-in-progress. Emphasis on basic calculations.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "CAPS FET Accounting Grade 10 Term 4 Weeks 1-2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T4-COSTACC",
+      "title": "Manufacturing Concepts",
+      "code": "CAPS-ACCOUNTING-GR10-T4-COSTACC-01",
+      "description": "Explanation of unique concepts related to the manufacturing environment. Direct and indirect material. Direct and indirect labour. Factory overheads.",
+      "metadata": { "weekNumbers": [1], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T4-COSTACC",
+      "title": "Cost Classification and Calculations",
+      "code": "CAPS-ACCOUNTING-GR10-T4-COSTACC-02",
+      "description": "Prime costs. Fixed and variable costs. Work-in-progress. Emphasis on basic calculations. Integrate ethics, internal control and indigenous knowledge where relevant.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T4",
+      "title": "Budgeting",
+      "code": "CAPS-ACCOUNTING-GR10-T4-BUDGET",
+      "description": "Define and explain basic budgeting concepts. Cash budget, zero-based budget, capital budget, long-term budget, medium-term budget. Perform basic calculations.",
+      "metadata": { "weekNumbers": [3], "capsReference": "CAPS FET Accounting Grade 10 Term 4 Week 3", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T4-BUDGET",
+      "title": "Budgeting Concepts",
+      "code": "CAPS-ACCOUNTING-GR10-T4-BUDGET-01",
+      "description": "Define and explain basic budgeting concepts. Differentiate between cash and non-cash items. Concepts: receipts, payments, income, expenses.",
+      "metadata": { "weekNumbers": [3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T4-BUDGET",
+      "title": "Budget Types and Calculations",
+      "code": "CAPS-ACCOUNTING-GR10-T4-BUDGET-02",
+      "description": "Cash budget, zero-based budget, capital budget, long-term budget, medium-term budget. Perform basic calculations.",
+      "metadata": { "weekNumbers": [3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T4",
+      "title": "Revision and Final Examination",
+      "code": "CAPS-ACCOUNTING-GR10-T4-REVISION",
+      "description": "Revision and consolidation of all Grade 10 topics, addressing backlogs, providing extension activities and enrichment for differentiated support. Final examination: Paper 1 (150 marks, 2 hours) and Paper 2 (150 marks, 2 hours).",
+      "metadata": { "weekNumbers": [4,5,6,7,8,9,10], "capsReference": "CAPS FET Accounting Grade 10 Term 4 Weeks 4-10", "assessmentStandards": ["Paper 1: 150 marks, 2 hours — Discipline 1: Recording, reporting and evaluation of financial statements", "Paper 2: 150 marks, 2 hours — Discipline 2: Internal management and control processes"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T4-REVISION",
+      "title": "Revision of All Grade 10 Topics",
+      "code": "CAPS-ACCOUNTING-GR10-T4-REVISION-01",
+      "description": "Revision and consolidation addressing backlogs. Extension activities and enrichment for differentiated support. Split of content for two-paper exam available in the exam guideline.",
+      "metadata": { "weekNumbers": [4,5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR10-T4-REVISION",
+      "title": "Final Examination",
+      "code": "CAPS-ACCOUNTING-GR10-T4-REVISION-02",
+      "description": "Final Exam: Paper 1 (150 marks, 2 hours) — Discipline 1: Recording, reporting and evaluation of financial statements. Paper 2 (150 marks, 2 hours) — Discipline 2: Internal management and control processes. Cognitive levels: 30% basic thinking, 40% moderately high thinking, 30% higher order thinking. 10-15% problem-solving questions.",
+      "metadata": { "weekNumbers": [7,8,9,10], "capsReference": "", "assessmentStandards": ["Paper 1: 150 marks, 2 hours", "Paper 2: 150 marks, 2 hours"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    }
+  ]
+}

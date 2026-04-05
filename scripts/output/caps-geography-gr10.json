@@ -1,0 +1,1038 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "FET Phase",
+      "code": "CAPS-FET",
+      "description": "Further Education and Training Phase (Grades 10-12)",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 10",
+      "code": "CAPS-GR10",
+      "description": "",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 10
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR10",
+      "title": "Geography",
+      "code": "CAPS-GEOGRAPHY-GR10",
+      "description": "Geography — Grade 10 — CAPS Curriculum",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-GEOGRAPHY-GR10",
+      "title": "Term 1",
+      "code": "CAPS-GEOGRAPHY-GR10-T1",
+      "description": "Atmosphere: Map skills consolidation, composition and structure of the atmosphere, heating of the atmosphere, moisture in the atmosphere, and reading synoptic weather maps.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T1",
+      "title": "Consolidation of Grade 8 and 9 Map Skills",
+      "code": "CAPS-GEOGRAPHY-GR10-T1-MAPSKILLS",
+      "description": "Consolidation of Grade 8 and 9 map skills including orthophoto maps, topographic maps, scale, coordinates, and interpreting maps and photographs.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T1-MAPSKILLS",
+      "title": "Orthophoto Maps and Aerial Photographs",
+      "code": "CAPS-GEOGRAPHY-GR10-T1-MAPSKILLS-01",
+      "description": "1:10 000 orthophoto maps and vertical aerial photographs (Review Grade 8). Orthophoto images made from aerial photographs, how height is shown on orthophoto maps, contour lines on orthophoto maps, identifying features.",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T1-MAPSKILLS",
+      "title": "Topographic Maps",
+      "code": "CAPS-GEOGRAPHY-GR10-T1-MAPSKILLS-02",
+      "description": "1:50 000 topographic maps. Reading map symbols to identify natural and constructed features, height clues, contour patterns (river valleys, hills, mountains, ridges, spurs). Scale and measuring distance using line and ratio scales. Co-ordinates to locate features. Interpreting topographic and orthophoto maps and aerial photographs to describe landscape, identify land use, and settlement patterns.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T1",
+      "title": "Composition and Structure of the Atmosphere",
+      "code": "CAPS-GEOGRAPHY-GR10-T1-ATMOS",
+      "description": "The composition and structure of the atmosphere, the ozone layer including causes and effects of ozone depletion, ways to reduce ozone depletion, and the importance of the atmosphere.",
+      "metadata": {
+        "weekNumbers": [
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T1-ATMOS",
+      "title": "The Ozone Layer",
+      "code": "CAPS-GEOGRAPHY-GR10-T1-ATMOS-01",
+      "description": "Causes and effects of ozone depletion, ways to reduce ozone depletion, and importance of the atmosphere.",
+      "metadata": {
+        "weekNumbers": [
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T1",
+      "title": "Heating of the Atmosphere",
+      "code": "CAPS-GEOGRAPHY-GR10-T1-HEATING",
+      "description": "Processes associated with the heating of the atmosphere, factors that affect the temperature of different places around the world, the greenhouse effect, global warming, and the impact of climate and climate change on Africa's environment and people.",
+      "metadata": {
+        "weekNumbers": [
+          4,
+          5,
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T1-HEATING",
+      "title": "Processes of Atmospheric Heating",
+      "code": "CAPS-GEOGRAPHY-GR10-T1-HEATING-01",
+      "description": "Processes associated with the heating of the atmosphere.",
+      "metadata": {
+        "weekNumbers": [
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T1-HEATING",
+      "title": "Factors Affecting Temperature",
+      "code": "CAPS-GEOGRAPHY-GR10-T1-HEATING-02",
+      "description": "Factors that affect the temperature of different places around the world: latitude, altitude, ocean currents, and distance from oceans.",
+      "metadata": {
+        "weekNumbers": [
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T1-HEATING",
+      "title": "Greenhouse Effect and Global Warming",
+      "code": "CAPS-GEOGRAPHY-GR10-T1-HEATING-03",
+      "description": "The greenhouse effect, global warming, and the impact of climate and climate change on Africa's environment and people.",
+      "metadata": {
+        "weekNumbers": [
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T1",
+      "title": "Moisture in the Atmosphere",
+      "code": "CAPS-GEOGRAPHY-GR10-T1-MOISTURE",
+      "description": "Water in the atmosphere in different forms, processes associated with evaporation, condensation and precipitation, GIS and remote sensing concepts, weather elements, and the concepts of dew point, condensation level, humidity and relative humidity.",
+      "metadata": {
+        "weekNumbers": [
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T1-MOISTURE",
+      "title": "Evaporation, Condensation and Precipitation",
+      "code": "CAPS-GEOGRAPHY-GR10-T1-MOISTURE-01",
+      "description": "Water in the atmosphere in different forms. Processes associated with evaporation, condensation and precipitation.",
+      "metadata": {
+        "weekNumbers": [
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T1-MOISTURE",
+      "title": "GIS and Remote Sensing",
+      "code": "CAPS-GEOGRAPHY-GR10-T1-MOISTURE-02",
+      "description": "Geographical Information Systems (GIS): concept of GIS, components of GIS, reasons for the development of GIS, concept of remote sensing, how remote sensing works, satellite images related to meteorology and climatology.",
+      "metadata": {
+        "weekNumbers": [
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T1-MOISTURE",
+      "title": "Weather Elements and Cloud Formation",
+      "code": "CAPS-GEOGRAPHY-GR10-T1-MOISTURE-03",
+      "description": "Weather elements: temperature, dew-point temperature, cloud cover, wind direction, wind speed, atmospheric pressure. Concepts of dew point, condensation level, humidity, relative humidity. How and why clouds form. Cloud names and associated weather conditions.",
+      "metadata": {
+        "weekNumbers": [
+          7,
+          8
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T1",
+      "title": "Reading and Interpreting Synoptic Weather Maps",
+      "code": "CAPS-GEOGRAPHY-GR10-T1-SYNOPTIC",
+      "description": "Reading and interpreting synoptic weather maps including types of precipitation, different forms of precipitation, and mechanisms that produce different kinds of rainfall (relief, convectional, frontal).",
+      "metadata": {
+        "weekNumbers": [
+          8,
+          9,
+          10
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T1-SYNOPTIC",
+      "title": "Reading Synoptic Weather Maps",
+      "code": "CAPS-GEOGRAPHY-GR10-T1-SYNOPTIC-01",
+      "description": "Focus on the use of synoptic weather maps. Reading and interpreting synoptic weather maps. Types of precipitation: rain, drizzle, thunderstorms, hail and snow as illustrated on station models.",
+      "metadata": {
+        "weekNumbers": [
+          8,
+          9
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T1-SYNOPTIC",
+      "title": "Precipitation Types and Rainfall Mechanisms",
+      "code": "CAPS-GEOGRAPHY-GR10-T1-SYNOPTIC-02",
+      "description": "Different forms of precipitation: hail, snow, rain, dew, frost. Mechanisms that produce different kinds of rainfall: relief, convectional, and frontal.",
+      "metadata": {
+        "weekNumbers": [
+          9,
+          10
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-GEOGRAPHY-GR10",
+      "title": "Term 2",
+      "code": "CAPS-GEOGRAPHY-GR10-T2",
+      "description": "Geomorphology: The structure of the earth, plate tectonics, folding and faulting, earthquakes, and volcanoes.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T2",
+      "title": "The Structure of the Earth",
+      "code": "CAPS-GEOGRAPHY-GR10-T2-EARTHSTRUCT",
+      "description": "The internal structure of the earth. Classification of rocks: igneous, sedimentary and metamorphic. Concept of contour lines and identification of different landforms associated with types of rocks.",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T2-EARTHSTRUCT",
+      "title": "Internal Structure of the Earth",
+      "code": "CAPS-GEOGRAPHY-GR10-T2-EARTHSTRUCT-01",
+      "description": "The internal structure of the earth.",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T2-EARTHSTRUCT",
+      "title": "Classification of Rocks",
+      "code": "CAPS-GEOGRAPHY-GR10-T2-EARTHSTRUCT-02",
+      "description": "Classification of rocks: igneous, sedimentary and metamorphic.",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T2",
+      "title": "Plate Tectonics",
+      "code": "CAPS-GEOGRAPHY-GR10-T2-PLATETECT",
+      "description": "Changes in the position of continents over time, evidence for the movement of continents, plate tectonics as an explanation for the movement of continents, and the world's volcanic and earthquake zones.",
+      "metadata": {
+        "weekNumbers": [
+          2,
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T2-PLATETECT",
+      "title": "Continental Drift and Evidence",
+      "code": "CAPS-GEOGRAPHY-GR10-T2-PLATETECT-01",
+      "description": "Changes in the position of continents over time. Evidence for the movement of continents over time.",
+      "metadata": {
+        "weekNumbers": [
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T2-PLATETECT",
+      "title": "Plate Tectonics Theory",
+      "code": "CAPS-GEOGRAPHY-GR10-T2-PLATETECT-02",
+      "description": "Plate tectonics as an explanation for the movement of continents. The world's volcanic and earthquake zones. World map showing location of plates and plate boundaries.",
+      "metadata": {
+        "weekNumbers": [
+          2,
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T2",
+      "title": "Folding and Faulting",
+      "code": "CAPS-GEOGRAPHY-GR10-T2-FOLDINGFAULT",
+      "description": "The process of rock folding, the process of faulting, different types of faults, and landforms associated with faulting.",
+      "metadata": {
+        "weekNumbers": [
+          4,
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T2-FOLDINGFAULT",
+      "title": "Rock Folding",
+      "code": "CAPS-GEOGRAPHY-GR10-T2-FOLDINGFAULT-01",
+      "description": "The process of rock folding.",
+      "metadata": {
+        "weekNumbers": [
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T2-FOLDINGFAULT",
+      "title": "Faulting and Associated Landforms",
+      "code": "CAPS-GEOGRAPHY-GR10-T2-FOLDINGFAULT-02",
+      "description": "The process of faulting, different types of faults, and landforms associated with faulting.",
+      "metadata": {
+        "weekNumbers": [
+          4,
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T2",
+      "title": "Earthquakes",
+      "code": "CAPS-GEOGRAPHY-GR10-T2-EARTHQUAKES",
+      "description": "How and where earthquakes occur, measuring and predicting earthquakes, how earthquakes and tsunamis affect people and settlements, differences in vulnerability, strategies to reduce the impact of earthquakes, and case examples.",
+      "metadata": {
+        "weekNumbers": [
+          6,
+          7,
+          8
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T2-EARTHQUAKES",
+      "title": "How and Where Earthquakes Occur",
+      "code": "CAPS-GEOGRAPHY-GR10-T2-EARTHQUAKES-01",
+      "description": "How and where earthquakes occur. Measuring and predicting earthquakes. World maps showing the ring of fire and location of earthquakes.",
+      "metadata": {
+        "weekNumbers": [
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T2-EARTHQUAKES",
+      "title": "Impact and Management of Earthquakes",
+      "code": "CAPS-GEOGRAPHY-GR10-T2-EARTHQUAKES-02",
+      "description": "How earthquakes and tsunamis affect people and settlements, differences in vulnerability. Strategies to reduce the impact of earthquakes. Case examples of the effects of selected earthquakes.",
+      "metadata": {
+        "weekNumbers": [
+          7,
+          8
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T2",
+      "title": "Volcanoes",
+      "code": "CAPS-GEOGRAPHY-GR10-T2-VOLCANOES",
+      "description": "Types of volcanoes, structure of volcanoes, world maps showing the ring of fire and location of volcanoes, and the impact of volcanoes on people and the environment using case studies.",
+      "metadata": {
+        "weekNumbers": [
+          9,
+          10
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T2-VOLCANOES",
+      "title": "Types and Structure of Volcanoes",
+      "code": "CAPS-GEOGRAPHY-GR10-T2-VOLCANOES-01",
+      "description": "Types of volcanoes and structure of volcanoes. World maps showing the ring of fire and location of volcanoes.",
+      "metadata": {
+        "weekNumbers": [
+          9
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T2-VOLCANOES",
+      "title": "Impact of Volcanoes",
+      "code": "CAPS-GEOGRAPHY-GR10-T2-VOLCANOES-02",
+      "description": "Impact of volcanoes on people and the environment. Use of case studies.",
+      "metadata": {
+        "weekNumbers": [
+          10
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-GEOGRAPHY-GR10",
+      "title": "Term 3",
+      "code": "CAPS-GEOGRAPHY-GR10-T3",
+      "description": "Population Geography: Population distribution and density, population structure, population growth, and population movements.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T3",
+      "title": "Population Distribution and Density",
+      "code": "CAPS-GEOGRAPHY-GR10-T3-POPDIST",
+      "description": "Meaning of population distribution and population density, maps showing distribution of population in atlases, factors that affect population density, and identification of low- and high-density areas on a topographical map.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T3-POPDIST",
+      "title": "Population Distribution Concepts",
+      "code": "CAPS-GEOGRAPHY-GR10-T3-POPDIST-01",
+      "description": "Meaning of population distribution and population density. Maps showing distribution of population in atlases. Factors that affect population density.",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T3-POPDIST",
+      "title": "Factors Affecting Distribution and Density",
+      "code": "CAPS-GEOGRAPHY-GR10-T3-POPDIST-02",
+      "description": "Factors that affect distribution and density of the world's population. Identification of low- and high-density areas on a topographical map.",
+      "metadata": {
+        "weekNumbers": [
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T3",
+      "title": "Population Structure",
+      "code": "CAPS-GEOGRAPHY-GR10-T3-POPSTRUCT",
+      "description": "Population indicators, factors that influence population indicators, population structure including age, sex and gender represented as population pyramids.",
+      "metadata": {
+        "weekNumbers": [
+          3,
+          4,
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T3-POPSTRUCT",
+      "title": "Population Indicators",
+      "code": "CAPS-GEOGRAPHY-GR10-T3-POPSTRUCT-01",
+      "description": "Population indicators and factors that influence population indicators.",
+      "metadata": {
+        "weekNumbers": [
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T3-POPSTRUCT",
+      "title": "Population Pyramids",
+      "code": "CAPS-GEOGRAPHY-GR10-T3-POPSTRUCT-02",
+      "description": "Population structure: age, sex and gender represented as population pyramids. GIS components and concept of remote sensing.",
+      "metadata": {
+        "weekNumbers": [
+          3,
+          4,
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T3",
+      "title": "Population Growth",
+      "code": "CAPS-GEOGRAPHY-GR10-T3-POPGROWTH",
+      "description": "World population growth over time, concept of overpopulation, and managing population growth.",
+      "metadata": {
+        "weekNumbers": [
+          6,
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T3-POPGROWTH",
+      "title": "World Population Growth Over Time",
+      "code": "CAPS-GEOGRAPHY-GR10-T3-POPGROWTH-01",
+      "description": "World population growth over time. Maps and infographics showing population growth over time.",
+      "metadata": {
+        "weekNumbers": [
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T3-POPGROWTH",
+      "title": "Overpopulation and Population Management",
+      "code": "CAPS-GEOGRAPHY-GR10-T3-POPGROWTH-02",
+      "description": "Concept of overpopulation. Managing population growth. Satellite images related to population topics.",
+      "metadata": {
+        "weekNumbers": [
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T3",
+      "title": "Population Movements",
+      "code": "CAPS-GEOGRAPHY-GR10-T3-POPMOVE",
+      "description": "Kinds of population movement, causes and effects of population movements, temporary and permanent movement, attitudes to migrants and refugees.",
+      "metadata": {
+        "weekNumbers": [
+          8,
+          9,
+          10
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T3-POPMOVE",
+      "title": "Kinds of Population Movement",
+      "code": "CAPS-GEOGRAPHY-GR10-T3-POPMOVE-01",
+      "description": "Kinds of population movement (use of case studies to illustrate topics is essential).",
+      "metadata": {
+        "weekNumbers": [
+          8
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T3-POPMOVE",
+      "title": "Causes and Effects of Population Movements",
+      "code": "CAPS-GEOGRAPHY-GR10-T3-POPMOVE-02",
+      "description": "Causes and effects of population movements. Temporary and permanent movement. Attitudes to migrants and refugees.",
+      "metadata": {
+        "weekNumbers": [
+          9,
+          10
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-GEOGRAPHY-GR10",
+      "title": "Term 4",
+      "code": "CAPS-GEOGRAPHY-GR10-T4",
+      "description": "Water Resources: Water management in South Africa and floods.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T4",
+      "title": "Water Management in South Africa",
+      "code": "CAPS-GEOGRAPHY-GR10-T4-WATERMGMT",
+      "description": "Rivers, lakes and dams in South Africa, factors influencing the availability of water in SA, challenges of providing free basic water to rural and urban communities, role of government and municipalities, and strategies for sustainable use of water.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T4-WATERMGMT",
+      "title": "Water Resources in South Africa",
+      "code": "CAPS-GEOGRAPHY-GR10-T4-WATERMGMT-01",
+      "description": "Rivers, lakes and dams in South Africa. Factors influencing the availability of water in SA.",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T4-WATERMGMT",
+      "title": "Water Provision Challenges and Government Role",
+      "code": "CAPS-GEOGRAPHY-GR10-T4-WATERMGMT-02",
+      "description": "Challenges of providing free basic water to rural and urban communities in SA. Role of government: initiatives towards securing water including inter-basin transfers and building dams.",
+      "metadata": {
+        "weekNumbers": [
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T4-WATERMGMT",
+      "title": "Sustainable Water Use",
+      "code": "CAPS-GEOGRAPHY-GR10-T4-WATERMGMT-03",
+      "description": "Role of municipalities in water provision and water purification. Strategies for sustainable use of water and the role of government and individuals. GIS concepts: spatial objects, lines, points, nodes and scales.",
+      "metadata": {
+        "weekNumbers": [
+          3,
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T4",
+      "title": "Floods",
+      "code": "CAPS-GEOGRAPHY-GR10-T4-FLOODS",
+      "description": "Causes of flooding (physical and human), characteristics of floods, basic understanding of analysis and interpretation of flood hydrographs, managing flooding in urban, rural and informal settlement areas, and a case study of a flood in South Africa.",
+      "metadata": {
+        "weekNumbers": [
+          4,
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T4-FLOODS",
+      "title": "Causes and Characteristics of Floods",
+      "code": "CAPS-GEOGRAPHY-GR10-T4-FLOODS-01",
+      "description": "Causes of flooding: physical and human. Characteristics of floods: basic understanding of analysis and interpretation of flood hydrographs (not for exam purposes).",
+      "metadata": {
+        "weekNumbers": [
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-GEOGRAPHY-GR10-T4-FLOODS",
+      "title": "Managing Flooding and Case Study",
+      "code": "CAPS-GEOGRAPHY-GR10-T4-FLOODS-02",
+      "description": "Managing flooding in urban, rural and informal settlement areas. Case study of a flood in South Africa.",
+      "metadata": {
+        "weekNumbers": [
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    }
+  ]
+}

@@ -1,0 +1,347 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "FET Phase",
+      "code": "CAPS-FET",
+      "description": "Further Education and Training Phase (Grades 10-12)",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 11",
+      "code": "CAPS-GR11",
+      "description": "",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 11
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR11",
+      "title": "Life Orientation",
+      "code": "CAPS-LIFEORIENTATION-GR11",
+      "description": "Life Orientation — Grade 11 — CAPS Curriculum",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFEORIENTATION-GR11",
+      "title": "Term 1",
+      "code": "CAPS-LIFEORIENTATION-GR11-T1",
+      "description": "Development of the self in society (goals, relationships), careers and career choices (admission requirements, financial assistance), democracy and human rights (democratic participation, role of sport in nation building)",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Source-based task",
+          "PET"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR11-T1",
+      "title": "Goals, Goal-Setting and Relationships",
+      "code": "CAPS-LIFEORIENTATION-GR11-T1-GOALSRELATIONSHIPS",
+      "description": "Goals and goal-setting: define concepts (goals, goal-setting), identify types of goals (short-term, medium-term, long-term), steps in planning and goal-setting, problem-solving skills, perseverance and persistence. Evaluate the importance of prioritising life goals (family, parenting, marriage, career choices and relationships). Analyse the relationship between personal values, choices and goal setting. Relationships: explain how relationships can influence and are influenced by own well-being. Discuss different types of relationships with different people or groups and their changing nature. Identify factors that contribute to relationships detrimental to well-being: rights and responsibilities in relationships, societal and cultural views that influence or affect relationships, qualities required in different relationships, individuality in relationships. Critically analyse the impact of the media on values and beliefs about relationships.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR11-T1",
+      "title": "Admission Requirements and Financial Assistance",
+      "code": "CAPS-LIFEORIENTATION-GR11-T1-ADMISSIONS",
+      "description": "Admission requirements: research requirements for admission to additional and higher education courses (NSC requirements for certificate, diploma, degree). Research additional and higher education options: Admission Point Score (APS) for higher learning institutions, admission requirements for specific programmes or courses, calculate APS based on Grade 10 results. Develop a career portfolio (use Khetha Booklet). Explore requirements for admission to Universities of Technology and TVET colleges. Explain purpose of National Benchmark Tests (NBTs). Financial assistance: explore options for bursaries (NSFAS, Funza Lushaka, and other), study loans, scholarships, learnerships, Sector Education and Training Authorities (SETAs). Outline obligations in terms of financial arrangements.",
+      "metadata": {
+        "weekNumbers": [
+          4,
+          5,
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR11-T1",
+      "title": "Democratic Participation and Role of Sport in Nation Building",
+      "code": "CAPS-LIFEORIENTATION-GR11-T1-DEMOCRACY",
+      "description": "Principles, processes and procedures for democratic participation: public participation in democratic structures and petition processes, governance, law-making process, rule of law (definition, importance and benefits), transparency, representation, accountability. Research democratic structures: national, provincial, local government. Principles and functions of structures in addressing the interests of civil society: constitutions, elections, representation of constituencies, mandates, lobbying, advocacy. Role of sport in nation building: how sport can support or detract from nation building. Participant and spectator behaviour in sport: incidences that may trigger certain behaviour. Impact of particular behaviours on participants, spectators, teams, opposition, the referee, community, society and nation. Exposure to positive behaviour programmes (respect for authority, opponents and spectators). Critically debate how sport can support or detract from nation building.",
+      "metadata": {
+        "weekNumbers": [
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFEORIENTATION-GR11",
+      "title": "Term 2",
+      "code": "CAPS-LIFEORIENTATION-GR11-T2",
+      "description": "Unequal power relations (GBV) and social and environmental responsibility",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Controlled test"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR11-T2",
+      "title": "Unequal Power Relations and Gender-Based Violence",
+      "code": "CAPS-LIFEORIENTATION-GR11-T2-GBV",
+      "description": "Research incidences of gender-based violence (GBV) in SA and the world. Differentiate between forms of violence: domestic, sexual, rape, physical, emotional/mental, femicide, sexual harassment. Critically discuss factors that contribute towards GBV: unequal power relations, power balance and power struggles between genders, abuse of power, social norms about gender roles and responsibilities, patriarchy, sexist views, gender stereotypes, prejudice, bigotry, race, sexual orientation (LGBTQI+). Discuss the negative effects of GBV on health and well-being of the individual, family and society: physical trauma, psychological trauma, emotional trauma. Explore how GBV contributes towards broken family structures, increased social ills, inability to build trusting social relationships, burden on health and judicial systems. Explore strategies to address unequal power relations and power inequality between genders. Evaluate efforts of campaigns to reduce and prevent GBV: awareness campaigns (16 Days of Activism), educational programmes (CSE, free social and legal support).",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR11-T2",
+      "title": "Social and Environmental Responsibility",
+      "code": "CAPS-LIFEORIENTATION-GR11-T2-ENVRESPONSIBILITY",
+      "description": "Environmental issues that cause ill-health: use of harmful substances in food production, inhumane farming methods. Environmental hazards: soil erosion, pollution, radiation, floods, fires. Impact of depletion of resources: fishing stocks, firewood, land. Dealing with environmental factors that cause ill-health on a personal level: attitudes, safety, first aid skills, coping with disasters. Climate change: causes, impact on development, mitigation and adaptation. Human activities that contribute to global warming. Effect on eco-systems, oceans, humans and weather patterns. Ways to reduce, mitigate and adapt to global warming: responsible consumption habits, recycling, sustainable use of natural resources, sustainable transportation. Responsible citizenship: identify and participate in a community service that addresses a contemporary environmental issue.",
+      "metadata": {
+        "weekNumbers": [
+          5,
+          6,
+          7,
+          8
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFEORIENTATION-GR11",
+      "title": "Term 3",
+      "code": "CAPS-LIFEORIENTATION-GR11-T3",
+      "description": "Development of the self in society (healthy and balanced lifestyle, risky behaviour) and careers and career choices (job competencies, CV and interview skills)",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Project",
+          "PET"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR11-T3",
+      "title": "Healthy and Balanced Lifestyle and Risky Behaviour",
+      "code": "CAPS-LIFEORIENTATION-GR11-T3-LIFESTYLE",
+      "description": "Healthy and balanced lifestyle choices: maintaining physical, psychological, social, emotional and spiritual health; healthy nutrition and being physically active. Factors that impact negatively on lifestyle choices: lack of knowledge, poor decision-making skills, unsafe attitudes and behaviours, unsafe environments, emotional factors, peer pressure. Socio-economic aspects: poor literacy, low income, poverty and unfavourable social environments. Risky behaviour and situations: substance use and abuse, unsafe sexual behaviour, risk of pregnancy, teenage suicides, poor hygiene and dietary habits, unsafe road use. Impact of unsafe practices on self and others: physically, emotionally, spiritually and socially. Individual responsibility for making informed decisions: prioritising personal safety, seeking support and advice to change risky behaviour. Factors that impact positively on lifestyle choices: positive role models (parents, peers and others), personal values, belief system, religion, social skills, positive cultural influences, economic conditions.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR11-T3",
+      "title": "Competencies, Abilities and Ethics to Secure a Job",
+      "code": "CAPS-LIFEORIENTATION-GR11-T3-JOBCOMPETENCIES",
+      "description": "Competencies, abilities and ethics that will assist in securing a job and developing a career. Studying advertisements. Writing an application letter. Completing application forms (hard copies and online). Writing and building a curriculum vitae (CV): all forms of experience gained, testimonials, evidence of job shadowing, informal and/or part-time jobs, managing projects, administration skills. Interview skills: personal appearance, conduct and preparation for typical questions. Work ethics: responsibility and accountability. Personal expectations and knowledge about self in relation to the demands of the world of work and socio-economic conditions: jobs that require skilled, semi-skilled, unskilled and physical labour. Additional and higher education studies required for different careers: further certificates and diplomas, honours degrees, masters degrees, doctoral degrees.",
+      "metadata": {
+        "weekNumbers": [
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFEORIENTATION-GR11",
+      "title": "Term 4",
+      "code": "CAPS-LIFEORIENTATION-GR11-T4",
+      "description": "Democracy and human rights (diverse religions) and study skills",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Final examinations"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR11-T4",
+      "title": "Democracy: Diverse Religions and Moral Issues",
+      "code": "CAPS-LIFEORIENTATION-GR11-T4-RELIGION",
+      "description": "Elaborate on the contributions of South Africa's diverse religions and belief systems to a harmonious society and own belief system. Clarify own values and beliefs. Identify and critically analyse various moral and spiritual issues and dilemmas (right-to-life, euthanasia, white lies, cultural practices and traditions). Respect differing opinions.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFEORIENTATION-GR11-T4",
+      "title": "Study Skills and Examination Preparation",
+      "code": "CAPS-LIFEORIENTATION-GR11-T4-STUDYSKILLS",
+      "description": "Revise and implement a study plan including: time management skills, study skills (examine how learning takes place and reflect on effectiveness). Study styles as preferred way of approaching tasks. Study strategy to approach a specific task in the light of perceived demands. Examination writing skills. Apply goal-setting skills: personal development goals regarding study, health and fitness. Revision and consolidation.",
+      "metadata": {
+        "weekNumbers": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    }
+  ]
+}

@@ -1,0 +1,405 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "FET Phase",
+      "code": "CAPS-FET",
+      "description": "Further Education and Training Phase covering Grades 10 to 12 under the Curriculum and Assessment Policy Statement.",
+      "metadata": { "weekNumbers": [], "capsReference": "CAPS FET", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 11",
+      "code": "CAPS-GR11",
+      "description": "Grade 11 Accounting — FET Phase.",
+      "metadata": { "weekNumbers": [], "capsReference": "CAPS FET Grade 11", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR11",
+      "title": "Accounting",
+      "code": "CAPS-ACCOUNTING-GR11",
+      "description": "Accounting for Grade 11 covering reconciliations, fixed assets, partnerships, budgeting, inventory systems, cost accounting, and VAT.",
+      "metadata": { "weekNumbers": [], "capsReference": "CAPS FET Accounting Grade 11", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-ACCOUNTING-GR11",
+      "title": "Term 1",
+      "code": "CAPS-ACCOUNTING-GR11-T1",
+      "description": "Term 1 covers bank and creditors reconciliation, fixed assets, and financial accounting of partnerships including adjustments, ledger, accounting equation and final accounts.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "CAPS FET Accounting Grade 11 Term 1", "assessmentStandards": ["Task 1: Written Report (50 marks) Reconciliations and/or fixed/tangible assets", "Task 2: Control Test 1 (100 marks, 1.5 hours)"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T1",
+      "title": "Reconciliation: Bank",
+      "code": "CAPS-ACCOUNTING-GR11-T1-BANKRECON",
+      "description": "Reconcile bank statements with cash journals to prepare bank reconciliation statements. Entries on bank statement not in journals: stop/debit orders, direct transfers (EFTs), bank charges, interest received or paid, correction of errors or omissions. Entries in journals not on statement: outstanding deposits and EFTs.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "CAPS FET Accounting Grade 11 Term 1 Weeks 1-2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T1-BANKRECON",
+      "title": "Bank Statement vs Cash Journals",
+      "code": "CAPS-ACCOUNTING-GR11-T1-BANKRECON-01",
+      "description": "Reconcile bank statements with cash journals. Entries on bank statement not in journals: stop/debit orders, direct transfers (EFTs paid out/received), bank charges, interest received or paid, correction of errors or omissions.",
+      "metadata": { "weekNumbers": [1], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T1-BANKRECON",
+      "title": "Outstanding Items and Reconciliation Statement",
+      "code": "CAPS-ACCOUNTING-GR11-T1-BANKRECON-02",
+      "description": "Entries in journals not on statement: outstanding deposits and EFTs. Prepare bank reconciliation statement. Integrate ethical and internal control issues. Apply GAAP.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T1",
+      "title": "Reconciliation: Creditors",
+      "code": "CAPS-ACCOUNTING-GR11-T1-CREDITRECON",
+      "description": "Reconcile individual creditors monthly statements with accounts in the creditors ledger. Identify differences and rectify. Possible differences: outstanding invoices or credit notes, outstanding payments, discounts not recorded, correction of errors/omissions.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "CAPS FET Accounting Grade 11 Term 1 Weeks 3-4", "assessmentStandards": ["Task 1: Written Report (50 marks) Week 6-7"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T1-CREDITRECON",
+      "title": "Creditors Statement Reconciliation",
+      "code": "CAPS-ACCOUNTING-GR11-T1-CREDITRECON-01",
+      "description": "Reconcile individual creditors monthly statements with accounts in the creditors ledger of a business. Identify differences and rectify. Possible differences include: outstanding invoices or credit notes, outstanding payments, discounts not recorded, correction of errors/omissions.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T1-CREDITRECON",
+      "title": "Ethics and Internal Control: Creditors Reconciliation",
+      "code": "CAPS-ACCOUNTING-GR11-T1-CREDITRECON-02",
+      "description": "Integrate ethical and internal control issues relating to creditors reconciliation. Apply GAAP.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T1",
+      "title": "Fixed Assets",
+      "code": "CAPS-ACCOUNTING-GR11-T1-FIXEDASSETS",
+      "description": "Understand the need for a tangible/fixed asset register and how it is compiled. Record acquisition, calculate and record depreciation, record fully depreciated assets, and record disposal of fixed assets.",
+      "metadata": { "weekNumbers": [5,6,7], "capsReference": "CAPS FET Accounting Grade 11 Term 1 Weeks 5-7", "assessmentStandards": ["Task 1: Written Report (50 marks) Week 6-7"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T1-FIXEDASSETS",
+      "title": "Fixed Asset Register and Acquisition",
+      "code": "CAPS-ACCOUNTING-GR11-T1-FIXEDASSETS-01",
+      "description": "Understand the need for a tangible/fixed asset register and how it is compiled. Record the acquisition of tangible/fixed assets.",
+      "metadata": { "weekNumbers": [5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T1-FIXEDASSETS",
+      "title": "Depreciation",
+      "code": "CAPS-ACCOUNTING-GR11-T1-FIXEDASSETS-02",
+      "description": "Calculate and record depreciation on cost price using straight-line method and/or diminishing balance methods. Understand how tangible/fixed assets are recorded when they are fully depreciated.",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T1-FIXEDASSETS",
+      "title": "Disposal of Fixed Assets",
+      "code": "CAPS-ACCOUNTING-GR11-T1-FIXEDASSETS-03",
+      "description": "Record the disposal of fixed assets (cash, credit, trade-in, donated, drawings by owner) at the beginning/during/end of a financial year. Integrate ethical and internal control issues relating to fixed assets (movement and responsible use). Apply GAAP.",
+      "metadata": { "weekNumbers": [6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T1",
+      "title": "Financial Accounting of Partnerships: Adjustments, Ledger, Accounting Equation, Final Accounts",
+      "code": "CAPS-ACCOUNTING-GR11-T1-PARTNERSHIP",
+      "description": "Define and explain partnership concepts, IFRS and GAAP principles. Accounting cycle for partnerships. Prepare final accounts taking into account year-end adjustments including partnership-specific adjustments.",
+      "metadata": { "weekNumbers": [8,9,10], "capsReference": "CAPS FET Accounting Grade 11 Term 1 Weeks 8-10", "assessmentStandards": ["Task 2: Control Test 1 (100 marks, 1.5 hours) Week 11"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T1-PARTNERSHIP",
+      "title": "Partnership Concepts and GAAP",
+      "code": "CAPS-ACCOUNTING-GR11-T1-PARTNERSHIP-01",
+      "description": "Define and explain accounting concepts unique to partnerships: capital accounts, current accounts, interest on capital, salaries to partners, bonus to partners, primary/final distribution of profits or losses. Define and explain IFRS and GAAP principles.",
+      "metadata": { "weekNumbers": [8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T1-PARTNERSHIP",
+      "title": "Revised Year-End Adjustments (Partnerships)",
+      "code": "CAPS-ACCOUNTING-GR11-T1-PARTNERSHIP-02",
+      "description": "Revise: trading stock deficit/surplus, consumable stores on hand, depreciation, bad debts, bad debts recovered (incl. insolvent estate), correction of errors/omissions, accrued income, income received in advance, prepaid expenses, accrued expenses. Introduce additional adjustments: provision for bad debts, interest on loan (capitalised).",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T1-PARTNERSHIP",
+      "title": "Partnership Agreement Adjustments and Final Accounts",
+      "code": "CAPS-ACCOUNTING-GR11-T1-PARTNERSHIP-03",
+      "description": "Adjustments related to partnership agreement: salaries to partners, bonus to partners, interest on capital, sharing of profit/loss. Preparing final accounts: trading account, profit and loss account, appropriation account. Reversal of certain year-end adjustments (accruals, income received in advance, prepayments).",
+      "metadata": { "weekNumbers": [9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-ACCOUNTING-GR11",
+      "title": "Term 2",
+      "code": "CAPS-ACCOUNTING-GR11-T2",
+      "description": "Term 2 covers partnerships financial statements and notes, and analysis and interpretation of partnership financial statements.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "CAPS FET Accounting Grade 11 Term 2", "assessmentStandards": ["Task 3: Project (50 marks) Partnerships: Financial statements", "Task 4: June Examination (300 marks, 2 papers of 150 marks each)"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T2",
+      "title": "Partnerships: Financial Statements and Notes",
+      "code": "CAPS-ACCOUNTING-GR11-T2-PARTNERFINST",
+      "description": "Prepare financial statements and notes for a partnership: Statement of Comprehensive Income, Statement of Financial Position, Notes to the Financial Statements. Apply IFRS and GAAP principles.",
+      "metadata": { "weekNumbers": [1,2,3,4,5], "capsReference": "CAPS FET Accounting Grade 11 Term 2 Weeks 1-5", "assessmentStandards": ["Task 3: Project (50 marks) Week 5-6"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T2-PARTNERFINST",
+      "title": "Statement of Comprehensive Income (Partnership)",
+      "code": "CAPS-ACCOUNTING-GR11-T2-PARTNERFINST-01",
+      "description": "Prepare Statement of Comprehensive Income for a partnership. Apply the IFRS and GAAP principles.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T2-PARTNERFINST",
+      "title": "Statement of Financial Position (Partnership)",
+      "code": "CAPS-ACCOUNTING-GR11-T2-PARTNERFINST-02",
+      "description": "Prepare Statement of Financial Position for a partnership. Apply the IFRS and GAAP principles.",
+      "metadata": { "weekNumbers": [2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T2-PARTNERFINST",
+      "title": "Notes to the Financial Statements (Partnership)",
+      "code": "CAPS-ACCOUNTING-GR11-T2-PARTNERFINST-03",
+      "description": "Prepare notes to the financial statements for a partnership. Refer to CAPS section 4.7.3 for correct formats.",
+      "metadata": { "weekNumbers": [3,4,5], "capsReference": "CAPS section 4.7.3", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T2",
+      "title": "Partnerships: Analysis and Interpretation of Financial Statements",
+      "code": "CAPS-ACCOUNTING-GR11-T2-PARTNERANALYSIS",
+      "description": "Analyse and interpret financial statements and notes for a partnership. Revise and introduce financial indicators: profitability, liquidity, solvency, risk/gearing and return.",
+      "metadata": { "weekNumbers": [6,7,8,9], "capsReference": "CAPS FET Accounting Grade 11 Term 2 Weeks 6-9", "assessmentStandards": ["Task 4: June Examination (300 marks) Week 10-11"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T2-PARTNERANALYSIS",
+      "title": "Profitability and Liquidity Indicators",
+      "code": "CAPS-ACCOUNTING-GR11-T2-PARTNERANALYSIS-01",
+      "description": "Revise profitability: gross profit on sales, gross profit on cost of sales, net profit on sales, operating expenses on sales, operating profit on sales. Revise liquidity: current ratio, acid test ratio. Introduce: stock turnover rate, stock holding period, average debtors collection period, average creditors payment period.",
+      "metadata": { "weekNumbers": [6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T2-PARTNERANALYSIS",
+      "title": "Solvency, Risk/Gearing and Return Indicators",
+      "code": "CAPS-ACCOUNTING-GR11-T2-PARTNERANALYSIS-02",
+      "description": "Revise solvency: solvency ratio. Introduce risk/gearing: debt-equity ratio. Introduce return: on each partner's equity, on average partners' equity.",
+      "metadata": { "weekNumbers": [7,8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-ACCOUNTING-GR11",
+      "title": "Term 3",
+      "code": "CAPS-ACCOUNTING-GR11-T3",
+      "description": "Term 3 covers budgeting (cash budgets and projected income statement), inventory systems, and cost accounting for manufacturing including ledger accounts and calculations.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "CAPS FET Accounting Grade 11 Term 3", "assessmentStandards": ["Task 5: Presentation (50 marks)", "Task 6: Control Test (100 marks, 1.5 hours)"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T3",
+      "title": "Budgeting: Basic Concepts, Cash Budgets and Projected Income Statement",
+      "code": "CAPS-ACCOUNTING-GR11-T3-BUDGET",
+      "description": "Differentiate between a cash budget and a projected income statement. Prepare and present a projected income statement and a cash budget for sole traders including debtors collection and creditors payment schedules.",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "CAPS FET Accounting Grade 11 Term 3 Weeks 1-4", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T3-BUDGET",
+      "title": "Projected Income Statement",
+      "code": "CAPS-ACCOUNTING-GR11-T3-BUDGET-01",
+      "description": "Differentiate between a cash budget and a projected income statement. Prepare and present a projected income statement (statement of comprehensive income) including projected revenue and expenditure. Integrate ethical, internal control and internal audit issues relating to budgeting and projections. Apply GAAP.",
+      "metadata": { "weekNumbers": [1], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T3-BUDGET",
+      "title": "Cash Budget",
+      "code": "CAPS-ACCOUNTING-GR11-T3-BUDGET-02",
+      "description": "Prepare and present a cash budget for sole traders: projected cash receipts and cash payments, projected debtors collection, projected creditors payments. Separate debtors collection and/or creditors payment schedules. Integrate ethical, internal control and internal audit issues relating to budgeting.",
+      "metadata": { "weekNumbers": [2,3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T3",
+      "title": "Inventory Systems",
+      "code": "CAPS-ACCOUNTING-GR11-T3-INVENTORY",
+      "description": "Define, explain and discuss differences, advantages and disadvantages of perpetual stock system and periodic stock system. Focus on calculation of cost of sales and gross profit using each system.",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "CAPS FET Accounting Grade 11 Term 3 Weeks 5-6", "assessmentStandards": ["Task 5: Presentation (50 marks) Week 7-8"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T3-INVENTORY",
+      "title": "Perpetual Stock System",
+      "code": "CAPS-ACCOUNTING-GR11-T3-INVENTORY-01",
+      "description": "Define and explain the perpetual stock system. Calculate cost of sales using trading stock account and/or percentage mark-up. Calculate gross profit using sales and cost of sales and/or percentage mark-up.",
+      "metadata": { "weekNumbers": [5], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T3-INVENTORY",
+      "title": "Periodic Stock System",
+      "code": "CAPS-ACCOUNTING-GR11-T3-INVENTORY-02",
+      "description": "Define and explain the periodic stock system. Calculate cost of sales using opening stock, purchases, returns/allowances, carriage on purchases/custom duties, closing stock accounts and/or percentage mark-up. Calculate gross profit using sales and cost of sales. Integrate ethical, internal control and internal audit issues relating to stock.",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T3",
+      "title": "Cost Accounting (Manufacturing): Ledger Accounts and Calculations",
+      "code": "CAPS-ACCOUNTING-GR11-T3-COSTACC",
+      "description": "Calculate costs, unit costs and break-even point in the manufacturing environment. Variable and fixed cost classification. Recording of stock and cost items in ledger accounts.",
+      "metadata": { "weekNumbers": [7,8,9], "capsReference": "CAPS FET Accounting Grade 11 Term 3 Weeks 7-9", "assessmentStandards": ["Task 6: Control Test (100 marks, 1.5 hours) Week 10-11"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T3-COSTACC",
+      "title": "Cost Classification and Calculations",
+      "code": "CAPS-ACCOUNTING-GR11-T3-COSTACC-01",
+      "description": "Variable costs: direct material cost, direct labour cost, selling and distribution cost. Fixed costs: factory overhead cost, administration cost. Production cost of one product (unit cost) using variable and fixed costs. Total cost of production (direct material, direct labour and factory overhead costs). Breakeven point using contribution per unit concept.",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T3-COSTACC",
+      "title": "Manufacturing Ledger Accounts",
+      "code": "CAPS-ACCOUNTING-GR11-T3-COSTACC-02",
+      "description": "Recording of stock and cost items in ledger accounts. Stock accounts (balance sheet accounts): raw material stock, work-in-progress stock, finished goods stock, consumable stores stock/indirect materials stock. Cost accounts: direct material cost (DMC), direct labour cost (DLC), factory overhead cost (FOHC), administration cost (AC), selling and distribution cost (SDC). Other relevant nominal accounts affecting calculation of cost account.",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-ACCOUNTING-GR11",
+      "title": "Term 4",
+      "code": "CAPS-ACCOUNTING-GR11-T4",
+      "description": "Term 4 covers Value Added Tax (VAT), revision and examination preparation, and the final examination.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "CAPS FET Accounting Grade 11 Term 4", "assessmentStandards": ["Task 7: Final Examination (Paper 1: 150 marks, 2 hours; Paper 2: 150 marks, 2 hours)"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T4",
+      "title": "Value Added Tax (VAT)",
+      "code": "CAPS-ACCOUNTING-GR11-T4-VAT",
+      "description": "Explanation and discussion of VAT: need, purpose and principles. Basic VAT concepts including VAT-able items, current standard VAT rate, zero-rated items and VAT-exempted items. Perform VAT calculations.",
+      "metadata": { "weekNumbers": [1,2,3], "capsReference": "CAPS FET Accounting Grade 11 Term 4 Weeks 1-3", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T4-VAT",
+      "title": "VAT Concepts",
+      "code": "CAPS-ACCOUNTING-GR11-T4-VAT-01",
+      "description": "Explanation and discussion: need for VAT, purpose of VAT, principles of VAT, invoice or receipt base. Basic concepts of VAT: VAT-able items, current (standard) VAT rate, zero-rated items, VAT-exempted items.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T4-VAT",
+      "title": "VAT Calculations",
+      "code": "CAPS-ACCOUNTING-GR11-T4-VAT-02",
+      "description": "Perform VAT calculations: use current rate, add VAT to cost price plus mark-up amount, calculate VAT from VAT-inclusive amount, calculate VAT from VAT-exclusive amount. Understand the effect of bad debts, discounts and goods returned on VAT.",
+      "metadata": { "weekNumbers": [2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T4-VAT",
+      "title": "VAT Ethics and Internal Control",
+      "code": "CAPS-ACCOUNTING-GR11-T4-VAT-03",
+      "description": "Integrate ethics relating to VAT, VAT fraud, etc. Integrate internal audit and internal control processes over collection of VAT from customers and payment of VAT to SARS.",
+      "metadata": { "weekNumbers": [2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T4",
+      "title": "Revision and Final Examination",
+      "code": "CAPS-ACCOUNTING-GR11-T4-REVISION",
+      "description": "Revision and examination preparation covering all Grade 11 topics. Final examination: two papers of 150 marks each (2 hours each).",
+      "metadata": { "weekNumbers": [4,5,6,7,8,9,10], "capsReference": "CAPS FET Accounting Grade 11 Term 4 Weeks 4-10", "assessmentStandards": ["Paper 1: 150 marks, 2 hours — Discipline 1: Financial reporting and evaluation", "Paper 2: 150 marks, 2 hours — Discipline 2: Managerial accounting, internal auditing and control"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T4-REVISION",
+      "title": "Revision of All Grade 11 Topics",
+      "code": "CAPS-ACCOUNTING-GR11-T4-REVISION-01",
+      "description": "Revision and examination preparation for all topics covered during the year.",
+      "metadata": { "weekNumbers": [4,5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ACCOUNTING-GR11-T4-REVISION",
+      "title": "Final Examination",
+      "code": "CAPS-ACCOUNTING-GR11-T4-REVISION-02",
+      "description": "Final Examination: Paper 1 (150 marks, 2 hours) — Discipline 1: Financial reporting and evaluation. Paper 2 (150 marks, 2 hours) — Discipline 2: Managerial accounting, internal auditing and control. Cognitive levels: 30% basic thinking (45 marks), 40% moderately high thinking (60 marks), 30% higher-order thinking (45 marks). 10-15% problem solving type questions.",
+      "metadata": { "weekNumbers": [7,8,9,10], "capsReference": "2019 national exam guidelines", "assessmentStandards": ["Paper 1: 150 marks, 2 hours", "Paper 2: 150 marks, 2 hours"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    }
+  ]
+}

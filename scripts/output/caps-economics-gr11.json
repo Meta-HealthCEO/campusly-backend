@@ -1,0 +1,602 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Further Education and Training (FET)",
+      "code": "CAPS-FET",
+      "description": "Grades 10-12 Further Education and Training phase under CAPS",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 11",
+      "code": "CAPS-GR11",
+      "description": "Grade 11 curriculum under the FET phase",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR11",
+      "title": "Economics Grade 11",
+      "code": "CAPS-ECONOMICS-GR11",
+      "description": "CAPS Economics for Grade 11 covering Macroeconomics, Microeconomics, Economic Pursuits and Contemporary Economic Issues",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR11",
+      "title": "Factors of Production",
+      "code": "CAPS-ECONOMICS-GR11-T1-FACTPROD",
+      "description": "Factors of production and remuneration, local economic planning activities, accessibility of marginalised groups, community participation in local economic planning, empowerment and procurement",
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "Term 1, Weeks 1-2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR11-T1-FACTPROD",
+      "title": "Factors of Production and Remuneration",
+      "code": "CAPS-ECONOMICS-GR11-T1-FACTPROD-01",
+      "description": "Factors of production and their remuneration",
+      "metadata": {
+        "weekNumbers": [1],
+        "capsReference": "Term 1, Week 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR11-T1-FACTPROD",
+      "title": "Local Economic Planning and Empowerment",
+      "code": "CAPS-ECONOMICS-GR11-T1-FACTPROD-02",
+      "description": "Local economic planning activities; accessibility of marginalised groups; community participation in local economic planning; empowerment and procurement",
+      "metadata": {
+        "weekNumbers": [2],
+        "capsReference": "Term 1, Week 2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR11",
+      "title": "Circular Flow and Quantitative Elements: Economic Goods and Services",
+      "code": "CAPS-ECONOMICS-GR11-T1-CIRCULARFLOW",
+      "description": "Final consumption expenditure, government consumption expenditure, gross fixed capital formation, main national aggregates including GVA, GNE and GNI",
+      "metadata": {
+        "weekNumbers": [3, 4, 5],
+        "capsReference": "Term 1, Weeks 3-5",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR11-T1-CIRCULARFLOW",
+      "title": "Final Consumption and Government Expenditure",
+      "code": "CAPS-ECONOMICS-GR11-T1-CIRCULARFLOW-01",
+      "description": "Final consumption expenditure (C); consumption expenditure by government (G)",
+      "metadata": {
+        "weekNumbers": [3],
+        "capsReference": "Term 1, Week 3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR11-T1-CIRCULARFLOW",
+      "title": "Gross Fixed Capital Formation and Main Aggregates",
+      "code": "CAPS-ECONOMICS-GR11-T1-CIRCULARFLOW-02",
+      "description": "Gross fixed capital formation (I): definition, composition, importance; main aggregates: GVA, GNE, GNI",
+      "metadata": {
+        "weekNumbers": [4, 5],
+        "capsReference": "Term 1, Weeks 4-5",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR11",
+      "title": "Economic Systems: Mixed Economy",
+      "code": "CAPS-ECONOMICS-GR11-T1-ECOSYSTEMS",
+      "description": "Economic systems including free market capitalism, centrally planned socialism/communism and dualistic/mixed economy with South Africa as an example",
+      "metadata": {
+        "weekNumbers": [6, 7],
+        "capsReference": "Term 1, Weeks 6-7",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR11-T1-ECOSYSTEMS",
+      "title": "Free Market and Centrally Planned Systems",
+      "code": "CAPS-ECONOMICS-GR11-T1-ECOSYSTEMS-01",
+      "description": "Free market (capitalism); centrally planned (socialism/command/communism)",
+      "metadata": {
+        "weekNumbers": [6],
+        "capsReference": "Term 1, Week 6",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR11-T1-ECOSYSTEMS",
+      "title": "Mixed Economy (South Africa)",
+      "code": "CAPS-ECONOMICS-GR11-T1-ECOSYSTEMS-02",
+      "description": "Dualistic/mixed economy with South Africa as an example",
+      "metadata": {
+        "weekNumbers": [7],
+        "capsReference": "Term 1, Week 7",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR11",
+      "title": "Economic Structure of South Africa",
+      "code": "CAPS-ECONOMICS-GR11-T1-SASTRUCTURE",
+      "description": "Sectors of the economy (primary, secondary, tertiary), SA's infrastructure, service provisioning and access to economic opportunity",
+      "metadata": {
+        "weekNumbers": [8, 9],
+        "capsReference": "Term 1, Weeks 8-9",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR11-T1-SASTRUCTURE",
+      "title": "Sectors of the Economy",
+      "code": "CAPS-ECONOMICS-GR11-T1-SASTRUCTURE-01",
+      "description": "Sectors of the economy: primary, secondary and tertiary sector",
+      "metadata": {
+        "weekNumbers": [8],
+        "capsReference": "Term 1, Week 8",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR11-T1-SASTRUCTURE",
+      "title": "SA Infrastructure and Economic Opportunity",
+      "code": "CAPS-ECONOMICS-GR11-T1-SASTRUCTURE-02",
+      "description": "SA's infrastructure; service provisioning and access to economic opportunity",
+      "metadata": {
+        "weekNumbers": [9],
+        "capsReference": "Term 1, Week 9",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR11",
+      "title": "Dynamics of the Market: Relationship Between Markets",
+      "code": "CAPS-ECONOMICS-GR11-T2-MARKETREL",
+      "description": "Analysis of relationships between markets, relative prices, demand and supply relationships (substitutes and complements), relationships between product and factor markets, market structure",
+      "metadata": {
+        "weekNumbers": [1, 2, 3],
+        "capsReference": "Term 2, Weeks 1-3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR11-T2-MARKETREL",
+      "title": "Relative Prices and Demand/Supply Relationships",
+      "code": "CAPS-ECONOMICS-GR11-T2-MARKETREL-01",
+      "description": "Relative prices; demand and supply relationships: substitutes and complements; relationships between product and factor markets",
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "Term 2, Weeks 1-2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR11-T2-MARKETREL",
+      "title": "Market Structure Models",
+      "code": "CAPS-ECONOMICS-GR11-T2-MARKETREL-02",
+      "description": "Market structure: perfect and imperfect markets; four basic market structure models; characteristics and differences; classification into perfect and imperfect markets",
+      "metadata": {
+        "weekNumbers": [2, 3],
+        "capsReference": "Term 2, Weeks 2-3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR11",
+      "title": "Dynamics of Markets: Effects of Costs and Revenue",
+      "code": "CAPS-ECONOMICS-GR11-T2-COSTREV",
+      "description": "Effects of cost and revenue on prices and levels of production; objectives of businesses; short-run and long-run costs; revenue calculations; profits and losses",
+      "metadata": {
+        "weekNumbers": [4, 5, 6, 7],
+        "capsReference": "Term 2, Weeks 4-7",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 6
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR11-T2-COSTREV",
+      "title": "Objectives of Businesses and Short-Run Costs",
+      "code": "CAPS-ECONOMICS-GR11-T2-COSTREV-01",
+      "description": "Objectives of businesses; short-run costs: total, average and marginal; cost schedules; curves",
+      "metadata": {
+        "weekNumbers": [4, 5],
+        "capsReference": "Term 2, Weeks 4-5",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR11-T2-COSTREV",
+      "title": "Long-Run Costs, Revenue and Profitability",
+      "code": "CAPS-ECONOMICS-GR11-T2-COSTREV-02",
+      "description": "Long-run costs; revenue calculations; changes in revenue; profits and losses; application of revenue and costs analysis including production and pricing of factors",
+      "metadata": {
+        "weekNumbers": [6, 7],
+        "capsReference": "Term 2, Weeks 6-7",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR11",
+      "title": "Dynamics of Markets: Price Elasticity",
+      "code": "CAPS-ECONOMICS-GR11-T2-ELASTICITY",
+      "description": "Explanation and calculation of price elasticities; price elasticity of demand; price elasticity of supply; factors determining elasticity of demand",
+      "metadata": {
+        "weekNumbers": [8, 9],
+        "capsReference": "Term 2, Weeks 8-9",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 7
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR11-T2-ELASTICITY",
+      "title": "Price Elasticity of Demand",
+      "code": "CAPS-ECONOMICS-GR11-T2-ELASTICITY-01",
+      "description": "Price elasticity of demand: explanation, calculation and graphical illustration",
+      "metadata": {
+        "weekNumbers": [8],
+        "capsReference": "Term 2, Week 8",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR11-T2-ELASTICITY",
+      "title": "Price Elasticity of Supply and Determinants",
+      "code": "CAPS-ECONOMICS-GR11-T2-ELASTICITY-02",
+      "description": "Price elasticity of supply; factors determining the elasticity of demand",
+      "metadata": {
+        "weekNumbers": [9],
+        "capsReference": "Term 2, Week 9",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR11",
+      "title": "Economic Growth",
+      "code": "CAPS-ECONOMICS-GR11-T3-ECOGROWTH",
+      "description": "Wealth creation and patterns of distribution, redistribution methods, economic growth meaning and importance, methods, constraints, SA growth experience, standard of living",
+      "metadata": {
+        "weekNumbers": [1, 2, 3],
+        "capsReference": "Term 3, Weeks 1-3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 8
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR11-T3-ECOGROWTH",
+      "title": "Wealth Creation and Distribution",
+      "code": "CAPS-ECONOMICS-GR11-T3-ECOGROWTH-01",
+      "description": "Wealth creation and patterns of distribution; distribution; income and distribution; wealth distribution; inequality; Gini coefficient and Lorenz curve; redistribution methods",
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "Term 3, Weeks 1-2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR11-T3-ECOGROWTH",
+      "title": "Economic Growth: Meaning, Methods and SA Experience",
+      "code": "CAPS-ECONOMICS-GR11-T3-ECOGROWTH-02",
+      "description": "Economic growth: meaning and importance; methods; constraints on growth; South Africa's recent growth experience; standard of living",
+      "metadata": {
+        "weekNumbers": [2, 3],
+        "capsReference": "Term 3, Weeks 2-3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR11",
+      "title": "Economic Development",
+      "code": "CAPS-ECONOMICS-GR11-T3-ECODEVEL",
+      "description": "Measuring levels of development, methods of development, common characteristics of underdevelopment, developing strategies, South African endeavours, Indigenous Knowledge Systems",
+      "metadata": {
+        "weekNumbers": [4, 5, 6],
+        "capsReference": "Term 3, Weeks 4-6",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 9
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR11-T3-ECODEVEL",
+      "title": "Measuring Development and Common Characteristics",
+      "code": "CAPS-ECONOMICS-GR11-T3-ECODEVEL-01",
+      "description": "Measuring levels of development; methods of development; common characteristics: low standard of living, low productivity, high population growth, high unemployment, dependence on primary sector, deficient infrastructure",
+      "metadata": {
+        "weekNumbers": [4, 5],
+        "capsReference": "Term 3, Weeks 4-5",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR11-T3-ECODEVEL",
+      "title": "Developing Strategies, SA Endeavours and IKS",
+      "code": "CAPS-ECONOMICS-GR11-T3-ECODEVEL-02",
+      "description": "Developing strategies; South African endeavours; Indigenous Knowledge Systems (IKS)",
+      "metadata": {
+        "weekNumbers": [5, 6],
+        "capsReference": "Term 3, Weeks 5-6",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR11",
+      "title": "Money and Banking",
+      "code": "CAPS-ECONOMICS-GR11-T3-MONEYBANK",
+      "description": "Composition of South Africa's money and banking system; money functions and instruments; banking principles; credit creation; interest rates; micro-lending; central banking and monetary policy",
+      "metadata": {
+        "weekNumbers": [7, 8, 9],
+        "capsReference": "Term 3, Weeks 7-9",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 10
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR11-T3-MONEYBANK",
+      "title": "Money: Functions, Instruments and Value",
+      "code": "CAPS-ECONOMICS-GR11-T3-MONEYBANK-01",
+      "description": "Technical functions of money; modern money; money-associated instruments; the monetary system; the value of money; stabilising the value of money",
+      "metadata": {
+        "weekNumbers": [7, 8],
+        "capsReference": "Term 3, Weeks 7-8",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR11-T3-MONEYBANK",
+      "title": "Banking, Credit Creation and Central Banking",
+      "code": "CAPS-ECONOMICS-GR11-T3-MONEYBANK-02",
+      "description": "Basic principles of credit creation; interest rates; micro-lending activities; central banking: basic functions; monetary policy; bank failures and consequences",
+      "metadata": {
+        "weekNumbers": [8, 9],
+        "capsReference": "Term 3, Weeks 8-9",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR11",
+      "title": "Globalisation",
+      "code": "CAPS-ECONOMICS-GR11-T4-GLOBALISATION",
+      "description": "Meaning, causes, consequences of globalisation and the north/south divide",
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "Term 4, Weeks 1-2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 11
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR11-T4-GLOBALISATION",
+      "title": "Meaning and Causes of Globalisation",
+      "code": "CAPS-ECONOMICS-GR11-T4-GLOBALISATION-01",
+      "description": "Meaning and causes of globalisation",
+      "metadata": {
+        "weekNumbers": [1],
+        "capsReference": "Term 4, Week 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR11-T4-GLOBALISATION",
+      "title": "Consequences and North/South Divide",
+      "code": "CAPS-ECONOMICS-GR11-T4-GLOBALISATION-02",
+      "description": "Consequences of globalisation; north/south divide",
+      "metadata": {
+        "weekNumbers": [2],
+        "capsReference": "Term 4, Week 2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR11",
+      "title": "Environmental Deterioration",
+      "code": "CAPS-ECONOMICS-GR11-T4-ENVIRONMENT",
+      "description": "The environmental problem; protecting the environment; approaches to sustainability; global and local impact on South Africa",
+      "metadata": {
+        "weekNumbers": [3, 4],
+        "capsReference": "Term 4, Weeks 3-4",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 12
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR11-T4-ENVIRONMENT",
+      "title": "The Environmental Problem",
+      "code": "CAPS-ECONOMICS-GR11-T4-ENVIRONMENT-01",
+      "description": "The problem of environmental deterioration",
+      "metadata": {
+        "weekNumbers": [3],
+        "capsReference": "Term 4, Week 3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR11-T4-ENVIRONMENT",
+      "title": "Protecting the Environment and Approaches to Sustainability",
+      "code": "CAPS-ECONOMICS-GR11-T4-ENVIRONMENT-02",
+      "description": "Protecting the environment; approaches to sustainability; the global and local impact on South Africa",
+      "metadata": {
+        "weekNumbers": [3, 4],
+        "capsReference": "Term 4, Weeks 3-4",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    }
+  ]
+}

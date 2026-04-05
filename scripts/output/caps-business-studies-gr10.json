@@ -1,0 +1,620 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Further Education and Training Phase",
+      "code": "CAPS-FET",
+      "description": "CAPS FET Phase covering Grades 10 to 12",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 10",
+      "code": "CAPS-GR10",
+      "description": "Grade 10 FET Phase",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR10",
+      "title": "Business Studies Grade 10",
+      "code": "CAPS-BUSINESSSTUDIES-GR10",
+      "description": "CAPS Business Studies for Grade 10",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10",
+      "title": "Micro Environment",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T1-MICROENV",
+      "description": "Meaning and components of the micro (internal) business environment including vision, mission, goals, objectives, organisational resources, management and leadership, business functions, organisational culture and organisational structure.",
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "Term 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10-T1-MICROENV",
+      "title": "Vision, Mission, Goals and Objectives",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T1-MICROENV-01",
+      "description": "Meaning of the term micro-environment; vision, mission statement, goals and objectives; the eight functions and activities of the business.",
+      "metadata": {
+        "weekNumbers": [1],
+        "capsReference": "Term 1, Week 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10-T1-MICROENV",
+      "title": "Organisational Culture and Structure",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T1-MICROENV-02",
+      "description": "Various components of the micro environment: organisational culture, business organisational structure; purpose of organisational culture; purpose/importance of a business organisational structure with specific reference to an organogram.",
+      "metadata": {
+        "weekNumbers": [2],
+        "capsReference": "Term 1, Week 2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10",
+      "title": "Business Functions",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T1-BUSFUNC",
+      "description": "Activities and importance of the eight business functions including general management, administration, financing, public relations and purchasing. Differences between leadership and management. NCA and CPA nature, purpose, rights, responsibilities and remedies.",
+      "metadata": {
+        "weekNumbers": [3, 4],
+        "capsReference": "Term 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10-T1-BUSFUNC",
+      "title": "General Management",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T1-BUSFUNC-01",
+      "description": "Recap the eight business functions; differences between leadership and management; activities and importance/purpose of general management.",
+      "metadata": {
+        "weekNumbers": [3],
+        "capsReference": "Term 1, Week 3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10-T1-BUSFUNC",
+      "title": "Administration, Financing, Public Relations and Purchasing",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T1-BUSFUNC-02",
+      "description": "Activities and importance/purpose of administration, financing, public relations and purchasing. Purchasing includes NCA and CPA: nature, purpose, rights, responsibilities and remedies.",
+      "metadata": {
+        "weekNumbers": [4],
+        "capsReference": "Term 1, Week 4",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10",
+      "title": "Concept of Quality",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T1-QUALITY",
+      "description": "Meaning of quality, quality control and quality assurance; differences between quality control and quality assurance; importance of quality; quality indicators of business functions; correlation between management and business success.",
+      "metadata": {
+        "weekNumbers": [5, 6],
+        "capsReference": "Term 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10-T1-QUALITY",
+      "title": "Quality Control and Quality Assurance",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T1-QUALITY-01",
+      "description": "Meaning of quality, quality control and quality assurance; difference between quality control and quality assurance; importance of quality for businesses.",
+      "metadata": {
+        "weekNumbers": [5],
+        "capsReference": "Term 1, Week 5",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10-T1-QUALITY",
+      "title": "Quality Indicators and Management Success",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T1-QUALITY-02",
+      "description": "Quality indicators of the human resources, administration, financial and general management functions; correlation between management and the success of business in achieving its objectives, strengths and weaknesses.",
+      "metadata": {
+        "weekNumbers": [6],
+        "capsReference": "Term 1, Week 6",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10",
+      "title": "Market Environment",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T1-MARKETENV",
+      "description": "Meaning of the market environment; components of the market environment; reasons why competition poses a challenge; examples of other organisations/civil society; meaning of opportunities and threats with practical examples.",
+      "metadata": {
+        "weekNumbers": [7],
+        "capsReference": "Term 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10",
+      "title": "Macro Environment",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T1-MACROENV",
+      "description": "Meaning of the macro-environment; practical examples of each component/feature; reasons why each component/feature poses a challenge to businesses.",
+      "metadata": {
+        "weekNumbers": [8],
+        "capsReference": "Term 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10",
+      "title": "Interrelationship Between the Environments",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T1-INTERREL",
+      "description": "Link/relationship between features/components of the micro-environment; interrelation between micro and market environments; examples of the relationship between the business with consumers, suppliers, intermediaries, and competitors; relationship between micro, market, and macro environments.",
+      "metadata": {
+        "weekNumbers": [9],
+        "capsReference": "Term 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 6
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10",
+      "title": "Business Sectors",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T2-SECTORS",
+      "description": "Meaning of primary, secondary, and tertiary sectors; relationship between sectors; meaning of formal and informal sectors; public and private sector distinctions and their importance.",
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "Term 2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 7
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10-T2-SECTORS",
+      "title": "Primary, Secondary and Tertiary Sectors",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T2-SECTORS-01",
+      "description": "Meaning of the primary, secondary, and tertiary sectors with examples of each; relationship between these sectors; meaning of formal and informal sectors with practical examples; importance and distinction between formal and informal sectors.",
+      "metadata": {
+        "weekNumbers": [1],
+        "capsReference": "Term 2, Week 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10-T2-SECTORS",
+      "title": "Public and Private Sectors",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T2-SECTORS-02",
+      "description": "Meaning of the public and private sectors; importance of the public and private sectors; distinction between the public and private sectors.",
+      "metadata": {
+        "weekNumbers": [2],
+        "capsReference": "Term 2, Week 2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10",
+      "title": "Contemporary Socio-Economic Issues",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T2-SOCIOECO",
+      "description": "Meaning of socio-economic issues; reasons why they pose a challenge to businesses; inequality, poverty, inclusivity, unemployment, HIV/Aids, gambling, counterfeiting, bootlegging, strikes, political disturbance and crime and their impact on businesses.",
+      "metadata": {
+        "weekNumbers": [3, 4],
+        "capsReference": "Term 2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 8
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10-T2-SOCIOECO",
+      "title": "Inequality, Poverty and Inclusivity",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T2-SOCIOECO-01",
+      "description": "Meaning of socio-economic issues; reasons why they pose a challenge; meaning of inequality and poverty; impact of inequality and poverty on businesses; term 'inclusivity' and its purpose in the workplace; unemployment and unproductive labour forces.",
+      "metadata": {
+        "weekNumbers": [3],
+        "capsReference": "Term 2, Week 3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10-T2-SOCIOECO",
+      "title": "HIV/Aids, Gambling, Crime and Other Issues",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T2-SOCIOECO-02",
+      "description": "Negative impact of HIV/Aids on businesses; different types of gambling and their impact; meaning of counterfeiting/bootlegging/strikes/political disturbance and crime; impact of socio-economic issues on businesses.",
+      "metadata": {
+        "weekNumbers": [4],
+        "capsReference": "Term 2, Week 4",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10",
+      "title": "Social Responsibility",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T2-SOCIALRESP",
+      "description": "Term 'social responsibility' with practical examples; definition of corporate social responsibility; recommend/suggest initiatives businesses can take to address socio-economic issues.",
+      "metadata": {
+        "weekNumbers": [5],
+        "capsReference": "Term 2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 9
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10",
+      "title": "Forms of Ownership",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T2-OWNERSHIP",
+      "description": "Sole proprietor, partnership, non-profit company, profit companies, co-operatives: definition, characteristics, advantages, disadvantages and comparison between forms of ownership.",
+      "metadata": {
+        "weekNumbers": [6, 7],
+        "capsReference": "Term 2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 10
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10-T2-OWNERSHIP",
+      "title": "Sole Proprietor and Partnership",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T2-OWNERSHIP-01",
+      "description": "Sole proprietor and partnership: definition, characteristics, advantages, disadvantages and differences (comparison) between the forms of ownership.",
+      "metadata": {
+        "weekNumbers": [6],
+        "capsReference": "Term 2, Week 6",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10-T2-OWNERSHIP",
+      "title": "Non-Profit Company, Profit Companies and Co-operatives",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T2-OWNERSHIP-02",
+      "description": "Non-profit company, profit companies, co-operatives: definition, characteristics, advantages, disadvantages and differences (comparison) between the forms of ownership.",
+      "metadata": {
+        "weekNumbers": [7],
+        "capsReference": "Term 2, Week 7",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10",
+      "title": "Creative Thinking and Problem Solving",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T3-CREATIVE",
+      "description": "Meaning and advantages of creative thinking; use of creative thinking to generate entrepreneurial opportunities; meaning of problem solving; differences between decision making and problem solving; problem solving cycle; problem-solving techniques including force-field analysis, Delphi technique, nominal group technique and brainstorming.",
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "Term 3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 11
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10-T3-CREATIVE",
+      "title": "Creative Thinking",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T3-CREATIVE-01",
+      "description": "Meaning of creative thinking; advantages/benefits of creative thinking in the workplace; use creative thinking to generate entrepreneurial opportunities; businesses can use creative thinking to solve business problems; mind mapping and brainstorming to identify innovative opportunities; ways to implement creative business opportunities.",
+      "metadata": {
+        "weekNumbers": [1],
+        "capsReference": "Term 3, Week 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10-T3-CREATIVE",
+      "title": "Problem Solving",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T3-CREATIVE-02",
+      "description": "Meaning of problem solving; differences between decision making and problem solving; problem solving cycle; problem-solving techniques: force-field analysis, Delphi technique, nominal group technique, brainstorming.",
+      "metadata": {
+        "weekNumbers": [2],
+        "capsReference": "Term 3, Week 2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10",
+      "title": "Business Opportunity and Related Factors",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T3-BUSOPPORT",
+      "description": "Meaning of a business opportunity; assessing needs and desires; research instruments and data collection; market research; SWOT analysis to determine a viable business venture.",
+      "metadata": {
+        "weekNumbers": [3, 4],
+        "capsReference": "Term 3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 12
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10-T3-BUSOPPORT",
+      "title": "Identifying a Business Opportunity",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T3-BUSOPPORT-01",
+      "description": "Meaning of a business opportunity with practical examples; importance of assessing needs and desires; research instruments and data collection (questionnaires, interview structures); protocol of conducting research; difference between internal and external market research; conduct market research and identify a business opportunity.",
+      "metadata": {
+        "weekNumbers": [3],
+        "capsReference": "Term 3, Week 3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10-T3-BUSOPPORT",
+      "title": "SWOT Analysis",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T3-BUSOPPORT-02",
+      "description": "Definition of business opportunities based on researched needs and desires; SWOT analysis; use SWOT analysis to determine a viable business venture; identify a business opportunity based on SWOT analysis findings; apply a SWOT analysis from given scenarios/case studies.",
+      "metadata": {
+        "weekNumbers": [4],
+        "capsReference": "Term 3, Week 4",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10",
+      "title": "Presentation of Business Information",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T3-PRESINFO",
+      "description": "Accurate and concise verbal and non-verbal presentation; presentation of business reports; factors to consider for a verbal presentation; support materials; definition, purpose and design of different visual aids including PowerPoint, hand-outs, flip charts, interactive whiteboards and posters.",
+      "metadata": {
+        "weekNumbers": [5, 6],
+        "capsReference": "Term 3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 13
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10-T3-PRESINFO",
+      "title": "Verbal Presentations",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T3-PRESINFO-01",
+      "description": "Accurate and concise verbal and non-verbal presentation; presentation of business reports; verbal presentations and factors that must be considered when preparing for a verbal presentation.",
+      "metadata": {
+        "weekNumbers": [5],
+        "capsReference": "Term 3, Week 5",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10-T3-PRESINFO",
+      "title": "Visual Aids and Presentation Design",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T3-PRESINFO-02",
+      "description": "Support materials for presentations; definition of different visual aids (PowerPoint/data projector, hand-outs/flyers/brochures, flip charts, interactive whiteboard/smart boards, posters/signs/banners/portable advertising stands/flags); purpose of visual aids; design and layout of a presentation.",
+      "metadata": {
+        "weekNumbers": [6],
+        "capsReference": "Term 3, Week 6",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10",
+      "title": "Business Plan",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T3-BUSPLAN",
+      "description": "Importance of a business plan; macro environment challenges using PESTLE analysis; components of a business plan including executive summary, description of business, SWOT analysis, marketing plan (7Ps), competition and financial plan.",
+      "metadata": {
+        "weekNumbers": [7, 8],
+        "capsReference": "Term 3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 14
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10-T3-BUSPLAN",
+      "title": "Business Plan Components: Overview and Description",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T3-BUSPLAN-01",
+      "description": "Importance of a business plan; macro environment challenges using PESTLE analysis; components of a business plan; executive summary; description of the business including long-term objective, mission and vision; the product/service.",
+      "metadata": {
+        "weekNumbers": [7],
+        "capsReference": "Term 3, Week 7",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10-T3-BUSPLAN",
+      "title": "Business Plan: Structure, Marketing and Financial Plan",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T3-BUSPLAN-02",
+      "description": "Structure of the business (ownership)/relationship between structure and forms of ownership; different types of legal requirements; SWOT analysis for the envisaged business; marketing plan (market research, marketing mix 7Ps: price, product, promotion, place, people, physical environment, process); competition; financial plan including a balance sheet.",
+      "metadata": {
+        "weekNumbers": [8],
+        "capsReference": "Term 3, Week 8",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10",
+      "title": "Relationship and Team Performance",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T4-TEAMPERF",
+      "description": "Factors influencing business relationships; interpersonal relationships in the workplace; personal beliefs, values and how they influence business relationships; criteria for successful and collaborative team performance; working in a team to accomplish business objectives.",
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "Term 4",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 15
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10-T4-TEAMPERF",
+      "title": "Interpersonal Relationships and Business Objectives",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T4-TEAMPERF-01",
+      "description": "Factors that can influence relationships (prejudice, beliefs, values and diversity); understanding business objectives (profit, productivity, service); interpersonal relationships in the workplace across different hierarchies and management levels.",
+      "metadata": {
+        "weekNumbers": [1],
+        "capsReference": "Term 4, Week 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR10-T4-TEAMPERF",
+      "title": "Team Performance and Collaboration",
+      "code": "CAPS-BUSINESSSTUDIES-GR10-T4-TEAMPERF-02",
+      "description": "Personal beliefs and values and how they influence business relationships (prejudice, discrimination, equity, diversity); criteria for successful and collaborative team performance in a business context; working in a team to accomplish business objectives.",
+      "metadata": {
+        "weekNumbers": [2],
+        "capsReference": "Term 4, Week 2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    }
+  ]
+}

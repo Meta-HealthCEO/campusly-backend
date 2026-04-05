@@ -1,0 +1,622 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Further Education and Training Phase",
+      "code": "CAPS-FET",
+      "description": "CAPS FET Phase covering Grades 10 to 12",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 11",
+      "code": "CAPS-GR11",
+      "description": "Grade 11 FET Phase",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR11",
+      "title": "Business Studies Grade 11",
+      "code": "CAPS-BUSINESSSTUDIES-GR11",
+      "description": "CAPS Business Studies for Grade 11",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11",
+      "title": "Influences On, and Control Factors Relating to the Business Environments",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T1-ENVCONTROL",
+      "description": "Ways to be involved in business environments if beneficial to the business; recap components of micro, market and macro business environments; examination of control factors (more control over micro, less over market, no control over macro).",
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "Term 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11-T1-ENVCONTROL",
+      "title": "Micro and Market Environment Components",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T1-ENVCONTROL-01",
+      "description": "Micro environment: vision, mission statement, goals and objectives, organisational resources, management and leadership, eight functions and activities. Market environment: consumers/customers, suppliers, intermediaries, competitors, other organisations/civil society (CBOs, NGOs, regulators, strategic allies, unions).",
+      "metadata": {
+        "weekNumbers": [1],
+        "capsReference": "Term 1, Week 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11-T1-ENVCONTROL",
+      "title": "Macro Environment and Control Factors",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T1-ENVCONTROL-02",
+      "description": "Macro environment: physical/natural, economic, social/cultural/demographic, technological, legal and political, international/global, institutional environments. Examination of control factors: more control over micro, less control over market, no control over macro environment.",
+      "metadata": {
+        "weekNumbers": [2],
+        "capsReference": "Term 1, Week 2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11",
+      "title": "Challenges of the Business Environments",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T1-ENVCHALL",
+      "description": "Challenges of the micro (internal), market and macro business environments.",
+      "metadata": {
+        "weekNumbers": [3],
+        "capsReference": "Term 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11",
+      "title": "Adapting to Challenges of Business Environments",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T1-ENVADAPT",
+      "description": "How a business constantly needs to adapt to challenges of the micro, market and macro business environments; information management, strategic responses, mergers, takeovers, acquisitions and alliances, organisation design and flexibility, direct influence and social responsibility; lobbying, networking and power relations.",
+      "metadata": {
+        "weekNumbers": [4, 5],
+        "capsReference": "Term 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11-T1-ENVADAPT",
+      "title": "Strategic Responses and Adaptation",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T1-ENVADAPT-01",
+      "description": "Ways in which a business can adapt to challenges of the business environment: information management, strategic responses, mergers, takeovers, acquisitions and alliances, organisation design and flexibility, direct influence of the environment and social responsibility.",
+      "metadata": {
+        "weekNumbers": [4],
+        "capsReference": "Term 1, Week 4",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11-T1-ENVADAPT",
+      "title": "Lobbying, Networking and Power Relations",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T1-ENVADAPT-02",
+      "description": "Lobbying (e.g. hedging against inflation, bargaining sessions between management and unions, influencing supervisory body/regulators); networking (e.g. finding new customers); power relationships (e.g. strategic alliance agreements, persuasion of large investors, company representatives' influence).",
+      "metadata": {
+        "weekNumbers": [5],
+        "capsReference": "Term 1, Week 5",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11",
+      "title": "Impact and Challenges of Contemporary Socio-Economic Issues on Business Operations",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T1-SOCIOECO",
+      "description": "Impact of contemporary socio-economic issues on business operations and productivity; intellectual property rights; industrial relations developments; Labour Relations Act; trade unions.",
+      "metadata": {
+        "weekNumbers": [6],
+        "capsReference": "Term 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11-T1-SOCIOECO",
+      "title": "Socio-Economic Issues and Business Operations",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T1-SOCIOECO-01",
+      "description": "Impact of contemporary socio-economic issues on business operations and productivity: income, inflation, social/cultural/demographic issues, economic crime, population growth, illiteracy, lack of skills, unavailability of natural resources, inefficiency in use of resources, dumping, exhaustion of natural resources, piracy, strikes.",
+      "metadata": {
+        "weekNumbers": [6],
+        "capsReference": "Term 1, Week 6",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11-T1-SOCIOECO",
+      "title": "Intellectual Property Rights and Labour Relations",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T1-SOCIOECO-02",
+      "description": "Business solutions to deal with piracy; nature and definition of intellectual property rights (copyright, patent, trademark); developments in industrial relations (labour strikes, go-slows, lockouts); Labour Relations Act (nature and purpose); trade unions (definition, history, roles and functions).",
+      "metadata": {
+        "weekNumbers": [6],
+        "capsReference": "Term 1, Week 6",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11",
+      "title": "Business Sectors",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T1-SECTORS",
+      "description": "Links between various primary, secondary, and tertiary enterprises; examination of the links between primary, secondary and tertiary sectors.",
+      "metadata": {
+        "weekNumbers": [7],
+        "capsReference": "Term 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11",
+      "title": "Benefits of a Company Versus Other Forms of Ownership",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T1-COMPANY",
+      "description": "Benefits and challenges of establishing a company versus other forms of ownership (including taxation issues); recap characteristics, advantages and disadvantages of forms of ownership; formation of companies; Memorandum of Incorporation; name, incorporation and commencement of the company; prospectus.",
+      "metadata": {
+        "weekNumbers": [8],
+        "capsReference": "Term 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 6
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11-T1-COMPANY",
+      "title": "Company vs Other Forms of Ownership",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T1-COMPANY-01",
+      "description": "Benefits and challenges of establishing a company versus other forms of ownership (including taxation issues); recap characteristics, advantages and disadvantages; benefits and challenges of a company versus sole trader, partnership, co-operatives.",
+      "metadata": {
+        "weekNumbers": [8],
+        "capsReference": "Term 1, Week 8",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11-T1-COMPANY",
+      "title": "Formation of Companies",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T1-COMPANY-02",
+      "description": "Formation of companies; the company's charter – Memorandum of Incorporation; name of the company, incorporation and commencement of the company; prospectus.",
+      "metadata": {
+        "weekNumbers": [8],
+        "capsReference": "Term 1, Week 8",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11",
+      "title": "Avenues of Acquiring Business",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T1-ACQUIRING",
+      "description": "Avenues of acquiring businesses (franchising, outsourcing, leasing); advantages and disadvantages; contractual implications (royalties, legalities).",
+      "metadata": {
+        "weekNumbers": [9],
+        "capsReference": "Term 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 7
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11",
+      "title": "Creative Thinking and Problem Solving, Stress, Crisis and Change Management",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T2-CREATIVE",
+      "description": "Application of creative thinking to address business problems and improve practice; routine vs creative thinking; mental blocks; problem-solving skills; Delphi technique and force-field analysis; working with others; stress management; crisis and change management.",
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "Term 2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 8
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11-T2-CREATIVE",
+      "title": "Creative Thinking and Problem Solving",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T2-CREATIVE-01",
+      "description": "Application of creative thinking to address business problems and to improve business practice; routine vs creative thinking; mental blocks to creativity and idea generation; problem-solving skills in a business context; more complex problem-solving techniques (Delphi technique and force-field analysis revision); working with others to solve problems; creative solutions to business problems assessed against the reality of the business environment.",
+      "metadata": {
+        "weekNumbers": [1],
+        "capsReference": "Term 2, Week 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11-T2-CREATIVE",
+      "title": "Stress, Crisis and Change Management",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T2-CREATIVE-02",
+      "description": "Concepts relating to stress, crisis and change management; how to manage stress; importance of stress management in pressurised work environments; crisis and change management; dealing with business-related crises (tight deadlines, loss of property, illness); dealing with and adapting to change (unemployment, retrenchment, globalisation, affirmative action).",
+      "metadata": {
+        "weekNumbers": [2],
+        "capsReference": "Term 2, Week 2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11",
+      "title": "Marketing Function",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T2-MARKETING",
+      "description": "Marketing activities; product policy; pricing policy; distribution policy; marketing communication (sales promotion, advertising, publicity, personal selling).",
+      "metadata": {
+        "weekNumbers": [3, 4],
+        "capsReference": "Term 2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 9
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11-T2-MARKETING",
+      "title": "Marketing Activities and Marketing Mix",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T2-MARKETING-01",
+      "description": "Marketing activities (locating the consumer, standardisation and grading, storage, transport, financing, risk-bearing, buying and selling); marketing mix – product policy (product development, design, packaging and trademarks); pricing policy (importance, techniques, determination, influencing factors, price adjustments).",
+      "metadata": {
+        "weekNumbers": [3],
+        "capsReference": "Term 2, Week 3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11-T2-MARKETING",
+      "title": "Distribution and Communication Policy",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T2-MARKETING-02",
+      "description": "Distribution policy: channels of distribution, intermediaries, direct and indirect distribution; communication policy: sales promotion, advertising, publicity and personal selling.",
+      "metadata": {
+        "weekNumbers": [4],
+        "capsReference": "Term 2, Week 4",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11",
+      "title": "Production Function",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T2-PRODUCTION",
+      "description": "Production planning and control; safety management; quality control including quality management systems (SABS), quality control bodies and policies.",
+      "metadata": {
+        "weekNumbers": [5, 6, 7],
+        "capsReference": "Term 2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 10
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11-T2-PRODUCTION",
+      "title": "Production Planning and Control",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T2-PRODUCTION-01",
+      "description": "Production planning (information about production planning and control); production planning: planning, routing, scheduling and loading; production control: dispatching, following up, inspection and corrective action.",
+      "metadata": {
+        "weekNumbers": [5],
+        "capsReference": "Term 2, Week 5",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11-T2-PRODUCTION",
+      "title": "Safety Management and Quality Control",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T2-PRODUCTION-02",
+      "description": "Safety management: knowledge about factory safety, machinery and Occupational Health and Safety Act; quality control: quality management systems (SABS), quality control bodies and policies.",
+      "metadata": {
+        "weekNumbers": [6, 7],
+        "capsReference": "Term 2, Weeks 6-7",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11",
+      "title": "Professionalism and Ethics",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T2-ETHICS",
+      "description": "Theories and principles of professionalism and ethics; application of principles and skills of professional, responsible, ethical and effective business practice; concept of ethics and different perspectives on ethics; ethical business ventures.",
+      "metadata": {
+        "weekNumbers": [8],
+        "capsReference": "Term 2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 11
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11",
+      "title": "Assessment of Entrepreneurial Qualities in Business",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T3-ENTREPRENEUR",
+      "description": "Degree to which a business embraces entrepreneurial qualities; identification and assessment of a business against entrepreneurial qualities (risk taking, perseverance, good management, etc.); critical reflections on a business venture; exploration of what makes a business successful; key success factors.",
+      "metadata": {
+        "weekNumbers": [1],
+        "capsReference": "Term 3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 12
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11",
+      "title": "Transform a Business Plan Into an Action Plan",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T3-ACTIONPLAN",
+      "description": "Transformation of a business plan into an action plan (including Gantt charts and timelines) collaboratively or independently; planning tools: Gantt charts or work breakdown structure (WBS) with timelines and responsibilities; project planning.",
+      "metadata": {
+        "weekNumbers": [2],
+        "capsReference": "Term 3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 13
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11",
+      "title": "Start a Business Venture Based on an Action Plan",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T3-STARTBUS",
+      "description": "Collaboratively or independently starting a business venture based on an action plan; initiating and setting up business ventures to generate income; acquiring funding (equity capital/loans/debt, considering other sources of funding/capital).",
+      "metadata": {
+        "weekNumbers": [3, 4],
+        "capsReference": "Term 3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 14
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11",
+      "title": "Presentation of Business Information",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T3-PRESINFO",
+      "description": "Accurate and concise verbal and non-verbal presentation of business-related information; presentation and validation of business-related information in verbal and non-verbal format (tables, graphs, diagrams, illustrations, posters and hand-outs); written information – reports, business plans, business information and analysis; responding professionally to questions.",
+      "metadata": {
+        "weekNumbers": [5, 6],
+        "capsReference": "Term 3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 15
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11-T3-PRESINFO",
+      "title": "Verbal and Non-Verbal Presentations",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T3-PRESINFO-01",
+      "description": "Accurate and concise verbal and non-verbal presentation of a variety of business-related information (including graphs); presentation and validation (support) of business-related information in verbal and non-verbal format (tables, graphs, diagrams, illustrations, posters and hand-outs).",
+      "metadata": {
+        "weekNumbers": [5],
+        "capsReference": "Term 3, Week 5",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11-T3-PRESINFO",
+      "title": "Written Information and Responding to Questions",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T3-PRESINFO-02",
+      "description": "Design and layout of the presentation using different visual aids (slides, posters and hand-outs); written information: reports, business plans, business information and analysis, steps in report-writing, composing a flyer; responding in a non-aggressive and professional manner to questions about work and presentations.",
+      "metadata": {
+        "weekNumbers": [6],
+        "capsReference": "Term 3, Week 6",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11",
+      "title": "Team Stages and Dynamics, Theories and Conflict Management",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T3-TEAMCONFLICT",
+      "description": "Stages of team development/building a team; conflict management definition, causes, skills and techniques to resolve differences.",
+      "metadata": {
+        "weekNumbers": [7, 8],
+        "capsReference": "Term 3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 16
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11-T3-TEAMCONFLICT",
+      "title": "Stages of Team Development",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T3-TEAMCONFLICT-01",
+      "description": "Stages of team development: forming stage (getting to know each other), storming stage (true character starts to show/first round conflict), norming stage (settling and reconciliation), performing stage (working as a team towards the goal).",
+      "metadata": {
+        "weekNumbers": [7],
+        "capsReference": "Term 3, Week 7",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11-T3-TEAMCONFLICT",
+      "title": "Conflict Management",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T3-TEAMCONFLICT-02",
+      "description": "Definition of conflict; causes of conflict in the business; definition of conflict management; conflict management skills to resolve differences in business situations.",
+      "metadata": {
+        "weekNumbers": [8],
+        "capsReference": "Term 3, Week 8",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11",
+      "title": "Introduction to Human Resources Function",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T4-HUMANRES",
+      "description": "Human resources activities (recruitment and selection, contracts, induction, salaries, and other benefits); procedures related to recruitment, selection and interviewing; legalities of employment contracts; procedures of induction and placements; salary determination (piecemeal and time-related) including personal tax; employee benefits (pension, medical, other).",
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "Term 4",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 17
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11-T4-HUMANRES",
+      "title": "Recruitment, Selection, Contracts and Induction",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T4-HUMANRES-01",
+      "description": "Human resources activities: recruitment and selection, contracts, induction, salaries, and other benefits; procedures related to recruitment, selection and interviewing; legalities of employment contracts; procedures of induction and placements.",
+      "metadata": {
+        "weekNumbers": [1],
+        "capsReference": "Term 4, Week 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-BUSINESSSTUDIES-GR11-T4-HUMANRES",
+      "title": "Salary Determination and Employee Benefits",
+      "code": "CAPS-BUSINESSSTUDIES-GR11-T4-HUMANRES-02",
+      "description": "Interviewing, selection and induction; salary determination (piecemeal and time-related), including personal tax, link to basic conditions of employment; employee benefits: pension, medical, other.",
+      "metadata": {
+        "weekNumbers": [2],
+        "capsReference": "Term 4, Week 2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    }
+  ]
+}

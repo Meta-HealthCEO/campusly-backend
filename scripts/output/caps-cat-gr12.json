@@ -1,0 +1,707 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "FET Phase",
+      "code": "CAPS-FET",
+      "description": "Further Education and Training Phase (Grades 10-12)",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 12",
+      "code": "CAPS-GR12",
+      "description": "",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 12
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR12",
+      "title": "Computer Applications Technology",
+      "code": "CAPS-CAT-GR12",
+      "description": "Computer Applications Technology — Grade 12 — CAPS Curriculum",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-CAT-GR12",
+      "title": "Term 1",
+      "code": "CAPS-CAT-GR12-T1",
+      "description": "Computer Applications Technology Grade 12 Term 1 covering Systems Technologies (general concepts, hardware, software, social implications), Solution Development (Databases, Spreadsheets, Word Processing) and Information Management and PAT.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 44,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR12-T1",
+      "title": "Systems Technologies: General Concepts",
+      "code": "CAPS-CAT-GR12-T1-GENERAL",
+      "description": "Types of computer systems for different uses (personal, SOHO, mobile and power users), role and use of data, information, knowledge, conclusion, decision as part of information management, reasons for using computers, convergence.",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Types of computer systems for different uses: Personal, SOHO, mobile and power users",
+          "Role and use of data, information, knowledge, conclusion, decision as part of information management",
+          "Reasons for using computers",
+          "Convergence - what is it?"
+        ],
+        "notionalHours": 2,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR12-T1",
+      "title": "Systems Technologies: Hardware",
+      "code": "CAPS-CAT-GR12-T1-HARDWARE",
+      "description": "Input, output, processing, storage, and communication as part of the information processing cycle, consolidate and reinforce hardware and software regarding uses and making buying decisions; input and output devices (multi-touch screen, HDMI, 3D printers, monitor response time); storage devices and media (SSD, card reader); troubleshooting and new technologies.",
+      "metadata": {
+        "weekNumbers": [
+          2,
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Input, output, processing, storage, and communication as part of the information processing cycle",
+          "Consolidate and reinforce hardware and software regarding uses, making buying decisions",
+          "Input and output devices: Multi-touch screen, HDMI, 3D printers, monitor - response time of display devices",
+          "Storage devices and media: SSD, card reader",
+          "Troubleshooting: Fix ordinary problems, new technologies"
+        ],
+        "notionalHours": 6,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR12-T1",
+      "title": "Systems Technologies: Software",
+      "code": "CAPS-CAT-GR12-T1-SOFTWARE",
+      "description": "Software that enhances accessibility, efficiency and productivity, uses of common applications, web-based applications vs installed applications, interpret system requirements, common software problems and upgrades, risks of using flawed software.",
+      "metadata": {
+        "weekNumbers": [
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Software that enhances accessibility, efficiency, productivity",
+          "Uses of common applications",
+          "Web-based applications vs installed applications",
+          "Interpret system requirements, common software problems and upgrades",
+          "Risks of using flawed software"
+        ],
+        "notionalHours": 2,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR12-T1",
+      "title": "Social Implications",
+      "code": "CAPS-CAT-GR12-T1-SOCIALIMPL",
+      "description": "Environmental issues, user-centred design in software applications (website, database form, presentations).",
+      "metadata": {
+        "weekNumbers": [
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Environmental issues",
+          "User-centred design in software applications such as: Website, Database form, Presentations"
+        ],
+        "notionalHours": 2,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR12-T1",
+      "title": "Solution Development: Databases",
+      "code": "CAPS-CAT-GR12-T1-DATABASE",
+      "description": "Reinforce content from Grade 11, revise forms and queries, reports (design grouped reports, group headers and footers, calculations in groups: sum, average, counting, maximum, minimum), add fields with calculations in queries and reports, data validation techniques, queries using and/or/not/wildcards/IS null.",
+      "metadata": {
+        "weekNumbers": [
+          5,
+          6,
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Reinforce content, concepts, and skills from Grade 11",
+          "Revise forms and queries",
+          "Reports - Design reports: grouped, group headers and footers",
+          "Calculations in groups such as sum, average, counting, maximum, minimum",
+          "Add fields with calculations in queries, reports",
+          "Data validation techniques",
+          "Queries using and, or, not, wildcards (*), IS null operator"
+        ],
+        "notionalHours": 10,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR12-T1",
+      "title": "Solution Development: Spreadsheets",
+      "code": "CAPS-CAT-GR12-T1-SPREADSHEETS",
+      "description": "Reinforce content, concepts and skills; function vs formula; named ranges; more complex functions (Nested IF, vertical and horizontal LOOKUP, XLOOKUP, ROUNDUP, ROUNDDOWN, COUNTIFS, SUMIFS, RANDBETWEEN, UPPER, LOWER, AND, OR); SUBTOTAL feature; combinations of functions and formulae; basic date and time calculations; Edit group on the Home tab.",
+      "metadata": {
+        "weekNumbers": [
+          8,
+          9
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Reinforce content, concepts, and skills",
+          "Function vs formula",
+          "Named ranges",
+          "More complex functions: Nested IF, vertical and horizontal LOOKUP also XLOOKUP, including error indicator #N,A",
+          "Variations of known functions: ROUNDUP, ROUNDOWN, COUNTIFS, SUMIFS",
+          "Additional functions: RANDBETWEEN, UPPER, LOWER, AND, OR",
+          "SUBTOTAL feature (AVERAGE, COUNT, SUM)",
+          "Combination of functions, formulae to solve problems",
+          "Basic date and time calculations (YEAR, MONTH, DAY, DAYS, HOUR, MINUTE, SECOND, TIME, TODAY, NOW)",
+          "Edit group on the Home tab: Find and select"
+        ],
+        "notionalHours": 8,
+        "cognitiveWeighting": null
+      },
+      "order": 6
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR12-T1",
+      "title": "Solution Development: Word Processing",
+      "code": "CAPS-CAT-GR12-T1-WORDPROC",
+      "description": "Reinforce content from Grades 10 and 11; links (bookmark, hyperlink, cross-reference); referencing options (index and table of figures); reviewing, proofing, and tracking changes; line breaks (pagination issues: widow, orphan control); electronic forms (legacy controls); import data collected via electronic forms including MS and Google forms; file management (extract a password protected .exe file); select options in the editing group.",
+      "metadata": {
+        "weekNumbers": [
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Reinforce content, concepts, and skills from Grade 10 and 11",
+          "Links (bookmark, hyperlink, cross-reference)",
+          "Referencing options: Index and table of figures",
+          "Reviewing, proofing, and tracking changes",
+          "Line breaks (pagination issues such as widow, orphan control)",
+          "Electronic forms: Legacy controls",
+          "Import data collected via electronic forms, incl. MS and Google forms",
+          "File management: Extract a password protected .exe file",
+          "Select options in the editing group",
+          "Completion of Word processing work"
+        ],
+        "notionalHours": 6,
+        "cognitiveWeighting": null
+      },
+      "order": 7
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR12-T1",
+      "title": "Information Management and PAT",
+      "code": "CAPS-CAT-GR12-T1-INFOMGMT",
+      "description": "Setting questionnaires, gathering information and data, discussing the writing of professional and formal reports, discussing the use of spreadsheet and database in professional reports. Reinforce content, concepts and skills from Grades 10 and 11. PAT Phase 1 to be completed before the end of term.",
+      "metadata": {
+        "weekNumbers": [
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Setting questionnaires, gather information and data",
+          "Discuss the writing of professional, formal reports",
+          "Discuss the use of spreadsheet and database in professional reports",
+          "Reinforce content, concepts and skills from Grade 10 and Grade 11",
+          "PAT Phase 1 to be completed before the end of term"
+        ],
+        "notionalHours": 6,
+        "cognitiveWeighting": null
+      },
+      "order": 8
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-CAT-GR12",
+      "title": "Term 2",
+      "code": "CAPS-CAT-GR12-T2",
+      "description": "Computer Applications Technology Grade 12 Term 2 covering Network Technologies, Social Implications, Solution Development (HTML/Web Design, Spreadsheets, Word Processing, Database), Information Management and PAT, and Mid-Year Examination.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 44,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR12-T2",
+      "title": "Network Technologies: Networks",
+      "code": "CAPS-CAT-GR12-T2-NETWORKS",
+      "description": "Wide area networks (WAN): Internet as an example of a WAN, internet services, government internet services, streaming; buying decisions regarding internet connection, broadband and bandwidth; throttling and shaping, fair use policy; communication and communication devices, standards for wireless communication, modem and router, NFC; internet technologies (URL shortener, browser add-on, IoT, wearables).",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Wide area networks (WAN): Internet as an example of a WAN, Internet services, government internet services and information, Streaming",
+          "Make buying and informed decisions regarding internet connection and access, concept of broadband and bandwidth",
+          "Throttling and shaping",
+          "Fair use policy",
+          "Communication and communication devices - standards for wireless communication, modem and router, NFC",
+          "Internet technologies",
+          "URL shortener, browser add-on, using browsers productively, IoT, wearables"
+        ],
+        "notionalHours": 4,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR12-T2",
+      "title": "Social Implications",
+      "code": "CAPS-CAT-GR12-T2-SOCIALIMPL",
+      "description": "Computer crimes (hardware, software, information, identity, bandwidth theft, theft of time, Internet-related fraud and scams: phishing, spoofing, pharming); Internet attacks (DDoS, bots and zombies, right to access vs right to privacy, misuse of personal information); security issues (clickjacking, ransomware); security technologies (VPN, firewall, screen lock pattern); safeguards against criminals, viruses and threats; impact of technology on the global community; distributed computing, cybersecurity, crowdfunding, BYOD, big data, Bitcoin, 4IR, 5IR, Blockchain.",
+      "metadata": {
+        "weekNumbers": [
+          2,
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Computer crimes in relation to hardware, software, information, identity, bandwidth theft, theft of time and services",
+          "Internet-related fraud and scams: phishing, spoofing, pharming",
+          "Internet attacks: DDoS attacks, taking over PCs - bots and zombies",
+          "Right to access vs. right to privacy, misuse of personal information",
+          "Security issues: clickjacking, ransomware",
+          "Avoiding security threats including security technologies such as VPN, firewall, screen lock pattern",
+          "Safeguards against criminals, viruses and threats",
+          "The impact of technology on the global community, distributed computing, cyber security issues",
+          "How technology benefits society: crowdfunding, BYOD, big data, Bitcoin, 4IR, 5IR, Blockchain"
+        ],
+        "notionalHours": 4,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR12-T2",
+      "title": "Solution Development: HTML and Web Design",
+      "code": "CAPS-CAT-GR12-T2-HTML",
+      "description": "Reinforce content from Grade 11: underline tag, border around an image, good website and page design (use of colour), HTML tables (syntax: table tags; attributes: border, cell padding), create links to target location, develop a web page for a specific scenario, all tags on the HTML tag list.",
+      "metadata": {
+        "weekNumbers": [
+          3,
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Reinforce content from Grade 11: Underline tag, border around an image",
+          "Good website, page design - consider use of colour (basic)",
+          "HTML tables: Syntax: Table tags; Attributes: Border, cell padding",
+          "Create links to target location",
+          "Develop a web page for a specific scenario",
+          "All tags on the HTML tag list (See Grade 12 NSC CAT P1 QP Addendum)"
+        ],
+        "notionalHours": 6,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR12-T2",
+      "title": "Solution Development: Spreadsheets",
+      "code": "CAPS-CAT-GR12-T2-SPREADSHEETS",
+      "description": "Reinforce and consolidate content, concepts and skills; text functions (LEFT, RIGHT, MID, CONCATENATE, LEN, VALUE, FIND); completion of spreadsheet work from previous week.",
+      "metadata": {
+        "weekNumbers": [
+          5,
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Reinforce and consolidate content, concepts, and skills",
+          "Text functions such as: Left, right, mid, concatenate, len, value, find (also to find the position of text in a cell)"
+        ],
+        "notionalHours": 6,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR12-T2",
+      "title": "Solution Development: Word Processing",
+      "code": "CAPS-CAT-GR12-T2-WORDPROC",
+      "description": "Reinforce and consolidate content, concepts and skills; mail merge with different data sources (database, Word table, spreadsheet, CSV); objects: reinforce manipulation (tables, graphics), linking and embedding; reinforce tabs.",
+      "metadata": {
+        "weekNumbers": [
+          6,
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Reinforce and consolidate content, concepts, and skills",
+          "Mail merge - different data sources: database, Word table, spreadsheet, CSV",
+          "Objects: Reinforce manipulation (tables, graphics), linking and embedding",
+          "Reinforce tabs"
+        ],
+        "notionalHours": 4,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR12-T2",
+      "title": "Solution Development: Database",
+      "code": "CAPS-CAT-GR12-T2-DATABASE",
+      "description": "Reinforce and consolidate content, concepts and skills; design a database for a specific scenario; interpret and deduce data and information (e.g., derive data type or validation rule of certain fields without specific instructions).",
+      "metadata": {
+        "weekNumbers": [
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Reinforce and consolidate content, concepts, and skills",
+          "Design a database for a specific scenario",
+          "Interpret and deduce data and information, e.g., derive data type or validation rule of certain fields without specific instructions"
+        ],
+        "notionalHours": 2,
+        "cognitiveWeighting": null
+      },
+      "order": 6
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR12-T2",
+      "title": "Information Management and PAT",
+      "code": "CAPS-CAT-GR12-T2-INFOMGMT",
+      "description": "Reinforce information management skills, use information and data gathered (processing and analysing); use the Cite tag in PAT (not examinable); transfer of skills from one application to another. PAT Phase 2 to be completed before the end of term.",
+      "metadata": {
+        "weekNumbers": [
+          8,
+          9
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Practical assessment task: Reinforce information management skills",
+          "Use information and data gathered: Processing and analysing",
+          "HTML: Use the Cite tag in PAT (not examinable)",
+          "Include transfer of skills from one application to another",
+          "PAT Phase 2 to be completed before the end of term"
+        ],
+        "notionalHours": 8,
+        "cognitiveWeighting": null
+      },
+      "order": 7
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-CAT-GR12",
+      "title": "Term 3",
+      "code": "CAPS-CAT-GR12-T3",
+      "description": "Computer Applications Technology Grade 12 Term 3 covering Systems Technologies, Internet Technologies, Social Implications, Solution Development (Word Processing, Spreadsheets, Database, HTML/Web Design), Information Management and PAT, and Trial Examination.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 32,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR12-T3",
+      "title": "Information Management and PAT",
+      "code": "CAPS-CAT-GR12-T3-INFOMGMT",
+      "description": "Reinforce information management skills, use information and data gathered (processing and analysing). PAT Phase 3 to be completed before the end of term.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Practical assessment task",
+          "Reinforce information management skills",
+          "Use information and data gathered: Processing and analysing",
+          "PAT Phase 3 to be completed before the end of term"
+        ],
+        "notionalHours": 8,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR12-T3",
+      "title": "Systems Technologies: System Software and Computer Management",
+      "code": "CAPS-CAT-GR12-T3-SYSTECH",
+      "description": "Role of the operating system, manage programs, management of files (operating system utilities, schedule, update, security features: access control, backup, anti-virus software), factors that influence performance; file management: extract a password protected .exe file.",
+      "metadata": {
+        "weekNumbers": [
+          3
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Role of the operating system, manage programs",
+          "Management of files: Operating system utilities, schedule, update, security features such as access control, backup, anti-virus software",
+          "Factors that influence performance",
+          "File management: Extract a password protected .exe file"
+        ],
+        "notionalHours": 4,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR12-T3",
+      "title": "Internet Technologies: Communications",
+      "code": "CAPS-CAT-GR12-T3-ECOMM",
+      "description": "Types of digital communications (video conferencing), typical features of web browsers, uses of computer communications, digital communications, communication devices.",
+      "metadata": {
+        "weekNumbers": [
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Types of digital communications - video conferencing",
+          "Typical features of web browsers",
+          "Uses of computer communications, digital communications",
+          "Communication devices"
+        ],
+        "notionalHours": 4,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR12-T3",
+      "title": "Social Implications",
+      "code": "CAPS-CAT-GR12-T3-SOCIALIMPL",
+      "description": "Impact and use of social networking sites and technologies, legal and ethical issues on the use of social media, remote access (incl. VPN), creating opportunity for e-commuting, e-working and e-learning, m-learning, blended learning, how technology can benefit or harm society, information overload, virtual reality (VR), augmented reality (AR), artificial intelligence (AI), geotagging; Word processing documents using style focusing (page layout, advanced Word processing techniques, techniques of integration including linking objects).",
+      "metadata": {
+        "weekNumbers": [
+          5
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Impact and use of social networking sites and technologies",
+          "Legal and ethical issues on the use of social media",
+          "Remote access (incl. VPN), creating opportunity for e-commuting, e-working and e-learning, m-learning, blended learning",
+          "How technology can benefit or harm society, information overload",
+          "Virtual reality (VR) and augmented reality (AR)",
+          "Artificial intelligence (AI)",
+          "Geotagging",
+          "Word processing: Documents using style focusing: Page layout that includes advanced Word processing techniques, techniques of integration with other software including linking objects"
+        ],
+        "notionalHours": 4,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR12-T3",
+      "title": "Solution Development: Spreadsheets",
+      "code": "CAPS-CAT-GR12-T3-SPREADSHEETS",
+      "description": "Date and time, maths, statistical, text, logical, lookup and reference functions; use more advanced combinations of functions and formulae; appropriate graph for a given scenario.",
+      "metadata": {
+        "weekNumbers": [
+          6
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Spreadsheets: Date and time, maths, statistical, text, logical, lookup and reference functions",
+          "Use more advanced combinations of functions and formulas",
+          "Appropriate graph for a given scenario"
+        ],
+        "notionalHours": 4,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR12-T3",
+      "title": "Solution Development: Database",
+      "code": "CAPS-CAT-GR12-T3-DATABASE",
+      "description": "Consolidate and reinforce content, concepts and skills; create a database for given scenarios; techniques of integration with other software; multiple related tables but work with only one table at a time. Web development: reinforce content, concepts and skills as well as good website and page design.",
+      "metadata": {
+        "weekNumbers": [
+          7
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Consolidate and reinforce content, concepts, and skills",
+          "Create a database for a given scenarios",
+          "Techniques of integration with other software",
+          "Multiple related tables but work with only one table at a time",
+          "Web development: Reinforce content, concepts, and skills as well as good website, page design"
+        ],
+        "notionalHours": 4,
+        "cognitiveWeighting": null
+      },
+      "order": 6
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR12-T3",
+      "title": "Consolidation",
+      "code": "CAPS-CAT-GR12-T3-CONSOLIDATION",
+      "description": "Consolidate content, concepts, skills and values across all topics in preparation for the Trial Examination.",
+      "metadata": {
+        "weekNumbers": [
+          8
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Consolidated concepts skills and values"
+        ],
+        "notionalHours": 4,
+        "cognitiveWeighting": null
+      },
+      "order": 7
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-CAT-GR12",
+      "title": "Term 4",
+      "code": "CAPS-CAT-GR12-T4",
+      "description": "Computer Applications Technology Grade 12 Term 4 covering consolidation of all content using case studies and Final NSC Examination.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 8,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-CAT-GR12-T4",
+      "title": "Consolidation Using Case Studies",
+      "code": "CAPS-CAT-GR12-T4-CONSOLIDATION",
+      "description": "Reproduce and create documents incorporating text, graphics and data; manipulate graphics and text within documents; use integrated software to create and design documents for specific purposes; apply general principles of layout and design; emphasise information using placement and colour; create documents by customising templates; use media, visual literacy and technology skills; consolidate content, concepts and skills using case studies to make informed decisions; identify general hardware configuration; understand computers and their uses; ICTs as tools to access and communicate information; make better buying decisions; fix ordinary computer problems; appropriate use of the internet and e-mail; make informed decisions in selecting communication devices; know how to protect oneself against online villains and threats; recommend specific hardware and software for a specific scenario.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "Reproduce and create documents that incorporate text, graphics, and data",
+          "Manipulate graphics and text within documents",
+          "Use integrated software to create and design documents for specific purposes",
+          "Apply general principles of layout and design to a document process",
+          "Emphasise information using techniques such as placement and colour",
+          "Create documents by customising templates",
+          "Use media, visual literacy, and technology skills to create products that express understanding",
+          "Consolidate content, concepts and skills previously covered using case studies",
+          "Identify general hardware configuration",
+          "Understand computers and their uses",
+          "ICTs as tools to access information and to communicate with others around the world",
+          "Make better buying decisions",
+          "Know how to fix ordinary computer problems",
+          "Know the appropriate use of the Internet and e-mail",
+          "Make informed decisions and choices in selecting communication devices and modes of communications",
+          "Know how to protect oneself against online villains and threats",
+          "Understand technology concepts, systems, and operations",
+          "Know how to apply digital tools to: Communicate, gather, analyse, use information, solve problems",
+          "Recommend specific hardware, software for a specific scenario",
+          "Know about upgrading and how to integrate equipment with new products, technology",
+          "Understand when to upgrade, when to buy new equipment or software and make informed decisions"
+        ],
+        "notionalHours": 7,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    }
+  ]
+}

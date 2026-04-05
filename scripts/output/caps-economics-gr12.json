@@ -1,0 +1,694 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Further Education and Training (FET)",
+      "code": "CAPS-FET",
+      "description": "Grades 10-12 Further Education and Training phase under CAPS",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 12",
+      "code": "CAPS-GR12",
+      "description": "Grade 12 curriculum under the FET phase",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR12",
+      "title": "Economics Grade 12",
+      "code": "CAPS-ECONOMICS-GR12",
+      "description": "CAPS Economics for Grade 12 covering Macroeconomics, Microeconomics, Economic Pursuits and Contemporary Economic Issues",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR12",
+      "title": "Circular Flow",
+      "code": "CAPS-ECONOMICS-GR12-T1-CIRCULARFLOW",
+      "description": "Open and closed economy, role players, injections and leakages, economy in equilibrium, autonomous consumption, MOC/MPS, four-sector model, national accounts aggregates and conversions, the multiplier",
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "Term 1, Weeks 1-2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR12-T1-CIRCULARFLOW",
+      "title": "Open and Closed Economy Models",
+      "code": "CAPS-ECONOMICS-GR12-T1-CIRCULARFLOW-01",
+      "description": "Open economy and closed economy; role players in the economy; injections and leakages; economy in equilibrium",
+      "metadata": {
+        "weekNumbers": [1],
+        "capsReference": "Term 1, Week 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR12-T1-CIRCULARFLOW",
+      "title": "National Accounts, Four-Sector Model and the Multiplier",
+      "code": "CAPS-ECONOMICS-GR12-T1-CIRCULARFLOW-02",
+      "description": "Autonomous consumption; MOC/MPS; four-sector model; national accounts aggregates and conversions; the multiplier",
+      "metadata": {
+        "weekNumbers": [2],
+        "capsReference": "Term 1, Week 2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR12",
+      "title": "Business Cycles",
+      "code": "CAPS-ECONOMICS-GR12-T1-BUSCYCLES",
+      "description": "Composition and features, causes, types, government policy, monetary and fiscal policy, new economic paradigm, smoothing of cycles and features underpinning forecasting",
+      "metadata": {
+        "weekNumbers": [3, 4, 5],
+        "capsReference": "Term 1, Weeks 3-5",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR12-T1-BUSCYCLES",
+      "title": "Composition, Features and Causes of Business Cycles",
+      "code": "CAPS-ECONOMICS-GR12-T1-BUSCYCLES-01",
+      "description": "Composition and features of business cycles; explanation or causes; types of business cycles",
+      "metadata": {
+        "weekNumbers": [3, 4],
+        "capsReference": "Term 1, Weeks 3-4",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR12-T1-BUSCYCLES",
+      "title": "Government Policy, Smoothing and Forecasting",
+      "code": "CAPS-ECONOMICS-GR12-T1-BUSCYCLES-02",
+      "description": "Government policy; monetary and fiscal policy; new economic paradigm (smoothing of cycles); features underpinning forecasting of business cycles",
+      "metadata": {
+        "weekNumbers": [4, 5],
+        "capsReference": "Term 1, Weeks 4-5",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR12",
+      "title": "Public Sector",
+      "code": "CAPS-ECONOMICS-GR12-T1-PUBSECTOR",
+      "description": "Composition and necessity of the public sector, problems of provisioning, objectives, budgets, fiscal policy including Laffer curve, and public sector failure",
+      "metadata": {
+        "weekNumbers": [6, 7],
+        "capsReference": "Term 1, Weeks 6-7",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR12-T1-PUBSECTOR",
+      "title": "Composition, Necessity and Objectives of the Public Sector",
+      "code": "CAPS-ECONOMICS-GR12-T1-PUBSECTOR-01",
+      "description": "Composition and necessity of the public sector; problems of public sector provisioning; objectives of the public sector",
+      "metadata": {
+        "weekNumbers": [6],
+        "capsReference": "Term 1, Week 6",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR12-T1-PUBSECTOR",
+      "title": "Budgets, Fiscal Policy and Public Sector Failure",
+      "code": "CAPS-ECONOMICS-GR12-T1-PUBSECTOR-02",
+      "description": "Budgets; fiscal policy including Laffer curve; public sector failure",
+      "metadata": {
+        "weekNumbers": [7],
+        "capsReference": "Term 1, Week 7",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR12",
+      "title": "International Trade (Foreign Exchange Markets)",
+      "code": "CAPS-ECONOMICS-GR12-T1-INTTRADE",
+      "description": "Reasons for international trade, absolute and comparative advantages, balance of payments, IMF, correcting balance of payments disequilibria, foreign exchange markets and exchange rates",
+      "metadata": {
+        "weekNumbers": [8, 9],
+        "capsReference": "Term 1, Weeks 8-9",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR12-T1-INTTRADE",
+      "title": "Reasons for Trade, Absolute and Comparative Advantage",
+      "code": "CAPS-ECONOMICS-GR12-T1-INTTRADE-01",
+      "description": "The main reasons for international trade; absolute and comparative advantages and disadvantages",
+      "metadata": {
+        "weekNumbers": [8],
+        "capsReference": "Term 1, Week 8",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR12-T1-INTTRADE",
+      "title": "Balance of Payments, IMF and Foreign Exchange Markets",
+      "code": "CAPS-ECONOMICS-GR12-T1-INTTRADE-02",
+      "description": "The balance of payments; International Monetary Fund (IMF); correcting balance of payments surplus and deficit (disequilibria); foreign exchange markets and establishment of foreign exchange rates",
+      "metadata": {
+        "weekNumbers": [9],
+        "capsReference": "Term 1, Week 9",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR12",
+      "title": "Dynamics of Markets: Perfect Markets",
+      "code": "CAPS-ECONOMICS-GR12-T2-PERFECTMKT",
+      "description": "Perfect competition, industry and individual business, market structure, output including profits and losses, competition policies",
+      "metadata": {
+        "weekNumbers": [1, 2],
+        "capsReference": "Term 2, Weeks 1-2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR12-T2-PERFECTMKT",
+      "title": "Perfect Competition and Market Structure",
+      "code": "CAPS-ECONOMICS-GR12-T2-PERFECTMKT-01",
+      "description": "Perfect competition; industry and individual business; market structure",
+      "metadata": {
+        "weekNumbers": [1],
+        "capsReference": "Term 2, Week 1",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR12-T2-PERFECTMKT",
+      "title": "Output, Profits, Losses and Competition Policies",
+      "code": "CAPS-ECONOMICS-GR12-T2-PERFECTMKT-02",
+      "description": "Output (profits and losses) in perfect competition; competition policies",
+      "metadata": {
+        "weekNumbers": [2],
+        "capsReference": "Term 2, Week 2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR12",
+      "title": "Dynamics of Markets: Imperfect Markets",
+      "code": "CAPS-ECONOMICS-GR12-T2-IMPERFECTMKT",
+      "description": "Monopolies, duopolies, oligopolies, monopolistic competition and market structures",
+      "metadata": {
+        "weekNumbers": [3, 4],
+        "capsReference": "Term 2, Weeks 3-4",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 6
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR12-T2-IMPERFECTMKT",
+      "title": "Monopoly and Duopoly",
+      "code": "CAPS-ECONOMICS-GR12-T2-IMPERFECTMKT-01",
+      "description": "Monopolies and duopolies as market structures",
+      "metadata": {
+        "weekNumbers": [3],
+        "capsReference": "Term 2, Week 3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR12-T2-IMPERFECTMKT",
+      "title": "Oligopoly and Monopolistic Competition",
+      "code": "CAPS-ECONOMICS-GR12-T2-IMPERFECTMKT-02",
+      "description": "Oligopolies and monopolistic competition as market structures",
+      "metadata": {
+        "weekNumbers": [4],
+        "capsReference": "Term 2, Week 4",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR12",
+      "title": "Dynamics of Markets: Market Failures",
+      "code": "CAPS-ECONOMICS-GR12-T2-MKTFAILURE",
+      "description": "Concept of market failure, causes, misallocation of resources, consequences, cost-benefit analysis (conserving vs using resources and public vs private expenditure)",
+      "metadata": {
+        "weekNumbers": [5, 6],
+        "capsReference": "Term 2, Weeks 5-6",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 7
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR12-T2-MKTFAILURE",
+      "title": "Concept, Causes and Misallocation of Resources",
+      "code": "CAPS-ECONOMICS-GR12-T2-MKTFAILURE-01",
+      "description": "Concept of market failures; causes of market failure; misallocation of resources",
+      "metadata": {
+        "weekNumbers": [5],
+        "capsReference": "Term 2, Week 5",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR12-T2-MKTFAILURE",
+      "title": "Consequences and Cost-Benefit Analysis",
+      "code": "CAPS-ECONOMICS-GR12-T2-MKTFAILURE-02",
+      "description": "Consequences of market failures; cost-benefit analysis: conserving vs using resources and public expenditure vs private expenditure",
+      "metadata": {
+        "weekNumbers": [6],
+        "capsReference": "Term 2, Week 6",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR12",
+      "title": "International Trade Policies (Protectionism and Free Trade)",
+      "code": "CAPS-ECONOMICS-GR12-T2-TRADEPOLICY",
+      "description": "Protection and free trade, globalisation, major protocols, export promotion, import substitution, free trade arguments, desirable mix, trade liberalisation, WTO, forms of economic integration",
+      "metadata": {
+        "weekNumbers": [7, 8],
+        "capsReference": "Term 2, Weeks 7-8",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 8
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR12-T2-TRADEPOLICY",
+      "title": "Protectionism, Free Trade and Globalisation",
+      "code": "CAPS-ECONOMICS-GR12-T2-TRADEPOLICY-01",
+      "description": "Protection and free trade; globalisation; major protocols; export promotion; import substitution; free trade arguments for and against; desirable mix and evaluation of policies",
+      "metadata": {
+        "weekNumbers": [7],
+        "capsReference": "Term 2, Week 7",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR12-T2-TRADEPOLICY",
+      "title": "Trade Liberalisation, WTO and Economic Integration",
+      "code": "CAPS-ECONOMICS-GR12-T2-TRADEPOLICY-02",
+      "description": "Trade liberalisation and WTO; forms of economic integration",
+      "metadata": {
+        "weekNumbers": [8],
+        "capsReference": "Term 2, Week 8",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR12",
+      "title": "Economic Growth and Development",
+      "code": "CAPS-ECONOMICS-GR12-T2-GROWTHDEVEL",
+      "description": "Economic growth vs development, demand side approach, supply side approach, evaluation of approaches, SA endeavours, north/south divide",
+      "metadata": {
+        "weekNumbers": [9],
+        "capsReference": "Term 2, Week 9",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 9
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR12-T2-GROWTHDEVEL",
+      "title": "Economic Growth vs Development and Demand/Supply Approaches",
+      "code": "CAPS-ECONOMICS-GR12-T2-GROWTHDEVEL-01",
+      "description": "Economic growth vs economic development; demand side approach; supply side approach; evaluation of the approaches",
+      "metadata": {
+        "weekNumbers": [9],
+        "capsReference": "Term 2, Week 9",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR12-T2-GROWTHDEVEL",
+      "title": "SA Endeavours and North/South Divide",
+      "code": "CAPS-ECONOMICS-GR12-T2-GROWTHDEVEL-02",
+      "description": "SA endeavours in economic growth and development; north/south divide",
+      "metadata": {
+        "weekNumbers": [9],
+        "capsReference": "Term 2, Week 9",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR12",
+      "title": "Growth and Development: Industrial Development",
+      "code": "CAPS-ECONOMICS-GR12-T3-INDUSTDEV",
+      "description": "Industrial development, regional development, SA endeavours and appropriateness of SA strategies",
+      "metadata": {
+        "weekNumbers": [2],
+        "capsReference": "Term 3, Week 2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 10
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR12-T3-INDUSTDEV",
+      "title": "Industrial and Regional Development",
+      "code": "CAPS-ECONOMICS-GR12-T3-INDUSTDEV-01",
+      "description": "Industrial development; regional development in South Africa",
+      "metadata": {
+        "weekNumbers": [2],
+        "capsReference": "Term 3, Week 2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR12-T3-INDUSTDEV",
+      "title": "SA Endeavours and Appropriateness of Strategies",
+      "code": "CAPS-ECONOMICS-GR12-T3-INDUSTDEV-02",
+      "description": "SA endeavours and the appropriateness of SA strategies for industrial development",
+      "metadata": {
+        "weekNumbers": [2],
+        "capsReference": "Term 3, Week 2",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR12",
+      "title": "Economic and Social Indicators",
+      "code": "CAPS-ECONOMICS-GR12-T3-INDICATORS",
+      "description": "Performance of the economy, economic indicators, money supply/interest rates, social indicators, international comparisons, Globalisation-IMF and World Bank",
+      "metadata": {
+        "weekNumbers": [3],
+        "capsReference": "Term 3, Week 3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 11
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR12-T3-INDICATORS",
+      "title": "Economic Performance Indicators",
+      "code": "CAPS-ECONOMICS-GR12-T3-INDICATORS-01",
+      "description": "Performance of the economy; economic indicators; money supply/interest rates",
+      "metadata": {
+        "weekNumbers": [3],
+        "capsReference": "Term 3, Week 3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR12-T3-INDICATORS",
+      "title": "Social Indicators and International Comparisons",
+      "code": "CAPS-ECONOMICS-GR12-T3-INDICATORS-02",
+      "description": "Social indicators and international comparisons; Globalisation-IMF and World Bank",
+      "metadata": {
+        "weekNumbers": [3],
+        "capsReference": "Term 3, Week 3",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR12",
+      "title": "Economic Issues of the Day: Inflation",
+      "code": "CAPS-ECONOMICS-GR12-T3-INFLATION",
+      "description": "Inflation concept, types, causes and consequences, inflation problem in SA and measures to combat inflation",
+      "metadata": {
+        "weekNumbers": [4],
+        "capsReference": "Term 3, Week 4",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 12
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR12-T3-INFLATION",
+      "title": "Inflation Concept, Types and Causes",
+      "code": "CAPS-ECONOMICS-GR12-T3-INFLATION-01",
+      "description": "Inflation concept; types of inflation; causes of inflation",
+      "metadata": {
+        "weekNumbers": [4],
+        "capsReference": "Term 3, Week 4",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR12-T3-INFLATION",
+      "title": "Consequences of Inflation and Measures to Combat",
+      "code": "CAPS-ECONOMICS-GR12-T3-INFLATION-02",
+      "description": "Consequences of inflation; inflation problem in SA; measures to combat inflation",
+      "metadata": {
+        "weekNumbers": [4],
+        "capsReference": "Term 3, Week 4",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR12",
+      "title": "Economic Issues of the Day: Tourism",
+      "code": "CAPS-ECONOMICS-GR12-T3-TOURISM",
+      "description": "Tourism concept, reasons for growth, effects, benefits, SA profile including IKS, policy suggestions",
+      "metadata": {
+        "weekNumbers": [5],
+        "capsReference": "Term 3, Week 5",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 13
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR12-T3-TOURISM",
+      "title": "Tourism Concept, Growth and Effects",
+      "code": "CAPS-ECONOMICS-GR12-T3-TOURISM-01",
+      "description": "Tourism concept; reasons for growth; effects and benefits of tourism",
+      "metadata": {
+        "weekNumbers": [5],
+        "capsReference": "Term 3, Week 5",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR12-T3-TOURISM",
+      "title": "SA Tourism Profile and Policy Suggestions",
+      "code": "CAPS-ECONOMICS-GR12-T3-TOURISM-02",
+      "description": "SA tourism profile including IKS; policy suggestions for tourism",
+      "metadata": {
+        "weekNumbers": [5],
+        "capsReference": "Term 3, Week 5",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ECONOMICS-GR12",
+      "title": "Economic Issues of the Day: Environmental Sustainability",
+      "code": "CAPS-ECONOMICS-GR12-T3-ENVIRONMENT",
+      "description": "Environmental sustainability, state of the environment, measures to ensure sustainability, international measures and agreements including recent international agreements",
+      "metadata": {
+        "weekNumbers": [6],
+        "capsReference": "Term 3, Week 6",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 14
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR12-T3-ENVIRONMENT",
+      "title": "Environmental Sustainability and State of the Environment",
+      "code": "CAPS-ECONOMICS-GR12-T3-ENVIRONMENT-01",
+      "description": "Environmental sustainability concept; state of the environment; measures to ensure sustainability",
+      "metadata": {
+        "weekNumbers": [6],
+        "capsReference": "Term 3, Week 6",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "subtopic",
+      "parentCode": "CAPS-ECONOMICS-GR12-T3-ENVIRONMENT",
+      "title": "International Measures and Agreements",
+      "code": "CAPS-ECONOMICS-GR12-T3-ENVIRONMENT-02",
+      "description": "International measures; international agreements inclusive of recent international agreements on environmental sustainability",
+      "metadata": {
+        "weekNumbers": [6],
+        "capsReference": "Term 3, Week 6",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    }
+  ]
+}

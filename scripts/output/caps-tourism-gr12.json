@@ -1,0 +1,420 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "FET Phase",
+      "code": "CAPS-FET",
+      "description": "Further Education and Training Phase (Grades 10-12)",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 12",
+      "code": "CAPS-GR12",
+      "description": "",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 12
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR12",
+      "title": "Tourism",
+      "code": "CAPS-TOURISM-GR12",
+      "description": "Tourism — Grade 12 — CAPS Curriculum",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-TOURISM-GR12",
+      "title": "Term 1",
+      "code": "CAPS-TOURISM-GR12-T1",
+      "description": "International tourism events and political situations, map work and tour planning including itinerary, budgeting, health, safety and travel documentation",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "p. 31-32",
+        "assessmentStandards": [
+          "March controlled test"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR12-T1",
+      "title": "Global Events of International Significance",
+      "code": "CAPS-TOURISM-GR12-T1-GLOBALEVENTS",
+      "description": "Concept of global event. Sporting events: FIFA World Cup, Wimbledon, Comrades, Tour de France, Olympic Games. Other events: G8 Summit, summits on climate change (mentioned as examples only). Positive and negative impact of global events on international tourism. Impact of hosting a global event on domestic tourism in the host country and on the host country's economy. Advantages and disadvantages for the host country in a tourism context: development in infrastructural services, investment, foreign exchange income, the multiplier effect.",
+      "metadata": {
+        "weekNumbers": [
+          2
+        ],
+        "capsReference": "p. 31",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR12-T1",
+      "title": "Political Situations and Unforeseen Occurrences",
+      "code": "CAPS-TOURISM-GR12-T1-POLITICAL",
+      "description": "Concepts: political situation and unforeseen occurrence. Examples of recent political situations: civil war, terrorism, general unrest. Examples of unforeseen occurrences: tsunamis, earthquakes, other natural disasters, global recession, diseases, accidents, economic upsets (identify recent examples; do not study the events as such). Impact of these situations and occurrences on international tourism and the economy of the affected country. Resources: recent information accessed from the media.",
+      "metadata": {
+        "weekNumbers": [
+          3
+        ],
+        "capsReference": "p. 31",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR12-T1",
+      "title": "Tour Itinerary and Route Planning",
+      "code": "CAPS-TOURISM-GR12-T1-ITINERARY",
+      "description": "Recap of Grade 11 content (CAPS ref p28). Tour itinerary: concepts (itinerary, logical tour planning, scheduled tours), factors to consider when planning an itinerary, different types of itineraries, writing of an itinerary. Tour plans and route planning: develop tour plans to suit specific tourist profiles, available budget and time; route planning; choice of transport and accommodation to suit customers' needs and preferences; choice of tourist attractions and activities to suit tourist profiles. Compiling a day-by-day itinerary: main aspects (description of transport, accommodation, attractions and activities, including stops for meals), factors to consider (logical planning), drawing up itineraries according to different scenarios. Format: Day, time*, transport, accommodation, attractions, activities and budget. Compiling a tour budget: factors influencing development of a budget, develop a basic tour budget indicating expenses for travel, accommodation, meals, visiting tourist attractions, shopping and tips.",
+      "metadata": {
+        "weekNumbers": [
+          4,
+          5,
+          6,
+          7
+        ],
+        "capsReference": "p. 31-32",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR12-T1",
+      "title": "Health, Safety and Travel Documentation",
+      "code": "CAPS-TOURISM-GR12-T1-HEALTHSAFETY",
+      "description": "Health: concepts (WHO, health certificates, travel clinics, compulsory and recommended vaccinations). Precautions for high-risk destinations (malaria, bilharzia, cholera areas). Vaccinations required for entering and leaving high-risk areas: yellow fever, hepatitis, TB and HIV. Recommended health precautions: bottled water, sun block, preventative medicine. Safety: reasons why the safety of tourists in SA is important. General safety precautions for tourists (in car, in public areas, on the street, in hotel room, at airport, after dark). Travel documentation: valid passport, visa, health certificate. Requirements for tourists travelling between countries. International driver's licence. Passport requirements and online application form. Visa requirements and application form. Concepts: duty-free goods, prohibited goods, green channel, red channel, to declare, travel allowances. Customs regulations when departing from or arriving in South Africa. Accessing and interpreting customs information.",
+      "metadata": {
+        "weekNumbers": [
+          8,
+          9
+        ],
+        "capsReference": "p. 32",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-TOURISM-GR12",
+      "title": "Term 2",
+      "code": "CAPS-TOURISM-GR12-T2",
+      "description": "World time zones, famous world icons and attractions, foreign market share, marketing South Africa, and foreign exchange",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "p. 32-35",
+        "assessmentStandards": [
+          "Tourism skills assessment task",
+          "Mid-year examination OR controlled test"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR12-T2",
+      "title": "World Time Zones",
+      "code": "CAPS-TOURISM-GR12-T2-TIMEZONES",
+      "description": "Concepts: time zone, UTC, Greenwich, hemispheres, equator and seasons, standard time, local time, international date line, 24-hour clock (00:00–23:59), latitude, longitude. Introduction to a world time zone map. Daylight saving time (DST): concept, reasons for this practice, impact of time zones and DST on travel planning. Calculations to determine arrival and departure time with and without DST and flying time (time zone map must be provided; learners are not required to know which countries apply DST). Concepts: jet lag and jet fatigue, symptoms of jet lag, how to minimise and ease the effects of jet lag.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3
+        ],
+        "capsReference": "p. 32",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR12-T2",
+      "title": "Famous World Icons and Attractions",
+      "code": "CAPS-TOURISM-GR12-T2-ICONS",
+      "description": "Difference between a tourist attraction and an icon. Reasons why specific tourism attractions or physical features are regarded as icons. Economic significance of icons for a country or area. Profile and statistics of tourists visiting these icons. Study icons according to Gr 12 examination guideline under headings: location on a world map (country, city, town, area), reason(s) why it is an icon, brief description of the icon, picture of the icon. Factors contributing to the success of a tourist attraction: excellent marketing, sustainable and responsible management plans, efficiency and ethical behaviour of staff and management, positive visitor experience, safety and crime prevention, general appearance and upkeep, needs of people with disabilities and universal access. Characteristics of a successful tourist attraction: actual number of visitors exceeds target, repeat visits, income generated exceeds target figures, positive impact on local community and environment.",
+      "metadata": {
+        "weekNumbers": [
+          4,
+          5,
+          6,
+          7
+        ],
+        "capsReference": "p. 33-34",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR12-T2",
+      "title": "Foreign Market Share and Marketing South Africa",
+      "code": "CAPS-TOURISM-GR12-T2-MARKETINGSA",
+      "description": "Foreign market share: statistics regarding inbound international tourism. Interpretation of statistics: foreign arrivals to SA (land and air travel markets) and how arrival statistics determine foreign market share, most visited provinces, length of stay in each province, average expenditure per tourist, activities undertaken whilst in SA. Marketing South Africa as a tourism destination: importance of marketing SA internationally, increase in annual volume of foreign arrivals, increase in international awareness of SA as a travel destination. Core business of SA Tourism: marketing SA internationally as a destination of choice, maintaining and enhancing standards of facilities and services, coordinating marketing activities of role players. Opportunities for marketing SA internationally: ITB (Berlin), World Travel Market (London). Funding for SA Tourism's international marketing: role of TOMSA. Branding — SA's brand logo. Introduction to Tourism Indaba travel trade show and the Getaway show. Recap of Grade 11 content (promotional and advertising techniques and marketing budget — CAPS ref p28).",
+      "metadata": {
+        "weekNumbers": [
+          7,
+          8
+        ],
+        "capsReference": "p. 34-35",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR12-T2",
+      "title": "Foreign Exchange",
+      "code": "CAPS-TOURISM-GR12-T2-FOREX",
+      "description": "Gross domestic product (GDP) and its benefits to the South African economy. Multiplier effect and link to GDP. Concepts: 'strong' and 'weak' rand, relative strength and relative weakness of a currency at specific times. Interpreting a currency rate sheet. Converting major currencies to South African rand and vice versa (use exchange rates expressed as 1 unit of foreign currency = value in rand; calculators may be used, rounded off to two decimals). Differentiating between bank selling rate (BSR) and bank buying rate (BBR). Effect of exchange rates on international tourism, affecting both inbound and outbound tourists, and how these influence travel patterns of South Africans travelling to developing and developed countries. Fluctuations in exchange rates.",
+      "metadata": {
+        "weekNumbers": [
+          9,
+          10
+        ],
+        "capsReference": "p. 34",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-TOURISM-GR12",
+      "title": "Term 3",
+      "code": "CAPS-TOURISM-GR12-T3",
+      "description": "International payment forms, sustainable and responsible tourism, World Heritage Sites, customer feedback, and tourism sectors careers",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "p. 35-37",
+        "assessmentStandards": [
+          "Preparatory examination"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR12-T3",
+      "title": "Forms of Payment When Travelling Internationally",
+      "code": "CAPS-TOURISM-GR12-T3-INTLPAYMENT",
+      "description": "Concepts: Electronic fund transfers (EFT), telegraphic transfers (SWIFT transfers), bank drafts, internet payments, foreign bank notes (cash), credit cards (Visa, MasterCard, American Express, Diners Club), preloaded foreign currency debit cards (cash passport card, travel wallet, international travel card). Advantages and disadvantages of each form of payment.",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "p. 35",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR12-T3",
+      "title": "Sustainable and Responsible Tourism",
+      "code": "CAPS-TOURISM-GR12-T3-SUSTAINABLE",
+      "description": "Three pillars of sustainable tourism (people, profit, planet). Concept and background of the triple bottom line approach. Environment (planet): good environmental practices — resource management (energy and water), waste management (reduce, re-use, recycle), litter control, pollution control, environmentally friendly building, promotion of indigenous flora and control of alien invasive plants. Economy (profit): role of business, responsible attitude of a tourism business towards people and environment, ways to practise it (ownership, employment, procurement of local goods and services). Social (people): considering positive and negative effects of tourism on local communities, culture and heritage. Corporate social investment (CSI) in tourism. Responsible tourism and tourists: codes of conduct for tourist behaviour (social, economic and environmental), how a tourism destination can attract environmentally conscious tourists, contribution of FTT towards encouraging responsible and sustainable practices. Use of case studies of companies that practise the triple bottom-line approach.",
+      "metadata": {
+        "weekNumbers": [
+          2,
+          3
+        ],
+        "capsReference": "p. 36",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR12-T3",
+      "title": "World Heritage Sites",
+      "code": "CAPS-TOURISM-GR12-T3-WORLDHERITAGE",
+      "description": "Concept: World Heritage Site. Role of UNESCO: logo and main function. Types: natural and cultural World Heritage Sites. Description of all World Heritage Sites in South Africa, their location on a map of South Africa, and how they meet UNESCO criteria (use latest information). Value of the World Heritage Sites to South Africa's tourism industry.",
+      "metadata": {
+        "weekNumbers": [
+          4
+        ],
+        "capsReference": "p. 36",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR12-T3",
+      "title": "Customer Feedback and Communication",
+      "code": "CAPS-TOURISM-GR12-T3-CUSTOMERFEEDBACK",
+      "description": "Concept: customer feedback. Purpose of obtaining customer feedback. Methods to obtain customer feedback: surveys, questionnaires, feedback cards, follow-up calls, SMS messages, web-based responses. How to analyse feedback: study and capture feedback data, determine extent of customer satisfaction, identify most common complaints, decide on an action plan, start the intervention process. Impact of the service delivered by an organisation on its business profitability.",
+      "metadata": {
+        "weekNumbers": [
+          5
+        ],
+        "capsReference": "p. 36",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR12-T3",
+      "title": "Tourism Sectors: Careers, Professional Image and Employment",
+      "code": "CAPS-TOURISM-GR12-T3-CAREERS",
+      "description": "Recap of Grade 11 content (CAPS ref p29): job and career opportunities in tourism sectors, subsectors and related services, entrepreneurial opportunities in tourism. Professional image in the tourism industry: image of the company (name, logo, slogan, website, stationery, marketing material, product packaging, physical appearance, environmental policies, customer service policies), image of staff (professional appearance, uniforms, dress code, personal hygiene, grooming, interaction with customers, communication skills). Conditions of employment: basic conditions of employment in one chosen field of tourism (airlines, hotels or national parks). Contract of employment: working hours, uniform allowances, travel benefits, leave, core duties, fringe benefits, remuneration and deductions, termination of service, professional accountability and responsibility, service ethics. Reference to the Department of Labour Basic Conditions of Employment Act. Purpose and value of a code of conduct.",
+      "metadata": {
+        "weekNumbers": [
+          6,
+          7
+        ],
+        "capsReference": "p. 37",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-TOURISM-GR12",
+      "title": "Term 4",
+      "code": "CAPS-TOURISM-GR12-T4",
+      "description": "Revision and NSC examination preparation",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "capsReference": "",
+        "assessmentStandards": [
+          "November NSC examination (200 marks)"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR12-T4",
+      "title": "Revision and Exam Preparation",
+      "code": "CAPS-TOURISM-GR12-T4-REVISION",
+      "description": "Review and consolidate all learning material from Terms 1–3 with reinforcement activities. Activities may include class quizzes, games, short tests, drawing concept maps, class competitions, working through previous examination question papers.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    }
+  ]
+}

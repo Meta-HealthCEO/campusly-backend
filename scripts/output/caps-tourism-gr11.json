@@ -1,0 +1,457 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "FET Phase",
+      "code": "CAPS-FET",
+      "description": "Further Education and Training Phase (Grades 10-12)",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FET",
+      "title": "Grade 11",
+      "code": "CAPS-GR11",
+      "description": "",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 11
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR11",
+      "title": "Tourism",
+      "code": "CAPS-TOURISM-GR11",
+      "description": "Tourism — Grade 11 — CAPS Curriculum",
+      "metadata": {
+        "weekNumbers": [],
+        "capsReference": "",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-TOURISM-GR11",
+      "title": "Term 1",
+      "code": "CAPS-TOURISM-GR11-T1",
+      "description": "Transport services: airports, airlines, airport and aircraft terminology, bus and train industries, Gautrain, luxury cruise liners",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "p. 23-24",
+        "assessmentStandards": [
+          "Tourism skills assessment task",
+          "March controlled test"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR11-T1",
+      "title": "Airports, Airlines and Airport Operations",
+      "code": "CAPS-TOURISM-GR11-T1-AIRPORTS",
+      "description": "Concepts: gateway, inbound, outbound, domestic, regional, intercontinental, transcontinental, transatlantic and connecting flights. Long-haul, medium-haul, short-haul, chartered flights, international airports, national airports, privately-owned airports and private landing strips. SA's international and national airports: location on map, international status (passenger and cargo), airports operated by ACSA. Airlines operating in SA: national carrier, budget airlines, international carriers. Interpretation of airline timetables and schedules.",
+      "metadata": {
+        "weekNumbers": [
+          2,
+          3
+        ],
+        "capsReference": "p. 23",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR11-T1",
+      "title": "Airport and Aircraft Terminology and Seating",
+      "code": "CAPS-TOURISM-GR11-T1-AIRPORTTERMS",
+      "description": "Airport terminology: landside, terminal, airside, gate, check-in counter, speed check-in kiosks, boarding pass, security control points, boarding, carousel, baggage claim area. Check-in and boarding procedures. Baggage allowances (domestic flights). Safety procedures before take-off. Aircraft terminology: aisle, galley, cockpit, overhead storage bins, tray tables, cargo hold, entertainment, oxygen masks. Seating configuration: wide- and narrow-body aircraft, business class, economy class, locating seats, aisle and window seats, emergency exit seats. Technology at airports: baggage wrap, x-ray security scanners, biometric scanners, thermal body scanners, metal detectors, information display boards, touch screen information systems, smartphones and internet-enabled devices for air travel (iTravel).",
+      "metadata": {
+        "weekNumbers": [
+          4,
+          5
+        ],
+        "capsReference": "p. 23",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR11-T1",
+      "title": "Tourism Bus and Train Industry",
+      "code": "CAPS-TOURISM-GR11-T1-BUSTRAIN",
+      "description": "Tourism bus industry: major tourist transporters, types (minibuses, coaches, special-purpose buses such as open-top sightseeing buses), information provided on bus schedules. Tourism train industry: difference between commuter trains (Metrorail) and tourist trains (Shosholoza Myl). Terminology: schedule, coaches, coupé, compartment, lounges, tourist class, economy class, dining car. Luxury trains: Blue Train, Rovos Rail, Shongololo Express, Premier Class. Information on train schedules.",
+      "metadata": {
+        "weekNumbers": [
+          6,
+          7
+        ],
+        "capsReference": "p. 23",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR11-T1",
+      "title": "Gautrain and Luxury Cruise Liner Industry",
+      "code": "CAPS-TOURISM-GR11-T1-GAUTRAINCRUISE",
+      "description": "Gautrain: interesting features (exterior and interior appearance, security, speed), technology (ticketing procedures, electronic boarding, electronic arrival and departure announcements), routes, parking facilities and bus service linked to Gautrain, benefits for the tourism industry. Luxury cruise liner industry: concepts (port, cruise terminal, cabins, suites, decks), facilities and entertainment on board.",
+      "metadata": {
+        "weekNumbers": [
+          8,
+          9
+        ],
+        "capsReference": "p. 24",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-TOURISM-GR11",
+      "title": "Term 2",
+      "code": "CAPS-TOURISM-GR11-T2",
+      "description": "Car rental, domestic tourism growth strategy, culture and heritage, and marketing",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "p. 24-25, 28",
+        "assessmentStandards": [
+          "PAT (marks carried over to Term 4)",
+          "Mid-year examination"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR11-T2",
+      "title": "Car Rental",
+      "code": "CAPS-TOURISM-GR11-T2-CARRENTAL",
+      "description": "Introduction to the car rental industry in South Africa. Conditions for renting: age, driver's licence, creditworthy, signing of contract. Different rental packages and options. Insurances: CDW, TLW vs SCDW, STLW and PAI. Additional costs: tourism levy, fuel deposits and charges, airport surcharges, additional driver charges, contract fee, delivery and collection charges, cross-border fees, optional equipment. Incidental costs: administration fee for accidents, traffic fines. Payment options and methods for car rental.",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2
+        ],
+        "capsReference": "p. 24",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR11-T2",
+      "title": "Domestic Tourism Growth Strategy",
+      "code": "CAPS-TOURISM-GR11-T2-DTGS",
+      "description": "The Domestic Tourism Growth Strategy (DTGS) 2012–2020. State of domestic tourism in SA. Why a DTGS? (problem statement and vision — no statistics). Current trends influencing tourism (brief explanations). Domestic marketing campaign (Sho't Left). Five domestic market segments: profile, why they travel, type of travel and holiday preferred (no % needed). Four strategic objectives and targets of the DTGS and the implementation plan.",
+      "metadata": {
+        "weekNumbers": [
+          3,
+          4
+        ],
+        "capsReference": "p. 25",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR11-T2",
+      "title": "Culture and Heritage Tourism",
+      "code": "CAPS-TOURISM-GR11-T2-CULTURE",
+      "description": "Concepts: culture, heritage, cultural diversity. Elements of culture: arts and crafts, cuisine, music and dance. Importance and value of conserving heritage for future generations. Heritage sites in South Africa. Examples in own province. South African cultural uniqueness: tourism importance of cultures in own province (folklore, dress, cuisine, gumboot dancing, township kwaito art, sangoma's, traditional medicine, traditional healing, small chiefdoms, Ndebele art, Zulu dances, rickshaws, San, art festivals). How cultural uniqueness and diversity can promote inbound and domestic tourism. South African Heritage Resource Agency (SAHRA): logo and functions. Provincial heritage agencies. Special heritage permits and protection regulations (structures older than 60 years, archaeological and palaeontological sites, meteorites, shipwrecks, burial grounds, graves).",
+      "metadata": {
+        "weekNumbers": [
+          5,
+          6,
+          7
+        ],
+        "capsReference": "p. 25",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR11-T2",
+      "title": "Marketing of Tourism",
+      "code": "CAPS-TOURISM-GR11-T2-MARKETING",
+      "description": "Concepts: marketing, market research, target markets, market share, competitive edge, core and niche markets. Purpose of marketing tourism products and services. Marketing budget: market research costs, communication costs (printing, telephone, fax, internet), travel costs (local and overseas, vehicle and flight costs), personnel costs. Above-the-line promotional techniques: conventional media (TV, newspapers, magazines, posters, radio), printed material (brochures, flyers, pamphlets, posters, billboards, meander maps), electronic advertising (video walls, audio-visual presentations, digital displays, cellphone advertising, web-based advertising). Below-the-line promotional techniques: personal selling, sales promotions, in-store discounts, promotional sponsorship, exhibitions, shows and expos. Matching promotion type to potential customer.",
+      "metadata": {
+        "weekNumbers": [
+          7,
+          8
+        ],
+        "capsReference": "p. 28",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-TOURISM-GR11",
+      "title": "Term 3",
+      "code": "CAPS-TOURISM-GR11-T3",
+      "description": "Tour itinerary planning, regional tourism, SADC attractions, foreign exchange, and communication and customer care",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "capsReference": "p. 21, 26-29",
+        "assessmentStandards": [
+          "Data-handling task",
+          "September controlled test"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR11-T3",
+      "title": "Tour Itinerary Planning",
+      "code": "CAPS-TOURISM-GR11-T3-ITINERARY",
+      "description": "Concepts: itinerary, logical tour planning, scheduled tours. Factors to consider when planning an itinerary. Different types of itineraries. Writing of an itinerary. Times may be included but main focus is on logical spread, variety and appropriateness of tourist activities.",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "p. 28",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR11-T3",
+      "title": "Regional Tourism and SADC Attractions",
+      "code": "CAPS-TOURISM-GR11-T3-SADC",
+      "description": "Concepts: regional tourism, South African Development Community (SADC). SADC member countries: location and capital cities on a map. Gateways: accessibility of each country from SA (road, air or water). Advantages of regional tourism for SA and SADC member states. Main tourist attractions in SADC countries (World Heritage Sites marked with *). For each: location on map, reasons why it is a top tourist attraction, activities, pictures, relevant tourist information. Angola: Kissama National Park. Botswana: Okavango Delta, Tsodilo Hills*. DRC: Virunga National Park*. Lesotho: Katse Dam and Lesotho Highlands Water Project, Sani Pass. Madagascar: Royal Hills of Ambohimanga*. Mauritius: Grand Baie. Mozambique: Lake Niassa, Bazaruto Archipelago, Island of Mozambique*. Namibia: Fish River Canyon, Etosha National Park, Namib Desert. Malawi: Lake Malawi. Seychelles: beaches and leisure activities. Swaziland: Hlane Royal National Park. Tanzania: Mount Kilimanjaro*, Serengeti National Park. Zambia: Victoria Falls and Zambezi River, Lake Kariba. Zimbabwe: Victoria Falls and Zambezi River, Lake Kariba, The Great Zimbabwe Ruins*, Matopo Hills*.",
+      "metadata": {
+        "weekNumbers": [
+          2,
+          3,
+          4
+        ],
+        "capsReference": "p. 27",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR11-T3",
+      "title": "Foreign Exchange",
+      "code": "CAPS-TOURISM-GR11-T3-FOREX",
+      "description": "Concepts: local currency, foreign currency, foreign exchange, exchange rate. Major currencies: US dollar, Euro, British pound, Japanese yen, Australian dollar, South African rand — currency codes and symbols. Facilities where foreign currency can be exchanged (foreign exchange bureaus, commercial banks, etc.). How money spent by inbound international tourists benefits local people directly and indirectly — the multiplier effect. Interpreting a currency rate sheet from a foreign exchange bureau. Converting major currencies to South African rand and vice versa.",
+      "metadata": {
+        "weekNumbers": [
+          5,
+          6
+        ],
+        "capsReference": "p. 26",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR11-T3",
+      "title": "Communication Technology and Service Excellence",
+      "code": "CAPS-TOURISM-GR11-T3-COMMSERVICE",
+      "description": "Communication technology: types of equipment (landline telephones, cell phones, fax machine, photocopying machine, printers and computer including email, video conferencing and teleconferencing). Functions, advantages and disadvantages of each. Verbal and written communication. Service excellence: concepts, importance and value to a tourism business, advantages of excellent service delivery for a business and for a tourist. Customer care for foreign tourists: treating and assisting foreigners, respecting traditions, customs and behaviour, communicating effectively with visitors from diverse cultural backgrounds.",
+      "metadata": {
+        "weekNumbers": [
+          7,
+          8
+        ],
+        "capsReference": "p. 21, 29",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR11-T3",
+      "title": "Customer Complaints and Managing Quality Service",
+      "code": "CAPS-TOURISM-GR11-T3-COMPLAINTS",
+      "description": "Customer complaints: in person, verbal, telephone, cell phone and written (letters, faxes, SMSs, website). Value of customer complaints to a business (as an opportunity for improvement). Six steps for dealing with verbal customer complaints: 1) Listen carefully, 2) Ask questions in a caring and concerned manner, 3) Apologise without blaming, 4) Solve the problem immediately, 5) Offer the customer something (upgrade, free product, discounts, full refunds), 6) Thank the customer. Constructive criticism and handling of criticism in a mature manner. Managing quality service: types of strategies used by companies (performance management, quality control checks, customer surveys, team and peer reviews, in-service training). How services delivered in one sector impact on services delivered in another sector.",
+      "metadata": {
+        "weekNumbers": [
+          9,
+          10
+        ],
+        "capsReference": "p. 29",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 5
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-TOURISM-GR11",
+      "title": "Term 4",
+      "code": "CAPS-TOURISM-GR11-T4",
+      "description": "Job and career opportunities, entrepreneurial opportunities in tourism, and sustainable and responsible tourism",
+      "metadata": {
+        "weekNumbers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "capsReference": "p. 20, 29",
+        "assessmentStandards": [
+          "PAT",
+          "November examination"
+        ],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR11-T4",
+      "title": "Job and Career Opportunities in Tourism",
+      "code": "CAPS-TOURISM-GR11-T4-CAREERS",
+      "description": "Job and career opportunities in tourism sectors, subsectors and related services: transport, hospitality (accommodation and food), tourism attractions (gaming and lotteries, leisure, conservation, sport and recreation), events and conferences, tourism services, travel trade sectors. Requirements and inherent qualities (personal characteristics) to work in a particular sector. A learner chooses any tourism sector or career to study according to own interests. Personality type, characteristics and essential skills.",
+      "metadata": {
+        "weekNumbers": [
+          1
+        ],
+        "capsReference": "p. 29",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR11-T4",
+      "title": "Entrepreneurial Opportunities in Tourism",
+      "code": "CAPS-TOURISM-GR11-T4-ENTREPRENEUR",
+      "description": "Concept of entrepreneur. Skills needed to be an entrepreneur. Identification of products or services suitable for entrepreneurial opportunities. Opportunities to start own tourism business.",
+      "metadata": {
+        "weekNumbers": [
+          2
+        ],
+        "capsReference": "p. 29",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-TOURISM-GR11-T4",
+      "title": "Sustainable and Responsible Tourism (Recovery/Extension)",
+      "code": "CAPS-TOURISM-GR11-T4-SUSTAINABLE",
+      "description": "Recovery of Grade 10 content: sustainable tourism (concept, sustainable practices, three pillars — planet, people, profit; environmental, social and economic impact of tourism businesses on natural environment and local communities). Responsible tourism (concept, rules for tourist behaviour in natural environment, good environmental practices: litter control, conservation of energy, water and scarce resources). Global warming and the tourism industry (concept, carbon footprint, causes, consequences of climate change, how the tourist industry can minimise its carbon footprint).",
+      "metadata": {
+        "weekNumbers": [
+          3,
+          4,
+          5
+        ],
+        "capsReference": "p. 20",
+        "assessmentStandards": [],
+        "notionalHours": 0,
+        "cognitiveWeighting": null
+      },
+      "order": 3
+    }
+  ]
+}
