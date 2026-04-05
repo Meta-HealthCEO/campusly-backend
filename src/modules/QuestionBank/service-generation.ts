@@ -1,10 +1,13 @@
 import mongoose from 'mongoose';
 import { Question } from './model.js';
-import type { IQuestionOption } from './model.js';
+import type { IQuestionOption, IDiagram } from './model.js';
 import { CurriculumNode } from '../CurriculumStructure/model.js';
 import { AIService } from '../../services/ai.service.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
 import type { GenerateQuestionsInput, ExtractFromPaperInput } from './validation.js';
+import { getTemplatesForGrade, formatTemplatesForPrompt } from '../../lib/tikz-templates.js';
+import { renderDiagram } from './service-diagram.js';
+import type { DiagramInput } from './service-diagram.js';
 
 const DAILY_LIMIT = 20;
 
@@ -39,7 +42,24 @@ export class GenerationService {
 
     if (!node) throw new NotFoundError('Curriculum node not found');
 
-    // ── Build prompt ──
+    // ── Build prompt (with optional diagram support) ──
+    const gradeLevel = data.gradeLevel ?? 7;
+    const templates = getTemplatesForGrade(gradeLevel);
+    const templateBlock = formatTemplatesForPrompt(templates);
+
+    const diagramInstructions = templateBlock
+      ? [
+          '\n\nDIAGRAM SUPPORT:',
+          'When a question involves geometry, graphs, data representation, shapes, number lines, or coordinate planes,',
+          'include a "diagram" field in the question object with this structure:',
+          '{ "tikz": "<TikZ code string>", "data": { "type": "<template_name>", ...parameters }, "alt": "<accessibility description>" }.',
+          'Use the templates below as reference — adapt the placeholder values to fit the question.',
+          'If a question is pure algebra, arithmetic, or text-based, omit the "diagram" field entirely (do not set it to null).',
+          '\nAvailable TikZ templates:\n',
+          templateBlock,
+        ].join(' ')
+      : '';
+
     const systemPrompt = [
       'You are an expert assessment question creator for South African schools.',
       'You create questions aligned with the CAPS curriculum.',
@@ -49,7 +69,10 @@ export class GenerationService {
       'For MCQ: provide 4 options with labels A-D, exactly one isCorrect: true.',
       'For true_false: provide 2 options with labels "True" and "False".',
       'For other types: leave options as empty array and provide detailed answer and markingRubric.',
-    ].join(' ');
+      diagramInstructions,
+    ]
+      .filter(Boolean)
+      .join(' ');
 
     const userPrompt = [
       `Create ${data.count} ${data.type.replace(/_/g, ' ')} question(s) for:`,
@@ -70,6 +93,9 @@ export class GenerationService {
     // ── Parse response into Question documents ──
     const parsed = parseAIQuestions(aiResponse, data);
 
+    // ── Render diagrams (fire-and-forget failures — question saves regardless) ──
+    const renderedDiagrams = await renderParsedDiagrams(parsed);
+
     // ── Save all as drafts ──
     const soid = new mongoose.Types.ObjectId(schoolId);
     const uoid = new mongoose.Types.ObjectId(userId);
@@ -77,7 +103,7 @@ export class GenerationService {
     const suboid = new mongoose.Types.ObjectId(data.subjectId);
     const groid = new mongoose.Types.ObjectId(data.gradeId);
 
-    const docs = parsed.map((q) => ({
+    const docs = parsed.map((q, idx) => ({
       curriculumNodeId: cnoid,
       schoolId: soid,
       subjectId: suboid,
@@ -85,6 +111,7 @@ export class GenerationService {
       type: data.type,
       stem: q.stem,
       media: [],
+      diagram: renderedDiagrams[idx],
       options: q.options,
       answer: q.answer,
       markingRubric: q.markingRubric,
@@ -144,12 +171,19 @@ export class GenerationService {
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
+interface ParsedDiagram {
+  tikz: string;
+  data: Record<string, unknown>;
+  alt: string;
+}
+
 interface ParsedQuestion {
   stem: string;
   options: IQuestionOption[];
   answer: string;
   markingRubric: string;
   marks: number;
+  diagram: ParsedDiagram | null;
 }
 
 function parseAIQuestions(
@@ -177,12 +211,15 @@ function parseAIQuestions(
           })
         : [];
 
+      const diagram = parseDiagramField(q.diagram);
+
       return {
         stem: typeof q.stem === 'string' ? q.stem : 'Generated question',
         options,
         answer: typeof q.answer === 'string' ? q.answer : '',
         markingRubric: typeof q.markingRubric === 'string' ? q.markingRubric : '',
         marks: typeof q.marks === 'number' && q.marks >= 1 ? q.marks : data.difficulty,
+        diagram,
       };
     });
   } catch {
@@ -194,9 +231,58 @@ function parseAIQuestions(
         answer: response,
         markingRubric: '',
         marks: data.difficulty,
+        diagram: null,
       },
     ];
   }
+}
+
+function parseDiagramField(raw: unknown): ParsedDiagram | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const d = raw as Record<string, unknown>;
+
+  const tikz = typeof d.tikz === 'string' ? d.tikz.trim() : '';
+  if (!tikz) return null;
+
+  const data =
+    d.data && typeof d.data === 'object' && !Array.isArray(d.data)
+      ? (d.data as Record<string, unknown>)
+      : {};
+  const alt = typeof d.alt === 'string' ? d.alt : 'Diagram';
+
+  return { tikz, data, alt };
+}
+
+async function renderParsedDiagrams(
+  parsed: ParsedQuestion[],
+): Promise<(IDiagram | null)[]> {
+  const results: (IDiagram | null)[] = new Array(parsed.length).fill(null);
+  const jobs = parsed
+    .map((q, idx) => (q.diagram ? { idx, d: q.diagram } : null))
+    .filter((j): j is { idx: number; d: ParsedDiagram } => j !== null);
+
+  if (jobs.length === 0) return results;
+
+  await Promise.allSettled(
+    jobs.map(async ({ idx, d }) => {
+      try {
+        const input: DiagramInput = { tikz: d.tikz, data: d.data, alt: d.alt };
+        const r = await renderDiagram(input);
+        results[idx] = {
+          tikz: d.tikz, data: d.data, alt: d.alt,
+          svgUrl: r.svgUrl ?? null, pdfUrl: r.pdfUrl ?? null,
+          hash: r.hash, renderStatus: r.renderStatus, renderError: r.renderError ?? null,
+        };
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : 'Unknown render error';
+        results[idx] = {
+          tikz: d.tikz, data: d.data, alt: d.alt,
+          svgUrl: null, pdfUrl: null, hash: '', renderStatus: 'failed', renderError: msg,
+        };
+      }
+    }),
+  );
+  return results;
 }
 
 // ─── Extract helpers ──────────────────────────────────────────────────────

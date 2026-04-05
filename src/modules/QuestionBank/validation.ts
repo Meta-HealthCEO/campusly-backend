@@ -89,6 +89,7 @@ export const generateQuestionsSchema = z.object({
   count: z.number().int().min(1).max(20).default(5),
   difficulty: z.number().int().min(1).max(5).default(3),
   cognitiveLevel: cognitiveLevelSchema,
+  gradeLevel: z.number().int().min(1).max(12).optional(),
 }).strict();
 
 // ─── Question Query ────────────────────────────────────────────────────────

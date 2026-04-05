@@ -10,6 +10,15 @@ export interface IPaperQuestion {
   marks: number;
   modelAnswer: string;
   markingGuideline: string;
+  diagram: {
+    tikz: string;
+    data: Record<string, unknown>;
+    alt: string;
+    svgUrl: string | null;
+    hash: string;
+    renderStatus: 'pending' | 'rendered' | 'failed';
+    renderError: string | null;
+  } | null;
 }
 
 export interface IPaperSection {
@@ -43,6 +52,21 @@ const paperQuestionSchema = new Schema<IPaperQuestion>(
     marks: { type: Number, required: true },
     modelAnswer: { type: String, required: true },
     markingGuideline: { type: String, required: true },
+    diagram: {
+      type: new Schema(
+        {
+          tikz: { type: String, required: true },
+          data: { type: Schema.Types.Mixed, default: {} },
+          alt: { type: String, required: true },
+          svgUrl: { type: String, default: null },
+          hash: { type: String, required: true },
+          renderStatus: { type: String, enum: ['pending', 'rendered', 'failed'], default: 'pending' },
+          renderError: { type: String, default: null },
+        },
+        { _id: false },
+      ),
+      default: null,
+    },
   },
   { _id: false },
 );

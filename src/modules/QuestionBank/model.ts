@@ -42,11 +42,25 @@ export type PaperStatus = (typeof PAPER_STATUSES)[number];
 export const MEDIA_TYPES = ['image', 'diagram', 'table'] as const;
 export type MediaType = (typeof MEDIA_TYPES)[number];
 
+export const DIAGRAM_RENDER_STATUSES = ['pending', 'rendered', 'failed'] as const;
+export type DiagramRenderStatus = (typeof DIAGRAM_RENDER_STATUSES)[number];
+
 // ─── Question Interfaces ───────────────────────────────────────────────────
 
 export interface IQuestionMedia {
   mediaType: MediaType;
   url: string;
+}
+
+export interface IDiagram {
+  tikz: string;
+  data: Record<string, unknown>;
+  alt: string;
+  svgUrl: string | null;
+  pdfUrl: string | null;
+  hash: string;
+  renderStatus: DiagramRenderStatus;
+  renderError: string | null;
 }
 
 export interface IQuestionOption {
@@ -68,6 +82,7 @@ export interface IQuestion extends Document {
   type: QuestionType;
   stem: string;
   media: IQuestionMedia[];
+  diagram: IDiagram | null;
   options: IQuestionOption[];
   answer: string;
   markingRubric: string;
@@ -161,6 +176,20 @@ const questionMediaSchema = new Schema<IQuestionMedia>(
   { _id: false },
 );
 
+const diagramSchema = new Schema<IDiagram>(
+  {
+    tikz: { type: String, required: true },
+    data: { type: Schema.Types.Mixed, default: {} },
+    alt: { type: String, required: true },
+    svgUrl: { type: String, default: null },
+    pdfUrl: { type: String, default: null },
+    hash: { type: String, required: true },
+    renderStatus: { type: String, enum: DIAGRAM_RENDER_STATUSES, default: 'pending' },
+    renderError: { type: String, default: null },
+  },
+  { _id: false },
+);
+
 const questionOptionSchema = new Schema<IQuestionOption>(
   {
     label: { type: String, required: true },
@@ -191,6 +220,7 @@ const questionSchema = new Schema<IQuestion>(
     type: { type: String, enum: QUESTION_TYPES, required: true },
     stem: { type: String, required: true, trim: true },
     media: { type: [questionMediaSchema], default: [] },
+    diagram: { type: diagramSchema, default: null },
     options: { type: [questionOptionSchema], default: [] },
     answer: { type: String, default: '' },
     markingRubric: { type: String, default: '' },
