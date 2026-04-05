@@ -1,0 +1,140 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Intermediate Phase",
+      "code": "CAPS-IP",
+      "description": "Intermediate Phase (Grades 4-6)",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-IP",
+      "title": "Grade 4",
+      "code": "CAPS-GR4",
+      "description": "Grade 4",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR4",
+      "title": "Afrikaans Eerste Addisionele Taal",
+      "code": "CAPS-AFRIKAANSFAL-GR4",
+      "description": "Afrikaans Eerste Addisionele Taal Graad 4",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-AFRIKAANSFAL-GR4",
+      "title": "Kwartaal 1",
+      "code": "CAPS-AFRIKAANSFAL-GR4-T1",
+      "description": "Afrikaans Eerste Addisionele Taal Graad 4 Kwartaal 1",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSFAL-GR4-T1",
+      "title": "Weke 1-2: Inligtingsteks met Visuele Prikkels (Plakkaat)",
+      "code": "CAPS-AFRIKAANSFAL-GR4-T1-WK1-2",
+      "description": "Luister en Praat (Mondeling): Luister na inligtingsteks van 'n plakkaat wat 'n gebeurtenis adverteer; identifiseer spesifieke besonderhede; interpreteer die inligting wat gegee is; hou verband met persoonlike ervarings. Lees en Kyk: Lees inligtingsteks met visuele prikkels, bv. grafieke / tabelle / diagramme / breinkaarte / kaarte / prente ens.; pre-lees: voorspellings oor titel en prente / visuele beelde; gebruik leesstrategieë soos soeklees; vra en beantwoord vrae; bespreek hoofgedagte en spesifieke besonderhede wat die visuele beelde interpreteer. Lees vir begrip — gebruik leesstrategieë. Leesmetodologieë. Lees vir genot — Novelle / Leesboek. Skryf en Aanbied: Skryf 'n inligtingsteks soos 'n verslag; organiseer inligting logies; sluit besonderhede in; gebruik onderwerp en ondersteunende sinne; gebruik toepaslike taal, spelling en punktuasie; gebruik toepaslike woordeskat; skryf woorde en hul betekenisse in 'n persoonlike woordeboek neer; beplan, skryf 'n eerste weergawe en verfyn skryfwerk. Skep 'n persoonlike woordeboek. Taalstrukture en -konvensies: Werk met woorde — lidwoorde, soortname, abstrakte selfstandige naamwoorde, byvoeglike naamwoorde, werkwoorde, alfabetiese rangskikking, sinonieme en antonieme. Werk met sinne — enkelvoudige sinne, stelsinne, vraagsinnne. Woordeskat en betekenisleer. Spelling en punktuasie.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "CAPS Afrikaans EAT Graad 4 Kwartaal 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSFAL-GR4-T1",
+      "title": "Weke 3-4: Novelle-uittreksel / Karakterskets (VAS 1 Mondeling begin)",
+      "code": "CAPS-AFRIKAANSFAL-GR4-T1-WK3-4",
+      "description": "Luister en Praat (Mondeling): Luister na en reageer op 'n uittreksel uit die novelle; inleidende aktiwiteite: voorspellings; luister na die uittreksel uit die novelle; luister vir hoofgedagte en spesifieke besonderhede; beskryf gebeure; druk gevoelens uit in verband met gebeure; verband met eie lewe; bespreek sosiale, morele en kulturele waardes in die teks; neem deel aan groepbesprekings. Lees en Kyk: Lees 'n uittreksel uit 'n novelle; pre-leesstrategieë: soeklees, vluglees, voorspellings oor die titel en besprekings oor die tema / inhoud; identifiseer en verduidelik die hoofgebeure; bespreek die karakters; identifiseer en bespreek gevoelens wat in die teks uitgespreek word; verbind karakters en gebeure met eie lewe. Gebruik 'n skryfraam. Letterkunde. Leesmetodologieë. Assesseer vir leer — ter voorbereiding van hardoplees. Skryf en Aanbied: Skryf 'n karakterskets van die hoofkarakter; gebruik 'n skryfraam; pre-skryf: luister na die uittreksel uit die novelle; kies toepaslike taalgebruik en teksstruktuur; gebruik die korrekte formaat; organiseer die inhoud logies; skryf in kronologiese orde. Gebruik die skryfproses (beplanning, opstel, hersiening, redigering, proeflees, aanbieding). VAS 1 Mondeling: Hardoplees (20 punte) — begin in kwartaal 1, sluit af in kwartaal 2 wanneer die punt opgeteken sal word.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "CAPS Afrikaans EAT Graad 4 Kwartaal 1", "assessmentStandards": ["VAS 1 Mondeling: Hardoplees 20 punte (begin K1, sluit af K2)"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSFAL-GR4-T1",
+      "title": "Weke 5-6: Kortverhaal (VAS 1 Mondeling gaan voort)",
+      "code": "CAPS-AFRIKAANSFAL-GR4-T1-WK5-6",
+      "description": "Luister en Praat (Mondeling): Luister na 'n kortverhaal; inleidende aktiwiteite: voorspelling; identifiseer karakters; herroep hoofgedagte; beantwoord mondelinge vrae; hervertel 'n storie; vertel in korrekte volgorde; noem korrekte karakters. Lees en Kyk: Lees 'n kortverhaal; pre-lees: voorspel vanuit titel en prente; gebruik leesstrategieë, bv. voorspelling, kontekstuele leidrade; bespreek nuwe woordeskat uit die teks; lees met begrip; gebruik begripstrategieë: visualisering, voorspelling, maak verbindings, lei betekenis van onbekende woorde en beelde af. Begripstrategieë. Letterkunde. Leesmetodologieë. Skryf en Aanbied: Skryf 'n storie gebaseer op 'n persoonlike ondervinding; selekteer toepaslike inhoud; gebruik gepaste struktuur en formaat; sluit karakters in; gebruik toepaslike taalgebruik, spelling en punktuasie; gebruik 'n verskeidenheid woorde wat verbind hou met die onderwerpe. Gebruik die skryfproses. Taalstrukture en -konvensies: Abstrakte selfstandige naamwoorde, byvoeglike naamwoorde, telwoorde, vokaalgroep 3, alfabetiese rangskikking, afbreek van woorde, lettergrepe en klankgrepe. Enkelvoudige sinne, enkelvoudige sin (onderwerp, voorwerp, gesegde). Spelling en punktuasie.",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "CAPS Afrikaans EAT Graad 4 Kwartaal 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSFAL-GR4-T1",
+      "title": "Weke 7-8: Resep / Instruksieteks (VAS 2 Kreatiewe Skryf)",
+      "code": "CAPS-AFRIKAANSFAL-GR4-T1-WK7-8",
+      "description": "Luister en Praat (Mondeling): Luister en bespreek 'n resep; inleidende aktiwiteite: voorspelling; herroep prosedure; identifiseer die kenmerke van instruksies; gee duidelike instruksies oor hoe om 'n koppie tee te maak; maak notas en pas instruksies toe; vra vrae vir duidelikheid. Lees en Kyk: Lees 'n resep; pre-lees: voorspel vanuit titel en prente; gebruik leesstrategieë; bespreek spesifieke besonderhede van teks; bespreek volgorde van instruksies; gebruik leesbegripstrategieë: visualisering, maak verbindings. Leesmetodologieë. Skryf en Aanbied: Skryf instruksies: Hoe om 'n koppie tee te maak; maak 'n lys van bestanddele en spesifieke besonderhede; gebruik korrekte volgorde; maak van opdragte (bevele) gebruik; gebruik korrekte struktuur en formaat. Gebruik die skryfproses. VAS 2 Kreatiewe Skryf: Opstel (20 punte) — Beskrywend / verhalend (3 paragrawe); taak word gedurende die kwartaal voltooi. Taalstrukture en -konvensies: Vokaalgroep 3, afbreek van woorde, lettergrepe en klankgrepe, sinonieme en antonieme, voegwoorde. Werk met sinne — hoof- en hulpwerkwoorde, byvoeglike naamwoorde (verbuiging, trappe van vergelyking, intensiewe vorm), tyd (teenwoordig en verlede), idiomatiese uitdrukkings, enkelvoudige sinne.",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "CAPS Afrikaans EAT Graad 4 Kwartaal 1", "assessmentStandards": ["VAS 2 Kreatiewe Skryf: Opstel 20 punte — Beskrywend/verhalend, 3 paragrawe"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSFAL-GR4-T1",
+      "title": "Weke 9-10: Plakkaat / Kennisgewing (VAS 3 Respons op Tekste)",
+      "code": "CAPS-AFRIKAANSFAL-GR4-T1-WK9-10",
+      "description": "Luister en Praat (Mondeling): Neem deel aan 'n kort gesprek oor 'n bekende onderwerp; maak beurte; bly by die onderwerp; vra relevante vrae; oefen luister en praat (kies een vir daaglikse oefening): voer 'n eenvoudige rympie, gedig of liedjie uit; speel 'n eenvoudige taalspeletjie; gee en volg eenvoudige instruksies / aanwysings; vertel eie nuus; vertel 'n storie wat gehoor of gelees is. Lees en Kyk: Lees 'n plakkaat of kennisgewing; pre-lees: bespreek die prente; bespreek waaroor die teks gaan; identifiseer spesifieke inligting; interpreteer die inligting; bespreek die doel van die teks; bespreek die taalgebruik; identifiseer en bespreek ontwerpkenmerke soos kleur en verskillende skrifgroottes. Oefen om te lees — lees hardop met toepaslike uitspraak, uitdrukking en tempo. Skryf en Aanbied: Ontwerp 'n plakkaat wat 'n geleentheid adverteer; kies toepaslike inligting; gebruik die korrekte formaat; gebruik ontwerpkenmerke soos kleur en verskillende lettergroottes of -soorte. Gebruik die skryfproses. VAS 3 Respons op Tekste (40 punte): Literêre / Nie-literêre teks (15 punte), Visuele teks (10 punte), Taalstrukture en -konvensies (15 punte). Taalstrukture en -konvensies: Sinonieme en antonieme. Bywoorde van tyd, plek en wyse, sinsoorte, enkelvoudige sin, woordorde, ontkenning, metafore, vergelykings.",
+      "metadata": { "weekNumbers": [9,10], "capsReference": "CAPS Afrikaans EAT Graad 4 Kwartaal 1", "assessmentStandards": ["VAS 3 Respons op Tekste 40 punte — Literêre/Nie-literêre 15, Visuele 10, Taal 15"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-AFRIKAANSFAL-GR4",
+      "title": "Kwartaal 2",
+      "code": "CAPS-AFRIKAANSFAL-GR4-T2",
+      "description": "Afrikaans Eerste Addisionele Taal Graad 4 Kwartaal 2",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSFAL-GR4-T2",
+      "title": "Weke 1-2: Gedig / Lied",
+      "code": "CAPS-AFRIKAANSFAL-GR4-T2-WK1-2",
+      "description": "Luister en Praat (Mondeling): Luister na 'n gedig / lied; herroep hoofgedagte; bespreek sentrale idee / boodskap; verwys na eie ervaring; identifiseer ritme en lewer kommentaar op die effek daarvan op die hoorder; druk gevoelens uit wat deur die gedig opgeroep word; bied lied / gesiteerde reëls aan. Lees en Kyk: Lees 'n gedig / lied; gebruik 'n teks van 'n handboek of uit die onderwyser se hulpbronlêer; bespreek hoofgedagte(s); druk gevoelens uit; identifiseer ritme en rym en die effek daarvan; verdeel woorde in lettergrepe om ritme te verstaan; gebruik leesstrategieë. Lees met begrip. Leesmetodologieë. Skryf en Aanbied: Skryf 'n eenvoudige gedig / lied; gebruik toepaslike inhoud; gebruik gepaste struktuur en formaat; beplan, ontwerp en hersien die gedig / lied; gebruik toepaslike ritme en rym; gebruik kennis van lettergrepe om ritme te ontwikkel. Taalstrukture en -konvensies: Abstrakte selfstandige naamwoorde, samestellings, selfstandige naamwoorde, leenwoorde, personifikasie, alliterasie, rym. Enkelvoudige sinne, saamgestelde sinne. Spelling en punktuasie — spelling en spelpatrone, afkappingstekens, vraagtekens.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "CAPS Afrikaans EAT Graad 4 Kwartaal 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSFAL-GR4-T2",
+      "title": "Weke 3-4: Weerverslag (VAS 1 Mondeling sluit af)",
+      "code": "CAPS-AFRIKAANSFAL-GR4-T2-WK3-4",
+      "description": "Luister en Praat (Mondeling): Luister na weerverslag; inleidende aktiwiteite: voorspelling; luister vir spesifieke besonderhede; bespreek bruikbaarheid van die inligting; neem deel aan klasbesprekings; bespreek moontlike uitwerking op mense; vergelyk toestande op verskillende plekke; dui voorkeurbestemmings met redes aan; regverdig eie mening; identifiseer kenmerke van weer en die aard van taalgebruik. Luister na 'n beskrywing en beskryf 'n voorwerp — identifiseer die voorwerp wat korrek beskryf word; gebruik woorde wat die voorwerp korrek beskryf; gebruik enkele nuwe woorde; gebruik byvoeglike naamwoorde. Lees en Kyk: Lees 'n weerverslag; identifiseer en verduidelik ooreenkomste en verskille; identifiseer die wyse waarop die teks georganiseer is; lees 'n informatiewe teks met hulpmiddels soos kaarte of grafiese voorstellings; gebruik leesstrategieë. Leesmetodologieë. Skryf en Aanbied: Skryf 'n informatiewe teks met visuele komponente soos 'n boekomslag / tydlyn; organiseer inligting logies; gebruik onderwerp en ondersteunende sinne. VAS 1 Mondeling: Hardoplees — begin met hierdie taak in kwartaal 1 en sluit af in kwartaal 2 wanneer die punt aangeteken sal word. Taalstrukture en -konvensies: Werkwoorde, byvoeglike werkwoorde. Enkelvoudige sin (onderwerp, gesegde, voorwerp), tydsvorme (verlede tyd, toekomende tyd). Spelling en punktuasie — afkappingstekens, vraagtekens en uitroeptekens.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "CAPS Afrikaans EAT Graad 4 Kwartaal 2", "assessmentStandards": ["VAS 1 Mondeling sluit af in K2 — punt aangeteken"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSFAL-GR4-T2",
+      "title": "Weke 5-6: Dialoog (VAS 1 Mondeling sluit af)",
+      "code": "CAPS-AFRIKAANSFAL-GR4-T2-WK5-6",
+      "description": "Luister en Praat (Mondeling): Luister na 'n dialoog; inleidende aktiwiteite: voorspelling; luister en bepaal verband met eie ervaring; identifiseer spesifieke besonderhede; neem deel aan groepbesprekings; maak beurte om te praat; bly by onderwerp; vra relevante vrae; handhaaf bespreking; reageer met empatie en respek op ander se idees; gee gebalanseerde en konstruktiewe terugvoering. Rolspeel 'n scenario wat verband hou met die gekose roman in kwartaal 1. Lees en Kyk: Lees 'n dialoog; gebruik leesstrategieë: vluglees, maak voorspellings, lei die betekenis van onbekende woorde en beelde af; hersien om begrip te bevorder; verstaan die woordeskat; identifiseer hoof- en ondersteunende idees; bespreek nuwe woordeskat; gebruik 'n woordeboek; dink na oor tekste wat onafhanklik gelees word; vertel storie of hoofgedagtes oor in 3 tot 5 sinne. Letterkunde. Leesmetodologieë. Skryf en Aanbied: Skryf 'n onderhoud; kies inhoud toepaslik; gebruik die raam; gebruik direkte rede vir dialoog; brei sinne uit; gebruik uitgebreide woordeskat; gebruik gepaste grammatika, spelling en punktuasie. Skryf 'n boekresensie oor die gekose novelle in kwartaal 1. Taalstrukture en -konvensies: Afleiding, samestelling, idiome, metafore, spreekwoorde, woorde wat verwar, woordorde. Deelwoorde in sinne, direkte en indirekte rede. Spelling en punktuasie — afkappingstekens, deelteken, kappie, aanhalingstekens.",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "CAPS Afrikaans EAT Graad 4 Kwartaal 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSFAL-GR4-T2",
+      "title": "Weke 7-8: Instruksieteks / Aanwysings / Reëls (VAS 4 Skryfwerk)",
+      "code": "CAPS-AFRIKAANSFAL-GR4-T2-WK7-8",
+      "description": "Luister en Praat (Mondeling): Luister na en voer instruksies uit, bv. aanwysings / reëls / veiligheidsreëls wanneer jy die pad oorsteek / hoe om jou hande te was / instruksies om iets te maak; inleidende aktiwiteite: voorspelling; herroep prosedure; identifiseer kenmerke van instruksieteks; let op na hoofopskrifte; gee duidelike instruksies en voorbeelde; maak aantekeninge en pas instruksies toe; vra vrae vir duidelikheid; lewer kommentaar oor duidelikheid van instruksies. Luister na en gee aanwysings — luister vir spesifieke besonderhede; gebruik besonderhede akkuraat; gebruik korrekte taalvorm. Lees en Kyk: Lees 'n instruksieteks soos aanwysings / reëls / veiligheidsreëls; pre-lees: voorspelling gebaseer op titel en prente; bespreek besonderhede van die teks; bespreek volgorde van instruksies; gebruik woordeboek om spelling van woorde en betekenis na te slaan. Leesmetodologieë. Skryf en Aanbied: Skryf 'n instruksieteks soos aanwysings / reëls / veiligheidsreëls wanneer jy die pad oorsteek / hoe om jou hande te was / instruksies om iets te maak; kies gepaste inhoud vir onderwerp; gebruik toepaslike struktuur as 'n raamwerk; orden inligting logies; gebruik kern- en ondersteunende sinne om samehangende paragrawe te ontwikkel; gebruik toepaslike taal, spelling en punktuasie. VAS 4 Skryfwerk: Transaksionele skryf (10 punte) — word voor die kontroletoets geskryf. Taalstrukture en -konvensies: Afleidings, samestellings, woorde wat verwar, onpersoonlike voornaamwoorde. Werk met sinne — saamgestelde sinne, direkte en indirekte rede. Spelling en punktuasie — spelling en spelpatrone, dubbelpunt.",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "CAPS Afrikaans EAT Graad 4 Kwartaal 2", "assessmentStandards": ["VAS 4 Skryfwerk: Transaksionele skryf 10 punte"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSFAL-GR4-T2",
+      "title": "Weke 9-10: Assessering van Hardoplees / Konsolidasie",
+      "code": "CAPS-AFRIKAANSFAL-GR4-T2-WK9-10",
+      "description": "Assessering van Hardoplees van die novelle wat in kwartaal 1 en 2 bestudeer is. Konsolidasie van alle kwartaal 1 en kwartaal 2 inhoud. Formele Assesseringsopsomming: VAS 1 Mondeling — Hardoplees (20 punte); VAS 2 Kreatiewe Skryf — Opstel, beskrywend/verhalend, 3 paragrawe (20 punte); VAS 3 Respons op Tekste (40 punte) — Literêre/Nie-literêre teks (15 punte), Visuele teks (10 punte), Taalstrukture en -konvensies (15 punte); VAS 4 Skryfwerk: Transaksionele skryf (10 punte).",
+      "metadata": { "weekNumbers": [9,10], "capsReference": "CAPS Afrikaans EAT Graad 4 Kwartaal 2", "assessmentStandards": ["Assessering van Hardoplees van novelle"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    }
+  ]
+}

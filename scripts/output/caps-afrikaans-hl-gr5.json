@@ -1,0 +1,140 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Intermediate Phase",
+      "code": "CAPS-IP",
+      "description": "Intermediate Phase (Grades 4-6)",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-IP",
+      "title": "Grade 5",
+      "code": "CAPS-GR5",
+      "description": "Grade 5",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR5",
+      "title": "Afrikaans Huistaal",
+      "code": "CAPS-AFRIKAANSHL-GR5",
+      "description": "Afrikaans Huistaal Graad 5",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-AFRIKAANSHL-GR5",
+      "title": "Kwartaal 1",
+      "code": "CAPS-AFRIKAANSHL-GR5-T1",
+      "description": "Afrikaans Huistaal Graad 5 Kwartaal 1",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSHL-GR5-T1",
+      "title": "Weke 1-2: Inligtingsteks",
+      "code": "CAPS-AFRIKAANSHL-GR5-T1-WK1-2",
+      "description": "Luister en Praat: Luister na en reageer op 'n inligtingsteks; identifiseer spesifieke besonderhede; interpreteer die inligting; hou verband met persoonlike ervarings; lewer kommentaar op sosiale, morele en kulturele waardes; stel kritiese vrae; gee en regverdig eie mening met redes; gebruik interaksiestrategieë om effektief in 'n groepsituasie te kommunikeer. Lees en Kyk: Lees inligtingsteks; pre-lees: maak voorspellings gebaseer op die titel, opskrifte en prente; bespreek die sentrale idee en spesifieke besonderhede; lewer kommentaar op die keuse van prente in die teks; gebruik leesstrategieë; lees vir begrip; deel idees en lug menings. Leesmetodologieë. Skryf en Aanbied: Skryf inligtingsteks; skryf 3-4 paragrawe; gebruik relevante inhoud; organiseer inligting logies; skryf onderwerpsenne en sluit relevante inligting in om samehangende paragrawe te ontwikkel; gebruik 'n verskeidenheid sinsoorte; gebruik toepaslike grammatika, spelling en punktuasie. Taalstrukture en -konvensies: Woordvlakwerk — werkwoorde. Sinsvlakwerk — enkelvoudige sinne, tydsvorme, sinonieme. Woordbetekenis — personifikasie, idiome, spreekwoorde, vergelyking. Spelling en punktuasie.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "CAPS Afrikaans HL Graad 5 Kwartaal 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSHL-GR5-T1",
+      "title": "Weke 3-4: Novelle-uittreksel / Boekresensie (VAS 1 Mondeling begin)",
+      "code": "CAPS-AFRIKAANSHL-GR5-T1-WK3-4",
+      "description": "Luister en Praat: Luister na en reageer op 'n uittreksel uit 'n novelle; inleidende aktiwiteite: voorspellings; luister na 'n uittreksel uit die novelle; luister vir hoofgedagte en spesifieke volgorde; druk gevoelens uit oor gebeurtenisse en karakters in verband met eie ervarings; beskryf gebeure; bespreek die hoofgedagtes en spesifieke besonderhede; verduidelik die gebeure duidelik en in volgorde; druk gevoelens uit met betrekking tot gebeure; bring in verband met eie ervarings. Lees en Kyk: Lees 'n uittreksel uit 'n novelle; pre-lees: maak voorspellings gebaseer op die titel en bespreek verwante temas / inhoud; identifiseer en verduidelik die hoofgedagte; bespreek die karakters; identifiseer en bespreek gevoelens wat uitgedruk word; bring gebeure en karakters in verband met eie ervarings; gebruik 'n verskeidenheid leesstrategieë; bespreek die struktuur, taalgebruik, doel en gehoor. Letterkunde. Leesmetodologieë. Assesseer vir leer — ter voorbereiding van hardoplees. Skryf en Aanbied: Skryf 'n boekresensie; gebruik 'n skryfraam; pre-skryf: luister na uittreksels uit 'n gelese novelle; kies inhoud wat geskik is vir die doel; gebruik gepaste taal en teksstruktuur; organiseer inhoud logies; gebruik chronologiese volgorde. VAS 1 Mondeling: Hardoplees (20 punte) — begin in kwartaal 1, sluit af in kwartaal 2 wanneer die punt aangeteken sal word.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "CAPS Afrikaans HL Graad 5 Kwartaal 1", "assessmentStandards": ["VAS 1 Mondeling: Hardoplees 20 punte (begin K1, sluit af K2)"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSHL-GR5-T1",
+      "title": "Weke 5-6: Storie (VAS 1 Mondeling gaan voort)",
+      "code": "CAPS-AFRIKAANSHL-GR5-T1-WK5-6",
+      "description": "Luister en Praat: Luister na en reageer op 'n storie; inleidende aktiwiteite: maak voorspellings; identifiseer hoof- en ondersteunende gedagtes; bring in verband met eie lewe; bespreek en lug menings; neem deel aan groepbesprekings; stel relevante vrae; gee terugvoering; voer gesprek; reageer met empatie en respek op ander se idees. Neem beurte. Lees en Kyk: Lees 'n storie; pre-lees: maak voorspellings gebaseer op die titel en prente; gebruik leesstrategieë; bespreek die sentrale idee, intrige, karakters en agtergrond; druk gevoelens en menings uit; bespreek oorsaak en gevolg in die verhaal; gebruik 'n woordeboek. Leesmetodologieë. Skryf en Aanbied: Skryf 'n verhaal (verhalend of beskrywend); kies inhoud wat geskik is vir die doel; gebruik gepaste taal en teksstruktuur; gebruik die regte formaat; skryf onderwerpsenne en sluit relevante inligting in om samehangende paragrawe te ontwikkel; gebruik toepaslike grammatika, spelling en punktuasie; gebruik tye korrek. Taalstrukture en -konvensies: Woordbetekenis — antonieme. Tydsvorme. Spelling en punktuasie.",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "CAPS Afrikaans HL Graad 5 Kwartaal 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSHL-GR5-T1",
+      "title": "Weke 7-8: Koerantberig (VAS 2 Skryf)",
+      "code": "CAPS-AFRIKAANSHL-GR5-T1-WK7-8",
+      "description": "Luister en Praat: Luister na en reageer op 'n koerantberig; inleidende aktiwiteite: maak voorspellings gebaseer op opskrifte van die teks; gebruik 'n verskeidenheid leesstrategieë; maak voorspellings; gebruik kontekstuele leidrade om betekenis te bepaal en maak afleidings; identifiseer en verduidelik die ooreenkomste en verskille van iets; bespreek nuwe woordeskat in die gelese teks; gebruik 'n woordeboek. Neem deel aan besprekings. Lees en Kyk: Lees 'n koerantberig; pre-lees: maak voorspellings gebaseer op opskrifte van die teks; gebruik 'n verskeidenheid leesstrategieë: vluglees, soeklees, gebruik van voorkennis; maak voorspellings; gebruik kontekstuele leidrade. Skryf en Aanbied: Skryf 'n koerantberig; sluit opskrif, sub-opskrif, hoofparagraaf, antwoorde op wie, wat, waar, wanneer, waarom en hoe in; verbind sinne tot 'n samehangende paragraaf; gebruik 'n wye verskeidenheid woordeskat. VAS 2 Skryf: Opstel (20 punte) — Verhalend of beskrywend; drie (3) paragrawe; taak word gedurende die kwartaal voltooi.",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "CAPS Afrikaans HL Graad 5 Kwartaal 1", "assessmentStandards": ["VAS 2 Skryf: Opstel 20 punte — verhalend/beskrywend, 3 paragrawe"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSHL-GR5-T1",
+      "title": "Weke 9-10: Gedig (VAS 3 Respons op Tekste)",
+      "code": "CAPS-AFRIKAANSHL-GR5-T1-WK9-10",
+      "description": "Luister en Praat: Luister na 'n gedig; inleidende aktiwiteite: voorspelling; wys waardering vir die klankeffekte wat deur die rym in die gedig opgeroep word en regeer daarop; beskryf gebeure; bespreek die hoofgedagte; bring in verband met eie ervarings; druk gevoelens uit wat deur die gedig opgeroep word; bespreek toon en taalgebruik. Dra 'n gedig / geselekteerde reëls voor. Lees en Kyk: Lees 'n gedig; pre-lees: maak voorspellings gebaseer op die titel en prente; gebruik leesstrategieë; identifiseer rym en ritme, en lewer kommentaar oor die effek daarvan op die hoorder; druk gevoelens uit en lug menings; bring in verband met eie ervarings; gebruik 'n woordeboek. Letterkunde. Leesmetodologieë. Skryf en Aanbied: Skryf 'n gedig; gebruik alliterasie, assonansie, metafoor en vergelykings; toon begrip van die styl en register; besin oor en evalueer skryf- en kreatiewe werk; gebruik toepaslike punktuasiereëls. VAS 3 Respons op Tekste (40 punte): Literêre / Nie-literêre teks (15 punte), Visuele teks (10 punte), Taalstrukture en -konvensies (15 punte).",
+      "metadata": { "weekNumbers": [9,10], "capsReference": "CAPS Afrikaans HL Graad 5 Kwartaal 1", "assessmentStandards": ["VAS 3 Respons op Tekste 40 punte — Literêre/Nie-literêre 15, Visuele 10, Taal 15"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-AFRIKAANSHL-GR5",
+      "title": "Kwartaal 2",
+      "code": "CAPS-AFRIKAANSHL-GR5-T2",
+      "description": "Afrikaans Huistaal Graad 5 Kwartaal 2",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSHL-GR5-T2",
+      "title": "Weke 1-2: Gedig",
+      "code": "CAPS-AFRIKAANSHL-GR5-T2-WK1-2",
+      "description": "Luister en Praat: Luister na 'n gedig; maak voorspellings; waardeer en reageer op die klankeffek wat deur die gedig opgeroep word; beskryf die sentrale idee; bring in verband met eie ervarings; druk gevoelens uit wat opgeroep word deur gedig; bespreek die toon en taalgebruik en die effek daarvan op die hoorder. Opvoering van gedig / gekose reëls — kies toon en uitdrukking wat pas by die inhoud en styl van die gedig; gebruik gepaste intonasie en gesigsuitdrukkings; gebruik gepaste lyftaal, houding en aanbiedingsvaardighede. Lees en Kyk: Lees 'n gedig; lees vir begrip; gebruik leesstrategieë; identifiseer rym en ritme en lewer kommentaar oor die effek; druk gevoelens en menings uit; bring in verband met eie lewe. Letterkunde. Leesmetodologieë. Skryf en Aanbied: Skryf 'n gedig; gebruik alliterasie, assonansie, metafoor en vergelyking; toon begrip van die styl en register; besin oor en evalueer skryf- en kreatiewe werk; gebruik gepaste leestekenreëls. Taalstrukture en -konvensies: Bywoorde van wyse, tyd, plek en graad, voorsetsels, toon, byvoeglike naamwoorde. Sinsvlakwerk — enkelvoudige sinne, komplekse sinne. Spelling en punktuasie.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "CAPS Afrikaans HL Graad 5 Kwartaal 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSHL-GR5-T2",
+      "title": "Weke 3-4: Weerverslag (VAS 1 Mondeling sluit af)",
+      "code": "CAPS-AFRIKAANSHL-GR5-T2-WK3-4",
+      "description": "Luister en Praat: Luister en reageer op 'n weerverslag; inleidende aktiwiteite: voorspelling; luister vir spesifieke besonderhede; bespreek bruikbaarheid van die inligting; bring inligting in verband met eie ervarings; bespreek moontlike effek op mense; vergelyk toestande op verskillende plekke; dui voorkeurbestemmings met redes aan; neem deel aan besprekings en reverdig eie menings; identifiseer kenmerke, register en taalgebruik van 'n weerverslag; gebruik interaksiestrategieë om doeltreffend in 'n groep te kommunikeer. Lees en Kyk: Lees 'n weerverslag; pre-lees: maak voorspellings gebaseer op die titel, opskrifte en prente; lees vir begrip; gebruik leesstrategieë; identifiseer en verduidelik ooreenkomste en verskille; lees 'n inligtingsteks met visuele beelde, bv. 'n landkaart; interpreteer visuele beelde; gebruik 'n breinkaart / notas om die inligting op te som. Leesmetodologieë. Skryf en Aanbied: Skryf 'n weerverslag; verbind sinne tot 'n samehangende paragraaf deur voornaamwoorde, verbindingswoorde en korrekte punktuasie te gebruik; gebruik 'n wye verskeidenheid woordeskat; gebruik toepaslike grammatika en spelling; bied inligting aan deur 'n landkaartgrafiek of vloeidiagram te gebruik. VAS 1 Mondeling sluit af — punt word in kwartaal 2 aangeteken.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "CAPS Afrikaans HL Graad 5 Kwartaal 2", "assessmentStandards": ["VAS 1 Mondeling sluit af in K2 — punt aangeteken"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSHL-GR5-T2",
+      "title": "Weke 5-6: Drama (VAS 4 Transaksionele Skryf)",
+      "code": "CAPS-AFRIKAANSHL-GR5-T2-WK5-6",
+      "description": "Luister en Praat: Luister na 'n drama; inleidende aktiwiteite: hervertel die tonele in die volgorde; identifiseer en bespreek die hoofgedagte, intrige, agtergrond, atmosfeer en karakters; luister vir spesifieke besonderhede; gebruik besonderhede korrek; druk gevoelens en gedagtes uit; gebruik taal korrek; rolspeel 'n karakter; varieer stem en gesigsuitdrukkings; verander register, taalgebruik. Lees en Kyk: Lees 'n drama; lees vir begrip; gebruik leesstrategieë; gebruik begripstrategieë: verduidelik hoe skrywers woordeskat en taal gebruik om intrige, agtergrond en karakters te beskryf; verduidelik die effek van woorde en beelde; identifiseer oorsaak en gevolg in mondelinge en geskrewe tekste. Letterkunde. Leesmetodologieë. Skryf en Aanbied: Skryf 'n drama OF 'n verhalende / beskrywende opstel; skep karakters; beskryf die agtergrond; ontwikkel intrige; gebruik korrekte formaat; skep toon en atmosfeer; skryf sinne deur direkte en indirekte rede te gebruik; gebruik gepaste grammatika, spelling en punktuasie. VAS 4 Transaksionele Skryf: Transaksionele skryf (10 punte): word voor die kontroletoets geskryf.",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "CAPS Afrikaans HL Graad 5 Kwartaal 2", "assessmentStandards": ["VAS 4 Transaksionele Skryf 10 punte"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSHL-GR5-T2",
+      "title": "Weke 7-8: Verslag met Visuele Beelde / Tabelle / Grafieke",
+      "code": "CAPS-AFRIKAANSHL-GR5-T2-WK7-8",
+      "description": "Luister en Praat: Luister na en reageer op 'n verslag; maak voorspellings gebaseer op die titel, opskrifte en prente / foto's; identifiseer die sentrale idee en beantwoord vrae; neem deel aan besprekings en regverdig eie mening; ontleed inligting; som inligting op; bied inligting aan deur gebruik te maak van 'n tabel, grafiek of inligtingskaart. Neem deel aan groepbesprekings. Lees en Kyk: Lees 'n verslag met visuele beelde, bv. tabelle / grafieke / diagramme / landkaarte / inligtingskaarte; gebruik leesstrategieë; verduidelik hoe skrywers woordeskat en taal gebruik om intrige, agtergrond en karakters te beskryf; verduidelik die effek van woorde en beelde; identifiseer oorsaak en gevolg; gebruik mind maps / notas om te verduidelik. Skryf en Aanbied: Skryf 'n verslag; formuleer relevante inhoud gebaseer op navorsing; verwerk inligting van een formaat na 'n ander; gebruik wat, wanneer, waar en wie; rangskik inligting logies; verbind sinne deur voornaamwoorde, verbindingswoorde en korrekte punktuasie te gebruik. Taalstrukture en -konvensies: Werkwoorde, enkelvoud en meervoud, verkleinwoorde (Afrikatale), byvoeglike naamwoorde. Sinsvlakwerk — voorwerp, vrae, direkte en indirekte rede. Spelling en punktuasie — aanhalingstekens.",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "CAPS Afrikaans HL Graad 5 Kwartaal 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-AFRIKAANSHL-GR5-T2",
+      "title": "Weke 9-10: Junie-Kontroletoets (VAS 5 Respons op Teks)",
+      "code": "CAPS-AFRIKAANSHL-GR5-T2-WK9-10",
+      "description": "VAS 5 Junie-Kontroletoets — Respons op Teks (40 punte): Literêre / Nie-literêre teks (15 punte), Visuele teks (10 punte), Taalstrukture en -konvensies (15 punte). Konsolidasie van alle kwartaal 1 en kwartaal 2 inhoud. Formele Assesseringsopsomming: VAS 1 Mondeling — Hardoplees (20 punte); VAS 2 Skryf — Opstel, verhalend/beskrywend, 3 paragrawe (20 punte); VAS 3 Respons op Tekste (40 punte); VAS 4 Transaksionele Skryf (10 punte); VAS 5 Junie-Kontroletoets — Respons op Teks (40 punte).",
+      "metadata": { "weekNumbers": [9,10], "capsReference": "CAPS Afrikaans HL Graad 5 Kwartaal 2", "assessmentStandards": ["VAS 5 Junie-Kontroletoets — Respons op Teks 40 punte"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    }
+  ]
+}

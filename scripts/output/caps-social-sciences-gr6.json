@@ -1,0 +1,140 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Intermediate Phase",
+      "code": "CAPS-IP",
+      "description": "Grades 4-6 Intermediate Phase",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-IP",
+      "title": "Grade 6",
+      "code": "CAPS-GR6",
+      "description": "Grade 6",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR6",
+      "title": "Social Sciences",
+      "code": "CAPS-SOCIALSCIENCES-GR6",
+      "description": "Grade 6 Social Sciences (Geography and History)",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR6",
+      "title": "Term 1",
+      "code": "CAPS-SOCIALSCIENCES-GR6-T1",
+      "description": "Grade 6 Social Sciences Term 1",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR6-T1",
+      "title": "Geography: Map Skills — World Maps, Latitude, Longitude and Scale",
+      "code": "CAPS-SOCIALSCIENCES-GR6-T1-GEO1",
+      "description": "Use world maps and globes to identify continents and oceans. Use latitude and longitude to locate places. Use scale to calculate distances. Interpret different types of maps.",
+      "metadata": { "weekNumbers": [1,2,3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 20, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR6-T1",
+      "title": "History: Mapungubwe",
+      "code": "CAPS-SOCIALSCIENCES-GR6-T1-HIS1",
+      "description": "Describe the kingdom of Mapungubwe and its location. Explain how Mapungubwe became an important trade centre. Describe the society, culture and achievements of Mapungubwe.",
+      "metadata": { "weekNumbers": [6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 20, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR6",
+      "title": "Term 2",
+      "code": "CAPS-SOCIALSCIENCES-GR6-T2",
+      "description": "Grade 6 Social Sciences Term 2",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR6-T2",
+      "title": "Geography: Trade — South Africa and the World",
+      "code": "CAPS-SOCIALSCIENCES-GR6-T2-GEO2",
+      "description": "Describe South Africa's major exports and imports. Identify South Africa's main trading partners. Explain how trade links countries and regions. Describe the role of harbours and transport routes in trade.",
+      "metadata": { "weekNumbers": [1,2,3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 20, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR6-T2",
+      "title": "History: European Explorers",
+      "code": "CAPS-SOCIALSCIENCES-GR6-T2-HIS2",
+      "description": "Describe the reasons for European exploration in the 15th and 16th centuries. Trace the routes of explorers who sailed around Africa. Explain the impact of exploration on Africa and its people.",
+      "metadata": { "weekNumbers": [6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 20, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR6",
+      "title": "Term 3",
+      "code": "CAPS-SOCIALSCIENCES-GR6-T3",
+      "description": "Grade 6 Social Sciences Term 3",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR6-T3",
+      "title": "Geography: Climate and Vegetation Worldwide",
+      "code": "CAPS-SOCIALSCIENCES-GR6-T3-GEO3",
+      "description": "Identify and describe the world's major climate zones. Explain the relationship between latitude, altitude and climate. Describe the major biomes and their characteristic vegetation.",
+      "metadata": { "weekNumbers": [1,2,3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 20, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR6-T3",
+      "title": "History: Democracy and Citizenship",
+      "code": "CAPS-SOCIALSCIENCES-GR6-T3-HIS3",
+      "description": "Describe the development of democracy in South Africa. Explain the rights and responsibilities of citizens in a democracy. Describe how the South African Constitution protects people's rights.",
+      "metadata": { "weekNumbers": [6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 20, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR6",
+      "title": "Term 4",
+      "code": "CAPS-SOCIALSCIENCES-GR6-T4",
+      "description": "Grade 6 Social Sciences Term 4",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR6-T4",
+      "title": "Geography: Population",
+      "code": "CAPS-SOCIALSCIENCES-GR6-T4-GEO4",
+      "description": "Describe world population distribution and density. Explain factors that affect where people live. Describe population growth and its challenges. Analyse population data from graphs and maps.",
+      "metadata": { "weekNumbers": [1,2,3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 18, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR6-T4",
+      "title": "History: Medicine Through Time",
+      "code": "CAPS-SOCIALSCIENCES-GR6-T4-HIS4",
+      "description": "Describe how medicine and healthcare have changed over time. Identify significant discoveries and inventions in medicine. Explain how traditional and modern medicine differ. Discuss the contribution of South African medical pioneers.",
+      "metadata": { "weekNumbers": [6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 18, "cognitiveWeighting": null },
+      "order": 2
+    }
+  ]
+}

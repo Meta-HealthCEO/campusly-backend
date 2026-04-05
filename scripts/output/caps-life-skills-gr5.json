@@ -1,0 +1,140 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Intermediate Phase",
+      "code": "CAPS-IP",
+      "description": "Intermediate Phase (Grades 4-6)",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-IP",
+      "title": "Grade 5",
+      "code": "CAPS-GR5",
+      "description": "Grade 5",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR5",
+      "title": "Life Skills",
+      "code": "CAPS-LIFESKILLS-GR5",
+      "description": "Life Skills Grade 5",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFESKILLS-GR5",
+      "title": "Term 1",
+      "code": "CAPS-LIFESKILLS-GR5-T1",
+      "description": "Life Skills Grade 5 Term 1",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR5-T1",
+      "title": "Weeks 1-2: Personal and Social Well-being — Identity and Diversity",
+      "code": "CAPS-LIFESKILLS-GR5-T1-WK1-2",
+      "description": "Personal and Social Well-being: Understanding personal identity; appreciating diversity in culture, religion and language; constitutional rights and responsibilities. Creative Arts: Visual art — exploring mixed media and design principles.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "CAPS Life Skills Grade 5 Term 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR5-T1",
+      "title": "Weeks 3-4: Beginning Knowledge — Life and Living",
+      "code": "CAPS-LIFESKILLS-GR5-T1-WK3-4",
+      "description": "Beginning Knowledge (Natural Sciences): Ecosystems and food webs; adaptations of plants and animals; interdependence of living organisms. Technology: Design and make a simple product. Physical Education: Team sports skills.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "CAPS Life Skills Grade 5 Term 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR5-T1",
+      "title": "Weeks 5-6: Personal and Social Well-being — Emotional Literacy",
+      "code": "CAPS-LIFESKILLS-GR5-T1-WK5-6",
+      "description": "Personal and Social Well-being: Recognising and managing emotions; empathy and compassion; dealing with stress and anxiety; bullying prevention. Creative Arts: Music — part-singing, harmony and rhythm.",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "CAPS Life Skills Grade 5 Term 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR5-T1",
+      "title": "Weeks 7-8: Beginning Knowledge — Matter and Materials",
+      "code": "CAPS-LIFESKILLS-GR5-T1-WK7-8",
+      "description": "Beginning Knowledge (Natural Sciences): Mixtures; separating mixtures; solids, liquids and gases; changes in states of matter. Physical Education: Gymnastics and movement sequences.",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "CAPS Life Skills Grade 5 Term 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR5-T1",
+      "title": "Weeks 9-10: Creative Arts and Physical Education Assessment",
+      "code": "CAPS-LIFESKILLS-GR5-T1-WK9-10",
+      "description": "Creative Arts: Integrated arts project — visual art and performing arts performance. Physical Education: Formal skills assessment. Personal and Social Well-being: Term consolidation.",
+      "metadata": { "weekNumbers": [9,10], "capsReference": "CAPS Life Skills Grade 5 Term 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFESKILLS-GR5",
+      "title": "Term 2",
+      "code": "CAPS-LIFESKILLS-GR5-T2",
+      "description": "Life Skills Grade 5 Term 2",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR5-T2",
+      "title": "Weeks 1-2: Beginning Knowledge — Energy and Change",
+      "code": "CAPS-LIFESKILLS-GR5-T2-WK1-2",
+      "description": "Beginning Knowledge (Natural Sciences): Electrical energy, circuits and conductors; alternative energy sources; conservation of energy. Creative Arts: Visual art — printmaking techniques.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "CAPS Life Skills Grade 5 Term 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR5-T2",
+      "title": "Weeks 3-4: Personal and Social Well-being — Healthy Relationships",
+      "code": "CAPS-LIFESKILLS-GR5-T2-WK3-4",
+      "description": "Personal and Social Well-being: Healthy friendships and relationships; resisting negative peer pressure; substance abuse awareness; puberty and adolescence. Physical Education: Athletics — track and field events.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "CAPS Life Skills Grade 5 Term 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR5-T2",
+      "title": "Weeks 5-6: Beginning Knowledge — Earth and Beyond",
+      "code": "CAPS-LIFESKILLS-GR5-T2-WK5-6",
+      "description": "Beginning Knowledge (Natural Sciences): The universe; stars and constellations; weather patterns and climate; the water cycle. Creative Arts: Drama — scripting and performing.",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "CAPS Life Skills Grade 5 Term 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR5-T2",
+      "title": "Weeks 7-8: Creative Arts — Music and Visual Art",
+      "code": "CAPS-LIFESKILLS-GR5-T2-WK7-8",
+      "description": "Creative Arts: Music — composition and performance; Visual Art — three-dimensional art forms and sculpture. Personal and Social Well-being: Goal setting and decision-making.",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "CAPS Life Skills Grade 5 Term 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR5-T2",
+      "title": "Weeks 9-10: Assessment and Consolidation",
+      "code": "CAPS-LIFESKILLS-GR5-T2-WK9-10",
+      "description": "Formal Assessment: Creative Arts portfolio and performance assessment. Physical Education: Practical assessment. Beginning Knowledge: Written assessment on energy, earth and beyond. Personal and Social Well-being: consolidation.",
+      "metadata": { "weekNumbers": [9,10], "capsReference": "CAPS Life Skills Grade 5 Term 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    }
+  ]
+}

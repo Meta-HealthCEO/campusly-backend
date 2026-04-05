@@ -1,0 +1,140 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Intermediate Phase",
+      "code": "CAPS-IP",
+      "description": "Grades 4-6 Intermediate Phase",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-IP",
+      "title": "Grade 4",
+      "code": "CAPS-GR4",
+      "description": "Grade 4",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR4",
+      "title": "Social Sciences",
+      "code": "CAPS-SOCIALSCIENCES-GR4",
+      "description": "Grade 4 Social Sciences (Geography and History)",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR4",
+      "title": "Term 1",
+      "code": "CAPS-SOCIALSCIENCES-GR4-T1",
+      "description": "Grade 4 Social Sciences Term 1",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR4-T1",
+      "title": "Geography: Places Where People Live",
+      "code": "CAPS-SOCIALSCIENCES-GR4-T1-GEO1",
+      "description": "Describe different types of settlements: urban, suburban and rural. Explain why people live in particular places. Identify factors that attract people to settle in an area: water, flat land, natural resources.",
+      "metadata": { "weekNumbers": [1,2,3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 20, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR4-T1",
+      "title": "History: Local History Project",
+      "code": "CAPS-SOCIALSCIENCES-GR4-T1-HIS1",
+      "description": "Investigate the history of the local area. Collect information from photographs, oral histories, maps and documents. Present findings about the past of the local community.",
+      "metadata": { "weekNumbers": [6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 20, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR4",
+      "title": "Term 2",
+      "code": "CAPS-SOCIALSCIENCES-GR4-T2",
+      "description": "Grade 4 Social Sciences Term 2",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR4-T2",
+      "title": "Geography: Map Skills",
+      "code": "CAPS-SOCIALSCIENCES-GR4-T2-GEO2",
+      "description": "Read and use maps with keys/legends and compass directions. Identify and describe physical features on maps. Use grid references to locate places on a map.",
+      "metadata": { "weekNumbers": [1,2,3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 20, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR4-T2",
+      "title": "History: Learning from Leaders",
+      "code": "CAPS-SOCIALSCIENCES-GR4-T2-HIS2",
+      "description": "Examine the lives and contributions of significant South African leaders. Describe how leaders worked for justice and equality. Discuss values demonstrated by important leaders.",
+      "metadata": { "weekNumbers": [6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 20, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR4",
+      "title": "Term 3",
+      "code": "CAPS-SOCIALSCIENCES-GR4-T3",
+      "description": "Grade 4 Social Sciences Term 3",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR4-T3",
+      "title": "Geography: Food and Farming in South Africa",
+      "code": "CAPS-SOCIALSCIENCES-GR4-T3-GEO3",
+      "description": "Describe different types of farming in South Africa: subsistence and commercial. Identify major farming regions and what they produce. Explain how farming is linked to food security.",
+      "metadata": { "weekNumbers": [1,2,3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 20, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR4-T3",
+      "title": "History: Transport Through Time",
+      "code": "CAPS-SOCIALSCIENCES-GR4-T3-HIS3",
+      "description": "Describe how transport has changed over time. Compare transport methods in the past and present. Explain how improvements in transport changed people's lives and societies.",
+      "metadata": { "weekNumbers": [6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 20, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR4",
+      "title": "Term 4",
+      "code": "CAPS-SOCIALSCIENCES-GR4-T4",
+      "description": "Grade 4 Social Sciences Term 4",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR4-T4",
+      "title": "Geography: Water in South Africa",
+      "code": "CAPS-SOCIALSCIENCES-GR4-T4-GEO4",
+      "description": "Describe the distribution of water resources in South Africa. Identify major rivers and dams. Explain the importance of water for people and the environment. Discuss water conservation.",
+      "metadata": { "weekNumbers": [1,2,3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 18, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR4-T4",
+      "title": "History: Communication Through Time",
+      "code": "CAPS-SOCIALSCIENCES-GR4-T4-HIS4",
+      "description": "Describe how communication has changed over time. Compare communication methods in the past and present. Explain how the development of writing, printing and digital communication changed society.",
+      "metadata": { "weekNumbers": [6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 18, "cognitiveWeighting": null },
+      "order": 2
+    }
+  ]
+}

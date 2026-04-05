@@ -1,0 +1,140 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Intermediate Phase",
+      "code": "CAPS-IP",
+      "description": "Intermediate Phase (Grades 4-6)",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-IP",
+      "title": "Grade 4",
+      "code": "CAPS-GR4",
+      "description": "Grade 4",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR4",
+      "title": "Life Skills",
+      "code": "CAPS-LIFESKILLS-GR4",
+      "description": "Life Skills Grade 4",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFESKILLS-GR4",
+      "title": "Term 1",
+      "code": "CAPS-LIFESKILLS-GR4-T1",
+      "description": "Life Skills Grade 4 Term 1",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR4-T1",
+      "title": "Weeks 1-2: Personal and Social Well-being — My Body and Growth",
+      "code": "CAPS-LIFESKILLS-GR4-T1-WK1-2",
+      "description": "Personal and Social Well-being: Physical growth and development, puberty awareness, personal hygiene and health. Creative Arts: Visual art — exploring line, shape and colour. Physical Education: Introductory movement activities, body awareness.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "CAPS Life Skills Grade 4 Term 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR4-T1",
+      "title": "Weeks 3-4: Beginning Knowledge — Living and Non-living Things",
+      "code": "CAPS-LIFESKILLS-GR4-T1-WK3-4",
+      "description": "Beginning Knowledge (Natural Sciences): Differences between living and non-living things; characteristics of living organisms. Technology: Structures and materials in the environment. Creative Arts: Performing arts — drama and movement.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "CAPS Life Skills Grade 4 Term 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR4-T1",
+      "title": "Weeks 5-6: Personal and Social Well-being — Relationships and Values",
+      "code": "CAPS-LIFESKILLS-GR4-T1-WK5-6",
+      "description": "Personal and Social Well-being: Building positive relationships; communicating feelings appropriately; understanding values such as respect, honesty and responsibility. Creative Arts: Music — singing, rhythm and beat.",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "CAPS Life Skills Grade 4 Term 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR4-T1",
+      "title": "Weeks 7-8: Beginning Knowledge — Matter and Materials",
+      "code": "CAPS-LIFESKILLS-GR4-T1-WK7-8",
+      "description": "Beginning Knowledge (Natural Sciences and Technology): Properties of materials; sorting and grouping materials; processing materials. Physical Education: Ball skills and cooperative games.",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "CAPS Life Skills Grade 4 Term 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR4-T1",
+      "title": "Weeks 9-10: Creative Arts and Physical Education Assessment",
+      "code": "CAPS-LIFESKILLS-GR4-T1-WK9-10",
+      "description": "Creative Arts: Integrated arts project — visual art and performing arts. Physical Education: Formal skills assessment. Personal and Social Well-being: Consolidation of term topics.",
+      "metadata": { "weekNumbers": [9,10], "capsReference": "CAPS Life Skills Grade 4 Term 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFESKILLS-GR4",
+      "title": "Term 2",
+      "code": "CAPS-LIFESKILLS-GR4-T2",
+      "description": "Life Skills Grade 4 Term 2",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR4-T2",
+      "title": "Weeks 1-2: Beginning Knowledge — Energy and Change",
+      "code": "CAPS-LIFESKILLS-GR4-T2-WK1-2",
+      "description": "Beginning Knowledge (Natural Sciences): Forms of energy — light, heat, sound and movement. How energy is used in everyday life. Creative Arts: Visual art — colour mixing and texture.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "CAPS Life Skills Grade 4 Term 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR4-T2",
+      "title": "Weeks 3-4: Personal and Social Well-being — Safety and Healthy Living",
+      "code": "CAPS-LIFESKILLS-GR4-T2-WK3-4",
+      "description": "Personal and Social Well-being: Road safety, water safety and fire safety rules; healthy food choices and balanced diet; importance of exercise and rest. Physical Education: Athletics — running, jumping and throwing skills.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "CAPS Life Skills Grade 4 Term 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR4-T2",
+      "title": "Weeks 5-6: Beginning Knowledge — Earth and Beyond",
+      "code": "CAPS-LIFESKILLS-GR4-T2-WK5-6",
+      "description": "Beginning Knowledge (Natural Sciences): The solar system, planets and the moon; day and night; seasons. Creative Arts: Performing arts — dance sequences, creative movement.",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "CAPS Life Skills Grade 4 Term 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR4-T2",
+      "title": "Weeks 7-8: Creative Arts — Music and Drama",
+      "code": "CAPS-LIFESKILLS-GR4-T2-WK7-8",
+      "description": "Creative Arts: Music — playing simple instruments, reading basic notation; Drama — creating and performing a short play. Personal and Social Well-being: Dealing with peer pressure and conflict resolution.",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "CAPS Life Skills Grade 4 Term 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR4-T2",
+      "title": "Weeks 9-10: Assessment and Consolidation",
+      "code": "CAPS-LIFESKILLS-GR4-T2-WK9-10",
+      "description": "Formal Assessment: Creative Arts portfolio assessment. Physical Education: Practical skills test. Beginning Knowledge: Written assessment on energy, materials and earth and beyond. Personal and Social Well-being: consolidation.",
+      "metadata": { "weekNumbers": [9,10], "capsReference": "CAPS Life Skills Grade 4 Term 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    }
+  ]
+}

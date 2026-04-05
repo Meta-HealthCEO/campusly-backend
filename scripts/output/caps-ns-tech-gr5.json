@@ -1,0 +1,257 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Intermediate Phase",
+      "code": "CAPS-IP",
+      "description": "Grades 4-6 Intermediate Phase",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-IP",
+      "title": "Grade 5",
+      "code": "CAPS-GR5",
+      "description": "Grade 5",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR5",
+      "title": "Natural Sciences and Technology",
+      "code": "CAPS-NSTECH-GR5",
+      "description": "Grade 5 Natural Sciences and Technology",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-NSTECH-GR5",
+      "title": "Term 1",
+      "code": "CAPS-NSTECH-GR5-T1",
+      "description": "Grade 5 Natural Sciences and Technology Term 1",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR5-T1",
+      "title": "Life and Living: Plants, Animals and Their Habitats",
+      "code": "CAPS-NSTECH-GR5-T1-LL1",
+      "description": "Describe different biomes and their characteristic plants and animals. Explain how organisms are adapted to their specific habitats.",
+      "metadata": { "weekNumbers": [1,2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 12, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR5-T1",
+      "title": "Matter and Materials: Metals and Non-Metals",
+      "code": "CAPS-NSTECH-GR5-T1-MM1",
+      "description": "Distinguish between metals and non-metals based on physical properties: lustre, malleability, conductivity and density. Classify common materials as metals or non-metals.",
+      "metadata": { "weekNumbers": [4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR5-T1",
+      "title": "Energy and Change: Stored Energy in Fuels",
+      "code": "CAPS-NSTECH-GR5-T1-EC1",
+      "description": "Describe how fuels store chemical energy. Investigate the release of energy during combustion. Identify common fuels and their uses.",
+      "metadata": { "weekNumbers": [6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR5-T1",
+      "title": "Planet Earth and Beyond: Earth's Rotation and Orbit",
+      "code": "CAPS-NSTECH-GR5-T1-PE1",
+      "description": "Explain Earth's rotation on its axis causes day and night. Describe Earth's orbit around the Sun and how it causes the seasons.",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR5-T1",
+      "title": "Formal Assessment Task",
+      "code": "CAPS-NSTECH-GR5-T1-FAT",
+      "description": "Formal Assessment Task — Test or Assignment.",
+      "metadata": { "weekNumbers": [10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 4, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-NSTECH-GR5",
+      "title": "Term 2",
+      "code": "CAPS-NSTECH-GR5-T2",
+      "description": "Grade 5 Natural Sciences and Technology Term 2",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR5-T2",
+      "title": "Life and Living: Animal Skeletons",
+      "code": "CAPS-NSTECH-GR5-T2-LL2",
+      "description": "Compare vertebrate and invertebrate animals. Describe functions of skeletal systems: support, protection and movement. Identify types of skeletons: endoskeleton, exoskeleton and hydrostatic skeleton.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR5-T2",
+      "title": "Technology: Skeletons as Structures",
+      "code": "CAPS-NSTECH-GR5-T2-TECH1",
+      "description": "Investigate how skeletal structures support loads. Design and make a structure that uses a skeleton framework. Test and evaluate the strength of the structure.",
+      "metadata": { "weekNumbers": [3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 12, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR5-T2",
+      "title": "Matter and Materials: Uses of Metals",
+      "code": "CAPS-NSTECH-GR5-T2-MM2",
+      "description": "Describe the uses of metals based on their properties: iron/steel, aluminium, copper and gold. Explain why specific metals are used for specific purposes.",
+      "metadata": { "weekNumbers": [6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR5-T2",
+      "title": "Energy and Change: Energy and Electricity",
+      "code": "CAPS-NSTECH-GR5-T2-EC2",
+      "description": "Describe how electrical energy is produced and used. Investigate simple electrical circuits. Identify conductors and insulators.",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR5-T2",
+      "title": "Formal Assessment Task",
+      "code": "CAPS-NSTECH-GR5-T2-FAT",
+      "description": "Formal Assessment Task — Test or Assignment.",
+      "metadata": { "weekNumbers": [10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 4, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-NSTECH-GR5",
+      "title": "Term 3",
+      "code": "CAPS-NSTECH-GR5-T3",
+      "description": "Grade 5 Natural Sciences and Technology Term 3",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR5-T3",
+      "title": "Life and Living: Food Chains",
+      "code": "CAPS-NSTECH-GR5-T3-LL3",
+      "description": "Describe food chains and food webs. Identify producers, consumers and decomposers. Explain energy flow through food chains.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR5-T3",
+      "title": "Life and Living: Life Cycles",
+      "code": "CAPS-NSTECH-GR5-T3-LL4",
+      "description": "Describe life cycles of animals: amphibians (frogs), insects (butterflies/beetles) and mammals. Compare complete and incomplete metamorphosis.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR5-T3",
+      "title": "Matter and Materials: Processing Materials",
+      "code": "CAPS-NSTECH-GR5-T3-MM3",
+      "description": "Describe how natural materials are processed to make useful products. Investigate processing of materials: wood to paper, cotton to cloth, iron ore to steel.",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR5-T3",
+      "title": "Energy and Change: Energy and Movement — Elastic",
+      "code": "CAPS-NSTECH-GR5-T3-EC3",
+      "description": "Investigate how elastic materials store and release energy. Design and make a device that uses elastic energy to perform work.",
+      "metadata": { "weekNumbers": [7,8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 12, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR5-T3",
+      "title": "Planet Earth and Beyond: Surface of Earth and Soil Types",
+      "code": "CAPS-NSTECH-GR5-T3-PE2",
+      "description": "Describe the surface features of Earth. Investigate different types of soil: clay, sand, silt and loam. Describe soil formation and properties.",
+      "metadata": { "weekNumbers": [10], "capsReference": "", "assessmentStandards": [], "notionalHours": 6, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR5-T3",
+      "title": "Formal Assessment Task",
+      "code": "CAPS-NSTECH-GR5-T3-FAT",
+      "description": "Formal Assessment Task — Test or Assignment.",
+      "metadata": { "weekNumbers": [11], "capsReference": "", "assessmentStandards": [], "notionalHours": 4, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-NSTECH-GR5",
+      "title": "Term 4",
+      "code": "CAPS-NSTECH-GR5-T4",
+      "description": "Grade 5 Natural Sciences and Technology Term 4",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR5-T4",
+      "title": "Matter and Materials: Processed Materials",
+      "code": "CAPS-NSTECH-GR5-T4-MM4",
+      "description": "Investigate properties of processed materials: glass, plastics, ceramics and composites. Describe the advantages and disadvantages of different processed materials.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR5-T4",
+      "title": "Planet Earth and Beyond: Sedimentary Rocks",
+      "code": "CAPS-NSTECH-GR5-T4-PE3",
+      "description": "Describe the formation of sedimentary rocks through deposition, compaction and cementation. Identify common sedimentary rocks and their characteristics.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR5-T4",
+      "title": "Planet Earth and Beyond: Fossils",
+      "code": "CAPS-NSTECH-GR5-T4-PE4",
+      "description": "Describe how fossils are formed. Explain what fossils tell us about ancient life on Earth. Identify examples of important South African fossils.",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR5-T4",
+      "title": "Revision and Consolidation",
+      "code": "CAPS-NSTECH-GR5-T4-REV",
+      "description": "Revision and consolidation of all Grade 5 Natural Sciences and Technology content.",
+      "metadata": { "weekNumbers": [7,8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 10, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR5-T4",
+      "title": "Formal Assessment Task",
+      "code": "CAPS-NSTECH-GR5-T4-FAT",
+      "description": "Formal Assessment Task — End-of-year Test.",
+      "metadata": { "weekNumbers": [10], "capsReference": "", "assessmentStandards": [], "notionalHours": 4, "cognitiveWeighting": null },
+      "order": 5
+    }
+  ]
+}

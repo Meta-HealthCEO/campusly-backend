@@ -1,0 +1,140 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Intermediate Phase",
+      "code": "CAPS-IP",
+      "description": "Grades 4-6 Intermediate Phase",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-IP",
+      "title": "Grade 5",
+      "code": "CAPS-GR5",
+      "description": "Grade 5",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR5",
+      "title": "Social Sciences",
+      "code": "CAPS-SOCIALSCIENCES-GR5",
+      "description": "Grade 5 Social Sciences (Geography and History)",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR5",
+      "title": "Term 1",
+      "code": "CAPS-SOCIALSCIENCES-GR5-T1",
+      "description": "Grade 5 Social Sciences Term 1",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR5-T1",
+      "title": "Geography: Map Skills and Africa",
+      "code": "CAPS-SOCIALSCIENCES-GR5-T1-GEO1",
+      "description": "Use maps of Africa to identify countries, capital cities and physical features. Use compass directions, scale and grid references. Read and interpret different types of maps.",
+      "metadata": { "weekNumbers": [1,2,3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 20, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR5-T1",
+      "title": "History: Hunter-Gatherers and Herders",
+      "code": "CAPS-SOCIALSCIENCES-GR5-T1-HIS1",
+      "description": "Describe the way of life of San hunter-gatherers in southern Africa. Explain how the Khoikhoi lived as herders. Compare the lifestyles of hunter-gatherers and herders.",
+      "metadata": { "weekNumbers": [6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 20, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR5",
+      "title": "Term 2",
+      "code": "CAPS-SOCIALSCIENCES-GR5-T2",
+      "description": "Grade 5 Social Sciences Term 2",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR5-T2",
+      "title": "Geography: Physical Features of South Africa",
+      "code": "CAPS-SOCIALSCIENCES-GR5-T2-GEO2",
+      "description": "Identify and describe the major physical features of South Africa: mountains, plateaus, escarpments, coastal plains and rivers. Explain how physical features affect human settlement.",
+      "metadata": { "weekNumbers": [1,2,3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 20, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR5-T2",
+      "title": "History: First Farmers in South Africa",
+      "code": "CAPS-SOCIALSCIENCES-GR5-T2-HIS2",
+      "description": "Describe the arrival and settlement of Bantu-speaking farmers in southern Africa. Explain how farming changed the way people lived. Describe the social organisation and material culture of early farming communities.",
+      "metadata": { "weekNumbers": [6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 20, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR5",
+      "title": "Term 3",
+      "code": "CAPS-SOCIALSCIENCES-GR5-T3",
+      "description": "Grade 5 Social Sciences Term 3",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR5-T3",
+      "title": "Geography: Weather, Climate and Vegetation",
+      "code": "CAPS-SOCIALSCIENCES-GR5-T3-GEO3",
+      "description": "Distinguish between weather and climate. Describe the major climate zones of South Africa. Identify the relationship between climate and vegetation types in South Africa.",
+      "metadata": { "weekNumbers": [1,2,3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 20, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR5-T3",
+      "title": "History: Ancient Egypt",
+      "code": "CAPS-SOCIALSCIENCES-GR5-T3-HIS3",
+      "description": "Describe the geography and civilisation of ancient Egypt. Explain the importance of the Nile River. Describe achievements of ancient Egyptian civilisation: writing, architecture, religion and government.",
+      "metadata": { "weekNumbers": [6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 20, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR5",
+      "title": "Term 4",
+      "code": "CAPS-SOCIALSCIENCES-GR5-T4",
+      "description": "Grade 5 Social Sciences Term 4",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR5-T4",
+      "title": "Geography: Minerals and Mining",
+      "code": "CAPS-SOCIALSCIENCES-GR5-T4-GEO4",
+      "description": "Identify the major minerals found in South Africa: gold, diamonds, platinum and coal. Describe where minerals are found and how they are mined. Explain the economic and social impact of mining.",
+      "metadata": { "weekNumbers": [1,2,3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 18, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-SOCIALSCIENCES-GR5-T4",
+      "title": "History: Heritage Trail Through the Provinces",
+      "code": "CAPS-SOCIALSCIENCES-GR5-T4-HIS4",
+      "description": "Identify heritage sites in each province of South Africa. Describe the significance of selected heritage sites. Explain the importance of preserving our heritage.",
+      "metadata": { "weekNumbers": [6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 18, "cognitiveWeighting": null },
+      "order": 2
+    }
+  ]
+}

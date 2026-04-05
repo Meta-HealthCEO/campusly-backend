@@ -1,0 +1,140 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Intermediate Phase",
+      "code": "CAPS-IP",
+      "description": "Intermediate Phase (Grades 4-6)",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-IP",
+      "title": "Grade 4",
+      "code": "CAPS-GR4",
+      "description": "Grade 4",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR4",
+      "title": "English Home Language",
+      "code": "CAPS-ENGLISHHL-GR4",
+      "description": "English Home Language Grade 4",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-ENGLISHHL-GR4",
+      "title": "Term 1",
+      "code": "CAPS-ENGLISHHL-GR4-T1",
+      "description": "English Home Language Grade 4 Term 1",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR4-T1",
+      "title": "Weeks 1-2: Visual Information Text / Poster",
+      "code": "CAPS-ENGLISHHL-GR4-T1-WK1-2",
+      "description": "Listening and Speaking: Listen to and discuss a visual information text / poster advertising an event; identify specific information; interpret the information given; relate to personal experiences. Reading and Viewing: Read a visual information text such as a poster or advertisement; use pre-reading strategies; use reading strategies such as skimming; identify design features such as colour and different font sizes. Writing and Presenting: Write an information text like a report; organise information logically; develop supporting details; use appropriate tools such as maps and tables. Language Structures and Conventions: Work with words — nouns, adjectives, abstract nouns, verbs, alphabetical order, synonyms and antonyms. Sentences — simple sentences, question sentences. Spelling and punctuation.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "CAPS English HL Grade 4 Term 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR4-T1",
+      "title": "Weeks 3-4: Novelette Extract (FAT 1 Oral begins)",
+      "code": "CAPS-ENGLISHHL-GR4-T1-WK3-4",
+      "description": "Listening and Speaking: Listen to and respond to a passage from a novelette; introductory activities — predict what will happen; listen for main idea and specific details; describe events; discuss social, moral and cultural values. Reading and Viewing: Read an extract from a novelette using pre-reading strategies; identify and clarify main events; discuss characters; use a writing frame to summarise. Literature reading — Novelette / Reader must be read daily for at least 30 minutes. Reading methodology: Drop all and read / Group guided reading / Shared reading / Independent reading. Assess for learning — preparation for reading aloud. Writing and Presenting: Write a character sketch of the main character; use a writing frame; organise information logically; write in chronological order. FAT 1 Oral: Read Aloud (20 marks) — begins in Term 1, concludes in Term 2 when mark is recorded.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "CAPS English HL Grade 4 Term 1", "assessmentStandards": ["FAT 1 Oral: Read Aloud 20 marks (starts T1, concludes T2)"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR4-T1",
+      "title": "Weeks 5-6: Short Story (FAT 1 Oral continues)",
+      "code": "CAPS-ENGLISHHL-GR4-T1-WK5-6",
+      "description": "Listening and Speaking: Listen to a short story; introductory activities; identify characters; retell main events; retell the story in the correct order; name correct characters. Reading and Viewing: Read a short story; use pre-reading strategies such as predicting from title and pictures; use reading strategies; identify new vocabulary; discuss main idea; use comprehension strategies — visualisation, predicting, making connections, making inferences. Literature — Novelette / Reader continues. Writing and Presenting: Write a story based on a personal experience; select appropriate content; use appropriate structure and format; include characters; use appropriate language, spelling and punctuation. Language Structures and Conventions: Abstract nouns, adjectives, telwoorde, vowel group 3, alphabetical order, syllables and sound groups.",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "CAPS English HL Grade 4 Term 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR4-T1",
+      "title": "Weeks 7-8: Recipe / Instructional Text (FAT 2 Writing)",
+      "code": "CAPS-ENGLISHHL-GR4-T1-WK7-8",
+      "description": "Listening and Speaking: Listen to and discuss a recipe; identify characteristics of instructional text; give clear instructions; ask questions about the clarity of instructions; follow instructions. Reading and Viewing: Read a recipe; use pre-reading strategies; use reading strategies such as skimming for main ideas; identify specific details; use comprehension strategies. Writing and Presenting: Write instructions on how to make something (e.g. how to make a cup of tea); make a list of ingredients / components; use specific details; use correct sequence; make use of commands (imperatives); use correct structure and format. FAT 2 Writing: Essay (20 marks) — Narrative or descriptive, 3 paragraphs; task completed during the term.",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "CAPS English HL Grade 4 Term 1", "assessmentStandards": ["FAT 2 Writing: Essay 20 marks — narrative/descriptive, 3 paragraphs"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR4-T1",
+      "title": "Weeks 9-10: Poster / Notice (FAT 3 Response to Texts)",
+      "code": "CAPS-ENGLISHHL-GR4-T1-WK9-10",
+      "description": "Listening and Speaking: Take part in a short conversation on a familiar topic; make bets; stay on topic; ask relevant questions; practise listening and speaking — perform a simple rhyme, poem or song; play a simple language game; give and follow simple instructions / directions; tell own news; tell a story heard or read. Reading and Viewing: Read a poster or notice; discuss the pictures; identify specific information; interpret the information; discuss the purpose of the text; discuss language use; identify and discuss design features such as colour and different font sizes; read aloud with appropriate expression and tempo. Writing and Presenting: Design a poster advertising an event; choose appropriate information; use the correct format; use design features such as colour and different letter sizes or types. FAT 3 Response to Texts (40 marks): Literary / Non-literary text (15 marks), Visual text (10 marks), Language Structures and Conventions (15 marks).",
+      "metadata": { "weekNumbers": [9,10], "capsReference": "CAPS English HL Grade 4 Term 1", "assessmentStandards": ["FAT 3 Response to Texts 40 marks — Literary/Non-literary 15, Visual 10, Language 15"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-ENGLISHHL-GR4",
+      "title": "Term 2",
+      "code": "CAPS-ENGLISHHL-GR4-T2",
+      "description": "English Home Language Grade 4 Term 2",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR4-T2",
+      "title": "Weeks 1-2: Poem / Song / Limerick",
+      "code": "CAPS-ENGLISHHL-GR4-T2-WK1-2",
+      "description": "Listening and Speaking: Listen to a poem / song / limerick; identify the main idea / message; relate to own experience; identify rhythm and leave a comment on the effect on the listener; express feelings evoked by the poem; offer lines from the poem / song. Reading and Viewing: Read a poem / song from a textbook or teacher resource; discuss main idea; express feelings evoked; identify rhythm and rhyme and the effect thereof; divide words into syllables to understand rhythm; use reading strategies; discuss vocabulary. Writing and Presenting: Write a simple poem / song; use appropriate content; use appropriate structure and format; plan, draft and revise; use appropriate rhythm and rhyme; use knowledge of syllables to develop rhythm. Language Structures and Conventions: Abstract nouns, compound nouns, simile, alliteration, rhyme. Spelling and punctuation.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "CAPS English HL Grade 4 Term 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR4-T2",
+      "title": "Weeks 3-4: Weather Report / Chart / Table / Map (FAT 1 Oral concludes)",
+      "code": "CAPS-ENGLISHHL-GR4-T2-WK3-4",
+      "description": "Listening and Speaking: Listen to a weather report; introductory activities — predict; listen for specific details; discuss usefulness of the information; discuss possible effects on people; compare conditions in different places; indicate preferred destinations with reasons; justify own opinion; identify characteristics of weather reports; use interactional strategies to communicate effectively in group situations; listen to a description and describe an object. Reading and Viewing: Read a weather report; identify and clarify similarities and differences; identify the way the text is organised; read an information text with visual elements such as maps or graphic representations; use pre-reading strategies; identify main idea and details; use reading strategies. Writing and Presenting: Write an information text with visual components such as a book cover / timeline; organise information logically. FAT 1 Oral: Read Aloud concluded — mark recorded in Term 2.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "CAPS English HL Grade 4 Term 2", "assessmentStandards": ["FAT 1 Oral concluded in Term 2 — mark recorded"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR4-T2",
+      "title": "Weeks 5-6: Dialogue",
+      "code": "CAPS-ENGLISHHL-GR4-T2-WK5-6",
+      "description": "Listening and Speaking: Listen to a dialogue; introductory activities — predict; listen to determine relevance with own experience; identify specific details. Role-play a scenario related to the selected novel in Term 1. Reading and Viewing: Read a dialogue; use reading strategies; identify main and supporting ideas; use comprehension strategies. Literature — Novelette continues. Writing and Presenting: Write a dialogue (short scene / play); choose appropriate content; use the framework; use direct and indirect speech; use extensive vocabulary; use appropriate grammar, spelling and punctuation. Language Structures and Conventions: Derivation, compounding, idioms, metaphor, proverbs, confusable words.",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "CAPS English HL Grade 4 Term 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR4-T2",
+      "title": "Weeks 7-8: Instructional Text / Directions / Rules (FAT 4 Transactional Writing)",
+      "code": "CAPS-ENGLISHHL-GR4-T2-WK7-8",
+      "description": "Listening and Speaking: Listen to and carry out instructions, e.g. directions / rules / safety rules for crossing the road / how to wash hands / instructions for making something; introductory activities; recall procedure; identify characteristics of instructional text; pay attention to headings; give clear instructions and examples; take notes and apply instructions; ask questions for clarity; listen and give directions. Reading and Viewing: Read an instructional text such as directions / rules / safety rules for crossing the road / how to make something; use pre-reading strategies; identify specific details; identify the sequence of instructions; use vocabulary strategies. Writing and Presenting: Write an instructional text such as directions / rules / safety rules; choose appropriate content; use appropriate structure as a framework; organise information logically; use core and supporting sentences to develop coherent paragraphs. FAT 4 Transactional Writing (10 marks): Written before the June controlled test.",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "CAPS English HL Grade 4 Term 2", "assessmentStandards": ["FAT 4 Transactional Writing 10 marks"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR4-T2",
+      "title": "Weeks 9-10: Assessment of Read Aloud / June Controlled Test",
+      "code": "CAPS-ENGLISHHL-GR4-T2-WK9-10",
+      "description": "Assessment of Read Aloud from the novelette studied in Term 1 and 2. June controlled test preparation and consolidation. Formal Assessment summary: FAT 1 Oral — Read Aloud (20 marks); FAT 2 Writing — Essay, narrative/descriptive, 3 paragraphs (20 marks); FAT 3 Response to Texts (40 marks) — Literary/Non-literary text (15 marks), Visual text (10 marks), Language Structures and Conventions (15 marks); FAT 4 Transactional Writing (10 marks).",
+      "metadata": { "weekNumbers": [9,10], "capsReference": "CAPS English HL Grade 4 Term 2", "assessmentStandards": ["Assessment of Read Aloud from novelette"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    }
+  ]
+}

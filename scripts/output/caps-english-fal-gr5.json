@@ -1,0 +1,140 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Intermediate Phase",
+      "code": "CAPS-IP",
+      "description": "Intermediate Phase (Grades 4-6)",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-IP",
+      "title": "Grade 5",
+      "code": "CAPS-GR5",
+      "description": "Grade 5",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR5",
+      "title": "English First Additional Language",
+      "code": "CAPS-ENGLISHFAL-GR5",
+      "description": "English First Additional Language Grade 5",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-ENGLISHFAL-GR5",
+      "title": "Term 1",
+      "code": "CAPS-ENGLISHFAL-GR5-T1",
+      "description": "English First Additional Language Grade 5 Term 1",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR5-T1",
+      "title": "Weeks 1-2: Information Text (Visual) + SMS / Email",
+      "code": "CAPS-ENGLISHFAL-GR5-T1-WK1-2",
+      "description": "Listening and Speaking: Listen to and respond to an information text; identify specific details; interpret information; relate to personal experiences. Reading and Viewing: Read an information text including visual elements; pre-reading — make predictions based on title, headings and pictures; discuss the central idea and specific details; provide commentary on the choice of images; use reading strategies including comprehension. Also read social texts — SMS / email; identify main idea; discuss purpose of text. Writing and Presenting: Write 3-4 paragraphs; use relevant content appropriate for the audience and purpose of the text; present information clearly; organise information logically; write subject sentences and connect relevant information to develop coherent paragraphs. Also write an SMS / email — choose relevant content; use correct format, e.g. greeting, date, etc. Language Structures and Conventions: Word level — work words, singular sentences, tenses, synonyms. Vocabulary — personification, idioms, proverbs, comparisons. Spelling and punctuation.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "CAPS English FAL Grade 5 Term 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR5-T1",
+      "title": "Weeks 3-4: Novelette / Novella Extract (FAT 1 Oral begins)",
+      "code": "CAPS-ENGLISHFAL-GR5-T1-WK3-4",
+      "description": "Listening and Speaking: Listen to and respond to an extract from a novelette / novella; predict using pre-reading strategies; listen for main idea and specific details; describe events; discuss values. Reading and Viewing: Read an extract from a novelette; use pre-reading strategies — make predictions based on title and discuss related themes / content; identify and clarify main events; discuss characters; discuss feelings expressed; use a writing frame to summarise. Literature — Novelette / Novella must be read daily. Reading methodology: Drop all and read / Group guided reading / Shared reading / Independent reading. Assess for learning — preparation for reading aloud. Writing and Presenting: Write a book review; use a writing frame; pre-write — listen to extracts from the novelette; choose appropriate content appropriate for the purpose; use appropriate language and text structure; organise information logically; use chronological order. FAT 1 Oral: Read Aloud (20 marks) — begins in Term 1, concludes in Term 2 when mark is recorded.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "CAPS English FAL Grade 5 Term 1", "assessmentStandards": ["FAT 1 Oral: Read Aloud 20 marks (starts T1, concludes T2)"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR5-T1",
+      "title": "Weeks 5-6: Story (FAT 1 Oral continues)",
+      "code": "CAPS-ENGLISHFAL-GR5-T1-WK5-6",
+      "description": "Listening and Speaking: Listen to and respond to a story; introductory activities — make predictions; identify main and supporting ideas; relate to own life; take part in group discussions; ask relevant questions; react with empathy and respect. Reading and Viewing: Read a story; use pre-reading strategies; identify new vocabulary from context; discuss the central idea, plot, characters and background; discuss cause and effect. Literature — Novelette continues. Writing and Presenting: Write a narrative or descriptive story (verhalend of beskrywend); choose appropriate content; use appropriate language and text structure; use the correct format; write coherent paragraphs; use a range of vocabulary; use tenses correctly. Language Structures and Conventions: Vocabulary meaning — antonyms. Tenses. Spelling and punctuation.",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "CAPS English FAL Grade 5 Term 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR5-T1",
+      "title": "Weeks 7-8: Newspaper Article (FAT 2 Writing)",
+      "code": "CAPS-ENGLISHFAL-GR5-T1-WK7-8",
+      "description": "Listening and Speaking: Listen to and respond to a newspaper article; introductory activities — make predictions based on title and headings; listen for specific details; identify the main message; relate to own experience; comment on social, moral and cultural values. Reading and Viewing: Read a newspaper article; use pre-reading strategies; use various reading strategies including skimming, scanning and use of context; identify similarities and differences; identify the way the text is organised; use a mind map / notes to record information. Writing and Presenting: Write a newspaper article; include headline, by-line, main paragraph; answers to who, what, when, where, why and how; choose appropriate content; connect sentences into a coherent paragraph; use appropriate vocabulary. FAT 2 Writing: Essay (20 marks) — Narrative or descriptive, 3 paragraphs; task completed during the term.",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "CAPS English FAL Grade 5 Term 1", "assessmentStandards": ["FAT 2 Writing: Essay 20 marks — narrative/descriptive, 3 paragraphs"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR5-T1",
+      "title": "Weeks 9-10: Poem (FAT 3 Response to Texts)",
+      "code": "CAPS-ENGLISHFAL-GR5-T1-WK9-10",
+      "description": "Listening and Speaking: Listen to a poem; identify the main idea; relate to own experience; identify rhythm; comment on sound effects evoked by rhyme and rhythm; describe events; use appropriate intonation and expression, pace, tempo and volume. Reading and Viewing: Read a poem; use comprehension skills; pre-reading — make predictions based on title and pictures; identify rhyme and rhythm and comment on the effect on the reader; express feelings and opinions; use poetry reading strategies. Writing and Presenting: Write a poem; use alliteration, assonance, metaphor and comparisons; show understanding of style and register; begin and evaluate creative writing; use appropriate punctuation rules. FAT 3 Response to Texts (40 marks): Literary / Non-literary text (15 marks), Visual text (10 marks), Language Structures and Conventions (15 marks).",
+      "metadata": { "weekNumbers": [9,10], "capsReference": "CAPS English FAL Grade 5 Term 1", "assessmentStandards": ["FAT 3 Response to Texts 40 marks — Literary/Non-literary 15, Visual 10, Language 15"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-ENGLISHFAL-GR5",
+      "title": "Term 2",
+      "code": "CAPS-ENGLISHFAL-GR5-T2",
+      "description": "English First Additional Language Grade 5 Term 2",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR5-T2",
+      "title": "Weeks 1-2: Poem",
+      "code": "CAPS-ENGLISHFAL-GR5-T2-WK1-2",
+      "description": "Listening and Speaking: Listen to a poem; identify the main idea; relate to own experience; appreciate and comment on the sound effects evoked by rhyme and rhythm; describe events; perform selected lines. Reading and Viewing: Read a poem; use comprehension skills; identify rhyme and rhythm and the effect; express feelings and opinions. Writing and Presenting: Write a poem; use alliteration, assonance, metaphor and comparisons; use descriptive language; begin and evaluate creative writing; use appropriate punctuation rules. Language Structures and Conventions: Adverbs of manner/way, time and place, tenses, prepositions, adjectives. Spelling and punctuation.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "CAPS English FAL Grade 5 Term 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR5-T2",
+      "title": "Weeks 3-4: Weather Report (FAT 1 Oral concludes)",
+      "code": "CAPS-ENGLISHFAL-GR5-T2-WK3-4",
+      "description": "Listening and Speaking: Listen to a weather report; identify and interpret information; discuss possible effects on people; compare conditions in different places; use interactional strategies to communicate effectively in group situations. Reading and Viewing: Read a weather report; identify similarities and differences; identify the way the text is organised; read an information text with visual elements such as maps; use a mind map / notes to record information. Writing and Presenting: Write a weather report; connect sentences using subject and supporting sentences; use appropriate grammar, spelling and punctuation. FAT 1 Oral concluded — mark recorded in Term 2.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "CAPS English FAL Grade 5 Term 2", "assessmentStandards": ["FAT 1 Oral concluded in Term 2 — mark recorded"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR5-T2",
+      "title": "Weeks 5-6: Play (FAT 4 Transactional Writing)",
+      "code": "CAPS-ENGLISHFAL-GR5-T2-WK5-6",
+      "description": "Listening and Speaking: Listen to and discuss a drama; retell scenes in the correct order; identify and discuss main ideas, plot, background, atmosphere and characters; use correct language; role-play a character; vary voice and expressions; change register and language use. Reading and Viewing: Read a simple play; use comprehension skills; use various reading strategies; discuss how writers use vocabulary and language to develop plot, background and characters. Writing and Presenting: Write a play OR a narrative / descriptive essay; create characters; describe the background; develop the plot; use the correct format; create atmosphere. FAT 4 Transactional Writing (10 marks): Written before the June controlled test.",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "CAPS English FAL Grade 5 Term 2", "assessmentStandards": ["FAT 4 Transactional Writing 10 marks"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR5-T2",
+      "title": "Weeks 7-8: Report with Visuals / Tables / Charts",
+      "code": "CAPS-ENGLISHFAL-GR5-T2-WK7-8",
+      "description": "Listening and Speaking: Listen to and respond to a report; make predictions based on the title, headings and pictures; identify the central idea and details; analyse information; take part in discussions; present information using a table, graph or information map. Reading and Viewing: Read a report with visual images, e.g. tables / graphs / diagrams / maps / information maps; use reading strategies; use vocabulary strategies; clarify the effect of words and images; identify cause and effect; use mind maps / notes to summarise. Writing and Presenting: Write a report; formulate relevant content based on research; process information from one format to another; rank information logically; connect sentences using subject and supporting sentences. Language Structures and Conventions: Work words, compound and singular nouns, verkleinwoorde (diminutives), adjectives. Tenses. Vocabulary. Spelling and punctuation.",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "CAPS English FAL Grade 5 Term 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR5-T2",
+      "title": "Weeks 9-10: June Controlled Test (FAT 5 Response to Texts)",
+      "code": "CAPS-ENGLISHFAL-GR5-T2-WK9-10",
+      "description": "FAT 5 June Controlled Test — Response to Texts (40 marks): Literary / Non-literary text (15 marks), Visual text (10 marks), Language Structures and Conventions (15 marks). Consolidation of all Term 1 and Term 2 content. Formal Assessment Summary: FAT 1 Oral — Read Aloud (20 marks); FAT 2 Writing — Essay, narrative/descriptive, 3 paragraphs (20 marks); FAT 3 Response to Texts (40 marks); FAT 4 Transactional Writing (10 marks); FAT 5 June Controlled Test — Response to Texts (40 marks).",
+      "metadata": { "weekNumbers": [9,10], "capsReference": "CAPS English FAL Grade 5 Term 2", "assessmentStandards": ["FAT 5 June Controlled Test — Response to Texts 40 marks"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    }
+  ]
+}

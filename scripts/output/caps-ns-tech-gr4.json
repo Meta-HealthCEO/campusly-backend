@@ -1,0 +1,275 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Intermediate Phase",
+      "code": "CAPS-IP",
+      "description": "Grades 4-6 Intermediate Phase",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-IP",
+      "title": "Grade 4",
+      "code": "CAPS-GR4",
+      "description": "Grade 4",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR4",
+      "title": "Natural Sciences and Technology",
+      "code": "CAPS-NSTECH-GR4",
+      "description": "Grade 4 Natural Sciences and Technology",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-NSTECH-GR4",
+      "title": "Term 1",
+      "code": "CAPS-NSTECH-GR4-T1",
+      "description": "Grade 4 Natural Sciences and Technology Term 1",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR4-T1",
+      "title": "Life and Living: Living and Non-Living Things",
+      "code": "CAPS-NSTECH-GR4-T1-LL1",
+      "description": "Distinguish between living and non-living things. Identify characteristics of living things: movement, growth, nutrition, reproduction, respiration, excretion, sensitivity.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR4-T1",
+      "title": "Life and Living: Structure of Plants and Animals",
+      "code": "CAPS-NSTECH-GR4-T1-LL2",
+      "description": "Identify and describe the external structures of plants and animals. Describe the functions of plant parts: roots, stems, leaves and flowers.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR4-T1",
+      "title": "Matter and Materials: States of Matter and the Water Cycle",
+      "code": "CAPS-NSTECH-GR4-T1-MM1",
+      "description": "Describe the three states of matter: solids, liquids and gases. Describe the water cycle: evaporation, condensation and precipitation.",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR4-T1",
+      "title": "Energy and Change: Energy Transfer",
+      "code": "CAPS-NSTECH-GR4-T1-EC1",
+      "description": "Investigate how energy can be transferred from one form to another. Identify sources of energy and energy transfer in everyday life.",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR4-T1",
+      "title": "Planet Earth and Beyond: Planet Earth",
+      "code": "CAPS-NSTECH-GR4-T1-PE1",
+      "description": "Describe the shape and structure of planet Earth. Identify layers of the Earth: core, mantle and crust.",
+      "metadata": { "weekNumbers": [9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR4-T1",
+      "title": "Formal Assessment Task",
+      "code": "CAPS-NSTECH-GR4-T1-FAT",
+      "description": "Formal Assessment Task — Test or Assignment.",
+      "metadata": { "weekNumbers": [11], "capsReference": "", "assessmentStandards": [], "notionalHours": 4, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-NSTECH-GR4",
+      "title": "Term 2",
+      "code": "CAPS-NSTECH-GR4-T2",
+      "description": "Grade 4 Natural Sciences and Technology Term 2",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR4-T2",
+      "title": "Life and Living: Plant Growth",
+      "code": "CAPS-NSTECH-GR4-T2-LL3",
+      "description": "Investigate the conditions necessary for plant growth: light, water, nutrients and suitable temperatures. Describe the process of germination.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR4-T2",
+      "title": "Matter and Materials: Solid Materials",
+      "code": "CAPS-NSTECH-GR4-T2-MM2",
+      "description": "Investigate the properties of solid materials: hardness, flexibility, transparency, ability to absorb water. Compare and classify solid materials.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR4-T2",
+      "title": "Technology: Strengthening and Frames",
+      "code": "CAPS-NSTECH-GR4-T2-TECH1",
+      "description": "Investigate ways of strengthening materials. Design and make frame structures using appropriate materials and joining methods.",
+      "metadata": { "weekNumbers": [5,6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 12, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR4-T2",
+      "title": "Energy and Change: Energy Around Us",
+      "code": "CAPS-NSTECH-GR4-T2-EC2",
+      "description": "Identify different forms of energy in the environment: light, heat, sound, kinetic, electrical. Describe how energy is used in daily life.",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR4-T2",
+      "title": "Planet Earth and Beyond: The Sun",
+      "code": "CAPS-NSTECH-GR4-T2-PE2",
+      "description": "Describe the Sun as a star and source of energy. Explain how the Sun provides light and heat to Earth.",
+      "metadata": { "weekNumbers": [10], "capsReference": "", "assessmentStandards": [], "notionalHours": 6, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR4-T2",
+      "title": "Formal Assessment Task",
+      "code": "CAPS-NSTECH-GR4-T2-FAT",
+      "description": "Formal Assessment Task — Test or Assignment.",
+      "metadata": { "weekNumbers": [11], "capsReference": "", "assessmentStandards": [], "notionalHours": 4, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-NSTECH-GR4",
+      "title": "Term 3",
+      "code": "CAPS-NSTECH-GR4-T3",
+      "description": "Grade 4 Natural Sciences and Technology Term 3",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR4-T3",
+      "title": "Life and Living: Habitats",
+      "code": "CAPS-NSTECH-GR4-T3-LL4",
+      "description": "Describe different habitats: forest, grassland, wetland, desert, ocean. Explain how plants and animals are adapted to their habitats.",
+      "metadata": { "weekNumbers": [1,2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 12, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR4-T3",
+      "title": "Energy and Change: Musical Instruments",
+      "code": "CAPS-NSTECH-GR4-T3-EC3",
+      "description": "Investigate how musical instruments produce sound. Classify instruments as string, wind or percussion. Describe how vibrations produce sound.",
+      "metadata": { "weekNumbers": [4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR4-T3",
+      "title": "Energy and Change: Sound and Vibrations",
+      "code": "CAPS-NSTECH-GR4-T3-EC4",
+      "description": "Investigate how sound travels through different materials. Describe properties of sound: pitch and volume. Investigate how sound is produced by vibrations.",
+      "metadata": { "weekNumbers": [6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR4-T3",
+      "title": "Planet Earth and Beyond: Earth and Sun",
+      "code": "CAPS-NSTECH-GR4-T3-PE3",
+      "description": "Describe the relationship between Earth and the Sun. Explain how Earth's rotation causes day and night. Describe seasonal changes related to Earth's orbit.",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR4-T3",
+      "title": "Planet Earth and Beyond: The Moon",
+      "code": "CAPS-NSTECH-GR4-T3-PE4",
+      "description": "Describe the Moon as Earth's natural satellite. Identify the phases of the Moon. Explain how the Moon reflects light from the Sun.",
+      "metadata": { "weekNumbers": [10], "capsReference": "", "assessmentStandards": [], "notionalHours": 6, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR4-T3",
+      "title": "Formal Assessment Task",
+      "code": "CAPS-NSTECH-GR4-T3-FAT",
+      "description": "Formal Assessment Task — Test or Assignment.",
+      "metadata": { "weekNumbers": [11], "capsReference": "", "assessmentStandards": [], "notionalHours": 4, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-NSTECH-GR4",
+      "title": "Term 4",
+      "code": "CAPS-NSTECH-GR4-T4",
+      "description": "Grade 4 Natural Sciences and Technology Term 4",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR4-T4",
+      "title": "Life and Living: Animal Shelters",
+      "code": "CAPS-NSTECH-GR4-T4-LL5",
+      "description": "Investigate the shelters that animals build or use. Compare natural animal shelters with human-made shelters. Describe the materials animals use.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR4-T4",
+      "title": "Technology: Rocket Systems",
+      "code": "CAPS-NSTECH-GR4-T4-TECH2",
+      "description": "Investigate how rockets work using Newton's third law. Design and make a simple rocket or projectile system.",
+      "metadata": { "weekNumbers": [3,4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 12, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR4-T4",
+      "title": "Matter and Materials: Review and Consolidation",
+      "code": "CAPS-NSTECH-GR4-T4-MM3",
+      "description": "Review and consolidate understanding of matter and materials covered across Grade 4. Describe properties and uses of different materials.",
+      "metadata": { "weekNumbers": [6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR4-T4",
+      "title": "Revision and Consolidation",
+      "code": "CAPS-NSTECH-GR4-T4-REV",
+      "description": "Revision and consolidation of all Grade 4 Natural Sciences and Technology content.",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR4-T4",
+      "title": "Formal Assessment Task",
+      "code": "CAPS-NSTECH-GR4-T4-FAT",
+      "description": "Formal Assessment Task — End-of-year Test.",
+      "metadata": { "weekNumbers": [10], "capsReference": "", "assessmentStandards": [], "notionalHours": 4, "cognitiveWeighting": null },
+      "order": 5
+    }
+  ]
+}

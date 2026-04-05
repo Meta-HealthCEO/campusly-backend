@@ -1,0 +1,275 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Intermediate Phase",
+      "code": "CAPS-IP",
+      "description": "Grades 4-6 Intermediate Phase",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-IP",
+      "title": "Grade 6",
+      "code": "CAPS-GR6",
+      "description": "Grade 6",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR6",
+      "title": "Natural Sciences and Technology",
+      "code": "CAPS-NSTECH-GR6",
+      "description": "Grade 6 Natural Sciences and Technology",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-NSTECH-GR6",
+      "title": "Term 1",
+      "code": "CAPS-NSTECH-GR6-T1",
+      "description": "Grade 6 Natural Sciences and Technology Term 1",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR6-T1",
+      "title": "Life and Living: Photosynthesis",
+      "code": "CAPS-NSTECH-GR6-T1-LL1",
+      "description": "Describe photosynthesis as the process by which plants make food using sunlight, water and carbon dioxide. Write and interpret the word equation for photosynthesis. Explain the role of chlorophyll.",
+      "metadata": { "weekNumbers": [1,2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 12, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR6-T1",
+      "title": "Life and Living: Nutrients in Food",
+      "code": "CAPS-NSTECH-GR6-T1-LL2",
+      "description": "Identify the main nutrients in food: carbohydrates, proteins, fats, vitamins, minerals and water. Describe the role of each nutrient in the body.",
+      "metadata": { "weekNumbers": [4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR6-T1",
+      "title": "Matter and Materials: Particles in Solids, Liquids and Gases",
+      "code": "CAPS-NSTECH-GR6-T1-MM1",
+      "description": "Use the particle model to explain the properties of solids, liquids and gases. Describe particle arrangement, movement and spacing in each state.",
+      "metadata": { "weekNumbers": [6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR6-T1",
+      "title": "Energy and Change: Electric Circuits",
+      "code": "CAPS-NSTECH-GR6-T1-EC1",
+      "description": "Investigate and build simple series and parallel circuits. Describe the role of components: battery, bulb, switch and wire. Draw circuit diagrams using standard symbols.",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR6-T1",
+      "title": "Formal Assessment Task",
+      "code": "CAPS-NSTECH-GR6-T1-FAT",
+      "description": "Formal Assessment Task — Test or Assignment.",
+      "metadata": { "weekNumbers": [10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 4, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-NSTECH-GR6",
+      "title": "Term 2",
+      "code": "CAPS-NSTECH-GR6-T2",
+      "description": "Grade 6 Natural Sciences and Technology Term 2",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR6-T2",
+      "title": "Life and Living: Nutrition and Balanced Diets",
+      "code": "CAPS-NSTECH-GR6-T2-LL3",
+      "description": "Describe what constitutes a balanced diet. Explain the consequences of nutritional deficiencies and excesses. Analyse food labels to assess nutritional content.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR6-T2",
+      "title": "Matter and Materials: Mixtures",
+      "code": "CAPS-NSTECH-GR6-T2-MM2",
+      "description": "Describe and classify mixtures as heterogeneous or homogeneous. Investigate methods of separating mixtures: filtering, sieving, evaporation and magnetic separation.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR6-T2",
+      "title": "Matter and Materials: Solutions and Dissolving",
+      "code": "CAPS-NSTECH-GR6-T2-MM3",
+      "description": "Describe solutions as homogeneous mixtures of a solute dissolved in a solvent. Investigate factors that affect dissolving: temperature, particle size and stirring.",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR6-T2",
+      "title": "Energy and Change: Conductors and Insulators",
+      "code": "CAPS-NSTECH-GR6-T2-EC2",
+      "description": "Classify materials as electrical conductors or insulators through investigation. Describe the uses of conductors and insulators in electrical devices.",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR6-T2",
+      "title": "Planet Earth and Beyond: The Solar System",
+      "code": "CAPS-NSTECH-GR6-T2-PE1",
+      "description": "Describe the structure of the solar system. Name and order the planets from the Sun. Describe the relative sizes and distances of planets.",
+      "metadata": { "weekNumbers": [9], "capsReference": "", "assessmentStandards": [], "notionalHours": 6, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR6-T2",
+      "title": "Formal Assessment Task",
+      "code": "CAPS-NSTECH-GR6-T2-FAT",
+      "description": "Formal Assessment Task — Test or Assignment.",
+      "metadata": { "weekNumbers": [10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 4, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-NSTECH-GR6",
+      "title": "Term 3",
+      "code": "CAPS-NSTECH-GR6-T3",
+      "description": "Grade 6 Natural Sciences and Technology Term 3",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR6-T3",
+      "title": "Life and Living: Ecosystems and Food Webs",
+      "code": "CAPS-NSTECH-GR6-T3-LL4",
+      "description": "Describe the components of an ecosystem: biotic and abiotic factors. Construct and interpret food webs. Explain how changes in one species affect the whole food web.",
+      "metadata": { "weekNumbers": [1,2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 12, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR6-T3",
+      "title": "Matter and Materials: Water Pollution and Wetlands",
+      "code": "CAPS-NSTECH-GR6-T3-MM4",
+      "description": "Describe causes and effects of water pollution. Explain the importance of wetlands as natural water filters. Identify ways to prevent and reduce water pollution.",
+      "metadata": { "weekNumbers": [4,5], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR6-T3",
+      "title": "Matter and Materials: Purifying Water",
+      "code": "CAPS-NSTECH-GR6-T3-MM5",
+      "description": "Describe the steps in purifying water: sedimentation, filtration, chlorination. Design and build a simple water filter. Evaluate the effectiveness of the filter.",
+      "metadata": { "weekNumbers": [6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR6-T3",
+      "title": "Energy and Change: Systems to Solve Problems",
+      "code": "CAPS-NSTECH-GR6-T3-EC3",
+      "description": "Investigate systems that use electrical energy to solve problems. Design and make a system that uses a switch to control an output device.",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR6-T3",
+      "title": "Planet Earth and Beyond: Earth's Rotation and Revolution",
+      "code": "CAPS-NSTECH-GR6-T3-PE2",
+      "description": "Differentiate between Earth's rotation and revolution. Explain how the tilt of Earth's axis causes seasons. Describe the length of day and night at different times of year.",
+      "metadata": { "weekNumbers": [10], "capsReference": "", "assessmentStandards": [], "notionalHours": 6, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR6-T3",
+      "title": "Formal Assessment Task",
+      "code": "CAPS-NSTECH-GR6-T3-FAT",
+      "description": "Formal Assessment Task — Test or Assignment.",
+      "metadata": { "weekNumbers": [11], "capsReference": "", "assessmentStandards": [], "notionalHours": 4, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-NSTECH-GR6",
+      "title": "Term 4",
+      "code": "CAPS-NSTECH-GR6-T4",
+      "description": "Grade 6 Natural Sciences and Technology Term 4",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR6-T4",
+      "title": "Energy and Change: Mains Electricity and Fossil Fuels",
+      "code": "CAPS-NSTECH-GR6-T4-EC4",
+      "description": "Describe how mains electricity is generated using fossil fuels. Explain the environmental impact of burning fossil fuels. Identify renewable energy alternatives.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR6-T4",
+      "title": "Planet Earth and Beyond: Moon's Movements",
+      "code": "CAPS-NSTECH-GR6-T4-PE3",
+      "description": "Describe the Moon's orbit around Earth. Explain the phases of the Moon and their causes. Describe how the Moon's gravity causes tides.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR6-T4",
+      "title": "Planet Earth and Beyond: Telescopes",
+      "code": "CAPS-NSTECH-GR6-T4-PE4",
+      "description": "Describe how telescopes extend our ability to observe space. Compare optical and radio telescopes. Describe significant telescopes and their discoveries.",
+      "metadata": { "weekNumbers": [5], "capsReference": "", "assessmentStandards": [], "notionalHours": 4, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR6-T4",
+      "title": "Technology: Moon and Mars Rovers",
+      "code": "CAPS-NSTECH-GR6-T4-TECH1",
+      "description": "Describe the design and purpose of space rovers. Investigate how rovers are controlled remotely. Design a simple rover system that can perform a task.",
+      "metadata": { "weekNumbers": [6,7], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR6-T4",
+      "title": "Revision and Consolidation",
+      "code": "CAPS-NSTECH-GR6-T4-REV",
+      "description": "Revision and consolidation of all Grade 6 Natural Sciences and Technology content.",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-NSTECH-GR6-T4",
+      "title": "Formal Assessment Task",
+      "code": "CAPS-NSTECH-GR6-T4-FAT",
+      "description": "Formal Assessment Task — End-of-year Test.",
+      "metadata": { "weekNumbers": [10], "capsReference": "", "assessmentStandards": [], "notionalHours": 4, "cognitiveWeighting": null },
+      "order": 6
+    }
+  ]
+}

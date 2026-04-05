@@ -1,0 +1,293 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Intermediate Phase",
+      "code": "CAPS-IP",
+      "description": "Intermediate Phase (Grades 4-6)",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-IP",
+      "title": "Grade 4",
+      "code": "CAPS-GR4",
+      "description": "Grade 4",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR4",
+      "title": "Mathematics",
+      "code": "CAPS-MATHEMATICS-GR4",
+      "description": "Mathematics Grade 4",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR4",
+      "title": "Term 1",
+      "code": "CAPS-MATHEMATICS-GR4-T1",
+      "description": "Mathematics Grade 4 Term 1",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR4-T1",
+      "title": "Whole Numbers: Counting, Ordering and Representing",
+      "code": "CAPS-MATHEMATICS-GR4-T1-WNCOR",
+      "description": "Number range for counting, ordering, comparing and representing, as well as place value of digits. Count forwards and backwards in 2s, 3s, 5s, 10s, 25s, 50s, 100s between 0 and at least 10 000. Order, compare and represent numbers to at least four-digit numbers. Represent odd and even numbers to at least 1 000. Recognise the place value of digits in whole numbers to at least four-digit numbers. Round off to the nearest 10, 100 and 1 000.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "CAPS Grade 4 Mathematics Term 1", "assessmentStandards": [], "notionalHours": 9, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR4-T1",
+      "title": "Number Sentences",
+      "code": "CAPS-MATHEMATICS-GR4-T1-NS",
+      "description": "Write number sentences to describe problem situations. Solve and complete number sentences by inspection, trial and improvement, and checking the solution by substitution. Properties of whole numbers: commutative, associative and distributive properties. 0 in terms of its additive property.",
+      "metadata": { "weekNumbers": [3], "capsReference": "CAPS Grade 4 Mathematics Term 1", "assessmentStandards": [], "notionalHours": 6, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR4-T1",
+      "title": "Whole Numbers: Addition and Subtraction",
+      "code": "CAPS-MATHEMATICS-GR4-T1-WNAS",
+      "description": "Addition and subtraction of whole numbers of at least 4 digits. Calculation techniques: estimation, building up and breaking down numbers, using a number line, rounding off and compensating, using addition and subtraction as inverse operations. Solving problems in financial and measurement contexts.",
+      "metadata": { "weekNumbers": [4,5,6], "capsReference": "CAPS Grade 4 Mathematics Term 1", "assessmentStandards": [], "notionalHours": 18, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR4-T1",
+      "title": "Formal Assessment Task: Assignment",
+      "code": "CAPS-MATHEMATICS-GR4-T1-FAT",
+      "description": "Formal assessment task (assignment) covering whole numbers: counting, ordering and representing numbers; number sentences; whole numbers: addition and subtraction. To be completed in class within three hours.",
+      "metadata": { "weekNumbers": [7], "capsReference": "CAPS Grade 4 Mathematics Term 1", "assessmentStandards": [], "notionalHours": 3, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR4-T1",
+      "title": "Whole Numbers: Multiplication",
+      "code": "CAPS-MATHEMATICS-GR4-T1-WNM",
+      "description": "Multiplication of one-digit numbers by numbers up to 10; multiplication of at least a two-digit number by a one-digit number; multiplication of at least a whole two-digit number by two-digit numbers. Calculation techniques: estimation, building up and breaking down numbers, doubling and halving, using multiplication and division as inverse operations. Multiples of one-digit numbers to at least 100. Factors of one-digit and two-digit whole numbers to at least 100. Solving problems in financial and measurement contexts, ratio and rate.",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "CAPS Grade 4 Mathematics Term 1", "assessmentStandards": [], "notionalHours": 15, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR4-T1",
+      "title": "Revision",
+      "code": "CAPS-MATHEMATICS-GR4-T1-REV",
+      "description": "Revision of all Term 1 topics.",
+      "metadata": { "weekNumbers": [10], "capsReference": "CAPS Grade 4 Mathematics Term 1", "assessmentStandards": [], "notionalHours": 4, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR4-T1",
+      "title": "Formal Assessment Task: Test",
+      "code": "CAPS-MATHEMATICS-GR4-T1-TEST",
+      "description": "Formal assessment task: Test covering all Term 1 topics.",
+      "metadata": { "weekNumbers": [11], "capsReference": "CAPS Grade 4 Mathematics Term 1", "assessmentStandards": [], "notionalHours": 6, "cognitiveWeighting": null },
+      "order": 7
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR4",
+      "title": "Term 2",
+      "code": "CAPS-MATHEMATICS-GR4-T2",
+      "description": "Mathematics Grade 4 Term 2",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11,12], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR4-T2",
+      "title": "Formal Assessment Task: Investigation",
+      "code": "CAPS-MATHEMATICS-GR4-T2-INV",
+      "description": "Formal assessment task: Investigation on any ONE of the Term 2 topics, administered before teaching that topic.",
+      "metadata": { "weekNumbers": [1], "capsReference": "CAPS Grade 4 Mathematics Term 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR4-T2",
+      "title": "Whole Numbers: Division",
+      "code": "CAPS-MATHEMATICS-GR4-T2-WND",
+      "description": "Division of at least a two-digit number by a one-digit number; division of at least a whole three-digit number by one-digit numbers. Calculation techniques: estimation, building up and breaking down numbers, using multiplication and division as inverse operations. Solving problems in financial and measurement contexts, ratio, rate, grouping and equal sharing with remainders.",
+      "metadata": { "weekNumbers": [1,2,3], "capsReference": "CAPS Grade 4 Mathematics Term 2", "assessmentStandards": [], "notionalHours": 15, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR4-T2",
+      "title": "Geometric Patterns",
+      "code": "CAPS-MATHEMATICS-GR4-T2-GP",
+      "description": "Investigate and extend geometric patterns looking for relationships or rules in sequences not limited to a constant difference or ratio, and of learners' own creation. Describe observed relationships or rules in learners' own words. Determine input values, output values and rules using flow diagrams. Determine equivalence of different descriptions of the same relationship or rule presented verbally, in a flow diagram, or by a number sentence.",
+      "metadata": { "weekNumbers": [4,5], "capsReference": "CAPS Grade 4 Mathematics Term 2", "assessmentStandards": [], "notionalHours": 6, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR4-T2",
+      "title": "Numeric Patterns",
+      "code": "CAPS-MATHEMATICS-GR4-T2-NP",
+      "description": "Investigate and extend numeric patterns looking for relationships or rules in sequences involving a constant difference or ratio, and of learners' own creation. Describe observed relationships or rules in learners' own words. Determine input values, output values and rules using flow diagrams and tables. Determine equivalence of different descriptions of the same relationship or rule presented verbally, in a flow diagram, in a table, or by a number sentence.",
+      "metadata": { "weekNumbers": [6], "capsReference": "CAPS Grade 4 Mathematics Term 2", "assessmentStandards": [], "notionalHours": 9, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR4-T2",
+      "title": "Properties of 2D Shapes",
+      "code": "CAPS-MATHEMATICS-GR4-T2-2DS",
+      "description": "Recognise, visualise and name 2-D shapes focusing on regular and irregular polygons: triangles, squares, rectangles, other quadrilaterals, pentagons, hexagons, heptagons, and circles. Describe, sort and compare 2-D shapes in terms of straight and curved sides and number of sides. Draw 2-D shapes on grid paper. Symmetry: recognise, draw and describe line(s) of symmetry in 2-D shapes.",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "CAPS Grade 4 Mathematics Term 2", "assessmentStandards": [], "notionalHours": 12, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR4-T2",
+      "title": "Properties of 3D Objects",
+      "code": "CAPS-MATHEMATICS-GR4-T2-3DO",
+      "description": "Recognise, visualise and name 3-D objects focusing on rectangular prisms, spheres, cylinders, and pyramids. Describe, sort and compare 3-D objects in terms of shapes of faces, flat and curved surfaces. Make 3-D models using cut out polygons.",
+      "metadata": { "weekNumbers": [9,10], "capsReference": "CAPS Grade 4 Mathematics Term 2", "assessmentStandards": [], "notionalHours": 9, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR4-T2",
+      "title": "Revision and Assessment",
+      "code": "CAPS-MATHEMATICS-GR4-T2-REV",
+      "description": "Revision and formal assessment task: Test covering all Term 1 and Term 2 topics.",
+      "metadata": { "weekNumbers": [11,12], "capsReference": "CAPS Grade 4 Mathematics Term 2", "assessmentStandards": [], "notionalHours": 9, "cognitiveWeighting": null },
+      "order": 7
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR4",
+      "title": "Term 3",
+      "code": "CAPS-MATHEMATICS-GR4-T3",
+      "description": "Mathematics Grade 4 Term 3",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR4-T3",
+      "title": "Formal Assessment Task: Project",
+      "code": "CAPS-MATHEMATICS-GR4-T3-PROJ",
+      "description": "Formal assessment task: Project covering a combination of topics from Terms 1 to 3. Must be completed before the end of Term 3.",
+      "metadata": { "weekNumbers": [1], "capsReference": "CAPS Grade 4 Mathematics Term 3", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR4-T3",
+      "title": "Common Fractions",
+      "code": "CAPS-MATHEMATICS-GR4-T3-CF",
+      "description": "Compare and order common fractions with different denominators (halves, thirds, quarters, fifths, sixths, sevenths and eighths). Describe and compare common fractions in diagram form. Recognise, describe and use the equivalence of division and fractions. Addition of common fractions with same denominators. Solve problems in contexts involving fractions, including grouping and equal sharing. Recognise and use equivalent forms of common fractions (denominators which are multiples of one another).",
+      "metadata": { "weekNumbers": [2,3,4], "capsReference": "CAPS Grade 4 Mathematics Term 3", "assessmentStandards": [], "notionalHours": 14, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR4-T3",
+      "title": "Data Cycle",
+      "code": "CAPS-MATHEMATICS-GR4-T3-DC",
+      "description": "Collecting and organising data using tally marks and tables. Representing data: draw pictographs (one-to-one correspondence) and bar graphs. Interpreting data represented in words, pictographs, bar graphs, and pie charts. Analysing data by answering questions related to data categories. Reporting data: summarise verbally and in short written paragraphs making predictions. Probability experiments: perform simple repeated events (tossing a coin, rolling a die) and list possible outcomes.",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "CAPS Grade 4 Mathematics Term 3", "assessmentStandards": [], "notionalHours": 14, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR4-T3",
+      "title": "Mass",
+      "code": "CAPS-MATHEMATICS-GR4-T3-MASS",
+      "description": "Estimate and practically measure 3D objects using bathroom scales, kitchen scales, and balances. Record, compare and order the mass in grams (g) and kilograms (kg). Solve problems in contexts involving mass. Convert between grams and kilograms limited to examples with whole numbers and fractions.",
+      "metadata": { "weekNumbers": [7], "capsReference": "CAPS Grade 4 Mathematics Term 3", "assessmentStandards": [], "notionalHours": 6, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR4-T3",
+      "title": "Transformations",
+      "code": "CAPS-MATHEMATICS-GR4-T3-TRANS",
+      "description": "Build composite shapes: put 2-D shapes together to make different composite 2-D shapes including some shapes with line symmetry. Tessellations: pack out 2-D shapes to make tessellated patterns including some patterns with line symmetry. Describe patterns referring to lines, 2-D shapes, 3-D objects and lines of symmetry in nature, from modern everyday life, and from our cultural heritage.",
+      "metadata": { "weekNumbers": [8], "capsReference": "CAPS Grade 4 Mathematics Term 3", "assessmentStandards": [], "notionalHours": 6, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR4-T3",
+      "title": "Revision and Assessment",
+      "code": "CAPS-MATHEMATICS-GR4-T3-REV",
+      "description": "Revision and formal assessment task: Test covering all Term 3 topics.",
+      "metadata": { "weekNumbers": [9,10], "capsReference": "CAPS Grade 4 Mathematics Term 3", "assessmentStandards": [], "notionalHours": 3, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR4",
+      "title": "Term 4",
+      "code": "CAPS-MATHEMATICS-GR4-T4",
+      "description": "Mathematics Grade 4 Term 4",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR4-T4",
+      "title": "Time",
+      "code": "CAPS-MATHEMATICS-GR4-T4-TIME",
+      "description": "Read, tell and write time in 12-hour and 24-hour formats on analogue and digital instruments in hours, minutes, and seconds. Instruments include clocks, watches, and stopwatches. Reading calendars. Solve problems in contexts involving time. Calculate the number of days between any two dates within the same or consecutive years. Calculate time intervals given in seconds and/or minutes, minutes and/or hours, hours and/or days, days, weeks and/or months, years and/or decades.",
+      "metadata": { "weekNumbers": [1,2,3], "capsReference": "CAPS Grade 4 Mathematics Term 4", "assessmentStandards": [], "notionalHours": 12, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR4-T4",
+      "title": "Length",
+      "code": "CAPS-MATHEMATICS-GR4-T4-LEN",
+      "description": "Estimate and practically measure 2D shapes and 3D objects using rulers, metre sticks, tape measures, and trundle wheels. Record, compare and order lengths in millimetres (mm), centimetres (cm), metres (m) and kilometres (km). Solve problems in contexts involving length. Convert between mm and cm, cm and m, m and km (limited to whole numbers and common fractions).",
+      "metadata": { "weekNumbers": [4], "capsReference": "CAPS Grade 4 Mathematics Term 4", "assessmentStandards": [], "notionalHours": 6, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR4-T4",
+      "title": "Perimeter, Area and Volume",
+      "code": "CAPS-MATHEMATICS-GR4-T4-PAV",
+      "description": "Measure perimeter using rulers or measuring tapes. Find areas of regular and irregular shapes by counting squares on grids to develop understanding of square units. Find volume/capacity of objects by packing or filling them to develop understanding of cubic units.",
+      "metadata": { "weekNumbers": [5], "capsReference": "CAPS Grade 4 Mathematics Term 4", "assessmentStandards": [], "notionalHours": 6, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR4-T4",
+      "title": "Capacity and Volume",
+      "code": "CAPS-MATHEMATICS-GR4-T4-CAP",
+      "description": "Estimate and practically measure 3D objects using measuring spoons, measuring cups, and measuring jugs. Record, compare and order the capacity and volume of 3D objects in millilitres (ml) and litres (l). Solve problems in contexts involving capacity/volume. Convert between millilitres and litres (limited to examples with whole numbers and fractions).",
+      "metadata": { "weekNumbers": [6], "capsReference": "CAPS Grade 4 Mathematics Term 4", "assessmentStandards": [], "notionalHours": 6, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR4-T4",
+      "title": "Revision and Assessment",
+      "code": "CAPS-MATHEMATICS-GR4-T4-REV",
+      "description": "Revision and formal assessment task: Test covering Term 1-4 topics.",
+      "metadata": { "weekNumbers": [7,8,9,10], "capsReference": "CAPS Grade 4 Mathematics Term 4", "assessmentStandards": [], "notionalHours": 21, "cognitiveWeighting": null },
+      "order": 5
+    }
+  ]
+}

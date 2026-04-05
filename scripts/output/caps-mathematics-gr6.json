@@ -1,0 +1,338 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Intermediate Phase",
+      "code": "CAPS-IP",
+      "description": "Grades 4-6 Intermediate Phase",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-IP",
+      "title": "Grade 6",
+      "code": "CAPS-GR6",
+      "description": "Grade 6",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR6",
+      "title": "Mathematics",
+      "code": "CAPS-MATHEMATICS-GR6",
+      "description": "Grade 6 Mathematics",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR6",
+      "title": "Term 1",
+      "code": "CAPS-MATHEMATICS-GR6-T1",
+      "description": "Grade 6 Mathematics Term 1",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR6-T1",
+      "title": "Whole Numbers: Counting, Ordering, Comparing and Representing",
+      "code": "CAPS-MATHEMATICS-GR6-T1-WNCOR",
+      "description": "Count forwards and backwards in whole numbers to at least 9-digit numbers. Order and compare 9-digit numbers. Recognise and represent prime numbers to at least 100.",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "", "assessmentStandards": [], "notionalHours": 9, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR6-T1",
+      "title": "Whole Numbers: Addition and Subtraction",
+      "code": "CAPS-MATHEMATICS-GR6-T1-WNAS",
+      "description": "Add and subtract whole numbers of at least 5 and 6 digits. Use a calculator to check results. Solve problems in context involving multiple operations.",
+      "metadata": { "weekNumbers": [3], "capsReference": "", "assessmentStandards": [], "notionalHours": 6, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR6-T1",
+      "title": "Whole Numbers: Multiplication",
+      "code": "CAPS-MATHEMATICS-GR6-T1-WNM",
+      "description": "Multiply at least 4-digit by 3-digit numbers. Determine prime factors of numbers to at least 100. Perform multiple operations on whole numbers. Solve problems in context.",
+      "metadata": { "weekNumbers": [4,5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 18, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR6-T1",
+      "title": "Formal Assessment Task: Assignment",
+      "code": "CAPS-MATHEMATICS-GR6-T1-FAT",
+      "description": "Formal Assessment Task — Assignment.",
+      "metadata": { "weekNumbers": [7], "capsReference": "", "assessmentStandards": [], "notionalHours": 3, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR6-T1",
+      "title": "Whole Numbers: Division",
+      "code": "CAPS-MATHEMATICS-GR6-T1-WND",
+      "description": "Divide at least 4-digit by 3-digit numbers using long division. Perform multiple operations on whole numbers. Solve problems in context.",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 15, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR6-T1",
+      "title": "Revision",
+      "code": "CAPS-MATHEMATICS-GR6-T1-REV",
+      "description": "Revision of Term 1 content.",
+      "metadata": { "weekNumbers": [10], "capsReference": "", "assessmentStandards": [], "notionalHours": 4, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR6-T1",
+      "title": "Test",
+      "code": "CAPS-MATHEMATICS-GR6-T1-TEST",
+      "description": "Formal Assessment Task — Test.",
+      "metadata": { "weekNumbers": [11], "capsReference": "", "assessmentStandards": [], "notionalHours": 6, "cognitiveWeighting": null },
+      "order": 7
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR6",
+      "title": "Term 2",
+      "code": "CAPS-MATHEMATICS-GR6-T2",
+      "description": "Grade 6 Mathematics Term 2",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR6-T2",
+      "title": "Formal Assessment Task: Investigation",
+      "code": "CAPS-MATHEMATICS-GR6-T2-INV",
+      "description": "Formal Assessment Task — Investigation.",
+      "metadata": { "weekNumbers": [1], "capsReference": "", "assessmentStandards": [], "notionalHours": 3, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR6-T2",
+      "title": "Number Sentences",
+      "code": "CAPS-MATHEMATICS-GR6-T2-NS",
+      "description": "Write and solve number sentences by inspection, trial and improvement and backtracking. Solve problems using number sentences.",
+      "metadata": { "weekNumbers": [2], "capsReference": "", "assessmentStandards": [], "notionalHours": 6, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR6-T2",
+      "title": "Numeric Patterns",
+      "code": "CAPS-MATHEMATICS-GR6-T2-NP",
+      "description": "Investigate and extend numeric patterns involving sequences not limited to a constant difference or ratio. Describe patterns using flow diagrams and tables.",
+      "metadata": { "weekNumbers": [3], "capsReference": "", "assessmentStandards": [], "notionalHours": 9, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR6-T2",
+      "title": "Geometric Patterns",
+      "code": "CAPS-MATHEMATICS-GR6-T2-GP",
+      "description": "Investigate and extend geometric patterns in physical and diagram form. Represent patterns using tables and flow diagrams.",
+      "metadata": { "weekNumbers": [4], "capsReference": "", "assessmentStandards": [], "notionalHours": 6, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR6-T2",
+      "title": "Common Fractions",
+      "code": "CAPS-MATHEMATICS-GR6-T2-CF",
+      "description": "Recognise and use equivalent forms including tenths, hundredths and percentages. Order and compare fractions. Perform operations with fractions.",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 12, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR6-T2",
+      "title": "Decimal Fractions",
+      "code": "CAPS-MATHEMATICS-GR6-T2-DF",
+      "description": "Recognise and use decimal fractions to at least two decimal places. Multiply and divide decimal fractions by 10 and 100. Solve problems in context.",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 12, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR6-T2",
+      "title": "Revision",
+      "code": "CAPS-MATHEMATICS-GR6-T2-REV",
+      "description": "Revision of Term 2 content.",
+      "metadata": { "weekNumbers": [9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 9, "cognitiveWeighting": null },
+      "order": 7
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR6-T2",
+      "title": "Test",
+      "code": "CAPS-MATHEMATICS-GR6-T2-TEST",
+      "description": "Formal Assessment Task — Test.",
+      "metadata": { "weekNumbers": [11], "capsReference": "", "assessmentStandards": [], "notionalHours": 6, "cognitiveWeighting": null },
+      "order": 8
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR6",
+      "title": "Term 3",
+      "code": "CAPS-MATHEMATICS-GR6-T3",
+      "description": "Grade 6 Mathematics Term 3",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10,11], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR6-T3",
+      "title": "Formal Assessment Task: Project",
+      "code": "CAPS-MATHEMATICS-GR6-T3-PROJ",
+      "description": "Formal Assessment Task — Project.",
+      "metadata": { "weekNumbers": [1], "capsReference": "", "assessmentStandards": [], "notionalHours": 3, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR6-T3",
+      "title": "Length",
+      "code": "CAPS-MATHEMATICS-GR6-T3-LEN",
+      "description": "Measure, estimate, record, compare and order length using decimal fractions to at least two decimal places. Convert between units of length.",
+      "metadata": { "weekNumbers": [2], "capsReference": "", "assessmentStandards": [], "notionalHours": 6, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR6-T3",
+      "title": "Properties of 2D Shapes",
+      "code": "CAPS-MATHEMATICS-GR6-T3-2DS",
+      "description": "Recognise, visualise and name 2D shapes including parallelograms and octagons. Describe, sort and compare 2D shapes. Identify and describe types of angles: acute, right, obtuse, straight, reflex and revolution. Use compasses for constructions.",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "", "assessmentStandards": [], "notionalHours": 14, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR6-T3",
+      "title": "Symmetry, Transformations and Enlargements",
+      "code": "CAPS-MATHEMATICS-GR6-T3-TRANS",
+      "description": "Recognise and draw lines of symmetry. Describe and perform enlargements and reductions of triangles and quadrilaterals by a given factor.",
+      "metadata": { "weekNumbers": [5], "capsReference": "", "assessmentStandards": [], "notionalHours": 6, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR6-T3",
+      "title": "Properties of 3D Objects",
+      "code": "CAPS-MATHEMATICS-GR6-T3-3DO",
+      "description": "Recognise, visualise and name 3D objects including tetrahedrons. Describe and compare 3D objects in terms of edges, vertices and faces. Build 3D objects from nets.",
+      "metadata": { "weekNumbers": [6], "capsReference": "", "assessmentStandards": [], "notionalHours": 8, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR6-T3",
+      "title": "Area, Perimeter and Volume",
+      "code": "CAPS-MATHEMATICS-GR6-T3-PAV",
+      "description": "Calculate perimeter and area of squares and rectangles using formulas. Calculate volume of rectangular prisms using the formula l×w×h. Calculate surface area of rectangular prisms.",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "", "assessmentStandards": [], "notionalHours": 14, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR6-T3",
+      "title": "Revision",
+      "code": "CAPS-MATHEMATICS-GR6-T3-REV",
+      "description": "Revision of Term 3 content.",
+      "metadata": { "weekNumbers": [9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 9, "cognitiveWeighting": null },
+      "order": 7
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR6-T3",
+      "title": "Test",
+      "code": "CAPS-MATHEMATICS-GR6-T3-TEST",
+      "description": "Formal Assessment Task — Test.",
+      "metadata": { "weekNumbers": [11], "capsReference": "", "assessmentStandards": [], "notionalHours": 6, "cognitiveWeighting": null },
+      "order": 8
+    },
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR6",
+      "title": "Term 4",
+      "code": "CAPS-MATHEMATICS-GR6-T4",
+      "description": "Grade 6 Mathematics Term 4",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR6-T4",
+      "title": "Mass",
+      "code": "CAPS-MATHEMATICS-GR6-T4-MASS",
+      "description": "Measure, estimate, record, compare and order mass using decimal forms to at least two decimal places. Convert between units of mass.",
+      "metadata": { "weekNumbers": [1], "capsReference": "", "assessmentStandards": [], "notionalHours": 6, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR6-T4",
+      "title": "Time",
+      "code": "CAPS-MATHEMATICS-GR6-T4-TIME",
+      "description": "Read and record time using analogue and digital instruments. Solve problems involving time zones. Know relationships between centuries, decades, years, weeks and days.",
+      "metadata": { "weekNumbers": [2,3], "capsReference": "", "assessmentStandards": [], "notionalHours": 12, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR6-T4",
+      "title": "Capacity and Volume",
+      "code": "CAPS-MATHEMATICS-GR6-T4-CAP",
+      "description": "Measure, estimate, record, compare and order capacity and volume using kilolitres and decimal forms to at least two decimal places. Convert between units.",
+      "metadata": { "weekNumbers": [4], "capsReference": "", "assessmentStandards": [], "notionalHours": 6, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR6-T4",
+      "title": "Data Handling",
+      "code": "CAPS-MATHEMATICS-GR6-T4-DC",
+      "description": "Collect data using questionnaires. Organise and represent data using double bar graphs. Identify the mode and median of data sets. Critically read and interpret data.",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "", "assessmentStandards": [], "notionalHours": 12, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR6-T4",
+      "title": "Four Operations in Context",
+      "code": "CAPS-MATHEMATICS-GR6-T4-FOIC",
+      "description": "Solve problems in context involving all four operations with whole numbers and fractions. Perform multiple operations following the correct order of operations.",
+      "metadata": { "weekNumbers": [7], "capsReference": "", "assessmentStandards": [], "notionalHours": 6, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR6-T4",
+      "title": "Revision",
+      "code": "CAPS-MATHEMATICS-GR6-T4-REV",
+      "description": "Revision of Term 4 content and year.",
+      "metadata": { "weekNumbers": [8,9], "capsReference": "", "assessmentStandards": [], "notionalHours": 21, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR6-T4",
+      "title": "Test",
+      "code": "CAPS-MATHEMATICS-GR6-T4-TEST",
+      "description": "Formal Assessment Task — End-of-year Test.",
+      "metadata": { "weekNumbers": [10], "capsReference": "", "assessmentStandards": [], "notionalHours": 6, "cognitiveWeighting": null },
+      "order": 7
+    }
+  ]
+}
