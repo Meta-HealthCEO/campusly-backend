@@ -1,0 +1,252 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Foundation Phase",
+      "code": "CAPS-FP",
+      "description": "Foundation Phase (Grades R-3)",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FP",
+      "title": "Grade 2",
+      "code": "CAPS-GR2",
+      "description": "Grade 2",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR2",
+      "title": "Mathematics",
+      "code": "CAPS-MATHEMATICS-GR2",
+      "description": "Mathematics for Grade 2 — Foundation Phase CAPS",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR2",
+      "title": "Term 1",
+      "code": "CAPS-MATHEMATICS-GR2-T1",
+      "description": "Grade 2 Mathematics Term 1 (45 days)",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Grade 2 Mathematics ATP Term 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR2-T1",
+      "title": "Numbers, Operations and Relationships",
+      "code": "CAPS-MATHEMATICS-GR2-T1-NOR",
+      "description": "Count to 200; number concept to 100; place value (hundreds, tens and units); order and compare numbers to 100; addition and subtraction to 99; number sentences",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Numbers, Operations and Relationships", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR2-T1",
+      "title": "Patterns, Functions and Algebra",
+      "code": "CAPS-MATHEMATICS-GR2-T1-PFA",
+      "description": "Geometric patterns: copy, extend and describe; number patterns: copy, extend and describe; create own patterns",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Patterns, Functions and Algebra", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR2-T1",
+      "title": "Space and Shape (Geometry)",
+      "code": "CAPS-MATHEMATICS-GR2-T1-SS",
+      "description": "Position: describe position of objects; 2D shapes and 3D objects: recognise, identify, name, describe, sort and compare",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Space and Shape", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR2-T1",
+      "title": "Measurement",
+      "code": "CAPS-MATHEMATICS-GR2-T1-MEAS",
+      "description": "Time: read and write time in hours and half hours on analogue clocks; sequence events; names of months; Length: estimate, measure, order using non-standard units",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Measurement", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR2-T1",
+      "title": "Data Handling",
+      "code": "CAPS-MATHEMATICS-GR2-T1-DATA",
+      "description": "Collect and sort data; represent data in pictographs; discuss and report on data",
+      "metadata": { "weekNumbers": [8,9,10], "capsReference": "Data Handling", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR2",
+      "title": "Term 2",
+      "code": "CAPS-MATHEMATICS-GR2-T2",
+      "description": "Grade 2 Mathematics Term 2 (49 days)",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Grade 2 Mathematics ATP Term 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR2-T2",
+      "title": "Numbers, Operations and Relationships",
+      "code": "CAPS-MATHEMATICS-GR2-T2-NOR",
+      "description": "Count to 200; number concept to 150; addition and subtraction to 149; grouping and sharing; fractions (halves, quarters and thirds); money: solve money problems",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Numbers, Operations and Relationships", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR2-T2",
+      "title": "Patterns, Functions and Algebra",
+      "code": "CAPS-MATHEMATICS-GR2-T2-PFA",
+      "description": "Number patterns: extend and describe; input and output number patterns; number sentences with missing numbers",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Patterns, Functions and Algebra", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR2-T2",
+      "title": "Space and Shape (Geometry)",
+      "code": "CAPS-MATHEMATICS-GR2-T2-SS",
+      "description": "Symmetry: recognise and draw lines of symmetry in 2D shapes; 2D shapes: sort, describe and compare including sides and angles",
+      "metadata": { "weekNumbers": [5,6,7,8,9,10], "capsReference": "Space and Shape", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR2-T2",
+      "title": "Measurement",
+      "code": "CAPS-MATHEMATICS-GR2-T2-MEAS",
+      "description": "Time: telling time in quarter hours; Mass: compare and order using non-standard measures; Capacity/Volume: estimate, measure and compare",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Measurement", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR2-T2",
+      "title": "Data Handling",
+      "code": "CAPS-MATHEMATICS-GR2-T2-DATA",
+      "description": "Collect, organise, represent and interpret data; bar graphs and pictographs; answer questions about data",
+      "metadata": { "weekNumbers": [8,9,10], "capsReference": "Data Handling", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR2",
+      "title": "Term 3",
+      "code": "CAPS-MATHEMATICS-GR2-T3",
+      "description": "Grade 2 Mathematics Term 3 (49 days)",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Grade 2 Mathematics ATP Term 3", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR2-T3",
+      "title": "Numbers, Operations and Relationships",
+      "code": "CAPS-MATHEMATICS-GR2-T3-NOR",
+      "description": "Count to 200; number concept to 175; addition and subtraction to 175; repeated addition leading to multiplication; multiplication tables for 2, 5, 10; division with grouping and sharing",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Numbers, Operations and Relationships", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR2-T3",
+      "title": "Patterns, Functions and Algebra",
+      "code": "CAPS-MATHEMATICS-GR2-T3-PFA",
+      "description": "Geometric patterns: extend and describe; number patterns: extend and describe including skip counting in 2s, 3s, 5s, 10s",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Patterns, Functions and Algebra", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR2-T3",
+      "title": "Space and Shape (Geometry)",
+      "code": "CAPS-MATHEMATICS-GR2-T3-SS",
+      "description": "3D objects: sort, describe, compare and identify; position and views; 2D shapes making up faces of 3D objects",
+      "metadata": { "weekNumbers": [6,7,8], "capsReference": "Space and Shape", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR2-T3",
+      "title": "Measurement",
+      "code": "CAPS-MATHEMATICS-GR2-T3-MEAS",
+      "description": "Time: tell and write time; read calendars; Length: estimate, measure, compare and order in centimetres; Mass: estimate, measure, compare in kilograms",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Measurement", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR2-T3",
+      "title": "Data Handling",
+      "code": "CAPS-MATHEMATICS-GR2-T3-DATA",
+      "description": "Collect data; sort data into categories; represent data in bar graphs; answer questions about bar graphs",
+      "metadata": { "weekNumbers": [9,10], "capsReference": "Data Handling", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-MATHEMATICS-GR2",
+      "title": "Term 4",
+      "code": "CAPS-MATHEMATICS-GR2-T4",
+      "description": "Grade 2 Mathematics Term 4 (49 days)",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Grade 2 Mathematics ATP Term 4", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR2-T4",
+      "title": "Numbers, Operations and Relationships",
+      "code": "CAPS-MATHEMATICS-GR2-T4-NOR",
+      "description": "Count to 200; number concept to 200; addition and subtraction to 200; multiplication and division; fractions: unitary and non-unitary fractions; money: calculate change",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Numbers, Operations and Relationships", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR2-T4",
+      "title": "Patterns, Functions and Algebra",
+      "code": "CAPS-MATHEMATICS-GR2-T4-PFA",
+      "description": "Number patterns: extend, describe and create; geometric patterns: extend, describe and create; number sentences",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Patterns, Functions and Algebra", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR2-T4",
+      "title": "Space and Shape (Geometry)",
+      "code": "CAPS-MATHEMATICS-GR2-T4-SS",
+      "description": "Symmetry: recognise and draw lines of symmetry; 2D shapes and 3D objects: sort and describe; transformations: tessellations with 2D shapes",
+      "metadata": { "weekNumbers": [6,7,8,9,10], "capsReference": "Space and Shape", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR2-T4",
+      "title": "Measurement",
+      "code": "CAPS-MATHEMATICS-GR2-T4-MEAS",
+      "description": "Time: read calendars; Capacity/Volume: estimate and measure in litres; Length: estimate and measure in centimetres and metres",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Measurement", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-MATHEMATICS-GR2-T4",
+      "title": "Data Handling",
+      "code": "CAPS-MATHEMATICS-GR2-T4-DATA",
+      "description": "Collect and organise data; represent data in bar graphs and pictographs; interpret and report on data",
+      "metadata": { "weekNumbers": [8,9,10], "capsReference": "Data Handling", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    }
+  ]
+}

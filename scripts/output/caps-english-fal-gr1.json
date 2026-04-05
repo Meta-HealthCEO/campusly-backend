@@ -1,0 +1,216 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Foundation Phase",
+      "code": "CAPS-FP",
+      "description": "Foundation Phase (Grades R-3)",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FP",
+      "title": "Grade 1",
+      "code": "CAPS-GR1",
+      "description": "Grade 1",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR1",
+      "title": "English First Additional Language",
+      "code": "CAPS-ENGLISHFAL-GR1",
+      "description": "English First Additional Language for Grade 1 — Foundation Phase CAPS. Skills: Listening and Speaking (Mon/Wed/Fri), Phonics (Mon/Wed/Fri), Shared Reading only (daily schedule), Writing (Tue/Thu)",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-ENGLISHFAL-GR1",
+      "title": "Term 1",
+      "code": "CAPS-ENGLISHFAL-GR1-T1",
+      "description": "Grade 1 English FAL Term 1 (45 days). Themes: Orientation (This is me, My birthday, We go to school), My Family, We play outside, We have feelings",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Grade 1 EFAL ATP Term 1", "assessmentStandards": ["L&S rubric 14pts", "Phonics 7pts", "Reading 7pts"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR1-T1",
+      "title": "Listening and Speaking",
+      "code": "CAPS-ENGLISHFAL-GR1-T1-LS",
+      "description": "Done Mon/Wed/Fri: greeting routine + song/rhyme + open-ended question + vocabulary of the day (4 words/day from Week 3). Vocabulary themes: feelings (happy/sad/scared/excited), school (backpack/uniform/stationery), family (big/small/brother/little), weather (season/temperature/Summer/Winter). Songs: Head and shoulders, If you're happy, I see sunshine",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Listening and Speaking: greeting, songs, vocabulary", "assessmentStandards": ["Identify/name items 7pts", "Respond to question 7pts"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR1-T1",
+      "title": "Phonics",
+      "code": "CAPS-ENGLISHFAL-GR1-T1-PHON",
+      "description": "Mon/Wed/Fri: attention getter (1-2-3 EYES ON ME); environmental sounds → sound /a/ → /s/ → /t/ → /p/; segmenting sentences into words; blending CVC words; emergent phonemic awareness",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Phonics: initial sounds /a/ /s/ /t/ /p/, CVC blending", "assessmentStandards": ["Reproduce sound patterns 7pts"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR1-T1",
+      "title": "Reading — Shared Reading",
+      "code": "CAPS-ENGLISHFAL-GR1-T1-READ",
+      "description": "Shared Reading only in Grade 1 FAL. Daily cycle: Mon Pre-read → Tue First read → Wed Story illustration → Thu Second read → Fri Post-read. Emergent literacy: recognise words in environment; listen to story; join choruses; book handling and print concepts",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Reading: Shared Reading daily cycle", "assessmentStandards": ["Listen and answer questions 7pts", "Join choruses 7pts"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR1-T1",
+      "title": "Writing",
+      "code": "CAPS-ENGLISHFAL-GR1-T1-WRITE",
+      "description": "Drawing with a caption; teacher models writing on board first; learners copy; simple writing frames related to themes (I feel..., My family is...); emergent mark-making",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Writing: drawing + caption, writing frames", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-ENGLISHFAL-GR1",
+      "title": "Term 2",
+      "code": "CAPS-ENGLISHFAL-GR1-T2",
+      "description": "Grade 1 English FAL Term 2 (51 days). Themes: Friends, Growing things, Animals, Sports and Games, The three little pigs",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Grade 1 EFAL ATP Term 2", "assessmentStandards": ["L&S rubric 10pts", "Phonics 5pts", "Reading 15pts"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR1-T2",
+      "title": "Listening and Speaking",
+      "code": "CAPS-ENGLISHFAL-GR1-T2-LS",
+      "description": "Mon/Wed/Fri: greeting + song/rhyme + open-ended question + vocabulary. Songs with actions: If you want to be a friend, I plant it, Here is a seed, Elephants have, Fasten your laces, Little pigs. Vocabulary: friend/friends/talk/play/alone; seed/grow/wheat/plant/soil; stripes/spots/leopard/zebra; ball/kick/catch/field; house/grass/sticks/bricks/wolf",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Listening and Speaking: friends, growing, animals, sport themes", "assessmentStandards": ["L&S rubric 10pts"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR1-T2",
+      "title": "Phonics",
+      "code": "CAPS-ENGLISHFAL-GR1-T2-PHON",
+      "description": "Mon/Wed/Fri: revision of i/p sounds; introduce n, m, h, o, b, c, k, e; CVC building (c-a-t, s-i-t); sound families (hot/hop/hob); segmenting and blending; rhyming words; reading phonic words in sentences",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Phonics: n m h o b c k e, CVC, sound families", "assessmentStandards": ["Phonics 5pts"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR1-T2",
+      "title": "Reading — Shared Reading",
+      "code": "CAPS-ENGLISHFAL-GR1-T2-READ",
+      "description": "Shared Reading only. Daily cycle: Mon Pre-read → Tue First read → Wed Story illustration → Thu Second read → Fri Post-read (recount part of story liked most; retell; act out). Sight words introduced weekly",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Reading: Shared Reading daily cycle, retelling", "assessmentStandards": ["Reading 15pts"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR1-T2",
+      "title": "Writing",
+      "code": "CAPS-ENGLISHFAL-GR1-T2-WRITE",
+      "description": "Tue/Thu: drawing + caption; writing frames (My friend is..., We like to..., I want to grow..., My garden is full of..., My favourite animal is..., I want to play..., I want to build..., The three little...and the big bad...)",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Writing: drawing + caption, themed writing frames", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-ENGLISHFAL-GR1",
+      "title": "Term 3",
+      "code": "CAPS-ENGLISHFAL-GR1-T3",
+      "description": "Grade 1 English FAL Term 3 (52 days). Themes: All around town, Working together, Clothes, Reading is fun, Keeping our bodies healthy and safe",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Grade 1 EFAL ATP Term 3", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR1-T3",
+      "title": "Listening and Speaking",
+      "code": "CAPS-ENGLISHFAL-GR1-T3-LS",
+      "description": "Mon/Wed/Fri: greeting + song/rhyme + open-ended question + vocabulary. Songs: We'll be going into town, Turn left/turn right, If we try work together, Children with a white shirt, I am special, Stories are such fun, Ride ride your bike, I may be young. Vocabulary: taxi/passenger/town/street/bus; work/help/class/classmate; clothing/blue/red/wear/boots; book/fun/read/cover/title/author; body/helmet/bike/bone/hurt; uncomfortable/secret/tell/trust/brave",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Listening and Speaking: community, clothes, books, safety themes", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR1-T3",
+      "title": "Phonics",
+      "code": "CAPS-ENGLISHFAL-GR1-T3-PHON",
+      "description": "Mon/Wed/Fri: revision of ck, g, d, u, r, f, l; plurals -s (books/dogs/socks/cats); plurals -es (boxes/dishes/dresses/brushes/watches/glasses); sound differentiation revision; curriculum coverage: adjectives, prepositions, adverbs",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Phonics: ck g d u r f l, plurals -s and -es", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR1-T3",
+      "title": "Reading — Shared Reading",
+      "code": "CAPS-ENGLISHFAL-GR1-T3-READ",
+      "description": "Shared Reading only. Daily cycle: Mon Pre-read → Tue First read (visualise) → Wed Story illustration → Thu Second read (make inferences) → Fri Post-read (recount one thing/retell/act out). Increasing comprehension skills",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Reading: Shared Reading, visualise, inferences", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR1-T3",
+      "title": "Writing",
+      "code": "CAPS-ENGLISHFAL-GR1-T3-WRITE",
+      "description": "Thu/Fri: writing frames (I like to go..., I go to town, I work well with..., I love to wear..., I want to read a story about..., My body is healthy when..., I trust...); curriculum: simple adjectives (big/small/little), prepositions (in/on), adverbs (quickly/slowly)",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Writing: writing frames, adjectives, prepositions, adverbs", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-ENGLISHFAL-GR1",
+      "title": "Term 4",
+      "code": "CAPS-ENGLISHFAL-GR1-T4",
+      "description": "Grade 1 English FAL Term 4 (47 days). Themes: Solving problems, We grow and change, Our living history, Science is fun, Consolidation and Revision",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Grade 1 EFAL ATP Term 4", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR1-T4",
+      "title": "Listening and Speaking",
+      "code": "CAPS-ENGLISHFAL-GR1-T4-LS",
+      "description": "Mon/Wed/Fri: greeting + song/rhyme + open-ended question + vocabulary. Songs: Every problem has a solution, We all grow and change, What do you know about history, I love science, (rainbow colours). Vocabulary: problem/solve/creative/idea/paint/artist; change/taller/smarter/kinder; history/past/present/future/memory; science/experiment/vaccine/scientist; rainbow/colours/rain/sunlight",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Listening and Speaking: problems, growth, history, science themes", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR1-T4",
+      "title": "Phonics",
+      "code": "CAPS-ENGLISHFAL-GR1-T4-PHON",
+      "description": "Mon/Wed/Fri: revision of j, v; -x words (fox/box/fix/six/wax/fax); -w words (wag/wig/wet/wit/wall/will/well); -y words (yes/yet/yum/yip); words ending -y (my/cry/why/dry/fry/fly/sky); plurals -s/-es formal assessment; revision of all phonics taught in Grade 1",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Phonics: j v x w y, -y words, plurals revision, formal assessment", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR1-T4",
+      "title": "Reading — Shared Reading",
+      "code": "CAPS-ENGLISHFAL-GR1-T4-READ",
+      "description": "Shared Reading only. Daily cycle: Mon Pre-read (predict) → Tue First read (inferences, connections, frame of reference, visualise) → Wed Story illustration → Thu Second read (inferences, connections, evaluations) → Fri Post-read (recount/act out). Formal Assessment Week 7: answer questions about story",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Reading: Shared Reading, inferences, evaluations, formal assessment", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR1-T4",
+      "title": "Writing",
+      "code": "CAPS-ENGLISHFAL-GR1-T4-WRITE",
+      "description": "Writing frames (I could not find.../So I..., I needed help when..., I feel happy when..., I used to wear.../Now it..., A tradition in my family is..., I want to invent..., I feel safe when..., I am responsible when I...); Holiday writing task",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Writing: themed writing frames, responsibility, traditions", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    }
+  ]
+}

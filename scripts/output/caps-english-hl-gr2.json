@@ -1,0 +1,197 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Foundation Phase",
+      "code": "CAPS-FP",
+      "description": "Foundation Phase (Grades R-3)",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FP",
+      "title": "Grade 2",
+      "code": "CAPS-GR2",
+      "description": "Grade 2",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR2",
+      "title": "English Home Language",
+      "code": "CAPS-ENGLISHHL-GR2",
+      "description": "English Home Language for Grade 2 — Foundation Phase CAPS. Skills: Listening and Speaking, Phonics, Reading (Shared/Group Guided/Independent), Writing, Handwriting. Note: Term 3 ATP not available; Terms 1, 2 and 4 are included.",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-ENGLISHHL-GR2",
+      "title": "Term 1",
+      "code": "CAPS-ENGLISHHL-GR2-T1",
+      "description": "Grade 2 English HL Term 1 (45 days; 3-day baseline period in Weeks 1-2)",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Grade 2 English HL ATP Term 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR2-T1",
+      "title": "Listening and Speaking",
+      "code": "CAPS-ENGLISHHL-GR2-T1-LS",
+      "description": "Classifies information; answers questions about stories; personal experiences; makes suggestions to problems; participates in discussions; increasing vocabulary",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Listening and Speaking", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR2-T1",
+      "title": "Phonics",
+      "code": "CAPS-ENGLISHHL-GR2-T1-PHON",
+      "description": "Sound families (short vowels -at, -ag, -am, -it); revise word families; consonant digraphs (sh, ch, th); vowel digraphs; builds 3-4 letter words; learns to spell 10 words per week",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Phonics: sound families, digraphs, spelling", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR2-T1",
+      "title": "Reading — Shared, Group Guided and Independent",
+      "code": "CAPS-ENGLISHHL-GR2-T1-READ",
+      "description": "Shared Reading: cover/pictures to predict; cause and effect; personal response; concepts of print; phonics; comprehension at range of levels; Group Guided: sight vocabulary, phonics, structural analysis, self-monitoring; Independent: reads to partner for fluency",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Reading: Shared, Group Guided, Independent Reading", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR2-T1",
+      "title": "Writing",
+      "code": "CAPS-ENGLISHHL-GR2-T1-WRITE",
+      "description": "Draws pictures; contributes ideas and words for class story; at least 3 sentences own news; uses capital letters; uses comma with lists; shared writing",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Writing: class story, own news, punctuation", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR2-T1",
+      "title": "Handwriting",
+      "code": "CAPS-ENGLISHHL-GR2-T1-HW",
+      "description": "Book and page position; lower case letters correctly formed; directionality, formation and spacing; aligns on lined paper",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Handwriting", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-ENGLISHHL-GR2",
+      "title": "Term 2",
+      "code": "CAPS-ENGLISHHL-GR2-T2",
+      "description": "Grade 2 English HL Term 2 (49 days)",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Grade 2 English HL ATP Term 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR2-T2",
+      "title": "Listening and Speaking",
+      "code": "CAPS-ENGLISHHL-GR2-T2-LS",
+      "description": "Listens to stories for longer periods; identifies similarities and differences; makes own rhymes; listens to more complex instructions; participates in discussions; retells stories",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Listening and Speaking", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR2-T2",
+      "title": "Phonics",
+      "code": "CAPS-ENGLISHHL-GR2-T2-PHON",
+      "description": "3-letter consonant blends (str-ip, str-ap); vowel digraphs ('oa' as in boat, 'ea' as in eat, 'ai' as in train); silent e/split digraph (tape, time, note); builds 3-5 letter words; learns 10 words per week",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Phonics: consonant blends, vowel digraphs, split digraph", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR2-T2",
+      "title": "Reading — Shared, Group Guided and Independent",
+      "code": "CAPS-ENGLISHHL-GR2-T2-READ",
+      "description": "Shared Reading: cause and effect; key details; higher-order questions; different text formats; Group Guided: structural analysis, self-monitoring, fluency, comprehension, punctuation; Independent: partner reading, comics and fiction books",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Reading: Shared, Group Guided, Independent Reading", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR2-T2",
+      "title": "Writing",
+      "code": "CAPS-ENGLISHHL-GR2-T2-WRITE",
+      "description": "Paragraph of at least 5 sentences; personal experiences and daily news; topic discussion; writing process; expressive texts (thank you card, letter); own story of at least one paragraph; capital letters, full stops, question marks; uses prepositions; present and past tenses",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Writing: paragraphs, expressive texts, tenses", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR2-T2",
+      "title": "Handwriting",
+      "code": "CAPS-ENGLISHHL-GR2-T2-HW",
+      "description": "Print script in all capitals and lower case; correct spacing; aligns on 17mm ruled lines; copies and writes different formats (birthday invitations, messages, lists)",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Handwriting: print script, different formats", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-ENGLISHHL-GR2",
+      "title": "Term 4",
+      "code": "CAPS-ENGLISHHL-GR2-T4",
+      "description": "Grade 2 English HL Term 4 (49 days). Note: Term 3 ATP was not available.",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Grade 2 English HL ATP Term 4", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR2-T4",
+      "title": "Listening and Speaking",
+      "code": "CAPS-ENGLISHHL-GR2-T4-LS",
+      "description": "Personal experiences and general news; descriptive language; uses language terms (noun, adjective, verb, pronoun, comma, question mark, paragraph); jokes and riddles; follows complex sequence of instructions",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Listening and Speaking", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR2-T4",
+      "title": "Phonics",
+      "code": "CAPS-ENGLISHHL-GR2-T4-PHON",
+      "description": "New vowel digraphs, diphthongs and blends; vowel digraphs (ar, oa, oe, ow); suffixes (-ly, -ies); revises plurals (s and es); reads from phonics lessons; builds words using phonics sounds taught",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Phonics: vowel digraphs, diphthongs, suffixes", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR2-T4",
+      "title": "Reading — Shared, Group Guided and Independent",
+      "code": "CAPS-ENGLISHHL-GR2-T4-READ",
+      "description": "Shared Reading: fiction and non-fiction; sequence of events; identifying problem; apostrophes in contractions; Group Guided: fluency, phonics/structural analysis, self-correcting, increasing speed; Independent: reading games, crosswords, variety of texts",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Reading: Shared, Group Guided, Independent Reading", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR2-T4",
+      "title": "Writing",
+      "code": "CAPS-ENGLISHHL-GR2-T4-WRITE",
+      "description": "1-2 paragraphs on personal experiences; organises info in chart/table; drafts and publishes own story; sequences text; spells common words; uses punctuation; present/past/future tenses; recipe framework; builds word bank",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Writing: paragraphs, drafting, tenses, recipe", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHHL-GR2-T4",
+      "title": "Handwriting",
+      "code": "CAPS-ENGLISHHL-GR2-T4-HW",
+      "description": "Begin transition from print script to joined script/cursive; consistent letter formation; increasing writing speed while maintaining neatness",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Handwriting: transition to joined script/cursive", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    }
+  ]
+}

@@ -1,0 +1,297 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Foundation Phase",
+      "code": "CAPS-FP",
+      "description": "Foundation Phase (Grades R-3)",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FP",
+      "title": "Grade 1",
+      "code": "CAPS-GR1",
+      "description": "Grade 1",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR1",
+      "title": "Life Skills",
+      "code": "CAPS-LIFESKILLS-GR1",
+      "description": "Life Skills for Grade 1 — Foundation Phase CAPS. Study areas: Beginning Knowledge (BK), Personal and Social Well-being (PSW), Creative Arts, Physical Education (PE)",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFESKILLS-GR1",
+      "title": "Term 1",
+      "code": "CAPS-LIFESKILLS-GR1-T1",
+      "description": "Grade 1 Life Skills Term 1",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Grade 1 Life Skills ATP Term 1", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR1-T1",
+      "title": "PSW & BK: Orientation and Perceptual Development",
+      "code": "CAPS-LIFESKILLS-GR1-T1-PSW-ORIENT",
+      "description": "Orientation to school environment; classroom routines; school rules; perceptual development activities",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "Personal and Social Well-being / Beginning Knowledge: Orientation", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR1-T1",
+      "title": "PSW & BK: Me",
+      "code": "CAPS-LIFESKILLS-GR1-T1-PSW-ME",
+      "description": "Learner's identity: name, age, gender, home language; family members; personal information; uniqueness; parts of the body",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "Personal and Social Well-being / Beginning Knowledge: Me", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR1-T1",
+      "title": "PSW & BK: At School",
+      "code": "CAPS-LIFESKILLS-GR1-T1-PSW-SCHOOL",
+      "description": "People and places at school; classroom objects and their uses; school rules and responsibilities; getting along with others",
+      "metadata": { "weekNumbers": [5,6], "capsReference": "Personal and Social Well-being / Beginning Knowledge: At School", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR1-T1",
+      "title": "PSW & BK: Healthy Habits",
+      "code": "CAPS-LIFESKILLS-GR1-T1-PSW-HEALTH",
+      "description": "Personal hygiene: washing hands, brushing teeth; eating habits; importance of exercise and rest; healthy food choices",
+      "metadata": { "weekNumbers": [7,8], "capsReference": "Personal and Social Well-being / Beginning Knowledge: Healthy Habits", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR1-T1",
+      "title": "PSW & BK: Weather",
+      "code": "CAPS-LIFESKILLS-GR1-T1-PSW-WEATHER",
+      "description": "Seasons and weather: observe and describe daily weather; appropriate clothing for different weather conditions; weather effects on daily life",
+      "metadata": { "weekNumbers": [9,10], "capsReference": "Personal and Social Well-being / Beginning Knowledge: Weather", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR1-T1",
+      "title": "Creative Arts — Visual Arts",
+      "code": "CAPS-LIFESKILLS-GR1-T1-CA-VISUAL",
+      "description": "Explore and experiment with a variety of media and materials; drawing, painting, collage; respond to artwork",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Creative Arts: Visual Arts", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR1-T1",
+      "title": "Creative Arts — Performing Arts",
+      "code": "CAPS-LIFESKILLS-GR1-T1-CA-PERFORM",
+      "description": "Drama: role play, mime, movement; Music: songs, rhymes, rhythmic activities; Dance: movement to music, basic actions",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Creative Arts: Performing Arts", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 7
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR1-T1",
+      "title": "Physical Education",
+      "code": "CAPS-LIFESKILLS-GR1-T1-PE",
+      "description": "Body management and movement skills; balancing, jumping, skipping; ball skills; simple games; locomotor and non-locomotor skills",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Physical Education", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 8
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFESKILLS-GR1",
+      "title": "Term 2",
+      "code": "CAPS-LIFESKILLS-GR1-T2",
+      "description": "Grade 1 Life Skills Term 2",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Grade 1 Life Skills ATP Term 2", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR1-T2",
+      "title": "PSW & BK: Family",
+      "code": "CAPS-LIFESKILLS-GR1-T2-PSW-FAMILY",
+      "description": "My family: members and roles; different types of families; family relationships; responsibilities within the family; family history",
+      "metadata": { "weekNumbers": [1,2], "capsReference": "Personal and Social Well-being / Beginning Knowledge: Family", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR1-T2",
+      "title": "PSW & BK: Safety in the Home",
+      "code": "CAPS-LIFESKILLS-GR1-T2-PSW-SAFETY",
+      "description": "Identifying safe and unsafe situations at home; safe use of household items; fire safety; what to do in an emergency; road safety basics",
+      "metadata": { "weekNumbers": [3,4], "capsReference": "Personal and Social Well-being / Beginning Knowledge: Safety in the Home", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR1-T2",
+      "title": "PSW & BK: My Body and My Senses",
+      "code": "CAPS-LIFESKILLS-GR1-T2-PSW-BODY",
+      "description": "The five senses and their body parts; what each sense does; how we use our senses to learn about the world",
+      "metadata": { "weekNumbers": [5,6,7], "capsReference": "Personal and Social Well-being / Beginning Knowledge: My Body and My Senses", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR1-T2",
+      "title": "PSW & BK: Keeping My Body Safe",
+      "code": "CAPS-LIFESKILLS-GR1-T2-PSW-SAFE",
+      "description": "Private body parts; appropriate and inappropriate touch; saying no to unwanted touching; trusted adults; personal safety rules",
+      "metadata": { "weekNumbers": [8,9,10], "capsReference": "Personal and Social Well-being / Beginning Knowledge: Keeping My Body Safe", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR1-T2",
+      "title": "Creative Arts — Visual Arts",
+      "code": "CAPS-LIFESKILLS-GR1-T2-CA-VISUAL",
+      "description": "Drawing and painting with different media; collage related to themes; printmaking; construction with recycled materials",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Creative Arts: Visual Arts", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR1-T2",
+      "title": "Creative Arts — Performing Arts",
+      "code": "CAPS-LIFESKILLS-GR1-T2-CA-PERFORM",
+      "description": "Mime and dramatic play; songs and rhymes related to themes; rhythmic and expressive movement",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Creative Arts: Performing Arts", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 6
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR1-T2",
+      "title": "Physical Education",
+      "code": "CAPS-LIFESKILLS-GR1-T2-PE",
+      "description": "Locomotor skills: running, hopping, galloping; body coordination; manipulative skills with balls; simple team games; movement to music",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Physical Education", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 7
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFESKILLS-GR1",
+      "title": "Term 3",
+      "code": "CAPS-LIFESKILLS-GR1-T3",
+      "description": "Grade 1 Life Skills Term 3 (content based on CAPS curriculum scope)",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Grade 1 Life Skills CAPS Term 3", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR1-T3",
+      "title": "PSW & BK: Food and Nutrition",
+      "code": "CAPS-LIFESKILLS-GR1-T3-PSW-FOOD",
+      "description": "Healthy food choices; food groups; where food comes from; importance of eating a balanced diet; hunger and food insecurity",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "Personal and Social Well-being / Beginning Knowledge: Food and Nutrition", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR1-T3",
+      "title": "PSW & BK: Feelings and Emotions",
+      "code": "CAPS-LIFESKILLS-GR1-T3-PSW-FEELINGS",
+      "description": "Identifying and naming feelings; expressing emotions appropriately; managing feelings; empathy; dealing with conflict",
+      "metadata": { "weekNumbers": [5,6,7], "capsReference": "Personal and Social Well-being: Feelings and Emotions", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR1-T3",
+      "title": "PSW & BK: Plants",
+      "code": "CAPS-LIFESKILLS-GR1-T3-PSW-PLANTS",
+      "description": "Parts of plants; what plants need to grow; life cycle of a plant; plants we eat; caring for plants",
+      "metadata": { "weekNumbers": [8,9,10], "capsReference": "Beginning Knowledge: Plants", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR1-T3",
+      "title": "Creative Arts",
+      "code": "CAPS-LIFESKILLS-GR1-T3-CA",
+      "description": "Visual arts: drawing, collage, painting linked to themes; Performing Arts: drama, music, movement and dance activities",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Creative Arts", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR1-T3",
+      "title": "Physical Education",
+      "code": "CAPS-LIFESKILLS-GR1-T3-PE",
+      "description": "Rhythmic activities; body coordination and balance; manipulative skills; ball games; movement games and simple sports",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Physical Education", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-LIFESKILLS-GR1",
+      "title": "Term 4",
+      "code": "CAPS-LIFESKILLS-GR1-T4",
+      "description": "Grade 1 Life Skills Term 4 (content based on CAPS curriculum scope)",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Grade 1 Life Skills CAPS Term 4", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR1-T4",
+      "title": "PSW & BK: Animals",
+      "code": "CAPS-LIFESKILLS-GR1-T4-PSW-ANIMALS",
+      "description": "Domestic and wild animals; characteristics and habitats; what animals need to survive; animals and their young; caring for animals",
+      "metadata": { "weekNumbers": [1,2,3,4], "capsReference": "Beginning Knowledge: Animals", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR1-T4",
+      "title": "PSW & BK: My Community",
+      "code": "CAPS-LIFESKILLS-GR1-T4-PSW-COMMUNITY",
+      "description": "People in the community and their roles; community helpers; local environment; caring for the environment; responsibilities as a community member",
+      "metadata": { "weekNumbers": [5,6,7], "capsReference": "Personal and Social Well-being / Beginning Knowledge: My Community", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR1-T4",
+      "title": "PSW & BK: Rights and Responsibilities",
+      "code": "CAPS-LIFESKILLS-GR1-T4-PSW-RIGHTS",
+      "description": "Children's rights; responsibilities at home and school; being a good citizen; taking care of shared spaces; rules in society",
+      "metadata": { "weekNumbers": [8,9,10], "capsReference": "Personal and Social Well-being: Rights and Responsibilities", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR1-T4",
+      "title": "Creative Arts",
+      "code": "CAPS-LIFESKILLS-GR1-T4-CA",
+      "description": "Visual arts: drawing, painting, construction; Performing Arts: songs, drama, movement and dance; end-of-year celebration activities",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Creative Arts", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-LIFESKILLS-GR1-T4",
+      "title": "Physical Education",
+      "code": "CAPS-LIFESKILLS-GR1-T4-PE",
+      "description": "Consolidation of locomotor, non-locomotor and manipulative skills; simple team sports; athletic activities; movement and rhythm games",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Physical Education", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    }
+  ]
+}

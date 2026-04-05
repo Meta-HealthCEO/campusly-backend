@@ -1,0 +1,252 @@
+{
+  "frameworkId": "69d010ed84807770f038c23d",
+  "nodes": [
+    {
+      "type": "phase",
+      "parentCode": null,
+      "title": "Foundation Phase",
+      "code": "CAPS-FP",
+      "description": "Foundation Phase (Grades R-3)",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "grade",
+      "parentCode": "CAPS-FP",
+      "title": "Grade 2",
+      "code": "CAPS-GR2",
+      "description": "Grade 2",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "subject",
+      "parentCode": "CAPS-GR2",
+      "title": "English First Additional Language",
+      "code": "CAPS-ENGLISHFAL-GR2",
+      "description": "English First Additional Language for Grade 2 — Foundation Phase CAPS. Skills: Listening and Speaking (Mon/Wed/Fri), Phonics (Mon/Wed/Fri), Shared Reading (Tue/Thu) and Group Guided Reading (Mon-Fri daily), Writing (Tue/Thu)",
+      "metadata": { "weekNumbers": [], "capsReference": "", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-ENGLISHFAL-GR2",
+      "title": "Term 1",
+      "code": "CAPS-ENGLISHFAL-GR2-T1",
+      "description": "Grade 2 English FAL Term 1 (45 days). Themes: Consolidation/baseline assessment (Weeks 1-6), Celebrating birthdays (Weeks 7-8), Getting around — different kinds of transportation (Weeks 9-10)",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Grade 2 EFAL ATP Term 1", "assessmentStandards": ["L&S rubric 7pts", "Phonics 7pts", "Reading 7pts"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR2-T1",
+      "title": "Listening and Speaking",
+      "code": "CAPS-ENGLISHFAL-GR2-T1-LS",
+      "description": "Mon/Wed/Fri: greeting routine (Hello/Good morning/How are you?/Nice to meet you/How old are you?/What day is it?); songs and rhymes; open-ended question; vocabulary 4 words/day from Week 3. Vocabulary: names/same/different; birthday/celebrate/cake/balloon/candle/present/surprise/party; wish/gift/invite/yummy; drive/car/bus/taxi/fly/airplane/motorcycle/boat/bike",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Listening and Speaking: greeting dialogues, birthday, transport vocabulary", "assessmentStandards": ["L&S rubric 7pts"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR2-T1",
+      "title": "Phonics",
+      "code": "CAPS-ENGLISHFAL-GR2-T1-PHON",
+      "description": "Mon/Wed/Fri: baseline assessment on Grade 1 sounds; identify all single letter sounds; distinguish between different sounds aurally; -at words (cat/mat/fat/sat/pat); -an words (pan/fan/can/man/ran/van); -e words (ten/pen/hen/pet/get/red); -i words (sit/fit/lid/tin/pin); -o words (lot/rot/top/cot/hot); -u words (fun/run/nut/bun); segmenting and blending throughout",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Phonics: baseline, CVC families -at -an -e -i -o -u, segmenting/blending", "assessmentStandards": ["Phonics 7pts"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR2-T1",
+      "title": "Reading — Shared Reading",
+      "code": "CAPS-ENGLISHFAL-GR2-T1-SR",
+      "description": "Shared Reading on Tuesdays and Thursdays. Cycle: Tue Pre-read (predict) → Thu First Read → following Tue Second Read → following Thu Post-read (recount/act out). Develops comprehension, print concepts and story understanding",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Reading: Shared Reading Tue/Thu, predict, recount", "assessmentStandards": ["Reading 7pts"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR2-T1",
+      "title": "Reading — Group Guided Reading",
+      "code": "CAPS-ENGLISHFAL-GR2-T1-GGR",
+      "description": "Group Guided Reading Mon-Fri daily. Baseline assessment to determine 5 reading groups (Group 1: no letter-sound recognition; Group 2: few common words; Group 3: some words, needs help decoding; Group 4: many common words, occasional help; Group 5: fluent, independent reader). Teacher listens to one group per day",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Reading: Group Guided Reading — 5 groups, daily sessions", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR2-T1",
+      "title": "Writing",
+      "code": "CAPS-ENGLISHFAL-GR2-T1-WRITE",
+      "description": "Tue/Thu: baseline assessment on language structures and creative writing; drawing + caption; writing frames (I am a.../I want to drive.../I feel...); teacher models writing on board first",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Writing: baseline, drawing + caption, simple writing frames", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-ENGLISHFAL-GR2",
+      "title": "Term 2",
+      "code": "CAPS-ENGLISHFAL-GR2-T2",
+      "description": "Grade 2 English FAL Term 2 (51 days). Themes: Helping friends (Weeks 1-2), Setting goals (Weeks 3-4), We have feelings (Weeks 5-6), Making mistakes (Weeks 7-8), Being safe and responsible (Weeks 9-10)",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Grade 2 EFAL ATP Term 2", "assessmentStandards": ["L&S 5pts", "Phonics 5pts", "Reading 5pts", "Writing 5pts"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR2-T2",
+      "title": "Listening and Speaking",
+      "code": "CAPS-ENGLISHFAL-GR2-T2-LS",
+      "description": "Mon/Wed/Fri: greeting + song/rhyme + open-ended question + vocabulary. Songs: The more we get together, If you want to be a friend, Always try your best, Have a dream set a goal, I have feelings so do you, I make mistakes all the time, I've got a special secret. Vocabulary: friendship/kind/helpful/swing/slide/pretend; goal/achieve/improve/practise/proud; feelings/grumpy/anxious/disappointed; mistake/apologise/careful; responsible/safe/unsafe/frightened",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Listening and Speaking: friendship, goals, feelings, mistakes, safety", "assessmentStandards": ["L&S 5pts"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR2-T2",
+      "title": "Phonics",
+      "code": "CAPS-ENGLISHFAL-GR2-T2-PHON",
+      "description": "Mon/Wed/Fri: revision of -y word endings (shy/try/fly/sky/sly/why/dry/by/my); -s endings (ties/pie-pies/die-dies/lie-lies); -ed endings (asked/baked); -ing endings (walking/baking/cooking/singing/writing/barking); long/short vowel sound distinction; words ending -ed and -ing revision",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Phonics: -y endings, -s plurals, -ed endings, -ing endings", "assessmentStandards": ["Phonics 5pts"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR2-T2",
+      "title": "Reading — Shared Reading",
+      "code": "CAPS-ENGLISHFAL-GR2-T2-SR",
+      "description": "Shared Reading on Tuesdays and Thursdays. Same cycle as Term 1: Pre-read → First Read → Second Read → Post-read (recount/act out). Increasing comprehension depth and vocabulary in context",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Reading: Shared Reading Tue/Thu", "assessmentStandards": ["Reading 5pts"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR2-T2",
+      "title": "Reading — Group Guided Reading",
+      "code": "CAPS-ENGLISHFAL-GR2-T2-GGR",
+      "description": "Group Guided Reading Mon-Fri daily. Revise groups if needed. Teacher listens to one group per day. Reads aloud with teacher using phonics, context clues and sight words. Builds fluency and word attacking skills",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Reading: Group Guided Reading — 5 groups, daily sessions", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR2-T2",
+      "title": "Writing",
+      "code": "CAPS-ENGLISHFAL-GR2-T2-WRITE",
+      "description": "Tue/Thu: writing frames progressing to short paragraphs. Frames: My friend is.../He/she is.../We like to...; I helped my friend.../I felt...; My goal is.../I will achieve by...; I feel happy when.../I feel grumpy when...; Once I.../Then.../Next time I will...; I feel safe when.../I am responsible when I...",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Writing: themed frames, friendship, goals, feelings, safety", "assessmentStandards": ["Writing 5pts"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-ENGLISHFAL-GR2",
+      "title": "Term 3",
+      "code": "CAPS-ENGLISHFAL-GR2-T3",
+      "description": "Grade 2 English FAL Term 3 (52 days). Themes: Traditions (Weeks 1-2), Community (Weeks 3-4), Creative thinking (Weeks 5-6), Healthy eating (Weeks 7-8), Worried and afraid (Weeks 9-10)",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Grade 2 EFAL ATP Term 3", "assessmentStandards": ["L&S retell story 5pts", "Phonics spelling 15pts", "Reading oral 5pts", "Writing birthday/get-well card 5pts"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR2-T3",
+      "title": "Listening and Speaking",
+      "code": "CAPS-ENGLISHFAL-GR2-T3-LS",
+      "description": "Mon/Wed/Fri: greeting + song/rhyme + open-ended question + vocabulary. Songs: Stone Soup (lyrics with actions — shimmy/make circles/rub hands/bubbling in pot/getting nice and hot). Vocabulary: slaughter/animal/celebration/tradition/song/dance/culture/clay; church/mosque/religion/pray/scratch/holidays/celebrate/jewellery; town/city/village/community/school/church/shop/helpful/teacher/farmer/herder; soup/ingredient/stir/trick/villagers/plan/thin/sneaky/clever; creative/idea/old/newspaper/handbag/packet/toy/make/search; recycle/trash/bin/string/problem/solution/wear/necklace/music; healthy/unhealthy/snack/treat/protein/meat/eggs/peanuts/focus; kitchen/cabinet/delicious/disgusting/culture/embarrassed/point/yard; afraid/scared/spider/snake/worry/nervous/trust/pay/fees; cry/shake/scream/shoulder/people/sports/comfort/money/buy",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Listening and Speaking: traditions, community, creativity, health, worry themes", "assessmentStandards": ["L&S retell story 5pts"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR2-T3",
+      "title": "Phonics",
+      "code": "CAPS-ENGLISHFAL-GR2-T3-PHON",
+      "description": "Mon/Wed/Fri: revision of sounds from Term 1; sp (spill/spell/spank/spunk/spit/spin/spot); sh- (ship/shop/shut/shed/shell/shack/shock/shall); -sh (wish/fish/cash/bush/push/wash/crash/trash); th (then/theft/they/think/thank/that/the); word families; -ch (chin/chop/check/chain/much/each); th (bath/cloth/with/mouth/maths/tooth/fifth/depth); sl/-ing/ (slash/slashing/slip/slipping/sling/slinging); -oo- (pool/fool/tool/drool/spoon/soon/moon/loon); ch- and -ed (rich/such/much/chatted/chipped/chopped/chilled/checked); Formal Assessment by Week 9",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Phonics: sp sh- -sh th -ch sl -oo- blends, formal assessment", "assessmentStandards": ["Phonics spelling 15pts"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR2-T3",
+      "title": "Reading — Shared Reading",
+      "code": "CAPS-ENGLISHFAL-GR2-T3-SR",
+      "description": "Shared Reading on Tuesdays and Thursdays. Cycle: Tue1 Pre-read → Thu1 First Read → Tue2 Second Read → Thu2 Post-reading activity. Learners make predictions, visualise, make inferences (good guesses), make connections",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Reading: Shared Reading Tue/Thu, predict, visualise, infer", "assessmentStandards": ["Reading oral 5pts"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR2-T3",
+      "title": "Reading — Group Guided Reading",
+      "code": "CAPS-ENGLISHFAL-GR2-T3-GGR",
+      "description": "Group Guided Reading Mon-Fri daily: listen to one group per day. Revise groups if needed. 5 ability groups. Learners read aloud from own book with teacher; uses reading strategies (phonics, context clues, structural analysis, sight words); reads with increasing fluency and expression; shows understanding of punctuation; builds sight vocabulary",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Reading: Group Guided Reading — 5 groups, phonics/sight words/fluency", "assessmentStandards": [], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR2-T3",
+      "title": "Writing",
+      "code": "CAPS-ENGLISHFAL-GR2-T3-WRITE",
+      "description": "Writing twice per week. Frames: I want to learn how to...just like my.../He/she is.../I am...; In my family we.../We do this because.../I like when.../I also like...; about a place in community they admire; I want to be like... I like.../I think he/she is...; Day 2: When I go there I.../I also...; Write message on card to thank community person; about persons in community they admire; a toy they would love to make; a future invention; fruits and vegetables I like to eat; My favourite healthy food; Dear.../I felt afraid of.../When I felt afraid.../Thank you for.../Love; I am worried about.../I am also worried about.../I don't need to worry because.../I will tell...",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Writing: community, creativity, healthy eating, worry themes; nouns/pronouns; spelling from dictation", "assessmentStandards": ["Writing birthday/get-well card 5pts"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    },
+
+    {
+      "type": "term",
+      "parentCode": "CAPS-ENGLISHFAL-GR2",
+      "title": "Term 4",
+      "code": "CAPS-ENGLISHFAL-GR2-T4",
+      "description": "Grade 2 English FAL Term 4 (47 days). Themes: Solving problems (Weeks 1-2), Historical figures (Weeks 3-4), Bullying and appearance (Weeks 5-6), Using technology for good (Weeks 7-8), Consolidation and Revision (Weeks 9-10)",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Grade 2 EFAL ATP Term 4", "assessmentStandards": ["L&S rubric 5pts", "Phonics written 10pts", "Reading written comprehension 5pts", "Reading oral GGR checklist", "Writing 5pts"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR2-T4",
+      "title": "Listening and Speaking",
+      "code": "CAPS-ENGLISHFAL-GR2-T4-LS",
+      "description": "Done on Mondays, Wednesdays and Fridays: greeting + song/rhyme + open-ended question + vocabulary. Songs with actions: problem-solving songs, marching songs for historical figures, anti-bullying song (SAY NO TO BULLIES), technology songs. Vocabulary: problem/solve/fix/important/confident/ruin/classroom/rip/gone; happy/happier/happiest/smile/listen/listener/front/back/sorry/respect; history/past/statue/famous/culture/celebrate/clothing/protect/fight; leader/meeting/fierce/powerful/trade/money/market/ancestor/strength; mirror/reflection/appearance/look/beautiful/pretty/ugly/call/dirty/clean/hole; speak/proud/tease/stop/small/skinny/big/size/fit/thin/fat/body; social media/post/video/photograph/Earth/plastic/internet/save/speech/convince/expert/climate; heat up/destroy/article/destroying/article/flyer/protest/rally/Facebook/Instagram/Twitter",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Listening and Speaking: problems, history, bullying, technology themes", "assessmentStandards": ["L&S rubric 5pts — simple recount of 3-4 sentences"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 1
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR2-T4",
+      "title": "Phonics",
+      "code": "CAPS-ENGLISHFAL-GR2-T4-PHON",
+      "description": "Mon/Wed/Fri: fl- (fly/flash/flip/flap/flat); sl- (sly/slot/sling/slow/slab); cl- (cling/clap/cloth/clue/class); pl (plan/play/plum); br- (bring/brim/brown/break/brick); gr- (grow/grass/green/grab/gran/grid); -oo- (book/room/boot/foot/tooth/cook/cool); -ee (tree/bee/see/cheese/teeth/feet/greet/meet); Revision; Distinguish aurally between sounds that are often confused (e.g. ship/sheep); Formal Assessment Week 6; Word building with consonant and vowel digraphs",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Phonics: fl- sl- cl- pl br- gr- -oo- -ee, formal assessment", "assessmentStandards": ["Phonics written 10pts — word with short vowels, group word families"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 2
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR2-T4",
+      "title": "Reading — Shared Reading",
+      "code": "CAPS-ENGLISHFAL-GR2-T4-SR",
+      "description": "Shared Reading on Tuesdays and Thursdays. Cycle: Tue Pre-read → Thu First Read (search the text, recall details) → Tue Second Read (make evaluations) → Thu Post-read (oral recount). Learners listen to stories; answer literal questions; name objects in pictures; act out story using dialogue. Formal Assessment: oral reading passage 50-60 words (DBE Workbook or Reader) with multiple choice and cloze procedure questions",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Reading: Shared Reading Tue/Thu, evaluations, recall, formal assessment", "assessmentStandards": ["Reading written comprehension 5pts — 50-60 words, multiple choice/cloze"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 3
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR2-T4",
+      "title": "Reading — Group Guided Reading",
+      "code": "CAPS-ENGLISHFAL-GR2-T4-GGR",
+      "description": "Group Guided Reading Mon-Fri daily (Week 1: establish whether learners are in correct reading group; Weeks 2-10: listen to one group per day). 5 ability groups. Formal Assessment: oral reading from own book (60-70 words) with 3 questions — by Week 9. Reads aloud using phonics, context clues, structural analysis, sight words; reads with fluency and expression; shows understanding of punctuation",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Reading: Group Guided Reading — 5 groups, formal oral assessment 60-70 words", "assessmentStandards": ["Reading oral GGR checklist — 60-70 words, 3 questions"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 4
+    },
+    {
+      "type": "topic",
+      "parentCode": "CAPS-ENGLISHFAL-GR2-T4",
+      "title": "Writing",
+      "code": "CAPS-ENGLISHFAL-GR2-T4-WRITE",
+      "description": "Tuesdays and Thursdays. Frames: One time I felt angry because.../I solved the problem by.../I didn't work because...; In the story.../Zweli feels...; Things I know about history: 1./2.; I liked when.../I think Queen Amina is a role model because...; The bully said,'...'/He/She feels...; Practical using word cards: jumbled sentences; Practical using word cards in correct order; Organise information in simple graphic form (e.g. how many learners have a cell phone); Shared Writing: What are we going to do this holiday? Language structures: nouns/pronouns; simple present, present progressive and past tenses; plurals",
+      "metadata": { "weekNumbers": [1,2,3,4,5,6,7,8,9,10], "capsReference": "Writing: themed frames, jumbled sentences, graphic organiser, tenses", "assessmentStandards": ["Writing 5pts — 3 sentences on familiar topic, capital letters, full stops"], "notionalHours": 0, "cognitiveWeighting": null },
+      "order": 5
+    }
+  ]
+}
