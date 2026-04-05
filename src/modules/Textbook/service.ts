@@ -83,7 +83,7 @@ export class TextbookService {
 
     const [textbooks, total] = await Promise.all([
       Textbook.find(query)
-        .select('-chapters')
+        .select('-chapters.resources')
         .populate([
           { path: 'subjectId', select: 'name' },
           { path: 'gradeId', select: 'name level' },
