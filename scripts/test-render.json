@@ -1,0 +1,3 @@
+{
+  "tikz": "\\begin{tikzpicture}\\begin{axis}[axis lines=middle, xlabel={$x$}, ylabel={$y$}, xmin=-2, xmax=8, ymin=-8, ymax=6, grid=major, grid style={gray!30}, width=12cm, height=9cm, samples=200]\\addplot[domain=-1:7, thick, blue] {-(x-3)^2 + 4};\\addplot[only marks, mark=*, mark size=2.5pt, blue] coordinates {(1,0)(5,0)(3,4)(0,-5)};\\node[above right, blue] at (axis cs:3,4) {$T(3;\\,4)$};\\node[below left, blue] at (axis cs:1,0) {$(1;\\,0)$};\\node[below right, blue] at (axis cs:5,0) {$(5;\\,0)$};\\node[left, blue] at (axis cs:0,-5) {$(0;\\,-5)$};\\end{axis}\\end{tikzpicture}"
+}

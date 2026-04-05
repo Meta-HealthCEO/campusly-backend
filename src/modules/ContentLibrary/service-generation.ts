@@ -203,14 +203,20 @@ CONTENT RULES BY BLOCK TYPE
      * "targets": array of target zone strings
      * "correctMapping": object mapping item to target
 
-SOUTH AFRICAN CONTEXT
-- Use South African English spelling (colour, metre, organisation)
-- Currency examples in Rand (R) — e.g. "R150", "R2 500"
-- Use SA geography: Table Mountain, Kruger National Park, Drakensberg, Orange River, Limpopo
+SOUTH AFRICAN CONTEXT AND TERMINOLOGY (CRITICAL)
+- ALWAYS use "learners" (never "students")
+- ALWAYS use "educator" in formal references (never "teacher")
+- Use South African English spelling (colour, metre, organisation, analyse, centre)
+- Currency examples in Rand (R) — e.g. "R150", "R2 500", never dollars
+- Reference "Matric" for Grade 12, "NSC" for National Senior Certificate
+- Use "SBA" for School-Based Assessment, not "coursework"
+- Use "control test" not "quiz" for formal assessments
+- Use SA geography: Table Mountain, Kruger National Park, Drakensberg, uMgeni River, Limpopo
 - Reference SA flora/fauna: protea, springbok, African penguin, baobab tree
-- Use SA names in examples: Thabo, Naledi, Sipho, Ayanda, Fatima, Pieter
-- Reference SA context: load shedding, taxi routes, braai, Ubuntu philosophy
-- Align to CAPS curriculum standards and terminology
+- Use SA names: Thabo, Naledi, Sipho, Ayanda, Fatima, Pieter, Lerato, Kagiso, Zanele
+- Reference SA context: load shedding, taxi routes, braai, Ubuntu, Eskom, SARS (tax), Telkom
+- Use SA measurement conventions: km (not miles), °C (not °F), litres (not gallons)
+- Align to CAPS curriculum standards and assessment terminology throughout
 
 PEDAGOGICAL STRUCTURE
 For LESSONS: follow this flow:
