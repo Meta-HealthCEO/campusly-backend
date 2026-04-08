@@ -3,7 +3,7 @@ import { Textbook } from './model.js';
 import type { IChapter } from './model.js';
 import { ContentResource } from '../ContentLibrary/model.js';
 import { NotFoundError, BadRequestError } from '../../common/errors.js';
-import { paginationHelper, escapeRegex } from '../../common/utils.js';
+import { escapeRegex } from '../../common/utils.js';
 import type {
   CreateTextbookInput,
   UpdateTextbookInput,
@@ -79,25 +79,18 @@ export class TextbookService {
       query.title = { $regex: escapeRegex(filters.search), $options: 'i' };
     }
 
-    const { skip, limit } = paginationHelper(filters.page, filters.limit);
+    const textbooks = await Textbook.find(query)
+      .select('-chapters.resources')
+      .populate([
+        { path: 'subjectId', select: 'name' },
+        { path: 'gradeId', select: 'name level' },
+        { path: 'frameworkId', select: 'name' },
+        { path: 'createdBy', select: 'firstName lastName' },
+      ])
+      .sort({ createdAt: -1 })
+      .lean();
 
-    const [textbooks, total] = await Promise.all([
-      Textbook.find(query)
-        .select('-chapters.resources')
-        .populate([
-          { path: 'subjectId', select: 'name' },
-          { path: 'gradeId', select: 'name level' },
-          { path: 'frameworkId', select: 'name' },
-          { path: 'createdBy', select: 'firstName lastName' },
-        ])
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .lean(),
-      Textbook.countDocuments(query),
-    ]);
-
-    return { textbooks, total, page: filters.page ?? 1, limit };
+    return { textbooks, total: textbooks.length };
   }
 
   static async getTextbook(id: string, schoolId: string) {

@@ -71,8 +71,8 @@ export const textbookQuerySchema = z.object({
   gradeId: objectIdSchema.optional(),
   status: z.enum(['draft', 'published', 'archived']).optional(),
   search: z.string().optional(),
-  page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce.number().int().min(1).max(100).default(20),
+  page: z.coerce.number().int().min(1).optional(),
+  limit: z.coerce.number().int().min(1).optional(),
 });
 
 export type TextbookQueryInput = z.infer<typeof textbookQuerySchema>;
