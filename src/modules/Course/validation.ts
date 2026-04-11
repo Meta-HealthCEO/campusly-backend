@@ -166,3 +166,40 @@ export const assignCourseSchema = z.object({
 }).strict();
 
 export type AssignCourseInput = z.infer<typeof assignCourseSchema>;
+
+// ─── Student progress ──────────────────────────────────────────────────────
+
+export const writeProgressSchema = z.object({
+  interactionsDone: z.number().int().min(0).max(1000).optional(),
+  scrolledToEnd: z.boolean().optional(),
+}).strict();
+
+export type WriteProgressInput = z.infer<typeof writeProgressSchema>;
+
+// ─── Student quiz attempt ──────────────────────────────────────────────────
+
+export const submitQuizAttemptSchema = z.object({
+  answers: z
+    .array(
+      z.object({
+        questionId: objectIdSchema,
+        // Open type — the grader narrows per question type. The Zod schema
+        // doesn't lock the answer shape because it depends on the question.
+        answer: z.unknown(),
+      }),
+    )
+    .min(1, 'At least one answer is required')
+    .max(200),
+}).strict();
+
+export type SubmitQuizAttemptInput = z.infer<typeof submitQuizAttemptSchema>;
+
+// ─── Catalog query ─────────────────────────────────────────────────────────
+
+export const catalogQuerySchema = z.object({
+  subjectId: objectIdSchema.optional(),
+  gradeLevel: z.coerce.number().int().min(1).max(12).optional(),
+  search: z.string().optional(),
+});
+
+export type CatalogQueryInput = z.infer<typeof catalogQuerySchema>;
