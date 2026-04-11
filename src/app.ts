@@ -81,6 +81,7 @@ import questionBankRoutes from './modules/QuestionBank/routes.js';
 import textbookRoutes from './modules/Textbook/routes.js';
 import courseRoutes from './modules/Course/routes.js';
 import courseStudentRoutes from './modules/Course/routes-student.js';
+import coursePublicRoutes from './modules/Course/routes-public.js';
 
 const app = express();
 
@@ -187,6 +188,11 @@ app.use('/api/question-bank', authenticate, questionBankRoutes);
 app.use('/api/textbooks', authenticate, textbookRoutes);
 app.use('/api/courses', authenticate, requireModule('courses'), courseRoutes);
 app.use('/api/enrolments', authenticate, requireModule('courses'), courseStudentRoutes);
+// PUBLIC — no authenticate, no requireModule. Certificate verification
+// must work for anyone holding a verification code, including unregistered
+// users outside the school. A school that later disables the 'courses'
+// module should still have its previously-issued certificates verifiable.
+app.use('/api/certificates', coursePublicRoutes);
 
 // Static file serving — uploaded assets
 app.use('/uploads', (_req, res, next) => {
