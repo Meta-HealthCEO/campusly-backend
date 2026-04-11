@@ -135,7 +135,7 @@ export interface ICourseLesson extends Document {
   quizQuestionIds: Types.ObjectId[];
 
   isGraded: boolean;
-  passMarkPercent: number | null;
+  passMarkPercent: number;
   isRequiredToAdvance: boolean;
   maxAttempts: number | null;
 
@@ -160,6 +160,10 @@ const courseLessonSchema = new Schema<ICourseLesson>(
       default: null,
     },
     textbookId: { type: Schema.Types.ObjectId, ref: 'Textbook', default: null },
+    // chapterId is the _id of a subdoc inside Textbook.chapters[], not a
+    // top-level collection reference. Subdoc IDs cannot be populated via
+    // .populate() — consumers must load the parent Textbook and find the
+    // chapter manually. Do not add a ref: here.
     chapterId: { type: Schema.Types.ObjectId, default: null },
     homeworkId: { type: Schema.Types.ObjectId, ref: 'Homework', default: null },
     quizQuestionIds: {
@@ -169,7 +173,7 @@ const courseLessonSchema = new Schema<ICourseLesson>(
     },
 
     isGraded: { type: Boolean, default: false },
-    passMarkPercent: { type: Number, default: null, min: 0, max: 100 },
+    passMarkPercent: { type: Number, default: 70, min: 0, max: 100 },
     isRequiredToAdvance: { type: Boolean, default: false },
     maxAttempts: { type: Number, default: null, min: 1 },
   },
@@ -268,7 +272,10 @@ const lessonProgressSchema = new Schema<ILessonProgress>(
   { timestamps: true },
 );
 
-lessonProgressSchema.index({ enrolmentId: 1, lessonId: 1 }, { unique: true });
+lessonProgressSchema.index(
+  { enrolmentId: 1, lessonId: 1 },
+  { unique: true, partialFilterExpression: { isDeleted: false } },
+);
 
 export const LessonProgress = mongoose.model<ILessonProgress>(
   'LessonProgress',
@@ -330,8 +337,11 @@ const quizAttemptSchema = new Schema<IQuizAttempt>(
 
 quizAttemptSchema.index({ enrolmentId: 1, lessonId: 1, attemptNumber: 1 });
 
+// NOTE: Mongoose model name is 'CourseQuizAttempt' (not 'QuizAttempt') to
+// avoid collision with the Learning module's QuizAttempt model. The exported
+// TypeScript binding stays `QuizAttempt` because it's module-local.
 export const QuizAttempt = mongoose.model<IQuizAttempt>(
-  'QuizAttempt',
+  'CourseQuizAttempt',
   quizAttemptSchema,
 );
 
@@ -376,7 +386,10 @@ const certificateSchema = new Schema<ICertificate>(
 );
 
 certificateSchema.index({ verificationCode: 1 }, { unique: true });
-certificateSchema.index({ enrolmentId: 1 }, { unique: true });
+certificateSchema.index(
+  { enrolmentId: 1 },
+  { unique: true, partialFilterExpression: { isDeleted: false } },
+);
 
 export const Certificate = mongoose.model<ICertificate>(
   'Certificate',
