@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { authorize, validate } from '../../middleware/index.js';
 import { CourseController } from './controller.js';
+import { CourseStudentController } from './controller-student.js';
 import {
   createCourseSchema,
   updateCourseSchema,
@@ -13,6 +14,7 @@ import {
   reorderLessonsSchema,
   rejectCourseSchema,
   assignCourseSchema,
+  catalogQuerySchema,
 } from './validation.js';
 
 const router = Router();
@@ -42,6 +44,23 @@ router.post(
   authorize(...COURSE_ROLES),
   validate(createCourseSchema),
   CourseController.createCourse,
+);
+
+// ─── Catalog (any authenticated role with course module access) ──────────
+// MUST come before /:id to avoid the literal "catalog" being captured as
+// an :id parameter.
+
+router.get(
+  '/catalog',
+  authorize(...COURSE_ROLES, 'student'),
+  validate({ query: catalogQuerySchema }),
+  CourseStudentController.listCatalog,
+);
+
+router.get(
+  '/catalog/:slug',
+  authorize(...COURSE_ROLES, 'student'),
+  CourseStudentController.getCatalogPreview,
 );
 
 router.get(
