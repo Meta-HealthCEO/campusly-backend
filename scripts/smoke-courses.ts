@@ -2,7 +2,7 @@
  * Manual smoke test for the Courses backend (Plan A).
  *
  * Run: `API_URL=http://localhost:4500/api TEACHER_JWT=... HOD_JWT=... CLASS_ID=... \
- *       CONTENT_RESOURCE_ID=... tsx scripts/smoke-courses.ts`
+ *       CONTENT_RESOURCE_ID=... STUDENT_JWT=... tsx scripts/smoke-courses.ts`
  *
  * Requires:
  *   - Dev server running on API_URL
@@ -15,6 +15,8 @@
  *   - A class ID (CLASS_ID) with at least one student in that school
  *   - A ContentResource ID (CONTENT_RESOURCE_ID) that belongs to the
  *     school's Content Library
+ *   - A student account JWT (STUDENT_JWT) whose Student record is in the
+ *     class identified by CLASS_ID
  *
  * What it does:
  *   1. Teacher creates a draft course
@@ -24,6 +26,10 @@
  *   5. HOD publishes
  *   6. Teacher assigns to the class
  *   7. Prints the enrolment count
+ *   8. Student lists their enrolments
+ *   9. Student fetches the enrolment detail with progress
+ *  10. Student fetches first lesson content
+ *  11. Student writes scrolled-to-end progress
  *
  * This script is run manually; it is NOT in CI and not imported from any
  * production code path.
@@ -34,10 +40,11 @@ const TEACHER_JWT = process.env.TEACHER_JWT;
 const HOD_JWT = process.env.HOD_JWT;
 const CLASS_ID = process.env.CLASS_ID;
 const CONTENT_RESOURCE_ID = process.env.CONTENT_RESOURCE_ID;
+const STUDENT_JWT = process.env.STUDENT_JWT;
 
-if (!TEACHER_JWT || !HOD_JWT || !CLASS_ID || !CONTENT_RESOURCE_ID) {
+if (!TEACHER_JWT || !HOD_JWT || !CLASS_ID || !CONTENT_RESOURCE_ID || !STUDENT_JWT) {
   console.error(
-    'Missing env vars. Required: TEACHER_JWT, HOD_JWT, CLASS_ID, CONTENT_RESOURCE_ID',
+    'Missing env vars. Required: TEACHER_JWT, HOD_JWT, CLASS_ID, CONTENT_RESOURCE_ID, STUDENT_JWT',
   );
   process.exit(1);
 }
@@ -155,6 +162,61 @@ async function main(): Promise<void> {
     `/courses/${courseId}/enrolments`,
   );
   console.log(`   -> total=${enrolRes.data?.total}`);
+
+  console.log('8. Student listing my courses...');
+  const myCoursesRes = await call<{
+    enrolments: { _id: string; courseId: { _id: string } | string }[];
+    total: number;
+  }>(STUDENT_JWT!, 'GET', '/enrolments/me');
+  const myCourses = myCoursesRes.data?.enrolments ?? [];
+  console.log(`   -> total=${myCoursesRes.data?.total}`);
+
+  // Find the enrolment for the course we just created (in case the student
+  // is in multiple courses).
+  const myEnrolment = myCourses.find((e) => {
+    const cid = typeof e.courseId === 'string' ? e.courseId : e.courseId?._id;
+    return cid === courseId;
+  });
+
+  if (!myEnrolment) {
+    console.warn('   -> WARN: student is not enroled in the smoke-test course. Skipping student steps.');
+  } else {
+    const myEnrolmentId = myEnrolment._id;
+    console.log(`   -> enrolmentId=${myEnrolmentId}`);
+
+    console.log('9. Student fetching the enrolment with progress...');
+    const enrolDetailRes = await call<{
+      course: { modules: { lessons: { _id: string; type: string }[] }[] };
+    }>(STUDENT_JWT!, 'GET', `/enrolments/${myEnrolmentId}`);
+    const firstLesson = enrolDetailRes.data?.course.modules[0]?.lessons[0];
+    if (!firstLesson) {
+      console.warn('    -> WARN: no lessons in the course. Skipping lesson steps.');
+    } else {
+      console.log(`    -> first lesson id=${firstLesson._id} type=${firstLesson.type}`);
+
+      console.log('10. Student fetching first lesson content...');
+      await call(
+        STUDENT_JWT!,
+        'GET',
+        `/enrolments/${myEnrolmentId}/lessons/${firstLesson._id}`,
+      );
+      console.log('    -> lesson content returned');
+
+      console.log('11. Student writing scrolled-to-end progress...');
+      const progressRes = await call<{
+        lessonStatus: string;
+        nextLessonUnlocked: boolean;
+      }>(
+        STUDENT_JWT!,
+        'POST',
+        `/enrolments/${myEnrolmentId}/lessons/${firstLesson._id}/progress`,
+        { scrolledToEnd: true },
+      );
+      console.log(
+        `    -> lessonStatus=${progressRes.data?.lessonStatus} nextLessonUnlocked=${progressRes.data?.nextLessonUnlocked}`,
+      );
+    }
+  }
 
   console.log('\nOK Smoke test passed');
 }
