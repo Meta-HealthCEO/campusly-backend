@@ -371,7 +371,7 @@ export class CourseStudentService {
  * Sort lessons in linear-unlock order: by module orderIndex, then lesson
  * orderIndex within the module.
  */
-function sortLessonsForUnlock(
+export function sortLessonsForUnlock(
   lessons: ICourseLesson[],
   modules: { _id: mongoose.Types.ObjectId; orderIndex: number }[],
 ): ICourseLesson[] {
@@ -397,7 +397,7 @@ function sortLessonsForUnlock(
  * If a lesson has its own progress row with a status of 'completed' or
  * 'in_progress', we trust that status.
  */
-function computeUnlockStatuses(
+export function computeUnlockStatuses(
   sortedLessons: ICourseLesson[],
   progressByLesson: Map<string, ILessonProgress>,
 ): Map<string, 'locked' | 'available' | 'in_progress' | 'completed'> {

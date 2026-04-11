@@ -1,10 +1,13 @@
 import mongoose from 'mongoose';
 import {
   Course,
+  CourseModule,
   CourseLesson,
   Enrolment,
   LessonProgress,
   QuizAttempt,
+  type ICourseLesson,
+  type ILessonProgress,
 } from './model.js';
 import type { IQuestion } from '../QuestionBank/model.js';
 import { ContentResource } from '../ContentLibrary/model.js';
@@ -16,6 +19,7 @@ import {
   ForbiddenError,
   BadRequestError,
 } from '../../common/errors.js';
+import { sortLessonsForUnlock, computeUnlockStatuses } from './service-student.js';
 
 // Block types that require student interaction to "complete". Names must
 // match BLOCK_TYPES in src/modules/ContentLibrary/model.ts. Excludes text,
@@ -348,6 +352,44 @@ async function loadStudentLessonContext(
     isDeleted: false,
   });
   if (!course) throw new NotFoundError('Course not found');
+
+  // Enforce linear unlock: a write to a locked lesson must fail. The
+  // teacher-facing GET /lessons/:id has the same check, but a non-browser
+  // client could otherwise call POST directly without ever calling GET.
+  // This is the single chokepoint for both writeLessonProgress and
+  // submitQuizAttempt.
+  const allModules = await CourseModule.find({
+    courseId: enrolment.courseId,
+    schoolId: soid,
+    isDeleted: false,
+  })
+    .sort({ orderIndex: 1 })
+    .lean();
+  const allLessons = await CourseLesson.find({
+    courseId: enrolment.courseId,
+    schoolId: soid,
+    isDeleted: false,
+  })
+    .sort({ orderIndex: 1 })
+    .lean();
+  const progressRows = await LessonProgress.find({
+    enrolmentId: enrolment._id,
+    schoolId: soid,
+    isDeleted: false,
+  }).lean();
+  const progressByLesson = new Map<string, ILessonProgress>();
+  for (const p of progressRows) {
+    progressByLesson.set(p.lessonId.toString(), p as unknown as ILessonProgress);
+  }
+  const sortedLessons = sortLessonsForUnlock(
+    allLessons as unknown as ICourseLesson[],
+    allModules,
+  );
+  const lessonStatusById = computeUnlockStatuses(sortedLessons, progressByLesson);
+  const status = lessonStatusById.get(lesson._id.toString()) ?? 'locked';
+  if (status === 'locked') {
+    throw new ForbiddenError('Complete the previous lesson first');
+  }
 
   return { enrolment, lesson, course, soid };
 }

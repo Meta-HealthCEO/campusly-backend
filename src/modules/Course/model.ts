@@ -335,7 +335,10 @@ const quizAttemptSchema = new Schema<IQuizAttempt>(
   },
 );
 
-quizAttemptSchema.index({ enrolmentId: 1, lessonId: 1, attemptNumber: 1 });
+quizAttemptSchema.index(
+  { enrolmentId: 1, lessonId: 1, attemptNumber: 1 },
+  { unique: true, partialFilterExpression: { isDeleted: false } },
+);
 
 // NOTE: Mongoose model name is 'CourseQuizAttempt' (not 'QuizAttempt') to
 // avoid collision with the Learning module's QuizAttempt model. The exported
