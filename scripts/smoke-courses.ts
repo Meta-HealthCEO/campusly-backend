@@ -30,6 +30,10 @@
  *   9. Student fetches the enrolment detail with progress
  *  10. Student fetches first lesson content
  *  11. Student writes scrolled-to-end progress
+ *  12. Teacher fetches analytics dashboard
+ *  13. Public certificate verify with a bogus code (expects valid=false)
+ *  14. Student attempts certificate download (may 400 if the course wasn't
+ *      fully completed in this run — that's expected)
  *
  * This script is run manually; it is NOT in CI and not imported from any
  * production code path.
@@ -62,12 +66,13 @@ async function call<T>(
   path: string,
   body?: unknown,
 ): Promise<ApiEnvelope<T>> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+  if (token) headers.Authorization = `Bearer ${token}`;
   const res = await fetch(`${API}${path}`, {
     method,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
+    headers,
     body: body ? JSON.stringify(body) : undefined,
   });
   const json = (await res.json()) as ApiEnvelope<T>;
@@ -215,6 +220,50 @@ async function main(): Promise<void> {
       console.log(
         `    -> lessonStatus=${progressRes.data?.lessonStatus} nextLessonUnlocked=${progressRes.data?.nextLessonUnlocked}`,
       );
+    }
+  }
+
+  console.log('12. Teacher fetching analytics...');
+  const analyticsRes = await call<{
+    enrolmentCount: number;
+    completionRate: number;
+    avgQuizScore: number;
+    certificatesIssued: number;
+  }>(TEACHER_JWT!, 'GET', `/courses/${courseId}/analytics`);
+  console.log(
+    `    -> enrolments=${analyticsRes.data?.enrolmentCount} completion=${analyticsRes.data?.completionRate}% avgScore=${analyticsRes.data?.avgQuizScore}% certs=${analyticsRes.data?.certificatesIssued}`,
+  );
+
+  console.log('13. Public certificate verify with invalid code...');
+  const badVerifyRes = await call<{ valid: boolean }>(
+    '',
+    'GET',
+    '/certificates/verify/INVALID12345',
+  );
+  const badValid = badVerifyRes.data?.valid;
+  console.log(`    -> valid=${badValid} (expected: false)`);
+
+  // Step 14 — certificate download — only runs if the student actually
+  // completed the course and got a cert. Most smoke runs won't trigger
+  // completion because step 11 only wrote scrolledToEnd for one lesson.
+  // So we attempt the download and tolerate a 400 (no certificate yet).
+  if (myEnrolment) {
+    console.log('14. Student attempting certificate download (may 400 if not yet completed)...');
+    try {
+      const res = await fetch(`${API}/enrolments/${myEnrolment._id}/certificate`, {
+        method: 'GET',
+        headers: { Authorization: `Bearer ${STUDENT_JWT!}` },
+      });
+      if (res.status === 200) {
+        const length = res.headers.get('content-length') ?? '(unknown)';
+        console.log(`    -> 200 OK, PDF size=${length} bytes`);
+      } else if (res.status === 400) {
+        console.log(`    -> 400 (expected — course not yet fully completed)`);
+      } else {
+        console.log(`    -> ${res.status} (unexpected)`);
+      }
+    } catch (err) {
+      console.log(`    -> fetch error: ${String(err)}`);
     }
   }
 
