@@ -17,11 +17,17 @@ import {
   BadRequestError,
 } from '../../common/errors.js';
 
+// Block types that require student interaction to "complete". Names must
+// match BLOCK_TYPES in src/modules/ContentLibrary/model.ts. Excludes text,
+// image, video (passive media) and code (no submission/run mechanism yet).
 const INTERACTIVE_BLOCK_TYPES = new Set([
   'quiz',
   'fill_blank',
-  'match',
+  'match_columns',
   'ordering',
+  'drag_drop',
+  'hotspot',
+  'step_reveal',
 ]);
 
 export class CourseProgressService {
@@ -79,10 +85,14 @@ export class CourseProgressService {
     progress.scrolledToEnd = newScrolledToEnd;
 
     const completed = await isLessonComplete(lesson, progress, enrolment, soid);
-    if (completed) {
+    if (completed && progress.status !== 'completed') {
+      // Only stamp completedAt on the transition from not-completed to
+      // completed. Repeat calls after completion must not drift the
+      // timestamp forward — that would corrupt the audit trail used by
+      // teacher analytics in Plan C.
       progress.status = 'completed';
       progress.completedAt = new Date();
-    } else if (progress.status === 'locked') {
+    } else if (!completed && progress.status === 'locked') {
       progress.status = 'in_progress';
     }
     await progress.save();
@@ -408,7 +418,11 @@ async function recomputeEnrolmentProgress(
   enrolmentId: mongoose.Types.ObjectId,
   schoolId: mongoose.Types.ObjectId,
 ): Promise<void> {
-  const enrolment = await Enrolment.findById(enrolmentId);
+  const enrolment = await Enrolment.findOne({
+    _id: enrolmentId,
+    schoolId,
+    isDeleted: false,
+  });
   if (!enrolment) return;
 
   const totalLessons = await CourseLesson.countDocuments({
