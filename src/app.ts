@@ -80,6 +80,7 @@ import contentLibraryStudentRoutes from './modules/ContentLibrary/routes-student
 import questionBankRoutes from './modules/QuestionBank/routes.js';
 import textbookRoutes from './modules/Textbook/routes.js';
 import courseRoutes from './modules/Course/routes.js';
+import courseStudentRoutes from './modules/Course/routes-student.js';
 
 const app = express();
 
@@ -185,6 +186,7 @@ app.use('/api/content-library/student', authenticate, contentLibraryStudentRoute
 app.use('/api/question-bank', authenticate, questionBankRoutes);
 app.use('/api/textbooks', authenticate, textbookRoutes);
 app.use('/api/courses', authenticate, requireModule('courses'), courseRoutes);
+app.use('/api/enrolments', authenticate, requireModule('courses'), courseStudentRoutes);
 
 // Static file serving — uploaded assets
 app.use('/uploads', (_req, res, next) => {
