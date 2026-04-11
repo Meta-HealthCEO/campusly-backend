@@ -15,7 +15,7 @@ export const createCourseSchema = z.object({
   coverImageUrl: z.string().default(''),
   subjectId: objectIdSchema.nullable().optional(),
   gradeLevel: z.number().int().min(1).max(12).nullable().optional(),
-  tags: z.array(z.string().trim()).default([]),
+  tags: z.array(z.string().trim().min(1).max(30)).max(20).default([]),
   estimatedDurationHours: z.number().min(0).max(1000).nullable().optional(),
   passMarkPercent: z.number().int().min(0).max(100).default(60),
   certificateEnabled: z.boolean().default(true),
@@ -31,7 +31,7 @@ export const updateCourseSchema = z.object({
   coverImageUrl: z.string().optional(),
   subjectId: objectIdSchema.nullable().optional(),
   gradeLevel: z.number().int().min(1).max(12).nullable().optional(),
-  tags: z.array(z.string().trim()).optional(),
+  tags: z.array(z.string().trim().min(1).max(30)).max(20).optional(),
   estimatedDurationHours: z.number().min(0).max(1000).nullable().optional(),
   passMarkPercent: z.number().int().min(0).max(100).optional(),
   certificateEnabled: z.boolean().optional(),
@@ -88,7 +88,10 @@ const lessonBase = z.object({
   orderIndex: z.number().int().min(0).default(0),
   title: z.string().min(1).max(200).trim(),
   isRequiredToAdvance: z.boolean().default(false),
-  passMarkPercent: z.number().int().min(0).max(100).nullable().optional(),
+  // Default 70 matches the schema default on CourseLesson.passMarkPercent.
+  // Only meaningful for type='quiz' lessons — the non-quiz variants ignore
+  // this field at runtime but the default keeps the type inference clean.
+  passMarkPercent: z.number().int().min(0).max(100).default(70),
   maxAttempts: z.number().int().min(1).nullable().optional(),
 });
 
