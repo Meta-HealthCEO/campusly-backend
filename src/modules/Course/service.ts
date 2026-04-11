@@ -32,35 +32,59 @@ import type {
   AssignCourseInput,
 } from './validation.js';
 
+// ─── Actor type ────────────────────────────────────────────────────────────
+
+/**
+ * Represents the authenticated user performing a course action.
+ * Controllers build this from req.user (Task 5).
+ * Exported so controllers can construct it without re-importing UserRole
+ * separately.
+ */
+export interface CourseActor {
+  userId: string;
+  role: UserRole;
+  isHOD: boolean;
+  isSchoolPrincipal: boolean;
+}
+
 // ─── Authorisation helpers ──────────────────────────────────────────────────
 //
 // NOTE: The campusly `UserRole` enum does not include dedicated `principal` or
-// `hod` roles — those responsibilities are handled by `school_admin` (with an
-// optional `isSchoolPrincipal` flag on the User document that's not relevant
-// here). So the "publisher" tier collapses to super_admin + school_admin, and
-// the "author" tier adds teachers on top.
+// `hod` roles — those are boolean flags (`isHOD`, `isSchoolPrincipal`) on the
+// User document and are decoded into the JWT by auth middleware.
+//
+// Permission tiers:
+//   publisher — can approve/reject the review workflow (publish/reject courses)
+//               super_admin, school_admin, or any teacher with isHOD/isSchoolPrincipal
+//   author    — can create/edit/delete courses
+//               super_admin, school_admin, teacher (any)
 
-const PUBLISHER_ROLES: UserRole[] = [UserRole.SUPER_ADMIN, UserRole.SCHOOL_ADMIN];
-const AUTHOR_ROLES: UserRole[] = [
-  UserRole.SUPER_ADMIN,
-  UserRole.SCHOOL_ADMIN,
-  UserRole.TEACHER,
-];
-
-function canPublish(role: UserRole): boolean {
-  return PUBLISHER_ROLES.includes(role);
+function canPublish(actor: CourseActor): boolean {
+  if (actor.role === UserRole.SUPER_ADMIN || actor.role === UserRole.SCHOOL_ADMIN) {
+    return true;
+  }
+  // Teachers carrying the HOD or principal flag have review authority.
+  return actor.isHOD || actor.isSchoolPrincipal;
 }
 
-function canAuthor(role: UserRole): boolean {
-  return AUTHOR_ROLES.includes(role);
+function canAuthor(actor: CourseActor): boolean {
+  return (
+    actor.role === UserRole.SUPER_ADMIN ||
+    actor.role === UserRole.SCHOOL_ADMIN ||
+    actor.role === UserRole.TEACHER
+  );
 }
 
-// Teachers can only edit their own drafts. School admins can edit any draft in
-// their school. super_admin can edit anything.
-function assertCanEditCourse(course: ICourse, userId: string, role: UserRole): void {
-  if (role === UserRole.SUPER_ADMIN) return;
-  if (canPublish(role)) return;
-  if (course.createdBy.toString() !== userId) {
+// super_admin, school_admin, HOD, and principal can edit any course in the
+// school. Regular teachers can only edit their own courses.
+function assertCanEditCourse(course: ICourse, actor: CourseActor): void {
+  if (actor.role === UserRole.SUPER_ADMIN || actor.role === UserRole.SCHOOL_ADMIN) {
+    return;
+  }
+  if (actor.isHOD || actor.isSchoolPrincipal) {
+    return;
+  }
+  if (course.createdBy.toString() !== actor.userId) {
     throw new ForbiddenError('You can only edit your own courses');
   }
 }
@@ -123,11 +147,10 @@ export class CourseService {
 
   static async createCourse(
     schoolId: string,
-    userId: string,
-    role: UserRole,
+    actor: CourseActor,
     data: CreateCourseInput,
   ) {
-    if (!canAuthor(role)) {
+    if (!canAuthor(actor)) {
       throw new ForbiddenError('You are not allowed to create courses');
     }
 
@@ -143,7 +166,7 @@ export class CourseService {
     const course = await Course.create({
       ...data,
       schoolId: new mongoose.Types.ObjectId(schoolId),
-      createdBy: new mongoose.Types.ObjectId(userId),
+      createdBy: new mongoose.Types.ObjectId(actor.userId),
       status: 'draft',
       subjectId: data.subjectId ? new mongoose.Types.ObjectId(data.subjectId) : null,
     });
@@ -152,7 +175,7 @@ export class CourseService {
 
   static async listCourses(
     schoolId: string,
-    userId: string,
+    actor: CourseActor,
     filters: CourseQueryInput,
   ) {
     const soid = new mongoose.Types.ObjectId(schoolId);
@@ -166,7 +189,7 @@ export class CourseService {
       query.subjectId = new mongoose.Types.ObjectId(filters.subjectId);
     }
     if (filters.gradeLevel !== undefined) query.gradeLevel = filters.gradeLevel;
-    if (filters.mine) query.createdBy = new mongoose.Types.ObjectId(userId);
+    if (filters.mine) query.createdBy = new mongoose.Types.ObjectId(actor.userId);
     if (filters.search) {
       query.title = { $regex: escapeRegex(filters.search), $options: 'i' };
     }
@@ -228,12 +251,11 @@ export class CourseService {
   static async updateCourse(
     id: string,
     schoolId: string,
-    userId: string,
-    role: UserRole,
+    actor: CourseActor,
     data: UpdateCourseInput,
   ) {
     const course = await getCourseOrThrow(id, schoolId);
-    assertCanEditCourse(course, userId, role);
+    assertCanEditCourse(course, actor);
 
     // Metadata edits are always allowed (even on published courses).
     // Structural edits (modules / lessons) go through their own endpoints
@@ -248,9 +270,9 @@ export class CourseService {
     return course.toObject();
   }
 
-  static async deleteCourse(id: string, schoolId: string, userId: string, role: UserRole) {
+  static async deleteCourse(id: string, schoolId: string, actor: CourseActor) {
     const course = await getCourseOrThrow(id, schoolId);
-    assertCanEditCourse(course, userId, role);
+    assertCanEditCourse(course, actor);
 
     if (course.status === 'published') {
       throw new BadRequestError('Cannot delete a published course. Archive it instead.');
@@ -263,9 +285,9 @@ export class CourseService {
 
   // ─── Review workflow ─────────────────────────────────────────────────────
 
-  static async submitForReview(id: string, schoolId: string, userId: string, role: UserRole) {
+  static async submitForReview(id: string, schoolId: string, actor: CourseActor) {
     const course = await getCourseOrThrow(id, schoolId);
-    assertCanEditCourse(course, userId, role);
+    assertCanEditCourse(course, actor);
 
     if (course.status !== 'draft') {
       throw new BadRequestError(`Cannot submit a course in '${course.status}' state`);
@@ -286,9 +308,9 @@ export class CourseService {
     return course.toObject();
   }
 
-  static async publishCourse(id: string, schoolId: string, userId: string, role: UserRole) {
-    if (!canPublish(role)) {
-      throw new ForbiddenError('Only school admins can publish courses');
+  static async publishCourse(id: string, schoolId: string, actor: CourseActor) {
+    if (!canPublish(actor)) {
+      throw new ForbiddenError('Only school admins, HODs, or principals can publish courses');
     }
 
     const course = await getCourseOrThrow(id, schoolId);
@@ -297,7 +319,7 @@ export class CourseService {
     }
 
     course.status = 'published';
-    course.publishedBy = new mongoose.Types.ObjectId(userId);
+    course.publishedBy = new mongoose.Types.ObjectId(actor.userId);
     course.publishedAt = new Date();
     course.reviewNotes = '';
     await course.save();
@@ -307,12 +329,11 @@ export class CourseService {
   static async rejectCourse(
     id: string,
     schoolId: string,
-    userId: string,
-    role: UserRole,
+    actor: CourseActor,
     data: RejectCourseInput,
   ) {
-    if (!canPublish(role)) {
-      throw new ForbiddenError('Only school admins can reject courses');
+    if (!canPublish(actor)) {
+      throw new ForbiddenError('Only school admins, HODs, or principals can reject courses');
     }
 
     const course = await getCourseOrThrow(id, schoolId);
@@ -326,9 +347,9 @@ export class CourseService {
     return course.toObject();
   }
 
-  static async archiveCourse(id: string, schoolId: string, userId: string, role: UserRole) {
+  static async archiveCourse(id: string, schoolId: string, actor: CourseActor) {
     const course = await getCourseOrThrow(id, schoolId);
-    assertCanEditCourse(course, userId, role);
+    assertCanEditCourse(course, actor);
 
     if (course.status !== 'published') {
       throw new BadRequestError(`Cannot archive a course in '${course.status}' state`);
@@ -344,12 +365,11 @@ export class CourseService {
   static async addModule(
     courseId: string,
     schoolId: string,
-    userId: string,
-    role: UserRole,
+    actor: CourseActor,
     data: CreateModuleInput,
   ) {
     const course = await getCourseOrThrow(courseId, schoolId);
-    assertCanEditCourse(course, userId, role);
+    assertCanEditCourse(course, actor);
     if (course.status !== 'draft') {
       throw new BadRequestError('Can only add modules to draft courses');
     }
@@ -367,12 +387,11 @@ export class CourseService {
     courseId: string,
     moduleId: string,
     schoolId: string,
-    userId: string,
-    role: UserRole,
+    actor: CourseActor,
     data: UpdateModuleInput,
   ) {
     const course = await getCourseOrThrow(courseId, schoolId);
-    assertCanEditCourse(course, userId, role);
+    assertCanEditCourse(course, actor);
     if (course.status !== 'draft') {
       throw new BadRequestError('Can only edit modules in draft courses');
     }
@@ -388,11 +407,10 @@ export class CourseService {
     courseId: string,
     moduleId: string,
     schoolId: string,
-    userId: string,
-    role: UserRole,
+    actor: CourseActor,
   ) {
     const course = await getCourseOrThrow(courseId, schoolId);
-    assertCanEditCourse(course, userId, role);
+    assertCanEditCourse(course, actor);
     if (course.status !== 'draft') {
       throw new BadRequestError('Can only delete modules in draft courses');
     }
@@ -417,12 +435,11 @@ export class CourseService {
   static async reorderModules(
     courseId: string,
     schoolId: string,
-    userId: string,
-    role: UserRole,
+    actor: CourseActor,
     data: ReorderModulesInput,
   ) {
     const course = await getCourseOrThrow(courseId, schoolId);
-    assertCanEditCourse(course, userId, role);
+    assertCanEditCourse(course, actor);
     if (course.status !== 'draft') {
       throw new BadRequestError('Can only reorder modules in draft courses');
     }
@@ -462,12 +479,11 @@ export class CourseService {
   static async addLesson(
     courseId: string,
     schoolId: string,
-    userId: string,
-    role: UserRole,
+    actor: CourseActor,
     data: CreateLessonInput,
   ) {
     const course = await getCourseOrThrow(courseId, schoolId);
-    assertCanEditCourse(course, userId, role);
+    assertCanEditCourse(course, actor);
     if (course.status !== 'draft') {
       throw new BadRequestError('Can only add lessons to draft courses');
     }
@@ -511,12 +527,11 @@ export class CourseService {
     courseId: string,
     lessonId: string,
     schoolId: string,
-    userId: string,
-    role: UserRole,
+    actor: CourseActor,
     data: UpdateLessonInput,
   ) {
     const course = await getCourseOrThrow(courseId, schoolId);
-    assertCanEditCourse(course, userId, role);
+    assertCanEditCourse(course, actor);
     if (course.status !== 'draft') {
       throw new BadRequestError('Can only edit lessons in draft courses');
     }
@@ -543,11 +558,10 @@ export class CourseService {
     courseId: string,
     lessonId: string,
     schoolId: string,
-    userId: string,
-    role: UserRole,
+    actor: CourseActor,
   ) {
     const course = await getCourseOrThrow(courseId, schoolId);
-    assertCanEditCourse(course, userId, role);
+    assertCanEditCourse(course, actor);
     if (course.status !== 'draft') {
       throw new BadRequestError('Can only delete lessons in draft courses');
     }
@@ -561,12 +575,11 @@ export class CourseService {
   static async reorderLessons(
     courseId: string,
     schoolId: string,
-    userId: string,
-    role: UserRole,
+    actor: CourseActor,
     data: ReorderLessonsInput,
   ) {
     const course = await getCourseOrThrow(courseId, schoolId);
-    assertCanEditCourse(course, userId, role);
+    assertCanEditCourse(course, actor);
     if (course.status !== 'draft') {
       throw new BadRequestError('Can only reorder lessons in draft courses');
     }
@@ -609,11 +622,10 @@ export class CourseService {
   static async assignCourseToClass(
     courseId: string,
     schoolId: string,
-    userId: string,
-    role: UserRole,
+    actor: CourseActor,
     data: AssignCourseInput,
   ) {
-    if (!canAuthor(role)) {
+    if (!canAuthor(actor)) {
       throw new ForbiddenError('Not allowed to assign courses');
     }
 
@@ -661,7 +673,7 @@ export class CourseService {
             schoolId: course.schoolId,
             courseId: course._id,
             studentId: s._id,
-            enrolledBy: new mongoose.Types.ObjectId(userId),
+            enrolledBy: new mongoose.Types.ObjectId(actor.userId),
             classId: classOid,
             enrolledAt: new Date(),
             status: 'active' as const,
@@ -685,16 +697,16 @@ export class CourseService {
   static async listEnrolments(
     courseId: string,
     schoolId: string,
-    userId: string,
-    role: UserRole,
+    actor: CourseActor,
   ) {
-    if (!canAuthor(role)) {
+    if (!canAuthor(actor)) {
       throw new ForbiddenError('Not allowed to view enrolments');
     }
 
     const course = await getCourseOrThrow(courseId, schoolId);
-    // Teachers can only see enrolments for their own course. School admins see all.
-    if (!canPublish(role) && course.createdBy.toString() !== userId) {
+    // HODs, principals, and school admins can see all enrolments.
+    // Regular teachers can only see enrolments for their own courses.
+    if (!canPublish(actor) && course.createdBy.toString() !== actor.userId) {
       throw new ForbiddenError('You can only view enrolments for your own courses');
     }
 

@@ -9,6 +9,8 @@ export interface AuthenticatedUser {
   role: UserRole;
   schoolId?: string;
   email: string;
+  isSchoolPrincipal?: boolean;
+  isHOD?: boolean;
 }
 
 /**
