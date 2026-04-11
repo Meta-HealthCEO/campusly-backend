@@ -131,7 +131,7 @@ export const updateLessonSchema = z.object({
   title: z.string().min(1).max(200).trim().optional(),
   orderIndex: z.number().int().min(0).optional(),
   isRequiredToAdvance: z.boolean().optional(),
-  passMarkPercent: z.number().int().min(0).max(100).nullable().optional(),
+  passMarkPercent: z.number().int().min(0).max(100).optional(),
   maxAttempts: z.number().int().min(1).nullable().optional(),
 }).strict();
 

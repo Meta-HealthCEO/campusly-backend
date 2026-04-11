@@ -78,12 +78,18 @@ function canAuthor(actor: CourseActor): boolean {
 // super_admin, school_admin, HOD, and principal can edit any course in the
 // school. Regular teachers can only edit their own courses.
 function assertCanEditCourse(course: ICourse, actor: CourseActor): void {
+  // Non-authors (parents, students, SGB members) cannot edit courses at all.
+  if (!canAuthor(actor)) {
+    throw new ForbiddenError('You are not allowed to edit courses');
+  }
+  // super_admin, school_admin, HODs and principals can edit any course in the school.
   if (actor.role === UserRole.SUPER_ADMIN || actor.role === UserRole.SCHOOL_ADMIN) {
     return;
   }
   if (actor.isHOD || actor.isSchoolPrincipal) {
     return;
   }
+  // Regular teachers can only edit their own courses.
   if (course.createdBy.toString() !== actor.userId) {
     throw new ForbiddenError('You can only edit your own courses');
   }
@@ -207,19 +213,27 @@ export class CourseService {
   }
 
   static async getCourse(id: string, schoolId: string) {
-    const course = await getCourseOrThrow(id, schoolId);
-    const populated = await Course.findById(course._id)
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new NotFoundError('Course not found');
+    }
+    const soid = new mongoose.Types.ObjectId(schoolId);
+    const course = await Course.findOne({
+      _id: new mongoose.Types.ObjectId(id),
+      schoolId: soid,
+      isDeleted: false,
+    })
       .populate([
         { path: 'subjectId', select: 'name' },
         { path: 'createdBy', select: 'firstName lastName email' },
         { path: 'publishedBy', select: 'firstName lastName' },
       ])
       .lean();
+    if (!course) throw new NotFoundError('Course not found');
 
-    // Fetch modules + lessons in two queries, then stitch together.
+    // Fetch modules + lessons in two scoped queries, then stitch together.
     const modules = await CourseModule.find({
       courseId: course._id,
-      schoolId: course.schoolId,
+      schoolId: soid,
       isDeleted: false,
     })
       .sort({ orderIndex: 1 })
@@ -227,7 +241,7 @@ export class CourseService {
 
     const lessons = await CourseLesson.find({
       courseId: course._id,
-      schoolId: course.schoolId,
+      schoolId: soid,
       isDeleted: false,
     })
       .sort({ orderIndex: 1 })
@@ -245,7 +259,7 @@ export class CourseService {
       lessons: lessonsByModule[m._id.toString()] ?? [],
     }));
 
-    return { ...populated, modules: modulesWithLessons };
+    return { ...course, modules: modulesWithLessons };
   }
 
   static async updateCourse(
@@ -260,10 +274,15 @@ export class CourseService {
     // Metadata edits are always allowed (even on published courses).
     // Structural edits (modules / lessons) go through their own endpoints
     // which enforce the draft-only rule.
-    Object.assign(course, data);
-    if (data.subjectId !== undefined) {
-      course.subjectId = data.subjectId
-        ? new mongoose.Types.ObjectId(data.subjectId)
+    //
+    // Destructure subjectId out of the plain-object assign so we never write
+    // a raw string to an ObjectId schema field. Every other updatable field
+    // in UpdateCourseInput is a primitive that Object.assign handles correctly.
+    const { subjectId, ...rest } = data;
+    Object.assign(course, rest);
+    if (subjectId !== undefined) {
+      course.subjectId = subjectId
+        ? new mongoose.Types.ObjectId(subjectId)
         : null;
     }
     await course.save();
@@ -543,7 +562,7 @@ export class CourseService {
     if (data.isRequiredToAdvance !== undefined) {
       lesson.isRequiredToAdvance = data.isRequiredToAdvance;
     }
-    if (data.passMarkPercent !== undefined && data.passMarkPercent !== null) {
+    if (data.passMarkPercent !== undefined) {
       lesson.passMarkPercent = data.passMarkPercent;
     }
     if (data.maxAttempts !== undefined) {
@@ -670,6 +689,7 @@ export class CourseService {
         },
         update: {
           $setOnInsert: {
+            isDeleted: false,
             schoolId: course.schoolId,
             courseId: course._id,
             studentId: s._id,
