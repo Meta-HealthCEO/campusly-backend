@@ -614,6 +614,24 @@ export class CourseService {
       throw new BadRequestError('One or more lessons do not belong to this course');
     }
 
+    // Verify every destination moduleId belongs to this course as well —
+    // otherwise a client could move a lesson onto a module from a different
+    // course (or a deleted / non-existent module) and silently orphan it.
+    const destinationModuleIds = Array.from(
+      new Set(data.orders.map((o) => o.moduleId)),
+    ).map((id) => new mongoose.Types.ObjectId(id));
+    const moduleCount = await CourseModule.countDocuments({
+      _id: { $in: destinationModuleIds },
+      courseId: course._id,
+      schoolId: course.schoolId,
+      isDeleted: false,
+    });
+    if (moduleCount !== destinationModuleIds.length) {
+      throw new BadRequestError(
+        'One or more destination modules do not belong to this course',
+      );
+    }
+
     await Promise.all(
       data.orders.map((o) =>
         CourseLesson.updateOne(
