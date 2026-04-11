@@ -174,6 +174,7 @@ export class CourseStudentService {
       _id: new mongoose.Types.ObjectId(enrolmentId),
       schoolId: soid,
       isDeleted: false,
+      status: { $in: ['active', 'completed'] },
     }).lean();
     if (!enrolment) throw new NotFoundError('Enrolment not found');
 
@@ -221,6 +222,7 @@ export class CourseStudentService {
       schoolId: soid,
       isDeleted: false,
     })
+      .select('-quizQuestionIds')
       .sort({ orderIndex: 1 })
       .lean();
 
