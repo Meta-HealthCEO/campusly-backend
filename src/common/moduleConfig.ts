@@ -42,6 +42,7 @@ export const BOLT_ON_MODULES = [
   'budget',
   'payroll',
   'asset_management',
+  'courses',
 ] as const;
 
 export const ALL_MODULES = [...CORE_MODULES, ...BOLT_ON_MODULES] as const;
