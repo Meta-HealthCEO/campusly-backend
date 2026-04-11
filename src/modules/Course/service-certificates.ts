@@ -156,33 +156,56 @@ export class CourseCertificateService {
     const issuedBy = (course.publishedBy as mongoose.Types.ObjectId | null)
       ?? enrolment.enrolledBy;
 
-    // Unique verification code with collision retry.
-    let verificationCode = generateVerificationCode();
-    for (let attempt = 0; attempt < 3; attempt++) {
-      const collision = await Certificate.findOne({ verificationCode })
-        .select('_id')
-        .lean();
-      if (!collision) break;
-      verificationCode = generateVerificationCode();
+    // Certificate creation with unique verification code. The partial
+    // unique index on verificationCode is the authoritative safety net
+    // against collisions — the code below catches MongoDB's duplicate-key
+    // error (code 11000) and retries with a fresh code. This is the
+    // atomic-safe alternative to a pre-check + create (which has a TOCTOU
+    // window). At ~10^18 combinations a single retry is virtually never
+    // needed, but the loop is a bounded safety net that prevents a 500
+    // from bubbling up to the student on the lucky-one-in-a-quintillion
+    // miss.
+    const MAX_CERT_ATTEMPTS = 5;
+    let certificate: unknown = null;
+    for (let attempt = 0; attempt < MAX_CERT_ATTEMPTS; attempt++) {
+      const verificationCode = generateVerificationCode();
+      try {
+        certificate = await Certificate.create({
+          schoolId,
+          isDeleted: false,
+          enrolmentId: enrolment._id,
+          studentId: enrolment.studentId,
+          courseId: enrolment.courseId,
+          studentName,
+          courseName: course.title,
+          schoolName,
+          issuedAt: new Date(),
+          issuedBy,
+          pdfUrl: '',
+          verificationCode,
+        });
+        break;
+      } catch (err: unknown) {
+        // MongoDB duplicate-key error is code 11000. Any other error
+        // propagates (unexpected) so the outer caller sees a real
+        // failure rather than a silent miss.
+        const isDuplicateKey = typeof err === 'object'
+          && err !== null
+          && 'code' in err
+          && (err as { code?: number }).code === 11000;
+        if (!isDuplicateKey) throw err;
+        // Loop around and try a fresh code.
+      }
     }
 
-    const certificate = await Certificate.create({
-      schoolId,
-      isDeleted: false,
-      enrolmentId: enrolment._id,
-      studentId: enrolment.studentId,
-      courseId: enrolment.courseId,
-      studentName,
-      courseName: course.title,
-      schoolName,
-      issuedAt: new Date(),
-      issuedBy,
-      pdfUrl: '',
-      verificationCode,
-    });
+    if (!certificate) {
+      // All MAX_CERT_ATTEMPTS tries hit a collision — impossible at
+      // realistic scale but we refuse to silently fail.
+      throw new Error('Failed to generate a unique certificate verification code after multiple attempts');
+    }
 
     // Link back to the enrolment.
-    enrolment.certificateId = certificate._id;
+    enrolment.certificateId = (certificate as { _id: mongoose.Types.ObjectId })._id;
     await enrolment.save();
 
     return certificate;
