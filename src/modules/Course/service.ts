@@ -9,6 +9,7 @@ import {
   type ICourseLesson,
 } from './model.js';
 import { Student } from '../Student/model.js';
+import { Question } from '../QuestionBank/model.js';
 import { Class } from '../Academic/model.js';
 import {
   NotFoundError,
@@ -533,9 +534,36 @@ export class CourseService {
     } else if (data.type === 'homework') {
       lessonDoc.homeworkId = new mongoose.Types.ObjectId(data.homeworkId);
     } else if (data.type === 'quiz') {
-      lessonDoc.quizQuestionIds = data.quizQuestionIds.map(
-        (id) => new mongoose.Types.ObjectId(id),
-      );
+      // Plan B will grade quiz attempts server-side. Only the three question
+      // types whose canonical answers live on the Question schema can be
+      // auto-graded. Reject any quiz lesson that includes other types at
+      // creation time so the constraint is visible to authors immediately
+      // rather than as a runtime grading failure later.
+      const GRADABLE_TYPES = new Set(['mcq', 'true_false', 'fill_blank']);
+      const ids = data.quizQuestionIds.map((id) => new mongoose.Types.ObjectId(id));
+
+      const questions = await Question.find({
+        _id: { $in: ids },
+        isDeleted: false,
+        $or: [{ schoolId: course.schoolId }, { schoolId: null }],
+      })
+        .select('_id type')
+        .lean();
+
+      if (questions.length !== ids.length) {
+        throw new BadRequestError(
+          'One or more quiz questions do not exist or are not accessible to this school',
+        );
+      }
+
+      const ungradable = questions.filter((q) => !GRADABLE_TYPES.has(q.type));
+      if (ungradable.length > 0) {
+        throw new BadRequestError(
+          'Quiz lessons may only contain mcq, true_false, or fill_blank questions',
+        );
+      }
+
+      lessonDoc.quizQuestionIds = ids;
     }
 
     const lesson = await CourseLesson.create(lessonDoc);
