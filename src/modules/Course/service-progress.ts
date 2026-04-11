@@ -20,6 +20,7 @@ import {
   BadRequestError,
 } from '../../common/errors.js';
 import { sortLessonsForUnlock, computeUnlockStatuses } from './service-student.js';
+import { CourseCertificateService } from './service-certificates.js';
 
 // Block types that require student interaction to "complete". Names must
 // match BLOCK_TYPES in src/modules/ContentLibrary/model.ts. Excludes text,
@@ -489,7 +490,14 @@ async function recomputeEnrolmentProgress(
   if (enrolment.progressPercent >= 100 && enrolment.status === 'active') {
     enrolment.status = 'completed';
     enrolment.completedAt = new Date();
-    // Plan C will issue the certificate here.
+    await enrolment.save();
+    // Issue the certificate (idempotent — safe even if this code path
+    // is reached twice in a race). issueIfEligible returns null for
+    // courses with certificates disabled or students who didn't meet
+    // the pass mark; the enrolment still transitions to 'completed'
+    // in those cases.
+    await CourseCertificateService.issueIfEligible(enrolment, schoolId);
+    return;
   }
   await enrolment.save();
 }
