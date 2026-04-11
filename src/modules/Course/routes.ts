@@ -182,4 +182,12 @@ router.get(
   CourseController.listEnrolments,
 );
 
+// ─── Analytics ─────────────────────────────────────────────────────────────
+
+router.get(
+  '/:id/analytics',
+  authorize(...COURSE_ROLES),
+  CourseController.getCourseAnalytics,
+);
+
 export default router;

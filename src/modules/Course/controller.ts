@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import { getUser, type AuthenticatedUser } from '../../types/authenticated-request.js';
 import { apiResponse } from '../../common/utils.js';
 import { CourseService, type CourseActor } from './service.js';
+import { CourseAnalyticsService } from './service-analytics.js';
 import type { CourseQueryInput } from './validation.js';
 
 /**
@@ -226,6 +227,18 @@ export class CourseController {
   static async listEnrolments(req: Request, res: Response): Promise<void> {
     const { user, actor } = buildContext(req);
     const result = await CourseService.listEnrolments(
+      req.params.id as string,
+      user.schoolId!,
+      actor,
+    );
+    res.json(apiResponse(true, result));
+  }
+
+  // ─── Analytics ───────────────────────────────────────────────────────────
+
+  static async getCourseAnalytics(req: Request, res: Response): Promise<void> {
+    const { user, actor } = buildContext(req);
+    const result = await CourseAnalyticsService.getCourseAnalytics(
       req.params.id as string,
       user.schoolId!,
       actor,
