@@ -3,6 +3,8 @@ import { getUser } from '../../types/authenticated-request.js';
 import { apiResponse } from '../../common/utils.js';
 import { CourseStudentService } from './service-student.js';
 import { CourseProgressService } from './service-progress.js';
+import { CourseCertificateService } from './service-certificates.js';
+import { CourseCertificatePdfService } from './service-pdf.js';
 
 export class CourseStudentController {
   // ─── Catalog ─────────────────────────────────────────────────────────────
@@ -97,5 +99,24 @@ export class CourseStudentController {
       user.schoolId!,
     );
     res.json(apiResponse(true, result, 'Enrolment dropped'));
+  }
+
+  // ─── Certificate download ────────────────────────────────────────────────
+
+  static async getCertificate(req: Request, res: Response): Promise<void> {
+    const user = getUser(req);
+    const cert = await CourseCertificateService.getCertificateForEnrolment(
+      req.params.id as string,
+      user.id,
+      user.schoolId!,
+    );
+    const buffer = await CourseCertificatePdfService.render(cert);
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="certificate-${cert.verificationCode}.pdf"`,
+    );
+    res.setHeader('Content-Length', buffer.length.toString());
+    res.end(buffer);
   }
 }

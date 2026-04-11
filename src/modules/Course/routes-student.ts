@@ -57,4 +57,12 @@ router.post(
   CourseStudentController.submitQuizAttempt,
 );
 
+// ─── Certificate download ──────────────────────────────────────────────────
+
+router.get(
+  '/:id/certificate',
+  authorize(...STUDENT_ROLES),
+  CourseStudentController.getCertificate,
+);
+
 export default router;
