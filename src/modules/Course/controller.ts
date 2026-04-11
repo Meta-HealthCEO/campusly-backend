@@ -1,21 +1,25 @@
 import type { Request, Response } from 'express';
-import { getUser } from '../../types/authenticated-request.js';
+import { getUser, type AuthenticatedUser } from '../../types/authenticated-request.js';
 import { apiResponse } from '../../common/utils.js';
 import { CourseService, type CourseActor } from './service.js';
 import type { CourseQueryInput } from './validation.js';
 
 /**
- * Build a CourseActor from the authenticated request user.
- * The service layer uses this to make permission decisions that depend on
- * both the role and the isHOD / isSchoolPrincipal flags.
+ * Build both the authenticated user and a CourseActor from a request in a
+ * single getUser() call. Every handler needs both (the user for schoolId,
+ * the actor for the service's permission checks), and this avoids calling
+ * getUser twice per handler.
  */
-function buildActor(req: Request): CourseActor {
+function buildContext(req: Request): { user: AuthenticatedUser; actor: CourseActor } {
   const user = getUser(req);
   return {
-    userId: user.id,
-    role: user.role,
-    isHOD: user.isHOD ?? false,
-    isSchoolPrincipal: user.isSchoolPrincipal ?? false,
+    user,
+    actor: {
+      userId: user.id,
+      role: user.role,
+      isHOD: user.isHOD ?? false,
+      isSchoolPrincipal: user.isSchoolPrincipal ?? false,
+    },
   };
 }
 
@@ -23,8 +27,7 @@ export class CourseController {
   // ─── Course CRUD ─────────────────────────────────────────────────────────
 
   static async createCourse(req: Request, res: Response): Promise<void> {
-    const user = getUser(req);
-    const actor = buildActor(req);
+    const { user, actor } = buildContext(req);
     const course = await CourseService.createCourse(
       user.schoolId!,
       actor,
@@ -34,8 +37,7 @@ export class CourseController {
   }
 
   static async listCourses(req: Request, res: Response): Promise<void> {
-    const user = getUser(req);
-    const actor = buildActor(req);
+    const { user, actor } = buildContext(req);
     const filters = req.query as unknown as CourseQueryInput;
     const result = await CourseService.listCourses(user.schoolId!, actor, filters);
     res.json(apiResponse(true, result));
@@ -51,8 +53,7 @@ export class CourseController {
   }
 
   static async updateCourse(req: Request, res: Response): Promise<void> {
-    const user = getUser(req);
-    const actor = buildActor(req);
+    const { user, actor } = buildContext(req);
     const course = await CourseService.updateCourse(
       req.params.id as string,
       user.schoolId!,
@@ -63,8 +64,7 @@ export class CourseController {
   }
 
   static async deleteCourse(req: Request, res: Response): Promise<void> {
-    const user = getUser(req);
-    const actor = buildActor(req);
+    const { user, actor } = buildContext(req);
     const result = await CourseService.deleteCourse(
       req.params.id as string,
       user.schoolId!,
@@ -76,8 +76,7 @@ export class CourseController {
   // ─── Review workflow ─────────────────────────────────────────────────────
 
   static async submitForReview(req: Request, res: Response): Promise<void> {
-    const user = getUser(req);
-    const actor = buildActor(req);
+    const { user, actor } = buildContext(req);
     const course = await CourseService.submitForReview(
       req.params.id as string,
       user.schoolId!,
@@ -87,8 +86,7 @@ export class CourseController {
   }
 
   static async publishCourse(req: Request, res: Response): Promise<void> {
-    const user = getUser(req);
-    const actor = buildActor(req);
+    const { user, actor } = buildContext(req);
     const course = await CourseService.publishCourse(
       req.params.id as string,
       user.schoolId!,
@@ -98,8 +96,7 @@ export class CourseController {
   }
 
   static async rejectCourse(req: Request, res: Response): Promise<void> {
-    const user = getUser(req);
-    const actor = buildActor(req);
+    const { user, actor } = buildContext(req);
     const course = await CourseService.rejectCourse(
       req.params.id as string,
       user.schoolId!,
@@ -110,8 +107,7 @@ export class CourseController {
   }
 
   static async archiveCourse(req: Request, res: Response): Promise<void> {
-    const user = getUser(req);
-    const actor = buildActor(req);
+    const { user, actor } = buildContext(req);
     const course = await CourseService.archiveCourse(
       req.params.id as string,
       user.schoolId!,
@@ -123,8 +119,7 @@ export class CourseController {
   // ─── Modules ─────────────────────────────────────────────────────────────
 
   static async addModule(req: Request, res: Response): Promise<void> {
-    const user = getUser(req);
-    const actor = buildActor(req);
+    const { user, actor } = buildContext(req);
     const mod = await CourseService.addModule(
       req.params.id as string,
       user.schoolId!,
@@ -135,8 +130,7 @@ export class CourseController {
   }
 
   static async updateModule(req: Request, res: Response): Promise<void> {
-    const user = getUser(req);
-    const actor = buildActor(req);
+    const { user, actor } = buildContext(req);
     const mod = await CourseService.updateModule(
       req.params.id as string,
       req.params.moduleId as string,
@@ -148,8 +142,7 @@ export class CourseController {
   }
 
   static async deleteModule(req: Request, res: Response): Promise<void> {
-    const user = getUser(req);
-    const actor = buildActor(req);
+    const { user, actor } = buildContext(req);
     const result = await CourseService.deleteModule(
       req.params.id as string,
       req.params.moduleId as string,
@@ -160,8 +153,7 @@ export class CourseController {
   }
 
   static async reorderModules(req: Request, res: Response): Promise<void> {
-    const user = getUser(req);
-    const actor = buildActor(req);
+    const { user, actor } = buildContext(req);
     const result = await CourseService.reorderModules(
       req.params.id as string,
       user.schoolId!,
@@ -174,8 +166,7 @@ export class CourseController {
   // ─── Lessons ─────────────────────────────────────────────────────────────
 
   static async addLesson(req: Request, res: Response): Promise<void> {
-    const user = getUser(req);
-    const actor = buildActor(req);
+    const { user, actor } = buildContext(req);
     const lesson = await CourseService.addLesson(
       req.params.id as string,
       user.schoolId!,
@@ -186,8 +177,7 @@ export class CourseController {
   }
 
   static async updateLesson(req: Request, res: Response): Promise<void> {
-    const user = getUser(req);
-    const actor = buildActor(req);
+    const { user, actor } = buildContext(req);
     const lesson = await CourseService.updateLesson(
       req.params.id as string,
       req.params.lessonId as string,
@@ -199,8 +189,7 @@ export class CourseController {
   }
 
   static async deleteLesson(req: Request, res: Response): Promise<void> {
-    const user = getUser(req);
-    const actor = buildActor(req);
+    const { user, actor } = buildContext(req);
     const result = await CourseService.deleteLesson(
       req.params.id as string,
       req.params.lessonId as string,
@@ -211,8 +200,7 @@ export class CourseController {
   }
 
   static async reorderLessons(req: Request, res: Response): Promise<void> {
-    const user = getUser(req);
-    const actor = buildActor(req);
+    const { user, actor } = buildContext(req);
     const result = await CourseService.reorderLessons(
       req.params.id as string,
       user.schoolId!,
@@ -225,8 +213,7 @@ export class CourseController {
   // ─── Assignment ──────────────────────────────────────────────────────────
 
   static async assignCourseToClass(req: Request, res: Response): Promise<void> {
-    const user = getUser(req);
-    const actor = buildActor(req);
+    const { user, actor } = buildContext(req);
     const result = await CourseService.assignCourseToClass(
       req.params.id as string,
       user.schoolId!,
@@ -237,8 +224,7 @@ export class CourseController {
   }
 
   static async listEnrolments(req: Request, res: Response): Promise<void> {
-    const user = getUser(req);
-    const actor = buildActor(req);
+    const { user, actor } = buildContext(req);
     const result = await CourseService.listEnrolments(
       req.params.id as string,
       user.schoolId!,
