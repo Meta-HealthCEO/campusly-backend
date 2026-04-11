@@ -17,51 +17,49 @@ import {
 
 const router = Router();
 
-// Every course authoring endpoint is open to teachers + admin-tier roles.
-// Finer-grained permission checks (draft ownership, HOD/principal overrides,
-// canPublish vs canAuthor) happen in the service layer because they depend
-// on isHOD / isSchoolPrincipal flags which the role-based authorize()
-// middleware cannot see.
-const AUTHOR_ROLES = ['super_admin', 'school_admin', 'teacher'] as const;
-
-// Review actions (publish, reject) are allowed at the route layer for any
-// author tier. The service's canPublish() helper then enforces:
-//   super_admin | school_admin | isHOD | isSchoolPrincipal
-// — so a plain teacher gets a ForbiddenError from the service.
-const REVIEW_ROLES = ['super_admin', 'school_admin', 'teacher'] as const;
+// Every course endpoint is open at the route layer to admins and teachers.
+// Finer-grained permission checks live in the service:
+//   - Draft ownership: teachers can only edit their own drafts
+//   - Review gating: only super_admin, school_admin, isHOD, or
+//     isSchoolPrincipal can publish/reject (enforced by canPublish)
+//   - Author gating: canAuthor blocks parents, students, and SGB members
+// The role tuple below is intentionally broad so that HOD/principal flags
+// (which are not part of UserRole) can be checked by the service layer,
+// not by the role-only authorize() middleware.
+const COURSE_ROLES = ['super_admin', 'school_admin', 'teacher'] as const;
 
 // ─── Course CRUD ───────────────────────────────────────────────────────────
 
 router.get(
   '/',
-  authorize(...AUTHOR_ROLES),
+  authorize(...COURSE_ROLES),
   validate({ query: courseQuerySchema }),
   CourseController.listCourses,
 );
 
 router.post(
   '/',
-  authorize(...AUTHOR_ROLES),
+  authorize(...COURSE_ROLES),
   validate(createCourseSchema),
   CourseController.createCourse,
 );
 
 router.get(
   '/:id',
-  authorize(...AUTHOR_ROLES),
+  authorize(...COURSE_ROLES),
   CourseController.getCourse,
 );
 
 router.put(
   '/:id',
-  authorize(...AUTHOR_ROLES),
+  authorize(...COURSE_ROLES),
   validate(updateCourseSchema),
   CourseController.updateCourse,
 );
 
 router.delete(
   '/:id',
-  authorize(...AUTHOR_ROLES),
+  authorize(...COURSE_ROLES),
   CourseController.deleteCourse,
 );
 
@@ -69,26 +67,26 @@ router.delete(
 
 router.post(
   '/:id/submit-for-review',
-  authorize(...AUTHOR_ROLES),
+  authorize(...COURSE_ROLES),
   CourseController.submitForReview,
 );
 
 router.post(
   '/:id/publish',
-  authorize(...REVIEW_ROLES),
+  authorize(...COURSE_ROLES),
   CourseController.publishCourse,
 );
 
 router.post(
   '/:id/reject',
-  authorize(...REVIEW_ROLES),
+  authorize(...COURSE_ROLES),
   validate(rejectCourseSchema),
   CourseController.rejectCourse,
 );
 
 router.post(
   '/:id/archive',
-  authorize(...AUTHOR_ROLES),
+  authorize(...COURSE_ROLES),
   CourseController.archiveCourse,
 );
 
@@ -96,28 +94,28 @@ router.post(
 
 router.patch(
   '/:id/modules/reorder',
-  authorize(...AUTHOR_ROLES),
+  authorize(...COURSE_ROLES),
   validate(reorderModulesSchema),
   CourseController.reorderModules,
 );
 
 router.post(
   '/:id/modules',
-  authorize(...AUTHOR_ROLES),
+  authorize(...COURSE_ROLES),
   validate(createModuleSchema),
   CourseController.addModule,
 );
 
 router.put(
   '/:id/modules/:moduleId',
-  authorize(...AUTHOR_ROLES),
+  authorize(...COURSE_ROLES),
   validate(updateModuleSchema),
   CourseController.updateModule,
 );
 
 router.delete(
   '/:id/modules/:moduleId',
-  authorize(...AUTHOR_ROLES),
+  authorize(...COURSE_ROLES),
   CourseController.deleteModule,
 );
 
@@ -125,28 +123,28 @@ router.delete(
 
 router.patch(
   '/:id/lessons/reorder',
-  authorize(...AUTHOR_ROLES),
+  authorize(...COURSE_ROLES),
   validate(reorderLessonsSchema),
   CourseController.reorderLessons,
 );
 
 router.post(
   '/:id/lessons',
-  authorize(...AUTHOR_ROLES),
+  authorize(...COURSE_ROLES),
   validate(createLessonSchema),
   CourseController.addLesson,
 );
 
 router.put(
   '/:id/lessons/:lessonId',
-  authorize(...AUTHOR_ROLES),
+  authorize(...COURSE_ROLES),
   validate(updateLessonSchema),
   CourseController.updateLesson,
 );
 
 router.delete(
   '/:id/lessons/:lessonId',
-  authorize(...AUTHOR_ROLES),
+  authorize(...COURSE_ROLES),
   CourseController.deleteLesson,
 );
 
@@ -154,14 +152,14 @@ router.delete(
 
 router.post(
   '/:id/assign',
-  authorize(...AUTHOR_ROLES),
+  authorize(...COURSE_ROLES),
   validate(assignCourseSchema),
   CourseController.assignCourseToClass,
 );
 
 router.get(
   '/:id/enrolments',
-  authorize(...AUTHOR_ROLES),
+  authorize(...COURSE_ROLES),
   CourseController.listEnrolments,
 );
 
