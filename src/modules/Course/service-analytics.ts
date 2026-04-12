@@ -7,6 +7,7 @@ import {
   QuizAttempt,
   Certificate,
 } from './model.js';
+import { Class } from '../Academic/model.js';
 import {
   NotFoundError,
   ForbiddenError,
@@ -31,6 +32,7 @@ export interface CourseAnalytics {
   }>;
   perClassBreakdown: Array<{
     classId: string | null;
+    className: string;
     enroled: number;
     completed: number;
   }>;
@@ -225,11 +227,34 @@ export class CourseAnalyticsService {
         },
       },
     ]);
-    const perClassBreakdown = classBreakdown.map((row) => ({
-      classId: row._id ? row._id.toString() : null,
-      enroled: row.enroled,
-      completed: row.completed,
-    }));
+    // Resolve class names in one round-trip so the frontend doesn't need
+    // to map classId → name client-side. Null _id means self-enroled.
+    const classIds = classBreakdown
+      .map((row) => row._id)
+      .filter((id): id is mongoose.Types.ObjectId => id !== null);
+    const classes = classIds.length
+      ? await Class.find({ _id: { $in: classIds }, schoolId: soid, isDeleted: false })
+          .select('name gradeId')
+          .populate({ path: 'gradeId', select: 'name' })
+          .lean()
+      : [];
+    const classNameById = new Map<string, string>();
+    for (const c of classes) {
+      const gradeName = (c.gradeId as unknown as { name?: string } | null)?.name ?? '';
+      const label = `${gradeName} ${c.name}`.trim() || c.name;
+      classNameById.set(c._id.toString(), label);
+    }
+    const perClassBreakdown = classBreakdown.map((row) => {
+      const classId = row._id ? row._id.toString() : null;
+      return {
+        classId,
+        className: classId
+          ? (classNameById.get(classId) ?? 'Unknown class')
+          : 'Self-enroled',
+        enroled: row.enroled,
+        completed: row.completed,
+      };
+    });
 
     return {
       enrolmentCount,
