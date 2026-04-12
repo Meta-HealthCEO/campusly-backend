@@ -59,6 +59,14 @@ router.post(
 
 // ─── Certificate download ──────────────────────────────────────────────────
 
+// /certificate/meta MUST come before /certificate so the literal isn't
+// captured by any catch-all suffix.
+router.get(
+  '/:id/certificate/meta',
+  authorize(...STUDENT_ROLES),
+  CourseStudentController.getCertificateMeta,
+);
+
 router.get(
   '/:id/certificate',
   authorize(...STUDENT_ROLES),

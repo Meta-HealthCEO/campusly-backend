@@ -119,4 +119,17 @@ export class CourseStudentController {
     res.setHeader('Content-Length', buffer.length.toString());
     res.end(buffer);
   }
+
+  // JSON metadata for the certificate — powers the student's certificate
+  // page card (student name, course name, issued date, verification code).
+  // Same ownership rules as getCertificate; returns JSON instead of a PDF.
+  static async getCertificateMeta(req: Request, res: Response): Promise<void> {
+    const user = getUser(req);
+    const cert = await CourseCertificateService.getCertificateForEnrolment(
+      req.params.id as string,
+      user.id,
+      user.schoolId!,
+    );
+    res.json(apiResponse(true, cert));
+  }
 }
