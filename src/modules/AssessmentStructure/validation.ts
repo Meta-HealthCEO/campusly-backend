@@ -17,7 +17,7 @@ export const createStructureSchema = z
     classId: nullableObjectId,
     gradeId: nullableObjectId,
     term: z.number().int().min(1).max(4),
-    academicYear: z.number().int().min(2000).max(2100),
+    academicYear: z.number().int().min(2020).max(2100),
   })
   .strict();
 
@@ -66,7 +66,7 @@ export const addLineItemSchema = z
     name: z.string().min(1).max(200).trim(),
     totalMarks: z.number().int().min(1),
     weight: z.number().min(0).max(100).nullable().optional(),
-    date: z.string().datetime().nullable().optional(),
+    date: z.string().min(1).nullable().optional(),
     existingAssessmentId: objectIdSchema.optional(),
   })
   .strict();
@@ -80,7 +80,7 @@ export const updateLineItemSchema = z
     name: z.string().min(1).max(200).trim().optional(),
     totalMarks: z.number().int().min(1).optional(),
     weight: z.number().min(0).max(100).nullable().optional(),
-    date: z.string().datetime().nullable().optional(),
+    date: z.string().min(1).nullable().optional(),
     existingAssessmentId: objectIdSchema.optional(),
     status: z.enum(lineItemStatuses).optional(),
   })
@@ -138,7 +138,7 @@ export const fromTemplateSchema = z
     classId: nullableObjectId,
     gradeId: nullableObjectId,
     term: z.number().int().min(1).max(4),
-    academicYear: z.number().int().min(2000).max(2100),
+    academicYear: z.number().int().min(2020).max(2100),
   })
   .strict();
 
@@ -149,7 +149,7 @@ export type FromTemplateInput = z.infer<typeof fromTemplateSchema>;
 export const cloneStructureSchema = z
   .object({
     term: z.number().int().min(1).max(4),
-    academicYear: z.number().int().min(2000).max(2100),
+    academicYear: z.number().int().min(2020).max(2100),
     classId: objectIdSchema.optional(),
     gradeId: objectIdSchema.optional(),
     name: z.string().min(1).max(200).trim().optional(),
