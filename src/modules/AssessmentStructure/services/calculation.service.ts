@@ -180,11 +180,8 @@ function calculateStudentResult(
         continue;
       }
 
-      // Present with a mark (including 0)
+      // Present with a mark (including 0) — compute percentage from raw mark / totalMarks
       allAbsent = false;
-      const percentage = markEntry.mark; // IMark.percentage is already stored, but we recalculate
-      // Actually use stored percentage field — but markEntry only stores mark + isAbsent
-      // We need the totalMarks from line item to compute percentage
       const pct = li.totalMarks > 0 ? (markEntry.mark / li.totalMarks) * 100 : 0;
       presentItems.push({ li, weight: baseWeight, percentage: pct });
     }
