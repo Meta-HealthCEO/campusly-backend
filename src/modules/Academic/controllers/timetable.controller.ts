@@ -1,6 +1,7 @@
 import type { Request } from 'express';
 import { Response } from 'express';
 import { AcademicService } from '../service.js';
+import { Timetable } from '../model.js';
 import { apiResponse } from '../../../common/utils.js';
 import { ConfigService } from '../../TimetableBuilder/services/config.service.js';
 
@@ -86,11 +87,14 @@ export class TimetableController {
 
     // Teachers can only update their own entries
     if (user.role === 'teacher') {
-      const existing = await AcademicService.getTimetableById(req.params.id as string, schoolId);
-      const ownerId = typeof existing.teacherId === 'object' && existing.teacherId !== null
-        ? String((existing.teacherId as unknown as { _id?: string })._id ?? existing.teacherId)
-        : String(existing.teacherId);
-      if (ownerId !== String(user.id)) {
+      const existing = await Timetable.findOne({ _id: req.params.id, schoolId, isDeleted: false })
+        .select('teacherId')
+        .lean();
+      if (!existing) {
+        res.status(404).json(apiResponse(false, undefined, undefined, 'Timetable entry not found'));
+        return;
+      }
+      if (String(existing.teacherId) !== String(user.id)) {
         res.status(403).json(apiResponse(false, undefined, undefined, 'You can only edit your own timetable entries'));
         return;
       }
@@ -106,11 +110,14 @@ export class TimetableController {
 
     // Teachers can only delete their own entries
     if (user.role === 'teacher') {
-      const existing = await AcademicService.getTimetableById(req.params.id as string, schoolId);
-      const ownerId = typeof existing.teacherId === 'object' && existing.teacherId !== null
-        ? String((existing.teacherId as unknown as { _id?: string })._id ?? existing.teacherId)
-        : String(existing.teacherId);
-      if (ownerId !== String(user.id)) {
+      const existing = await Timetable.findOne({ _id: req.params.id, schoolId, isDeleted: false })
+        .select('teacherId')
+        .lean();
+      if (!existing) {
+        res.status(404).json(apiResponse(false, undefined, undefined, 'Timetable entry not found'));
+        return;
+      }
+      if (String(existing.teacherId) !== String(user.id)) {
         res.status(403).json(apiResponse(false, undefined, undefined, 'You can only delete your own timetable entries'));
         return;
       }
