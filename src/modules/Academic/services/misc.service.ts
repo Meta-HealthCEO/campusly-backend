@@ -99,8 +99,8 @@ export class MiscAcademicService {
       .exec();
   }
 
-  static async getByTeacher(teacherId: string): Promise<ITimetable[]> {
-    return Timetable.find({ teacherId, isDeleted: false })
+  static async getByTeacher(teacherId: string, schoolId: string): Promise<ITimetable[]> {
+    return Timetable.find({ teacherId, schoolId, isDeleted: false })
       .populate('classId', 'name gradeId')
       .populate('subjectId', 'name code')
       .sort({ day: 1, period: 1 })

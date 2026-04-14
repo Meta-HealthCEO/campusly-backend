@@ -2,7 +2,9 @@ import type { Request } from 'express';
 import { Response } from 'express';
 import { getUser } from '../../types/authenticated-request.js';
 import { AcademicService } from './service.js';
+import { Timetable } from './model.js';
 import { apiResponse } from '../../common/utils.js';
+import { ForbiddenError } from '../../common/errors.js';
 
 export class AcademicController {
   // ─── Grade ─────────────────────────────────────────────────────────────
@@ -51,15 +53,69 @@ export class AcademicController {
   // ─── Class ─────────────────────────────────────────────────────────────
 
   static async createClass(req: Request, res: Response): Promise<void> {
-    const cls = await AcademicService.createClass(req.body);
-    res.status(201).json(apiResponse(true, cls, 'Class created successfully'));
+    const user = getUser(req);
+    const data = { ...req.body };
+
+    // If teacher is creating the class, auto-set themselves as the teacher
+    if (user.role === 'teacher' && !data.teacherId) {
+      data.teacherId = user.id;
+    }
+    if (!data.schoolId && user.schoolId) {
+      data.schoolId = user.schoolId;
+    }
+
+    const cls = await AcademicService.createClass(data);
+    // Re-fetch populated so frontend gets grade/teacher objects
+    const populated = await AcademicService.getClassById(String(cls._id), String(cls.schoolId));
+
+    // If a subjectId was provided, auto-create a timetable entry linking
+    // this teacher to this class + subject. This makes the class appear
+    // in the teacher's teaching-load under "subject classes".
+    if (data.subjectId && user.role === 'teacher') {
+      try {
+        // Find next available period to avoid clashes
+        const existingCount = await Timetable.countDocuments({
+          schoolId: populated.schoolId,
+          teacherId: user.id,
+          day: 'monday',
+          isDeleted: false,
+        });
+        await AcademicService.createTimetable({
+          schoolId: populated.schoolId,
+          teacherId: user.id as unknown as import('mongoose').Types.ObjectId,
+          classId: populated._id as import('mongoose').Types.ObjectId,
+          subjectId: data.subjectId as unknown as import('mongoose').Types.ObjectId,
+          day: 'monday',
+          period: existingCount,
+          startTime: '08:00',
+          endTime: '08:30',
+        });
+      } catch (err: unknown) {
+        // Non-fatal — class was created, timetable linkage is a convenience
+        console.error('Failed to auto-create timetable entry', err);
+      }
+    }
+
+    res.status(201).json(apiResponse(true, populated, 'Class created successfully'));
   }
 
   static async listClasses(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
+    const user = getUser(req);
+    const schoolId = user.schoolId!;
+
+    let teacherId: string | undefined = req.query.teacherId as string | undefined;
+    if (teacherId === 'me') teacherId = user.id;
+    if (user.role === 'teacher') teacherId = user.id;
+
+    const includeSubjectClasses = teacherId
+      ? (req.query.includeSubjectClasses !== 'false')
+      : undefined;
+
     const filters = {
       schoolId,
       gradeId: req.query.gradeId as string | undefined,
+      teacherId,
+      includeSubjectClasses,
     };
 
     const query = {
@@ -80,13 +136,23 @@ export class AcademicController {
   }
 
   static async updateClass(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
+    const user = getUser(req);
+    const schoolId = user.schoolId!;
+    if (user.role === 'teacher') {
+      const canAccess = await AcademicService.teacherCanAccessClass(user.id, req.params.id as string, schoolId);
+      if (!canAccess) throw new ForbiddenError('You can only modify your own classes');
+    }
     const cls = await AcademicService.updateClass(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, cls, 'Class updated successfully'));
   }
 
   static async deleteClass(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
+    const user = getUser(req);
+    const schoolId = user.schoolId!;
+    if (user.role === 'teacher') {
+      const canAccess = await AcademicService.teacherCanAccessClass(user.id, req.params.id as string, schoolId);
+      if (!canAccess) throw new ForbiddenError('You can only modify your own classes');
+    }
     await AcademicService.deleteClass(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Class deleted successfully'));
   }
@@ -103,6 +169,16 @@ export class AcademicController {
     res.json(apiResponse(true, { classroomCode: (cls as unknown as Record<string, unknown>).classroomCode, className: cls.name }, 'Join code regenerated successfully'));
   }
 
+  // ─── Teacher Teaching Load ──────────────────────────────────────────────
+
+  static async getTeacherTeachingLoad(req: Request, res: Response): Promise<void> {
+    const user = getUser(req);
+    let teacherId = (req.query.teacherId as string) ?? user.id;
+    if (user.role === 'teacher') teacherId = user.id;
+    const load = await AcademicService.getTeacherTeachingLoad(teacherId, user.schoolId!);
+    res.json(apiResponse(true, load, 'Teaching load retrieved'));
+  }
+
   // ─── Subject ───────────────────────────────────────────────────────────
 
   static async createSubject(req: Request, res: Response): Promise<void> {
@@ -111,11 +187,16 @@ export class AcademicController {
   }
 
   static async listSubjects(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const user = getUser(req);
+    const schoolId = (req.query.schoolId as string) ?? user.schoolId;
     if (!schoolId) {
       res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
       return;
     }
+
+    let teacherId: string | undefined = req.query.teacherId as string | undefined;
+    if (teacherId === 'me') teacherId = user.id;
+    if (user.role === 'teacher') teacherId = user.id;
 
     const query = {
       page: req.query.page ? Number(req.query.page) : undefined,
@@ -124,7 +205,9 @@ export class AcademicController {
       search: req.query.search as string | undefined,
     };
 
-    const result = await AcademicService.listSubjects(schoolId, query);
+    const gradeId = req.query.gradeId as string | undefined;
+
+    const result = await AcademicService.listSubjects(schoolId, query, { teacherId, gradeId });
     res.json(apiResponse(true, result, 'Subjects retrieved successfully'));
   }
 
@@ -183,7 +266,8 @@ export class AcademicController {
   }
 
   static async getTimetableByTeacher(req: Request, res: Response): Promise<void> {
-    const entries = await AcademicService.getByTeacher(req.params.teacherId as string);
+    const schoolId = req.user!.schoolId!;
+    const entries = await AcademicService.getByTeacher(req.params.teacherId as string, schoolId);
     res.json(apiResponse(true, entries, 'Teacher timetable retrieved successfully'));
   }
 
