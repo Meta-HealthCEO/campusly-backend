@@ -150,6 +150,8 @@ router.get(
   TermMarksController.getStudentTermMarks,
 );
 
+router.get('/:id/export', authorize(...roles), TermMarksController.exportTermMarks);
+
 // ─── Template operations on a structure ──────────────────────────────────────
 
 router.post(
