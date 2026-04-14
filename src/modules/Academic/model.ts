@@ -239,6 +239,7 @@ export interface IAssessment extends Document {
   academicYear: number;
   date: Date;
   paperId: Types.ObjectId | null;
+  structureId?: Types.ObjectId;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -298,6 +299,11 @@ const assessmentSchema = new Schema<IAssessment>(
       ref: 'AssessmentPaper',
       default: null,
     },
+    structureId: {
+      type: Schema.Types.ObjectId,
+      ref: 'AssessmentStructure',
+      default: null,
+    },
     isDeleted: {
       type: Boolean,
       default: false,
@@ -322,6 +328,7 @@ export interface IMark extends Document {
   total: number;
   percentage: number;
   comment?: string;
+  isAbsent: boolean;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -359,6 +366,10 @@ const markSchema = new Schema<IMark>(
     comment: {
       type: String,
       trim: true,
+    },
+    isAbsent: {
+      type: Boolean,
+      default: false,
     },
     isDeleted: {
       type: Boolean,
