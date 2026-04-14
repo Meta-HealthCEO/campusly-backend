@@ -42,15 +42,13 @@ export class MiscAcademicService {
 
   static async createTimetable(data: Partial<ITimetable>): Promise<ITimetable> {
     // Validate no clashes before saving
-    if (data.schoolId && data.teacherId && data.classId && data.day && data.period !== undefined) {
-      await TimetableClashService.validateNoClash(
-        String(data.schoolId),
-        String(data.teacherId),
-        String(data.classId),
-        data.day,
-        data.period,
-      );
-    }
+    await TimetableClashService.validateNoClash(
+      String(data.schoolId),
+      String(data.teacherId),
+      String(data.classId),
+      data.day as string,
+      data.period as number,
+    );
     const entry = new Timetable(data);
     return entry.save();
   }
@@ -90,8 +88,8 @@ export class MiscAcademicService {
     return entry;
   }
 
-  static async getByClass(classId: string): Promise<ITimetable[]> {
-    return Timetable.find({ classId, isDeleted: false })
+  static async getByClass(classId: string, schoolId: string): Promise<ITimetable[]> {
+    return Timetable.find({ classId, schoolId, isDeleted: false })
       .populate('subjectId', 'name code')
       .populate('teacherId', 'firstName lastName email')
       .sort({ day: 1, period: 1 })

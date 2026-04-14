@@ -22,6 +22,23 @@ export class TimetableBuilderController {
   static async updateConfig(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
     const schoolId = user.schoolId!;
+
+    if (user.role === 'teacher' && !user.isSchoolPrincipal) {
+      res.status(403).json(apiResponse(false, undefined, undefined, 'Only school admins can modify timetable configuration'));
+      return;
+    }
+
+    // Validate break afterPeriod values
+    if (req.body.breakSlots && req.body.periodsPerDay) {
+      const maxPeriods = Math.max(...Object.values(req.body.periodsPerDay as Record<string, number>));
+      for (const brk of req.body.breakSlots as Array<{ afterPeriod: number }>) {
+        if (brk.afterPeriod >= maxPeriods) {
+          res.status(400).json(apiResponse(false, undefined, undefined, `Break after period ${brk.afterPeriod} exceeds configured periods`));
+          return;
+        }
+      }
+    }
+
     const config = await ConfigService.updateConfig(schoolId, req.body);
     res.json(apiResponse(true, config, 'Config updated'));
   }

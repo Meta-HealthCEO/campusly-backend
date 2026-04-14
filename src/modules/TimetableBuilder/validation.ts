@@ -21,7 +21,10 @@ export const configSchema = z.object({
     period: z.number().int().min(1),
     startTime: z.string().min(1),
     endTime: z.string().min(1),
-  }).strict()).optional(),
+  }).strict().refine(
+    (pt) => pt.endTime > pt.startTime,
+    { message: 'End time must be after start time' },
+  )).optional(),
   breakSlots: z.array(z.object({
     afterPeriod: z.number().int().min(1),
     duration: z.number().int().min(1),

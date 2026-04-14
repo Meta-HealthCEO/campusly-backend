@@ -219,7 +219,11 @@ const timetableSchema = new Schema<ITimetable>(
   { timestamps: true },
 );
 
-timetableSchema.index({ classId: 1, day: 1, period: 1 }, { unique: true });
+// NOTE: If upgrading from an older index, run: db.timetables.dropIndex('classId_1_day_1_period_1') first
+timetableSchema.index(
+  { classId: 1, day: 1, period: 1 },
+  { unique: true, partialFilterExpression: { isDeleted: false } },
+);
 
 export const Timetable = mongoose.model<ITimetable>('Timetable', timetableSchema);
 
