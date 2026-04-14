@@ -74,7 +74,7 @@ router.delete(
 router.post(
   '/classes',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  authorize('super_admin', 'school_admin', 'teacher'),
   validate(classSchema),
   AcademicController.createClass,
 );
@@ -87,6 +87,13 @@ router.get(
 );
 
 router.get(
+  '/teacher/me/teaching-load',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'teacher'),
+  AcademicController.getTeacherTeachingLoad,
+);
+
+router.get(
   '/classes/:id',
   authenticate,
   authorize('super_admin', 'school_admin', 'teacher'),
@@ -96,7 +103,7 @@ router.get(
 router.put(
   '/classes/:id',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  authorize('super_admin', 'school_admin', 'teacher'),
   validate(updateClassSchema),
   AcademicController.updateClass,
 );
@@ -104,7 +111,7 @@ router.put(
 router.delete(
   '/classes/:id',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  authorize('super_admin', 'school_admin', 'teacher'),
   AcademicController.deleteClass,
 );
 
@@ -127,7 +134,7 @@ router.post(
 router.post(
   '/subjects',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  authorize('super_admin', 'school_admin', 'teacher'),
   validate(subjectSchema),
   AcademicController.createSubject,
 );
@@ -166,7 +173,7 @@ router.delete(
 router.post(
   '/timetable',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  authorize('super_admin', 'school_admin', 'teacher'),
   validate(timetableSchema),
   AcademicController.createTimetable,
 );
@@ -209,7 +216,7 @@ router.get(
 router.put(
   '/timetable/:id',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  authorize('super_admin', 'school_admin', 'teacher'),
   validate(updateTimetableSchema),
   AcademicController.updateTimetable,
 );
@@ -217,7 +224,7 @@ router.put(
 router.delete(
   '/timetable/:id',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  authorize('super_admin', 'school_admin', 'teacher'),
   AcademicController.deleteTimetable,
 );
 

@@ -14,11 +14,12 @@ import {
 const router = express.Router();
 
 const adminOnly = authorize('school_admin', 'super_admin');
+const adminOrTeacher = authorize('school_admin', 'super_admin', 'teacher');
 
 // ─── Config ─────────────────────────────────────────────────────────────────
 
-router.get('/config', adminOnly, TimetableBuilderController.getConfig);
-router.put('/config', adminOnly, validate(configSchema), TimetableBuilderController.updateConfig);
+router.get('/config', adminOrTeacher, TimetableBuilderController.getConfig);
+router.put('/config', adminOrTeacher, validate(configSchema), TimetableBuilderController.updateConfig);
 
 // ─── Requirements ───────────────────────────────────────────────────────────
 
