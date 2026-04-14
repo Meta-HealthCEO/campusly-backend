@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import { AssessmentStructure, IAssessmentStructure } from '../model.js';
-import { Class } from '../../Academic/model.js';
 import { Mark } from '../../Academic/model.js';
 import { Student } from '../../Student/model.js';
 import {
