@@ -232,7 +232,16 @@ export class AcademicController {
   // ─── Timetable ─────────────────────────────────────────────────────────
 
   static async createTimetable(req: Request, res: Response): Promise<void> {
-    const entry = await AcademicService.createTimetable(req.body);
+    const user = req.user!;
+    const data = { ...req.body };
+
+    // Teachers can only create entries for themselves
+    if (user.role === 'teacher') {
+      data.teacherId = user.id;
+      data.schoolId = user.schoolId;
+    }
+
+    const entry = await AcademicService.createTimetable(data);
     res.status(201).json(apiResponse(true, entry, 'Timetable entry created successfully'));
   }
 
@@ -272,13 +281,35 @@ export class AcademicController {
   }
 
   static async updateTimetable(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
+    const user = req.user!;
+    const schoolId = user.schoolId!;
+
+    // Teachers can only update their own entries
+    if (user.role === 'teacher') {
+      const existing = await AcademicService.getTimetableById(req.params.id as string, schoolId);
+      if (String(existing.teacherId) !== String(user.id)) {
+        res.status(403).json(apiResponse(false, undefined, undefined, 'You can only edit your own timetable entries'));
+        return;
+      }
+    }
+
     const entry = await AcademicService.updateTimetable(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, entry, 'Timetable entry updated successfully'));
   }
 
   static async deleteTimetable(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
+    const user = req.user!;
+    const schoolId = user.schoolId!;
+
+    // Teachers can only delete their own entries
+    if (user.role === 'teacher') {
+      const existing = await AcademicService.getTimetableById(req.params.id as string, schoolId);
+      if (String(existing.teacherId) !== String(user.id)) {
+        res.status(403).json(apiResponse(false, undefined, undefined, 'You can only delete your own timetable entries'));
+        return;
+      }
+    }
+
     await AcademicService.deleteTimetable(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Timetable entry deleted successfully'));
   }
