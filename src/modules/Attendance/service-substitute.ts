@@ -7,13 +7,12 @@ import { SubstituteConflictService } from './service-substitute-conflicts.js';
 import { NotificationService } from '../Notification/service.js';
 
 const DAY_NAMES = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
-type ConfigDayKey = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday';
 
-function getPeriodsForFullDay(config: { periodsPerDay?: IPeriodsPerDay } | null, date: Date): number[] {
+function getPeriodsForFullDay(config: { periodsPerDay?: IPeriodsPerDay } | null | undefined, date: Date): number[] {
   const dayName = DAY_NAMES[date.getDay()];
   if (dayName === 'saturday' || dayName === 'sunday') return [];
-  const key = dayName as ConfigDayKey;
-  const max = config?.periodsPerDay?.[key] ?? 7;
+  const ppd = config?.periodsPerDay as Record<string, number> | undefined;
+  const max = ppd?.[dayName] ?? 7;
   const periods: number[] = [];
   for (let i = 1; i <= max; i++) periods.push(i);
   return periods;
