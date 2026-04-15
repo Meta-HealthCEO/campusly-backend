@@ -85,7 +85,7 @@ const attendanceSchema = new Schema<IAttendance>(
   { timestamps: true },
 );
 
-attendanceSchema.index({ studentId: 1, date: 1, period: 1 }, { unique: true });
+attendanceSchema.index({ studentId: 1, schoolId: 1, date: 1, period: 1 }, { unique: true });
 attendanceSchema.index({ classId: 1, date: 1 });
 attendanceSchema.index({ schoolId: 1, date: 1 });
 attendanceSchema.index({ schoolId: 1, isDeleted: 1, createdAt: -1 });
@@ -216,49 +216,10 @@ meritSchema.index({ schoolId: 1, type: 1 });
 
 export const Merit = mongoose.model<IMerit>('Merit', meritSchema);
 
-// ─── Lesson Plan ────────────────────────────────────────────────────────────
-
-export interface ILessonPlan extends Document {
-  teacherId: Types.ObjectId;
-  schoolId: Types.ObjectId;
-  subjectId: Types.ObjectId;
-  classId: Types.ObjectId;
-  date: Date;
-  topic: string;
-  objectives: string[];
-  activities: string[];
-  resources: string[];
-  homework?: string;
-  reflectionNotes?: string;
-  isDeleted: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-const lessonPlanSchema = new Schema<ILessonPlan>(
-  {
-    teacherId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    schoolId: { type: Schema.Types.ObjectId, ref: 'School', required: true },
-    subjectId: { type: Schema.Types.ObjectId, ref: 'Subject', required: true },
-    classId: { type: Schema.Types.ObjectId, ref: 'Class', required: true },
-    date: { type: Date, required: true },
-    topic: { type: String, required: true, trim: true },
-    objectives: { type: [String], default: [] },
-    activities: { type: [String], default: [] },
-    resources: { type: [String], default: [] },
-    homework: { type: String },
-    reflectionNotes: { type: String },
-    isDeleted: { type: Boolean, default: false },
-  },
-  { timestamps: true },
-);
-
-lessonPlanSchema.index({ teacherId: 1, date: 1 });
-lessonPlanSchema.index({ schoolId: 1, classId: 1, date: 1 });
-
-export const LessonPlan = mongoose.model<ILessonPlan>('LessonPlan', lessonPlanSchema);
-
 // ─── Substitute Teacher ─────────────────────────────────────────────────────
+
+export type SubstituteStatus = 'pending' | 'approved' | 'declined' | 'cancelled';
+export type SubstituteReasonCategory = 'sick' | 'training' | 'personal' | 'family' | 'emergency' | 'other';
 
 export interface ISubstituteTeacher extends Document {
   originalTeacherId: Types.ObjectId;
@@ -266,9 +227,16 @@ export interface ISubstituteTeacher extends Document {
   schoolId: Types.ObjectId;
   date: Date;
   periods: number[];
-  reason: string;
+  reason?: string;
+  reasonCategory: SubstituteReasonCategory;
   classIds: Types.ObjectId[];
   approvedBy?: Types.ObjectId;
+  status: SubstituteStatus;
+  approvedAt?: Date;
+  declinedAt?: Date;
+  declineReason?: string;
+  leaveRequestId?: Types.ObjectId;
+  isFullDay: boolean;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -281,9 +249,26 @@ const substituteTeacherSchema = new Schema<ISubstituteTeacher>(
     schoolId: { type: Schema.Types.ObjectId, ref: 'School', required: true },
     date: { type: Date, required: true },
     periods: { type: [Number], required: true },
-    reason: { type: String, required: true },
+    reason: { type: String, trim: true },
+    reasonCategory: {
+      type: String,
+      enum: ['sick', 'training', 'personal', 'family', 'emergency', 'other'],
+      required: true,
+      default: 'other',
+    },
     classIds: { type: [Schema.Types.ObjectId], ref: 'Class', required: true },
     approvedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    status: {
+      type: String,
+      enum: ['pending', 'approved', 'declined', 'cancelled'],
+      default: 'pending',
+      required: true,
+    },
+    approvedAt: { type: Date },
+    declinedAt: { type: Date },
+    declineReason: { type: String, trim: true },
+    leaveRequestId: { type: Schema.Types.ObjectId, ref: 'LeaveRequest' },
+    isFullDay: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true },
@@ -291,5 +276,7 @@ const substituteTeacherSchema = new Schema<ISubstituteTeacher>(
 
 substituteTeacherSchema.index({ schoolId: 1, date: 1 });
 substituteTeacherSchema.index({ originalTeacherId: 1, date: 1 });
+substituteTeacherSchema.index({ schoolId: 1, status: 1, date: 1 });
+substituteTeacherSchema.index({ schoolId: 1, leaveRequestId: 1 });
 
 export const SubstituteTeacher = mongoose.model<ISubstituteTeacher>('SubstituteTeacher', substituteTeacherSchema);

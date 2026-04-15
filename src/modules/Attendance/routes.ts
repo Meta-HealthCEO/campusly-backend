@@ -3,6 +3,7 @@ import { authenticate } from '../../middleware/auth.js';
 import { authorize } from '../../middleware/rbac.js';
 import { validate } from '../../middleware/validate.js';
 import { requireParentOwnership } from '../../middleware/parentOwnership.js';
+import { requireTeacherClassOwnership } from '../../middleware/teacherClassOwnership.js';
 import { AttendanceController } from './controller.js';
 import { AttendanceExportController } from './export.controller.js';
 import {
@@ -11,10 +12,9 @@ import {
   createDisciplineSchema,
   updateDisciplineSchema,
   createMeritSchema,
-  createLessonPlanSchema,
-  updateLessonPlanSchema,
   createSubstituteSchema,
   updateSubstituteSchema,
+  declineSubstituteSchema,
 } from './validation.js';
 
 const router = Router();
@@ -26,13 +26,6 @@ router.get(
   authenticate,
   requireParentOwnership('studentId'),
   AttendanceController.getStudentStats,
-);
-
-router.get(
-  '/stats/class/:classId',
-  authenticate,
-  authorize('teacher', 'school_admin', 'super_admin'),
-  AttendanceController.getClassStats,
 );
 
 router.get(
@@ -78,6 +71,7 @@ router.get(
   '/class/:classId',
   authenticate,
   authorize('teacher', 'school_admin', 'super_admin'),
+  requireTeacherClassOwnership('classId'),
   AttendanceController.getByClass,
 );
 
@@ -85,7 +79,16 @@ router.get(
   '/report',
   authenticate,
   authorize('teacher', 'school_admin', 'super_admin'),
+  requireTeacherClassOwnership('classId'),
   AttendanceController.getReport,
+);
+
+router.get(
+  '/stats/class/:classId',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  requireTeacherClassOwnership('classId'),
+  AttendanceController.getClassStats,
 );
 
 router.get(
@@ -178,45 +181,6 @@ router.get(
   AttendanceController.getMeritBalance,
 );
 
-// ─── Lesson Plan Routes ─────────────────────────────────────────────────────
-
-router.post(
-  '/lesson-plans',
-  authenticate,
-  authorize('teacher', 'school_admin', 'super_admin'),
-  validate(createLessonPlanSchema),
-  AttendanceController.createLessonPlan,
-);
-
-router.get(
-  '/lesson-plans',
-  authenticate,
-  authorize('teacher', 'school_admin', 'super_admin'),
-  AttendanceController.listLessonPlans,
-);
-
-router.get(
-  '/lesson-plans/:id',
-  authenticate,
-  authorize('teacher', 'school_admin', 'super_admin'),
-  AttendanceController.getLessonPlan,
-);
-
-router.put(
-  '/lesson-plans/:id',
-  authenticate,
-  authorize('teacher', 'school_admin', 'super_admin'),
-  validate(updateLessonPlanSchema),
-  AttendanceController.updateLessonPlan,
-);
-
-router.delete(
-  '/lesson-plans/:id',
-  authenticate,
-  authorize('teacher', 'school_admin', 'super_admin'),
-  AttendanceController.deleteLessonPlan,
-);
-
 // ─── Substitute Teacher Routes ──────────────────────────────────────────────
 
 router.post(
@@ -232,6 +196,36 @@ router.get(
   authenticate,
   authorize('teacher', 'school_admin', 'super_admin'),
   AttendanceController.listSubstitutes,
+);
+
+// Static-segment routes must come before /:id routes to avoid conflicts
+router.get(
+  '/substitutes/suggestions',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  AttendanceController.getSubstituteSuggestions,
+);
+
+router.get(
+  '/substitutes/teacher/:teacherId/history',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'teacher'),
+  AttendanceController.getTeacherSubstituteHistory,
+);
+
+router.post(
+  '/substitutes/:id/approve',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  AttendanceController.approveSubstitute,
+);
+
+router.post(
+  '/substitutes/:id/decline',
+  authenticate,
+  authorize('super_admin', 'school_admin'),
+  validate(declineSubstituteSchema),
+  AttendanceController.declineSubstitute,
 );
 
 router.get(

@@ -77,36 +77,64 @@ export const createMeritSchema = z.object({
   reason: z.string().min(1, 'Reason is required'),
 }).strict();
 
-// ─── Lesson Plan ────────────────────────────────────────────────────────────
-
-export const createLessonPlanSchema = z.object({
-  schoolId: objectIdSchema,
-  subjectId: objectIdSchema,
-  classId: objectIdSchema,
-  date: z.string().datetime(),
-  topic: z.string().min(1, 'Topic is required'),
-  objectives: z.array(z.string()).optional(),
-  activities: z.array(z.string()).optional(),
-  resources: z.array(z.string()).optional(),
-  homework: z.string().optional(),
-  reflectionNotes: z.string().optional(),
-}).strict();
-
-export const updateLessonPlanSchema = createLessonPlanSchema.partial().strict();
-
 // ─── Substitute Teacher ─────────────────────────────────────────────────────
 
-export const createSubstituteSchema = z.object({
-  originalTeacherId: objectIdSchema,
-  substituteTeacherId: objectIdSchema,
-  schoolId: objectIdSchema,
-  date: z.string().datetime(),
-  periods: z.array(z.number().int().positive()).min(1, 'At least one period is required'),
-  reason: z.string().min(1, 'Reason is required'),
-  classIds: z.array(objectIdSchema).min(1, 'At least one class is required'),
-}).strict();
+const substituteReasonCategorySchema = z.enum([
+  'sick',
+  'training',
+  'personal',
+  'family',
+  'emergency',
+  'other',
+]);
 
-export const updateSubstituteSchema = createSubstituteSchema.partial().strict();
+export const createSubstituteSchema = z
+  .object({
+    originalTeacherId: objectIdSchema,
+    substituteTeacherId: objectIdSchema,
+    schoolId: objectIdSchema,
+    date: z.string().datetime(),
+    periods: z.array(z.number().int().positive()).default([]),
+    reason: z.string().optional(),
+    reasonCategory: substituteReasonCategorySchema,
+    classIds: z.array(objectIdSchema).min(1, 'At least one class is required'),
+    isFullDay: z.boolean().default(false),
+    leaveRequestId: objectIdSchema.optional(),
+  })
+  .strict()
+  .refine(
+    (data) => data.isFullDay || data.periods.length > 0,
+    { message: 'At least one period is required when not a full-day substitution', path: ['periods'] },
+  )
+  .refine(
+    (data) => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return new Date(data.date) >= today;
+    },
+    { message: 'Cannot create substitute for past dates', path: ['date'] },
+  );
+
+export const updateSubstituteSchema = z
+  .object({
+    originalTeacherId: objectIdSchema.optional(),
+    substituteTeacherId: objectIdSchema.optional(),
+    schoolId: objectIdSchema.optional(),
+    date: z.string().datetime().optional(),
+    periods: z.array(z.number().int().positive()).optional(),
+    reason: z.string().optional(),
+    reasonCategory: substituteReasonCategorySchema.optional(),
+    classIds: z.array(objectIdSchema).min(1).optional(),
+    isFullDay: z.boolean().optional(),
+    leaveRequestId: objectIdSchema.optional(),
+  })
+  .strict();
+
+export const declineSubstituteSchema = z
+  .object({
+    reason: z.string().min(1, 'Decline reason is required').trim(),
+  })
+  .strict();
 
 // ─── Inferred Types ─────────────────────────────────────────────────────────
 
@@ -115,5 +143,6 @@ export type BulkAttendanceInput = z.infer<typeof bulkAttendanceSchema>;
 export type AttendanceReportInput = z.infer<typeof attendanceReportSchema>;
 export type CreateDisciplineInput = z.infer<typeof createDisciplineSchema>;
 export type CreateMeritInput = z.infer<typeof createMeritSchema>;
-export type CreateLessonPlanInput = z.infer<typeof createLessonPlanSchema>;
 export type CreateSubstituteInput = z.infer<typeof createSubstituteSchema>;
+export type UpdateSubstituteInput = z.infer<typeof updateSubstituteSchema>;
+export type DeclineSubstituteInput = z.infer<typeof declineSubstituteSchema>;

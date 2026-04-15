@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import { LeavePolicy, LeaveRequest, LeaveBalance } from './model.js';
-import type { ILeaveTypeConfig } from './model.js';
+import type { ILeaveRequest, ILeaveTypeConfig } from './model.js';
+import { SubstituteTeacher } from '../Attendance/model.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
 import { paginationHelper, escapeRegex } from '../../common/utils.js';
 import type {
@@ -304,6 +305,34 @@ export class LeaveService {
     }
 
     return request.toObject();
+  }
+
+  // ─── Pending Substitute Coverage ──────────────────────────────────────────
+
+  /** Find approved leaves with no linked substitute (current/future only). */
+  static async findPendingSubstituteCoverage(schoolId: string): Promise<ILeaveRequest[]> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const leaves = await LeaveRequest.find({
+      schoolId,
+      status: 'approved',
+      isDeleted: false,
+      endDate: { $gte: today },
+    })
+      .populate('staffId', 'firstName lastName email')
+      .lean();
+
+    const result: ILeaveRequest[] = [];
+    for (const leave of leaves) {
+      const sub = await SubstituteTeacher.findOne({
+        schoolId,
+        leaveRequestId: leave._id,
+        isDeleted: false,
+      }).lean();
+      if (!sub) result.push(leave as unknown as ILeaveRequest);
+    }
+    return result;
   }
 
   // Balance methods are in service-balances.ts

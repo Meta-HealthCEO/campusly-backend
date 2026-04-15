@@ -149,6 +149,14 @@ export class LeaveController {
     res.json(apiResponse(true, suggestions, 'Substitute suggestions retrieved'));
   }
 
+  // ─── Pending Substitute Coverage ──────────────────────────────────────
+
+  static async getPendingCoverage(req: Request, res: Response): Promise<void> {
+    const { schoolId } = getUser(req);
+    const coverage = await LeaveService.findPendingSubstituteCoverage(schoolId as string);
+    res.json(apiResponse(true, coverage, 'Pending substitute coverage retrieved'));
+  }
+
   // ─── Reports ──────────────────────────────────────────────────────────
 
   static async getReportSummary(req: Request, res: Response): Promise<void> {

@@ -2,9 +2,13 @@ import type { Request } from 'express';
 import { Response } from 'express';
 import { getUser } from '../../types/authenticated-request.js';
 import { AttendanceService } from './service.js';
+import { DisciplineService } from './service-discipline.js';
+import { MeritService } from './service-merit.js';
+import { SubstituteService } from './service-substitute.js';
 import { AttendanceStatsService } from './service-stats.js';
 import { ChronicAbsenceService } from './chronic-absence.service.js';
 import { apiResponse } from '../../common/utils.js';
+import { BadRequestError } from '../../common/errors.js';
 
 export class AttendanceController {
   static async record(req: Request, res: Response): Promise<void> {
@@ -23,8 +27,7 @@ export class AttendanceController {
     const { startDate, endDate } = req.query;
 
     if (!startDate || !endDate) {
-      res.status(400).json(apiResponse(false, undefined, undefined, 'startDate and endDate are required'));
-      return;
+      throw new BadRequestError('startDate and endDate are required');
     }
 
     const records = await AttendanceService.getByStudent(
@@ -42,8 +45,7 @@ export class AttendanceController {
     const { date } = req.query;
 
     if (!date) {
-      res.status(400).json(apiResponse(false, undefined, undefined, 'date is required'));
-      return;
+      throw new BadRequestError('date is required');
     }
 
     const records = await AttendanceService.getByClass(classId, date as string, schoolId);
@@ -55,8 +57,7 @@ export class AttendanceController {
     const { studentId, classId, startDate, endDate } = req.query;
 
     if (!startDate || !endDate) {
-      res.status(400).json(apiResponse(false, undefined, undefined, 'startDate and endDate are required'));
-      return;
+      throw new BadRequestError('startDate and endDate are required');
     }
 
     const report = await AttendanceService.getReport({
@@ -70,18 +71,11 @@ export class AttendanceController {
   }
 
   static async getAbsentees(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
-
-    if (!schoolId) {
-      res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
-      return;
-    }
-
+    const schoolId = req.user!.schoolId!;
     const { date, period } = req.query;
 
     if (!date) {
-      res.status(400).json(apiResponse(false, undefined, undefined, 'date is required'));
-      return;
+      throw new BadRequestError('date is required');
     }
 
     const absentees = await AttendanceService.getAbsentees(
@@ -93,13 +87,7 @@ export class AttendanceController {
   }
 
   static async getDailyReport(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
-
-    if (!schoolId) {
-      res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
-      return;
-    }
-
+    const schoolId = req.user!.schoolId!;
     const date = req.params.date as string;
     const report = await AttendanceService.getDailyReport(schoolId, date);
     res.json(apiResponse(true, report, 'Daily report retrieved successfully'));
@@ -124,14 +112,13 @@ export class AttendanceController {
   // ─── Discipline ─────────────────────────────────────────────────────────────
 
   static async createDiscipline(req: Request, res: Response): Promise<void> {
-    const record = await AttendanceService.createDiscipline(req.body, getUser(req).id);
+    const record = await DisciplineService.createDiscipline(req.body, getUser(req).id);
     res.status(201).json(apiResponse(true, record, 'Discipline record created successfully'));
   }
 
   static async listDiscipline(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
-    if (!schoolId) { res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required')); return; }
-    const result = await AttendanceService.listDiscipline(
+    const schoolId = req.user!.schoolId!;
+    const result = await DisciplineService.listDiscipline(
       schoolId,
       { studentId: req.query.studentId as string, status: req.query.status as string, type: req.query.type as string },
       req.query.page ? Number(req.query.page) : undefined,
@@ -142,33 +129,32 @@ export class AttendanceController {
 
   static async getDiscipline(req: Request, res: Response): Promise<void> {
     const schoolId = req.user!.schoolId!;
-    const record = await AttendanceService.getDisciplineById(req.params.id as string, schoolId);
+    const record = await DisciplineService.getDisciplineById(req.params.id as string, schoolId);
     res.json(apiResponse(true, record, 'Discipline record retrieved successfully'));
   }
 
   static async updateDiscipline(req: Request, res: Response): Promise<void> {
     const schoolId = req.user!.schoolId!;
-    const record = await AttendanceService.updateDiscipline(req.params.id as string, schoolId, req.body);
+    const record = await DisciplineService.updateDiscipline(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, record, 'Discipline record updated successfully'));
   }
 
   static async deleteDiscipline(req: Request, res: Response): Promise<void> {
     const schoolId = req.user!.schoolId!;
-    await AttendanceService.deleteDiscipline(req.params.id as string, schoolId);
+    await DisciplineService.deleteDiscipline(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Discipline record deleted successfully'));
   }
 
   // ─── Merit / Demerit ────────────────────────────────────────────────────────
 
   static async createMerit(req: Request, res: Response): Promise<void> {
-    const merit = await AttendanceService.createMerit(req.body, getUser(req).id);
+    const merit = await MeritService.createMerit(req.body, getUser(req).id);
     res.status(201).json(apiResponse(true, merit, 'Merit/demerit recorded successfully'));
   }
 
   static async listMerits(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
-    if (!schoolId) { res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required')); return; }
-    const result = await AttendanceService.listMerits(
+    const schoolId = req.user!.schoolId!;
+    const result = await MeritService.listMerits(
       schoolId,
       { studentId: req.query.studentId as string, type: req.query.type as string, category: req.query.category as string },
       req.query.page ? Number(req.query.page) : undefined,
@@ -178,64 +164,27 @@ export class AttendanceController {
   }
 
   static async getMeritBalance(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
-    if (!schoolId) { res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required')); return; }
-    const balance = await AttendanceService.getStudentMeritBalance(req.params.studentId as string, schoolId);
+    const schoolId = req.user!.schoolId!;
+    const balance = await MeritService.getStudentMeritBalance(req.params.studentId as string, schoolId);
     res.json(apiResponse(true, balance, 'Merit balance retrieved successfully'));
-  }
-
-  // ─── Lesson Plans ─────────────────────────────────────────────────────────
-
-  static async createLessonPlan(req: Request, res: Response): Promise<void> {
-    const plan = await AttendanceService.createLessonPlan(req.body, getUser(req).id);
-    res.status(201).json(apiResponse(true, plan, 'Lesson plan created successfully'));
-  }
-
-  static async listLessonPlans(req: Request, res: Response): Promise<void> {
-    const result = await AttendanceService.listLessonPlans(
-      {
-        schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
-        teacherId: req.query.teacherId as string,
-        classId: req.query.classId as string,
-        subjectId: req.query.subjectId as string,
-      },
-      req.query.page ? Number(req.query.page) : undefined,
-      req.query.limit ? Number(req.query.limit) : undefined,
-    );
-    res.json(apiResponse(true, result, 'Lesson plans retrieved successfully'));
-  }
-
-  static async getLessonPlan(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
-    const plan = await AttendanceService.getLessonPlanById(req.params.id as string, schoolId);
-    res.json(apiResponse(true, plan, 'Lesson plan retrieved successfully'));
-  }
-
-  static async updateLessonPlan(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
-    const plan = await AttendanceService.updateLessonPlan(req.params.id as string, schoolId, req.body);
-    res.json(apiResponse(true, plan, 'Lesson plan updated successfully'));
-  }
-
-  static async deleteLessonPlan(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
-    await AttendanceService.deleteLessonPlan(req.params.id as string, schoolId);
-    res.json(apiResponse(true, undefined, 'Lesson plan deleted successfully'));
   }
 
   // ─── Substitute Teacher ───────────────────────────────────────────────────
 
   static async createSubstitute(req: Request, res: Response): Promise<void> {
-    const sub = await AttendanceService.createSubstitute(req.body);
+    const sub = await SubstituteService.createSubstitute(req.body);
     res.status(201).json(apiResponse(true, sub, 'Substitute teacher recorded successfully'));
   }
 
   static async listSubstitutes(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
-    if (!schoolId) { res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required')); return; }
-    const result = await AttendanceService.listSubstitutes(
+    const schoolId = req.user!.schoolId!;
+    const result = await SubstituteService.listSubstitutes(
       schoolId,
-      { date: req.query.date as string, originalTeacherId: req.query.originalTeacherId as string },
+      {
+        date: req.query.date as string,
+        originalTeacherId: req.query.originalTeacherId as string,
+        status: req.query.status as string,
+      },
       req.query.page ? Number(req.query.page) : undefined,
       req.query.limit ? Number(req.query.limit) : undefined,
     );
@@ -244,20 +193,62 @@ export class AttendanceController {
 
   static async getSubstitute(req: Request, res: Response): Promise<void> {
     const schoolId = req.user!.schoolId!;
-    const sub = await AttendanceService.getSubstituteById(req.params.id as string, schoolId);
+    const sub = await SubstituteService.getSubstituteById(req.params.id as string, schoolId);
     res.json(apiResponse(true, sub, 'Substitute record retrieved successfully'));
   }
 
   static async updateSubstitute(req: Request, res: Response): Promise<void> {
     const schoolId = req.user!.schoolId!;
-    const sub = await AttendanceService.updateSubstitute(req.params.id as string, schoolId, req.body);
+    const sub = await SubstituteService.updateSubstitute(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, sub, 'Substitute record updated successfully'));
   }
 
   static async deleteSubstitute(req: Request, res: Response): Promise<void> {
     const schoolId = req.user!.schoolId!;
-    await AttendanceService.deleteSubstitute(req.params.id as string, schoolId);
+    await SubstituteService.deleteSubstitute(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Substitute record deleted successfully'));
+  }
+
+  static async approveSubstitute(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const sub = await SubstituteService.approveSubstitute(req.params.id as string, schoolId, req.user!.id);
+    res.json(apiResponse(true, sub, 'Substitute approved'));
+  }
+
+  static async declineSubstitute(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const sub = await SubstituteService.declineSubstitute(
+      req.params.id as string,
+      schoolId,
+      req.body.reason as string,
+    );
+    res.json(apiResponse(true, sub, 'Substitute declined'));
+  }
+
+  static async getSubstituteSuggestions(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    if (!req.query.date || !req.query.periods || !req.query.originalTeacherId) {
+      throw new BadRequestError('date, periods, and originalTeacherId are required');
+    }
+    const date = new Date(req.query.date as string);
+    const periods = (req.query.periods as string)
+      .split(',')
+      .map((p) => Number(p.trim()))
+      .filter((n) => Number.isFinite(n) && n > 0);
+    if (periods.length === 0) {
+      throw new BadRequestError('At least one valid period is required');
+    }
+    const originalTeacherId = req.query.originalTeacherId as string;
+    const suggestions = await SubstituteService.suggestAvailableTeachers(schoolId, date, periods, originalTeacherId);
+    res.json(apiResponse(true, suggestions, 'Suggestions retrieved'));
+  }
+
+  static async getTeacherSubstituteHistory(req: Request, res: Response): Promise<void> {
+    const user = req.user!;
+    const schoolId = user.schoolId!;
+    const teacherId = user.role === 'teacher' ? user.id : (req.params.teacherId as string);
+    const history = await SubstituteService.listTeacherHistory(teacherId, schoolId);
+    res.json(apiResponse(true, history, 'History retrieved'));
   }
 
   // ─── Attendance Stats ────────────────────────────────────────────────────────

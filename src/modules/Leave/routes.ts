@@ -97,6 +97,14 @@ router.get(
   LeaveController.getSuggestions,
 );
 
+// ─── Pending Substitute Coverage ──────────────────────────────────────────────
+
+router.get(
+  '/pending-coverage',
+  authorize('super_admin', 'school_admin'),
+  LeaveController.getPendingCoverage,
+);
+
 // ─── Reports ──────────────────────────────────────────────────────────────────
 
 router.get(
