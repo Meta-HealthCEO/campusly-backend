@@ -5,13 +5,14 @@ export interface ILessonPlan extends Document {
   schoolId: Types.ObjectId;
   subjectId: Types.ObjectId;
   classId: Types.ObjectId;
-  curriculumTopicId?: Types.ObjectId;
+  curriculumTopicId: Types.ObjectId;
   date: Date;
   topic: string;
   objectives: string[];
   activities: string[];
   resources: string[];
-  homework?: string;
+  durationMinutes: number;
+  homeworkIds: Types.ObjectId[];
   reflectionNotes?: string;
   aiGenerated: boolean;
   isDeleted: boolean;
@@ -25,13 +26,14 @@ const lessonPlanSchema = new Schema<ILessonPlan>(
     schoolId: { type: Schema.Types.ObjectId, ref: 'School', required: true },
     subjectId: { type: Schema.Types.ObjectId, ref: 'Subject', required: true },
     classId: { type: Schema.Types.ObjectId, ref: 'Class', required: true },
-    curriculumTopicId: { type: Schema.Types.ObjectId, ref: 'CurriculumNode', required: false },
+    curriculumTopicId: { type: Schema.Types.ObjectId, ref: 'CurriculumNode', required: true },
+    durationMinutes: { type: Number, default: 45, min: 5, max: 240 },
+    homeworkIds: { type: [Schema.Types.ObjectId], ref: 'Homework', default: [] },
     date: { type: Date, required: true },
     topic: { type: String, required: true, trim: true },
     objectives: { type: [String], default: [] },
     activities: { type: [String], default: [] },
     resources: { type: [String], default: [] },
-    homework: { type: String },
     reflectionNotes: { type: String },
     aiGenerated: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },
