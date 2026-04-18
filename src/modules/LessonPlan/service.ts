@@ -1,10 +1,8 @@
-import mongoose from 'mongoose';
 import { LessonPlan, ILessonPlan } from './model.js';
 import { Class } from '../Academic/model.js';
 import { Subject } from '../Academic/model.js';
 import { CurriculumNode, ICurriculumNode } from '../CurriculumStructure/model.js';
 import { Homework } from '../Homework/model.js';
-import type { CreateHomeworkInput } from '../Homework/validation.js';
 import { NotFoundError, BadRequestError, ForbiddenError } from '../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../common/constants.js';
 
@@ -38,7 +36,7 @@ export function assertLessonPlanAccess(
 }
 
 /** Verify a class, subject, and (optionally) curriculum topic all belong to the school. */
-async function verifyRefs(schoolId: string, classId: string, subjectId: string, curriculumTopicId?: string): Promise<void> {
+export async function verifyRefs(schoolId: string, classId: string, subjectId: string, curriculumTopicId?: string): Promise<void> {
   const [cls, subject] = await Promise.all([
     Class.findOne({ _id: classId, schoolId, isDeleted: false }).lean(),
     Subject.findOne({ _id: subjectId, schoolId, isDeleted: false }).lean(),
@@ -61,28 +59,52 @@ async function verifyRefs(schoolId: string, classId: string, subjectId: string, 
  * Walks up parent chain from the topic until it finds a node with `type: 'grade'`.
  * If both a grade node and the class's grade name are resolvable and differ, throws.
  */
-async function assertTopicMatchesClassGrade(
+const MAX_CURRICULUM_DEPTH = 10;
+
+export async function assertTopicMatchesClassGrade(
   curriculumTopicId: string,
   classId: string,
   schoolId: string,
 ): Promise<void> {
   const [topic, cls] = await Promise.all([
-    CurriculumNode.findOne({ _id: curriculumTopicId, isDeleted: false }),
+    // I4: scope topic lookup to the school (mirrors verifyRefs: allow schoolId-null shared CAPS)
+    CurriculumNode.findOne({
+      _id: curriculumTopicId,
+      isDeleted: false,
+      $or: [{ schoolId }, { schoolId: null }],
+    }),
     Class.findOne({ _id: classId, schoolId, isDeleted: false }).populate('gradeId', 'name'),
   ]);
   if (!topic) throw new BadRequestError('Curriculum topic not found');
   if (!cls) throw new BadRequestError('Class not found');
 
-  // Traverse ancestors to find the grade node
+  // I1/I3: Traverse ancestors to find the grade node. Bound by MAX_DEPTH + visited-set to
+  // prevent infinite loops on malformed curriculum cycles. Parent walk filters isDeleted.
   let gradeNode: ICurriculumNode | null = topic;
-  while (gradeNode && gradeNode.type !== 'grade' && gradeNode.parentId) {
-    const parent: ICurriculumNode | null = await CurriculumNode.findById(gradeNode.parentId);
+  const visited = new Set<string>();
+  let depth = 0;
+  while (gradeNode && gradeNode.type !== 'grade' && gradeNode.parentId && depth < MAX_CURRICULUM_DEPTH) {
+    const parentIdStr = String(gradeNode.parentId);
+    if (visited.has(parentIdStr)) break;
+    visited.add(parentIdStr);
+    const parent: ICurriculumNode | null = await CurriculumNode.findOne({
+      _id: gradeNode.parentId,
+      isDeleted: false,
+    });
     if (!parent) break;
     gradeNode = parent;
+    depth++;
+  }
+
+  // I2: fail closed when no grade ancestor resolves
+  if (!gradeNode || gradeNode.type !== 'grade') {
+    throw new BadRequestError(
+      'Curriculum topic has no resolvable grade ancestor — please contact your admin',
+    );
   }
 
   const classGradeName = (cls.gradeId as unknown as { name: string } | null)?.name;
-  if (gradeNode?.type === 'grade' && classGradeName && gradeNode.title !== classGradeName) {
+  if (classGradeName && gradeNode.title !== classGradeName) {
     throw new BadRequestError(
       `Curriculum topic is for ${gradeNode.title}, but class is ${classGradeName}`,
     );
@@ -124,62 +146,6 @@ export class LessonPlanService {
       aiGenerated: data.aiGenerated ?? false,
     });
     return plan;
-  }
-
-  /**
-   * Create a lesson plan together with staged homework records.
-   * Compensation flow (MongoDB is standalone — no transactions available):
-   *   1. Create all staged homework docs first.
-   *   2. Create the lesson plan referencing those homework IDs.
-   *   3. If either step fails, soft-delete any homework rows already created.
-   */
-  static async createLessonPlanWithStagedHomework(
-    data: Partial<ILessonPlan> & { stagedHomework?: CreateHomeworkInput[] },
-    teacherId: string,
-  ): Promise<ILessonPlan> {
-    const staged = data.stagedHomework ?? [];
-    const createdHomeworkIds: mongoose.Types.ObjectId[] = [];
-
-    // Phase 1: create homework records
-    try {
-      for (const hw of staged) {
-        const doc = await Homework.create({
-          ...hw,
-          teacherId,
-        });
-        createdHomeworkIds.push(doc._id as mongoose.Types.ObjectId);
-      }
-    } catch (err: unknown) {
-      if (createdHomeworkIds.length) {
-        await Homework.updateMany(
-          { _id: { $in: createdHomeworkIds } },
-          { $set: { isDeleted: true } },
-        );
-      }
-      throw err;
-    }
-
-    // Phase 2: create the lesson plan
-    try {
-      const { stagedHomework: _staged, ...planData } = data;
-      void _staged;
-      const plan = await LessonPlanService.createLessonPlan(
-        {
-          ...planData,
-          homeworkIds: createdHomeworkIds as unknown as ILessonPlan['homeworkIds'],
-        },
-        teacherId,
-      );
-      return plan;
-    } catch (err: unknown) {
-      if (createdHomeworkIds.length) {
-        await Homework.updateMany(
-          { _id: { $in: createdHomeworkIds } },
-          { $set: { isDeleted: true } },
-        );
-      }
-      throw err;
-    }
   }
 
   static async listLessonPlans(
@@ -274,20 +240,22 @@ export class LessonPlanService {
     const existing = await LessonPlan.findOne({ _id: id, schoolId, isDeleted: false }).lean();
     if (!existing) throw new NotFoundError('Lesson plan not found');
     assertLessonPlanAccess(existing, actorId, actorRole, 'delete');
+
+    // I5: cascade FIRST — if the homework update fails, the plan remains live so a retry works.
+    // Submissions are preserved (we only soft-delete homework, not submissions).
+    if (existing.homeworkIds && existing.homeworkIds.length) {
+      await Homework.updateMany(
+        { _id: { $in: existing.homeworkIds }, isDeleted: false },
+        { $set: { isDeleted: true } },
+      );
+    }
+
     const plan = await LessonPlan.findOneAndUpdate(
       { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
       { new: true },
     );
     if (!plan) throw new NotFoundError('Lesson plan not found');
-
-    // Cascade: soft-delete attached homework (submissions are preserved)
-    if (plan.homeworkIds && plan.homeworkIds.length) {
-      await Homework.updateMany(
-        { _id: { $in: plan.homeworkIds }, isDeleted: false },
-        { $set: { isDeleted: true } },
-      );
-    }
 
     return plan;
   }
