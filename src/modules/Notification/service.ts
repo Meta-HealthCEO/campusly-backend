@@ -98,19 +98,19 @@ export class NotificationService {
         schoolId: data.targetId,
         isDeleted: false,
       }).select('userId');
-      userIds = students.map((s) => s.userId.toString());
+      userIds = students.filter((s) => s.userId != null).map((s) => s.userId!.toString());
     } else if (data.targetType === 'grade') {
       const students = await Student.find({
         gradeId: data.targetId,
         isDeleted: false,
       }).select('userId');
-      userIds = students.map((s) => s.userId.toString());
+      userIds = students.filter((s) => s.userId != null).map((s) => s.userId!.toString());
     } else if (data.targetType === 'class') {
       const students = await Student.find({
         classId: data.targetId,
         isDeleted: false,
       }).select('userId');
-      userIds = students.map((s) => s.userId.toString());
+      userIds = students.filter((s) => s.userId != null).map((s) => s.userId!.toString());
     }
 
     if (userIds.length === 0) {

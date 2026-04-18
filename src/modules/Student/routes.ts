@@ -53,7 +53,7 @@ router.post(
 router.post(
   '/',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  authorize('super_admin', 'school_admin', 'teacher'),
   validate(createStudentSchema),
   StudentController.create,
 );
@@ -61,14 +61,14 @@ router.post(
 router.get(
   '/',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'student', 'parent'),
+  authorize('super_admin', 'school_admin', 'teacher', 'student', 'parent', 'coach', 'sports_manager'),
   StudentController.list,
 );
 
 router.get(
   '/:id',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'parent'),
+  authorize('super_admin', 'school_admin', 'teacher', 'parent', 'coach', 'sports_manager'),
   requireParentOwnership('id'),
   StudentController.getById,
 );
@@ -76,7 +76,7 @@ router.get(
 router.put(
   '/:id',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  authorize('super_admin', 'school_admin', 'teacher'),
   validate(updateStudentSchema),
   StudentController.update,
 );
@@ -84,7 +84,7 @@ router.put(
 router.delete(
   '/:id',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  authorize('super_admin', 'school_admin', 'teacher'),
   StudentController.delete,
 );
 
@@ -119,6 +119,14 @@ router.get(
   authenticate,
   authorize('super_admin', 'school_admin', 'teacher', 'parent'),
   TranscriptController.getTranscript,
+);
+
+// ─── Student Invite ────────────────────────────────────────────────────────
+router.post(
+  '/:id/invite',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'teacher'),
+  StudentController.inviteStudent,
 );
 
 export default router;

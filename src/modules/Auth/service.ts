@@ -16,7 +16,7 @@ import { School, generateJoinCode } from '../School/model.js';
 import { Class } from '../Academic/model.js';
 import { Student } from '../Student/model.js';
 
-interface TokenPair {
+export interface TokenPair {
   accessToken: string;
   refreshToken: string;
 }
@@ -34,6 +34,8 @@ export class AuthService {
       isBursar: user.isBursar ?? false,
       isReceptionist: user.isReceptionist ?? false,
       isCounselor: user.isCounselor ?? false,
+      isStandaloneTeacher: user.isStandaloneTeacher ?? false,
+      isStandaloneCoach: user.isStandaloneCoach ?? false,
     };
 
     const accessToken = jwt.sign(payload, config.jwt.accessSecret, {

@@ -1,6 +1,8 @@
 import crypto from 'crypto';
-import { Grade, IGrade, Class, IClass } from '../model.js';
-import { NotFoundError } from '../../../common/errors.js';
+import type { Types } from 'mongoose';
+import { Grade, IGrade, Class, IClass, Timetable } from '../model.js';
+import { Student } from '../../Student/model.js';
+import { NotFoundError, ConflictError, BadRequestError } from '../../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../../common/constants.js';
 import { escapeRegex } from '../../../common/utils.js';
 
@@ -91,6 +93,29 @@ export class GradeService {
   // ─── Class CRUD ──────────────────────────────────────────────────────────
 
   static async createClass(data: Partial<IClass>): Promise<IClass> {
+    // Verify gradeId belongs to the same school
+    if (data.gradeId && data.schoolId) {
+      const grade = await Grade.findOne({
+        _id: data.gradeId,
+        schoolId: data.schoolId,
+        isDeleted: false,
+      });
+      if (!grade) {
+        throw new BadRequestError('Grade not found in this school');
+      }
+    }
+
+    // Check for duplicate class name within the same grade
+    const existing = await Class.findOne({
+      name: data.name,
+      gradeId: data.gradeId,
+      schoolId: data.schoolId,
+      isDeleted: false,
+    });
+    if (existing) {
+      throw new ConflictError('A class with this name already exists in this grade');
+    }
+
     // Generate a unique 6-char uppercase alphanumeric classroom code
     let code = generateClassroomCode();
     let attempts = 0;
@@ -123,13 +148,30 @@ export class GradeService {
   }
 
   static async listClasses(
-    filters: { schoolId: string; gradeId?: string },
+    filters: { schoolId: string; gradeId?: string; teacherId?: string; includeSubjectClasses?: boolean },
     query: ListQuery,
   ): Promise<PaginatedResult<IClass>> {
     const { page, limit, skip, sortField } = getPagination(query);
 
     const filter: Record<string, unknown> = { schoolId: filters.schoolId, isDeleted: false };
     if (filters.gradeId) filter.gradeId = filters.gradeId;
+
+    if (filters.teacherId) {
+      const includeSubject = filters.includeSubjectClasses !== false;
+      if (includeSubject) {
+        const timetableClassIds = await Timetable.distinct('classId', {
+          schoolId: filters.schoolId,
+          teacherId: filters.teacherId,
+          isDeleted: false,
+        }) as Types.ObjectId[];
+        filter.$or = [
+          { teacherId: filters.teacherId },
+          { _id: { $in: timetableClassIds } },
+        ];
+      } else {
+        filter.teacherId = filters.teacherId;
+      }
+    }
 
     if (query.search) {
       filter.name = new RegExp(escapeRegex(query.search), 'i');
@@ -179,5 +221,108 @@ export class GradeService {
     );
     if (!cls) throw new NotFoundError('Class not found');
     return cls;
+  }
+
+  // ─── Teacher Scoping Helpers ────────────────────────────────────────────
+
+  static async getTeacherTeachingLoad(teacherId: string, schoolId: string) {
+    // 1. Find homeroom class
+    const homeroom = await Class.findOne({ schoolId, teacherId, isDeleted: false })
+      .populate('gradeId', 'name level')
+      .lean();
+
+    // 2. Find timetable rows for this teacher
+    const timetableRows = await Timetable.find({ schoolId, teacherId, isDeleted: false })
+      .populate({ path: 'classId', match: { isDeleted: false } })
+      .populate('subjectId', 'name code')
+      .lean();
+
+    // 3. De-duplicate by classId::subjectId
+    const seen = new Set<string>();
+    const uniqueEntries: Array<{ classId: Types.ObjectId; subjectId: Types.ObjectId; classDoc: unknown; subjectDoc: unknown }> = [];
+    for (const row of timetableRows) {
+      // Skip entries where classId was filtered out by populate match (deleted class)
+      if (!row.classId || typeof row.classId !== 'object') continue;
+      const key = `${String(row.classId && typeof row.classId === 'object' && '_id' in row.classId ? (row.classId as { _id: Types.ObjectId })._id : row.classId)}::${String(row.subjectId && typeof row.subjectId === 'object' && '_id' in row.subjectId ? (row.subjectId as { _id: Types.ObjectId })._id : row.subjectId)}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        uniqueEntries.push({
+          classId: row.classId && typeof row.classId === 'object' && '_id' in row.classId
+            ? (row.classId as { _id: Types.ObjectId })._id
+            : row.classId as Types.ObjectId,
+          subjectId: row.subjectId && typeof row.subjectId === 'object' && '_id' in row.subjectId
+            ? (row.subjectId as { _id: Types.ObjectId })._id
+            : row.subjectId as Types.ObjectId,
+          classDoc: row.classId,
+          subjectDoc: row.subjectId,
+        });
+      }
+    }
+
+    // 4. Collect all distinct classIds (homeroom + subject classes)
+    const allClassIds: Types.ObjectId[] = [];
+    if (homeroom) allClassIds.push(homeroom._id as Types.ObjectId);
+    for (const entry of uniqueEntries) {
+      allClassIds.push(entry.classId);
+    }
+    const uniqueClassIds = [...new Set(allClassIds.map((id) => String(id)))];
+
+    // 5. Fetch all students in one query
+    const students = await Student.find({
+      schoolId,
+      classId: { $in: uniqueClassIds },
+      isDeleted: false,
+    })
+      .populate('userId', 'firstName lastName email profileImage')
+      .lean();
+
+    // 6. Group students by classId
+    const studentsByClass = new Map<string, typeof students>();
+    for (const student of students) {
+      const cid = String(student.classId);
+      if (!studentsByClass.has(cid)) studentsByClass.set(cid, []);
+      studentsByClass.get(cid)!.push(student);
+    }
+
+    // 7. Assemble response
+    return {
+      homeroom: homeroom
+        ? { class: homeroom, students: studentsByClass.get(String(homeroom._id)) ?? [] }
+        : null,
+      subjectClasses: uniqueEntries.map((entry) => ({
+        class: entry.classDoc,
+        subject: entry.subjectDoc,
+        students: studentsByClass.get(String(entry.classId)) ?? [],
+      })),
+    };
+  }
+
+  /** Count existing timetable entries for a teacher on a given day. */
+  static async countTimetableEntries(
+    schoolId: string,
+    teacherId: string,
+    day: string,
+  ): Promise<number> {
+    return Timetable.countDocuments({ schoolId, teacherId, day, isDeleted: false });
+  }
+
+  /** Count students enrolled in a class. */
+  static async countClassStudents(
+    classId: string,
+    schoolId: string,
+  ): Promise<number> {
+    return Student.countDocuments({ classId, schoolId, isDeleted: false });
+  }
+
+  static async teacherCanAccessClass(
+    teacherId: string,
+    classId: string,
+    schoolId: string,
+  ): Promise<boolean> {
+    const [isHomeroom, hasTimetable] = await Promise.all([
+      Class.exists({ _id: classId, schoolId, teacherId, isDeleted: false }),
+      Timetable.exists({ schoolId, teacherId, classId, isDeleted: false }),
+    ]);
+    return !!(isHomeroom || hasTimetable);
   }
 }

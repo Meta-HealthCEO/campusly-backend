@@ -106,6 +106,14 @@ export class ClassroomController {
     res.json(apiResponse(true, result, 'Response recorded'));
   }
 
+  static async getChatHistory(req: Request, res: Response): Promise<void> {
+    const { SessionChatMessage } = await import('./model-chat.js');
+    const messages = await SessionChatMessage.find({ sessionId: req.params.id })
+      .sort({ timestamp: 1 })
+      .lean();
+    res.json(apiResponse(true, messages, 'Chat history retrieved'));
+  }
+
   // ─── Videos ───────────────────────────────────────────────────────────────
 
   static async listVideos(req: Request, res: Response): Promise<void> {

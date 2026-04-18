@@ -5,6 +5,8 @@ export enum UserRole {
   PARENT = 'parent',
   STUDENT = 'student',
   SGB_MEMBER = 'sgb_member',
+  COACH = 'coach',
+  SPORTS_MANAGER = 'sports_manager',
 }
 
 export enum AttendanceStatus {

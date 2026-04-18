@@ -1,0 +1,47 @@
+import type { Request } from 'express';
+import { Response } from 'express';
+import { AcademicService } from '../service.js';
+import { apiResponse } from '../../../common/utils.js';
+
+export class GradeController {
+  static async createGrade(req: Request, res: Response): Promise<void> {
+    const grade = await AcademicService.createGrade(req.body);
+    res.status(201).json(apiResponse(true, grade, 'Grade created successfully'));
+  }
+
+  static async listGrades(req: Request, res: Response): Promise<void> {
+    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
+      return;
+    }
+
+    const query = {
+      page: req.query.page ? Number(req.query.page) : undefined,
+      limit: req.query.limit ? Number(req.query.limit) : undefined,
+      sort: (req.query.sort as string) ?? 'orderIndex',
+      search: req.query.search as string | undefined,
+    };
+
+    const result = await AcademicService.listGrades(schoolId, query);
+    res.json(apiResponse(true, result, 'Grades retrieved successfully'));
+  }
+
+  static async getGrade(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const grade = await AcademicService.getGradeById(req.params.id as string, schoolId);
+    res.json(apiResponse(true, grade, 'Grade retrieved successfully'));
+  }
+
+  static async updateGrade(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const grade = await AcademicService.updateGrade(req.params.id as string, schoolId, req.body);
+    res.json(apiResponse(true, grade, 'Grade updated successfully'));
+  }
+
+  static async deleteGrade(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    await AcademicService.deleteGrade(req.params.id as string, schoolId);
+    res.json(apiResponse(true, undefined, 'Grade deleted successfully'));
+  }
+}

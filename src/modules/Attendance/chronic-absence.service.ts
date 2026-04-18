@@ -73,59 +73,71 @@ export class ChronicAbsenceService {
     const now = new Date();
     const termStart = new Date(now.getFullYear(), 0, 1);
 
-    // Aggregate attendance per student
-    const stats = await Attendance.aggregate([
-      {
-        $match: {
-          schoolId: schoolOid,
-          isDeleted: false,
-          date: { $gte: termStart },
-          period: 1, // Use period 1 as the "daily" attendance marker
-        },
-      },
-      {
-        $group: {
-          _id: '$studentId',
-          totalDays: { $sum: 1 },
-          presentDays: { $sum: { $cond: [{ $eq: ['$status', 'present'] }, 1, 0] } },
-          absentDays: { $sum: { $cond: [{ $eq: ['$status', 'absent'] }, 1, 0] } },
-          lateDays: { $sum: { $cond: [{ $eq: ['$status', 'late'] }, 1, 0] } },
-          excusedDays: { $sum: { $cond: [{ $eq: ['$status', 'excused'] }, 1, 0] } },
-        },
-      },
-    ]);
-
-    const statsMap = new Map<string, typeof stats[0]>();
-    for (const s of stats) {
-      statsMap.set(String(s._id), s);
-    }
-
-    // Calculate trend: compare last 2 weeks vs previous 2 weeks
+    // Calculate trend window cutoffs
     const twoWeeksAgo = new Date(now);
     twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
     const fourWeeksAgo = new Date(now);
     fourWeeksAgo.setDate(fourWeeksAgo.getDate() - 28);
 
-    const recentStats = await Attendance.aggregate([
+    // Single aggregation computes both term stats and trend data via $facet
+    const [facetResult] = await Attendance.aggregate([
       {
         $match: {
           schoolId: schoolOid,
           isDeleted: false,
-          date: { $gte: fourWeeksAgo },
+          date: { $gte: termStart },
           period: 1,
         },
       },
       {
-        $group: {
-          _id: {
-            studentId: '$studentId',
-            recentWindow: { $cond: [{ $gte: ['$date', twoWeeksAgo] }, 'recent', 'previous'] },
-          },
-          total: { $sum: 1 },
-          present: { $sum: { $cond: [{ $in: ['$status', ['present', 'late']] }, 1, 0] } },
+        $facet: {
+          termStats: [
+            {
+              $group: {
+                _id: '$studentId',
+                totalDays: { $sum: 1 },
+                presentDays: { $sum: { $cond: [{ $eq: ['$status', 'present'] }, 1, 0] } },
+                absentDays: { $sum: { $cond: [{ $eq: ['$status', 'absent'] }, 1, 0] } },
+                lateDays: { $sum: { $cond: [{ $eq: ['$status', 'late'] }, 1, 0] } },
+                excusedDays: { $sum: { $cond: [{ $eq: ['$status', 'excused'] }, 1, 0] } },
+              },
+            },
+          ],
+          trendStats: [
+            { $match: { date: { $gte: fourWeeksAgo } } },
+            {
+              $group: {
+                _id: {
+                  studentId: '$studentId',
+                  recentWindow: { $cond: [{ $gte: ['$date', twoWeeksAgo] }, 'recent', 'previous'] },
+                },
+                total: { $sum: 1 },
+                present: { $sum: { $cond: [{ $in: ['$status', ['present', 'late']] }, 1, 0] } },
+              },
+            },
+          ],
         },
       },
     ]);
+
+    const stats = (facetResult?.termStats ?? []) as Array<{
+      _id: mongoose.Types.ObjectId;
+      totalDays: number;
+      presentDays: number;
+      absentDays: number;
+      lateDays: number;
+      excusedDays: number;
+    }>;
+    const recentStats = (facetResult?.trendStats ?? []) as Array<{
+      _id: { studentId: mongoose.Types.ObjectId; recentWindow: 'recent' | 'previous' };
+      total: number;
+      present: number;
+    }>;
+
+    const statsMap = new Map<string, typeof stats[0]>();
+    for (const s of stats) {
+      statsMap.set(String(s._id), s);
+    }
 
     const trendMap = new Map<string, { recentPct: number; previousPct: number }>();
     for (const r of recentStats) {

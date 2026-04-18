@@ -7,6 +7,7 @@ import type { SportCodeConfig } from './sport-configs.js';
 import { NotFoundError, BadRequestError } from '../../common/errors.js';
 import { paginationHelper } from '../../common/utils.js';
 import { calculateAttributes, calculateOverall, getTier } from './rating-calculators.js';
+import { BenchmarkService } from './service-benchmark.js';
 import type { RecordMatchStatsInput, RecordPersonalBestInput } from './validation-stats.js';
 
 // ─── Stats Service ───────────────────────────────────────────────────────────
@@ -114,7 +115,10 @@ export class StatsService {
     }
 
     const career = await this.getPlayerCareerStats(schoolId, studentId, sportCode);
-    const attributes = calculateAttributes(config, career.aggregated, career.appearances);
+    const snapshot = await BenchmarkService.snapshotForPlayer(studentId, schoolId, sportCode);
+    const attributes = calculateAttributes(
+      config, career.aggregated, career.appearances, snapshot.scores,
+    );
     const overall = calculateOverall(attributes);
     const formTrend = await this.calculateFormTrend(schoolId, studentId, sportCode);
     const position = await this.getMostCommonPosition(schoolId, studentId, sportCode);
@@ -164,15 +168,34 @@ export class StatsService {
     studentId: string,
     sportCode: string,
   ): Promise<IPlayerCard> {
-    const card = await PlayerCard.findOne({
+    const cardRaw = await PlayerCard.findOne({
       schoolId, studentId, sportCode, isDeleted: false,
-    }).populate('studentId', 'firstName lastName');
+    })
+      .populate({
+        path: 'studentId',
+        select: 'admissionNumber userId',
+        populate: { path: 'userId', select: 'firstName lastName' },
+      })
+      .lean();
 
-    if (!card) {
+    if (!cardRaw) {
       throw new NotFoundError('Player card not found');
     }
 
-    return card;
+    const sid = cardRaw.studentId as unknown as {
+      admissionNumber?: string;
+      userId?: { firstName?: string; lastName?: string } | null;
+    } | null;
+    const u = sid?.userId;
+    let studentName = 'Unknown Player';
+    if (u && (u.firstName || u.lastName)) {
+      studentName = `${u.firstName ?? ''} ${u.lastName ?? ''}`.trim();
+    } else if (sid?.admissionNumber) {
+      const m = sid.admissionNumber.match(/^[A-Z]+-\d+\s+(.+)$/);
+      studentName = m ? m[1] : sid.admissionNumber;
+    }
+
+    return { ...cardRaw, studentName } as unknown as IPlayerCard;
   }
 
   static async getPlayerCards(
@@ -193,14 +216,39 @@ export class StatsService {
     const filter: Record<string, unknown> = { schoolId, isDeleted: false };
     if (sportCode) filter.sportCode = sportCode;
 
-    const [cards, total] = await Promise.all([
+    const [cardsRaw, total] = await Promise.all([
       PlayerCard.find(filter)
-        .populate('studentId', 'firstName lastName')
+        .populate({
+          path: 'studentId',
+          select: 'admissionNumber userId',
+          populate: { path: 'userId', select: 'firstName lastName' },
+        })
         .sort({ overallRating: -1 })
         .skip(skip)
-        .limit(lim),
+        .limit(lim)
+        .lean(),
       PlayerCard.countDocuments(filter),
     ]);
+
+    // Project a flat studentName field so the frontend can render it cleanly.
+    const cards = cardsRaw.map((c) => {
+      const sid = c.studentId as unknown as {
+        _id?: unknown;
+        admissionNumber?: string;
+        userId?: { firstName?: string; lastName?: string } | null;
+      } | null;
+      const u = sid?.userId;
+      let studentName = 'Unknown Player';
+      if (u && (u.firstName || u.lastName)) {
+        studentName = `${u.firstName ?? ''} ${u.lastName ?? ''}`.trim();
+      } else if (sid?.admissionNumber) {
+        // Roster-only students (no userId) — admission number may carry a name.
+        // Strip the leading code (e.g. "SC-1001 Liam Naidoo" → "Liam Naidoo").
+        const m = sid.admissionNumber.match(/^[A-Z]+-\d+\s+(.+)$/);
+        studentName = m ? m[1] : sid.admissionNumber;
+      }
+      return { ...c, studentName } as unknown as IPlayerCard;
+    });
 
     return { cards, total, page: pg, limit: lim, totalPages: Math.ceil(total / lim) };
   }

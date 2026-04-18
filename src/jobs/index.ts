@@ -71,6 +71,9 @@ export async function setupWorkers(): Promise<Worker[]> {
     const { createAIGradingWorker } = await import('./ai-grading.job.js');
     workers.push(createAIGradingWorker());
 
+    const { createLessonNotesWorker } = await import('./lesson-notes.job.js');
+    workers.push(createLessonNotesWorker());
+
     logger.info(`[Jobs] ${workers.length} workers started successfully`);
 
     // Schedule repeatable jobs

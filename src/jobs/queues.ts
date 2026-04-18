@@ -85,3 +85,8 @@ export const aiGradingQueue = new Queue('ai-grading', {
     attempts: 3,
   },
 });
+
+export const lessonNotesQueue = new Queue('lesson-notes', {
+  connection: redisConnection,
+  defaultJobOptions,
+});

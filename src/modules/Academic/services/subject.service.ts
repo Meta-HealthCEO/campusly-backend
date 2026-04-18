@@ -1,4 +1,4 @@
-import { Subject, ISubject } from '../model.js';
+import { Subject, ISubject, Timetable } from '../model.js';
 import { NotFoundError } from '../../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../../common/constants.js';
 import { escapeRegex } from '../../../common/utils.js';
@@ -38,10 +38,25 @@ export class SubjectService {
   static async listSubjects(
     schoolId: string,
     query: ListQuery,
+    filters?: { teacherId?: string; gradeId?: string },
   ): Promise<PaginatedResult<ISubject>> {
     const { page, limit, skip, sortField } = getPagination(query);
 
     const filter: Record<string, unknown> = { schoolId, isDeleted: false };
+
+    if (filters?.teacherId) {
+      const subjectIds = await Timetable.distinct('subjectId', {
+        schoolId,
+        teacherId: filters.teacherId,
+        isDeleted: false,
+      });
+      filter._id = { $in: subjectIds };
+    }
+
+    // Filter to subjects that include this grade in their gradeIds array
+    if (filters?.gradeId) {
+      filter.gradeIds = filters.gradeId;
+    }
 
     if (query.search) {
       filter.$or = [

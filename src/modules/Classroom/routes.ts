@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { authorize, validate } from '../../middleware/index.js';
 import { ClassroomController } from './controller.js';
+import { RecordingController } from './controller-recording.js';
 import {
   createSessionSchema,
   updateSessionSchema,
@@ -87,6 +88,12 @@ router.get(
   ClassroomController.getAttendance,
 );
 
+router.get(
+  '/sessions/:id/chat',
+  authorize(...ALL_ROLES),
+  ClassroomController.getChatHistory,
+);
+
 router.post(
   '/sessions/:id/poll',
   authorize(...TEACHER_ROLES),
@@ -99,6 +106,38 @@ router.post(
   authorize('student', 'teacher'),
   validate(respondToPollSchema),
   ClassroomController.respondToPoll,
+);
+
+// ─── Recording & Lesson Notes ────────────────────────────────────────────────
+
+router.post(
+  '/sessions/:id/recording/start',
+  authorize(...TEACHER_ROLES),
+  RecordingController.startRecording,
+);
+
+router.post(
+  '/sessions/:id/recording/stop',
+  authorize(...TEACHER_ROLES),
+  RecordingController.stopRecording,
+);
+
+router.get(
+  '/sessions/:id/notes',
+  authorize(...ALL_ROLES),
+  RecordingController.getLessonNotes,
+);
+
+router.get(
+  '/notes/class/:classId',
+  authorize(...ALL_ROLES),
+  RecordingController.getClassLessonNotes,
+);
+
+router.post(
+  '/sessions/:id/notes/retry',
+  authorize(...TEACHER_ROLES),
+  RecordingController.retryLessonNotes,
 );
 
 // ─── Videos ──────────────────────────────────────────────────────────────────

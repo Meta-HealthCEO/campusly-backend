@@ -16,6 +16,8 @@ interface JwtPayload {
   isBursar?: boolean;
   isReceptionist?: boolean;
   isCounselor?: boolean;
+  isStandaloneTeacher?: boolean;
+  isStandaloneCoach?: boolean;
 }
 
 export function authenticate(req: Request, _res: Response, next: NextFunction): void {
@@ -46,6 +48,8 @@ export function authenticate(req: Request, _res: Response, next: NextFunction): 
       isBursar: decoded.isBursar ?? false,
       isReceptionist: decoded.isReceptionist ?? false,
       isCounselor: decoded.isCounselor ?? false,
+      isStandaloneTeacher: decoded.isStandaloneTeacher ?? false,
+      isStandaloneCoach: decoded.isStandaloneCoach ?? false,
     };
 
     next();

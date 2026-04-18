@@ -23,6 +23,9 @@ export interface IUser extends Document {
   isBursar: boolean;
   isReceptionist: boolean;
   isCounselor: boolean;
+  isStandaloneTeacher: boolean;
+  isStandaloneCoach: boolean;
+  onboardingDismissed: boolean;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -111,6 +114,18 @@ const userSchema = new Schema<IUser>(
       default: false,
     },
     isCounselor: {
+      type: Boolean,
+      default: false,
+    },
+    isStandaloneTeacher: {
+      type: Boolean,
+      default: false,
+    },
+    isStandaloneCoach: {
+      type: Boolean,
+      default: false,
+    },
+    onboardingDismissed: {
       type: Boolean,
       default: false,
     },

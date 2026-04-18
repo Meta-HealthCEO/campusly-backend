@@ -65,6 +65,28 @@ export const registerStudentSchema = z.object({
     .transform((v: string) => v.toUpperCase()),
 }).strict();
 
+export const standaloneTeacherSignupSchema = z.object({
+  firstName: z.string().min(1, 'First name is required').trim(),
+  lastName: z.string().min(1, 'Last name is required').trim(),
+  email: z.email(),
+  password: z
+    .string()
+    .min(8, 'Password must be at least 8 characters'),
+  country: z.string().optional(),
+  subjects: z.array(z.string()).optional(),
+}).strict();
+
+export const standaloneCoachSignupSchema = z.object({
+  firstName: z.string().min(1, 'First name is required').trim(),
+  lastName: z.string().min(1, 'Last name is required').trim(),
+  email: z.email(),
+  password: z
+    .string()
+    .min(8, 'Password must be at least 8 characters'),
+  country: z.string().optional(),
+  sports: z.array(z.string()).optional(),
+}).strict();
+
 export const joinSchoolSchema = z.object({
   joinCode: z
     .string()
@@ -81,3 +103,5 @@ export type RefreshInput = z.infer<typeof refreshSchema>;
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
 export type JoinSchoolInput = z.infer<typeof joinSchoolSchema>;
+export type StandaloneTeacherSignupInput = z.infer<typeof standaloneTeacherSignupSchema>;
+export type StandaloneCoachSignupInput = z.infer<typeof standaloneCoachSignupSchema>;

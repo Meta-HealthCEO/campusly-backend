@@ -16,11 +16,12 @@ export const updateGradeSchema = gradeSchema.partial().strict();
 // ─── Class ───────────────────────────────────────────────────────────────────
 
 export const classSchema = z.object({
-  name: z.string().min(1, 'Name is required').trim(),
+  name: z.string().min(1, 'Name is required').max(50, 'Name must be 50 characters or fewer').trim(),
   gradeId: objectIdSchema,
   schoolId: objectIdSchema,
   teacherId: objectIdSchema,
-  capacity: z.number().int().min(1, 'Capacity must be at least 1'),
+  capacity: z.number().int().min(1, 'Capacity must be at least 1').max(200, 'Capacity cannot exceed 200'),
+  subjectId: objectIdSchema.optional(),
 }).strict();
 
 export const updateClassSchema = classSchema.partial().strict();

@@ -30,6 +30,10 @@ export class AcademicService {
   static deleteClass = GradeService.deleteClass;
   static getClassByCode = GradeService.getClassByCode;
   static regenerateClassroomCode = GradeService.regenerateClassroomCode;
+  static getTeacherTeachingLoad = GradeService.getTeacherTeachingLoad;
+  static teacherCanAccessClass = GradeService.teacherCanAccessClass;
+  static countTimetableEntries = GradeService.countTimetableEntries;
+  static countClassStudents = GradeService.countClassStudents;
 
   // ─── Subject (from subject.service) ────────────────────────────────────────
   static createSubject = SubjectService.createSubject;

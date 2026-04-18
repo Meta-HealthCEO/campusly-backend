@@ -21,12 +21,29 @@ export function calculateOverall(attributes: Record<string, number>): number {
   return clamp99(avg);
 }
 
+/**
+ * Blend two scores: a stat-derived score and a benchmark-derived score.
+ * If only one is present, returns that one. Otherwise weighted average.
+ */
+function blend(
+  statScore: number | undefined,
+  benchScore: number | undefined,
+  statWeight = 0.5,
+): number {
+  const a = statScore ?? 0;
+  const b = benchScore ?? 0;
+  if (statScore == null && benchScore != null) return clamp99(b);
+  if (benchScore == null && statScore != null) return clamp99(a);
+  return clamp99(a * statWeight + b * (1 - statWeight));
+}
+
 export function calculateAttributes(
   config: SportCodeConfig,
   aggregated: Record<string, number>,
   appearances: number,
+  fitnessScores: Record<string, number> = {},
 ): Record<string, number> {
-  if (appearances === 0) {
+  if (appearances === 0 && Object.keys(fitnessScores).length === 0) {
     const attrs: Record<string, number> = {};
     for (const attr of config.ratingAttributes) {
       attrs[attr] = 0;
@@ -36,7 +53,7 @@ export function calculateAttributes(
 
   const calculator = RATING_CALCULATORS[config.code];
   if (calculator) {
-    return calculator(config.ratingAttributes, aggregated, appearances);
+    return calculator(config.ratingAttributes, aggregated, appearances, fitnessScores);
   }
 
   return defaultAttributeCalc(config.ratingAttributes, aggregated, appearances);
@@ -65,6 +82,7 @@ type RatingCalcFn = (
   attrs: string[],
   agg: Record<string, number>,
   appearances: number,
+  fitnessScores?: Record<string, number>,
 ) => Record<string, number>;
 
 const RATING_CALCULATORS: Record<string, RatingCalcFn> = {
@@ -88,7 +106,7 @@ const RATING_CALCULATORS: Record<string, RatingCalcFn> = {
     };
   },
 
-  rugby: (attrs, agg, appearances) => {
+  rugby: (attrs, agg, appearances, fitness = {}) => {
     const tries = agg.tries ?? 0;
     const metres = agg.metresGained ?? 0;
     const tackles = agg.tackles ?? 0;
@@ -96,28 +114,42 @@ const RATING_CALCULATORS: Record<string, RatingCalcFn> = {
     const conversions = agg.conversions ?? 0;
     const penalties = agg.penalties ?? 0;
     const tackleRate = tackles + missed > 0 ? (tackles / (tackles + missed)) * 100 : 0;
+    const apps = Math.max(appearances, 1);
+
+    const sprint = fitness['40m_sprint'] ?? fitness['20m_sprint'];
+    const strengthBench = fitness['bench_press_1rm'] ?? fitness['squat_1rm'];
 
     return {
-      [attrs[0]]: clamp99(tries * 10 + metres * 0.2),            // Attack
-      [attrs[1]]: clamp99(tackleRate * 0.8),                      // Defence
-      [attrs[2]]: clamp99((conversions + penalties) * 8),         // Kicking
-      [attrs[3]]: clamp99(Math.min(appearances * 5, 80)),         // Strength
-      [attrs[4]]: clamp99(metres / Math.max(appearances, 1) * 2),// Speed
-      [attrs[5]]: clamp99((tries + tackles * 0.5) / Math.max(appearances, 1) * 10), // Game Sense
+      [attrs[0]]: clamp99(tries * 12 + metres * 0.2),                    // Attack
+      [attrs[1]]: clamp99(tackleRate * 0.8 + Math.min(tackles / apps, 15) * 2), // Defence
+      [attrs[2]]: clamp99((conversions + penalties) * 8),                // Kicking
+      [attrs[3]]: blend(Math.min(appearances * 5, 80), strengthBench, 0.4), // Strength
+      [attrs[4]]: blend(metres / apps * 2, sprint, 0.3),                 // Speed
+      [attrs[5]]: clamp99((tries + tackles * 0.5) / apps * 10 + Math.min(appearances * 4, 50)), // Game Sense
     };
   },
 
-  soccer: (attrs, agg, appearances) => {
+  soccer: (attrs, agg, appearances, fitness = {}) => {
     const goals = agg.goals ?? 0;
     const assists = agg.assists ?? 0;
+    const apps = Math.max(appearances, 1);
+
+    const sprint = fitness['40m_sprint'] ?? fitness['20m_sprint'];
+    const jump = fitness['vertical_jump'];
+    const beep = fitness['beep_test'];
+    const bench = fitness['bench_press_1rm'] ?? fitness['squat_1rm'];
+
+    const statShooting = clamp99(goals / apps * 40 + (agg.shotsOnTarget ?? 0) / apps * 4);
+    const statPassing = clamp99(assists / apps * 40);
+    const statDribbling = clamp99((goals + assists) / apps * 20);
 
     return {
-      [attrs[0]]: clamp99(Math.min(appearances * 6, 85)),                  // Pace
-      [attrs[1]]: clamp99(goals / Math.max(appearances, 1) * 40),         // Shooting
-      [attrs[2]]: clamp99(assists / Math.max(appearances, 1) * 40),       // Passing
-      [attrs[3]]: clamp99((goals + assists) / Math.max(appearances, 1) * 20), // Dribbling
-      [attrs[4]]: clamp99(Math.min(appearances * 5, 75)),                  // Defence
-      [attrs[5]]: clamp99(Math.min(appearances * 5, 80)),                  // Physical
+      [attrs[0]]: blend(Math.min(appearances * 6, 80), sprint, 0.25),    // Pace ← 40m sprint
+      [attrs[1]]: statShooting,                                          // Shooting (match-driven)
+      [attrs[2]]: statPassing,                                           // Passing (match-driven)
+      [attrs[3]]: blend(statDribbling, beep, 0.7),                       // Dribbling
+      [attrs[4]]: clamp99(Math.min(appearances * 5, 75)),                // Defence (match presence)
+      [attrs[5]]: blend(Math.min(appearances * 5, 70), Math.max(jump ?? 0, bench ?? 0), 0.3), // Physical
     };
   },
 

@@ -24,6 +24,7 @@ import feeRoutes from './modules/Fee/routes.js';
 import academicRoutes from './modules/Academic/routes.js';
 import homeworkRoutes from './modules/Homework/routes.js';
 import attendanceRoutes from './modules/Attendance/routes.js';
+import lessonPlanRoutes from './modules/LessonPlan/routes.js';
 import tuckShopRoutes from './modules/TuckShop/routes.js';
 import notificationRoutes from './modules/Notification/routes.js';
 import announcementRoutes from './modules/Announcement/routes.js';
@@ -75,6 +76,7 @@ import curriculumRoutes from './modules/Curriculum/routes.js';
 import curriculumStructureRoutes from './modules/CurriculumStructure/routes.js';
 import pastoralRoutes from './modules/Pastoral/routes.js';
 import classroomRoutes from './modules/Classroom/routes.js';
+import { RecordingController } from './modules/Classroom/controller-recording.js';
 import contentLibraryRoutes from './modules/ContentLibrary/routes.js';
 import contentLibraryStudentRoutes from './modules/ContentLibrary/routes-student.js';
 import questionBankRoutes from './modules/QuestionBank/routes.js';
@@ -152,6 +154,7 @@ app.use('/api/academic', authenticate, requireModule('academic'), academicRoutes
 app.use('/api/timetable-builder', authenticate, requireModule('academic'), timetableBuilderRoutes);
 app.use('/api/homework', authenticate, requireModule('homework'), homeworkRoutes);
 app.use('/api/attendance', authenticate, requireModule('attendance'), attendanceRoutes);
+app.use('/api/lesson-plans', authenticate, requireModule('academic'), lessonPlanRoutes);
 app.use('/api/achiever', authenticate, requireModule('achiever'), achieverRoutes);
 app.use('/api/consent', authenticate, requireModule('consent'), consentRoutes);
 app.use('/api/sports', authenticate, requireModule('sport'), sportRoutes);
@@ -182,6 +185,11 @@ app.use('/api/governance', authenticate, governanceRoutes);
 app.use('/api/curriculum', authenticate, curriculumRoutes);
 app.use('/api/curriculum-structure', authenticate, curriculumStructureRoutes);
 app.use('/api/pastoral', authenticate, pastoralRoutes);
+app.post(
+  '/api/classroom/webhook/egress',
+  express.raw({ type: '*/*' }),
+  RecordingController.handleEgressWebhook,
+);
 app.use('/api/classroom', authenticate, classroomRoutes);
 app.use('/api/content-library', authenticate, contentLibraryRoutes);
 app.use('/api/content-library/student', authenticate, contentLibraryStudentRoutes);

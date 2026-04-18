@@ -193,6 +193,66 @@ export class AIService {
     }
   }
 
+  static async generateAudioCompletion(
+    systemPrompt: string,
+    userText: string,
+    audioBase64: string,
+    audioMediaType: 'audio/mp4' | 'audio/mpeg' | 'audio/wav' | 'audio/webm' = 'audio/mp4',
+    options?: { maxTokens?: number; temperature?: number },
+  ): Promise<{ text: string; usage: { input_tokens: number; output_tokens: number } }> {
+    await acquireSemaphore();
+    try {
+      const client = getClient();
+
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 600_000); // 10 min for audio
+
+      const message = await callWithRetry(() =>
+        client.messages.create(
+          {
+            model: ANTHROPIC_MODEL,
+            max_tokens: options?.maxTokens ?? 8192,
+            temperature: options?.temperature ?? 0.2,
+            system: systemPrompt,
+            messages: [
+              {
+                role: 'user',
+                content: [
+                  {
+                    type: 'input_audio',
+                    source: { type: 'base64', media_type: audioMediaType, data: audioBase64 },
+                  },
+                  { type: 'text', text: userText },
+                ] as unknown as Parameters<typeof client.messages.create>[0]['messages'][0]['content'],
+              },
+            ],
+          },
+          { signal: controller.signal },
+        ),
+      );
+
+      clearTimeout(timeout);
+
+      const inputTokens = message.usage?.input_tokens ?? 0;
+      const outputTokens = message.usage?.output_tokens ?? 0;
+      logger.info(
+        `[AIService] Audio tokens — input: ${inputTokens}, output: ${outputTokens}`,
+      );
+
+      const text = message.content
+        .filter((b) => b.type === 'text')
+        .map((b) => (b as Anthropic.TextBlock).text)
+        .join('');
+
+      return {
+        text,
+        usage: { input_tokens: inputTokens, output_tokens: outputTokens },
+      };
+    } finally {
+      releaseSemaphore();
+    }
+  }
+
   static async generateDocumentCompletion(
     systemPrompt: string,
     userText: string,

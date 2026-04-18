@@ -24,8 +24,8 @@ const medicalProfileSchema = z.object({
 });
 
 export const createStudentSchema = z.object({
-  userId: objectIdSchema,
-  schoolId: objectIdSchema,
+  userId: objectIdSchema.optional(),
+  schoolId: objectIdSchema.optional(),
   gradeId: objectIdSchema,
   classId: objectIdSchema,
   admissionNumber: z.string().min(1, 'Admission number is required'),

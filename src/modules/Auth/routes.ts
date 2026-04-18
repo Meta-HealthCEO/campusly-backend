@@ -12,6 +12,8 @@ import {
   forgotPasswordSchema,
   resetPasswordSchema,
   joinSchoolSchema,
+  standaloneTeacherSignupSchema,
+  standaloneCoachSignupSchema,
 } from './validation.js';
 
 const router = express.Router();
@@ -28,5 +30,21 @@ router.post('/forgot-password', authRateLimiter, validate(forgotPasswordSchema),
 router.post('/reset-password', authRateLimiter, validate(resetPasswordSchema), AuthController.resetPassword);
 router.get('/me', authenticate, AuthController.getMe);
 router.post('/join-school', authenticate, validate(joinSchoolSchema), AuthController.joinSchool);
+
+// Standalone signup flows
+router.post(
+  '/signup/standalone-teacher',
+  authRateLimiter,
+  validate(standaloneTeacherSignupSchema),
+  AuthController.signupStandaloneTeacher,
+);
+router.post(
+  '/signup/standalone-coach',
+  authRateLimiter,
+  validate(standaloneCoachSignupSchema),
+  AuthController.signupStandaloneCoach,
+);
+router.get('/coach/onboarding-status', authenticate, AuthController.getCoachOnboardingStatus);
+router.post('/coach/onboarding-dismiss', authenticate, AuthController.dismissCoachOnboarding);
 
 export default router;

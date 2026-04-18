@@ -1,10 +1,28 @@
 import { Request, Response } from 'express';
 import { StudentService } from './service.js';
+import { StudentInviteService } from './invite.service.js';
 import { apiResponse } from '../../common/utils.js';
+import { ForbiddenError } from '../../common/errors.js';
 
 export class StudentController {
   static async create(req: Request, res: Response): Promise<void> {
-    const student = await StudentService.create(req.body);
+    const data = { ...req.body };
+    // Auto-fill schoolId from the authenticated user if not provided
+    if (!data.schoolId && req.user?.schoolId) {
+      data.schoolId = req.user.schoolId;
+    }
+    const schoolId = data.schoolId as string;
+    // Verify teacher can access the target class
+    if (req.user?.role === 'teacher' && data.classId) {
+      const { AcademicService } = await import('../Academic/service.js');
+      const canAccess = await AcademicService.teacherCanAccessClass(
+        req.user.id, data.classId as string, schoolId,
+      );
+      if (!canAccess) {
+        throw new ForbiddenError('You can only add students to your own classes');
+      }
+    }
+    const student = await StudentService.create(data);
     res.status(201).json(apiResponse(true, student, 'Student created successfully'));
   }
 
@@ -35,6 +53,16 @@ export class StudentController {
 
   static async update(req: Request, res: Response): Promise<void> {
     const schoolId = req.user!.schoolId!;
+    // Verify teacher can access the target class when reassigning
+    if (req.user?.role === 'teacher' && req.body.classId) {
+      const { AcademicService } = await import('../Academic/service.js');
+      const canAccess = await AcademicService.teacherCanAccessClass(
+        req.user.id, req.body.classId as string, schoolId,
+      );
+      if (!canAccess) {
+        throw new ForbiddenError('You can only move students to your own classes');
+      }
+    }
     const student = await StudentService.update(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, student, 'Student updated successfully'));
   }
@@ -49,5 +77,15 @@ export class StudentController {
     const schoolId = req.user!.schoolId!;
     const student = await StudentService.updateMedicalProfile(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, student, 'Medical profile updated successfully'));
+  }
+
+  static async inviteStudent(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user?.schoolId ?? '';
+    const result = await StudentInviteService.inviteStudent(
+      req.params.id as string,
+      schoolId,
+      req.body,
+    );
+    res.json(apiResponse(true, result, 'Student invited successfully'));
   }
 }

@@ -185,7 +185,7 @@ export class CourseStudentService {
     })
       .select('userId')
       .lean();
-    const callerIsStudent = student?.userId.toString() === userId;
+    const callerIsStudent = student?.userId && student.userId.toString() === userId;
 
     const course = await Course.findOne({
       _id: enrolment.courseId,
@@ -307,7 +307,10 @@ export class CourseStudentService {
     })
       .select('userId')
       .lean();
-    if (!student || student.userId.toString() !== userId) {
+    if (!student || !student.userId) {
+      throw new ForbiddenError('You do not have access to this lesson');
+    }
+    if (student.userId.toString() !== userId) {
       throw new ForbiddenError('You do not have access to this lesson');
     }
 

@@ -46,6 +46,9 @@ export interface IVirtualSession extends Document {
   isRecorded: boolean;
   roomId?: string;
   recordingUrl?: string;
+  egressId?: string;
+  isRecording: boolean;
+  lessonNoteId?: Types.ObjectId;
   settings: ISessionSettings;
   recurringRule?: string;
   timetablePeriodId?: Types.ObjectId;
@@ -111,6 +114,9 @@ const virtualSessionSchema = new Schema<IVirtualSession>(
     isRecorded: { type: Boolean, default: true },
     roomId: { type: String },
     recordingUrl: { type: String },
+    egressId: { type: String },
+    isRecording: { type: Boolean, default: false },
+    lessonNoteId: { type: Schema.Types.ObjectId, ref: 'LessonNote' },
     settings: { type: sessionSettingsSchema, default: () => ({}) },
     recurringRule: { type: String },
     timetablePeriodId: { type: Schema.Types.ObjectId },

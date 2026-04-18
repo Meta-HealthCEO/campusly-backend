@@ -194,12 +194,51 @@ export class SessionService {
       schoolId: new mongoose.Types.ObjectId(schoolId),
       isDeleted: false,
       status: { $in: ['scheduled', 'live'] },
-    }).lean();
+    })
+      .populate('teacherId', 'firstName lastName')
+      .lean();
     if (!session) throw new NotFoundError('Session not found or not joinable');
 
-    // TODO: generate real LiveKit token using LiveKit SDK
-    const token = `lk_stub_${userId}_${session.roomId}_${Date.now()}`;
-    return { token, roomId: session.roomId, sessionId: session._id };
+    const isTeacher = session.teacherId && typeof session.teacherId === 'object'
+      ? String((session.teacherId as { _id: unknown })._id) === userId
+      : String(session.teacherId) === userId;
+
+    const roomName = `session_${String(session._id)}`;
+
+    let participantName: string;
+    if (isTeacher && session.teacherId && typeof session.teacherId === 'object') {
+      const teacher = session.teacherId as { firstName?: string; lastName?: string };
+      participantName = [teacher.firstName, teacher.lastName].filter(Boolean).join(' ') || 'Teacher';
+    } else {
+      participantName = `Student ${userId.slice(-4)}`;
+    }
+
+    const { isLiveKitConfigured, generateRoomToken, getLiveKitUrl } = await import(
+      '../../services/livekit.service.js'
+    );
+
+    if (!isLiveKitConfigured()) {
+      return {
+        token: '',
+        livekitUrl: '',
+        roomName,
+        sessionId: session._id,
+        participantName,
+        isTeacher,
+        livekitConfigured: false,
+      };
+    }
+
+    const token = await generateRoomToken(roomName, userId, participantName, isTeacher);
+    return {
+      token,
+      livekitUrl: getLiveKitUrl(),
+      roomName,
+      sessionId: session._id,
+      participantName,
+      isTeacher,
+      livekitConfigured: true,
+    };
   }
 
   static async getAttendance(sessionId: string, schoolId: string) {

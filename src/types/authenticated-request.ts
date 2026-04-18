@@ -11,6 +11,8 @@ export interface AuthenticatedUser {
   email: string;
   isSchoolPrincipal?: boolean;
   isHOD?: boolean;
+  isStandaloneTeacher?: boolean;
+  isStandaloneCoach?: boolean;
 }
 
 /**

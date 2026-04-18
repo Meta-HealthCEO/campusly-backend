@@ -14,6 +14,8 @@ declare global {
         isBursar?: boolean;
         isReceptionist?: boolean;
         isCounselor?: boolean;
+        isStandaloneTeacher?: boolean;
+        isStandaloneCoach?: boolean;
       };
       requestId?: string;
       schoolId?: string;

@@ -27,6 +27,8 @@ interface ListTeamQuery {
   schoolId?: string;
   sport?: string;
   isActive?: boolean;
+  allowedTeamIds?: string[];
+  studentId?: string;
 }
 
 interface ListFixtureQuery {
@@ -35,6 +37,7 @@ interface ListFixtureQuery {
   sort?: string;
   schoolId?: string;
   teamId?: string;
+  allowedTeamIds?: string[];
 }
 
 interface ListSeasonQuery {
@@ -81,6 +84,14 @@ export class SportService {
 
     if (query.isActive !== undefined) {
       filter.isActive = query.isActive;
+    }
+
+    if (query.allowedTeamIds) {
+      filter._id = { $in: query.allowedTeamIds };
+    }
+
+    if (query.studentId) {
+      filter.playerIds = query.studentId;
     }
 
     const [teams, total] = await Promise.all([
@@ -174,6 +185,12 @@ export class SportService {
 
     if (query.teamId) {
       filter.teamId = query.teamId;
+    }
+
+    if (query.allowedTeamIds) {
+      filter.teamId = query.teamId
+        ? { $in: query.allowedTeamIds.includes(query.teamId) ? [query.teamId] : [] }
+        : { $in: query.allowedTeamIds };
     }
 
     const [fixtures, total] = await Promise.all([

@@ -28,7 +28,7 @@ export type EnrollmentStatus =
   | 'withdrawn';
 
 export interface IStudent extends Document {
-  userId: Types.ObjectId;
+  userId?: Types.ObjectId;
   schoolId: Types.ObjectId;
   gradeId: Types.ObjectId;
   classId: Types.ObjectId;
@@ -86,7 +86,7 @@ const studentSchema = new Schema<IStudent>(
     userId: {
       type: Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
+      required: false,
     },
     schoolId: {
       type: Schema.Types.ObjectId,

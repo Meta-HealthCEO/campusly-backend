@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import { SportService } from './service.js';
+import { CoachAssignmentService } from './service-coach-assignment.js';
+import { getUser } from '../../types/authenticated-request.js';
 import { apiResponse } from '../../common/utils.js';
 
 export class SportController {
@@ -12,12 +14,16 @@ export class SportController {
   }
 
   static async listTeams(req: Request, res: Response): Promise<void> {
+    const user = getUser(req);
+    const allowedTeamIds = await CoachAssignmentService.getScopedTeamIds(user);
     const query = {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
       sort: req.query.sort as string | undefined,
       schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
       sport: req.query.sport as string | undefined,
+      studentId: req.query.studentId as string | undefined,
+      allowedTeamIds: allowedTeamIds ?? undefined,
     };
 
     const result = await SportService.listTeams(query);
@@ -51,12 +57,15 @@ export class SportController {
   }
 
   static async listFixtures(req: Request, res: Response): Promise<void> {
+    const user = getUser(req);
+    const allowedTeamIds = await CoachAssignmentService.getScopedTeamIds(user);
     const query = {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
       sort: req.query.sort as string | undefined,
       schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
       teamId: req.query.teamId as string | undefined,
+      allowedTeamIds: allowedTeamIds ?? undefined,
     };
 
     const result = await SportService.listFixtures(query);

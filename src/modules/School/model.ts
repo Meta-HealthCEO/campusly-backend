@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document, type Types } from 'mongoose';
 
 export interface IAddress {
   street: string;
@@ -37,6 +37,8 @@ export interface ISchool extends Document {
   emisNumber?: string;
   type?: 'primary' | 'secondary' | 'combined' | 'special';
   joinCode: string;
+  plan: 'standalone' | 'school';
+  ownerUserId?: Types.ObjectId;
   isActive: boolean;
   isDeleted: boolean;
   createdAt: Date;
@@ -150,6 +152,15 @@ const schoolSchema = new Schema<ISchool>(
     isActive: {
       type: Boolean,
       default: true,
+    },
+    plan: {
+      type: String,
+      enum: ['standalone', 'school'],
+      default: 'school',
+    },
+    ownerUserId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
     },
     isDeleted: {
       type: Boolean,

@@ -240,7 +240,7 @@ export class CourseCertificateService {
     })
       .select('userId')
       .lean();
-    if (!student || student.userId.toString() !== userId) {
+    if (!student || !student.userId || student.userId.toString() !== userId) {
       throw new NotFoundError('Certificate not found');
     }
 
