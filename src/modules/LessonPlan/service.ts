@@ -8,17 +8,26 @@ import { PAGINATION_DEFAULTS } from '../../common/constants.js';
 const ADMIN_ROLES = new Set(['school_admin', 'super_admin']);
 
 /**
- * Assert that the caller may access (update/delete) the given lesson plan.
+ * Assert that the caller may perform `action` on the given lesson plan.
  * Only the plan's teacher OR a school/super admin is permitted.
  * Throws ForbiddenError with an action-specific message otherwise.
+ *
+ * `teacherId` may arrive as an ObjectId, a string, or a populated User doc.
+ * We resolve all three safely; a populated doc falls back to its `_id`.
  */
 export function assertLessonPlanAccess(
-  plan: Pick<ILessonPlan, 'teacherId'>,
+  plan: Pick<ILessonPlan, '_id' | 'teacherId'>,
   actorId: string,
   actorRole: string,
-  action: 'update' | 'delete' = 'update',
+  action: 'update' | 'delete' | 'attach' | 'detach' | 'access',
 ): void {
-  const isOwner = String(plan.teacherId) === actorId;
+  const teacherIdStr =
+    typeof plan.teacherId === 'string'
+      ? plan.teacherId
+      : plan.teacherId && typeof plan.teacherId === 'object' && '_id' in plan.teacherId
+        ? String((plan.teacherId as { _id: unknown })._id)
+        : String(plan.teacherId);
+  const isOwner = teacherIdStr === actorId;
   const isAdmin = ADMIN_ROLES.has(actorRole);
   if (!isOwner && !isAdmin) {
     throw new ForbiddenError(`You can only ${action} your own lesson plans`);
