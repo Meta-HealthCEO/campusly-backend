@@ -1,28 +1,55 @@
 import { z } from 'zod/v4';
 
-const objectIdRegex = /^[0-9a-fA-F]{24}$/;
-const objectIdSchema = z.string().regex(objectIdRegex, 'Invalid ObjectId format');
+const objectIdSchema = z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid ObjectId');
 
-// ─── Homework ────────────────────────────────────────────────────────────────
+// ─── Homework (typed discriminator: quiz | reading | exercise) ──────────────
 
-export const createHomeworkSchema = z.object({
-  title: z.string().min(1, 'Title is required').trim(),
-  description: z.string().min(1, 'Description is required'),
+const baseHomeworkFields = {
+  title: z.string().min(1).max(200),
   subjectId: objectIdSchema,
   classId: objectIdSchema,
   schoolId: objectIdSchema,
-  resourceId: objectIdSchema.optional(),
   dueDate: z.string().datetime(),
-  attachments: z.array(z.string()).optional(),
-  totalMarks: z.number().min(1, 'Total marks must be at least 1'),
-  rubric: z.string().optional(),
+  totalMarks: z.number().int().min(0).max(1000),
+  attachments: z.array(z.string().url()).max(20).optional(),
   peerReviewEnabled: z.boolean().optional(),
   groupAssignment: z.boolean().optional(),
-  maxFileSize: z.number().positive('Max file size must be positive').optional(),
   allowedFileTypes: z.array(z.string()).optional(),
-}).strict();
+  maxFileSize: z.number().int().positive().optional(),
+};
 
-export const updateHomeworkSchema = createHomeworkSchema.partial().strict();
+export const createQuizHomeworkSchema = z.object({
+  type: z.literal('quiz'),
+  quizId: objectIdSchema,
+  ...baseHomeworkFields,
+});
+
+export const createReadingHomeworkSchema = z.object({
+  type: z.literal('reading'),
+  contentResourceId: objectIdSchema,
+  pageRange: z.string().max(50).optional(),
+  ...baseHomeworkFields,
+});
+
+export const createExerciseHomeworkSchema = z.object({
+  type: z.literal('exercise'),
+  exerciseQuestionIds: z.array(objectIdSchema).min(1).max(100),
+  ...baseHomeworkFields,
+});
+
+export const createHomeworkSchema = z.discriminatedUnion('type', [
+  createQuizHomeworkSchema,
+  createReadingHomeworkSchema,
+  createExerciseHomeworkSchema,
+]);
+
+export const updateHomeworkSchema = z.object({
+  title: z.string().min(1).max(200).optional(),
+  dueDate: z.string().datetime().optional(),
+  totalMarks: z.number().int().min(0).max(1000).optional(),
+  status: z.enum(['assigned', 'closed']).optional(),
+  pageRange: z.string().max(50).optional(),
+});
 
 // ─── Submission ──────────────────────────────────────────────────────────────
 

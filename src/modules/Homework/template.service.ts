@@ -83,16 +83,18 @@ export class HomeworkTemplateService {
 
     if (!template) throw new NotFoundError('Template not found');
 
+    // Note: template-level description/rubric are NOT copied onto Homework —
+    // those fields no longer exist on the Homework model (typed discriminator
+    // refactor). They remain template-scoped metadata only.
     const homework = new Homework({
       title: overrides.title ?? template.title,
-      description: template.description ?? '',
+      type: 'reading',
       subjectId: template.subjectId,
       classId: overrides.classId,
       schoolId,
       teacherId,
       dueDate: new Date(overrides.dueDate),
       totalMarks: template.totalMarks,
-      rubric: template.rubric,
       attachments: template.attachments.map((a) => a.url),
       status: 'assigned',
     });
@@ -121,14 +123,15 @@ export class HomeworkTemplateService {
 
     if (!homework) throw new NotFoundError('Homework not found');
 
+    // Homework no longer has description/rubric fields (typed discriminator
+    // refactor). Template description/rubric can be authored by the teacher
+    // separately via the templates UI.
     const template = new HomeworkTemplate({
       schoolId,
       teacherId,
       title: homework.title,
-      description: homework.description,
       subjectId: homework.subjectId,
       totalMarks: homework.totalMarks,
-      rubric: homework.rubric,
       attachments: homework.attachments.map((url: string) => ({
         url,
         name: url.split('/').pop() ?? 'attachment',

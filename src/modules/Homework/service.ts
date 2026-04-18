@@ -52,7 +52,6 @@ export class HomeworkService {
     if (query.search) {
       filter.$or = [
         { title: new RegExp(escapeRegex(query.search), 'i') },
-        { description: new RegExp(escapeRegex(query.search), 'i') },
       ];
     }
 
@@ -61,7 +60,9 @@ export class HomeworkService {
         .populate('subjectId', 'name code')
         .populate('classId', 'name')
         .populate('teacherId', 'firstName lastName email')
-        .populate('resourceId', 'title type status blocks')
+        .populate('contentResourceId', 'title type status blocks')
+        .populate('quizId', 'title totalMarks')
+        .populate('exerciseQuestionIds', 'stem type totalMarks')
         .sort(sortField)
         .skip(skip)
         .limit(limit)
@@ -78,7 +79,9 @@ export class HomeworkService {
       .populate('subjectId', 'name code')
       .populate('classId', 'name')
       .populate('teacherId', 'firstName lastName email')
-      .populate('resourceId', 'title type status blocks')
+      .populate('contentResourceId', 'title type status blocks')
+      .populate('quizId', 'title totalMarks')
+      .populate('exerciseQuestionIds', 'stem type totalMarks')
       .lean();
 
     if (!homework) {
@@ -97,7 +100,9 @@ export class HomeworkService {
       .populate('subjectId', 'name code')
       .populate('classId', 'name')
       .populate('teacherId', 'firstName lastName email')
-      .populate('resourceId', 'title type status blocks');
+      .populate('contentResourceId', 'title type status blocks')
+      .populate('quizId', 'title totalMarks')
+      .populate('exerciseQuestionIds', 'stem type totalMarks');
 
     if (!homework) {
       throw new NotFoundError('Homework not found');
@@ -222,7 +227,9 @@ export class HomeworkService {
       .populate('subjectId', 'name code')
       .populate('classId', 'name')
       .populate('teacherId', 'firstName lastName')
-      .populate('resourceId', 'title type status blocks')
+      .populate('contentResourceId', 'title type status blocks')
+      .populate('quizId', 'title totalMarks')
+      .populate('exerciseQuestionIds', 'stem type totalMarks')
       .sort({ dueDate: -1 })
       .lean();
 
