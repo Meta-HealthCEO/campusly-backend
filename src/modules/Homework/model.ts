@@ -3,20 +3,23 @@ import mongoose, { Schema, Document, Types } from 'mongoose';
 // ─── Homework ────────────────────────────────────────────────────────────────
 
 export type HomeworkStatus = 'assigned' | 'closed';
+export type HomeworkType = 'quiz' | 'reading' | 'exercise';
 
 export interface IHomework extends Document {
   title: string;
-  description: string;
+  type: HomeworkType;
+  quizId?: Types.ObjectId | null;
+  contentResourceId?: Types.ObjectId | null;
+  pageRange?: string | null;
+  exerciseQuestionIds: Types.ObjectId[];
   subjectId: Types.ObjectId;
   classId: Types.ObjectId;
   schoolId: Types.ObjectId;
   teacherId: Types.ObjectId;
-  resourceId?: Types.ObjectId;
   dueDate: Date;
-  attachments: string[];
   totalMarks: number;
   status: HomeworkStatus;
-  rubric?: string;
+  attachments: string[];
   peerReviewEnabled: boolean;
   groupAssignment: boolean;
   maxFileSize?: number;
@@ -28,80 +31,37 @@ export interface IHomework extends Document {
 
 const homeworkSchema = new Schema<IHomework>(
   {
-    title: {
+    title: { type: String, required: true, trim: true },
+    type: {
       type: String,
-      required: true,
-      trim: true,
-    },
-    description: {
-      type: String,
+      enum: ['quiz', 'reading', 'exercise'],
       required: true,
     },
-    subjectId: {
-      type: Schema.Types.ObjectId,
-      ref: 'Subject',
-      required: true,
+    quizId: { type: Schema.Types.ObjectId, ref: 'Quiz', default: null },
+    contentResourceId: { type: Schema.Types.ObjectId, ref: 'ContentResource', default: null },
+    pageRange: { type: String, default: null, trim: true },
+    exerciseQuestionIds: {
+      type: [Schema.Types.ObjectId],
+      ref: 'Question',
+      default: [],
     },
-    classId: {
-      type: Schema.Types.ObjectId,
-      ref: 'Class',
-      required: true,
-    },
-    schoolId: {
-      type: Schema.Types.ObjectId,
-      ref: 'School',
-      required: true,
-    },
-    teacherId: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
-    resourceId: {
-      type: Schema.Types.ObjectId,
-      ref: 'ContentResource',
-      default: null,
-    },
-    dueDate: {
-      type: Date,
-      required: true,
-    },
+    subjectId: { type: Schema.Types.ObjectId, ref: 'Subject', required: true },
+    classId: { type: Schema.Types.ObjectId, ref: 'Class', required: true },
+    schoolId: { type: Schema.Types.ObjectId, ref: 'School', required: true },
+    teacherId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    dueDate: { type: Date, required: true },
+    totalMarks: { type: Number, required: true, min: 0 },
+    status: { type: String, enum: ['assigned', 'closed'], default: 'assigned' },
     attachments: {
       type: [String],
       default: [],
       validate: [(v: string[]) => v.length <= 20, 'Maximum 20 attachments allowed'],
     },
-    totalMarks: {
-      type: Number,
-      required: true,
-    },
-    status: {
-      type: String,
-      enum: ['assigned', 'closed'],
-      default: 'assigned',
-    },
-    rubric: {
-      type: String,
-    },
-    peerReviewEnabled: {
-      type: Boolean,
-      default: false,
-    },
-    groupAssignment: {
-      type: Boolean,
-      default: false,
-    },
-    maxFileSize: {
-      type: Number,
-    },
-    allowedFileTypes: {
-      type: [String],
-      default: [],
-    },
-    isDeleted: {
-      type: Boolean,
-      default: false,
-    },
+    peerReviewEnabled: { type: Boolean, default: false },
+    groupAssignment: { type: Boolean, default: false },
+    maxFileSize: { type: Number },
+    allowedFileTypes: { type: [String], default: [] },
+    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true },
 );
@@ -109,6 +69,7 @@ const homeworkSchema = new Schema<IHomework>(
 homeworkSchema.index({ classId: 1, subjectId: 1 });
 homeworkSchema.index({ schoolId: 1, dueDate: -1 });
 homeworkSchema.index({ schoolId: 1, isDeleted: 1, createdAt: -1 });
+homeworkSchema.index({ type: 1, schoolId: 1 });
 
 export const Homework = mongoose.model<IHomework>('Homework', homeworkSchema);
 
