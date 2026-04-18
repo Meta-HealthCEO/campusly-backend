@@ -55,7 +55,7 @@ export async function generateLessonPlanPdf(
   doc.moveDown(0.5);
 
   // Meta row: teacher · class · subject · date · duration
-  const date = new Date(plan.date).toISOString().slice(0, 10);
+  const date = formatLocalDate(new Date(plan.date));
   const teacherName = `${teacher.firstName} ${teacher.lastName}`;
   doc
     .font('Helvetica')
@@ -149,4 +149,14 @@ function detailForHomework(hw: IHomework): string {
   if (hw.type === 'reading' && hw.pageRange) return `pp. ${hw.pageRange}`;
   if (hw.type === 'exercise') return `${hw.exerciseQuestionIds.length} question(s)`;
   return '';
+}
+
+// Local-timezone ISO date (YYYY-MM-DD).
+// toISOString() uses UTC and can produce yesterday's date for users in
+// positive UTC offsets (e.g. SA UTC+2) when the timestamp is near midnight.
+function formatLocalDate(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
 }
