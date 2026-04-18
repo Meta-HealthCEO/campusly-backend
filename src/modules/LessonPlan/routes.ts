@@ -56,4 +56,25 @@ router.delete(
   LessonPlanController.delete,
 );
 
+router.get(
+  '/:id/pdf',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  LessonPlanController.getPdf,
+);
+
+router.post(
+  '/:id/homework',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  LessonPlanController.attachHomework,
+);
+
+router.delete(
+  '/:id/homework/:homeworkId',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  LessonPlanController.detachHomework,
+);
+
 export default router;

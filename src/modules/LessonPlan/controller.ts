@@ -1,12 +1,19 @@
 import type { Request, Response } from 'express';
 import { getUser } from '../../types/authenticated-request.js';
 import { LessonPlanService } from './service.js';
+import { createLessonPlanWithStagedHomework } from './service-compensation.js';
 import { LessonPlanAIService } from './service-ai.js';
+import { createHomeworkSchema } from '../Homework/validation.js';
 import { apiResponse } from '../../common/utils.js';
 
 export class LessonPlanController {
   static async create(req: Request, res: Response): Promise<void> {
-    const plan = await LessonPlanService.createLessonPlan(req.body, getUser(req).id);
+    const actorId = getUser(req).id;
+    const body = req.body as { stagedHomework?: unknown[] };
+    const staged = Array.isArray(body.stagedHomework) ? body.stagedHomework : [];
+    const plan = staged.length > 0
+      ? await createLessonPlanWithStagedHomework(req.body, actorId)
+      : await LessonPlanService.createLessonPlan(req.body, actorId);
     res.status(201).json(apiResponse(true, plan, 'Lesson plan created successfully'));
   }
 
@@ -57,5 +64,46 @@ export class LessonPlanController {
   static async aiGenerate(req: Request, res: Response): Promise<void> {
     const draft = await LessonPlanAIService.generate(req.body, getUser(req).id);
     res.json(apiResponse(true, draft, 'Lesson plan draft generated successfully'));
+  }
+
+  static async getPdf(req: Request, res: Response): Promise<void> {
+    const user = getUser(req);
+    const buf = await LessonPlanService.getLessonPlanPdfBuffer(
+      req.params.id as string,
+      user.schoolId!,
+      user.id,
+      user.role,
+    );
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader(
+      'Content-Disposition',
+      `inline; filename="lesson-plan-${req.params.id}.pdf"`,
+    );
+    res.send(buf);
+  }
+
+  static async attachHomework(req: Request, res: Response): Promise<void> {
+    const parsed = createHomeworkSchema.parse(req.body);
+    const user = getUser(req);
+    const hw = await LessonPlanService.attachHomeworkToLessonPlan(
+      req.params.id as string,
+      user.schoolId!,
+      parsed,
+      user.id,
+      user.role,
+    );
+    res.status(201).json(apiResponse(true, hw, 'Homework attached to lesson plan'));
+  }
+
+  static async detachHomework(req: Request, res: Response): Promise<void> {
+    const user = getUser(req);
+    await LessonPlanService.detachHomeworkFromLessonPlan(
+      req.params.id as string,
+      user.schoolId!,
+      req.params.homeworkId as string,
+      user.id,
+      user.role,
+    );
+    res.status(204).end();
   }
 }

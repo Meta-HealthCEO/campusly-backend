@@ -1,8 +1,13 @@
+import mongoose from 'mongoose';
 import { LessonPlan, ILessonPlan } from './model.js';
 import { Class } from '../Academic/model.js';
 import { Subject } from '../Academic/model.js';
 import { CurriculumNode, ICurriculumNode } from '../CurriculumStructure/model.js';
-import { Homework } from '../Homework/model.js';
+import { Homework, IHomework } from '../Homework/model.js';
+import { School } from '../School/model.js';
+import { User } from '../Auth/model.js';
+import type { CreateHomeworkInput } from '../Homework/validation.js';
+import { generateLessonPlanPdf } from './pdf-generator.js';
 import { NotFoundError, BadRequestError, ForbiddenError } from '../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../common/constants.js';
 
@@ -258,5 +263,85 @@ export class LessonPlanService {
     if (!plan) throw new NotFoundError('Lesson plan not found');
 
     return plan;
+  }
+
+  /** Render a populated lesson plan to a PDF buffer via PDFKit. */
+  static async getLessonPlanPdfBuffer(
+    id: string,
+    schoolId: string,
+    actorId: string,
+    actorRole: string,
+  ): Promise<Buffer> {
+    const plan = await LessonPlan.findOne({ _id: id, schoolId, isDeleted: false })
+      .populate('subjectId', 'name code')
+      .populate('classId', 'name')
+      .populate('curriculumTopicId', 'title code description')
+      .populate({ path: 'homeworkIds', match: { isDeleted: false } });
+    if (!plan) throw new NotFoundError('Lesson plan not found');
+    assertLessonPlanAccess(plan, actorId, actorRole, 'access');
+
+    const [school, teacher] = await Promise.all([
+      School.findById(plan.schoolId).select('name').lean(),
+      User.findById(plan.teacherId).select('firstName lastName').lean(),
+    ]);
+    if (!school || !teacher) throw new NotFoundError('School or teacher missing');
+
+    // The generator expects a PopulatedPlan shape — the populate calls above match it.
+    return generateLessonPlanPdf(plan as never, school, teacher);
+  }
+
+  /**
+   * Create a Homework record and attach it to the given lesson plan.
+   * Multi-tenancy: the homework's schoolId/classId/subjectId must match the plan.
+   * MongoDB is standalone — no transaction; if `plan.save()` fails after the
+   * homework is created, the homework may orphan. Accepted risk (see Task 8).
+   */
+  static async attachHomeworkToLessonPlan(
+    planId: string,
+    schoolId: string,
+    input: CreateHomeworkInput,
+    actorId: string,
+    actorRole: string,
+  ): Promise<IHomework> {
+    const plan = await LessonPlan.findOne({ _id: planId, schoolId, isDeleted: false });
+    if (!plan) throw new NotFoundError('Lesson plan not found');
+    assertLessonPlanAccess(plan, actorId, actorRole, 'attach');
+
+    if (String(input.schoolId) !== String(plan.schoolId)) {
+      throw new BadRequestError('Homework must belong to the same school as the lesson plan');
+    }
+    if (String(input.classId) !== String(plan.classId)) {
+      throw new BadRequestError('Homework class must match lesson plan class');
+    }
+    if (String(input.subjectId) !== String(plan.subjectId)) {
+      throw new BadRequestError('Homework subject must match lesson plan subject');
+    }
+
+    const hw = await Homework.create({ ...input, teacherId: actorId });
+    plan.homeworkIds.push(hw._id as mongoose.Types.ObjectId);
+    await plan.save();
+    return hw;
+  }
+
+  /** Detach a homework from the plan and soft-delete the homework record. */
+  static async detachHomeworkFromLessonPlan(
+    planId: string,
+    schoolId: string,
+    homeworkId: string,
+    actorId: string,
+    actorRole: string,
+  ): Promise<void> {
+    const plan = await LessonPlan.findOne({ _id: planId, schoolId, isDeleted: false });
+    if (!plan) throw new NotFoundError('Lesson plan not found');
+    assertLessonPlanAccess(plan, actorId, actorRole, 'detach');
+
+    const before = plan.homeworkIds.length;
+    const filtered = plan.homeworkIds.filter((id) => id.toString() !== homeworkId);
+    if (filtered.length === before) {
+      throw new NotFoundError('Homework not attached to this lesson plan');
+    }
+    plan.homeworkIds = filtered as ILessonPlan['homeworkIds'];
+    await plan.save();
+    await Homework.updateOne({ _id: homeworkId }, { $set: { isDeleted: true } });
   }
 }
