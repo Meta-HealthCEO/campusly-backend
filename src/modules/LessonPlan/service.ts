@@ -7,6 +7,24 @@ import { PAGINATION_DEFAULTS } from '../../common/constants.js';
 
 const ADMIN_ROLES = new Set(['school_admin', 'super_admin']);
 
+/**
+ * Assert that the caller may access (update/delete) the given lesson plan.
+ * Only the plan's teacher OR a school/super admin is permitted.
+ * Throws ForbiddenError with an action-specific message otherwise.
+ */
+export function assertLessonPlanAccess(
+  plan: Pick<ILessonPlan, 'teacherId'>,
+  actorId: string,
+  actorRole: string,
+  action: 'update' | 'delete' = 'update',
+): void {
+  const isOwner = String(plan.teacherId) === actorId;
+  const isAdmin = ADMIN_ROLES.has(actorRole);
+  if (!isOwner && !isAdmin) {
+    throw new ForbiddenError(`You can only ${action} your own lesson plans`);
+  }
+}
+
 /** Verify a class, subject, and (optionally) curriculum topic all belong to the school. */
 async function verifyRefs(schoolId: string, classId: string, subjectId: string, curriculumTopicId?: string): Promise<void> {
   const [cls, subject] = await Promise.all([
@@ -91,9 +109,7 @@ export class LessonPlanService {
     // Ownership: only the plan's teacher OR a school admin may update
     const existing = await LessonPlan.findOne({ _id: id, schoolId, isDeleted: false }).lean();
     if (!existing) throw new NotFoundError('Lesson plan not found');
-    if (!ADMIN_ROLES.has(actorRole) && String(existing.teacherId) !== actorId) {
-      throw new ForbiddenError('You can only update your own lesson plans');
-    }
+    assertLessonPlanAccess(existing, actorId, actorRole, 'update');
 
     // If classId/subjectId/topicId are being changed, re-verify they belong to the school
     if (data.classId || data.subjectId || data.curriculumTopicId) {
@@ -125,9 +141,7 @@ export class LessonPlanService {
   ): Promise<ILessonPlan> {
     const existing = await LessonPlan.findOne({ _id: id, schoolId, isDeleted: false }).lean();
     if (!existing) throw new NotFoundError('Lesson plan not found');
-    if (!ADMIN_ROLES.has(actorRole) && String(existing.teacherId) !== actorId) {
-      throw new ForbiddenError('You can only delete your own lesson plans');
-    }
+    assertLessonPlanAccess(existing, actorId, actorRole, 'delete');
     const plan = await LessonPlan.findOneAndUpdate(
       { _id: id, schoolId, isDeleted: false },
       { $set: { isDeleted: true } },
