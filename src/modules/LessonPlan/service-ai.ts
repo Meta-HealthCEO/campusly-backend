@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { z } from 'zod/v4';
 import { AIService } from '../../services/ai.service.js';
 import { CurriculumNode } from '../CurriculumStructure/model.js';
 import { AIUsageLog } from '../AITools/model.js';
@@ -18,13 +19,53 @@ interface GenerateInput {
   durationMinutes?: number;
 }
 
-interface GeneratedDraft {
+/**
+ * Durable AI contract: the AI outputs *suggestions* (titles + hints), never
+ * real IDs. The teacher maps each suggestion to an actual Quiz /
+ * ContentResource / Question via a picker in the frontend before saving.
+ * This prevents hallucinated references to records that don't exist.
+ */
+export type HomeworkSuggestion =
+  | { type: 'quiz'; title: string; questionCount: number; topicHint: string }
+  | { type: 'reading'; title: string; pageRangeHint?: string; topicHint: string }
+  | { type: 'exercise'; title: string; questionCount: number; topicHint: string };
+
+export interface GeneratedDraft {
   topic: string;
   objectives: string[];
   activities: string[];
   resources: string[];
-  homework?: string;
+  homeworkSuggestions: HomeworkSuggestion[];
 }
+
+const homeworkSuggestionSchema = z.discriminatedUnion('type', [
+  z.object({
+    type: z.literal('reading'),
+    title: z.string(),
+    pageRangeHint: z.string().optional(),
+    topicHint: z.string(),
+  }),
+  z.object({
+    type: z.literal('exercise'),
+    title: z.string(),
+    questionCount: z.number(),
+    topicHint: z.string(),
+  }),
+  z.object({
+    type: z.literal('quiz'),
+    title: z.string(),
+    questionCount: z.number(),
+    topicHint: z.string(),
+  }),
+]);
+
+const draftSchema = z.object({
+  topic: z.string().optional(),
+  objectives: z.array(z.string()).default([]),
+  activities: z.array(z.string()).default([]),
+  resources: z.array(z.string()).default([]),
+  homeworkSuggestions: z.array(homeworkSuggestionSchema).default([]),
+});
 
 export class LessonPlanAIService {
   static async generate(input: GenerateInput, teacherId: string): Promise<GeneratedDraft> {
@@ -62,6 +103,10 @@ export class LessonPlanAIService {
       ? topic.description
       : '(no description)';
 
+    // Durable contract: the AI must NEVER output real IDs (quizId,
+    // contentResourceId, questionIds). It only emits descriptive
+    // suggestions — titles and topic hints — which the teacher maps to
+    // real entities via a picker UI before saving the plan.
     const userPrompt = `Draft a ${duration}-minute lesson plan for the following curriculum topic.
 
 Topic: ${topic.title}
@@ -70,14 +115,20 @@ CAPS reference: ${capsReference}
 Notional hours: ${notionalHours}
 Assessment standards: ${assessmentStandards}
 
-Output JSON shape:
+Return JSON with this exact shape (do not include real IDs — you do not know the teacher's DB):
 {
-  "topic": "<concise lesson title, max 80 chars>",
-  "objectives": ["<3-5 specific, measurable learning objectives>"],
-  "activities": ["<4-6 sequenced classroom activities with approximate minute marks>"],
-  "resources": ["<3-5 concrete resources: textbook pages, worksheets, apparatus, digital tools>"],
-  "homework": "<single brief homework task, optional; omit or empty string if not applicable>"
-}`;
+  "topic": string (concise lesson title, max 80 chars),
+  "objectives": string[] (3-5 specific, measurable learning objectives),
+  "activities": string[] (4-6 sequenced classroom activities, each ~1 sentence with approximate minute marks),
+  "resources": string[] (2-4 concrete resources: textbook pages, worksheets, apparatus, digital tools),
+  "homeworkSuggestions": Array<
+    | { "type": "reading", "title": string, "pageRangeHint": string, "topicHint": string }
+    | { "type": "exercise", "title": string, "questionCount": number, "topicHint": string }
+    | { "type": "quiz", "title": string, "questionCount": number, "topicHint": string }
+  > (0-3 suggestions; prefer reading + exercise over quiz for primary grades)
+}
+
+topicHint: a short phrase the teacher can search for when picking a real resource/question/quiz in Campusly. Never output IDs.`;
 
     const { text: raw, usage } = await AIService.generateCompletionWithUsage(
       systemPrompt,
@@ -86,20 +137,25 @@ Output JSON shape:
     );
 
     const cleaned = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/i, '').trim();
-    let parsed: unknown;
+    let rawParsed: unknown;
     try {
-      parsed = JSON.parse(cleaned);
+      rawParsed = JSON.parse(cleaned);
     } catch {
       throw new BadRequestError('AI returned invalid JSON — please try again');
     }
 
-    const result = parsed as Partial<GeneratedDraft>;
+    const validation = draftSchema.safeParse(rawParsed);
+    if (!validation.success) {
+      throw new BadRequestError('AI returned a malformed lesson plan — please try again');
+    }
+    const parsed = validation.data;
+
     const draft: GeneratedDraft = {
-      topic: String(result.topic ?? topic.title),
-      objectives: Array.isArray(result.objectives) ? result.objectives.map(String) : [],
-      activities: Array.isArray(result.activities) ? result.activities.map(String) : [],
-      resources: Array.isArray(result.resources) ? result.resources.map(String) : [],
-      homework: result.homework ? String(result.homework) : undefined,
+      topic: parsed.topic && parsed.topic.length > 0 ? parsed.topic : topic.title,
+      objectives: parsed.objectives,
+      activities: parsed.activities,
+      resources: parsed.resources,
+      homeworkSuggestions: parsed.homeworkSuggestions,
     };
 
     // Log usage — fire-and-forget; don't fail the request if logging fails
