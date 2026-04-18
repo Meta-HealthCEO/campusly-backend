@@ -9,9 +9,9 @@ const baseHomeworkFields = {
   subjectId: objectIdSchema,
   classId: objectIdSchema,
   schoolId: objectIdSchema,
-  dueDate: z.string().datetime(),
+  dueDate: z.iso.datetime(),
   totalMarks: z.number().int().min(0).max(1000),
-  attachments: z.array(z.string().url()).max(20).optional(),
+  attachments: z.array(z.url()).max(20).optional(),
   peerReviewEnabled: z.boolean().optional(),
   groupAssignment: z.boolean().optional(),
   allowedFileTypes: z.array(z.string()).optional(),
@@ -45,11 +45,11 @@ export const createHomeworkSchema = z.discriminatedUnion('type', [
 
 export const updateHomeworkSchema = z.object({
   title: z.string().min(1).max(200).optional(),
-  dueDate: z.string().datetime().optional(),
+  dueDate: z.iso.datetime().optional(),
   totalMarks: z.number().int().min(0).max(1000).optional(),
   status: z.enum(['assigned', 'closed']).optional(),
   pageRange: z.string().max(50).optional(),
-});
+}).strict();
 
 // ─── Submission ──────────────────────────────────────────────────────────────
 

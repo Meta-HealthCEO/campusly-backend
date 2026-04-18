@@ -83,12 +83,16 @@ export class HomeworkTemplateService {
 
     if (!template) throw new NotFoundError('Template not found');
 
-    // Note: template-level description/rubric are NOT copied onto Homework —
-    // those fields no longer exist on the Homework model (typed discriminator
-    // refactor). They remain template-scoped metadata only.
+    // DEFERRED (tech debt): Templates don't yet have their own discriminator,
+    // so we default to 'reading' with no contentResourceId. This produces a
+    // structurally-invalid Homework (reading without a resource) that bypasses
+    // the Zod API layer. Future work: extend HomeworkTemplate with a type
+    // discriminator so cloned homeworks inherit the correct type + refs.
+    // Template-level description/rubric are intentionally NOT copied — those
+    // fields no longer exist on the Homework model.
     const homework = new Homework({
       title: overrides.title ?? template.title,
-      type: 'reading',
+      type: 'reading' as const,
       subjectId: template.subjectId,
       classId: overrides.classId,
       schoolId,
