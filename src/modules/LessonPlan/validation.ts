@@ -17,7 +17,7 @@ const stagedHomeworkSchema = z.discriminatedUnion('type', [
     classId: objectIdSchema,
     dueDate: z.iso.datetime(),
     totalMarks: z.number().int().min(0).max(1000),
-  }),
+  }).strict(),
   z.object({
     type: z.literal('reading'),
     title: z.string().min(1).max(200),
@@ -28,7 +28,7 @@ const stagedHomeworkSchema = z.discriminatedUnion('type', [
     classId: objectIdSchema,
     dueDate: z.iso.datetime(),
     totalMarks: z.number().int().min(0).max(1000).default(0),
-  }),
+  }).strict(),
   z.object({
     type: z.literal('exercise'),
     title: z.string().min(1).max(200),
@@ -38,7 +38,7 @@ const stagedHomeworkSchema = z.discriminatedUnion('type', [
     classId: objectIdSchema,
     dueDate: z.iso.datetime(),
     totalMarks: z.number().int().min(0).max(1000),
-  }),
+  }).strict(),
 ]);
 
 export const createLessonPlanSchema = z.object({
@@ -55,9 +55,9 @@ export const createLessonPlanSchema = z.object({
   reflectionNotes: z.string().max(5000).optional(),
   aiGenerated: z.boolean().optional(),
   stagedHomework: z.array(stagedHomeworkSchema).max(10).optional(),
-});
+}).strict();
 
-export const updateLessonPlanSchema = createLessonPlanSchema.partial();
+export const updateLessonPlanSchema = createLessonPlanSchema.partial().strict();
 
 export const aiGenerateLessonPlanSchema = z.object({
   curriculumTopicId: objectIdSchema,
@@ -66,7 +66,7 @@ export const aiGenerateLessonPlanSchema = z.object({
   schoolId: objectIdSchema,
   date: z.iso.datetime(),
   durationMinutes: z.number().int().min(5).max(240).optional(),
-});
+}).strict();
 
 export type CreateLessonPlanInput = z.infer<typeof createLessonPlanSchema>;
 export type UpdateLessonPlanInput = z.infer<typeof updateLessonPlanSchema>;
