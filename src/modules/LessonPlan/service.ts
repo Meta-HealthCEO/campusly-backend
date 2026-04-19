@@ -172,6 +172,7 @@ export class LessonPlanService {
         .populate('subjectId', 'name code')
         .populate('classId', 'name')
         .populate('curriculumTopicId', 'title code')
+        .populate({ path: 'homeworkIds', match: { isDeleted: false }, select: 'type title' })
         .sort('-date')
         .skip(skip)
         .limit(sanitizedLimit)
