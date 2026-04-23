@@ -25,6 +25,7 @@ import {
   getPaperById,
   updatePaper,
 } from './service-queries.js';
+import { PaperGenerationResponseSchema, PaperQuestionSchema } from './validation-ai.js';
 
 const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
 
@@ -127,11 +128,21 @@ Include a mix of question types (multiple choice, short answer, long answer, str
 
       const { data: result, usage } = await AIService.generateJSONWithUsage<AIGeneratedPaper>(systemPrompt, userPrompt);
 
-      // Render diagrams for questions that include TikZ code
-      await renderSectionDiagrams(result.sections);
+      const validation = PaperGenerationResponseSchema.safeParse(result);
+      if (!validation.success) {
+        const issue = validation.error.issues[0];
+        const where = issue?.path.join('.') || '(root)';
+        throw new BadRequestError(
+          `AI response did not match the expected structure at "${where}": ${issue?.message ?? 'unknown'}. Please try generating again.`,
+        );
+      }
+      const validated = validation.data;
 
-      paper.sections = result.sections;
-      paper.memorandum = result.memorandum;
+      // Render diagrams for questions that include TikZ code
+      await renderSectionDiagrams(validated.sections as IPaperSection[]);
+
+      paper.sections = validated.sections as IPaperSection[];
+      paper.memorandum = validated.memorandum;
       paper.status = 'ready';
       await paper.save();
 
@@ -202,12 +213,24 @@ The question must be different from: "${oldQuestion.questionText}"`;
 
     const { data: newQuestion, usage } = await AIService.generateJSONWithUsage<AIGeneratedQuestion>(systemPrompt, userPrompt);
 
+    const qValidation = PaperQuestionSchema.safeParse(newQuestion);
+    if (!qValidation.success) {
+      const issue = qValidation.error.issues[0];
+      const where = issue?.path.join('.') || '(root)';
+      throw new BadRequestError(
+        `AI response did not match the expected question structure at "${where}": ${issue?.message ?? 'unknown'}. Please try regenerating again.`,
+      );
+    }
+    // Cast to IPaperQuestion: Zod's DiagramSchema is optional (undefined on missing)
+    // while IPaperQuestion.diagram is null on missing — structurally compatible at runtime.
+    const validatedQuestion = qValidation.data as IPaperSection['questions'][number];
+
     // Render diagram if the regenerated question includes one
-    if (newQuestion.diagram && newQuestion.diagram.tikz) {
-      newQuestion.diagram = await renderQuestionDiagram(newQuestion.diagram);
+    if (validatedQuestion.diagram && validatedQuestion.diagram.tikz) {
+      validatedQuestion.diagram = await renderQuestionDiagram(validatedQuestion.diagram);
     }
 
-    paper.sections[sectionIndex].questions[questionIndex] = newQuestion;
+    paper.sections[sectionIndex].questions[questionIndex] = validatedQuestion;
     paper.status = 'edited';
     await paper.save();
 
