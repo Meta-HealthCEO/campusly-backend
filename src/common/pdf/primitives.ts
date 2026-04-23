@@ -1,12 +1,12 @@
 // src/common/pdf/primitives.ts
 import {
-  MARGIN, PAGE_WIDTH, CONTENT_WIDTH,
+  MARGIN, PAGE_WIDTH, CONTENT_WIDTH, FOOTER_RESERVE,
   FONT_TITLE, FONT_NORMAL,
 } from './constants.js';
 import type { NormalisedPaperMeta } from './types.js';
 
 export function checkPageSpace(doc: PDFKit.PDFDocument, needed: number): void {
-  if (doc.y + needed > doc.page.height - MARGIN - 30) {
+  if (doc.y + needed > doc.page.height - MARGIN - FOOTER_RESERVE) {
     doc.addPage();
   }
 }

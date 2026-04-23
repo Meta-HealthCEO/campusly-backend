@@ -1,6 +1,6 @@
 // src/common/pdf/document.ts
 import PDFDocument from 'pdfkit';
-import { MARGIN, PAGE_WIDTH } from './constants.js';
+import { MARGIN, CONTENT_WIDTH, FOOTER_RESERVE } from './constants.js';
 
 export function createDocument(): PDFKit.PDFDocument {
   return new PDFDocument({
@@ -17,16 +17,16 @@ export function finalise(doc: PDFKit.PDFDocument): Promise<Buffer> {
     doc.on('end', () => resolve(Buffer.concat(chunks)));
     doc.on('error', reject);
 
-    const pageCount = doc.bufferedPageRange().count;
-    for (let i = 0; i < pageCount; i++) {
-      doc.switchToPage(i);
+    const pages = doc.bufferedPageRange();
+    for (let i = 0; i < pages.count; i++) {
+      doc.switchToPage(pages.start + i);
       doc.save();
       doc.font('Helvetica').fontSize(8);
       doc.text(
-        `Page ${i + 1} of ${pageCount}`,
+        `Page ${i + 1} of ${pages.count}`,
         MARGIN,
-        doc.page.height - 30,
-        { width: PAGE_WIDTH - MARGIN * 2, align: 'center' },
+        doc.page.height - FOOTER_RESERVE,
+        { width: CONTENT_WIDTH, align: 'center' },
       );
       doc.restore();
     }

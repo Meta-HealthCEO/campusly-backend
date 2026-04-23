@@ -10,3 +10,5 @@ export const FONT_ITALIC = 'Helvetica-Oblique';
 
 export const DIAGRAM_MAX_WIDTH = CONTENT_WIDTH - 40; // indented
 export const DIAGRAM_MAX_HEIGHT = 240;
+
+export const FOOTER_RESERVE = 30; // reserve at bottom of page for page-number footer
