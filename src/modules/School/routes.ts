@@ -2,6 +2,7 @@ import express from 'express';
 import { SchoolController } from './controller.js';
 import { authenticate } from '../../middleware/auth.js';
 import { authorize } from '../../middleware/rbac.js';
+import { requireCapability } from '../../middleware/capability.js';
 import { validate } from '../../middleware/validate.js';
 import { createSchoolSchema, updateSchoolSchema, updateSettingsSchema } from './validation.js';
 
@@ -47,7 +48,7 @@ router.get(
 router.put(
   '/:id',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher'),
+  requireCapability('manage_school_settings'),
   validate(updateSchoolSchema),
   SchoolController.update,
 );
@@ -62,7 +63,7 @@ router.delete(
 router.patch(
   '/:id/settings',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_school_settings'),
   validate(updateSettingsSchema),
   SchoolController.updateSettings,
 );
