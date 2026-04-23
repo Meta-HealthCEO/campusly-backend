@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { authenticate } from '../../middleware/auth.js';
 import { authorize } from '../../middleware/rbac.js';
+import { requireCapability } from '../../middleware/capability.js';
 import { validate } from '../../middleware/validate.js';
 import { SportController } from './controller.js';
 import { StatsController } from './controller-stats.js';
@@ -61,7 +62,7 @@ const router = Router();
 router.post(
   '/teams',
   authenticate,
-  authorize('super_admin', 'school_admin', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   validate(createTeamSchema),
   SportController.createTeam,
 );
@@ -81,7 +82,7 @@ router.get(
 router.put(
   '/teams/:id',
   authenticate,
-  authorize('super_admin', 'school_admin', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   validate(updateTeamSchema),
   SportController.updateTeam,
 );
@@ -89,7 +90,7 @@ router.put(
 router.delete(
   '/teams/:id',
   authenticate,
-  authorize('super_admin', 'school_admin', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   SportController.deleteTeam,
 );
 
@@ -98,7 +99,7 @@ router.delete(
 router.post(
   '/fixtures',
   authenticate,
-  authorize('super_admin', 'school_admin', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   validate(createFixtureSchema),
   SportController.createFixture,
 );
@@ -118,7 +119,7 @@ router.get(
 router.put(
   '/fixtures/:id',
   authenticate,
-  authorize('super_admin', 'school_admin', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   validate(updateFixtureSchema),
   SportController.updateFixture,
 );
@@ -126,7 +127,7 @@ router.put(
 router.delete(
   '/fixtures/:id',
   authenticate,
-  authorize('super_admin', 'school_admin', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   SportController.deleteFixture,
 );
 
@@ -135,7 +136,7 @@ router.delete(
 router.post(
   '/seasons',
   authenticate,
-  authorize('super_admin', 'school_admin', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   validate(createSeasonSchema),
   SportController.createSeason,
 );
@@ -155,7 +156,7 @@ router.get(
 router.put(
   '/seasons/:id',
   authenticate,
-  authorize('super_admin', 'school_admin', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   validate(updateSeasonSchema),
   SportController.updateSeason,
 );
@@ -163,7 +164,7 @@ router.put(
 router.delete(
   '/seasons/:id',
   authenticate,
-  authorize('super_admin', 'school_admin', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   SportController.deleteSeason,
 );
 
@@ -187,7 +188,7 @@ router.get(
 router.post(
   '/fixtures/:fixtureId/result',
   authenticate,
-  authorize('super_admin', 'school_admin', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   validate(createMatchResultSchema),
   SportController.createMatchResult,
 );
@@ -195,7 +196,7 @@ router.post(
 router.put(
   '/fixtures/:fixtureId/result',
   authenticate,
-  authorize('super_admin', 'school_admin', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   validate(updateMatchResultSchema),
   SportController.updateMatchResult,
 );
@@ -248,7 +249,7 @@ router.get(
 router.post(
   '/fixtures/:fixtureId/stats',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   validate(recordMatchStatsSchema),
   StatsController.recordMatchStats,
 );
@@ -282,7 +283,7 @@ router.get(
 router.post(
   '/players/:studentId/personal-best',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   validate(recordPersonalBestSchema),
   StatsController.recordPersonalBest,
 );
@@ -290,7 +291,7 @@ router.post(
 router.post(
   '/players/:studentId/recalculate-card',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   StatsController.recalculatePlayerCard,
 );
 
@@ -307,21 +308,21 @@ router.get(
 router.post(
   '/ai/player/:studentId/analysis',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   AISportsController.generatePlayerAnalysis,
 );
 
 router.post(
   '/ai/player/:studentId/development-plan',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   AISportsController.generateDevelopmentPlan,
 );
 
 router.post(
   '/ai/player/:studentId/scouting-report',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   AISportsController.generateScoutingReport,
 );
 
@@ -335,21 +336,21 @@ router.post(
 router.post(
   '/ai/match/:fixtureId/report',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   AISportsController.generateMatchReport,
 );
 
 router.post(
   '/ai/team/:teamId/analysis',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   AISportsController.generateTeamAnalysis,
 );
 
 router.post(
   '/ai/talent-identification',
   authenticate,
-  authorize('super_admin', 'school_admin', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   AISportsController.identifyTalent,
 );
 
@@ -363,7 +364,7 @@ router.get(
 router.patch(
   '/ai/talent-flags/:id/review',
   authenticate,
-  authorize('super_admin', 'school_admin', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   AISportsController.reviewTalentFlag,
 );
 
@@ -384,7 +385,7 @@ router.get(
 router.post(
   '/training/sessions',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   validate(createTrainingSessionSchema),
   TrainingController.createSession,
 );
@@ -404,7 +405,7 @@ router.get(
 router.put(
   '/training/sessions/:id',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   validate(updateTrainingSessionSchema),
   TrainingController.updateSession,
 );
@@ -412,14 +413,14 @@ router.put(
 router.delete(
   '/training/sessions/:id',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   TrainingController.deleteSession,
 );
 
 router.post(
   '/training/sessions/:sessionId/attendance',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   validate(recordAttendanceSchema),
   TrainingController.recordAttendance,
 );
@@ -439,7 +440,7 @@ router.get(
 router.post(
   '/training/drills',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   validate(createDrillTemplateSchema),
   TrainingController.createDrill,
 );
@@ -453,7 +454,7 @@ router.get(
 router.put(
   '/training/drills/:id',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   validate(updateDrillTemplateSchema),
   TrainingController.updateDrill,
 );
@@ -461,7 +462,7 @@ router.put(
 router.delete(
   '/training/drills/:id',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   TrainingController.deleteDrill,
 );
 
@@ -470,7 +471,7 @@ router.delete(
 router.post(
   '/injuries',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   validate(createInjurySchema),
   InjuryController.createInjury,
 );
@@ -490,7 +491,7 @@ router.get(
 router.put(
   '/injuries/:id',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   validate(updateInjurySchema),
   InjuryController.updateInjury,
 );
@@ -498,14 +499,14 @@ router.put(
 router.delete(
   '/injuries/:id',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   InjuryController.deleteInjury,
 );
 
 router.post(
   '/injuries/:id/recovery-logs',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   validate(createRecoveryLogSchema),
   InjuryController.addRecoveryLog,
 );
@@ -527,7 +528,7 @@ router.get(
 router.post(
   '/fitness/tests',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   validate(createFitnessTestSchema),
   FitnessController.createTest,
 );
@@ -541,7 +542,7 @@ router.get(
 router.put(
   '/fitness/tests/:id',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   validate(updateFitnessTestSchema),
   FitnessController.updateTest,
 );
@@ -549,7 +550,7 @@ router.put(
 router.delete(
   '/fitness/tests/:id',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   FitnessController.deleteTest,
 );
 
@@ -562,7 +563,7 @@ router.get(
 router.post(
   '/fitness/biometrics',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   validate(createBiometricSchema),
   FitnessController.createBiometric,
 );
@@ -576,7 +577,7 @@ router.get(
 router.put(
   '/fitness/biometrics/:id',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   validate(updateBiometricSchema),
   FitnessController.updateBiometric,
 );
@@ -584,7 +585,7 @@ router.put(
 router.delete(
   '/fitness/biometrics/:id',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   FitnessController.deleteBiometric,
 );
 
@@ -593,7 +594,7 @@ router.delete(
 router.post(
   '/announcements',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   validate(createAnnouncementSchema),
   AnnouncementController.create,
 );
@@ -613,7 +614,7 @@ router.get(
 router.put(
   '/announcements/:id',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   validate(updateAnnouncementSchema),
   AnnouncementController.update,
 );
@@ -621,14 +622,14 @@ router.put(
 router.delete(
   '/announcements/:id',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   AnnouncementController.remove,
 );
 
 router.post(
   '/fixtures/:fixtureId/team-sheet',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   AnnouncementController.generateTeamSheet,
 );
 
@@ -680,14 +681,14 @@ router.get(
 router.post(
   '/benchmarks',
   authenticate,
-  authorize('super_admin', 'school_admin', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   BenchmarkController.upsert,
 );
 
 router.delete(
   '/benchmarks/:id',
   authenticate,
-  authorize('super_admin', 'school_admin', 'coach', 'sports_manager'),
+  requireCapability('manage_sport_config'),
   BenchmarkController.remove,
 );
 
