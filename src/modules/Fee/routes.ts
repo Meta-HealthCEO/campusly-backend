@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { authenticate, authorize, validate, requireParentOwnership, validateSchoolScope } from '../../middleware/index.js';
+import { requireCapability } from '../../middleware/capability.js';
 import { FeeController } from './controller.js';
 import { FeeExportController } from './export.controller.js';
 import {
@@ -45,7 +46,7 @@ router.get(
 router.post(
   '/types',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_fees'),
   validate(createFeeTypeSchema),
   FeeController.createFeeType,
 );
@@ -68,7 +69,7 @@ router.get(
 router.patch(
   '/types/:id',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_fees'),
   validate(updateFeeTypeSchema),
   FeeController.updateFeeType,
 );
@@ -76,7 +77,7 @@ router.patch(
 router.delete(
   '/types/:id',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_fees'),
   FeeController.deleteFeeType,
 );
 
@@ -85,7 +86,7 @@ router.delete(
 router.post(
   '/schedules',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_fees'),
   validate(createFeeScheduleSchema),
   FeeController.createFeeSchedule,
 );
@@ -108,7 +109,7 @@ router.get(
 router.patch(
   '/schedules/:id',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_fees'),
   validate(updateFeeScheduleSchema),
   FeeController.updateFeeSchedule,
 );
@@ -116,7 +117,7 @@ router.patch(
 router.delete(
   '/schedules/:id',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_fees'),
   FeeController.deleteFeeSchedule,
 );
 
@@ -125,7 +126,7 @@ router.delete(
 router.post(
   '/invoices',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_fees'),
   validate(createInvoiceSchema),
   FeeController.createInvoice,
 );
@@ -185,7 +186,7 @@ router.get(
 router.post(
   '/debit-orders',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_fees'),
   validate(createDebitOrderSchema),
   FeeController.createDebitOrder,
 );
@@ -208,7 +209,7 @@ router.get(
 router.patch(
   '/debit-orders/:id',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_fees'),
   validate(updateDebitOrderSchema),
   FeeController.updateDebitOrder,
 );
@@ -216,7 +217,7 @@ router.patch(
 router.delete(
   '/debit-orders/:id',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_fees'),
   FeeController.deleteDebitOrder,
 );
 
@@ -235,7 +236,7 @@ router.get(
 router.post(
   '/collections/escalate',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_fees'),
   validate(escalateCollectionSchema),
   FeeController.escalateCollection,
 );
@@ -263,7 +264,7 @@ router.post(
 router.post(
   '/late-fees/school/:schoolId',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_fees'),
   validateSchoolScope(),
   FeeController.calculateLateFees,
 );
@@ -273,7 +274,7 @@ router.post(
 router.post(
   '/allocate-payment/student/:studentId',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_fees'),
   validate(recordPaymentSchema),
   FeeController.allocatePayment,
 );
@@ -283,7 +284,7 @@ router.post(
 router.post(
   '/payment-arrangements',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_fees'),
   validate(createPaymentArrangementSchema),
   FeeController.createPaymentArrangement,
 );
@@ -301,7 +302,7 @@ router.get(
 router.post(
   '/write-off',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_fees'),
   validate(writeOffDebtSchema),
   FeeController.writeOffDebt,
 );
@@ -311,7 +312,7 @@ router.post(
 router.post(
   '/discount',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_fees'),
   validate(applyDiscountSchema),
   FeeController.applyDiscount,
 );
@@ -331,7 +332,7 @@ router.get(
 router.post(
   '/invoices/bulk',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_fees'),
   validate(bulkInvoiceSchema),
   FeeController.bulkInvoiceGeneration,
 );
@@ -341,7 +342,7 @@ router.post(
 router.post(
   '/credit-notes',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_fees'),
   validate(createCreditNoteSchema),
   FeeController.createCreditNote,
 );
@@ -349,7 +350,7 @@ router.post(
 router.patch(
   '/credit-notes/:id/approve',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_fees'),
   validate(approveCreditNoteSchema),
   FeeController.approveCreditNote,
 );
@@ -367,7 +368,7 @@ router.get(
 router.post(
   '/exemptions',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_fees'),
   validate(createFeeExemptionSchema),
   FeeController.createFeeExemption,
 );
