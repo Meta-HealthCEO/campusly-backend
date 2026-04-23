@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { authenticate } from '../../middleware/auth.js';
 import { authorize } from '../../middleware/rbac.js';
+import { requireCapability } from '../../middleware/capability.js';
 import { validate } from '../../middleware/validate.js';
 import { LibraryController } from './controller.js';
 import {
@@ -19,17 +20,17 @@ const router = Router();
 
 // ─── Book Routes ────────────────────────────────────────────────────────────
 
-router.post('/books', authenticate, authorize('school_admin', 'super_admin'), validate(createBookSchema), LibraryController.createBook);
+router.post('/books', authenticate, requireCapability('manage_library'), validate(createBookSchema), LibraryController.createBook);
 router.get('/books', authenticate, LibraryController.listBooks);
 router.get('/books/:id', authenticate, LibraryController.getBook);
-router.put('/books/:id', authenticate, authorize('school_admin', 'super_admin'), validate(updateBookSchema), LibraryController.updateBook);
-router.delete('/books/:id', authenticate, authorize('school_admin', 'super_admin'), LibraryController.deleteBook);
+router.put('/books/:id', authenticate, requireCapability('manage_library'), validate(updateBookSchema), LibraryController.updateBook);
+router.delete('/books/:id', authenticate, requireCapability('manage_library'), LibraryController.deleteBook);
 
 // ─── Book Loan Routes ───────────────────────────────────────────────────────
 
 router.post('/loans/issue', authenticate, authorize('school_admin', 'super_admin', 'teacher'), validate(issueBookSchema), LibraryController.issueBook);
 router.patch('/loans/:id/return', authenticate, authorize('school_admin', 'super_admin', 'teacher'), validate(returnBookSchema), LibraryController.returnBook);
-router.patch('/loans/:id/lost', authenticate, authorize('school_admin', 'super_admin'), LibraryController.markLost);
+router.patch('/loans/:id/lost', authenticate, requireCapability('manage_library'), LibraryController.markLost);
 router.get('/loans/overdue', authenticate, authorize('school_admin', 'super_admin', 'teacher'), LibraryController.getOverdueLoans);
 router.get('/loans/student/:studentId', authenticate, LibraryController.getStudentLoans);
 
@@ -40,7 +41,7 @@ router.get('/challenges', authenticate, LibraryController.listChallenges);
 router.get('/challenges/:id', authenticate, LibraryController.getChallenge);
 router.put('/challenges/:id', authenticate, authorize('school_admin', 'super_admin', 'teacher'), validate(updateChallengeSchema), LibraryController.updateChallenge);
 router.post('/challenges/:id/join', authenticate, LibraryController.joinChallenge);
-router.delete('/challenges/:id', authenticate, authorize('school_admin', 'super_admin'), LibraryController.deleteChallenge);
+router.delete('/challenges/:id', authenticate, requireCapability('manage_library'), LibraryController.deleteChallenge);
 
 // ─── Reading Log Routes ─────────────────────────────────────────────────────
 
@@ -54,8 +55,8 @@ router.get('/leaderboard/:challengeId', authenticate, LibraryController.getLeade
 // ─── Library Fines ──────────────────────────────────────────────────────────
 
 router.get('/fines', authenticate, authorize('school_admin', 'super_admin'), LibraryController.calculateFines);
-router.post('/fines/generate-invoices', authenticate, authorize('school_admin', 'super_admin'), validate(generateFineInvoicesSchema), LibraryController.generateFineInvoices);
+router.post('/fines/generate-invoices', authenticate, requireCapability('manage_library'), validate(generateFineInvoicesSchema), LibraryController.generateFineInvoices);
 router.get('/fine-config', authenticate, authorize('school_admin', 'super_admin'), LibraryController.getFineConfig);
-router.put('/fine-config', authenticate, authorize('school_admin', 'super_admin'), validate(updateFineConfigSchema), LibraryController.updateFineConfig);
+router.put('/fine-config', authenticate, requireCapability('manage_library'), validate(updateFineConfigSchema), LibraryController.updateFineConfig);
 
 export default router;
