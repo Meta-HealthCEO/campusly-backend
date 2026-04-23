@@ -61,6 +61,22 @@ router.post(
   AIToolsController.regenerateQuestion,
 );
 
+// GET /papers/:id/pdf — download paper PDF
+router.get(
+  '/papers/:id/pdf',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  AIToolsController.downloadPaperPdf,
+);
+
+// GET /papers/:id/memo-pdf — download memorandum PDF
+router.get(
+  '/papers/:id/memo-pdf',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  AIToolsController.downloadMemoPdf,
+);
+
 // ─── OCR Paper Marking ───────────────────────────────────────────────────────
 
 // POST /mark-paper — OCR-based paper marking from image

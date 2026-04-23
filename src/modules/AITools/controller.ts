@@ -2,6 +2,7 @@ import type { Request } from 'express';
 import { Response } from 'express';
 import { getUser } from '../../types/authenticated-request.js';
 import { AIToolsService } from './service.js';
+import { AIPdfService } from './service-pdf.js';
 import { apiResponse } from '../../common/utils.js';
 
 export class AIToolsController {
@@ -150,6 +151,30 @@ export class AIToolsController {
       req.body,
     );
     res.json(apiResponse(true, result, 'Paper marked successfully'));
+  }
+
+  static async downloadPaperPdf(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
+    const buf = await AIPdfService.generatePaperPdf(req.params.id as string, schoolId);
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="paper-${req.params.id}.pdf"`);
+    res.send(buf);
+  }
+
+  static async downloadMemoPdf(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
+    const buf = await AIPdfService.generateMemoPdf(req.params.id as string, schoolId);
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="memo-${req.params.id}.pdf"`);
+    res.send(buf);
   }
 
   static async getUsage(req: Request, res: Response): Promise<void> {
