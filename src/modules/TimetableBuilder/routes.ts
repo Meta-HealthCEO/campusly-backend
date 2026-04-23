@@ -1,5 +1,6 @@
 import express from 'express';
 import { authorize } from '../../middleware/rbac.js';
+import { requireCapability } from '../../middleware/capability.js';
 import { validate } from '../../middleware/validate.js';
 import { TimetableBuilderController } from './controller.js';
 import {
@@ -19,7 +20,7 @@ const adminOrTeacher = authorize('school_admin', 'super_admin', 'teacher');
 // ─── Config ─────────────────────────────────────────────────────────────────
 
 router.get('/config', adminOrTeacher, TimetableBuilderController.getConfig);
-router.put('/config', adminOrTeacher, validate(configSchema), TimetableBuilderController.updateConfig);
+router.put('/config', requireCapability('manage_school_config'), validate(configSchema), TimetableBuilderController.updateConfig);
 
 // ─── Requirements ───────────────────────────────────────────────────────────
 

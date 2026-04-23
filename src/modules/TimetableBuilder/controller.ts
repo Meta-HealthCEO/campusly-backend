@@ -23,11 +23,6 @@ export class TimetableBuilderController {
     const user = getUser(req);
     const schoolId = user.schoolId!;
 
-    if (user.role === 'teacher' && !user.isSchoolPrincipal) {
-      res.status(403).json(apiResponse(false, undefined, undefined, 'Only school admins can modify timetable configuration'));
-      return;
-    }
-
     // Validate break afterPeriod values
     if (req.body.breakSlots && req.body.periodsPerDay) {
       const maxPeriods = Math.max(...Object.values(req.body.periodsPerDay as Record<string, number>));
