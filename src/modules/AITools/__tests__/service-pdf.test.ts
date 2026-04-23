@@ -85,7 +85,7 @@ describe('AIPdfService', () => {
 
     const buf = await AIPdfService.generatePaperPdf(paper._id.toString(), schoolId.toString());
     expect(buf.length).toBeGreaterThan(500);
-    expect(buf.slice(0, 4).toString()).toBe('%PDF');
+    expect(buf.subarray(0, 4).toString()).toBe('%PDF');
   });
 
   it('throws NotFoundError when paper does not belong to school', async () => {
