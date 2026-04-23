@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { authorize, validate } from '../../middleware/index.js';
+import { requireCapability } from '../../middleware/capability.js';
 import { VisitorController } from './controller.js';
 import {
   registerVisitorSchema,
@@ -20,7 +21,7 @@ const router = Router();
 
 router.post(
   '/',
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_visitors'),
   validate({ body: registerVisitorSchema }),
   VisitorController.register,
 );
@@ -57,7 +58,7 @@ router.get(
 
 router.post(
   '/pre-register',
-  authorize('super_admin', 'school_admin', 'teacher'),
+  requireCapability('manage_visitors'),
   validate({ body: createPreRegistrationSchema }),
   VisitorController.createPreRegistration,
 );
@@ -71,7 +72,7 @@ router.get(
 
 router.patch(
   '/pre-register/:id/cancel',
-  authorize('super_admin', 'school_admin', 'teacher'),
+  requireCapability('manage_visitors'),
   VisitorController.cancelPreRegistration,
 );
 
@@ -79,7 +80,7 @@ router.patch(
 
 router.post(
   '/late-arrivals',
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_visitors'),
   validate({ body: createLateArrivalSchema }),
   VisitorController.createLateArrival,
 );
@@ -95,7 +96,7 @@ router.get(
 
 router.post(
   '/early-departures',
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_visitors'),
   validate({ body: createEarlyDepartureSchema }),
   VisitorController.createEarlyDeparture,
 );
@@ -117,7 +118,7 @@ router.get(
 
 router.patch(
   '/:id/checkout',
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_visitors'),
   validate({ body: checkoutVisitorSchema }),
   VisitorController.checkout,
 );
