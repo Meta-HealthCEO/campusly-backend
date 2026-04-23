@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document, Types } from 'mongoose';
 
 export interface IMarkingQuestion {
-  questionNumber: number;
+  questionNumber: string;
   studentAnswer: string;
   correctAnswer: string;
   marksAwarded: number;
@@ -16,22 +16,26 @@ export interface IPaperMarking extends Document {
   studentName: string;
   teacherId: Types.ObjectId;
   schoolId: Types.ObjectId;
-  images: string[];
-  imageTypes: string[];
+  imageCount: number;
   totalMarks: number;
   maxMarks: number;
   percentage: number;
   questions: IMarkingQuestion[];
-  status: 'processing' | 'completed' | 'failed' | 'published';
+  status: 'processing' | 'completed' | 'needs_review' | 'failed' | 'published';
   gradebookEntryId?: Types.ObjectId;
   errorMessage?: string;
+  isDeleted: boolean;
+  extractedHeader: string | null;
+  paperMismatch: boolean;
+  mismatchReason: string | null;
+  aiRawResult: Record<string, unknown> | null;
   createdAt: Date;
   updatedAt: Date;
 }
 
 const markingQuestionSchema = new Schema<IMarkingQuestion>(
   {
-    questionNumber: { type: Number, required: true },
+    questionNumber: { type: String, required: true },
     studentAnswer: { type: String, default: '' },
     correctAnswer: { type: String, default: '' },
     marksAwarded: { type: Number, required: true, min: 0 },
@@ -49,19 +53,23 @@ const paperMarkingSchema = new Schema<IPaperMarking>(
     studentName: { type: String, required: true, trim: true },
     teacherId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     schoolId: { type: Schema.Types.ObjectId, ref: 'School', required: true },
-    images: [{ type: String }],
-    imageTypes: [{ type: String }],
+    imageCount: { type: Number, default: 0 },
     totalMarks: { type: Number, default: 0 },
     maxMarks: { type: Number, default: 0 },
     percentage: { type: Number, default: 0 },
     questions: [markingQuestionSchema],
     status: {
       type: String,
-      enum: ['processing', 'completed', 'failed', 'published'],
+      enum: ['processing', 'completed', 'needs_review', 'failed', 'published'],
       default: 'processing',
     },
     gradebookEntryId: { type: Schema.Types.ObjectId, ref: 'Mark' },
     errorMessage: { type: String },
+    isDeleted: { type: Boolean, default: false, index: true },
+    extractedHeader: { type: String, default: null },
+    paperMismatch: { type: Boolean, default: false },
+    mismatchReason: { type: String, default: null },
+    aiRawResult: { type: Schema.Types.Mixed, default: null },
   },
   { timestamps: true },
 );
