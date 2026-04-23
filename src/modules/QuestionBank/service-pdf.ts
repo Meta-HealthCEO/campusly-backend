@@ -1,66 +1,50 @@
+// src/modules/QuestionBank/service-pdf.ts
 import mongoose from 'mongoose';
-import PDFDocument from 'pdfkit';
 import { AssessmentPaper } from './model.js';
 import type { IQuestion } from './model.js';
 import { School } from '../School/model.js';
 import { NotFoundError } from '../../common/errors.js';
 import { collectPaperQuestions } from './service-papers-helpers.js';
-import {
-  MARGIN,
-  renderTitlePage,
-  renderInstructions,
-  renderQuestionSections,
-  renderMemoTitlePage,
-  renderMemoSections,
-} from './service-pdf-helpers.js';
+import { createDocument, finalise } from '../../common/pdf/document.js';
+import { renderTitlePage, renderMemoTitlePage, renderInstructions } from '../../common/pdf/primitives.js';
+import { renderQuestionSections, renderMemoSections } from '../../common/pdf/question-rendering.js';
+import type {
+  NormalisedPaperMeta, NormalisedSection, NormalisedQuestion,
+  NormalisedDiagram, NormalisedQuestionType,
+} from '../../common/pdf/types.js';
 
-// ─── Public API ────────────────────────────────────────────────────────────
+const UPLOAD_DIR = process.env.UPLOAD_DIR || 'uploads';
+const URL_PREFIX = '/uploads/diagrams';
+const DIAGRAM_BASE_DIR = `${UPLOAD_DIR}/diagrams`;
 
 export class PdfService {
-  static async generatePaperPdf(
-    paperId: string,
-    schoolId: string,
-  ): Promise<Buffer> {
-    const { paper, questions, schoolName } = await loadPaperData(paperId, schoolId);
+  static async generatePaperPdf(paperId: string, schoolId: string): Promise<Buffer> {
+    const { meta, sections } = await load(paperId, schoolId);
     const doc = createDocument();
-
-    renderTitlePage(doc, schoolName, paper);
-    renderInstructions(doc, paper.instructions);
-    renderQuestionSections(doc, paper.sections, questions);
-
+    renderTitlePage(doc, meta);
+    renderInstructions(doc, meta.instructions);
+    renderQuestionSections(doc, sections, { baseDir: DIAGRAM_BASE_DIR, urlPrefix: URL_PREFIX });
     return finalise(doc);
   }
 
-  static async generateMemoPdf(
-    paperId: string,
-    schoolId: string,
-  ): Promise<Buffer> {
-    const { paper, questions, schoolName } = await loadPaperData(paperId, schoolId);
+  static async generateMemoPdf(paperId: string, schoolId: string): Promise<Buffer> {
+    const { meta, sections } = await load(paperId, schoolId);
     const doc = createDocument();
-
-    renderMemoTitlePage(doc, schoolName, paper);
-    renderMemoSections(doc, paper.sections, questions);
-
+    renderMemoTitlePage(doc, meta);
+    renderMemoSections(doc, sections, { baseDir: DIAGRAM_BASE_DIR, urlPrefix: URL_PREFIX });
     return finalise(doc);
   }
 }
 
-// ─── Data Loading ──────────────────────────────────────────────────────────
-
-interface PaperData {
-  paper: ReturnType<typeof AssessmentPaper.prototype.toObject>;
-  questions: Map<string, IQuestion>;
-  schoolName: string;
-}
-
-async function loadPaperData(paperId: string, schoolId: string): Promise<PaperData> {
+async function load(
+  paperId: string,
+  schoolId: string,
+): Promise<{ meta: NormalisedPaperMeta; sections: NormalisedSection[] }> {
   const oid = new mongoose.Types.ObjectId(paperId);
   const soid = new mongoose.Types.ObjectId(schoolId);
 
   const paper = await AssessmentPaper.findOne({
-    _id: oid,
-    schoolId: soid,
-    isDeleted: false,
+    _id: oid, schoolId: soid, isDeleted: false,
   })
     .populate([
       { path: 'subjectId', select: 'name' },
@@ -71,49 +55,88 @@ async function loadPaperData(paperId: string, schoolId: string): Promise<PaperDa
   if (!paper) throw new NotFoundError('Assessment paper not found');
 
   const allQuestions = await collectPaperQuestions(paper.sections, schoolId);
-  const questionsMap = new Map<string, IQuestion>();
-  for (const q of allQuestions) {
-    questionsMap.set(q._id.toString(), q);
-  }
+  const qMap = new Map<string, IQuestion>();
+  for (const q of allQuestions) qMap.set(q._id.toString(), q);
 
   const school = await School.findOne({ _id: soid, isDeleted: false }).lean();
-  const schoolName = school?.name ?? 'School';
 
-  return { paper, questions: questionsMap, schoolName };
+  const meta: NormalisedPaperMeta = {
+    schoolName: school?.name ?? 'School',
+    subject: getRefName(paper.subjectId),
+    gradeLabel: getRefName(paper.gradeId),
+    term: (paper.term as number | string) ?? '',
+    year: paper.year as number | string | undefined,
+    totalMarks: paper.totalMarks ?? 0,
+    duration: paper.duration ?? 0,
+    paperTypeLabel: formatPaperType(paper.paperType),
+    instructions: paper.instructions,
+  };
+
+  const sections: NormalisedSection[] = (paper.sections ?? []).map((s) => ({
+    title: s.title,
+    instructions: s.instructions,
+    questions: normaliseQuestions(s.questions, qMap),
+  }));
+
+  return { meta, sections };
 }
 
-// ─── Document Helpers ──────────────────────────────────────────────────────
+function normaliseQuestions(
+  sectionQuestions: Array<{ questionId: unknown; questionNumber: string; marks: number }>,
+  qMap: Map<string, IQuestion>,
+): NormalisedQuestion[] {
+  const result: NormalisedQuestion[] = [];
+  for (const pq of sectionQuestions) {
+    const qId = resolveQuestionId(pq.questionId);
+    const q = qMap.get(qId);
+    if (!q) continue;
 
-function createDocument(): PDFKit.PDFDocument {
-  return new PDFDocument({
-    size: 'A4',
-    margins: { top: MARGIN, bottom: MARGIN, left: MARGIN, right: MARGIN },
-    bufferPages: true,
-  });
+    const diagram: NormalisedDiagram | null = q.diagram ? {
+      svgUrl: q.diagram.svgUrl ?? null,
+      alt: q.diagram.alt ?? '',
+      renderStatus: q.diagram.renderStatus ?? 'pending',
+    } : null;
+
+    result.push({
+      number: pq.questionNumber,
+      marks: pq.marks,
+      stem: q.stem,
+      type: mapType(q.type),
+      options: (q.options ?? []).map((o) => ({
+        label: o.label, text: o.text, isCorrect: o.isCorrect,
+      })),
+      answer: q.answer ?? '',
+      markingRubric: q.markingRubric ?? '',
+      diagram,
+    });
+  }
+  return result;
 }
 
-function finalise(doc: PDFKit.PDFDocument): Promise<Buffer> {
-  return new Promise<Buffer>((resolve, reject) => {
-    const chunks: Buffer[] = [];
-    doc.on('data', (chunk: Buffer) => chunks.push(chunk));
-    doc.on('end', () => resolve(Buffer.concat(chunks)));
-    doc.on('error', reject);
+function mapType(t: string): NormalisedQuestionType {
+  if (t === 'mcq') return 'mcq';
+  if (t === 'true_false') return 'true_false';
+  if (t === 'long') return 'long';
+  if (t === 'structured') return 'structured';
+  return 'short';
+}
 
-    // Add page numbers
-    const pageCount = doc.bufferedPageRange().count;
-    for (let i = 0; i < pageCount; i++) {
-      doc.switchToPage(i);
-      doc.save();
-      doc.font('Helvetica').fontSize(8);
-      doc.text(
-        `Page ${i + 1} of ${pageCount}`,
-        MARGIN,
-        doc.page.height - 30,
-        { width: 595.28 - MARGIN * 2, align: 'center' },
-      );
-      doc.restore();
-    }
+function resolveQuestionId(questionId: unknown): string {
+  if (questionId && typeof questionId === 'object' && questionId !== null) {
+    return String((questionId as { _id?: unknown })._id ?? questionId);
+  }
+  return String(questionId);
+}
 
-    doc.end();
-  });
+function getRefName(ref: unknown): string {
+  if (ref && typeof ref === 'object' && 'name' in ref) {
+    return String((ref as { name?: unknown }).name ?? '');
+  }
+  return String(ref ?? '');
+}
+
+function formatPaperType(paperType: unknown): string {
+  return String(paperType ?? '')
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, (c) => c.toUpperCase());
 }
