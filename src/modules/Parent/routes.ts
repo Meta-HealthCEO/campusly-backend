@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { authenticate } from '../../middleware/auth.js';
 import { authorize } from '../../middleware/rbac.js';
+import { requireCapability } from '../../middleware/capability.js';
 import { validate } from '../../middleware/validate.js';
 import { ParentController } from './controller.js';
 import {
@@ -14,7 +15,7 @@ const router = Router();
 router.post(
   '/',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_users'),
   validate(createParentSchema),
   ParentController.create,
 );
@@ -43,7 +44,7 @@ router.get(
 router.put(
   '/:id',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_users'),
   validate(updateParentSchema),
   ParentController.update,
 );
@@ -51,14 +52,14 @@ router.put(
 router.delete(
   '/:id',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_users'),
   ParentController.delete,
 );
 
 router.post(
   '/:id/link-child',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_users'),
   validate(linkChildSchema),
   ParentController.linkChild,
 );
@@ -66,7 +67,7 @@ router.post(
 router.post(
   '/:id/unlink-child',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_users'),
   validate(linkChildSchema),
   ParentController.unlinkChild,
 );

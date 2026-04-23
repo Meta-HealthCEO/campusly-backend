@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { authenticate } from '../../middleware/auth.js';
 import { authorize } from '../../middleware/rbac.js';
+import { requireCapability } from '../../middleware/capability.js';
 import { validate } from '../../middleware/validate.js';
 import { requireParentOwnership } from '../../middleware/parentOwnership.js';
 import { StudentController } from './controller.js';
@@ -44,7 +45,7 @@ router.post(
 router.post(
   '/bulk-import',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_users'),
   BulkImportController.importStudents,
 );
 
@@ -53,7 +54,7 @@ router.post(
 router.post(
   '/',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher'),
+  requireCapability('manage_users'),
   validate(createStudentSchema),
   StudentController.create,
 );
@@ -76,7 +77,7 @@ router.get(
 router.put(
   '/:id',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher'),
+  requireCapability('manage_users'),
   validate(updateStudentSchema),
   StudentController.update,
 );
@@ -84,14 +85,14 @@ router.put(
 router.delete(
   '/:id',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher'),
+  requireCapability('manage_users'),
   StudentController.delete,
 );
 
 router.patch(
   '/:id/medical',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_users'),
   validate(updateMedicalProfileSchema),
   StudentController.updateMedicalProfile,
 );
@@ -101,7 +102,7 @@ router.patch(
 router.post(
   '/:id/photo',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_users'),
   PhotoController.uploadPhoto,
 );
 
@@ -125,7 +126,7 @@ router.get(
 router.post(
   '/:id/invite',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher'),
+  requireCapability('manage_users'),
   StudentController.inviteStudent,
 );
 
