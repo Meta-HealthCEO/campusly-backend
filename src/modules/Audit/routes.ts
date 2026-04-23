@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { authenticate, authorize } from '../../middleware/index.js';
+import { authenticate } from '../../middleware/index.js';
+import { requireCapability } from '../../middleware/capability.js';
 import { AuditController } from './controller.js';
 
 const router = Router();
@@ -9,14 +10,14 @@ const router = Router();
 router.get(
   '/logs',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('view_audit_log'),
   AuditController.listLogs,
 );
 
 router.get(
   '/logs/export',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('view_audit_log'),
   AuditController.exportLogs,
 );
 
