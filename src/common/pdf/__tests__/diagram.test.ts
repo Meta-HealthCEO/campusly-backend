@@ -1,5 +1,5 @@
 // src/common/pdf/__tests__/diagram.test.ts
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
