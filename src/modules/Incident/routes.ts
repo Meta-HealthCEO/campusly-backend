@@ -1,5 +1,6 @@
 import { Router, type Request, type Response, type NextFunction } from 'express';
 import { authorize } from '../../middleware/rbac.js';
+import { requireCapability } from '../../middleware/capability.js';
 import { validate } from '../../middleware/validate.js';
 import { ForbiddenError } from '../../common/errors.js';
 import { IncidentController } from './controller.js';
@@ -80,7 +81,7 @@ router.put(
 
 router.delete(
   '/:id',
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_pastoral'),
   IncidentController.remove,
 );
 

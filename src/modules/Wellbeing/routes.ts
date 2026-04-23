@@ -1,5 +1,6 @@
 import { Router, type Request, type Response, type NextFunction } from 'express';
 import { authorize } from '../../middleware/rbac.js';
+import { requireCapability } from '../../middleware/capability.js';
 import { validate } from '../../middleware/validate.js';
 import { ForbiddenError } from '../../common/errors.js';
 import { WellbeingController } from './controller.js';
@@ -33,7 +34,7 @@ router.get('/surveys', requireSurveyManager, WellbeingController.listSurveys);
 
 router.post(
   '/surveys',
-  requireSurveyManager,
+  requireCapability('manage_pastoral'),
   validate(createSurveySchema),
   WellbeingController.createSurvey,
 );
@@ -42,12 +43,12 @@ router.get('/surveys/:id', requireSurveyManager, WellbeingController.getSurvey);
 
 router.put(
   '/surveys/:id',
-  requireSurveyManager,
+  requireCapability('manage_pastoral'),
   validate(updateSurveySchema),
   WellbeingController.updateSurvey,
 );
 
-router.delete('/surveys/:id', requireSurveyManager, WellbeingController.deleteSurvey);
+router.delete('/surveys/:id', requireCapability('manage_pastoral'), WellbeingController.deleteSurvey);
 
 // ─── Student Response ──────────────────────────────────────────────────────
 
