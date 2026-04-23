@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { authorize, validate } from '../../middleware/index.js';
+import { requireCapability } from '../../middleware/capability.js';
 import {
   StructureController,
   CategoryController,
@@ -32,18 +33,18 @@ router.get('/templates', authorize(...roles), TemplateController.listTemplates);
 
 router.post(
   '/from-template/:templateId',
-  authorize(...roles),
+  requireCapability('manage_academic_setup'),
   validate(fromTemplateSchema),
   TemplateController.createFromTemplate,
 );
 
-router.delete('/templates/:id', authorize(...roles), TemplateController.deleteTemplate);
+router.delete('/templates/:id', requireCapability('manage_academic_setup'), TemplateController.deleteTemplate);
 
 // ─── Structure CRUD ──────────────────────────────────────────────────────────
 
 router.post(
   '/',
-  authorize(...roles),
+  requireCapability('manage_academic_setup'),
   validate(createStructureSchema),
   StructureController.create,
 );
@@ -54,22 +55,22 @@ router.get('/:id', authorize(...roles), StructureController.getById);
 
 router.put(
   '/:id',
-  authorize(...roles),
+  requireCapability('manage_academic_setup'),
   validate(updateStructureSchema),
   StructureController.update,
 );
 
-router.delete('/:id', authorize(...roles), StructureController.delete);
+router.delete('/:id', requireCapability('manage_academic_setup'), StructureController.delete);
 
 // ─── Status transitions ──────────────────────────────────────────────────────
 
-router.post('/:id/activate', authorize(...roles), StructureController.activate);
+router.post('/:id/activate', requireCapability('manage_academic_setup'), StructureController.activate);
 
-router.post('/:id/lock', authorize(...roles), StructureController.lock);
+router.post('/:id/lock', requireCapability('manage_academic_setup'), StructureController.lock);
 
 router.post(
   '/:id/unlock',
-  authorize(...roles),
+  requireCapability('manage_academic_setup'),
   validate(unlockSchema),
   StructureController.unlock,
 );
@@ -78,21 +79,21 @@ router.post(
 
 router.post(
   '/:id/categories',
-  authorize(...roles),
+  requireCapability('manage_academic_setup'),
   validate(addCategorySchema),
   CategoryController.addCategory,
 );
 
 router.put(
   '/:id/categories/:catId',
-  authorize(...roles),
+  requireCapability('manage_academic_setup'),
   validate(updateCategorySchema),
   CategoryController.updateCategory,
 );
 
 router.delete(
   '/:id/categories/:catId',
-  authorize(...roles),
+  requireCapability('manage_academic_setup'),
   CategoryController.deleteCategory,
 );
 
@@ -100,27 +101,27 @@ router.delete(
 
 router.post(
   '/:id/categories/:catId/line-items',
-  authorize(...roles),
+  requireCapability('manage_academic_setup'),
   validate(addLineItemSchema),
   CategoryController.addLineItem,
 );
 
 router.put(
   '/:id/categories/:catId/line-items/:itemId',
-  authorize(...roles),
+  requireCapability('manage_academic_setup'),
   validate(updateLineItemSchema),
   CategoryController.updateLineItem,
 );
 
 router.delete(
   '/:id/categories/:catId/line-items/:itemId',
-  authorize(...roles),
+  requireCapability('manage_academic_setup'),
   CategoryController.deleteLineItem,
 );
 
 router.post(
   '/:id/categories/:catId/line-items/:itemId/link',
-  authorize(...roles),
+  requireCapability('manage_academic_setup'),
   validate(linkAssessmentSchema),
   CategoryController.linkAssessment,
 );
@@ -129,14 +130,14 @@ router.post(
 
 router.post(
   '/:id/students',
-  authorize(...roles),
+  requireCapability('manage_academic_setup'),
   validate(addStudentsSchema),
   StudentController.addStudents,
 );
 
 router.delete(
   '/:id/students/:studentId',
-  authorize(...roles),
+  requireCapability('manage_academic_setup'),
   StudentController.removeStudent,
 );
 
@@ -156,14 +157,14 @@ router.get('/:id/export', authorize(...roles), TermMarksController.exportTermMar
 
 router.post(
   '/:id/save-as-template',
-  authorize(...roles),
+  requireCapability('manage_academic_setup'),
   validate(saveAsTemplateSchema),
   TemplateController.saveAsTemplate,
 );
 
 router.post(
   '/:id/clone',
-  authorize(...roles),
+  requireCapability('manage_academic_setup'),
   validate(cloneStructureSchema),
   TemplateController.clone,
 );

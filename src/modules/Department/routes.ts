@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import type { Request, Response, NextFunction } from 'express';
 import { authorize } from '../../middleware/rbac.js';
+import { requireCapability } from '../../middleware/capability.js';
 import { validate } from '../../middleware/validate.js';
 import { ForbiddenError } from '../../common/errors.js';
 import { DepartmentController } from './controller.js';
@@ -45,7 +46,7 @@ function requireHOD(req: Request, _res: Response, next: NextFunction): void {
 
 router.post(
   '/',
-  authorize('school_admin'),
+  requireCapability('manage_academic_setup'),
   validate(createDepartmentSchema),
   DepartmentController.create,
 );
@@ -65,14 +66,14 @@ router.get(
 
 router.put(
   '/:id',
-  authorize('school_admin'),
+  requireCapability('manage_academic_setup'),
   validate(updateDepartmentSchema),
   DepartmentController.update,
 );
 
 router.delete(
   '/:id',
-  authorize('school_admin'),
+  requireCapability('manage_academic_setup'),
   DepartmentController.remove,
 );
 

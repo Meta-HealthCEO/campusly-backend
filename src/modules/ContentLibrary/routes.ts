@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { authorize, validate } from '../../middleware/index.js';
+import { requireCapability } from '../../middleware/capability.js';
 import { ContentLibraryController } from './controller.js';
 import {
   createResourceSchema,
@@ -79,7 +80,7 @@ router.patch(
 
 router.patch(
   '/resources/:id/review',
-  authorize(...READ_ROLES),
+  requireCapability('manage_academic_setup'),
   validate(reviewResourceSchema),
   ContentLibraryController.reviewResource,
 );

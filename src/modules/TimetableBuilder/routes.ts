@@ -14,7 +14,6 @@ import {
 
 const router = express.Router();
 
-const adminOnly = authorize('school_admin', 'super_admin');
 const adminOrTeacher = authorize('school_admin', 'super_admin', 'teacher');
 
 // ─── Config ─────────────────────────────────────────────────────────────────
@@ -24,29 +23,29 @@ router.put('/config', requireCapability('manage_school_config'), validate(config
 
 // ─── Requirements ───────────────────────────────────────────────────────────
 
-router.get('/requirements', adminOnly, TimetableBuilderController.listRequirements);
-router.post('/requirements', adminOnly, validate(requirementSchema), TimetableBuilderController.upsertRequirement);
-router.put('/requirements/:id', adminOnly, validate(requirementSchema), TimetableBuilderController.upsertRequirement);
-router.delete('/requirements/:id', adminOnly, TimetableBuilderController.deleteRequirement);
+router.get('/requirements', adminOrTeacher, TimetableBuilderController.listRequirements);
+router.post('/requirements', requireCapability('manage_academic_setup'), validate(requirementSchema), TimetableBuilderController.upsertRequirement);
+router.put('/requirements/:id', requireCapability('manage_academic_setup'), validate(requirementSchema), TimetableBuilderController.upsertRequirement);
+router.delete('/requirements/:id', requireCapability('manage_academic_setup'), TimetableBuilderController.deleteRequirement);
 
 // ─── Teacher Availability ───────────────────────────────────────────────────
 
-router.get('/availability', adminOnly, TimetableBuilderController.listAvailability);
-router.get('/availability/:teacherId', adminOnly, TimetableBuilderController.getTeacherAvailability);
-router.put('/availability/:teacherId', adminOnly, validate(availabilitySchema), TimetableBuilderController.updateAvailability);
+router.get('/availability', adminOrTeacher, TimetableBuilderController.listAvailability);
+router.get('/availability/:teacherId', adminOrTeacher, TimetableBuilderController.getTeacherAvailability);
+router.put('/availability/:teacherId', requireCapability('manage_academic_setup'), validate(availabilitySchema), TimetableBuilderController.updateAvailability);
 
 // ─── Subject Lines (FET) ────────────────────────────────────────────────────
 
-router.get('/lines', adminOnly, TimetableBuilderController.listLines);
-router.post('/lines', adminOnly, validate(lineSchema), TimetableBuilderController.upsertLine);
-router.post('/lines/suggest', adminOnly, validate(lineSuggestSchema), TimetableBuilderController.suggestLines);
-router.put('/lines/:id', adminOnly, validate(lineSchema), TimetableBuilderController.updateLine);
-router.delete('/lines/:id', adminOnly, TimetableBuilderController.deleteLine);
+router.get('/lines', adminOrTeacher, TimetableBuilderController.listLines);
+router.post('/lines', requireCapability('manage_academic_setup'), validate(lineSchema), TimetableBuilderController.upsertLine);
+router.post('/lines/suggest', requireCapability('manage_academic_setup'), validate(lineSuggestSchema), TimetableBuilderController.suggestLines);
+router.put('/lines/:id', requireCapability('manage_academic_setup'), validate(lineSchema), TimetableBuilderController.updateLine);
+router.delete('/lines/:id', requireCapability('manage_academic_setup'), TimetableBuilderController.deleteLine);
 
 // ─── Generate ───────────────────────────────────────────────────────────────
 
-router.post('/generate', adminOnly, validate(generateSchema), TimetableBuilderController.generate);
-router.get('/generation/:id', adminOnly, TimetableBuilderController.getGeneration);
-router.post('/generation/:id/commit', adminOnly, TimetableBuilderController.commitGeneration);
+router.post('/generate', requireCapability('manage_academic_setup'), validate(generateSchema), TimetableBuilderController.generate);
+router.get('/generation/:id', adminOrTeacher, TimetableBuilderController.getGeneration);
+router.post('/generation/:id/commit', requireCapability('manage_academic_setup'), TimetableBuilderController.commitGeneration);
 
 export default router;

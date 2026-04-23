@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { authenticate } from '../../middleware/auth.js';
 import { authorize } from '../../middleware/rbac.js';
+import { requireCapability } from '../../middleware/capability.js';
 import { validate } from '../../middleware/validate.js';
 import { requireParentOwnership } from '../../middleware/parentOwnership.js';
 import { AcademicController } from './controller.js';
@@ -35,7 +36,7 @@ const router = Router();
 router.post(
   '/grades',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_academic_setup'),
   validate(gradeSchema),
   AcademicController.createGrade,
 );
@@ -57,7 +58,7 @@ router.get(
 router.put(
   '/grades/:id',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_academic_setup'),
   validate(updateGradeSchema),
   AcademicController.updateGrade,
 );
@@ -65,7 +66,7 @@ router.put(
 router.delete(
   '/grades/:id',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_academic_setup'),
   AcademicController.deleteGrade,
 );
 
@@ -74,7 +75,7 @@ router.delete(
 router.post(
   '/classes',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher'),
+  requireCapability('manage_academic_setup'),
   validate(classSchema),
   AcademicController.createClass,
 );
@@ -103,7 +104,7 @@ router.get(
 router.put(
   '/classes/:id',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher'),
+  requireCapability('manage_academic_setup'),
   validate(updateClassSchema),
   AcademicController.updateClass,
 );
@@ -111,7 +112,7 @@ router.put(
 router.delete(
   '/classes/:id',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher'),
+  requireCapability('manage_academic_setup'),
   AcademicController.deleteClass,
 );
 
@@ -134,7 +135,7 @@ router.post(
 router.post(
   '/subjects',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher'),
+  requireCapability('manage_academic_setup'),
   validate(subjectSchema),
   AcademicController.createSubject,
 );
@@ -156,7 +157,7 @@ router.get(
 router.put(
   '/subjects/:id',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_academic_setup'),
   validate(updateSubjectSchema),
   AcademicController.updateSubject,
 );
@@ -164,7 +165,7 @@ router.put(
 router.delete(
   '/subjects/:id',
   authenticate,
-  authorize('super_admin', 'school_admin'),
+  requireCapability('manage_academic_setup'),
   AcademicController.deleteSubject,
 );
 
@@ -173,7 +174,7 @@ router.delete(
 router.post(
   '/timetable',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher'),
+  requireCapability('manage_academic_setup'),
   validate(timetableSchema),
   AcademicController.createTimetable,
 );
@@ -216,7 +217,7 @@ router.get(
 router.put(
   '/timetable/:id',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher'),
+  requireCapability('manage_academic_setup'),
   validate(updateTimetableSchema),
   AcademicController.updateTimetable,
 );
@@ -224,7 +225,7 @@ router.put(
 router.delete(
   '/timetable/:id',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher'),
+  requireCapability('manage_academic_setup'),
   AcademicController.deleteTimetable,
 );
 
@@ -233,7 +234,7 @@ router.delete(
 router.post(
   '/assessments',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher'),
+  requireCapability('manage_academic_setup'),
   validate(assessmentSchema),
   AcademicController.createAssessment,
 );
@@ -255,7 +256,7 @@ router.get(
 router.put(
   '/assessments/:id',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher'),
+  requireCapability('manage_academic_setup'),
   validate(updateAssessmentSchema),
   AcademicController.updateAssessment,
 );
@@ -263,7 +264,7 @@ router.put(
 router.delete(
   '/assessments/:id',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher'),
+  requireCapability('manage_academic_setup'),
   AcademicController.deleteAssessment,
 );
 
@@ -311,40 +312,40 @@ router.get(
 
 // ─── Exams ──────────────────────────────────────────────────────────────────
 
-router.post('/exams', authenticate, authorize('super_admin', 'school_admin'), validate(examCreateSchema), AcademicController.createExam);
+router.post('/exams', authenticate, requireCapability('manage_academic_setup'), validate(examCreateSchema), AcademicController.createExam);
 router.get('/exams', authenticate, authorize('super_admin', 'school_admin', 'teacher'), AcademicController.listExams);
 router.get('/exams/:id', authenticate, authorize('super_admin', 'school_admin', 'teacher'), AcademicController.getExam);
-router.put('/exams/:id', authenticate, authorize('super_admin', 'school_admin'), validate(examUpdateSchema), AcademicController.updateExam);
-router.delete('/exams/:id', authenticate, authorize('super_admin', 'school_admin'), AcademicController.deleteExam);
+router.put('/exams/:id', authenticate, requireCapability('manage_academic_setup'), validate(examUpdateSchema), AcademicController.updateExam);
+router.delete('/exams/:id', authenticate, requireCapability('manage_academic_setup'), AcademicController.deleteExam);
 
 // ─── Exam Timetable ─────────────────────────────────────────────────────────
 
-router.post('/exam-timetable', authenticate, authorize('super_admin', 'school_admin'), validate(examTimetableCreateSchema), AcademicController.createExamTimetable);
+router.post('/exam-timetable', authenticate, requireCapability('manage_academic_setup'), validate(examTimetableCreateSchema), AcademicController.createExamTimetable);
 router.get('/exam-timetable/exam/:examId', authenticate, authorize('super_admin', 'school_admin', 'teacher', 'parent', 'student'), AcademicController.listExamTimetable);
 router.get('/exam-timetable/:id', authenticate, authorize('super_admin', 'school_admin', 'teacher', 'parent', 'student'), AcademicController.getExamTimetable);
-router.put('/exam-timetable/:id', authenticate, authorize('super_admin', 'school_admin'), validate(examTimetableUpdateSchema), AcademicController.updateExamTimetable);
-router.delete('/exam-timetable/:id', authenticate, authorize('super_admin', 'school_admin'), AcademicController.deleteExamTimetable);
+router.put('/exam-timetable/:id', authenticate, requireCapability('manage_academic_setup'), validate(examTimetableUpdateSchema), AcademicController.updateExamTimetable);
+router.delete('/exam-timetable/:id', authenticate, requireCapability('manage_academic_setup'), AcademicController.deleteExamTimetable);
 
 // ─── Past Papers ────────────────────────────────────────────────────────────
 
-router.post('/past-papers', authenticate, authorize('super_admin', 'school_admin', 'teacher'), validate(pastPaperCreateSchema), AcademicController.createPastPaper);
+router.post('/past-papers', authenticate, requireCapability('manage_academic_setup'), validate(pastPaperCreateSchema), AcademicController.createPastPaper);
 router.get('/past-papers', authenticate, authorize('super_admin', 'school_admin', 'teacher', 'parent', 'student'), AcademicController.listPastPapers);
-router.delete('/past-papers/:id', authenticate, authorize('super_admin', 'school_admin'), AcademicController.deletePastPaper);
+router.delete('/past-papers/:id', authenticate, requireCapability('manage_academic_setup'), AcademicController.deletePastPaper);
 
 // ─── Subject Weightings ─────────────────────────────────────────────────────
 
-router.post('/subject-weightings', authenticate, authorize('super_admin', 'school_admin'), validate(subjectWeightingCreateSchema), AcademicController.createSubjectWeighting);
+router.post('/subject-weightings', authenticate, requireCapability('manage_academic_setup'), validate(subjectWeightingCreateSchema), AcademicController.createSubjectWeighting);
 router.get('/subject-weightings', authenticate, authorize('super_admin', 'school_admin', 'teacher'), AcademicController.listSubjectWeightings);
-router.put('/subject-weightings/:id', authenticate, authorize('super_admin', 'school_admin'), validate(subjectWeightingUpdateSchema), AcademicController.updateSubjectWeighting);
-router.delete('/subject-weightings/:id', authenticate, authorize('super_admin', 'school_admin'), AcademicController.deleteSubjectWeighting);
+router.put('/subject-weightings/:id', authenticate, requireCapability('manage_academic_setup'), validate(subjectWeightingUpdateSchema), AcademicController.updateSubjectWeighting);
+router.delete('/subject-weightings/:id', authenticate, requireCapability('manage_academic_setup'), AcademicController.deleteSubjectWeighting);
 
 // ─── Remedial Tracking ──────────────────────────────────────────────────────
 
-router.post('/remedials', authenticate, authorize('super_admin', 'school_admin', 'teacher'), validate(remedialCreateSchema), AcademicController.createRemedial);
+router.post('/remedials', authenticate, requireCapability('manage_academic_setup'), validate(remedialCreateSchema), AcademicController.createRemedial);
 router.get('/remedials', authenticate, authorize('super_admin', 'school_admin', 'teacher'), AcademicController.listRemedials);
 router.get('/remedials/:id', authenticate, authorize('super_admin', 'school_admin', 'teacher'), AcademicController.getRemedial);
-router.put('/remedials/:id', authenticate, authorize('super_admin', 'school_admin', 'teacher'), validate(remedialUpdateSchema), AcademicController.updateRemedial);
-router.delete('/remedials/:id', authenticate, authorize('super_admin', 'school_admin'), AcademicController.deleteRemedial);
+router.put('/remedials/:id', authenticate, requireCapability('manage_academic_setup'), validate(remedialUpdateSchema), AcademicController.updateRemedial);
+router.delete('/remedials/:id', authenticate, requireCapability('manage_academic_setup'), AcademicController.deleteRemedial);
 
 // ─── Promotion ──────────────────────────────────────────────────────────────
 
