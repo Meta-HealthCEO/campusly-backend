@@ -19,7 +19,11 @@ import {
   retryGrade,
   getGradingJobs,
   getGradingJobById,
+  listRubricTemplates,
+  createRubricTemplate,
+  deleteRubricTemplate,
 } from './service-grading.js';
+import type { IRubricTemplate } from './model-rubric-templates.js';
 import {
   getUsageStats,
   getPapers,
@@ -358,5 +362,33 @@ The question must be different from: "${oldQuestion.questionText}"`;
 
   static async getGradingJobById(id: string, schoolId: string): Promise<IGradingJob> {
     return getGradingJobById(id, schoolId);
+  }
+
+  static async listRubricTemplates(
+    schoolId: string,
+    teacherId: string,
+  ): Promise<IRubricTemplate[]> {
+    return listRubricTemplates(schoolId, teacherId);
+  }
+
+  static async createRubricTemplate(
+    schoolId: string,
+    teacherId: string,
+    data: {
+      name: string;
+      description?: string;
+      criteria: Array<{ criterion: string; maxScore: number; description: string }>;
+      isShared?: boolean;
+    },
+  ): Promise<IRubricTemplate> {
+    return createRubricTemplate(schoolId, teacherId, data);
+  }
+
+  static async deleteRubricTemplate(
+    id: string,
+    schoolId: string,
+    teacherId: string,
+  ): Promise<void> {
+    return deleteRubricTemplate(id, schoolId, teacherId);
   }
 }

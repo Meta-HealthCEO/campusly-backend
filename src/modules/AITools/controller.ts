@@ -265,6 +265,36 @@ export class AIToolsController {
     res.send(buf);
   }
 
+  static async listRubricTemplates(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
+    const templates = await AIToolsService.listRubricTemplates(schoolId, getUser(req).id);
+    res.json(apiResponse(true, templates, 'Rubric templates retrieved'));
+  }
+
+  static async createRubricTemplate(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
+    const tpl = await AIToolsService.createRubricTemplate(schoolId, getUser(req).id, req.body);
+    res.status(201).json(apiResponse(true, tpl, 'Rubric template created'));
+  }
+
+  static async deleteRubricTemplate(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
+    await AIToolsService.deleteRubricTemplate(req.params.id as string, schoolId, getUser(req).id);
+    res.json(apiResponse(true, undefined, 'Rubric template deleted'));
+  }
+
   static async getUsage(req: Request, res: Response): Promise<void> {
     const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
 

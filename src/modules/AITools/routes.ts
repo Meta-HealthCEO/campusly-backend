@@ -14,6 +14,7 @@ import {
   markPaperSchema,
   updateMarkingSchema,
   publishMarkingSchema,
+  createRubricTemplateSchema,
 } from './validation.js';
 
 const router = express.Router();
@@ -142,6 +143,33 @@ router.post(
   authorize('teacher', 'school_admin', 'super_admin'),
   validate(bulkGradeSchema),
   AIToolsController.bulkGrade,
+);
+
+// ─── Rubric Templates ─────────────────────────────────────────────────────────
+
+// GET /grade/rubric-templates — list rubric templates
+router.get(
+  '/grade/rubric-templates',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  AIToolsController.listRubricTemplates,
+);
+
+// POST /grade/rubric-templates — create a rubric template
+router.post(
+  '/grade/rubric-templates',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  validate(createRubricTemplateSchema),
+  AIToolsController.createRubricTemplate,
+);
+
+// DELETE /grade/rubric-templates/:id — soft-delete a rubric template
+router.delete(
+  '/grade/rubric-templates/:id',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  AIToolsController.deleteRubricTemplate,
 );
 
 // GET /grade — list grading jobs

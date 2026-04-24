@@ -1,8 +1,10 @@
+import mongoose from 'mongoose';
 import { GradingJob, IGradingJob } from './model.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
 import { paginationHelper } from '../../common/utils.js';
 import { aiGradingQueue } from '../../jobs/queues.js';
 import { publishMarkToGradebook } from '../Academic/service-gradebook-publish.js';
+import { RubricTemplate, type IRubricTemplate } from './model-rubric-templates.js';
 
 interface GradingFilters {
   assignmentId?: string;
@@ -191,4 +193,54 @@ export async function getGradingJobById(
 
   if (!job) throw new NotFoundError('Grading job not found');
   return job;
+}
+
+// ─── Rubric Templates ─────────────────────────────────────────────────────────
+
+export async function listRubricTemplates(
+  schoolId: string,
+  teacherId: string,
+): Promise<IRubricTemplate[]> {
+  const schoolOid = new mongoose.Types.ObjectId(schoolId);
+  const teacherOid = new mongoose.Types.ObjectId(teacherId);
+  return RubricTemplate.find({
+    schoolId: schoolOid,
+    $or: [{ teacherId: teacherOid }, { isShared: true }],
+    isDeleted: false,
+  }).sort({ name: 1 }).lean() as unknown as Promise<IRubricTemplate[]>;
+}
+
+export async function createRubricTemplate(
+  schoolId: string,
+  teacherId: string,
+  data: {
+    name: string;
+    description?: string;
+    criteria: Array<{ criterion: string; maxScore: number; description: string }>;
+    isShared?: boolean;
+  },
+): Promise<IRubricTemplate> {
+  const tpl = await RubricTemplate.create({
+    ...data,
+    schoolId: new mongoose.Types.ObjectId(schoolId),
+    teacherId: new mongoose.Types.ObjectId(teacherId),
+    isShared: data.isShared ?? false,
+  });
+  return tpl.toObject() as IRubricTemplate;
+}
+
+export async function deleteRubricTemplate(
+  id: string,
+  schoolId: string,
+  teacherId: string,
+): Promise<void> {
+  const tpl = await RubricTemplate.findOne({
+    _id: new mongoose.Types.ObjectId(id),
+    schoolId: new mongoose.Types.ObjectId(schoolId),
+    teacherId: new mongoose.Types.ObjectId(teacherId),
+    isDeleted: false,
+  });
+  if (!tpl) throw new NotFoundError('Rubric template not found');
+  tpl.isDeleted = true;
+  await tpl.save();
 }

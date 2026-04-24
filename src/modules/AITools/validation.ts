@@ -156,3 +156,20 @@ export const publishMarkingSchema = z.object({
     comment: z.string().optional(),
   }),
 });
+
+// ─── Rubric Templates ─────────────────────────────────────────────────────────
+
+export const createRubricTemplateSchema = z.object({
+  body: z.object({
+    name: z.string().min(1).max(100),
+    description: z.string().max(500).optional(),
+    criteria: z.array(z.object({
+      criterion: z.string().min(1).max(200),
+      maxScore: z.number().int().positive().max(100),
+      description: z.string().max(500).default(''),
+    })).min(1).max(20),
+    isShared: z.boolean().optional(),
+  }),
+});
+
+export type CreateRubricTemplateInput = z.infer<typeof createRubricTemplateSchema>;
