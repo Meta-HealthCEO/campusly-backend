@@ -166,7 +166,7 @@ router.get(
 router.get(
   '/messages/:id/logs',
   authenticate,
-  authorize('school_admin', 'super_admin'),
+  authorize('teacher', 'school_admin', 'super_admin'),
   CommunicationController.getMessageLogs,
 );
 
