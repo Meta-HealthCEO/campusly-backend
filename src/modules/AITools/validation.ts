@@ -145,3 +145,14 @@ export const publishGradeSchema = z.object({
     comment: z.string().optional(),
   }),
 });
+
+// ─── Publish Marking ─────────────────────────────────────────────────────────
+
+export const publishMarkingSchema = z.object({
+  params: z.object({ id: z.string().min(1) }),
+  body: z.object({
+    assessmentId: z.string().min(1),
+    studentId: z.string().min(1).optional(),
+    comment: z.string().optional(),
+  }),
+});

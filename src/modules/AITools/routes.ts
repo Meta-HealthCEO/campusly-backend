@@ -13,6 +13,7 @@ import {
   publishGradeSchema,
   markPaperSchema,
   updateMarkingSchema,
+  publishMarkingSchema,
 } from './validation.js';
 
 const router = express.Router();
@@ -112,6 +113,15 @@ router.put(
   authorize('teacher', 'school_admin', 'super_admin'),
   validate(updateMarkingSchema),
   AIToolsController.updateMarking,
+);
+
+// POST /markings/:id/publish — publish marking result to gradebook
+router.post(
+  '/markings/:id/publish',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  validate(publishMarkingSchema),
+  AIToolsController.publishMarking,
 );
 
 // ─── AI Grading ───────────────────────────────────────────────────────────────

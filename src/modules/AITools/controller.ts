@@ -8,6 +8,7 @@ import {
   listMarkings,
   getMarkingById,
   updateMarking,
+  publishMarking,
 } from './service-marking-queries.js';
 
 export class AIToolsController {
@@ -203,6 +204,21 @@ export class AIToolsController {
     }
     const marking = await updateMarking(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, marking, 'Marking updated successfully'));
+  }
+
+  static async publishMarking(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
+    const { assessmentId, studentId, comment } = req.body as {
+      assessmentId: string;
+      studentId?: string;
+      comment?: string;
+    };
+    const marking = await publishMarking(req.params.id as string, schoolId, assessmentId, studentId, comment);
+    res.json(apiResponse(true, marking, 'Marking published to gradebook'));
   }
 
   static async downloadPaperPdf(req: Request, res: Response): Promise<void> {

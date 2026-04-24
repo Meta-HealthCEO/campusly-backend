@@ -2,6 +2,7 @@
 import mongoose from 'mongoose';
 import { PaperMarking, type IPaperMarking } from './model-marking.js';
 import { NotFoundError, BadRequestError } from '../../common/errors.js';
+import { publishMarkToGradebook } from '../Academic/service-gradebook-publish.js';
 
 export async function listMarkings(
   schoolId: string,
@@ -77,6 +78,45 @@ export async function updateMarking(
   if (updates.status) {
     marking.status = updates.status;
   }
+  await marking.save();
+  return marking.toObject() as IPaperMarking;
+}
+
+export async function publishMarking(
+  markingId: string,
+  schoolId: string,
+  assessmentId: string,
+  studentId?: string,
+  comment?: string,
+): Promise<IPaperMarking> {
+  const marking = await PaperMarking.findOne({
+    _id: new mongoose.Types.ObjectId(markingId),
+    schoolId: new mongoose.Types.ObjectId(schoolId),
+    isDeleted: false,
+  });
+  if (!marking) throw new NotFoundError('Marking not found');
+  if (marking.status !== 'completed' && marking.status !== 'needs_review') {
+    throw new BadRequestError('Only completed or needs_review markings can be published');
+  }
+
+  const resolvedStudentId = studentId ?? marking.studentId?.toString();
+  if (!resolvedStudentId) {
+    throw new BadRequestError(
+      'Student ID is required. The marking record has no linked student; provide studentId in the request body.',
+    );
+  }
+
+  const totalAwarded = marking.questions.reduce((s, q) => s + (q.marksAwarded ?? 0), 0);
+
+  await publishMarkToGradebook({
+    schoolId,
+    assessmentId,
+    studentId: resolvedStudentId,
+    mark: totalAwarded,
+    comment: comment ?? `AI-marked paper for ${marking.studentName}`,
+  });
+
+  marking.status = 'published';
   await marking.save();
   return marking.toObject() as IPaperMarking;
 }
