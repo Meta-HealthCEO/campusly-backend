@@ -3,7 +3,9 @@ import { Worker, Job } from 'bullmq';
 import { redisConnection, aiGradingQueue } from './queues.js';
 import { GradingJob } from '../modules/AITools/model.js';
 import { AIUsageLog } from '../modules/AITools/model.js';
+import type { IAIResult } from '../modules/AITools/model.js';
 import { AIService } from '../services/ai.service.js';
+import { GradingResponseSchema } from '../modules/AITools/validation-grading.js';
 
 const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
 
@@ -75,7 +77,16 @@ ${gradingJob.submissionText}
 
 Grade this submission against each criterion. Be specific and constructive.`;
 
-      const { data: aiResult, usage } = await AIService.generateJSONWithUsage<AIGradingResult>(systemPrompt, userPrompt);
+      const { data: rawResult, usage } = await AIService.generateJSONWithUsage<AIGradingResult>(systemPrompt, userPrompt);
+
+      const parsed = GradingResponseSchema.safeParse(rawResult);
+      if (!parsed.success) {
+        const issue = parsed.error.issues[0];
+        throw new Error(
+          `AI grading response invalid at "${issue?.path.join('.') || '(root)'}": ${issue?.message ?? 'unknown'}`,
+        );
+      }
+      const aiResult = parsed.data as IAIResult;
 
       gradingJob.aiResult = aiResult;
       gradingJob.status = 'completed';
