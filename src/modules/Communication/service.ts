@@ -6,10 +6,16 @@ import {
   type IBulkMessage,
   MessageLog,
 } from './model.js';
+import { DeviceRegistration } from './delivery-model.js';
 import { Student } from '../Student/model.js';
 import { Parent } from '../Parent/model.js';
+import { User } from '../Auth/model.js';
+import { EmailService } from '../../services/email.service.js';
+import { SmsService } from '../../services/sms.service.js';
+import { PushService } from '../../services/push.service.js';
 import { NotFoundError } from '../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../common/constants.js';
+import { logger } from '../../common/logger.js';
 
 interface ListQuery {
   page?: number;
@@ -137,43 +143,141 @@ export class CommunicationModuleService {
     sentBy: string,
   ): Promise<IBulkMessage> {
     const uniqueIds = await resolveRecipientIds(data.schoolId, data.recipients);
+    const channel = data.channel ?? 'all';
 
     const bulkMessage = new BulkMessage({
       schoolId: data.schoolId,
       templateId: data.templateId,
       subject: data.subject,
       body: data.body,
-      channel: data.channel ?? 'all',
+      channel,
       sentBy,
       recipients: data.recipients,
       totalRecipients: uniqueIds.length,
-      status: 'queued',
+      status: 'sending',
       sentAt: new Date(),
     });
     await bulkMessage.save();
 
-    // Create message logs for each recipient
-    const logs = uniqueIds.map((userId) => ({
+    // Create message log stubs for each recipient
+    const logDocs = uniqueIds.map((userId) => ({
       bulkMessageId: bulkMessage._id,
       recipientId: new mongoose.Types.ObjectId(userId),
-      channel: data.channel ?? 'all',
+      channel,
       status: 'queued' as const,
     }));
 
-    if (logs.length > 0) {
-      await MessageLog.insertMany(logs);
+    const insertedLogs = logDocs.length > 0
+      ? await MessageLog.insertMany(logDocs)
+      : [];
+
+    // Fetch user records so we have email / phone for each recipient
+    const userRecords = await User.find({
+      _id: { $in: uniqueIds.map((id) => new mongoose.Types.ObjectId(id)) },
+      isDeleted: false,
+    }).select('_id email phone').lean();
+
+    const userMap = new Map(userRecords.map((u) => [u._id.toString(), u]));
+
+    // For push channel: fetch all device tokens for these users
+    let deviceTokenMap = new Map<string, string[]>();
+    if (channel === 'push' || channel === 'all') {
+      const devices = await DeviceRegistration.find({
+        userId: { $in: uniqueIds.map((id) => new mongoose.Types.ObjectId(id)) },
+        isActive: true,
+      }).select('userId deviceToken').lean();
+      for (const d of devices) {
+        const uid = d.userId.toString();
+        const existing = deviceTokenMap.get(uid) ?? [];
+        existing.push(d.deviceToken);
+        deviceTokenMap.set(uid, existing);
+      }
     }
 
-    // In production, you'd add a BullMQ job here to process the sending
-    // For now, mark as sent
-    bulkMessage.status = 'sent';
-    bulkMessage.delivered = uniqueIds.length;
-    await bulkMessage.save();
+    let sentCount = 0;
+    let failedCount = 0;
 
-    await MessageLog.updateMany(
-      { bulkMessageId: bulkMessage._id },
-      { $set: { status: 'sent', sentAt: new Date() } },
-    );
+    for (const log of insertedLogs) {
+      const userId = log.recipientId.toString();
+      const userRecord = userMap.get(userId);
+
+      let ok = false;
+      let providerId: string | undefined;
+      let errorMsg: string | undefined;
+
+      try {
+        if (channel === 'email' || channel === 'all') {
+          if (!userRecord?.email) {
+            throw new Error('Recipient has no email address');
+          }
+          const result = await EmailService.sendEmail(
+            userRecord.email,
+            data.subject,
+            data.body,
+          );
+          if (!result.success) {
+            throw new Error('EmailService returned failure');
+          }
+          providerId = result.messageId;
+          ok = true;
+        } else if (channel === 'sms') {
+          if (!userRecord?.phone) {
+            throw new Error('Recipient has no phone number');
+          }
+          const result = await SmsService.sendSms(userRecord.phone, data.body);
+          if (!result.success) {
+            throw new Error('SmsService returned failure');
+          }
+          providerId = result.messageId;
+          ok = true;
+        } else if (channel === 'push') {
+          const tokens = deviceTokenMap.get(userId) ?? [];
+          if (tokens.length === 0) {
+            throw new Error('Recipient has no registered device tokens');
+          }
+          const result = await PushService.sendPushBatch(tokens, data.subject, data.body);
+          if (!result.success && (result.failedTokens?.length ?? 0) >= tokens.length) {
+            throw new Error('All push tokens failed');
+          }
+          providerId = result.messageId;
+          ok = true;
+        } else if (channel === 'whatsapp') {
+          // WhatsApp adapter not yet integrated — log and mark failed
+          logger.warn({ userId, channel }, 'WhatsApp delivery not configured; skipping recipient');
+          throw new Error('WhatsApp delivery is not yet configured');
+        } else {
+          throw new Error(`Unknown channel: ${channel}`);
+        }
+      } catch (err: unknown) {
+        errorMsg = err instanceof Error ? err.message : 'Unknown delivery error';
+        logger.warn({ userId, channel, err: errorMsg }, 'Bulk message delivery failed for recipient');
+      }
+
+      await MessageLog.findByIdAndUpdate(log._id, {
+        $set: {
+          status: ok ? 'sent' : 'failed',
+          sentAt: ok ? new Date() : undefined,
+          error: errorMsg,
+        },
+      });
+
+      if (ok) sentCount++; else failedCount++;
+    }
+
+    // Determine overall status
+    let finalStatus: IBulkMessage['status'];
+    if (sentCount > 0 && failedCount === 0) {
+      finalStatus = 'sent';
+    } else if (sentCount > 0 && failedCount > 0) {
+      finalStatus = 'partial';
+    } else {
+      finalStatus = 'failed';
+    }
+
+    bulkMessage.status = finalStatus;
+    bulkMessage.delivered = sentCount;
+    bulkMessage.failed = failedCount;
+    await bulkMessage.save();
 
     return bulkMessage;
   }

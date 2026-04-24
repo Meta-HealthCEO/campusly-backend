@@ -69,7 +69,7 @@ export const MessageTemplate = mongoose.model<IMessageTemplate>('MessageTemplate
 // ─── Bulk Message ───────────────────────────────────────────────────────────
 
 export type RecipientTargetType = 'school' | 'grade' | 'class' | 'custom';
-export type BulkMessageStatus = 'draft' | 'scheduled' | 'queued' | 'sending' | 'sent' | 'failed';
+export type BulkMessageStatus = 'draft' | 'scheduled' | 'queued' | 'sending' | 'sent' | 'partial' | 'failed';
 
 export interface IBulkMessageRecipients {
   type: RecipientTargetType;
@@ -134,7 +134,7 @@ const bulkMessageSchema = new Schema<IBulkMessage>(
     failed: { type: Number, default: 0 },
     status: {
       type: String,
-      enum: ['draft', 'scheduled', 'queued', 'sending', 'sent', 'failed'],
+      enum: ['draft', 'scheduled', 'queued', 'sending', 'sent', 'partial', 'failed'],
       default: 'draft',
     },
     scheduledFor: { type: Date },
