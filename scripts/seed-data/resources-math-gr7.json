@@ -1,0 +1,83 @@
+[
+  {
+    "title": "Integers — study guide",
+    "type": "study_notes",
+    "format": "static",
+    "difficulty": 1,
+    "estimatedMinutes": 15,
+    "blocks": [
+      {
+        "blockId": "b1",
+        "type": "text",
+        "order": 0,
+        "content": "Integers include all whole numbers, their opposites (negatives), and zero. Examples: -3, 0, 5."
+      },
+      {
+        "blockId": "b2",
+        "type": "text",
+        "order": 1,
+        "content": "When adding integers with the same sign, add their absolute values and keep the sign. When adding integers with different signs, subtract the smaller absolute value from the larger and keep the sign of the larger."
+      },
+      {
+        "blockId": "b3",
+        "type": "text",
+        "order": 2,
+        "content": "Practice: Try -4 + 7 = ? (Hint: signs differ; 7 - 4 = 3; keep the + sign because 7 is larger.) Answer: 3."
+      }
+    ]
+  },
+  {
+    "title": "Fractions worksheet",
+    "type": "worksheet",
+    "format": "static",
+    "difficulty": 2,
+    "estimatedMinutes": 20,
+    "blocks": [
+      {
+        "blockId": "b1",
+        "type": "text",
+        "order": 0,
+        "content": "Compare the following pairs of fractions. Use > or < between them:"
+      },
+      {
+        "blockId": "b2",
+        "type": "text",
+        "order": 1,
+        "content": "1. 1/2 ___ 2/3\n2. 3/4 ___ 5/8\n3. 2/5 ___ 4/10\n4. 7/12 ___ 1/2"
+      },
+      {
+        "blockId": "b3",
+        "type": "text",
+        "order": 2,
+        "content": "Show working for at least two of the comparisons. Answers: 1. <, 2. >, 3. =, 4. >"
+      }
+    ]
+  },
+  {
+    "title": "Introducing variables",
+    "type": "lesson",
+    "format": "static",
+    "difficulty": 1,
+    "estimatedMinutes": 10,
+    "blocks": [
+      {
+        "blockId": "b1",
+        "type": "text",
+        "order": 0,
+        "content": "A variable is a letter (usually x, y, n) that represents an unknown value. We use variables so we can write rules and patterns that work for any number."
+      },
+      {
+        "blockId": "b2",
+        "type": "text",
+        "order": 1,
+        "content": "Example: If a packet contains n sweets, two packets contain 2n sweets. Here, n is the variable."
+      },
+      {
+        "blockId": "b3",
+        "type": "text",
+        "order": 2,
+        "content": "Try this: If Jabu has x marbles and Thandi has 3 more than Jabu, write an expression for the number of marbles Thandi has. Answer: x + 3."
+      }
+    ]
+  }
+]

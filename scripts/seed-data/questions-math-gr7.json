@@ -1,0 +1,112 @@
+[
+  {
+    "type": "mcq",
+    "stem": "Calculate: -8 + 3",
+    "options": [
+      { "label": "A", "text": "-5", "isCorrect": true },
+      { "label": "B", "text": "5", "isCorrect": false },
+      { "label": "C", "text": "-11", "isCorrect": false },
+      { "label": "D", "text": "11", "isCorrect": false }
+    ],
+    "answer": "-5",
+    "markingRubric": "2 marks for correct sign and value",
+    "marks": 2,
+    "difficulty": 1,
+    "cognitiveLevel": { "caps": "knowledge", "blooms": "remember" }
+  },
+  {
+    "type": "short_answer",
+    "stem": "Simplify: 3x + 5x - 2x",
+    "options": [],
+    "answer": "6x",
+    "markingRubric": "1 mark for combining like terms, 1 mark for correct answer",
+    "marks": 2,
+    "difficulty": 1,
+    "cognitiveLevel": { "caps": "routine", "blooms": "apply" }
+  },
+  {
+    "type": "short_answer",
+    "stem": "Solve for x: x + 7 = 15",
+    "options": [],
+    "answer": "x = 8",
+    "markingRubric": "2 marks for correct setup and solution",
+    "marks": 2,
+    "difficulty": 1,
+    "cognitiveLevel": { "caps": "routine", "blooms": "apply" }
+  },
+  {
+    "type": "short_answer",
+    "stem": "Write 3/4 as a decimal.",
+    "options": [],
+    "answer": "0.75",
+    "markingRubric": "2 marks for correct decimal",
+    "marks": 2,
+    "difficulty": 1,
+    "cognitiveLevel": { "caps": "knowledge", "blooms": "remember" }
+  },
+  {
+    "type": "mcq",
+    "stem": "Which fraction is equivalent to 0.5?",
+    "options": [
+      { "label": "A", "text": "1/5", "isCorrect": false },
+      { "label": "B", "text": "2/5", "isCorrect": false },
+      { "label": "C", "text": "1/2", "isCorrect": true },
+      { "label": "D", "text": "1/4", "isCorrect": false }
+    ],
+    "answer": "1/2",
+    "markingRubric": "2 marks for correct option",
+    "marks": 2,
+    "difficulty": 1,
+    "cognitiveLevel": { "caps": "knowledge", "blooms": "remember" }
+  },
+  {
+    "type": "short_answer",
+    "stem": "Calculate the perimeter of a rectangle with length 8 cm and width 5 cm.",
+    "options": [],
+    "answer": "26 cm",
+    "markingRubric": "1 mark for formula P = 2(l+w), 1 mark for correct calculation, 1 mark for unit",
+    "marks": 3,
+    "difficulty": 2,
+    "cognitiveLevel": { "caps": "routine", "blooms": "apply" }
+  },
+  {
+    "type": "short_answer",
+    "stem": "Expand: 3(x + 4)",
+    "options": [],
+    "answer": "3x + 12",
+    "markingRubric": "1 mark for distributing 3, 1 mark for correct expansion",
+    "marks": 2,
+    "difficulty": 2,
+    "cognitiveLevel": { "caps": "routine", "blooms": "apply" }
+  },
+  {
+    "type": "short_answer",
+    "stem": "The sum of two consecutive integers is 25. Find the integers.",
+    "options": [],
+    "answer": "12 and 13",
+    "markingRubric": "2 marks for setup (x + (x+1) = 25), 1 mark for solving, 1 mark for both integers identified",
+    "marks": 4,
+    "difficulty": 3,
+    "cognitiveLevel": { "caps": "complex", "blooms": "analyse" }
+  },
+  {
+    "type": "short_answer",
+    "stem": "A shop sells pencils at R3 each and erasers at R2 each. Write an expression for the cost of p pencils and e erasers.",
+    "options": [],
+    "answer": "3p + 2e",
+    "markingRubric": "2 marks for correct expression",
+    "marks": 2,
+    "difficulty": 2,
+    "cognitiveLevel": { "caps": "routine", "blooms": "apply" }
+  },
+  {
+    "type": "short_answer",
+    "stem": "What is the highest common factor (HCF) of 12 and 18?",
+    "options": [],
+    "answer": "6",
+    "markingRubric": "2 marks for correct HCF",
+    "marks": 2,
+    "difficulty": 2,
+    "cognitiveLevel": { "caps": "routine", "blooms": "apply" }
+  }
+]

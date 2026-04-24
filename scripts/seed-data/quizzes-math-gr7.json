@@ -1,0 +1,184 @@
+[
+  {
+    "title": "Integers: basic operations",
+    "description": "Practice adding and subtracting positive and negative integers.",
+    "type": "mcq",
+    "totalPoints": 10,
+    "questions": [
+      {
+        "questionText": "What is -5 + 8?",
+        "questionType": "mcq",
+        "options": [
+          { "text": "-3", "isCorrect": false },
+          { "text": "3", "isCorrect": true },
+          { "text": "-13", "isCorrect": false },
+          { "text": "13", "isCorrect": false }
+        ],
+        "correctAnswer": "3",
+        "points": 2
+      },
+      {
+        "questionText": "What is -7 - 4?",
+        "questionType": "mcq",
+        "options": [
+          { "text": "3", "isCorrect": false },
+          { "text": "-3", "isCorrect": false },
+          { "text": "-11", "isCorrect": true },
+          { "text": "11", "isCorrect": false }
+        ],
+        "correctAnswer": "-11",
+        "points": 2
+      },
+      {
+        "questionText": "Which statement is true?",
+        "questionType": "mcq",
+        "options": [
+          { "text": "-3 > -1", "isCorrect": false },
+          { "text": "-5 < -2", "isCorrect": true },
+          { "text": "0 < -1", "isCorrect": false },
+          { "text": "-10 > 5", "isCorrect": false }
+        ],
+        "correctAnswer": "-5 < -2",
+        "points": 2
+      },
+      {
+        "questionText": "Calculate: 12 + (-7) - 3",
+        "questionType": "mcq",
+        "options": [
+          { "text": "2", "isCorrect": true },
+          { "text": "-2", "isCorrect": false },
+          { "text": "8", "isCorrect": false },
+          { "text": "22", "isCorrect": false }
+        ],
+        "correctAnswer": "2",
+        "points": 2
+      },
+      {
+        "questionText": "What is the additive inverse of -9?",
+        "questionType": "mcq",
+        "options": [
+          { "text": "9", "isCorrect": true },
+          { "text": "-9", "isCorrect": false },
+          { "text": "0", "isCorrect": false },
+          { "text": "1/9", "isCorrect": false }
+        ],
+        "correctAnswer": "9",
+        "points": 2
+      }
+    ],
+    "showInstantFeedback": true,
+    "allowRetry": true
+  },
+  {
+    "title": "Fractions: comparing and ordering",
+    "description": "Short quiz on comparing fractions with different denominators.",
+    "type": "mcq",
+    "totalPoints": 8,
+    "questions": [
+      {
+        "questionText": "Which is larger: 2/3 or 3/5?",
+        "questionType": "mcq",
+        "options": [
+          { "text": "2/3", "isCorrect": true },
+          { "text": "3/5", "isCorrect": false },
+          { "text": "They are equal", "isCorrect": false },
+          { "text": "Cannot tell", "isCorrect": false }
+        ],
+        "correctAnswer": "2/3",
+        "points": 2
+      },
+      {
+        "questionText": "Order from smallest to largest: 1/2, 2/5, 3/4",
+        "questionType": "mcq",
+        "options": [
+          { "text": "1/2, 2/5, 3/4", "isCorrect": false },
+          { "text": "2/5, 1/2, 3/4", "isCorrect": true },
+          { "text": "3/4, 1/2, 2/5", "isCorrect": false },
+          { "text": "1/2, 3/4, 2/5", "isCorrect": false }
+        ],
+        "correctAnswer": "2/5, 1/2, 3/4",
+        "points": 2
+      },
+      {
+        "questionText": "Which fraction is equivalent to 3/4?",
+        "questionType": "mcq",
+        "options": [
+          { "text": "6/8", "isCorrect": true },
+          { "text": "9/10", "isCorrect": false },
+          { "text": "4/6", "isCorrect": false },
+          { "text": "5/8", "isCorrect": false }
+        ],
+        "correctAnswer": "6/8",
+        "points": 2
+      },
+      {
+        "questionText": "Simplify: 12/18",
+        "questionType": "mcq",
+        "options": [
+          { "text": "2/3", "isCorrect": true },
+          { "text": "3/4", "isCorrect": false },
+          { "text": "1/2", "isCorrect": false },
+          { "text": "6/9", "isCorrect": false }
+        ],
+        "correctAnswer": "2/3",
+        "points": 2
+      }
+    ]
+  },
+  {
+    "title": "Algebraic expressions: introduction",
+    "description": "Identify terms, coefficients, and constants.",
+    "type": "mixed",
+    "totalPoints": 8,
+    "questions": [
+      {
+        "questionText": "In the expression 3x + 7, what is the coefficient of x?",
+        "questionType": "mcq",
+        "options": [
+          { "text": "3", "isCorrect": true },
+          { "text": "7", "isCorrect": false },
+          { "text": "x", "isCorrect": false },
+          { "text": "10", "isCorrect": false }
+        ],
+        "correctAnswer": "3",
+        "points": 2
+      },
+      {
+        "questionText": "In the expression 5y - 2, what is the constant term?",
+        "questionType": "mcq",
+        "options": [
+          { "text": "5", "isCorrect": false },
+          { "text": "y", "isCorrect": false },
+          { "text": "-2", "isCorrect": true },
+          { "text": "0", "isCorrect": false }
+        ],
+        "correctAnswer": "-2",
+        "points": 2
+      },
+      {
+        "questionText": "Which of these is a like term to 4x?",
+        "questionType": "mcq",
+        "options": [
+          { "text": "4", "isCorrect": false },
+          { "text": "4y", "isCorrect": false },
+          { "text": "7x", "isCorrect": true },
+          { "text": "4x²", "isCorrect": false }
+        ],
+        "correctAnswer": "7x",
+        "points": 2
+      },
+      {
+        "questionText": "Simplify: 3x + 2x - x",
+        "questionType": "mcq",
+        "options": [
+          { "text": "4x", "isCorrect": true },
+          { "text": "5x", "isCorrect": false },
+          { "text": "6x", "isCorrect": false },
+          { "text": "0", "isCorrect": false }
+        ],
+        "correctAnswer": "4x",
+        "points": 2
+      }
+    ]
+  }
+]
