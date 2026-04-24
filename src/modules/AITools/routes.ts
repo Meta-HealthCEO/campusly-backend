@@ -12,6 +12,7 @@ import {
   reviewGradeSchema,
   publishGradeParamsSchema,
   markPaperSchema,
+  updateMarkingSchema,
 } from './validation.js';
 
 const router = express.Router();
@@ -79,13 +80,38 @@ router.get(
 
 // ─── OCR Paper Marking ───────────────────────────────────────────────────────
 
-// POST /mark-paper — OCR-based paper marking from image
+// POST /mark-paper — OCR-based paper marking from images
 router.post(
   '/mark-paper',
   authenticate,
   authorize('teacher', 'school_admin', 'super_admin'),
   validate(markPaperSchema),
   AIToolsController.markPaper,
+);
+
+// GET /markings — list paper markings
+router.get(
+  '/markings',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  AIToolsController.listMarkings,
+);
+
+// GET /markings/:id — get a single marking
+router.get(
+  '/markings/:id',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  AIToolsController.getMarkingById,
+);
+
+// PUT /markings/:id — update teacher overrides
+router.put(
+  '/markings/:id',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  validate(updateMarkingSchema),
+  AIToolsController.updateMarking,
 );
 
 // ─── AI Grading ───────────────────────────────────────────────────────────────

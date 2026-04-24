@@ -4,6 +4,11 @@ import { getUser } from '../../types/authenticated-request.js';
 import { AIToolsService } from './service.js';
 import { AIPdfService } from './service-pdf.js';
 import { apiResponse } from '../../common/utils.js';
+import {
+  listMarkings,
+  getMarkingById,
+  updateMarking,
+} from './service-marking-queries.js';
 
 export class AIToolsController {
   static async generatePaper(req: Request, res: Response): Promise<void> {
@@ -145,12 +150,48 @@ export class AIToolsController {
       res.status(400).json({ success: false, error: 'User must be assigned to a school' });
       return;
     }
-    const result = await AIToolsService.markPaperFromImage(
-      getUser(req).id,
+    const marking = await AIToolsService.markPaperFromImages(getUser(req).id, schoolId, req.body);
+    res.json(apiResponse(true, marking, 'Paper marked successfully'));
+  }
+
+  static async listMarkings(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
+    const { paperId, studentId, status, page, limit } = req.query;
+    const result = await listMarkings(
       schoolId,
-      req.body,
+      {
+        paperId: paperId as string | undefined,
+        studentId: studentId as string | undefined,
+        status: status as string | undefined,
+      },
+      page ? parseInt(page as string, 10) : undefined,
+      limit ? parseInt(limit as string, 10) : undefined,
     );
-    res.json(apiResponse(true, result, 'Paper marked successfully'));
+    res.json(apiResponse(true, result, 'Markings retrieved successfully'));
+  }
+
+  static async getMarkingById(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
+    const marking = await getMarkingById(req.params.id as string, schoolId);
+    res.json(apiResponse(true, marking, 'Marking retrieved successfully'));
+  }
+
+  static async updateMarking(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
+    const marking = await updateMarking(req.params.id as string, schoolId, req.body);
+    res.json(apiResponse(true, marking, 'Marking updated successfully'));
   }
 
   static async downloadPaperPdf(req: Request, res: Response): Promise<void> {

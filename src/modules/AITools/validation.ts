@@ -102,16 +102,39 @@ export const reviewGradeSchema = z.object({
 
 export type ReviewGradeInput = z.infer<typeof reviewGradeSchema>;
 
-// ─── Mark Paper from Image (OCR) ─────────────────────────────────────────
+// ─── Mark Paper from Images (OCR, multi-image) ───────────────────────────────
 
 export const markPaperSchema = z.object({
-  paperId: z.string().min(1, 'Paper ID is required'),
-  studentName: z.string().min(1, 'Student name is required').trim(),
-  image: z.string().min(1, 'Image data is required'),
-  imageType: z.enum(['image/jpeg', 'image/png', 'image/webp']).default('image/jpeg'),
-}).strict();
+  body: z.object({
+    paperId: z.string().min(1),
+    studentName: z.string().min(1),
+    studentId: z.string().optional(),
+    images: z.array(z.string().min(1)).min(1).max(8),
+    imageTypes: z.array(z.enum(['image/jpeg', 'image/png', 'image/webp'])).min(1).max(8),
+  }).refine((data) => data.images.length === data.imageTypes.length, {
+    message: 'images and imageTypes arrays must have the same length',
+    path: ['imageTypes'],
+  }),
+});
 
 export type MarkPaperInput = z.infer<typeof markPaperSchema>;
+
+// ─── Update Marking (teacher overrides) ──────────────────────────────────────
+
+export const updateMarkingSchema = z.object({
+  body: z.object({
+    questions: z.array(z.object({
+      questionNumber: z.string(),
+      marksAwarded: z.number().nonnegative(),
+      maxMarks: z.number().nonnegative(),
+      feedback: z.string().optional(),
+    })).optional(),
+    status: z.enum(['completed', 'needs_review']).optional(),
+  }),
+  params: z.object({
+    id: z.string().min(1),
+  }),
+});
 
 // ─── Publish Grade (params only) ─────────────────────────────────────────────
 

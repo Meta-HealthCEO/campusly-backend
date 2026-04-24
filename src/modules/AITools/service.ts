@@ -8,8 +8,8 @@ import {
 import { AIService } from '../../services/ai.service.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
 import { getTemplatesForGrade, formatTemplatesForPrompt } from '../../lib/tikz-templates.js';
-import { markPaperFromImage } from './service-marking.js';
-import type { MarkPaperResult } from './service-marking.js';
+import { markPaperFromImages } from './service-marking.js';
+import type { MarkPaperResult, MarkPapersPayload } from './service-marking.js';
 import { renderSectionDiagrams, renderQuestionDiagram } from './service-paper-diagrams.js';
 import {
   gradeSubmission,
@@ -282,17 +282,12 @@ The question must be different from: "${oldQuestion.questionText}"`;
     return publishGrade(jobId, schoolId);
   }
 
-  static async markPaperFromImage(
+  static async markPaperFromImages(
     teacherId: string,
     schoolId: string,
-    data: {
-      paperId: string;
-      studentName: string;
-      image: string;
-      imageType: 'image/jpeg' | 'image/png' | 'image/webp';
-    },
+    payload: MarkPapersPayload,
   ): Promise<MarkPaperResult> {
-    return markPaperFromImage(teacherId, schoolId, data);
+    return markPaperFromImages(teacherId, schoolId, payload);
   }
 
   static async getUsageStats(
