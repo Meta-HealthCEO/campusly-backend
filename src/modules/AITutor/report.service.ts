@@ -5,23 +5,34 @@ import { Attendance } from '../Attendance/model.js';
 import { Merit } from '../Attendance/model.js';
 import { AIUsageLog } from '../AITools/model.js';
 import { AIService } from '../../services/ai.service.js';
+import { NotFoundError } from '../../common/errors.js';
+import { ReportComment } from './model-report-comments.js';
+import type { IReportComment } from './model-report-comments.js';
 import type { GenerateReportCommentsInput } from './validation.js';
 
 const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
 
-interface ReportComment {
+interface ReportCommentResult {
+  id: string;
   studentId: string;
   studentName: string;
   comment: string;
+  wasEdited: boolean;
 }
+
+const toneGuidance: Record<'encouraging' | 'balanced' | 'formal', string> = {
+  encouraging: 'Be warm and growth-oriented. Lead with strengths, frame areas for improvement as opportunities.',
+  balanced: 'Be even-handed. Acknowledge what is going well AND what needs work, in roughly equal measure.',
+  formal: 'Be professional and objective. Focus on observable performance, minimal emotional framing.',
+};
 
 export class ReportService {
   static async generateReportComments(
     teacherId: string,
     schoolId: string,
     input: GenerateReportCommentsInput,
-  ): Promise<ReportComment[]> {
-    const results: ReportComment[] = [];
+  ): Promise<ReportCommentResult[]> {
+    const results: ReportCommentResult[] = [];
 
     for (const studentId of input.studentIds) {
       // Fetch student details
@@ -91,7 +102,7 @@ export class ReportService {
 
       const systemPrompt = [
         `You are a professional report card comment writer for a South African CAPS school.`,
-        `Tone: ${input.tone}.`,
+        `Tone: ${input.tone}. ${toneGuidance[input.tone]}`,
         'Write a single paragraph (2-4 sentences) for a student report card.',
         'Mention specific strengths and areas for improvement based on the data.',
         'Be constructive and professional. Do not include numerical marks.',
@@ -109,7 +120,38 @@ export class ReportService {
         userPrompt,
       );
 
-      results.push({ studentId, studentName, comment: text });
+      const currentYear = new Date().getFullYear();
+      const upserted = await ReportComment.findOneAndUpdate(
+        {
+          schoolId: new mongoose.Types.ObjectId(schoolId),
+          studentId: new mongoose.Types.ObjectId(studentId),
+          subjectId: new mongoose.Types.ObjectId(input.subjectId),
+          term: input.term,
+          academicYear: currentYear,
+          isDeleted: false,
+        },
+        {
+          $set: {
+            teacherId: new mongoose.Types.ObjectId(teacherId),
+            ...(input.classId ? { classId: new mongoose.Types.ObjectId(input.classId) } : {}),
+            tone: input.tone,
+            aiGenerated: text,
+            finalText: text,
+            wasEdited: false,
+            lastEditedAt: undefined,
+            lastEditedBy: undefined,
+          },
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true },
+      );
+
+      results.push({
+        id: upserted._id.toString(),
+        studentId,
+        studentName,
+        comment: text,
+        wasEdited: false,
+      });
 
       await AIUsageLog.create({
         schoolId,
@@ -122,4 +164,87 @@ export class ReportService {
 
     return results;
   }
+}
+
+// ─── Standalone service functions for persistence CRUD ───────────────────────
+
+export async function listReportComments(
+  schoolId: string,
+  filters: {
+    classId?: string;
+    subjectId?: string;
+    term?: number;
+    studentId?: string;
+    academicYear?: number;
+  },
+): Promise<IReportComment[]> {
+  const query: Record<string, unknown> = {
+    schoolId: new mongoose.Types.ObjectId(schoolId),
+    isDeleted: false,
+  };
+  if (filters.classId) query.classId = new mongoose.Types.ObjectId(filters.classId);
+  if (filters.subjectId) query.subjectId = new mongoose.Types.ObjectId(filters.subjectId);
+  if (filters.term) query.term = filters.term;
+  if (filters.studentId) query.studentId = new mongoose.Types.ObjectId(filters.studentId);
+  if (filters.academicYear) query.academicYear = filters.academicYear;
+  return ReportComment.find(query).sort({ createdAt: -1 }).lean() as unknown as Promise<IReportComment[]>;
+}
+
+export async function updateReportComment(
+  id: string,
+  schoolId: string,
+  teacherId: string,
+  finalText: string,
+): Promise<IReportComment> {
+  const comment = await ReportComment.findOne({
+    _id: new mongoose.Types.ObjectId(id),
+    schoolId: new mongoose.Types.ObjectId(schoolId),
+    isDeleted: false,
+  });
+  if (!comment) throw new NotFoundError('Report comment not found');
+  comment.finalText = finalText;
+  comment.wasEdited = true;
+  comment.lastEditedAt = new Date();
+  comment.lastEditedBy = new mongoose.Types.ObjectId(teacherId);
+  await comment.save();
+  return comment.toObject() as IReportComment;
+}
+
+export async function regenerateReportComment(
+  id: string,
+  schoolId: string,
+  teacherId: string,
+): Promise<IReportComment> {
+  const existing = await ReportComment.findOne({
+    _id: new mongoose.Types.ObjectId(id),
+    schoolId: new mongoose.Types.ObjectId(schoolId),
+    isDeleted: false,
+  });
+  if (!existing) throw new NotFoundError('Report comment not found');
+
+  await ReportService.generateReportComments(teacherId, schoolId, {
+    studentIds: [existing.studentId.toString()],
+    classId: existing.classId?.toString(),
+    subjectId: existing.subjectId.toString(),
+    term: existing.term,
+    tone: existing.tone,
+  });
+
+  const fresh = await ReportComment.findById(existing._id);
+  if (!fresh) throw new NotFoundError('Report comment not found after regenerate');
+  return fresh.toObject() as IReportComment;
+}
+
+export async function deleteReportComment(
+  id: string,
+  schoolId: string,
+): Promise<void> {
+  const comment = await ReportComment.findOne({
+    _id: new mongoose.Types.ObjectId(id),
+    schoolId: new mongoose.Types.ObjectId(schoolId),
+    isDeleted: false,
+  });
+  if (!comment) throw new NotFoundError('Report comment not found');
+  comment.isDeleted = true;
+  await comment.save();
 }

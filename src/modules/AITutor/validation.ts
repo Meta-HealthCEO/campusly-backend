@@ -52,13 +52,33 @@ export type SubmitPracticeInput = z.infer<typeof submitPracticeSchema>;
 // ─── Generate Report Comments ────────────────────────────────────────────────
 
 export const generateReportCommentsSchema = z.object({
-  studentIds: z.array(oid).min(1).max(50),
-  subjectId: oid,
+  studentIds: z.array(z.string().min(1)).min(1).max(50),
+  classId: z.string().min(1).optional(),
+  subjectId: z.string().min(1),
   term: z.number().int().min(1).max(4),
-  tone: z.enum(['encouraging', 'direct', 'formal']).default('encouraging'),
-}).strict();
+  tone: z.enum(['encouraging', 'balanced', 'formal']).default('encouraging'),
+});
 
 export type GenerateReportCommentsInput = z.infer<typeof generateReportCommentsSchema>;
+
+// ─── Report Comments — CRUD ──────────────────────────────────────────────────
+
+export const updateReportCommentSchema = {
+  params: z.object({ id: z.string().min(1) }),
+  body: z.object({
+    finalText: z.string().min(1).max(5000),
+  }),
+};
+
+export const listReportCommentsQuerySchema = {
+  query: z.object({
+    classId: z.string().optional(),
+    subjectId: z.string().optional(),
+    term: z.string().optional(),
+    studentId: z.string().optional(),
+    academicYear: z.string().optional(),
+  }),
+};
 
 // ─── Parent Chat ─────────────────────────────────────────────────────────────
 
