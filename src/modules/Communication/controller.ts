@@ -70,6 +70,7 @@ export class CommunicationController {
     const result = await CommunicationModuleService.listMessages(schoolId, {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
+      status: req.query.status as string | undefined,
     });
     res.json(apiResponse(true, result, 'Messages retrieved successfully'));
   }
@@ -85,6 +86,16 @@ export class CommunicationController {
   static async scheduleMessage(req: Request, res: Response): Promise<void> {
     const message = await CommunicationModuleService.scheduleMessage(req.body, getUser(req).id);
     res.status(201).json(apiResponse(true, message, 'Message scheduled successfully'));
+  }
+
+  static async cancelScheduledMessage(req: Request, res: Response): Promise<void> {
+    const user = getUser(req);
+    const message = await CommunicationModuleService.cancelScheduledMessage(
+      req.params.id as string,
+      user.schoolId!,
+      user.id,
+    );
+    res.json(apiResponse(true, message, 'Scheduled message cancelled'));
   }
 
   // ─── Read Receipts ────────────────────────────────────────────────────────

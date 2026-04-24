@@ -5,6 +5,7 @@ import {
   BulkMessage,
   type IBulkMessage,
   MessageLog,
+  type IMessageLog,
 } from './model.js';
 import { DeviceRegistration } from './delivery-model.js';
 import { Student } from '../Student/model.js';
@@ -13,9 +14,10 @@ import { User } from '../Auth/model.js';
 import { EmailService } from '../../services/email.service.js';
 import { SmsService } from '../../services/sms.service.js';
 import { PushService } from '../../services/push.service.js';
-import { NotFoundError } from '../../common/errors.js';
+import { NotFoundError, BadRequestError } from '../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../common/constants.js';
 import { logger } from '../../common/logger.js';
+import { communicationQueue } from '../../jobs/queues.js';
 
 interface ListQuery {
   page?: number;
@@ -71,6 +73,120 @@ async function resolveRecipientIds(
   }
 
   return [...new Set(userIds.map((id) => id.toString()))];
+}
+
+// ─── Per-Recipient Dispatch ───────────────────────────────────────────────────
+
+export async function dispatchSingleLog(
+  log: IMessageLog,
+  meta: { subject: string; body: string },
+): Promise<void> {
+  const userRecord = await User.findOne({
+    _id: log.recipientId,
+    isDeleted: false,
+  }).select('_id email phone').lean();
+
+  const channel = log.channel;
+  let ok = false;
+  let errorMsg: string | undefined;
+
+  try {
+    if (channel === 'email' || channel === 'all') {
+      if (!userRecord?.email) throw new Error('Recipient has no email address');
+      const result = await EmailService.sendEmail(userRecord.email, meta.subject, meta.body);
+      if (!result.success) throw new Error('EmailService returned failure');
+      ok = true;
+    } else if (channel === 'sms') {
+      if (!userRecord?.phone) throw new Error('Recipient has no phone number');
+      const result = await SmsService.sendSms(userRecord.phone, meta.body);
+      if (!result.success) throw new Error('SmsService returned failure');
+      ok = true;
+    } else if (channel === 'push') {
+      const devices = await DeviceRegistration.find({
+        userId: log.recipientId,
+        isActive: true,
+      }).select('deviceToken').lean();
+      const tokens = devices.map((d) => d.deviceToken);
+      if (tokens.length === 0) throw new Error('Recipient has no registered device tokens');
+      const result = await PushService.sendPushBatch(tokens, meta.subject, meta.body);
+      if (!result.success && (result.failedTokens?.length ?? 0) >= tokens.length) {
+        throw new Error('All push tokens failed');
+      }
+      ok = true;
+    } else if (channel === 'whatsapp') {
+      logger.warn({ recipientId: log.recipientId.toString(), channel }, '[Comm] WhatsApp not configured; skipping');
+      throw new Error('WhatsApp delivery is not yet configured');
+    } else {
+      throw new Error(`Unknown channel: ${channel}`);
+    }
+  } catch (err: unknown) {
+    errorMsg = err instanceof Error ? err.message : 'Unknown delivery error';
+    logger.warn({ recipientId: log.recipientId.toString(), channel, err: errorMsg }, '[Comm] Delivery failed for recipient');
+  }
+
+  if (ok) {
+    await MessageLog.findByIdAndUpdate(log._id, {
+      $set: { status: 'sent', sentAt: new Date(), error: undefined },
+    });
+  } else {
+    const retryCount = log.retryCount ?? 0;
+    if (retryCount < 3) {
+      const delays = [60_000, 300_000, 1_800_000];
+      await communicationQueue.add(
+        'retry-delivery',
+        { logId: log._id.toString() },
+        { delay: delays[retryCount] },
+      );
+      await MessageLog.findByIdAndUpdate(log._id, {
+        $set: { status: 'retrying', error: errorMsg },
+      });
+    } else {
+      await MessageLog.findByIdAndUpdate(log._id, {
+        $set: { status: 'failed', error: errorMsg },
+      });
+    }
+  }
+}
+
+// ─── Execute Bulk Message ─────────────────────────────────────────────────────
+
+export async function executeBulkMessage(bulkId: string): Promise<void> {
+  const bulk = await BulkMessage.findById(bulkId);
+  if (!bulk || bulk.isDeleted) {
+    logger.warn({ bulkId }, '[Comm] executeBulkMessage: bulk message not found or deleted');
+    return;
+  }
+
+  bulk.status = 'sending';
+  await bulk.save();
+
+  const logs = await MessageLog.find({ bulkMessageId: bulk._id, isDeleted: false });
+
+  const meta = { subject: bulk.subject, body: bulk.body };
+  for (const log of logs) {
+    await dispatchSingleLog(log, meta);
+  }
+
+  // Re-count from DB to get accurate sent/failed totals
+  const [sentCount, failedCount] = await Promise.all([
+    MessageLog.countDocuments({ bulkMessageId: bulk._id, status: { $in: ['sent', 'delivered'] } }),
+    MessageLog.countDocuments({ bulkMessageId: bulk._id, status: 'failed' }),
+  ]);
+
+  let finalStatus: IBulkMessage['status'];
+  if (sentCount > 0 && failedCount === 0) {
+    finalStatus = 'sent';
+  } else if (sentCount > 0) {
+    finalStatus = 'partial';
+  } else {
+    finalStatus = 'failed';
+  }
+
+  bulk.status = finalStatus;
+  bulk.delivered = sentCount;
+  bulk.failed = failedCount;
+  bulk.sentAt = new Date();
+  await bulk.save();
 }
 
 export class CommunicationModuleService {
@@ -161,134 +277,26 @@ export class CommunicationModuleService {
     });
     await bulkMessage.save();
 
-    // Create message log stubs for each recipient
     const logDocs = uniqueIds.map((userId) => ({
       bulkMessageId: bulkMessage._id,
       recipientId: new mongoose.Types.ObjectId(userId),
       channel,
       status: 'queued' as const,
+      retryCount: 0,
     }));
 
-    const insertedLogs = logDocs.length > 0
-      ? await MessageLog.insertMany(logDocs)
-      : [];
+    await MessageLog.insertMany(logDocs);
+    await executeBulkMessage(bulkMessage._id.toString());
 
-    // Fetch user records so we have email / phone for each recipient
-    const userRecords = await User.find({
-      _id: { $in: uniqueIds.map((id) => new mongoose.Types.ObjectId(id)) },
-      isDeleted: false,
-    }).select('_id email phone').lean();
-
-    const userMap = new Map(userRecords.map((u) => [u._id.toString(), u]));
-
-    // For push channel: fetch all device tokens for these users
-    let deviceTokenMap = new Map<string, string[]>();
-    if (channel === 'push' || channel === 'all') {
-      const devices = await DeviceRegistration.find({
-        userId: { $in: uniqueIds.map((id) => new mongoose.Types.ObjectId(id)) },
-        isActive: true,
-      }).select('userId deviceToken').lean();
-      for (const d of devices) {
-        const uid = d.userId.toString();
-        const existing = deviceTokenMap.get(uid) ?? [];
-        existing.push(d.deviceToken);
-        deviceTokenMap.set(uid, existing);
-      }
-    }
-
-    let sentCount = 0;
-    let failedCount = 0;
-
-    for (const log of insertedLogs) {
-      const userId = log.recipientId.toString();
-      const userRecord = userMap.get(userId);
-
-      let ok = false;
-      let providerId: string | undefined;
-      let errorMsg: string | undefined;
-
-      try {
-        if (channel === 'email' || channel === 'all') {
-          if (!userRecord?.email) {
-            throw new Error('Recipient has no email address');
-          }
-          const result = await EmailService.sendEmail(
-            userRecord.email,
-            data.subject,
-            data.body,
-          );
-          if (!result.success) {
-            throw new Error('EmailService returned failure');
-          }
-          providerId = result.messageId;
-          ok = true;
-        } else if (channel === 'sms') {
-          if (!userRecord?.phone) {
-            throw new Error('Recipient has no phone number');
-          }
-          const result = await SmsService.sendSms(userRecord.phone, data.body);
-          if (!result.success) {
-            throw new Error('SmsService returned failure');
-          }
-          providerId = result.messageId;
-          ok = true;
-        } else if (channel === 'push') {
-          const tokens = deviceTokenMap.get(userId) ?? [];
-          if (tokens.length === 0) {
-            throw new Error('Recipient has no registered device tokens');
-          }
-          const result = await PushService.sendPushBatch(tokens, data.subject, data.body);
-          if (!result.success && (result.failedTokens?.length ?? 0) >= tokens.length) {
-            throw new Error('All push tokens failed');
-          }
-          providerId = result.messageId;
-          ok = true;
-        } else if (channel === 'whatsapp') {
-          // WhatsApp adapter not yet integrated — log and mark failed
-          logger.warn({ userId, channel }, 'WhatsApp delivery not configured; skipping recipient');
-          throw new Error('WhatsApp delivery is not yet configured');
-        } else {
-          throw new Error(`Unknown channel: ${channel}`);
-        }
-      } catch (err: unknown) {
-        errorMsg = err instanceof Error ? err.message : 'Unknown delivery error';
-        logger.warn({ userId, channel, err: errorMsg }, 'Bulk message delivery failed for recipient');
-      }
-
-      await MessageLog.findByIdAndUpdate(log._id, {
-        $set: {
-          status: ok ? 'sent' : 'failed',
-          sentAt: ok ? new Date() : undefined,
-          error: errorMsg,
-        },
-      });
-
-      if (ok) sentCount++; else failedCount++;
-    }
-
-    // Determine overall status
-    let finalStatus: IBulkMessage['status'];
-    if (sentCount > 0 && failedCount === 0) {
-      finalStatus = 'sent';
-    } else if (sentCount > 0 && failedCount > 0) {
-      finalStatus = 'partial';
-    } else {
-      finalStatus = 'failed';
-    }
-
-    bulkMessage.status = finalStatus;
-    bulkMessage.delivered = sentCount;
-    bulkMessage.failed = failedCount;
-    await bulkMessage.save();
-
-    return bulkMessage;
+    return BulkMessage.findById(bulkMessage._id) as Promise<IBulkMessage>;
   }
 
   // ─── Message History ──────────────────────────────────────────────────────
 
-  static async listMessages(schoolId: string, query: ListQuery) {
+  static async listMessages(schoolId: string, query: ListQuery & { status?: string }) {
     const { page, limit, skip } = getPagination(query);
-    const filter = { schoolId, isDeleted: false };
+    const filter: Record<string, unknown> = { schoolId, isDeleted: false };
+    if (query.status) filter.status = query.status;
 
     const [data, total] = await Promise.all([
       BulkMessage.find(filter)
@@ -327,25 +335,79 @@ export class CommunicationModuleService {
   ): Promise<IBulkMessage> {
     const scheduledDate = new Date(data.scheduledFor);
     if (scheduledDate <= new Date()) {
-      throw new NotFoundError('Scheduled date must be in the future');
+      throw new BadRequestError('Scheduled date must be in the future');
     }
 
     const uniqueIds = await resolveRecipientIds(data.schoolId, data.recipients);
+    const channel = data.channel ?? 'all';
+    const delay = scheduledDate.getTime() - Date.now();
 
     const bulkMessage = new BulkMessage({
       schoolId: data.schoolId,
       templateId: data.templateId,
       subject: data.subject,
       body: data.body,
-      channel: data.channel ?? 'all',
+      channel,
       sentBy,
       recipients: data.recipients,
       totalRecipients: uniqueIds.length,
       status: 'scheduled',
       scheduledFor: scheduledDate,
     });
+    await bulkMessage.save();
 
-    return bulkMessage.save();
+    // Freeze recipient list at scheduling time
+    const logDocs = uniqueIds.map((userId) => ({
+      bulkMessageId: bulkMessage._id,
+      recipientId: new mongoose.Types.ObjectId(userId),
+      channel,
+      status: 'queued' as const,
+      retryCount: 0,
+    }));
+    if (logDocs.length > 0) {
+      await MessageLog.insertMany(logDocs);
+    }
+
+    await communicationQueue.add(
+      'send-scheduled',
+      { bulkId: bulkMessage._id.toString() },
+      { delay },
+    );
+
+    return bulkMessage;
+  }
+
+  static async cancelScheduledMessage(
+    id: string,
+    schoolId: string,
+    userId: string,
+  ): Promise<IBulkMessage> {
+    const bulk = await BulkMessage.findOne({
+      _id: new mongoose.Types.ObjectId(id),
+      schoolId: new mongoose.Types.ObjectId(schoolId),
+      isDeleted: false,
+    });
+    if (!bulk) throw new NotFoundError('Scheduled message not found');
+    if (bulk.status !== 'scheduled') {
+      throw new BadRequestError('Only scheduled messages can be cancelled');
+    }
+    if (bulk.sentBy.toString() !== userId) {
+      throw new BadRequestError('Only the teacher who scheduled it can cancel');
+    }
+
+    bulk.status = 'cancelled';
+    bulk.isDeleted = true;
+    await bulk.save();
+
+    await MessageLog.updateMany(
+      { bulkMessageId: bulk._id },
+      { $set: { isDeleted: true } },
+    );
+
+    // The BullMQ delayed job will no-op on wake-up because status is no longer 'scheduled'
+    logger.info({ bulkId: id }, '[Comm] Scheduled message cancelled — BullMQ job will no-op on wake-up');
+
+    return bulk.toObject() as IBulkMessage;
   }
 
   // ─── Read Receipts ────────────────────────────────────────────────────────
@@ -389,7 +451,6 @@ export class CommunicationModuleService {
       ? Math.round((readCount / totalRecipients) * 100)
       : 0;
 
-    // Calculate average time to read (from sentAt)
     let avgTimeToReadMs = 0;
     if (message.sentAt && readCount > 0) {
       const sentTime = new Date(message.sentAt).getTime();

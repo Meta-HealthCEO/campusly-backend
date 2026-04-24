@@ -90,3 +90,8 @@ export const lessonNotesQueue = new Queue('lesson-notes', {
   connection: redisConnection,
   defaultJobOptions,
 });
+
+export const communicationQueue = new Queue('communication-send', {
+  connection: redisConnection,
+  defaultJobOptions,
+});

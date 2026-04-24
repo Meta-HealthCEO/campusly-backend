@@ -14,6 +14,7 @@ export {
   bulkMessageQueue,
   lostFoundArchiveQueue,
   aiGradingQueue,
+  communicationQueue,
   redisConnection,
 } from './queues.js';
 
@@ -73,6 +74,9 @@ export async function setupWorkers(): Promise<Worker[]> {
 
     const { createLessonNotesWorker } = await import('./lesson-notes.job.js');
     workers.push(createLessonNotesWorker());
+
+    const { createCommunicationSendWorker } = await import('./communication-send.job.js');
+    workers.push(createCommunicationSendWorker());
 
     logger.info(`[Jobs] ${workers.length} workers started successfully`);
 

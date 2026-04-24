@@ -8,6 +8,7 @@ import {
   updateTemplateSchema,
   sendBulkMessageSchema,
   scheduleMessageSchema,
+  cancelScheduledMessageSchema,
   previewTemplateSchema,
   updateConfigSchema,
   testChannelSchema,
@@ -88,7 +89,7 @@ router.post(
   CommunicationController.previewTemplate,
 );
 
-// ─── Schedule Route ─────────────────────────────────────────────────────────
+// ─── Schedule Routes ─────────────────────────────────────────────────────────
 
 router.post(
   '/schedule',
@@ -96,6 +97,14 @@ router.post(
   authorize('school_admin', 'teacher'),
   validate(scheduleMessageSchema),
   CommunicationController.scheduleMessage,
+);
+
+router.post(
+  '/scheduled/:id/cancel',
+  authenticate,
+  authorize('school_admin', 'super_admin', 'teacher'),
+  validate({ params: cancelScheduledMessageSchema }),
+  CommunicationController.cancelScheduledMessage,
 );
 
 // ─── Bulk Message Routes ────────────────────────────────────────────────────

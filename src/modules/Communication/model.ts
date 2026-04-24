@@ -69,7 +69,7 @@ export const MessageTemplate = mongoose.model<IMessageTemplate>('MessageTemplate
 // ─── Bulk Message ───────────────────────────────────────────────────────────
 
 export type RecipientTargetType = 'school' | 'grade' | 'class' | 'custom';
-export type BulkMessageStatus = 'draft' | 'scheduled' | 'queued' | 'sending' | 'sent' | 'partial' | 'failed';
+export type BulkMessageStatus = 'draft' | 'scheduled' | 'queued' | 'sending' | 'sent' | 'partial' | 'failed' | 'cancelled';
 
 export interface IBulkMessageRecipients {
   type: RecipientTargetType;
@@ -134,7 +134,7 @@ const bulkMessageSchema = new Schema<IBulkMessage>(
     failed: { type: Number, default: 0 },
     status: {
       type: String,
-      enum: ['draft', 'scheduled', 'queued', 'sending', 'sent', 'partial', 'failed'],
+      enum: ['draft', 'scheduled', 'queued', 'sending', 'sent', 'partial', 'failed', 'cancelled'],
       default: 'draft',
     },
     scheduledFor: { type: Date },
@@ -162,7 +162,7 @@ export const BulkMessage = mongoose.model<IBulkMessage>('BulkMessage', bulkMessa
 
 // ─── Message Log ────────────────────────────────────────────────────────────
 
-export type MessageLogStatus = 'queued' | 'sent' | 'delivered' | 'failed' | 'read';
+export type MessageLogStatus = 'queued' | 'sent' | 'delivered' | 'failed' | 'read' | 'retrying';
 
 export interface IMessageLog extends Document {
   bulkMessageId: Types.ObjectId;
@@ -173,6 +173,7 @@ export interface IMessageLog extends Document {
   deliveredAt?: Date;
   readAt?: Date;
   error?: string;
+  retryCount: number;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -185,13 +186,14 @@ const messageLogSchema = new Schema<IMessageLog>(
     channel: { type: String, required: true },
     status: {
       type: String,
-      enum: ['queued', 'sent', 'delivered', 'failed', 'read'],
+      enum: ['queued', 'sent', 'delivered', 'failed', 'read', 'retrying'],
       default: 'queued',
     },
     sentAt: { type: Date },
     deliveredAt: { type: Date },
     readAt: { type: Date },
     error: { type: String },
+    retryCount: { type: Number, default: 0 },
     isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true },

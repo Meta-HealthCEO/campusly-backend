@@ -53,8 +53,12 @@ export const scheduleMessageSchema = z.object({
     type: z.enum(['school', 'grade', 'class', 'custom']),
     targetIds: z.array(objectIdSchema).optional(),
   }),
-  scheduledFor: z.string().datetime('scheduledFor must be a valid date-time'),
+  scheduledFor: z.iso.datetime({ message: 'scheduledFor must be a valid ISO date-time' }),
 }).strict();
+
+export const cancelScheduledMessageSchema = z.object({
+  id: objectIdSchema,
+});
 
 // ─── Unified Send ──────────────────────────────────────────────────────────
 
@@ -141,6 +145,7 @@ export const registerDeviceSchema = z.object({
 export type CreateTemplateInput = z.infer<typeof createTemplateSchema>;
 export type SendBulkMessageInput = z.infer<typeof sendBulkMessageSchema>;
 export type ScheduleMessageInput = z.infer<typeof scheduleMessageSchema>;
+export type CancelScheduledMessageInput = z.infer<typeof cancelScheduledMessageSchema>;
 export type UnifiedSendInput = z.infer<typeof unifiedSendSchema>;
 export type UpdateConfigInput = z.infer<typeof updateConfigSchema>;
 export type TestChannelInput = z.infer<typeof testChannelSchema>;
