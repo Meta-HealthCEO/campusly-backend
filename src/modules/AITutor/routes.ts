@@ -7,6 +7,8 @@ import {
   generatePracticeSchema,
   submitPracticeSchema,
   generateReportCommentsSchema,
+  updateReportCommentSchema,
+  listReportCommentsQuerySchema,
   parentChatSchema,
 } from './validation.js';
 
@@ -67,6 +69,36 @@ router.post(
   authorize('teacher', 'school_admin', 'super_admin'),
   validate(generateReportCommentsSchema),
   AITutorController.generateReportComments,
+);
+
+// GET /report-comments — list saved report comments
+router.get(
+  '/report-comments',
+  authorize('teacher', 'school_admin', 'super_admin'),
+  validate(listReportCommentsQuerySchema),
+  AITutorController.listReportComments,
+);
+
+// PUT /report-comments/:id — update final text
+router.put(
+  '/report-comments/:id',
+  authorize('teacher', 'school_admin', 'super_admin'),
+  validate(updateReportCommentSchema),
+  AITutorController.updateReportComment,
+);
+
+// POST /report-comments/:id/regenerate — regenerate a single comment
+router.post(
+  '/report-comments/:id/regenerate',
+  authorize('teacher', 'school_admin', 'super_admin'),
+  AITutorController.regenerateReportComment,
+);
+
+// DELETE /report-comments/:id — soft-delete a comment
+router.delete(
+  '/report-comments/:id',
+  authorize('teacher', 'school_admin', 'super_admin'),
+  AITutorController.deleteReportComment,
 );
 
 // ─── Parent Routes ───────────────────────────────────────────────────────────

@@ -3,7 +3,7 @@ import { Response } from 'express';
 import { getUser } from '../../types/authenticated-request.js';
 import { AITutorService } from './service.js';
 import { PracticeService } from './practice.service.js';
-import { ReportService } from './report.service.js';
+import { ReportService, listReportComments, updateReportComment, regenerateReportComment, deleteReportComment } from './report.service.js';
 import { ParentService } from './parent.service.js';
 import { apiResponse } from '../../common/utils.js';
 
@@ -99,5 +99,40 @@ export class AITutorController {
       limit ? parseInt(limit as string, 10) : undefined,
     );
     res.json(apiResponse(true, result, 'Conversations retrieved successfully'));
+  }
+
+  static async listReportComments(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) { res.status(400).json({ success: false, error: 'User must be assigned to a school' }); return; }
+    const { classId, subjectId, term, studentId, academicYear } = req.query;
+    const comments = await listReportComments(schoolId, {
+      classId: classId as string | undefined,
+      subjectId: subjectId as string | undefined,
+      term: term ? parseInt(term as string, 10) : undefined,
+      studentId: studentId as string | undefined,
+      academicYear: academicYear ? parseInt(academicYear as string, 10) : undefined,
+    });
+    res.json(apiResponse(true, comments, 'Report comments retrieved'));
+  }
+
+  static async updateReportComment(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) { res.status(400).json({ success: false, error: 'User must be assigned to a school' }); return; }
+    const comment = await updateReportComment(req.params.id as string, schoolId, getUser(req).id, req.body.finalText as string);
+    res.json(apiResponse(true, comment, 'Report comment updated'));
+  }
+
+  static async regenerateReportComment(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) { res.status(400).json({ success: false, error: 'User must be assigned to a school' }); return; }
+    const comment = await regenerateReportComment(req.params.id as string, schoolId, getUser(req).id);
+    res.json(apiResponse(true, comment, 'Report comment regenerated'));
+  }
+
+  static async deleteReportComment(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) { res.status(400).json({ success: false, error: 'User must be assigned to a school' }); return; }
+    await deleteReportComment(req.params.id as string, schoolId);
+    res.json(apiResponse(true, undefined, 'Report comment deleted'));
   }
 }
