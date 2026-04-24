@@ -1,4 +1,4 @@
-import { GradingJob, IGradingJob, AIUsageLog } from './model.js';
+import { GradingJob, IGradingJob } from './model.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
 import { paginationHelper } from '../../common/utils.js';
 import { aiGradingQueue } from '../../jobs/queues.js';
