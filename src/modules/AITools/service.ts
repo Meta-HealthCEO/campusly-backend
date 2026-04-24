@@ -297,9 +297,13 @@ The question must be different from: "${oldQuestion.questionText}"`;
   static async reviewGrade(
     jobId: string,
     schoolId: string,
-    teacherOverride: { finalMark: number; teacherNotes: string },
+    data: {
+      finalMark?: number;
+      teacherNotes: string;
+      criteriaScores?: Array<{ criterion: string; score: number; maxScore: number; feedback?: string }>;
+    },
   ): Promise<IGradingJob> {
-    return reviewGrade(jobId, schoolId, teacherOverride);
+    return reviewGrade(jobId, schoolId, data);
   }
 
   static async publishGrade(

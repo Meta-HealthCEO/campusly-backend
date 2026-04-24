@@ -133,9 +133,17 @@ export interface IAIResult {
   improvements: string[];
 }
 
+export interface ITeacherOverrideCriterionScore {
+  criterion: string;
+  score: number;
+  maxScore: number;
+  feedback?: string;
+}
+
 export interface ITeacherOverride {
   finalMark: number;
   teacherNotes: string;
+  criteriaScores?: ITeacherOverrideCriterionScore[];
 }
 
 export interface IRubricCriterion {
@@ -182,10 +190,21 @@ const aiResultSchema = new Schema<IAIResult>(
   { _id: false },
 );
 
+const teacherOverrideCriterionSchema = new Schema<ITeacherOverrideCriterionScore>(
+  {
+    criterion: { type: String, required: true },
+    score: { type: Number, required: true, min: 0 },
+    maxScore: { type: Number, required: true, min: 0 },
+    feedback: { type: String },
+  },
+  { _id: false },
+);
+
 const teacherOverrideSchema = new Schema<ITeacherOverride>(
   {
     finalMark: { type: Number, required: true },
     teacherNotes: { type: String, default: '' },
+    criteriaScores: { type: [teacherOverrideCriterionSchema], default: undefined },
   },
   { _id: false },
 );

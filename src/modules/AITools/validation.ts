@@ -96,9 +96,18 @@ export type BulkGradeInput = z.infer<typeof bulkGradeSchema>;
 // ─── Review Grade ─────────────────────────────────────────────────────────────
 
 export const reviewGradeSchema = z.object({
-  finalMark: z.number().min(0),
-  teacherNotes: z.string().optional().default(''),
-}).strict();
+  finalMark: z.number().nonnegative().optional(),
+  teacherNotes: z.string().default(''),
+  criteriaScores: z.array(z.object({
+    criterion: z.string().min(1),
+    score: z.number().nonnegative(),
+    maxScore: z.number().positive(),
+    feedback: z.string().optional(),
+  })).optional(),
+}).refine(
+  (data) => data.finalMark !== undefined || (data.criteriaScores && data.criteriaScores.length > 0),
+  { message: 'Either finalMark or criteriaScores is required' },
+);
 
 export type ReviewGradeInput = z.infer<typeof reviewGradeSchema>;
 

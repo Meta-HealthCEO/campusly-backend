@@ -78,7 +78,11 @@ export async function bulkGrade(
 export async function reviewGrade(
   jobId: string,
   schoolId: string,
-  teacherOverride: { finalMark: number; teacherNotes: string },
+  data: {
+    finalMark?: number;
+    teacherNotes: string;
+    criteriaScores?: Array<{ criterion: string; score: number; maxScore: number; feedback?: string }>;
+  },
 ): Promise<IGradingJob> {
   const job = await GradingJob.findOne({ _id: jobId, schoolId, isDeleted: false });
 
@@ -89,13 +93,31 @@ export async function reviewGrade(
   if (!job.aiResult) {
     throw new BadRequestError('Cannot review a job before AI grading completes');
   }
-  if (teacherOverride.finalMark < 0 || teacherOverride.finalMark > job.aiResult.maxMark) {
-    throw new BadRequestError(
-      `Final mark must be between 0 and ${job.aiResult.maxMark}`,
-    );
+
+  let resolvedMark: number;
+  if (data.criteriaScores && data.criteriaScores.length > 0) {
+    for (const c of data.criteriaScores) {
+      if (c.score < 0 || c.score > c.maxScore) {
+        throw new BadRequestError(
+          `Score for "${c.criterion}" must be between 0 and ${c.maxScore}`,
+        );
+      }
+    }
+    resolvedMark = data.criteriaScores.reduce((s, c) => s + c.score, 0);
+  } else if (data.finalMark !== undefined) {
+    if (data.finalMark < 0 || data.finalMark > job.aiResult.maxMark) {
+      throw new BadRequestError(`Final mark must be between 0 and ${job.aiResult.maxMark}`);
+    }
+    resolvedMark = data.finalMark;
+  } else {
+    throw new BadRequestError('Either finalMark or criteriaScores must be provided');
   }
 
-  job.teacherOverride = teacherOverride;
+  job.teacherOverride = {
+    finalMark: resolvedMark,
+    teacherNotes: data.teacherNotes,
+    criteriaScores: data.criteriaScores,
+  } as IGradingJob['teacherOverride'];
   job.status = 'reviewed';
   await job.save();
 
