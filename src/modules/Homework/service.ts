@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { Homework, IHomework, HomeworkSubmission, IHomeworkSubmission } from './model.js';
-import { NotFoundError } from '../../common/errors.js';
+import { NotFoundError, BadRequestError } from '../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../common/constants.js';
 import { escapeRegex } from '../../common/utils.js';
 
@@ -167,6 +167,35 @@ export class HomeworkService {
     feedback: string | undefined,
     gradedBy: string,
   ): Promise<IHomeworkSubmission> {
+    if (mark < 0) {
+      throw new BadRequestError('Mark must be non-negative');
+    }
+
+    // Load submission first to get homeworkId for totalMarks check
+    const existingSubmission = await HomeworkSubmission.findOne({
+      _id: submissionId,
+      schoolId: new mongoose.Types.ObjectId(schoolId),
+      isDeleted: false,
+    }).lean();
+    if (!existingSubmission) {
+      throw new NotFoundError('Submission not found');
+    }
+
+    // Verify mark does not exceed homework totalMarks
+    const parentHomework = await Homework.findOne({
+      _id: existingSubmission.homeworkId,
+      schoolId: new mongoose.Types.ObjectId(schoolId),
+      isDeleted: false,
+    }).lean();
+    if (!parentHomework) {
+      throw new NotFoundError('Parent homework not found');
+    }
+    if (mark > parentHomework.totalMarks) {
+      throw new BadRequestError(
+        `Mark (${mark}) cannot exceed homework total (${parentHomework.totalMarks})`,
+      );
+    }
+
     const submission = await HomeworkSubmission.findOneAndUpdate(
       { _id: submissionId, schoolId, isDeleted: false },
       {
