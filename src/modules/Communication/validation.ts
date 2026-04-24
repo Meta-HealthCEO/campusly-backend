@@ -9,7 +9,7 @@ export const createTemplateSchema = z.object({
   schoolId: objectIdSchema,
   name: z.string().min(3, 'Name must be at least 3 characters').max(100),
   description: z.string().max(500).optional(),
-  type: z.enum(['fee_reminder', 'absence', 'general', 'event', 'emergency']),
+  type: z.enum(['fee_reminder', 'absence', 'general', 'event', 'emergency']).default('general'),
   channel: z.enum(['email', 'sms', 'whatsapp', 'push', 'all']).optional(),
   category: z.enum(['attendance', 'fees', 'academic', 'events', 'general', 'emergency']).optional(),
   subject: z.string().min(1, 'Subject is required'),

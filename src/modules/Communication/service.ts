@@ -119,9 +119,11 @@ export class CommunicationModuleService {
     return template;
   }
 
-  static async deleteTemplate(id: string, schoolId: string): Promise<IMessageTemplate> {
+  static async deleteTemplate(id: string, schoolId: string, createdBy?: string): Promise<IMessageTemplate> {
+    const filter: Record<string, unknown> = { _id: id, schoolId, isDeleted: false };
+    if (createdBy) filter.createdBy = new mongoose.Types.ObjectId(createdBy);
     const template = await MessageTemplate.findOneAndUpdate(
-      { _id: id, schoolId, isDeleted: false },
+      filter,
       { $set: { isDeleted: true } },
       { new: true },
     );

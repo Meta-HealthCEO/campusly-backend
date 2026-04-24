@@ -46,7 +46,7 @@ router.post(
 router.post(
   '/templates',
   authenticate,
-  authorize('school_admin', 'super_admin'),
+  authorize('school_admin', 'super_admin', 'teacher'),
   validate(createTemplateSchema),
   CommunicationController.createTemplate,
 );
@@ -54,14 +54,14 @@ router.post(
 router.get(
   '/templates',
   authenticate,
-  authorize('school_admin', 'super_admin'),
+  authorize('school_admin', 'super_admin', 'teacher'),
   CommunicationController.listTemplates,
 );
 
 router.get(
   '/templates/:id',
   authenticate,
-  authorize('school_admin', 'super_admin'),
+  authorize('school_admin', 'super_admin', 'teacher'),
   CommunicationController.getTemplate,
 );
 
@@ -76,7 +76,7 @@ router.put(
 router.delete(
   '/templates/:id',
   authenticate,
-  authorize('school_admin', 'super_admin'),
+  authorize('school_admin', 'super_admin', 'teacher'),
   CommunicationController.deleteTemplate,
 );
 

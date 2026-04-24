@@ -41,8 +41,11 @@ export class CommunicationController {
   }
 
   static async deleteTemplate(req: Request, res: Response): Promise<void> {
-    const schoolId = getUser(req).schoolId!;
-    await CommunicationModuleService.deleteTemplate(req.params.id as string, schoolId);
+    const user = getUser(req);
+    const schoolId = user.schoolId!;
+    // Teachers can only delete templates they created
+    const createdBy = user.role === 'teacher' ? user.id : undefined;
+    await CommunicationModuleService.deleteTemplate(req.params.id as string, schoolId, createdBy);
     res.json(apiResponse(true, undefined, 'Template deleted successfully'));
   }
 
