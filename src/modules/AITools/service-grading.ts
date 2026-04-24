@@ -163,7 +163,10 @@ export async function getGradingJobs(
 
   if (filters.assignmentId) query.assignmentId = filters.assignmentId;
   if (filters.studentId) query.studentId = filters.studentId;
-  if (filters.status) query.status = filters.status;
+  if (filters.status) {
+    const statuses = filters.status.split(',').map((s) => s.trim()).filter(Boolean);
+    query.status = statuses.length === 1 ? statuses[0] : { $in: statuses };
+  }
 
   const [jobs, total] = await Promise.all([
     GradingJob.find(query)

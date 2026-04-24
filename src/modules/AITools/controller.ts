@@ -115,6 +115,26 @@ export class AIToolsController {
     res.status(201).json(apiResponse(true, jobs, `${jobs.length} grading jobs queued`));
   }
 
+  static async listGradingJobs(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
+    const { assignmentId, studentId, status, page, limit } = req.query;
+    const result = await AIToolsService.getGradingJobs(
+      schoolId,
+      {
+        assignmentId: assignmentId as string | undefined,
+        studentId: studentId as string | undefined,
+        status: status as string | undefined,
+      },
+      page ? parseInt(page as string, 10) : undefined,
+      limit ? parseInt(limit as string, 10) : undefined,
+    );
+    res.json(apiResponse(true, result, 'Grading jobs retrieved'));
+  }
+
   static async getGradingJob(req: Request, res: Response): Promise<void> {
     const schoolId = req.user?.schoolId;
     if (!schoolId) {

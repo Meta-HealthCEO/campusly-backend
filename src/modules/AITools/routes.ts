@@ -144,6 +144,14 @@ router.post(
   AIToolsController.bulkGrade,
 );
 
+// GET /grade — list grading jobs
+router.get(
+  '/grade',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  AIToolsController.listGradingJobs,
+);
+
 // GET /grade/:jobId — get grading job detail
 router.get(
   '/grade/:jobId',
