@@ -32,21 +32,25 @@ function getClient(): Anthropic {
   return new Anthropic({ apiKey: ANTHROPIC_API_KEY });
 }
 
-async function callWithRetry(
-  fn: () => Promise<Anthropic.Message>,
-): Promise<Anthropic.Message> {
-  try {
-    return await fn();
-  } catch (error: unknown) {
-    const status =
-      error instanceof Anthropic.APIError ? error.status : undefined;
-    const retryableStatuses = [429, 500, 502, 503, 504];
-    if (status && retryableStatuses.includes(status)) {
-      logger.warn(`[AIService] Retrying after status ${status}...`);
+async function callWithRetry<T>(
+  fn: () => Promise<T>,
+  maxAttempts = 3,
+): Promise<T> {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
       return await fn();
+    } catch (err: unknown) {
+      lastError = err;
+      const status = (err as { status?: number })?.status;
+      const retryable = status === 429 || (status !== undefined && status >= 500 && status < 600);
+      if (!retryable || attempt === maxAttempts) throw err;
+      const backoffMs = 1000 * Math.pow(2, attempt - 1); // 1s, 2s, 4s
+      logger.warn(`[AIService] Retrying after status ${status} (attempt ${attempt}/${maxAttempts}, backoff ${backoffMs}ms)...`);
+      await new Promise((resolve) => setTimeout(resolve, backoffMs));
     }
-    throw error;
   }
+  throw lastError;
 }
 
 export class AIService {
