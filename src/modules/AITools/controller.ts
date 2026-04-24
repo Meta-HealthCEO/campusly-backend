@@ -140,8 +140,19 @@ export class AIToolsController {
       res.status(400).json({ success: false, error: 'User must be assigned to a school' });
       return;
     }
-    const job = await AIToolsService.publishGrade(req.params.jobId as string, schoolId);
-    res.json(apiResponse(true, job, 'Grade published successfully'));
+    const { assessmentId, comment } = req.body as { assessmentId: string; comment?: string };
+    const job = await AIToolsService.publishGrade(req.params.jobId as string, schoolId, assessmentId, comment);
+    res.json(apiResponse(true, job, 'Grade published to gradebook'));
+  }
+
+  static async retryGrade(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
+    const job = await AIToolsService.retryGrade(req.params.jobId as string, schoolId);
+    res.json(apiResponse(true, job, 'Grade re-queued'));
   }
 
   static async markPaper(req: Request, res: Response): Promise<void> {

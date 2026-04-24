@@ -2,6 +2,7 @@ import { GradingJob, IGradingJob, AIUsageLog } from './model.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
 import { paginationHelper } from '../../common/utils.js';
 import { aiGradingQueue } from '../../jobs/queues.js';
+import { publishMarkToGradebook } from '../Academic/service-gradebook-publish.js';
 
 interface GradingFilters {
   assignmentId?: string;
@@ -83,6 +84,14 @@ export async function reviewGrade(
   if (job.status !== 'completed') {
     throw new BadRequestError('Can only review completed grading jobs');
   }
+  if (!job.aiResult) {
+    throw new BadRequestError('Cannot review a job before AI grading completes');
+  }
+  if (teacherOverride.finalMark < 0 || teacherOverride.finalMark > job.aiResult.maxMark) {
+    throw new BadRequestError(
+      `Final mark must be between 0 and ${job.aiResult.maxMark}`,
+    );
+  }
 
   job.teacherOverride = teacherOverride;
   job.status = 'reviewed';
@@ -91,7 +100,12 @@ export async function reviewGrade(
   return job;
 }
 
-export async function publishGrade(jobId: string, schoolId: string): Promise<IGradingJob> {
+export async function publishGrade(
+  jobId: string,
+  schoolId: string,
+  assessmentId: string,
+  comment?: string,
+): Promise<IGradingJob> {
   const job = await GradingJob.findOne({ _id: jobId, schoolId, isDeleted: false });
 
   if (!job) throw new NotFoundError('Grading job not found');
@@ -99,9 +113,41 @@ export async function publishGrade(jobId: string, schoolId: string): Promise<IGr
     throw new BadRequestError('Can only publish completed or reviewed grading jobs');
   }
 
+  const resolvedMark =
+    job.teacherOverride?.finalMark ??
+    job.aiResult?.totalMark ??
+    0;
+
+  await publishMarkToGradebook({
+    schoolId,
+    assessmentId,
+    studentId: job.studentId.toString(),
+    mark: resolvedMark,
+    comment: comment ?? job.teacherOverride?.teacherNotes,
+  });
+
   job.status = 'published';
   await job.save();
+  return job;
+}
 
+export async function retryGrade(jobId: string, schoolId: string): Promise<IGradingJob> {
+  const job = await GradingJob.findOne({ _id: jobId, schoolId, isDeleted: false });
+
+  if (!job) throw new NotFoundError('Grading job not found');
+  if (
+    job.status === 'completed' ||
+    job.status === 'reviewed' ||
+    job.status === 'published'
+  ) {
+    throw new BadRequestError('Only queued or grading jobs can be retried');
+  }
+
+  job.status = 'queued';
+  job.aiResult = undefined;
+  await job.save();
+
+  await aiGradingQueue.add('grade-submission', { jobId: job._id.toString() });
   return job;
 }
 

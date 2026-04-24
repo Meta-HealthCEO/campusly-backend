@@ -10,7 +10,7 @@ import {
   gradeSubmissionSchema,
   bulkGradeSchema,
   reviewGradeSchema,
-  publishGradeParamsSchema,
+  publishGradeSchema,
   markPaperSchema,
   updateMarkingSchema,
 } from './validation.js';
@@ -151,13 +151,21 @@ router.post(
   AIToolsController.reviewGrade,
 );
 
-// POST /grade/:jobId/publish — publish grade to student
+// POST /grade/:jobId/publish — publish grade to gradebook
 router.post(
   '/grade/:jobId/publish',
   authenticate,
   authorize('teacher', 'school_admin', 'super_admin'),
-  validate({ params: publishGradeParamsSchema }),
+  validate(publishGradeSchema),
   AIToolsController.publishGrade,
+);
+
+// POST /grade/:jobId/retry — re-queue a failed/stuck grading job
+router.post(
+  '/grade/:jobId/retry',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  AIToolsController.retryGrade,
 );
 
 // ─── Usage Stats ──────────────────────────────────────────────────────────────

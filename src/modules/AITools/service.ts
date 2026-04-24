@@ -16,6 +16,7 @@ import {
   bulkGrade,
   reviewGrade,
   publishGrade,
+  retryGrade,
   getGradingJobs,
   getGradingJobById,
 } from './service-grading.js';
@@ -278,8 +279,17 @@ The question must be different from: "${oldQuestion.questionText}"`;
     return reviewGrade(jobId, schoolId, teacherOverride);
   }
 
-  static async publishGrade(jobId: string, schoolId: string): Promise<IGradingJob> {
-    return publishGrade(jobId, schoolId);
+  static async publishGrade(
+    jobId: string,
+    schoolId: string,
+    assessmentId: string,
+    comment?: string,
+  ): Promise<IGradingJob> {
+    return publishGrade(jobId, schoolId, assessmentId, comment);
+  }
+
+  static async retryGrade(jobId: string, schoolId: string): Promise<IGradingJob> {
+    return retryGrade(jobId, schoolId);
   }
 
   static async markPaperFromImages(

@@ -136,8 +136,12 @@ export const updateMarkingSchema = z.object({
   }),
 });
 
-// ─── Publish Grade (params only) ─────────────────────────────────────────────
+// ─── Publish Grade ───────────────────────────────────────────────────────────
 
-export const publishGradeParamsSchema = z.object({
-  jobId: objectIdSchema,
-}).strict();
+export const publishGradeSchema = z.object({
+  params: z.object({ jobId: z.string().min(1) }),
+  body: z.object({
+    assessmentId: z.string().min(1),
+    comment: z.string().optional(),
+  }),
+});
