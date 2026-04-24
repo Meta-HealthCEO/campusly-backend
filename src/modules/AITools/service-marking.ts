@@ -1,13 +1,22 @@
+// src/modules/AITools/service-marking.ts
+import mongoose from 'mongoose';
+import { PaperMarking } from './model-marking.js';
 import { GeneratedPaper } from './model.js';
 import { AssessmentPaper, Question } from '../QuestionBank/model.js';
 import { AIService } from '../../services/ai.service.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
-import { AIUsageLog } from './model.js';
+import { MarkingResponseSchema } from './validation-marking.js';
 
-const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
+export interface MarkPapersPayload {
+  paperId: string;
+  studentName: string;
+  studentId?: string;
+  images: string[];
+  imageTypes: Array<'image/jpeg' | 'image/png' | 'image/webp'>;
+}
 
-interface MarkPaperQuestionResult {
-  questionNumber: number;
+export interface MarkPaperQuestionResult {
+  questionNumber: string;
   studentAnswer: string;
   correctAnswer: string;
   marksAwarded: number;
@@ -16,166 +25,239 @@ interface MarkPaperQuestionResult {
 }
 
 export interface MarkPaperResult {
+  id: string;
   studentName: string;
   totalMarks: number;
   maxMarks: number;
   percentage: number;
   questions: MarkPaperQuestionResult[];
+  extractedHeader: string | null;
+  paperMismatch: boolean;
+  mismatchReason: string | null;
+  status: 'processing' | 'completed' | 'needs_review' | 'failed' | 'published';
 }
 
-interface MemoQuestion {
-  questionNumber: number;
-  questionText: string;
-  marks: number;
-  modelAnswer: string;
-  markingGuideline: string;
-}
-
-interface MarkPaperFromImageData {
-  paperId: string;
-  studentName: string;
-  image: string;
-  imageType: 'image/jpeg' | 'image/png' | 'image/webp';
-}
-
-export async function markPaperFromImage(
+export async function markPaperFromImages(
   teacherId: string,
   schoolId: string,
-  data: MarkPaperFromImageData,
+  payload: MarkPapersPayload,
 ): Promise<MarkPaperResult> {
-  const memoQuestions: MemoQuestion[] = [];
-  let paperTitle = '';
-  let paperMaxMarks = 0;
+  if (payload.images.length === 0) {
+    throw new BadRequestError('At least one image is required.');
+  }
+  if (payload.images.length !== payload.imageTypes.length) {
+    throw new BadRequestError('images and imageTypes arrays must have the same length.');
+  }
 
-  const generatedPaper = await GeneratedPaper.findOne({
-    _id: data.paperId,
-    schoolId,
-    isDeleted: false,
+  const paperInfo = await loadPaperInfo(payload.paperId, schoolId);
+  if (!paperInfo) throw new NotFoundError('Paper not found');
+
+  const marking = await PaperMarking.create({
+    paperId: new mongoose.Types.ObjectId(payload.paperId),
+    paperType: paperInfo.kind,
+    studentId: payload.studentId ? new mongoose.Types.ObjectId(payload.studentId) : undefined,
+    studentName: payload.studentName,
+    teacherId: new mongoose.Types.ObjectId(teacherId),
+    schoolId: new mongoose.Types.ObjectId(schoolId),
+    imageCount: payload.images.length,
+    totalMarks: 0,
+    maxMarks: paperInfo.totalMarks,
+    percentage: 0,
+    questions: [],
+    status: 'processing',
   });
 
-  if (generatedPaper) {
-    paperTitle = `${generatedPaper.subject} - Grade ${generatedPaper.grade} - ${generatedPaper.topic}`;
-    paperMaxMarks = generatedPaper.totalMarks;
-    for (const section of generatedPaper.sections) {
-      for (const q of section.questions) {
-        memoQuestions.push({
-          questionNumber: q.questionNumber,
-          questionText: q.questionText,
-          marks: q.marks,
-          modelAnswer: q.modelAnswer,
-          markingGuideline: q.markingGuideline,
-        });
-      }
-    }
-  } else {
-    const assessmentPaper = await AssessmentPaper.findOne({
-      _id: data.paperId,
-      schoolId,
-      isDeleted: false,
-    });
+  try {
+    const { systemPrompt, userPrompt } = buildPrompts(paperInfo);
 
-    if (!assessmentPaper) {
-      throw new NotFoundError('Paper not found');
-    }
-
-    paperTitle = assessmentPaper.title;
-    paperMaxMarks = assessmentPaper.totalMarks;
-
-    const questionIds = assessmentPaper.sections.flatMap(
-      (s) => s.questions.map((q) => q.questionId),
+    const { text } = await AIService.generateVisionCompletionWithImages(
+      systemPrompt,
+      userPrompt,
+      payload.images.map((b, i) => ({ base64: b, mediaType: payload.imageTypes[i] })),
+      { maxTokens: 4096, temperature: 0.2 },
     );
 
-    const questions = await Question.find({
-      _id: { $in: questionIds },
-      isDeleted: false,
-    });
+    const cleaned = text
+      .replace(/^```(?:json)?\s*/i, '')
+      .replace(/\s*```$/i, '')
+      .trim();
 
-    const questionMap = new Map(
-      questions.map((q) => [String(q._id), q]),
-    );
+    let raw: unknown;
+    try {
+      raw = JSON.parse(cleaned);
+    } catch {
+      throw new BadRequestError('AI returned non-JSON output. Please try again.');
+    }
 
-    for (const section of assessmentPaper.sections) {
-      for (const pq of section.questions) {
-        const question = questionMap.get(String(pq.questionId));
-        if (question) {
-          memoQuestions.push({
-            questionNumber: parseInt(pq.questionNumber, 10) || memoQuestions.length + 1,
-            questionText: question.stem,
-            marks: pq.marks,
-            modelAnswer: question.answer,
-            markingGuideline: question.markingRubric,
-          });
-        }
+    const validation = MarkingResponseSchema.safeParse(raw);
+    if (!validation.success) {
+      const issue = validation.error.issues[0];
+      const where = issue?.path.join('.') || '(root)';
+      throw new BadRequestError(
+        `AI response did not match expected structure at "${where}": ${issue?.message ?? 'unknown'}.`,
+      );
+    }
+    const validated = validation.data;
+
+    const terminalStatus = validated.paperMismatch ? 'needs_review' : 'completed';
+
+    marking.totalMarks = validated.totalMarks;
+    marking.maxMarks = validated.maxMarks || paperInfo.totalMarks;
+    marking.percentage = validated.percentage;
+    marking.questions = validated.questions.map((q) => ({
+      questionNumber: String(q.questionNumber),
+      studentAnswer: q.studentAnswer,
+      correctAnswer: q.correctAnswer,
+      marksAwarded: q.marksAwarded,
+      maxMarks: q.maxMarks,
+      feedback: q.feedback,
+    }));
+    marking.extractedHeader = validated.extractedHeader || null;
+    marking.paperMismatch = validated.paperMismatch;
+    marking.mismatchReason = validated.mismatchReason || null;
+    marking.aiRawResult = validated as unknown as Record<string, unknown>;
+    marking.status = terminalStatus;
+    await marking.save();
+
+    return toResult(marking);
+  } catch (err: unknown) {
+    marking.status = 'failed';
+    marking.errorMessage = err instanceof Error ? err.message : 'Unknown error';
+    try { await marking.save(); } catch { /* never throw from cleanup */ }
+    throw err;
+  }
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────
+
+interface PaperInfo {
+  kind: 'generated' | 'assessment';
+  subject: string;
+  grade: string;
+  topic: string;
+  totalMarks: number;
+  memoLines: string[];
+}
+
+async function loadPaperInfo(paperId: string, schoolId: string): Promise<PaperInfo | null> {
+  const oid = new mongoose.Types.ObjectId(paperId);
+  const soid = new mongoose.Types.ObjectId(schoolId);
+
+  const gen = await GeneratedPaper.findOne({ _id: oid, schoolId: soid, isDeleted: false }).lean();
+  if (gen) {
+    const memoLines: string[] = [];
+    for (const sec of gen.sections ?? []) {
+      for (const q of sec.questions ?? []) {
+        memoLines.push(
+          `Question ${q.questionNumber} (${q.marks} marks):\n  Question: ${q.questionText}\n  Correct Answer: ${q.modelAnswer}\n  Marking Guideline: ${q.markingGuideline}`,
+        );
       }
     }
+    return {
+      kind: 'generated',
+      subject: gen.subject,
+      grade: String(gen.grade),
+      topic: gen.topic,
+      totalMarks: gen.totalMarks,
+      memoLines,
+    };
   }
 
-  if (memoQuestions.length === 0) {
-    throw new BadRequestError('Paper has no questions to mark against');
+  const asm = await AssessmentPaper.findOne({ _id: oid, schoolId: soid, isDeleted: false })
+    .populate([{ path: 'subjectId', select: 'name' }, { path: 'gradeId', select: 'name level' }])
+    .lean();
+  if (asm) {
+    const qIds: mongoose.Types.ObjectId[] = [];
+    for (const sec of asm.sections ?? []) {
+      for (const pq of sec.questions ?? []) {
+        qIds.push(pq.questionId as mongoose.Types.ObjectId);
+      }
+    }
+    const qDocs = await Question.find({ _id: { $in: qIds }, schoolId: soid, isDeleted: false }).lean();
+    const qMap = new Map(qDocs.map((q) => [q._id.toString(), q]));
+    const memoLines: string[] = [];
+    for (const sec of asm.sections ?? []) {
+      for (const pq of sec.questions ?? []) {
+        const q = qMap.get(pq.questionId.toString());
+        if (!q) continue;
+        memoLines.push(
+          `Question ${pq.questionNumber} (${pq.marks} marks):\n  Question: ${q.stem}\n  Correct Answer: ${q.answer ?? ''}\n  Marking Guideline: ${q.markingRubric ?? ''}`,
+        );
+      }
+    }
+    const subj = (asm.subjectId as { name?: string } | undefined)?.name ?? '';
+    const gr = (asm.gradeId as { name?: string } | undefined)?.name ?? '';
+    return {
+      kind: 'assessment',
+      subject: subj,
+      grade: gr,
+      topic: asm.title ?? '',
+      totalMarks: asm.totalMarks ?? 0,
+      memoLines,
+    };
   }
 
-  const memoText = memoQuestions
-    .map(
-      (q: MemoQuestion) =>
-        `Question ${q.questionNumber} (${q.marks} marks):\n` +
-        `  Question: ${q.questionText}\n` +
-        `  Correct Answer: ${q.modelAnswer}\n` +
-        `  Marking Guideline: ${q.markingGuideline}`,
-    )
-    .join('\n\n');
+  return null;
+}
 
-  const systemPrompt = `You are marking a South African school test paper. You will be shown a photograph of a student's handwritten answers. Compare each answer against the memo provided. Award marks according to the marking guideline. For partial answers, award partial marks where appropriate. Be fair but accurate.
+function buildPrompts(paper: PaperInfo): { systemPrompt: string; userPrompt: string } {
+  const systemPrompt = `You are marking a South African school test paper. You will be shown photographs of a student's handwritten answers (one or more pages). Compare each answer against the memo provided. Award marks according to the marking guideline. For partial answers, award partial marks where appropriate. Be fair but accurate.
+
+FIRST: Read the paper header/title from page 1. Compare it against the expected paper metadata in the user message. If the photographed paper is clearly different from the expected paper (different subject, grade, or title), set "paperMismatch": true and explain in "mismatchReason". Otherwise set "paperMismatch": false.
 
 Return ONLY valid JSON with this exact structure:
 {
-  "studentName": "${data.studentName}",
-  "totalMarks": <number>,
-  "maxMarks": ${paperMaxMarks},
-  "percentage": <number>,
+  "studentName": "...",
+  "extractedHeader": "<the subject/grade/topic text you read from page 1>",
+  "paperMismatch": false,
+  "mismatchReason": "",
+  "totalMarks": 0,
+  "maxMarks": 0,
+  "percentage": 0,
   "questions": [
-    {
-      "questionNumber": <number>,
-      "studentAnswer": "<what you read from the handwriting>",
-      "correctAnswer": "<from the memo>",
-      "marksAwarded": <number>,
-      "maxMarks": <number>,
-      "feedback": "<brief explanation of marks awarded>"
-    }
+    { "questionNumber": "1", "studentAnswer": "...", "correctAnswer": "...", "marksAwarded": 0, "maxMarks": 0, "feedback": "..." }
   ]
 }
 
-Important:
-- Read the handwriting carefully. If you cannot read a word, indicate [illegible].
+Rules:
+- Read the handwriting carefully. If a word is illegible, include "[illegible]" in studentAnswer.
 - Match each visible answer to the corresponding question number.
-- If a question appears unanswered, award 0 marks and note "No answer provided".
-- The percentage should be calculated as (totalMarks / maxMarks * 100), rounded to 1 decimal.
+- If a question appears unanswered, award 0 and set feedback "No answer provided".
+- percentage = totalMarks / maxMarks * 100 rounded to 1 decimal.
 - Return ONLY JSON. No markdown fences, no explanation.`;
 
-  const userPrompt = `Paper: ${paperTitle}\nTotal Marks: ${paperMaxMarks}\n\nMEMORANDUM:\n${memoText}\n\nPlease read the student's handwritten answers from the attached image and grade them against this memo.`;
+  const userPrompt = `Expected paper metadata:
+- Subject: ${paper.subject}
+- Grade: ${paper.grade}
+- Topic/Title: ${paper.topic}
+- Total Marks: ${paper.totalMarks}
 
-  const { text, usage } = await AIService.generateVisionCompletion(
-    systemPrompt,
-    userPrompt,
-    data.image,
-    data.imageType,
-    { maxTokens: 4096, temperature: 0.2 },
-  );
+MEMORANDUM:
+${paper.memoLines.join('\n\n')}
 
-  await AIUsageLog.create({
-    schoolId,
-    teacherId,
-    type: 'paper_marking',
-    tokensUsed: { input: usage.input_tokens, output: usage.output_tokens },
-    aiModel: ANTHROPIC_MODEL,
-  });
+Please read the student's handwritten answers from the attached images and grade them against this memo.`;
 
-  const cleaned = text
-    .replace(/^```(?:json)?\s*/i, '')
-    .replace(/\s*```$/i, '')
-    .trim();
+  return { systemPrompt, userPrompt };
+}
 
-  const result = JSON.parse(cleaned) as MarkPaperResult;
-  result.studentName = data.studentName;
-
-  return result;
+function toResult(marking: InstanceType<typeof PaperMarking>): MarkPaperResult {
+  return {
+    id: marking._id.toString(),
+    studentName: marking.studentName,
+    totalMarks: marking.totalMarks,
+    maxMarks: marking.maxMarks,
+    percentage: marking.percentage,
+    questions: marking.questions.map((q) => ({
+      questionNumber: q.questionNumber,
+      studentAnswer: q.studentAnswer,
+      correctAnswer: q.correctAnswer,
+      marksAwarded: q.marksAwarded,
+      maxMarks: q.maxMarks,
+      feedback: q.feedback,
+    })),
+    extractedHeader: marking.extractedHeader,
+    paperMismatch: marking.paperMismatch,
+    mismatchReason: marking.mismatchReason,
+    status: marking.status,
+  };
 }

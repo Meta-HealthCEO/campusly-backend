@@ -130,6 +130,7 @@ export class AIService {
     return { data: JSON.parse(cleaned) as T, usage };
   }
 
+  /** Single-image convenience wrapper — delegates to generateVisionCompletionWithImages. */
   static async generateVisionCompletion(
     systemPrompt: string,
     userText: string,
@@ -137,12 +138,40 @@ export class AIService {
     imageMediaType: 'image/jpeg' | 'image/png' | 'image/webp',
     options?: { maxTokens?: number; temperature?: number },
   ): Promise<{ text: string; usage: { input_tokens: number; output_tokens: number } }> {
+    return this.generateVisionCompletionWithImages(
+      systemPrompt,
+      userText,
+      [{ base64: imageBase64, mediaType: imageMediaType }],
+      options,
+    );
+  }
+
+  static async generateVisionCompletionWithImages(
+    systemPrompt: string,
+    userText: string,
+    images: Array<{ base64: string; mediaType: 'image/jpeg' | 'image/png' | 'image/webp' }>,
+    options?: { maxTokens?: number; temperature?: number },
+  ): Promise<{ text: string; usage: { input_tokens: number; output_tokens: number } }> {
     await acquireSemaphore();
     try {
       const client = getClient();
 
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS * 2); // longer timeout for vision
+      const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS * 2);
+
+      const content: Anthropic.MessageParam['content'] = [
+        ...images.map(
+          (img): Anthropic.ImageBlockParam => ({
+            type: 'image',
+            source: {
+              type: 'base64',
+              media_type: img.mediaType,
+              data: img.base64,
+            },
+          }),
+        ),
+        { type: 'text', text: userText },
+      ];
 
       const message = await callWithRetry(() =>
         client.messages.create(
@@ -151,25 +180,7 @@ export class AIService {
             max_tokens: options?.maxTokens ?? 4096,
             temperature: options?.temperature ?? 0.3,
             system: systemPrompt,
-            messages: [
-              {
-                role: 'user',
-                content: [
-                  {
-                    type: 'image',
-                    source: {
-                      type: 'base64',
-                      media_type: imageMediaType,
-                      data: imageBase64,
-                    },
-                  },
-                  {
-                    type: 'text',
-                    text: userText,
-                  },
-                ],
-              },
-            ],
+            messages: [{ role: 'user', content }],
           },
           { signal: controller.signal },
         ),
@@ -180,7 +191,7 @@ export class AIService {
       const inputTokens = message.usage?.input_tokens ?? 0;
       const outputTokens = message.usage?.output_tokens ?? 0;
       logger.info(
-        `[AIService] Vision tokens — input: ${inputTokens}, output: ${outputTokens}`,
+        `[AIService] Vision (multi-image) tokens — input: ${inputTokens}, output: ${outputTokens}`,
       );
 
       const textBlock = message.content.find((b) => b.type === 'text');
