@@ -75,7 +75,12 @@ export class HomeworkController {
   }
 
   static async getSubmissions(req: Request, res: Response): Promise<void> {
-    const submissions = await HomeworkService.getSubmissions(req.params.id as string);
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
+    const submissions = await HomeworkService.getSubmissions(req.params.id as string, schoolId);
     res.json(apiResponse(true, submissions, 'Submissions retrieved successfully'));
   }
 
@@ -87,7 +92,15 @@ export class HomeworkController {
   }
 
   static async getStudentSubmissions(req: Request, res: Response): Promise<void> {
-    const submissions = await HomeworkService.getStudentSubmissions(req.params.studentId as string);
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
+    const submissions = await HomeworkService.getStudentSubmissions(
+      req.params.studentId as string,
+      schoolId,
+    );
     res.json(apiResponse(true, submissions, 'Student submissions retrieved successfully'));
   }
 }

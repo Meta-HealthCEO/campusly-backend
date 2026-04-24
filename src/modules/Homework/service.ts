@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { Homework, IHomework, HomeworkSubmission, IHomeworkSubmission } from './model.js';
 import { NotFoundError } from '../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../common/constants.js';
@@ -191,8 +192,23 @@ export class HomeworkService {
     return submission;
   }
 
-  static async getSubmissions(homeworkId: string): Promise<IHomeworkSubmission[]> {
-    return HomeworkSubmission.find({ homeworkId, isDeleted: false })
+  static async getSubmissions(homeworkId: string, schoolId: string): Promise<IHomeworkSubmission[]> {
+    // Verify the homework belongs to this school — 404 regardless of reason to avoid
+    // revealing cross-tenant existence.
+    const homework = await Homework.findOne({
+      _id: homeworkId,
+      schoolId: new mongoose.Types.ObjectId(schoolId),
+      isDeleted: false,
+    }).lean();
+    if (!homework) {
+      throw new NotFoundError('Homework not found');
+    }
+
+    return HomeworkSubmission.find({
+      homeworkId: new mongoose.Types.ObjectId(homeworkId),
+      schoolId: new mongoose.Types.ObjectId(schoolId),
+      isDeleted: false,
+    })
       .populate({
         path: 'studentId',
         populate: { path: 'userId', select: 'firstName lastName email' },
@@ -251,8 +267,12 @@ export class HomeworkService {
     }));
   }
 
-  static async getStudentSubmissions(studentId: string): Promise<IHomeworkSubmission[]> {
-    return HomeworkSubmission.find({ studentId, isDeleted: false })
+  static async getStudentSubmissions(studentId: string, schoolId: string): Promise<IHomeworkSubmission[]> {
+    return HomeworkSubmission.find({
+      studentId: new mongoose.Types.ObjectId(studentId),
+      schoolId: new mongoose.Types.ObjectId(schoolId),
+      isDeleted: false,
+    })
       .populate({
         path: 'homeworkId',
         populate: [
