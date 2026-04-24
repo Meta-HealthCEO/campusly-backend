@@ -3,6 +3,12 @@ import { AttendanceStatus } from '../../common/enums.js';
 
 export type { AttendanceStatus };
 
+export interface IAttendanceEditHistoryEntry {
+  at: Date;
+  by: Types.ObjectId;
+  prevStatus: string;
+}
+
 export interface IAttendance extends Document {
   studentId: Types.ObjectId;
   schoolId: Types.ObjectId;
@@ -17,6 +23,9 @@ export interface IAttendance extends Document {
   verifiedByParent: boolean;
   arrivalTime?: string;
   departureTime?: string;
+  lastModifiedBy?: Types.ObjectId;
+  lastModifiedAt?: Date;
+  editHistory: IAttendanceEditHistoryEntry[];
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -76,6 +85,23 @@ const attendanceSchema = new Schema<IAttendance>(
     },
     departureTime: {
       type: String,
+    },
+    lastModifiedBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    lastModifiedAt: {
+      type: Date,
+    },
+    editHistory: {
+      type: [
+        {
+          at: { type: Date, required: true },
+          by: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+          prevStatus: { type: String, required: true },
+        },
+      ],
+      default: [],
     },
     isDeleted: {
       type: Boolean,

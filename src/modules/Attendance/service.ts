@@ -1,4 +1,4 @@
-import mongoose, { AnyBulkWriteOperation } from 'mongoose';
+import mongoose from 'mongoose';
 import { Attendance, IAttendance, AttendanceStatus } from './model.js';
 import { AttendanceStatsService } from './service-stats.js';
 
@@ -43,28 +43,41 @@ export class AttendanceService {
     },
     recordedBy: string,
   ): Promise<IAttendance> {
-    const attendance = await Attendance.findOneAndUpdate(
-      {
-        studentId: data.studentId,
-        schoolId: data.schoolId,
-        date: new Date(data.date),
-        period: data.period,
-      },
-      {
-        $set: {
-          studentId: data.studentId,
-          classId: data.classId,
-          schoolId: data.schoolId,
-          date: new Date(data.date),
-          period: data.period,
-          status: data.status,
-          recordedBy,
-          notes: data.notes,
-          isDeleted: false,
-        },
-      },
-      { upsert: true, new: true, runValidators: true },
-    );
+    const recordedByOid = new mongoose.Types.ObjectId(recordedBy);
+    const existing = await Attendance.findOne({
+      studentId: data.studentId,
+      schoolId: data.schoolId,
+      date: new Date(data.date),
+      period: data.period,
+      isDeleted: false,
+    });
+
+    if (existing) {
+      if (existing.status !== data.status) {
+        existing.editHistory.push({ at: new Date(), by: recordedByOid, prevStatus: existing.status });
+      }
+      existing.status = data.status;
+      existing.classId = new mongoose.Types.ObjectId(data.classId);
+      existing.notes = data.notes ?? existing.notes;
+      existing.lastModifiedBy = recordedByOid;
+      existing.lastModifiedAt = new Date();
+      await existing.save();
+      return existing;
+    }
+
+    const attendance = await Attendance.create({
+      studentId: data.studentId,
+      classId: data.classId,
+      schoolId: data.schoolId,
+      date: new Date(data.date),
+      period: data.period,
+      status: data.status,
+      recordedBy,
+      notes: data.notes,
+      lastModifiedBy: recordedByOid,
+      lastModifiedAt: new Date(),
+      isDeleted: false,
+    });
 
     return attendance;
   }
@@ -73,50 +86,60 @@ export class AttendanceService {
     data: {
       classId: string;
       schoolId: string;
-      date: string;
+      date: string | Date;
       period: number;
       records: Array<{ studentId: string; status: AttendanceStatus; notes?: string }>;
     },
     recordedBy: string,
-  ): Promise<IAttendance[]> {
-    const operations: AnyBulkWriteOperation<IAttendance>[] = data.records.map((record) => {
-      const setFields: Record<string, unknown> = {
-        studentId: record.studentId,
-        classId: data.classId,
-        schoolId: data.schoolId,
-        date: new Date(data.date),
-        period: data.period,
-        status: record.status,
-        recordedBy,
-        isDeleted: false,
-      };
+  ): Promise<{ saved: Array<{ studentId: string; status: string }>; failed: Array<{ studentId: string; error: string }> }> {
+    const teacherOid = new mongoose.Types.ObjectId(recordedBy);
+    const dateObj = data.date instanceof Date ? data.date : new Date(data.date);
+    const saved: Array<{ studentId: string; status: string }> = [];
+    const failed: Array<{ studentId: string; error: string }> = [];
 
-      if (record.notes !== undefined) {
-        setFields.notes = record.notes;
-      }
+    for (const record of data.records) {
+      try {
+        const existing = await Attendance.findOne({
+          studentId: record.studentId,
+          schoolId: data.schoolId,
+          classId: data.classId,
+          date: dateObj,
+          period: data.period,
+          isDeleted: false,
+        });
 
-      return {
-        updateOne: {
-          filter: {
+        if (existing) {
+          if (existing.status !== record.status) {
+            existing.editHistory.push({ at: new Date(), by: teacherOid, prevStatus: existing.status });
+          }
+          existing.status = record.status;
+          existing.lastModifiedBy = teacherOid;
+          existing.lastModifiedAt = new Date();
+          if (record.notes !== undefined) existing.notes = record.notes;
+          await existing.save();
+        } else {
+          await Attendance.create({
             studentId: record.studentId,
+            classId: data.classId,
             schoolId: data.schoolId,
-            date: new Date(data.date),
+            date: dateObj,
             period: data.period,
-          },
-          update: { $set: setFields },
-          upsert: true,
-        },
-      };
-    });
+            status: record.status,
+            notes: record.notes,
+            recordedBy,
+            lastModifiedBy: teacherOid,
+            lastModifiedAt: new Date(),
+          });
+        }
 
-    await Attendance.bulkWrite(operations);
-
-    const records = await Attendance.find({
-      classId: data.classId,
-      date: new Date(data.date),
-      period: data.period,
-      isDeleted: false,
-    }).lean();
+        saved.push({ studentId: record.studentId, status: record.status });
+      } catch (err: unknown) {
+        failed.push({
+          studentId: record.studentId,
+          error: err instanceof Error ? err.message : 'Unknown error',
+        });
+      }
+    }
 
     // Fire-and-forget stats update — does not block the response
     const studentIds = data.records.map((r) => r.studentId);
@@ -124,7 +147,7 @@ export class AttendanceService {
       console.error('Failed to update attendance stats:', err);
     });
 
-    return records;
+    return { saved, failed };
   }
 
   static async getByStudent(

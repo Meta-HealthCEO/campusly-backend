@@ -17,8 +17,16 @@ export class AttendanceController {
   }
 
   static async bulkRecord(req: Request, res: Response): Promise<void> {
-    const records = await AttendanceService.bulkRecord(req.body, getUser(req).id);
-    res.status(201).json(apiResponse(true, records, 'Bulk attendance recorded successfully'));
+    const result = await AttendanceService.bulkRecord(req.body, getUser(req).id);
+    const hasPartialFailure = result.failed.length > 0 && result.saved.length > 0;
+    const allFailed = result.failed.length > 0 && result.saved.length === 0;
+    const status = allFailed ? 500 : hasPartialFailure ? 207 : 201;
+    const message = allFailed
+      ? 'All attendance records failed to save'
+      : hasPartialFailure
+        ? `Bulk attendance partially recorded: ${result.saved.length} saved, ${result.failed.length} failed`
+        : 'Bulk attendance recorded successfully';
+    res.status(status).json(apiResponse(!allFailed, result, message));
   }
 
   static async getByStudent(req: Request, res: Response): Promise<void> {
