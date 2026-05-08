@@ -1,12 +1,10 @@
 import mongoose from 'mongoose';
-import { AssessmentPaper } from './model.js';
 import type { IAssessmentPaper, IPaperQuestion } from './model.js';
 import { PaperMemo } from '../TeacherWorkbench/model.assessment.js';
 import type { IMemoAnswer } from '../TeacherWorkbench/model.assessment.js';
 import { logger } from '../../common/logger.js';
 import { assertCanEditPaper } from './service-papers-auth.js';
 import { regenerateSingleQuestion } from './service-paper-generation.js';
-import { renderDiagram } from './service-diagram.js';
 import {
   assertExactlyOneSource,
   loadPaperOrThrow,
@@ -14,6 +12,8 @@ import {
   assertQuestionInBounds,
   questionNumberFor,
   buildMemoAnswer,
+  recomputePaperTotalMarks,
+  scheduleRegenDiagramRender,
 } from './service-paper-questions-helpers.js';
 import type {
   AddQuestionToPaperInput,
@@ -62,14 +62,16 @@ export async function addQuestionToPaper(
       : null,
   };
   section.questions.push(newQuestion);
+  recomputePaperTotalMarks(paper);
   await paper.save();
 
-  // Mirror to memo — append answer at matching section. Soft-skip mirror
-  // failures (e.g. legacy paper without a memo) rather than crashing the
-  // question add; logger.error captures the divergence for ops.
+  // Mirror to memo — append answer at matching section AND keep memo's
+  // own totalMarks in sync with the paper. Soft-skip mirror failures
+  // (e.g. legacy paper without a memo) rather than crashing the question
+  // add; logger.error captures the divergence for ops.
   try {
     await PaperMemo.updateOne(
-      { paperId: paper._id },
+      { paperId: paper._id, isDeleted: false },
       {
         $push: {
           [`sections.${sectionIdx}.answers`]: buildMemoAnswer(
@@ -78,6 +80,7 @@ export async function addQuestionToPaper(
             newQuestion,
           ),
         },
+        $set: { totalMarks: paper.totalMarks },
       },
     );
   } catch (err: unknown) {
@@ -126,6 +129,11 @@ export async function updatePaperQuestion(
       renderStatus: 'pending',
     };
   }
+  // Only recompute when marks actually changed — text/diagram edits don't
+  // affect the paper total, so skip the work.
+  if (patch.marks !== undefined) {
+    recomputePaperTotalMarks(paper);
+  }
   await paper.save();
 
   // Mirror to memo only if a memo-relevant field changed.
@@ -135,21 +143,24 @@ export async function updatePaperQuestion(
     patch.markingGuideline !== undefined;
   if (memoFieldsTouched) {
     const qn = questionNumberFor(sectionIdx, position);
+    const memoSet: Record<string, unknown> = {
+      [`sections.${sectionIdx}.answers.$[ans].expectedAnswer`]:
+        question.modelAnswer ?? '',
+      [`sections.${sectionIdx}.answers.$[ans].markAllocation`]: [
+        {
+          criterion: question.markingGuideline ?? 'Full marks',
+          marks: question.marks,
+        },
+      ],
+    };
+    // If marks shifted, mirror the new paper totalMarks too.
+    if (patch.marks !== undefined) {
+      memoSet.totalMarks = paper.totalMarks;
+    }
     try {
       await PaperMemo.updateOne(
-        { paperId: paper._id },
-        {
-          $set: {
-            [`sections.${sectionIdx}.answers.$[ans].expectedAnswer`]:
-              question.modelAnswer ?? '',
-            [`sections.${sectionIdx}.answers.$[ans].markAllocation`]: [
-              {
-                criterion: question.markingGuideline ?? 'Full marks',
-                marks: question.marks,
-              },
-            ],
-          },
-        },
+        { paperId: paper._id, isDeleted: false },
+        { $set: memoSet },
         { arrayFilters: [{ 'ans.questionNumber': qn }] },
       );
     } catch (err: unknown) {
@@ -188,19 +199,25 @@ export async function deletePaperQuestion(
   section.questions.forEach((q, idx) => {
     q.position = idx;
   });
+  recomputePaperTotalMarks(paper);
   await paper.save();
 
   // Rebuild the memo section's answers from the post-delete paper state.
   // Cheaper-but-correct alternative: $pull by questionNumber THEN renumber
   // every remaining entry — same number of writes, more code, more places
-  // for skew bugs. Rebuild wins.
+  // for skew bugs. Rebuild wins. Mirror totalMarks alongside.
   const rebuiltAnswers: IMemoAnswer[] = section.questions.map((q, idx) =>
     buildMemoAnswer(sectionIdx, idx, q),
   );
   try {
     await PaperMemo.updateOne(
-      { paperId: paper._id },
-      { $set: { [`sections.${sectionIdx}.answers`]: rebuiltAnswers } },
+      { paperId: paper._id, isDeleted: false },
+      {
+        $set: {
+          [`sections.${sectionIdx}.answers`]: rebuiltAnswers,
+          totalMarks: paper.totalMarks,
+        },
+      },
     );
   } catch (err: unknown) {
     logger.error(
@@ -256,13 +273,17 @@ export async function regeneratePaperQuestion(
       : null,
   };
   section.questions[position] = updated;
+  // Replacement may have different marks than the original — always
+  // recompute. Even if marks happen to match, recompute is cheap and
+  // keeps the invariant unconditional.
+  recomputePaperTotalMarks(paper);
   await paper.save();
 
-  // Mirror to memo by questionNumber.
+  // Mirror to memo by questionNumber + sync totalMarks.
   const qn = questionNumberFor(sectionIdx, position);
   try {
     await PaperMemo.updateOne(
-      { paperId: paper._id },
+      { paperId: paper._id, isDeleted: false },
       {
         $set: {
           [`sections.${sectionIdx}.answers.$[ans].expectedAnswer`]:
@@ -273,6 +294,7 @@ export async function regeneratePaperQuestion(
               marks: updated.marks,
             },
           ],
+          totalMarks: paper.totalMarks,
         },
       },
       { arrayFilters: [{ 'ans.questionNumber': qn }] },
@@ -286,37 +308,12 @@ export async function regeneratePaperQuestion(
 
   // Fire-and-forget TikZ render — same pattern as service-paper-generation.
   if (updated.diagram?.tikz) {
-    const tikz = updated.diagram.tikz;
-    const caption = updated.diagram.caption ?? '';
-    const paperIdStr = String(paper._id);
-    void renderDiagram({ tikz, data: {}, alt: caption })
-      .then(async (result) => {
-        if (result.renderStatus !== 'rendered') return;
-        try {
-          await AssessmentPaper.updateOne(
-            { _id: paper._id },
-            {
-              $set: {
-                [`sections.${sectionIdx}.questions.${position}.diagram.svgUrl`]:
-                  result.svgUrl,
-                [`sections.${sectionIdx}.questions.${position}.diagram.renderStatus`]:
-                  'rendered',
-              },
-            },
-          );
-        } catch (persistErr: unknown) {
-          logger.error(
-            { err: persistErr, paperId: paperIdStr },
-            'Failed to persist regen diagram render result',
-          );
-        }
-      })
-      .catch((rerr: unknown) => {
-        logger.error(
-          { err: rerr, paperId: paperIdStr },
-          'TikZ rendering failed for regenerated question (non-fatal)',
-        );
-      });
+    scheduleRegenDiagramRender(
+      paper._id as mongoose.Types.ObjectId,
+      sectionIdx,
+      position,
+      { tikz: updated.diagram.tikz, caption: updated.diagram.caption },
+    );
   }
 
   return paper;
