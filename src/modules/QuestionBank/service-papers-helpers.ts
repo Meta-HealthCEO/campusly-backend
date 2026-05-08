@@ -1,19 +1,21 @@
 import mongoose from 'mongoose';
 import { AssessmentPaper, Question } from './model.js';
-import type { IQuestion } from './model.js';
+import type { IQuestion, IPaperSection } from './model.js';
 import { NotFoundError, BadRequestError } from '../../common/errors.js';
 import { ComplianceService } from './service-compliance.js';
 
-interface SectionLike {
-  questions: Array<{ questionId: mongoose.Types.ObjectId }>;
-}
+// Accept the canonical IPaperSection shape (Task 1). `questionId` may be
+// null (inline question), so filter those out before querying the bank.
+export type SectionLike = Pick<IPaperSection, 'questions'>;
 
 export async function collectPaperQuestions(
   sections: SectionLike[],
   schoolId: string,
 ): Promise<IQuestion[]> {
   const questionIds = sections.flatMap((s) =>
-    s.questions.map((q) => q.questionId),
+    s.questions
+      .map((q) => q.questionId)
+      .filter((id): id is mongoose.Types.ObjectId => id !== null && id !== undefined),
   );
 
   if (questionIds.length === 0) return [];
@@ -59,9 +61,12 @@ export async function clonePaper(id: string, schoolId: string, userId: string) {
       order: s.order,
       questions: s.questions.map((q) => ({
         questionId: q.questionId,
-        questionNumber: q.questionNumber,
+        questionText: q.questionText,
         marks: q.marks,
-        order: q.order,
+        position: q.position,
+        modelAnswer: q.modelAnswer,
+        markingGuideline: q.markingGuideline,
+        diagram: q.diagram,
       })),
     })),
     instructions: source.instructions,

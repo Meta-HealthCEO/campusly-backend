@@ -1,7 +1,7 @@
 // src/modules/QuestionBank/service-pdf.ts
 import mongoose from 'mongoose';
 import { AssessmentPaper } from './model.js';
-import type { IQuestion } from './model.js';
+import type { IQuestion, IPaperQuestion } from './model.js';
 import { School } from '../School/model.js';
 import { NotFoundError } from '../../common/errors.js';
 import { collectPaperQuestions } from './service-papers-helpers.js';
@@ -72,45 +72,91 @@ async function load(
     instructions: paper.instructions,
   };
 
-  const sections: NormalisedSection[] = (paper.sections ?? []).map((s) => ({
+  const sections: NormalisedSection[] = (paper.sections ?? []).map((s, sectionIdx) => ({
     title: s.title,
     instructions: s.instructions,
-    questions: normaliseQuestions(s.questions, qMap),
+    questions: normaliseQuestions(s.questions, qMap, sectionIdx),
   }));
 
   return { meta, sections };
 }
 
 function normaliseQuestions(
-  sectionQuestions: Array<{ questionId: unknown; questionNumber: string; marks: number }>,
+  sectionQuestions: IPaperQuestion[],
   qMap: Map<string, IQuestion>,
+  sectionIdx: number,
 ): NormalisedQuestion[] {
   const result: NormalisedQuestion[] = [];
-  for (const pq of sectionQuestions) {
-    const qId = resolveQuestionId(pq.questionId);
-    const q = qMap.get(qId);
-    if (!q) continue;
+  // Sort by position so display order matches stored order even if the
+  // array was persisted out-of-order.
+  const ordered = [...sectionQuestions].sort((a, b) => a.position - b.position);
+  for (const pq of ordered) {
+    // Display label: section + position (1-indexed). Matches Task 1 spec.
+    const number = `${sectionIdx + 1}.${pq.position + 1}`;
 
-    const diagram: NormalisedDiagram | null = q.diagram ? {
-      svgUrl: q.diagram.svgUrl ?? null,
-      alt: q.diagram.alt ?? '',
-      renderStatus: q.diagram.renderStatus ?? 'pending',
-    } : null;
+    // Bank-ref question: pull stem/options/answer/diagram from the bank.
+    if (pq.questionId) {
+      const qId = resolveQuestionId(pq.questionId);
+      const q = qMap.get(qId);
+      if (!q) continue;
+
+      const diagram: NormalisedDiagram | null = pickDiagram(pq, q);
+
+      result.push({
+        number,
+        marks: pq.marks,
+        stem: q.stem,
+        type: mapType(q.type),
+        options: (q.options ?? []).map((o) => ({
+          label: o.label, text: o.text, isCorrect: o.isCorrect,
+        })),
+        answer: pq.modelAnswer ?? q.answer ?? '',
+        markingRubric: pq.markingGuideline ?? q.markingRubric ?? '',
+        diagram,
+      });
+      continue;
+    }
+
+    // Inline question: questionText/modelAnswer/markingGuideline are
+    // authoritative; no bank lookup. Skip if neither id nor text is set
+    // (defensive — schema XOR refinement should have prevented this).
+    if (!pq.questionText) continue;
 
     result.push({
-      number: pq.questionNumber,
+      number,
       marks: pq.marks,
-      stem: q.stem,
-      type: mapType(q.type),
-      options: (q.options ?? []).map((o) => ({
-        label: o.label, text: o.text, isCorrect: o.isCorrect,
-      })),
-      answer: q.answer ?? '',
-      markingRubric: q.markingRubric ?? '',
-      diagram,
+      stem: pq.questionText,
+      type: 'short',
+      options: [],
+      answer: pq.modelAnswer ?? '',
+      markingRubric: pq.markingGuideline ?? '',
+      diagram: pickDiagram(pq, null),
     });
   }
   return result;
+}
+
+// Prefer the paper-question's own diagram override (caption) over the
+// bank diagram (alt). Either may be absent.
+function pickDiagram(
+  pq: IPaperQuestion,
+  bankQuestion: IQuestion | null,
+): NormalisedDiagram | null {
+  if (pq.diagram) {
+    return {
+      svgUrl: pq.diagram.svgUrl ?? null,
+      alt: pq.diagram.caption ?? '',
+      renderStatus: pq.diagram.renderStatus ?? 'pending',
+    };
+  }
+  if (bankQuestion?.diagram) {
+    return {
+      svgUrl: bankQuestion.diagram.svgUrl ?? null,
+      alt: bankQuestion.diagram.alt ?? '',
+      renderStatus: bankQuestion.diagram.renderStatus ?? 'pending',
+    };
+  }
+  return null;
 }
 
 function mapType(t: string): NormalisedQuestionType {

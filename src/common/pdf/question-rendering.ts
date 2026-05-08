@@ -7,6 +7,23 @@ import { checkPageSpace } from './primitives.js';
 import { embedDiagram, type EmbedOptions } from './diagram.js';
 import type { NormalisedSection, NormalisedQuestion, NormalisedQuestionOption } from './types.js';
 
+const LINE_HEIGHT = 13;
+const CHARS_PER_LINE = 80;
+
+// Conservative widow heuristic — estimates the vertical space a question
+// will need so we can break to a new page rather than splitting mid-stem.
+// The heuristic deliberately over-estimates a little (better to break early
+// than to orphan a question header at the bottom of a page).
+function estimateQuestionHeight(q: NormalisedQuestion): number {
+  const stemLines = Math.max(1, Math.ceil(q.stem.length / CHARS_PER_LINE));
+  const optionLines = (q.type === 'mcq' || q.type === 'true_false') ? q.options.length : 0;
+  // Marks-based answer-space hint: ~half a line per mark for written answers.
+  const answerLines = (q.type === 'mcq' || q.type === 'true_false') ? 0 : Math.ceil(q.marks / 2);
+  const diagramHeight = q.diagram ? 260 : 0;
+  // +2 lines = header + trailing moveDown.
+  return (stemLines + optionLines + answerLines + 2) * LINE_HEIGHT + diagramHeight;
+}
+
 export function renderQuestionSections(
   doc: PDFKit.PDFDocument,
   sections: NormalisedSection[],
@@ -23,7 +40,7 @@ export function renderQuestionSections(
     }
 
     for (const q of section.questions) {
-      checkPageSpace(doc, 60);
+      checkPageSpace(doc, estimateQuestionHeight(q));
       renderQuestion(doc, q, opts);
     }
     doc.moveDown(1);
@@ -82,7 +99,12 @@ export function renderMemoSections(
         mcqAnswers.push({ number: q.number, answer });
         renderMemoMcq(doc, q, answer);
       } else {
-        checkPageSpace(doc, 60);
+        // Memo answers: stem header + answer text + rubric, plus diagram.
+        const answerLines = Math.max(1, Math.ceil((q.answer ?? '').length / CHARS_PER_LINE));
+        const rubricLines = Math.max(0, Math.ceil((q.markingRubric ?? '').length / CHARS_PER_LINE));
+        const diagramHeight = q.diagram ? 260 : 0;
+        const need = (answerLines + rubricLines + 4) * LINE_HEIGHT + diagramHeight;
+        checkPageSpace(doc, need);
         renderMemoAnswer(doc, q, opts);
       }
     }
