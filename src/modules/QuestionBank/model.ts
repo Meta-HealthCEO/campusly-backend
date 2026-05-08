@@ -30,15 +30,6 @@ export const QUESTION_STATUSES = [
 
 export type QuestionStatus = (typeof QUESTION_STATUSES)[number];
 
-export const PAPER_TYPES = [
-  'class_test', 'assignment', 'mid_year', 'trial', 'final', 'custom',
-] as const;
-
-export type PaperType = (typeof PAPER_TYPES)[number];
-
-export const PAPER_STATUSES = ['draft', 'finalised', 'archived'] as const;
-export type PaperStatus = (typeof PAPER_STATUSES)[number];
-
 export const MEDIA_TYPES = ['image', 'diagram', 'table'] as const;
 export type MediaType = (typeof MEDIA_TYPES)[number];
 
@@ -96,71 +87,6 @@ export interface IQuestion extends Document {
   reviewedAt: Date | null;
   createdBy: Types.ObjectId;
   usageCount: number;
-  isDeleted: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-// ─── Paper Interfaces ──────────────────────────────────────────────────────
-
-export interface IPaperQuestion {
-  questionId: Types.ObjectId;
-  questionNumber: string;
-  marks: number;
-  order: number;
-}
-
-export interface IPaperSection {
-  title: string;
-  instructions: string;
-  order: number;
-  questions: IPaperQuestion[];
-}
-
-export interface ITopicCoverage {
-  nodeId: string;
-  title: string;
-  marks: number;
-  percent: number;
-}
-
-export interface ICognitiveDistribution {
-  knowledge: number;
-  routine: number;
-  complex: number;
-  problemSolving: number;
-}
-
-export interface IDifficultySpread {
-  easy: number;
-  medium: number;
-  hard: number;
-}
-
-export interface ICapsComplianceReport {
-  topicCoverage: ITopicCoverage[];
-  cognitiveDistribution: ICognitiveDistribution;
-  targetDistribution: ICognitiveDistribution;
-  compliant: boolean;
-  violations: string[];
-  difficultySpread: IDifficultySpread;
-}
-
-export interface IAssessmentPaper extends Document {
-  schoolId: Types.ObjectId;
-  title: string;
-  subjectId: Types.ObjectId;
-  gradeId: Types.ObjectId;
-  term: number;
-  year: number;
-  paperType: PaperType;
-  totalMarks: number;
-  duration: number;
-  sections: IPaperSection[];
-  instructions: string;
-  capsCompliance: ICapsComplianceReport | null;
-  status: PaperStatus;
-  createdBy: Types.ObjectId;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -247,102 +173,28 @@ questionSchema.index({ createdBy: 1, status: 1, isDeleted: 1 });
 
 export const Question = mongoose.model<IQuestion>('Question', questionSchema);
 
-// ─── Paper Schema ──────────────────────────────────────────────────────────
+// ─── Paper Re-exports ──────────────────────────────────────────────────────
+// Paper-related interfaces, schemas, and the AssessmentPaper model live in
+// model-papers.ts. They are re-exported here so existing import paths
+// (`from './model.js'`) continue to work without churn.
 
-const paperQuestionSchema = new Schema<IPaperQuestion>(
-  {
-    questionId: {
-      type: Schema.Types.ObjectId,
-      ref: 'Question',
-      required: true,
-    },
-    questionNumber: { type: String, required: true },
-    marks: { type: Number, required: true },
-    order: { type: Number, required: true },
-  },
-  { _id: false },
-);
+export {
+  PAPER_TYPES,
+  PAPER_STATUSES,
+  PAPER_DIFFICULTIES,
+  AssessmentPaper,
+} from './model-papers.js';
 
-const paperSectionSchema = new Schema<IPaperSection>(
-  {
-    title: { type: String, required: true },
-    instructions: { type: String, default: '' },
-    order: { type: Number, required: true },
-    questions: { type: [paperQuestionSchema], default: [] },
-  },
-  { _id: false },
-);
-
-const cogDistSchema = new Schema<ICognitiveDistribution>(
-  {
-    knowledge: { type: Number, default: 0 },
-    routine: { type: Number, default: 0 },
-    complex: { type: Number, default: 0 },
-    problemSolving: { type: Number, default: 0 },
-  },
-  { _id: false },
-);
-
-const topicCoverageSchema = new Schema<ITopicCoverage>(
-  {
-    nodeId: { type: String, required: true },
-    title: { type: String, required: true },
-    marks: { type: Number, required: true },
-    percent: { type: Number, required: true },
-  },
-  { _id: false },
-);
-
-const difficultySpreadSchema = new Schema<IDifficultySpread>(
-  {
-    easy: { type: Number, default: 0 },
-    medium: { type: Number, default: 0 },
-    hard: { type: Number, default: 0 },
-  },
-  { _id: false },
-);
-
-const capsComplianceSchema = new Schema<ICapsComplianceReport>(
-  {
-    topicCoverage: { type: [topicCoverageSchema], default: [] },
-    cognitiveDistribution: { type: cogDistSchema, required: true },
-    targetDistribution: { type: cogDistSchema, required: true },
-    compliant: { type: Boolean, default: false },
-    violations: { type: [String], default: [] },
-    difficultySpread: { type: difficultySpreadSchema, required: true },
-  },
-  { _id: false },
-);
-
-const assessmentPaperSchema = new Schema<IAssessmentPaper>(
-  {
-    schoolId: {
-      type: Schema.Types.ObjectId,
-      ref: 'School',
-      required: true,
-    },
-    title: { type: String, required: true, trim: true },
-    subjectId: { type: Schema.Types.ObjectId, ref: 'Subject', required: true },
-    gradeId: { type: Schema.Types.ObjectId, ref: 'Grade', required: true },
-    term: { type: Number, min: 1, max: 4, required: true },
-    year: { type: Number, required: true },
-    paperType: { type: String, enum: PAPER_TYPES, required: true },
-    totalMarks: { type: Number, default: 0 },
-    duration: { type: Number, required: true },
-    sections: { type: [paperSectionSchema], default: [] },
-    instructions: { type: String, default: '' },
-    capsCompliance: { type: capsComplianceSchema, default: null },
-    status: { type: String, enum: PAPER_STATUSES, default: 'draft' },
-    createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    isDeleted: { type: Boolean, default: false },
-  },
-  { timestamps: true },
-);
-
-assessmentPaperSchema.index({ schoolId: 1, createdBy: 1, isDeleted: 1 });
-assessmentPaperSchema.index({ schoolId: 1, status: 1, isDeleted: 1 });
-
-export const AssessmentPaper = mongoose.model<IAssessmentPaper>(
-  'AssessmentPaper',
-  assessmentPaperSchema,
-);
+export type {
+  PaperType,
+  PaperStatus,
+  PaperDifficulty,
+  IPaperQuestionDiagram,
+  IPaperQuestion,
+  IPaperSection,
+  ITopicCoverage,
+  ICognitiveDistribution,
+  IDifficultySpread,
+  ICapsComplianceReport,
+  IAssessmentPaper,
+} from './model-papers.js';
