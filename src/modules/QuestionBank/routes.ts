@@ -2,6 +2,17 @@ import { Router } from 'express';
 import { authorize, validate } from '../../middleware/index.js';
 import { QuestionBankController } from './controller.js';
 import {
+  postAddQuestionToPaper,
+  putUpdatePaperQuestion,
+  postRegeneratePaperQuestion,
+  deleteRemovePaperQuestion,
+  putUpdateMemo,
+  getPaperMemoHandler,
+  postFinalisePaper,
+  getPaperPdf,
+  getMemoPdf,
+} from './controller-papers.js';
+import {
   createQuestionSchema,
   updateQuestionSchema,
   reviewQuestionSchema,
@@ -10,7 +21,9 @@ import {
   questionQuerySchema,
   createPaperSchema,
   updatePaperSchema,
-  addQuestionSchema,
+  addQuestionToPaperSchema,
+  updatePaperQuestionSchema,
+  updateMemoSchema,
   paperQuerySchema,
   generatePaperSchema,
 } from './validation.js';
@@ -99,13 +112,13 @@ router.post(
 router.get(
   '/papers/:id/pdf',
   authorize(...READ_ROLES),
-  QuestionBankController.downloadPaperPdf,
+  getPaperPdf,
 );
 
 router.get(
   '/papers/:id/memo-pdf',
   authorize(...READ_ROLES),
-  QuestionBankController.downloadMemoPdf,
+  getMemoPdf,
 );
 
 // ─── Paper Operations (BEFORE generic :id) ─────────────────────────────────
@@ -113,7 +126,7 @@ router.get(
 router.post(
   '/papers/:id/finalise',
   authorize(...READ_ROLES),
-  QuestionBankController.finalisePaper,
+  postFinalisePaper,
 );
 
 router.get(
@@ -128,17 +141,51 @@ router.post(
   QuestionBankController.clonePaper,
 );
 
-router.post(
-  '/papers/:id/questions',
+// ─── Memo (read + wholesale update) ───────────────────────────────────────
+//
+// Defined BEFORE the more specific section/question routes so Express
+// doesn't confuse `/memo` with a section path. Both the list and update
+// flows are scoped to the paper's school via the service layer.
+
+router.get(
+  '/papers/:id/memo',
   authorize(...READ_ROLES),
-  validate(addQuestionSchema),
-  QuestionBankController.addQuestion,
+  getPaperMemoHandler,
+);
+
+router.put(
+  '/papers/:id/memo',
+  authorize(...READ_ROLES),
+  validate(updateMemoSchema),
+  putUpdateMemo,
+);
+
+// ─── Paper Question CRUD (section-scoped) ─────────────────────────────────
+
+router.post(
+  '/papers/:id/sections/:sectionIdx/questions',
+  authorize(...READ_ROLES),
+  validate(addQuestionToPaperSchema),
+  postAddQuestionToPaper,
+);
+
+router.put(
+  '/papers/:id/sections/:sectionIdx/questions/:position',
+  authorize(...READ_ROLES),
+  validate(updatePaperQuestionSchema),
+  putUpdatePaperQuestion,
+);
+
+router.post(
+  '/papers/:id/sections/:sectionIdx/questions/:position/regenerate',
+  authorize(...READ_ROLES),
+  postRegeneratePaperQuestion,
 );
 
 router.delete(
-  '/papers/:id/questions/:sectionIndex/:questionIndex',
+  '/papers/:id/sections/:sectionIdx/questions/:position',
   authorize(...READ_ROLES),
-  QuestionBankController.removeQuestion,
+  deleteRemovePaperQuestion,
 );
 
 // ─── Papers CRUD ───────────────────────────────────────────────────────────

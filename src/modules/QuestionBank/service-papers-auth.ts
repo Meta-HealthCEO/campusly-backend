@@ -1,7 +1,7 @@
 import { ForbiddenError } from '../../common/errors.js';
 import type { IAssessmentPaper } from './model-papers.js';
 
-const PAPER_ADMIN_ROLES = new Set(['school_admin', 'super_admin']);
+export const PAPER_ADMIN_ROLES = new Set(['school_admin', 'super_admin']);
 
 export type PaperAction =
   | 'update'
