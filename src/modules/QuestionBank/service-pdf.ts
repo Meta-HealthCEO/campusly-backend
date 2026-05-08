@@ -6,8 +6,8 @@ import { School } from '../School/model.js';
 import { NotFoundError } from '../../common/errors.js';
 import { collectPaperQuestions } from './service-papers-helpers.js';
 import { createDocument, finalise } from '../../common/pdf/document.js';
-import { renderTitlePage, renderMemoTitlePage, renderInstructions } from '../../common/pdf/primitives.js';
-import { renderQuestionSections, renderMemoSections } from '../../common/pdf/question-rendering.js';
+import { renderTitlePage, renderInstructions } from '../../common/pdf/primitives.js';
+import { renderQuestionSections } from '../../common/pdf/question-rendering.js';
 import type {
   NormalisedPaperMeta, NormalisedSection, NormalisedQuestion,
   NormalisedDiagram, NormalisedQuestionType,
@@ -26,14 +26,10 @@ export class PdfService {
     renderQuestionSections(doc, sections, { baseDir: DIAGRAM_BASE_DIR, urlPrefix: URL_PREFIX });
     return finalise(doc);
   }
-
-  static async generateMemoPdf(paperId: string, schoolId: string): Promise<Buffer> {
-    const { meta, sections } = await load(paperId, schoolId);
-    const doc = createDocument();
-    renderMemoTitlePage(doc, meta);
-    renderMemoSections(doc, sections, { baseDir: DIAGRAM_BASE_DIR, urlPrefix: URL_PREFIX });
-    return finalise(doc);
-  }
+  // Memo PDF generation lives in service-memo-pdf.ts (Task 8). The legacy
+  // PdfService.generateMemoPdf method that operated on paper rubric data
+  // was removed in Task 12 — the canonical replacement consumes IPaperMemo
+  // and is the single source of truth.
 }
 
 async function load(

@@ -167,24 +167,37 @@ async function loadPaperInfo(paperId: string, schoolId: string): Promise<PaperIn
     .populate([{ path: 'subjectId', select: 'name' }, { path: 'gradeId', select: 'name level' }])
     .lean();
   if (asm) {
+    // Collect bank-question IDs (inline questions have null questionId).
     const qIds: mongoose.Types.ObjectId[] = [];
     for (const sec of asm.sections ?? []) {
       for (const pq of sec.questions ?? []) {
-        qIds.push(pq.questionId as mongoose.Types.ObjectId);
+        if (pq.questionId) qIds.push(pq.questionId as mongoose.Types.ObjectId);
       }
     }
-    const qDocs = await Question.find({ _id: { $in: qIds }, schoolId: soid, isDeleted: false }).lean();
+    const qDocs = qIds.length
+      ? await Question.find({ _id: { $in: qIds }, schoolId: soid, isDeleted: false }).lean()
+      : [];
     const qMap = new Map(qDocs.map((q) => [q._id.toString(), q]));
     const memoLines: string[] = [];
-    for (const sec of asm.sections ?? []) {
-      for (const pq of sec.questions ?? []) {
-        const q = qMap.get(pq.questionId.toString());
-        if (!q) continue;
-        memoLines.push(
-          `Question ${pq.questionNumber} (${pq.marks} marks):\n  Question: ${q.stem}\n  Correct Answer: ${q.answer ?? ''}\n  Marking Guideline: ${q.markingRubric ?? ''}`,
-        );
-      }
-    }
+    (asm.sections ?? []).forEach((sec, sectionIdx) => {
+      (sec.questions ?? []).forEach((pq) => {
+        // Display label uses 1-indexed section + position (matches the
+        // PDF rendering convention in QuestionBank/service-pdf.ts).
+        const number = `${sectionIdx + 1}.${pq.position + 1}`;
+        if (pq.questionId) {
+          const q = qMap.get(pq.questionId.toString());
+          if (!q) return;
+          memoLines.push(
+            `Question ${number} (${pq.marks} marks):\n  Question: ${q.stem}\n  Correct Answer: ${pq.modelAnswer ?? q.answer ?? ''}\n  Marking Guideline: ${pq.markingGuideline ?? q.markingRubric ?? ''}`,
+          );
+        } else if (pq.questionText) {
+          // Inline question — paper carries the stem/answer/rubric directly.
+          memoLines.push(
+            `Question ${number} (${pq.marks} marks):\n  Question: ${pq.questionText}\n  Correct Answer: ${pq.modelAnswer ?? ''}\n  Marking Guideline: ${pq.markingGuideline ?? ''}`,
+          );
+        }
+      });
+    });
     const subj = (asm.subjectId as { name?: string } | undefined)?.name ?? '';
     const gr = (asm.gradeId as { name?: string } | undefined)?.name ?? '';
     return {
