@@ -1,5 +1,6 @@
-import mongoose from 'mongoose';
+import mongoose, { type Types as MTypes } from 'mongoose';
 import { Assessment, Mark, type IMark } from './model.js';
+import { AssessmentPaper } from '../QuestionBank/model.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
 
 export interface PublishMarkInput {
@@ -56,4 +57,75 @@ export async function publishMarkToGradebook(input: PublishMarkInput): Promise<I
 
   if (!updated) throw new Error('Mark upsert failed');
   return updated.toObject() as IMark;
+}
+
+/**
+ * Find or lazily create an Assessment record linked to a paper.
+ * Idempotent — caches the link on AssessmentPaper.assessmentId.
+ *
+ * Resolution order:
+ *   (a) cached AssessmentPaper.assessmentId
+ *   (b) match by metadata (school + class + subject + name + term + year)
+ *   (c) create new Assessment from paper metadata
+ */
+export async function findOrCreateAssessmentForPaper(input: {
+  paperId: string;
+  schoolId: string;
+  classId: string;
+  subjectId: string;
+}): Promise<{ _id: MTypes.ObjectId; totalMarks: number }> {
+  const paper = await AssessmentPaper.findOne({
+    _id: new mongoose.Types.ObjectId(input.paperId),
+    schoolId: new mongoose.Types.ObjectId(input.schoolId),
+    isDeleted: false,
+  });
+  if (!paper) throw new NotFoundError('Paper not found');
+
+  // (a) cached link
+  if (paper.assessmentId) {
+    const existing = await Assessment.findOne({
+      _id: paper.assessmentId,
+      isDeleted: false,
+    });
+    if (existing) {
+      return { _id: existing._id as MTypes.ObjectId, totalMarks: existing.totalMarks };
+    }
+    // cached link is stale (target deleted); fall through to recreate
+  }
+
+  // (b) match by metadata
+  const byMatch = await Assessment.findOne({
+    schoolId: new mongoose.Types.ObjectId(input.schoolId),
+    classId: new mongoose.Types.ObjectId(input.classId),
+    subjectId: new mongoose.Types.ObjectId(input.subjectId),
+    name: paper.title,
+    term: paper.term,
+    academicYear: paper.year,
+    isDeleted: false,
+  });
+  if (byMatch) {
+    paper.assessmentId = byMatch._id as MTypes.ObjectId;
+    await paper.save();
+    return { _id: byMatch._id as MTypes.ObjectId, totalMarks: byMatch.totalMarks };
+  }
+
+  // (c) create. Assessment.type enum is restrictive
+  // ('test' | 'exam' | 'assignment' | 'practical' | 'project') and does not
+  // align 1:1 with PAPER_TYPES, so we hard-code 'test' as the safe default.
+  const created = await Assessment.create({
+    name: paper.title,
+    subjectId: new mongoose.Types.ObjectId(input.subjectId),
+    classId: new mongoose.Types.ObjectId(input.classId),
+    schoolId: new mongoose.Types.ObjectId(input.schoolId),
+    type: 'test',
+    totalMarks: paper.totalMarks,
+    weight: 1,
+    term: paper.term,
+    academicYear: paper.year,
+    date: new Date(),
+    paperId: paper._id,
+  });
+  paper.assessmentId = created._id as MTypes.ObjectId;
+  await paper.save();
+  return { _id: created._id as MTypes.ObjectId, totalMarks: created.totalMarks };
 }

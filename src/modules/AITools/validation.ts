@@ -160,7 +160,9 @@ export const publishGradeSchema = z.object({
 export const publishMarkingSchema = z.object({
   params: z.object({ id: z.string().min(1) }),
   body: z.object({
-    assessmentId: z.string().min(1),
+    // Optional — if omitted, the service will lazily find or create an
+    // Assessment record from the linked paper's metadata.
+    assessmentId: z.string().min(1).optional(),
     studentId: z.string().min(1).optional(),
     comment: z.string().optional(),
   }),

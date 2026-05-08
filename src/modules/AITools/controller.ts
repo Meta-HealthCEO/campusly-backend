@@ -162,7 +162,7 @@ export class AIToolsController {
       return;
     }
     const { assessmentId, studentId, comment } = req.body as {
-      assessmentId: string;
+      assessmentId?: string;
       studentId?: string;
       comment?: string;
     };

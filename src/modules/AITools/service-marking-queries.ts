@@ -1,8 +1,12 @@
 // src/modules/AITools/service-marking-queries.ts
 import mongoose from 'mongoose';
 import { PaperMarking, type IPaperMarking } from './model-marking.js';
+import { AssessmentPaper } from '../QuestionBank/model.js';
 import { NotFoundError, BadRequestError } from '../../common/errors.js';
-import { publishMarkToGradebook } from '../Academic/service-gradebook-publish.js';
+import {
+  publishMarkToGradebook,
+  findOrCreateAssessmentForPaper,
+} from '../Academic/service-gradebook-publish.js';
 
 export async function listMarkings(
   schoolId: string,
@@ -85,7 +89,7 @@ export async function updateMarking(
 export async function publishMarking(
   markingId: string,
   schoolId: string,
-  assessmentId: string,
+  assessmentId: string | undefined,
   studentId?: string,
   comment?: string,
 ): Promise<IPaperMarking> {
@@ -106,11 +110,42 @@ export async function publishMarking(
     );
   }
 
+  // Lazy auto-link: if no assessmentId was supplied, find or create one
+  // from the paper's metadata. Only supported for assessment-bank papers
+  // (paperType === 'assessment'); generated papers must pass an explicit
+  // assessmentId because they aren't backed by an AssessmentPaper record.
+  let resolvedAssessmentId = assessmentId;
+  if (!resolvedAssessmentId) {
+    if (marking.paperType !== 'assessment') {
+      throw new BadRequestError(
+        'Cannot auto-link Assessment for generated papers. Pass assessmentId explicitly.',
+      );
+    }
+    if (!marking.classId) {
+      throw new BadRequestError(
+        'Cannot auto-link Assessment: marking has no classId. Pass assessmentId explicitly.',
+      );
+    }
+    const paper = await AssessmentPaper.findOne({
+      _id: marking.paperId,
+      schoolId: new mongoose.Types.ObjectId(schoolId),
+      isDeleted: false,
+    }).lean();
+    if (!paper) throw new NotFoundError('Linked paper not found');
+    const linked = await findOrCreateAssessmentForPaper({
+      paperId: String(marking.paperId),
+      schoolId: String(marking.schoolId),
+      classId: String(marking.classId),
+      subjectId: String(paper.subjectId),
+    });
+    resolvedAssessmentId = String(linked._id);
+  }
+
   const totalAwarded = marking.questions.reduce((s, q) => s + (q.marksAwarded ?? 0), 0);
 
   await publishMarkToGradebook({
     schoolId,
-    assessmentId,
+    assessmentId: resolvedAssessmentId,
     studentId: resolvedStudentId,
     mark: totalAwarded,
     comment: comment ?? `AI-marked paper for ${marking.studentName}`,
