@@ -26,11 +26,13 @@ const paperTypeEnum = z.enum([
   'class_test', 'assignment', 'mid_year', 'trial', 'final', 'custom',
 ]);
 
+const paperDifficultyEnum = z.enum(['easy', 'medium', 'hard']);
+
 // ─── Subdoc Schemas ────────────────────────────────────────────────────────
 
 const mediaSchema = z.object({
   mediaType: mediaTypeEnum,
-  url: z.string().url(),
+  url: z.url(),
 }).strict();
 
 const optionSchema = z.object({
@@ -108,46 +110,62 @@ export const questionQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(20),
 });
 
-// ─── Paper Section / Question ──────────────────────────────────────────────
+// ─── Paper Question / Section (NEW SHAPE — Task 1) ────────────────────────
 
-const paperQuestionSchema = z.object({
-  questionId: objectIdSchema,
-  questionNumber: z.string().min(1),
-  marks: z.number().int().min(1),
-  order: z.number().int().min(0),
+const paperQuestionDiagramSchema = z.object({
+  tikz: z.string().max(20000),
+  caption: z.string().max(500).optional(),
 }).strict();
 
-const paperSectionSchema = z.object({
-  title: z.string().min(1),
-  instructions: z.string().default(''),
-  order: z.number().int().min(0),
-  questions: z.array(paperQuestionSchema).default([]),
+// Base shape for a paper question — bank-ref XOR inline.
+const paperQuestionBaseShape = {
+  questionId: objectIdSchema.optional(),
+  questionText: z.string().min(1).max(5000).optional(),
+  marks: z.number().int().min(0).max(100),
+  position: z.number().int().min(0),
+  modelAnswer: z.string().max(5000).optional(),
+  markingGuideline: z.string().max(5000).optional(),
+  diagram: paperQuestionDiagramSchema.optional(),
+} as const;
+
+const paperQuestionXorRefinement = (
+  q: { questionId?: string; questionText?: string },
+) => (Boolean(q.questionId) !== Boolean(q.questionText));
+
+const paperQuestionInputSchema = z.object(paperQuestionBaseShape).refine(
+  paperQuestionXorRefinement,
+  { message: 'Exactly one of questionId or questionText must be set' },
+);
+
+const paperSectionInputSchema = z.object({
+  title: z.string().min(1).max(200),
+  instructions: z.string().max(2000).optional(),
+  questions: z.array(paperQuestionInputSchema).max(100),
 }).strict();
 
 // ─── Paper Schemas ─────────────────────────────────────────────────────────
 
 export const createPaperSchema = z.object({
-  title: z.string().min(1, 'Title is required').trim(),
+  title: z.string().min(1).max(200).trim(),
+  schoolId: objectIdSchema,
   subjectId: objectIdSchema,
   gradeId: objectIdSchema,
+  topicIds: z.array(objectIdSchema).min(1).max(20),
   term: z.number().int().min(1).max(4),
-  year: z.number().int(),
+  year: z.number().int().min(2000).max(2100),
   paperType: paperTypeEnum,
-  duration: z.number().int().min(1),
-  sections: z.array(paperSectionSchema).default([]),
-  instructions: z.string().default(''),
+  duration: z.number().int().min(5).max(480),
+  totalMarks: z.number().int().min(1).max(500),
+  difficulty: paperDifficultyEnum.default('medium'),
+  aiGenerated: z.boolean().default(false),
+  sections: z.array(paperSectionInputSchema).min(0).max(20).default([]),
+  instructions: z.string().max(5000).optional(),
 }).strict();
 
-export const updatePaperSchema = z.object({
-  title: z.string().min(1).trim().optional(),
-  term: z.number().int().min(1).max(4).optional(),
-  year: z.number().int().optional(),
-  paperType: paperTypeEnum.optional(),
-  duration: z.number().int().min(1).optional(),
-  instructions: z.string().optional(),
-  sections: z.array(paperSectionSchema).optional(),
-}).strict();
+export const updatePaperSchema = createPaperSchema.partial().strict();
 
+// Legacy add-question schema (sectionIndex + questionNumber) — preserved for
+// existing routes/services until Task 4 swaps to addQuestionToPaperSchema.
 export const addQuestionSchema = z.object({
   sectionIndex: z.number().int().min(0),
   questionId: objectIdSchema,
@@ -167,23 +185,67 @@ export const paperQuerySchema = z.object({
 
 // ─── AI Paper Generation ──────────────────────────────────────────────────
 
+const sectionConfigSchema = z.object({
+  title: z.string().min(1).max(200),
+  instructions: z.string().max(2000).optional(),
+  questionCount: z.number().int().min(1).max(50),
+  sectionMarks: z.number().int().min(1).max(200),
+}).strict();
+
 export const generatePaperSchema = z.object({
+  schoolId: objectIdSchema,
   subjectId: objectIdSchema,
   gradeId: objectIdSchema,
+  topicIds: z.array(objectIdSchema).min(1).max(20),
   term: z.number().int().min(1).max(4),
-  year: z.number().int().min(2020),
+  year: z.number().int().min(2000).max(2100),
   paperType: paperTypeEnum,
-  totalMarks: z.number().int().min(1),
-  duration: z.number().int().min(1),
-  topicNodeIds: z.array(objectIdSchema).default([]),
+  duration: z.number().int().min(5).max(480),
+  totalMarks: z.number().int().min(1).max(500),
+  difficulty: paperDifficultyEnum.default('medium'),
+  title: z.string().min(1).max(200),
+  sectionConfig: z.array(sectionConfigSchema).min(1).max(10),
+  instructions: z.string().max(5000).optional(),
+  // Legacy fields kept for backward compatibility with existing AI generator.
+  // TODO(Task 12): drop once service-paper-generation.ts is rewritten.
+  topicNodeIds: z.array(objectIdSchema).default([]).optional(),
   cognitiveWeighting: z.object({
     knowledge: z.number().min(0).max(100),
     routine: z.number().min(0).max(100),
     complex: z.number().min(0).max(100),
     problemSolving: z.number().min(0).max(100),
   }).optional(),
-  difficulty: z.enum(['easy', 'balanced', 'challenging']).default('balanced'),
-  instructions: z.string().default(''),
+}).strict();
+
+// ─── Question CRUD on existing paper (NEW — Task 2) ───────────────────────
+
+// Add: must pass exactly-one-of refinement.
+export const addQuestionToPaperSchema = paperQuestionInputSchema;
+
+// Update: all fields optional, NO refinement (so { marks: 5 } validates).
+// Built fresh — does NOT inherit from paperQuestionInputSchema.
+export const updatePaperQuestionSchema = z.object({
+  questionId: objectIdSchema.optional(),
+  questionText: z.string().min(1).max(5000).optional(),
+  marks: z.number().int().min(0).max(100).optional(),
+  position: z.number().int().min(0).optional(),
+  modelAnswer: z.string().max(5000).optional(),
+  markingGuideline: z.string().max(5000).optional(),
+  diagram: paperQuestionDiagramSchema.optional(),
+}).strict();
+
+// ─── Memo update (NEW — Task 2) ───────────────────────────────────────────
+
+export const updateMemoSchema = z.object({
+  sections: z.array(z.object({
+    title: z.string().min(1).max(200),
+    items: z.array(z.object({
+      position: z.number().int().min(0),
+      modelAnswer: z.string().max(5000),
+      markingGuideline: z.string().max(5000).optional(),
+      marks: z.number().int().min(0).max(100),
+    }).strict()),
+  }).strict()),
 }).strict();
 
 // ─── Extract From Paper (Vision) ──────────────────────────────────────────
@@ -208,3 +270,6 @@ export type AddQuestionInput = z.infer<typeof addQuestionSchema>;
 export type PaperQueryInput = z.infer<typeof paperQuerySchema>;
 export type GeneratePaperInput = z.infer<typeof generatePaperSchema>;
 export type ExtractFromPaperInput = z.infer<typeof extractFromPaperSchema>;
+export type AddQuestionToPaperInput = z.infer<typeof addQuestionToPaperSchema>;
+export type UpdatePaperQuestionInput = z.infer<typeof updatePaperQuestionSchema>;
+export type UpdateMemoInput = z.infer<typeof updateMemoSchema>;
