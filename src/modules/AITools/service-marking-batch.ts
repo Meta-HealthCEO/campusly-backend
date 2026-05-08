@@ -297,3 +297,8 @@ export async function cancelBatch(batchId: string, schoolId: string): Promise<vo
     { $set: { isDeleted: true, status: 'failed', errorMessage: 'Cancelled by user' } },
   );
 }
+
+// Re-export confirmBatch from sibling module so consumers can import everything
+// from this file. Implementation lives in service-marking-batch-confirm.ts to
+// keep this file under the 350-line limit.
+export { confirmBatch } from './service-marking-batch-confirm.js';
