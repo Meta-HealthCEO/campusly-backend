@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { CurriculumNode } from './model.js';
+import { resolveAcademicAncestor } from './service-academic-bridge.js';
 import { NotFoundError, ConflictError, BadRequestError } from '../../common/errors.js';
 import { paginationHelper } from '../../common/utils.js';
 import type { CreateNodeInput, UpdateNodeInput, BulkImportInput, NodeQueryInput } from './validation.js';
@@ -7,6 +8,7 @@ import type { CreateNodeInput, UpdateNodeInput, BulkImportInput, NodeQueryInput 
 export class NodesService {
   static async listNodes(schoolId: string, filters: NodeQueryInput) {
     const query: Record<string, unknown> = { isDeleted: false };
+    const soid = new mongoose.Types.ObjectId(schoolId);
 
     if (filters.frameworkId) {
       query.frameworkId = new mongoose.Types.ObjectId(filters.frameworkId);
@@ -24,7 +26,29 @@ export class NodesService {
       query.title = { $regex: filters.search, $options: 'i' };
     }
 
-    const soid = new mongoose.Types.ObjectId(schoolId);
+    // Academic Subject / Grade ID filtering — resolve to curriculum-node
+    // ancestor + descendant ID sets, then constrain by intersection.
+    const subjectIds = await resolveAcademicAncestor(filters.subjectId, 'subject', soid);
+    const gradeIds = await resolveAcademicAncestor(filters.gradeId, 'grade', soid);
+    if (subjectIds === null || gradeIds === null) {
+      return { nodes: [], total: 0, page: filters.page ?? 1, limit: filters.limit ?? 50 };
+    }
+    const idConstraints: mongoose.Types.ObjectId[][] = [];
+    if (subjectIds) idConstraints.push(subjectIds);
+    if (gradeIds) idConstraints.push(gradeIds);
+    if (idConstraints.length === 1) {
+      query._id = { $in: idConstraints[0] };
+    } else if (idConstraints.length === 2) {
+      const subjectSet = new Set(idConstraints[0].map((o: mongoose.Types.ObjectId) => o.toString()));
+      const intersection = idConstraints[1].filter(
+        (o: mongoose.Types.ObjectId) => subjectSet.has(o.toString()),
+      );
+      if (intersection.length === 0) {
+        return { nodes: [], total: 0, page: filters.page ?? 1, limit: filters.limit ?? 50 };
+      }
+      query._id = { $in: intersection };
+    }
+
     query.$or = [{ schoolId: null }, { schoolId: soid }];
 
     const { skip, limit } = paginationHelper(filters.page, filters.limit);

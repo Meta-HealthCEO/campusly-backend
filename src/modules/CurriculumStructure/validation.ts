@@ -89,6 +89,11 @@ export const nodeQuerySchema = z.object({
   search: z.string().optional(),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(200).default(50),
+  // Academic Subject / Grade IDs (NOT CurriculumNode IDs). When passed, the
+  // service resolves these to matching curriculum subject/grade nodes by name
+  // and traverses descendants — used by the Module 2 paper wizard topic picker.
+  subjectId: objectIdSchema.optional(),
+  gradeId: objectIdSchema.optional(),
 }).strict();
 
 // ─── Framework ───────────────────────────────────────────────────────────────
