@@ -9,6 +9,7 @@ import {
   clonePaper as clonePaperHelper,
   checkCompliance as checkComplianceHelper,
 } from './service-papers-helpers.js';
+import { assertCanEditPaper } from './service-papers-auth.js';
 import type {
   CreatePaperInput,
   UpdatePaperInput,
@@ -28,7 +29,6 @@ const POPULATE_DETAIL = [
 ];
 
 const REVIEW_ROLES = ['super_admin', 'school_admin', 'principal', 'hod'];
-const ADMIN_ROLES = ['super_admin', 'school_admin', 'principal'];
 
 export class PapersService {
   static async listPapers(
@@ -126,6 +126,7 @@ export class PapersService {
     id: string,
     schoolId: string,
     userId: string,
+    userRole: string,
     data: UpdatePaperInput,
   ) {
     const oid = new mongoose.Types.ObjectId(id);
@@ -138,12 +139,7 @@ export class PapersService {
     }).lean();
 
     if (!paper) throw new NotFoundError('Assessment paper not found');
-    if (paper.createdBy.toString() !== userId) {
-      throw new ForbiddenError('Only the creator can edit this paper');
-    }
-    if (paper.status !== 'draft') {
-      throw new ForbiddenError('Only draft papers can be edited');
-    }
+    assertCanEditPaper(paper, userId, userRole, 'update');
 
     const fields = ['title', 'term', 'year', 'paperType', 'duration', 'instructions', 'sections'] as const;
     const update: Record<string, unknown> = {};
@@ -178,12 +174,7 @@ export class PapersService {
     }).lean();
 
     if (!paper) throw new NotFoundError('Assessment paper not found');
-
-    const isAdmin = ADMIN_ROLES.includes(userRole);
-    const isCreator = paper.createdBy.toString() === userId;
-    if (!isAdmin && !isCreator) {
-      throw new ForbiddenError('Only the creator or an admin can delete this paper');
-    }
+    assertCanEditPaper(paper, userId, userRole, 'delete');
 
     await AssessmentPaper.findOneAndUpdate(
       { _id: oid, schoolId: soid, isDeleted: false },
@@ -197,6 +188,7 @@ export class PapersService {
     id: string,
     schoolId: string,
     userId: string,
+    userRole: string,
     data: AddQuestionInput,
   ) {
     const oid = new mongoose.Types.ObjectId(id);
@@ -209,11 +201,9 @@ export class PapersService {
     });
 
     if (!paper) throw new NotFoundError('Assessment paper not found');
-    if (paper.createdBy.toString() !== userId) {
-      throw new ForbiddenError('Only the creator can modify this paper');
-    }
-    if (paper.status !== 'draft') {
-      throw new ForbiddenError('Only draft papers can be modified');
+    assertCanEditPaper(paper, userId, userRole, 'add-question');
+    if (paper.status === 'archived') {
+      throw new ForbiddenError('Cannot modify an archived paper');
     }
     if (data.sectionIndex >= paper.sections.length) {
       throw new BadRequestError('Invalid section index');
@@ -260,6 +250,7 @@ export class PapersService {
     id: string,
     schoolId: string,
     userId: string,
+    userRole: string,
     sectionIndex: number,
     questionIndex: number,
   ) {
@@ -273,11 +264,9 @@ export class PapersService {
     });
 
     if (!paper) throw new NotFoundError('Assessment paper not found');
-    if (paper.createdBy.toString() !== userId) {
-      throw new ForbiddenError('Only the creator can modify this paper');
-    }
-    if (paper.status !== 'draft') {
-      throw new ForbiddenError('Only draft papers can be modified');
+    assertCanEditPaper(paper, userId, userRole, 'remove-question');
+    if (paper.status === 'archived') {
+      throw new ForbiddenError('Cannot modify an archived paper');
     }
     if (sectionIndex >= paper.sections.length) {
       throw new BadRequestError('Invalid section index');
@@ -306,7 +295,7 @@ export class PapersService {
     return paper.toObject();
   }
 
-  static async finalisePaper(id: string, schoolId: string, userId: string) {
+  static async finalisePaper(id: string, schoolId: string, userId: string, userRole: string) {
     const oid = new mongoose.Types.ObjectId(id);
     const soid = new mongoose.Types.ObjectId(schoolId);
 
@@ -317,9 +306,7 @@ export class PapersService {
     });
 
     if (!paper) throw new NotFoundError('Assessment paper not found');
-    if (paper.createdBy.toString() !== userId) {
-      throw new ForbiddenError('Only the creator can finalise this paper');
-    }
+    assertCanEditPaper(paper, userId, userRole, 'finalise');
     if (paper.status !== 'draft') {
       throw new BadRequestError('Only draft papers can be finalised');
     }

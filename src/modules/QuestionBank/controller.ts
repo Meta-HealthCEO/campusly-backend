@@ -219,6 +219,7 @@ export class QuestionBankController {
       req.params.id as string,
       schoolId,
       user.id,
+      user.role,
       req.body,
     );
     res.json(apiResponse(true, paper, 'Paper updated successfully'));
@@ -253,6 +254,7 @@ export class QuestionBankController {
       req.params.id as string,
       schoolId,
       user.id,
+      user.role,
       req.body,
     );
     res.json(apiResponse(true, paper, 'Question added to paper'));
@@ -271,6 +273,7 @@ export class QuestionBankController {
       req.params.id as string,
       schoolId,
       user.id,
+      user.role,
       sectionIndex,
       questionIndex,
     );
@@ -288,6 +291,7 @@ export class QuestionBankController {
       req.params.id as string,
       schoolId,
       user.id,
+      user.role,
     );
     res.json(apiResponse(true, paper, 'Paper finalised successfully'));
   }
