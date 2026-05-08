@@ -11,6 +11,15 @@ import { logger } from '../../common/logger.js';
 import { renderDiagram } from './service-diagram.js';
 
 /**
+ * Bumped before every paper.save() in service-paper-questions so Module 3's
+ * stale-marking banner can detect AI results that ran on an older revision
+ * (compares marking.paperVersion).
+ */
+export function bumpVersion(paper: { version: number }): void {
+  paper.version = (paper.version ?? 1) + 1;
+}
+
+/**
  * Enforce the bank-ref XOR inline contract — exactly one of `questionId` /
  * `questionText` must be present. The validation layer already runs this, but
  * we re-assert at the service boundary so callers that bypass route validation

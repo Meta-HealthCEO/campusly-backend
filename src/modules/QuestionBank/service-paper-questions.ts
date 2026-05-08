@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { AssessmentPaper } from './model.js';
 import type { IAssessmentPaper, IPaperQuestion } from './model.js';
 import { PaperMemo } from '../TeacherWorkbench/model.assessment.js';
 import type { IMemoAnswer } from '../TeacherWorkbench/model.assessment.js';
@@ -12,6 +13,7 @@ import {
   assertQuestionInBounds,
   questionNumberFor,
   buildMemoAnswer,
+  bumpVersion,
   recomputePaperTotalMarks,
   scheduleRegenDiagramRender,
 } from './service-paper-questions-helpers.js';
@@ -63,6 +65,7 @@ export async function addQuestionToPaper(
   };
   section.questions.push(newQuestion);
   recomputePaperTotalMarks(paper);
+  bumpVersion(paper);
   await paper.save();
 
   // Mirror to memo — append answer at matching section AND keep memo's
@@ -134,6 +137,7 @@ export async function updatePaperQuestion(
   if (patch.marks !== undefined) {
     recomputePaperTotalMarks(paper);
   }
+  bumpVersion(paper);
   await paper.save();
 
   // Mirror to memo only if a memo-relevant field changed.
@@ -200,6 +204,7 @@ export async function deletePaperQuestion(
     q.position = idx;
   });
   recomputePaperTotalMarks(paper);
+  bumpVersion(paper);
   await paper.save();
 
   // Rebuild the memo section's answers from the post-delete paper state.
@@ -277,6 +282,7 @@ export async function regeneratePaperQuestion(
   // recompute. Even if marks happen to match, recompute is cheap and
   // keeps the invariant unconditional.
   recomputePaperTotalMarks(paper);
+  bumpVersion(paper);
   await paper.save();
 
   // Mirror to memo by questionNumber + sync totalMarks.
@@ -339,5 +345,10 @@ export async function updatePaperMemo(
   await PaperMemo.updateOne(
     { paperId: paper._id },
     { $set: { sections: patch.sections } },
+  );
+  // Memo edits invalidate marking; $inc keeps version monotonic.
+  await AssessmentPaper.updateOne(
+    { _id: paper._id, schoolId, isDeleted: false },
+    { $inc: { version: 1 } },
   );
 }
