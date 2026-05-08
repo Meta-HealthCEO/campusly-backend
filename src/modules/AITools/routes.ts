@@ -1,12 +1,9 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import { authenticate } from '../../middleware/auth.js';
 import { authorize } from '../../middleware/rbac.js';
 import { validate } from '../../middleware/validate.js';
 import { AIToolsController } from './controller.js';
 import {
-  generatePaperSchema,
-  updatePaperSchema,
-  regenerateQuestionSchema,
   gradeSubmissionSchema,
   bulkGradeSchema,
   reviewGradeSchema,
@@ -19,66 +16,64 @@ import {
 
 const router = express.Router();
 
-// ─── Paper Generation ─────────────────────────────────────────────────────────
+// ─── Paper Generation (DEPRECATED — redirects to /api/question-bank/papers) ──
+//
+// All paper CRUD + generation routes previously lived under /api/ai-tools.
+// They moved to the canonical Question Bank module at /api/question-bank/papers.
+// 308 Permanent Redirect preserves request method + body so existing POST/PUT
+// clients continue to work without code changes.
+//
+// Marking-related routes (/mark-paper, /markings/*) remain here — they are
+// Module 3 scope and have not yet migrated.
 
-// POST /generate-paper — generate a new exam paper
-router.post(
-  '/generate-paper',
-  authenticate,
-  authorize('teacher', 'school_admin', 'super_admin'),
-  validate(generatePaperSchema),
-  AIToolsController.generatePaper,
-);
+function preserveQueryString(req: Request): string {
+  const queryIndex = req.originalUrl.indexOf('?');
+  return queryIndex >= 0 ? req.originalUrl.substring(queryIndex) : '';
+}
 
-// GET /papers — list generated papers
-router.get(
-  '/papers',
-  authenticate,
-  authorize('teacher', 'school_admin', 'super_admin'),
-  AIToolsController.getPapers,
-);
+// POST /generate-paper → POST /api/question-bank/papers/generate
+router.post('/generate-paper', (req: Request, res: Response) => {
+  res.redirect(308, `/api/question-bank/papers/generate${preserveQueryString(req)}`);
+});
 
-// GET /papers/:id — get paper detail
-router.get(
-  '/papers/:id',
-  authenticate,
-  authorize('teacher', 'school_admin', 'super_admin'),
-  AIToolsController.getPaperById,
-);
+// GET /papers → GET /api/question-bank/papers
+router.get('/papers', (req: Request, res: Response) => {
+  res.redirect(308, `/api/question-bank/papers${preserveQueryString(req)}`);
+});
 
-// PUT /papers/:id — edit paper
-router.put(
-  '/papers/:id',
-  authenticate,
-  authorize('teacher', 'school_admin', 'super_admin'),
-  validate(updatePaperSchema),
-  AIToolsController.updatePaper,
-);
+// GET /papers/:id → GET /api/question-bank/papers/:id
+router.get('/papers/:id', (req: Request, res: Response) => {
+  res.redirect(308, `/api/question-bank/papers/${req.params.id}${preserveQueryString(req)}`);
+});
 
-// POST /papers/:id/regenerate-question — replace one question
-router.post(
-  '/papers/:id/regenerate-question',
-  authenticate,
-  authorize('teacher', 'school_admin', 'super_admin'),
-  validate(regenerateQuestionSchema),
-  AIToolsController.regenerateQuestion,
-);
+// PUT /papers/:id → PUT /api/question-bank/papers/:id
+router.put('/papers/:id', (req: Request, res: Response) => {
+  res.redirect(308, `/api/question-bank/papers/${req.params.id}${preserveQueryString(req)}`);
+});
 
-// GET /papers/:id/pdf — download paper PDF
-router.get(
-  '/papers/:id/pdf',
-  authenticate,
-  authorize('teacher', 'school_admin', 'super_admin'),
-  AIToolsController.downloadPaperPdf,
-);
+// POST /papers/:id/regenerate-question → 410 Gone (path-param shape changed)
+//
+// Legacy body: { sectionIndex, questionIndex }
+// New canonical: POST /api/question-bank/papers/:id/sections/:sectionIdx/questions/:position/regenerate
+// The body→path-param translation can't be done safely without parsing the
+// body, so we return 410 Gone with a migration message instead of redirecting.
+router.post('/papers/:id/regenerate-question', (_req: Request, res: Response) => {
+  res.status(410).json({
+    success: false,
+    message:
+      'This endpoint has moved. Use POST /api/question-bank/papers/:id/sections/:sectionIdx/questions/:position/regenerate',
+  });
+});
 
-// GET /papers/:id/memo-pdf — download memorandum PDF
-router.get(
-  '/papers/:id/memo-pdf',
-  authenticate,
-  authorize('teacher', 'school_admin', 'super_admin'),
-  AIToolsController.downloadMemoPdf,
-);
+// GET /papers/:id/pdf → GET /api/question-bank/papers/:id/pdf
+router.get('/papers/:id/pdf', (req: Request, res: Response) => {
+  res.redirect(308, `/api/question-bank/papers/${req.params.id}/pdf${preserveQueryString(req)}`);
+});
+
+// GET /papers/:id/memo-pdf → GET /api/question-bank/papers/:id/memo-pdf
+router.get('/papers/:id/memo-pdf', (req: Request, res: Response) => {
+  res.redirect(308, `/api/question-bank/papers/${req.params.id}/memo-pdf${preserveQueryString(req)}`);
+});
 
 // ─── OCR Paper Marking ───────────────────────────────────────────────────────
 
