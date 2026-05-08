@@ -50,10 +50,12 @@ export async function confirmBatch(
       // Build a synthetic Multer.File[] by copying batch files into a temp area for finaliseImages.
       // markPaperFromImages calls finaliseImages which renames source files via fs.renameSync —
       // since multiple markings share files in the batch dir, we must copy first.
+      const stagedPaths: string[] = [];
       const stagedFiles = a.imageFilenames.map((fname): Express.Multer.File => {
         const srcPath = path.join(dir, fname);
         const stagedPath = path.join(dir, `staged-${a.studentId}-${path.basename(fname)}`);
         fs.copyFileSync(srcPath, stagedPath);
+        stagedPaths.push(stagedPath);
         const stat = fs.statSync(stagedPath);
         return {
           fieldname: 'files',
@@ -69,14 +71,22 @@ export async function confirmBatch(
         } as unknown as Express.Multer.File;
       });
 
-      await markPaperFromImages(teacherId, schoolId, {
-        paperId: String(batch.paperId),
-        paperType: batch.paperType,
-        studentName: a.studentName,
-        studentId: a.studentId,
-        classId: String(batch.classId),
-        files: stagedFiles,
-      });
+      try {
+        await markPaperFromImages(teacherId, schoolId, {
+          paperId: String(batch.paperId),
+          paperType: batch.paperType,
+          studentName: a.studentName,
+          studentId: a.studentId,
+          classId: String(batch.classId),
+          files: stagedFiles,
+        });
+      } finally {
+        // Clean up staged copies. On success, finaliseImages already renamed them
+        // out of this directory so unlink will ENOENT — that's fine.
+        for (const p of stagedPaths) {
+          try { fs.unlinkSync(p); } catch { /* ENOENT expected on success path */ }
+        }
+      }
     };
 
     const next = (): void => {
