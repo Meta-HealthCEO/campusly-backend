@@ -31,7 +31,7 @@ export interface IPaperQuestion {
   position: number;
   modelAnswer: string | null;
   markingGuideline: string | null;
-  diagram: IPaperQuestionDiagram;
+  diagram: IPaperQuestionDiagram | null;
 }
 
 export interface IPaperSection {
@@ -123,12 +123,7 @@ const paperQuestionSchema = new Schema<IPaperQuestion>(
     markingGuideline: { type: String, default: null },
     diagram: {
       type: paperQuestionDiagramSchema,
-      default: () => ({
-        tikz: null,
-        caption: null,
-        svgUrl: null,
-        renderStatus: 'pending',
-      }),
+      default: null,
     },
   },
   { _id: false },
