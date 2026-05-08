@@ -6,6 +6,15 @@ import { BadRequestError, NotFoundError } from '../../common/errors.js';
 import { batchDir } from './service-marking-images.js';
 import { markPaperFromImages } from './service-marking.js';
 
+function normaliseMime(filename: string): string {
+  const ext = path.extname(filename).slice(1).toLowerCase();
+  if (ext === 'jpg' || ext === 'jpeg' || ext === '') return 'image/jpeg';
+  if (ext === 'png') return 'image/png';
+  if (ext === 'webp') return 'image/webp';
+  if (ext === 'gif') return 'image/gif';
+  return `image/${ext}`;
+}
+
 interface ConfirmAssignment {
   imageFilenames: string[];
   studentId: string;        // resolved student
@@ -50,7 +59,7 @@ export async function confirmBatch(
           fieldname: 'files',
           originalname: fname,
           encoding: '7bit',
-          mimetype: `image/${path.extname(fname).slice(1) || 'jpeg'}`,
+          mimetype: normaliseMime(fname),
           size: stat.size,
           destination: dir,
           filename: path.basename(stagedPath),
