@@ -9,6 +9,13 @@ export interface IMarkingQuestion {
   feedback: string;
 }
 
+export interface PaperMarkingImage {
+  filename: string;
+  mimeType: string;
+  sizeBytes: number;
+  pageNumber: number;
+}
+
 export interface IPaperMarking extends Document {
   paperId: Types.ObjectId;
   paperType: 'generated' | 'assessment';
@@ -29,9 +36,23 @@ export interface IPaperMarking extends Document {
   paperMismatch: boolean;
   mismatchReason: string | null;
   aiRawResult: Record<string, unknown> | null;
+  images: PaperMarkingImage[];
+  paperVersion: number;
+  classId?: Types.ObjectId | null;
+  batchId?: Types.ObjectId | null;
   createdAt: Date;
   updatedAt: Date;
 }
+
+const paperMarkingImageSchema = new Schema<PaperMarkingImage>(
+  {
+    filename: { type: String, required: true, trim: true },
+    mimeType: { type: String, required: true, trim: true },
+    sizeBytes: { type: Number, required: true, min: 0 },
+    pageNumber: { type: Number, required: true, min: 1 },
+  },
+  { _id: false },
+);
 
 const markingQuestionSchema = new Schema<IMarkingQuestion>(
   {
@@ -70,6 +91,10 @@ const paperMarkingSchema = new Schema<IPaperMarking>(
     paperMismatch: { type: Boolean, default: false },
     mismatchReason: { type: String, default: null },
     aiRawResult: { type: Schema.Types.Mixed, default: null },
+    images: { type: [paperMarkingImageSchema], default: [] },
+    paperVersion: { type: Number, required: true, default: 1, min: 1 },
+    classId: { type: Schema.Types.ObjectId, ref: 'Class', default: null },
+    batchId: { type: Schema.Types.ObjectId, ref: 'MarkingBatch', default: null },
   },
   { timestamps: true },
 );
@@ -77,5 +102,6 @@ const paperMarkingSchema = new Schema<IPaperMarking>(
 paperMarkingSchema.index({ paperId: 1, schoolId: 1 });
 paperMarkingSchema.index({ teacherId: 1, schoolId: 1 });
 paperMarkingSchema.index({ studentId: 1, paperId: 1 });
+paperMarkingSchema.index({ batchId: 1 });
 
 export const PaperMarking = mongoose.model<IPaperMarking>('PaperMarking', paperMarkingSchema);
