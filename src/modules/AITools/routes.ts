@@ -7,6 +7,12 @@ import { validate } from '../../middleware/validate.js';
 import { AIToolsController } from './controller.js';
 import { createMarkingUpload } from './service-marking-images.js';
 import {
+  postCreateBatch,
+  getBatchHandler,
+  postConfirmBatch,
+  deleteBatchHandler,
+} from './controller-marking-batch.js';
+import {
   gradeSubmissionSchema,
   bulkGradeSchema,
   reviewGradeSchema,
@@ -94,6 +100,50 @@ router.post(
   authorize('teacher', 'school_admin', 'super_admin'),
   markingUpload.array('files', 8),
   AIToolsController.markPaper,
+);
+
+// ─── Bulk Batch Marking ──────────────────────────────────────────────────────
+//
+// Separate Multer instance for batch uploads — higher per-request file limit
+// (80 vs 8) since a batch covers a whole class. Files land in a sibling temp
+// dir, then service-marking-batch.createBatch() moves them into the per-batch
+// archive at uploads/batches/<id>/.
+const batchStagingDir = path.join(os.tmpdir(), 'campusly-batch-staging');
+const batchUpload = createMarkingUpload(batchStagingDir);
+
+// POST /mark-batch — create batch + kick off async header extraction.
+// Form fields: paperId, paperType, classId
+// File field: files[] (up to 80 pages across the class)
+router.post(
+  '/mark-batch',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  batchUpload.array('files', 80),
+  postCreateBatch,
+);
+
+// GET /batches/:id — fetch batch state (extract progress, matched/unmatched, etc.)
+router.get(
+  '/batches/:id',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  getBatchHandler,
+);
+
+// POST /batches/:id/confirm — teacher resolves ambiguous matches; spawn markings
+router.post(
+  '/batches/:id/confirm',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  postConfirmBatch,
+);
+
+// DELETE /batches/:id — cancel/soft-delete a batch
+router.delete(
+  '/batches/:id',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  deleteBatchHandler,
 );
 
 // GET /markings — list paper markings
