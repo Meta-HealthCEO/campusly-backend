@@ -11,9 +11,9 @@ import {
   loadPaperOrThrow,
   assertSectionInBounds,
   assertQuestionInBounds,
-  questionNumberFor,
   buildMemoAnswer,
   bumpVersion,
+  mirrorAnswerToMemo,
   recomputePaperTotalMarks,
   scheduleRegenDiagramRender,
 } from './service-paper-questions-helpers.js';
@@ -140,39 +140,22 @@ export async function updatePaperQuestion(
   bumpVersion(paper);
   await paper.save();
 
-  // Mirror to memo only if a memo-relevant field changed.
+  // Mirror to memo only if a memo-relevant field changed. Pass totalMarks
+  // through only when marks shifted, so unchanged-mark edits don't redundantly
+  // overwrite the memo's totalMarks field.
   const memoFieldsTouched =
     patch.marks !== undefined ||
     patch.modelAnswer !== undefined ||
     patch.markingGuideline !== undefined;
   if (memoFieldsTouched) {
-    const qn = questionNumberFor(sectionIdx, position);
-    const memoSet: Record<string, unknown> = {
-      [`sections.${sectionIdx}.answers.$[ans].expectedAnswer`]:
-        question.modelAnswer ?? '',
-      [`sections.${sectionIdx}.answers.$[ans].markAllocation`]: [
-        {
-          criterion: question.markingGuideline ?? 'Full marks',
-          marks: question.marks,
-        },
-      ],
-    };
-    // If marks shifted, mirror the new paper totalMarks too.
-    if (patch.marks !== undefined) {
-      memoSet.totalMarks = paper.totalMarks;
-    }
-    try {
-      await PaperMemo.updateOne(
-        { paperId: paper._id, isDeleted: false },
-        { $set: memoSet },
-        { arrayFilters: [{ 'ans.questionNumber': qn }] },
-      );
-    } catch (err: unknown) {
-      logger.error(
-        { err, paperId: String(paper._id), sectionIdx, position },
-        'Failed to mirror updatePaperQuestion to memo',
-      );
-    }
+    await mirrorAnswerToMemo(
+      paper._id as mongoose.Types.ObjectId,
+      sectionIdx,
+      position,
+      question,
+      patch.marks !== undefined ? paper.totalMarks : undefined,
+      'updatePaperQuestion',
+    );
   }
 
   return paper;
@@ -285,32 +268,16 @@ export async function regeneratePaperQuestion(
   bumpVersion(paper);
   await paper.save();
 
-  // Mirror to memo by questionNumber + sync totalMarks.
-  const qn = questionNumberFor(sectionIdx, position);
-  try {
-    await PaperMemo.updateOne(
-      { paperId: paper._id, isDeleted: false },
-      {
-        $set: {
-          [`sections.${sectionIdx}.answers.$[ans].expectedAnswer`]:
-            updated.modelAnswer ?? '',
-          [`sections.${sectionIdx}.answers.$[ans].markAllocation`]: [
-            {
-              criterion: updated.markingGuideline ?? 'Full marks',
-              marks: updated.marks,
-            },
-          ],
-          totalMarks: paper.totalMarks,
-        },
-      },
-      { arrayFilters: [{ 'ans.questionNumber': qn }] },
-    );
-  } catch (err: unknown) {
-    logger.error(
-      { err, paperId: String(paper._id), sectionIdx, position },
-      'Failed to mirror regeneratePaperQuestion to memo',
-    );
-  }
+  // Mirror to memo by questionNumber + sync totalMarks (always — regen may
+  // have shifted marks even when the per-question total looks identical).
+  await mirrorAnswerToMemo(
+    paper._id as mongoose.Types.ObjectId,
+    sectionIdx,
+    position,
+    updated,
+    paper.totalMarks,
+    'regeneratePaperQuestion',
+  );
 
   // Fire-and-forget TikZ render — same pattern as service-paper-generation.
   if (updated.diagram?.tikz) {

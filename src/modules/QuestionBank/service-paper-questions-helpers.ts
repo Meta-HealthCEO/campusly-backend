@@ -5,6 +5,7 @@ import type {
   IPaperQuestion,
   IPaperSection,
 } from './model.js';
+import { PaperMemo } from '../TeacherWorkbench/model.assessment.js';
 import type { IMemoAnswer } from '../TeacherWorkbench/model.assessment.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
 import { logger } from '../../common/logger.js';
@@ -124,6 +125,44 @@ export function buildMemoAnswer(
     commonMistakes: [],
     acceptableAlternatives: [],
   };
+}
+
+/**
+ * Mirror a single paper-question's mark-relevant fields to its matching
+ * `IMemoAnswer`. Used by `updatePaperQuestion` and `regeneratePaperQuestion`
+ * — both writes need the same `$set` shape (expectedAnswer + markAllocation,
+ * arrayFiltered by questionNumber). Pass `totalMarks` when paper-level
+ * marks shifted so the memo's `totalMarks` stays in sync. Mirror failures
+ * are logged and swallowed — never crash the question mutation on memo skew.
+ */
+export async function mirrorAnswerToMemo(
+  paperId: mongoose.Types.ObjectId,
+  sectionIdx: number,
+  position: number,
+  q: Pick<IPaperQuestion, 'marks' | 'modelAnswer' | 'markingGuideline'>,
+  totalMarks?: number,
+  context: string = 'mirrorAnswerToMemo',
+): Promise<void> {
+  const qn = questionNumberFor(sectionIdx, position);
+  const memoSet: Record<string, unknown> = {
+    [`sections.${sectionIdx}.answers.$[ans].expectedAnswer`]: q.modelAnswer ?? '',
+    [`sections.${sectionIdx}.answers.$[ans].markAllocation`]: [
+      { criterion: q.markingGuideline ?? 'Full marks', marks: q.marks },
+    ],
+  };
+  if (totalMarks !== undefined) memoSet.totalMarks = totalMarks;
+  try {
+    await PaperMemo.updateOne(
+      { paperId, isDeleted: false },
+      { $set: memoSet },
+      { arrayFilters: [{ 'ans.questionNumber': qn }] },
+    );
+  } catch (err: unknown) {
+    logger.error(
+      { err, paperId: String(paperId), sectionIdx, position },
+      `Failed to mirror ${context} to memo`,
+    );
+  }
 }
 
 /**
