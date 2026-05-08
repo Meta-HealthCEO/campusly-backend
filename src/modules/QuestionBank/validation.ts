@@ -248,17 +248,34 @@ export const updatePaperQuestionSchema = z.object({
 
 // ─── Memo update (NEW — Task 2) ───────────────────────────────────────────
 
-export const updateMemoSchema = z.object({
-  sections: z.array(z.object({
-    title: z.string().min(1).max(200),
-    items: z.array(z.object({
-      position: z.number().int().min(0),
-      modelAnswer: z.string().max(5000),
-      markingGuideline: z.string().max(5000).optional(),
-      marks: z.number().int().min(0).max(100),
-    }).strict()),
-  }).strict()),
+// Shape mirrors `IPaperMemo` in
+// `src/modules/TeacherWorkbench/model.assessment.ts` — model is source of
+// truth. Min/max bounds tighten the model's permissive Mongoose defaults
+// for sensible write-time UX (e.g. a memo with zero sections is meaningless).
+const memoMarkAllocationSchema = z.object({
+  criterion: z.string().min(1).max(500),
+  marks: z.number().int().min(0).max(100),
 }).strict();
+
+const memoAnswerSchema = z.object({
+  questionNumber: z.string().min(1).max(20),  // e.g. "1", "1.a", "2.b.iii"
+  expectedAnswer: z.string().min(1).max(5000),
+  markAllocation: z.array(memoMarkAllocationSchema).min(1).max(20),
+  commonMistakes: z.array(z.string().max(500)).max(10).optional(),
+  acceptableAlternatives: z.array(z.string().max(500)).max(10).optional(),
+}).strict();
+
+const memoSectionSchema = z.object({
+  sectionTitle: z.string().min(1).max(200),
+  answers: z.array(memoAnswerSchema).max(100),
+}).strict();
+
+export const updateMemoSchema = z.object({
+  sections: z.array(memoSectionSchema).min(1).max(20),
+}).strict().refine(
+  (obj) => Object.keys(obj).length > 0,
+  { message: 'At least one field must be provided to update' },
+);
 
 // ─── Extract From Paper (Vision) ──────────────────────────────────────────
 
