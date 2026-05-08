@@ -1,6 +1,12 @@
 import mongoose from 'mongoose';
 import { Question } from './model.js';
-import type { IQuestion, QuestionType, CapsLevel, IPaperSection } from './model.js';
+import type {
+  IQuestion,
+  QuestionType,
+  CapsLevel,
+  IPaperSection,
+  IPaperQuestion,
+} from './model.js';
 import { CurriculumNode } from '../CurriculumStructure/model.js';
 import { AIService } from '../../services/ai.service.js';
 import type { GeneratePaperInput } from './validation.js';
@@ -61,7 +67,7 @@ export function selectQuestions(
 
   const sorted = [...questions].sort((a, b) => {
     if (difficulty === 'easy') return a.difficulty - b.difficulty;
-    if (difficulty === 'challenging') return b.difficulty - a.difficulty;
+    if (difficulty === 'hard') return b.difficulty - a.difficulty;
     return Math.abs(a.difficulty - 3) - Math.abs(b.difficulty - 3);
   });
 
@@ -114,10 +120,15 @@ export async function generateMissingQuestions(
     existingMarks[key] += q.marks;
   }
 
+  // Topic IDs — Task 2 introduced `topicIds` as the canonical field. The legacy
+  // `topicNodeIds` is still in the validation schema (optional) for backward
+  // compatibility — callers may pass either. Normalise to a single array here.
+  const topicIds = (data.topicIds ?? data.topicNodeIds ?? []) as string[];
+
   let topicContext = 'General curriculum topic';
-  if (data.topicNodeIds.length > 0) {
+  if (topicIds.length > 0) {
     const node = await CurriculumNode.findOne({
-      _id: new mongoose.Types.ObjectId(data.topicNodeIds[0]),
+      _id: new mongoose.Types.ObjectId(topicIds[0]),
       isDeleted: false,
     }).lean();
     if (node) topicContext = `${node.title}${node.description ? ` — ${node.description}` : ''}`;
@@ -185,8 +196,9 @@ async function saveGeneratedQuestions(
   const uoid = new mongoose.Types.ObjectId(userId);
   const suboid = new mongoose.Types.ObjectId(data.subjectId);
   const groid = new mongoose.Types.ObjectId(data.gradeId);
-  const nodeId = data.topicNodeIds.length > 0
-    ? new mongoose.Types.ObjectId(data.topicNodeIds[0])
+  const topicIds = (data.topicIds ?? data.topicNodeIds ?? []) as string[];
+  const nodeId = topicIds.length > 0
+    ? new mongoose.Types.ObjectId(topicIds[0])
     : suboid;
 
   const docs = parsed.map((q) => ({
@@ -202,7 +214,7 @@ async function saveGeneratedQuestions(
     markingRubric: q.markingRubric,
     marks: q.marks,
     cognitiveLevel: { caps: q.capsLevel, blooms: capsToDefaultBlooms(q.capsLevel) },
-    difficulty: data.difficulty === 'easy' ? 2 : data.difficulty === 'challenging' ? 4 : 3,
+    difficulty: data.difficulty === 'easy' ? 2 : data.difficulty === 'hard' ? 4 : 3,
     tags: ['ai_paper_generation'],
     source: 'ai_generated' as const,
     status: 'approved' as const,
@@ -229,11 +241,14 @@ export function organiseSections(questions: IQuestion[]): IPaperSection[] {
 
   for (const [type, qs] of groups) {
     const label = SECTION_LABELS[type] ?? type.replace(/_/g, ' ');
-    const sectionQuestions = qs.map((q, i) => ({
+    const sectionQuestions: IPaperQuestion[] = qs.map((q, i) => ({
       questionId: q._id as mongoose.Types.ObjectId,
-      questionNumber: `${sectionIndex}.${i + 1}`,
+      questionText: null,
       marks: q.marks,
-      order: i,
+      position: i,
+      modelAnswer: null,
+      markingGuideline: null,
+      diagram: null,
     }));
 
     sections.push({
