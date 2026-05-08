@@ -43,14 +43,24 @@ export async function createBatch(input: CreateBatchInput): Promise<IMarkingBatc
     status: 'extracting',
   });
 
-  // Move uploads into batch dir as page-1, page-2, ...
-  const dir = batchDir(String(batch._id));
-  finaliseImages(input.files, dir);
+  try {
+    // Move uploads into batch dir as page-1, page-2, ...
+    const dir = batchDir(String(batch._id));
+    finaliseImages(input.files, dir);
 
-  // Kick off async extraction (fire-and-forget)
-  void extractBatchHeaders(String(batch._id)).catch((err: unknown) => {
-    logger.error({ err, batchId: String(batch._id) }, 'Batch extraction failed');
-  });
+    // Kick off async extraction (fire-and-forget)
+    void extractBatchHeaders(String(batch._id)).catch((err: unknown) => {
+      logger.error({ err, batchId: String(batch._id) }, 'Batch extraction failed');
+    });
+  } catch (err: unknown) {
+    logger.error({ err, batchId: batch._id }, 'Batch creation failed after doc create');
+    batch.status = 'failed';
+    batch.errorMessage = err instanceof Error ? err.message : 'Unknown error';
+    try { await batch.save(); } catch (saveErr) {
+      logger.error({ saveErr, batchId: batch._id }, 'Failed to mark batch as failed');
+    }
+    throw err;
+  }
 
   return batch;
 }
