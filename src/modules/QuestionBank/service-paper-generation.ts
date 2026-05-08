@@ -14,6 +14,15 @@ import {
 import type { CognitiveWeighting } from './service-paper-gen-helpers.js';
 import type { GeneratePaperInput } from './validation.js';
 
+// Single-question regeneration lives in service-paper-regen.ts to keep this
+// file under the 350-line cap. Re-exported here so callers using the
+// canonical paper-service path see it without needing a second import.
+export { regenerateSingleQuestion } from './service-paper-regen.js';
+export type {
+  RegenerateInput,
+  RegenerateResult,
+} from './service-paper-regen.js';
+
 const DAILY_LIMIT = 20;
 
 const DEFAULT_WEIGHTING: CognitiveWeighting = {

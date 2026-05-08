@@ -6,11 +6,11 @@ import {
   IPaperSection,
 } from './model.js';
 import { AIService } from '../../services/ai.service.js';
-import { BadRequestError, NotFoundError } from '../../common/errors.js';
+import { BadRequestError } from '../../common/errors.js';
 import { getTemplatesForGrade, formatTemplatesForPrompt } from '../../lib/tikz-templates.js';
 import { markPaperFromImages } from './service-marking.js';
 import type { MarkPaperResult, MarkPapersPayload } from './service-marking.js';
-import { renderSectionDiagrams, renderQuestionDiagram } from './service-paper-diagrams.js';
+import { renderSectionDiagrams } from './service-paper-diagrams.js';
 import {
   gradeSubmission,
   bulkGrade,
@@ -30,7 +30,7 @@ import {
   getPaperById,
   updatePaper,
 } from './service-queries.js';
-import { PaperGenerationResponseSchema, PaperQuestionSchema } from './validation-ai.js';
+import { PaperGenerationResponseSchema } from './validation-ai.js';
 
 const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
 
@@ -47,23 +47,6 @@ interface GeneratePaperParams {
 interface AIGeneratedPaper {
   sections: IPaperSection[];
   memorandum: string;
-}
-
-interface AIGeneratedQuestion {
-  questionNumber: number;
-  questionText: string;
-  marks: number;
-  modelAnswer: string;
-  markingGuideline: string;
-  diagram: {
-    tikz: string;
-    data: Record<string, unknown>;
-    alt: string;
-    svgUrl: string | null;
-    hash: string;
-    renderStatus: 'pending' | 'rendered' | 'failed';
-    renderError: string | null;
-  } | null;
 }
 
 export class AIToolsService {
@@ -187,86 +170,26 @@ Include a mix of question types (multiple choice, short answer, long answer, str
     }
   }
 
+  /**
+   * @deprecated Single-question regeneration now lives in
+   * `QuestionBank/service-paper-generation.ts` (re-exported from
+   * `service-paper-regen.ts`) and operates on `IAssessmentPaper`.
+   *
+   * The legacy `IGeneratedPaper` model targeted by this method is on the
+   * way out — its routes are 308-redirected to the QuestionBank paper
+   * routes in Task 11. This stub exists only so the AITools controller
+   * type-checks until Task 11 deletes the route.
+   */
   static async regenerateQuestion(
-    paperId: string,
-    sectionIndex: number,
-    questionIndex: number,
-    teacherId: string,
-    schoolId: string,
+    _paperId: string,
+    _sectionIndex: number,
+    _questionIndex: number,
+    _teacherId: string,
+    _schoolId: string,
   ): Promise<IGeneratedPaper> {
-    const paper = await GeneratedPaper.findOne({ _id: paperId, schoolId, isDeleted: false });
-
-    if (!paper) throw new NotFoundError('Paper not found');
-    if (!paper.sections[sectionIndex]) throw new BadRequestError('Invalid section index');
-    if (!paper.sections[sectionIndex].questions[questionIndex]) {
-      throw new BadRequestError('Invalid question index');
-    }
-
-    const section = paper.sections[sectionIndex];
-    const oldQuestion = section.questions[questionIndex];
-
-    const templates = getTemplatesForGrade(paper.grade);
-    const templateBlock = formatTemplatesForPrompt(templates);
-
-    const diagramInstructions = templateBlock
-      ? `\nIf the question benefits from a visual, include a "diagram" field: { "tikz": "<TikZ code>", "data": { "type": "<template_name>", ... }, "alt": "<description>" }. Otherwise omit "diagram" entirely.\n\nAvailable TikZ templates:\n${templateBlock}`
-      : '';
-
-    const systemPrompt = `You are an expert South African CAPS-aligned exam question generator.
-Generate a single replacement question that fits the same section and has the same marks allocation.
-Return JSON with this exact structure:
-{
-  "questionNumber": ${oldQuestion.questionNumber},
-  "questionText": "...",
-  "marks": ${oldQuestion.marks},
-  "modelAnswer": "...",
-  "markingGuideline": "...",
-  "diagram": { "tikz": "...", "data": { "type": "..." }, "alt": "..." }
-}
-The "diagram" field is optional — only include it when the question benefits from a visual.${diagramInstructions}`;
-
-    const userPrompt = `Generate a replacement ${section.questionType} question for:
-- Subject: ${paper.subject}
-- Grade: ${paper.grade}
-- Topic: ${paper.topic}
-- Section: ${section.sectionLabel} (${section.questionType})
-- Marks: ${oldQuestion.marks}
-- Difficulty: ${paper.difficulty}
-
-The question must be different from: "${oldQuestion.questionText}"`;
-
-    const { data: newQuestion, usage } = await AIService.generateJSONWithUsage<AIGeneratedQuestion>(systemPrompt, userPrompt);
-
-    const qValidation = PaperQuestionSchema.safeParse(newQuestion);
-    if (!qValidation.success) {
-      const issue = qValidation.error.issues[0];
-      const where = issue?.path.join('.') || '(root)';
-      throw new BadRequestError(
-        `AI response did not match the expected question structure at "${where}": ${issue?.message ?? 'unknown'}. Please try regenerating again.`,
-      );
-    }
-    // Cast to IPaperQuestion: Zod's DiagramSchema is optional (undefined on missing)
-    // while IPaperQuestion.diagram is null on missing — structurally compatible at runtime.
-    const validatedQuestion = qValidation.data as IPaperSection['questions'][number];
-
-    // Render diagram if the regenerated question includes one
-    if (validatedQuestion.diagram && validatedQuestion.diagram.tikz) {
-      validatedQuestion.diagram = await renderQuestionDiagram(validatedQuestion.diagram);
-    }
-
-    paper.sections[sectionIndex].questions[questionIndex] = validatedQuestion;
-    paper.status = 'edited';
-    await paper.save();
-
-    await AIUsageLog.create({
-      schoolId: paper.schoolId,
-      teacherId,
-      type: 'question_regeneration',
-      tokensUsed: { input: usage.input_tokens, output: usage.output_tokens },
-      aiModel: ANTHROPIC_MODEL,
-    });
-
-    return paper;
+    throw new BadRequestError(
+      'This endpoint has been deprecated. Use POST /api/question-bank/papers/:id/sections/:sectionIdx/questions/:position/regenerate instead.',
+    );
   }
 
   static async gradeSubmission(
