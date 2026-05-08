@@ -3,6 +3,7 @@ import { Response } from 'express';
 import { getUser } from '../../types/authenticated-request.js';
 import { AIToolsService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
+import { BadRequestError } from '../../common/errors.js';
 import {
   listMarkings,
   getMarkingById,
@@ -111,8 +112,27 @@ export class AIToolsController {
       res.status(400).json({ success: false, error: 'User must be assigned to a school' });
       return;
     }
-    const marking = await AIToolsService.markPaperFromImages(getUser(req).id, schoolId, req.body);
-    res.json(apiResponse(true, marking, 'Paper marked successfully'));
+    const files = (req.files as Express.Multer.File[] | undefined) ?? [];
+    if (files.length === 0) throw new BadRequestError('No images provided');
+    const { paperId, paperType, studentName, studentId, classId } = req.body as {
+      paperId?: string;
+      paperType?: 'generated' | 'assessment';
+      studentName?: string;
+      studentId?: string;
+      classId?: string;
+    };
+    if (!paperId) throw new BadRequestError('paperId is required');
+    if (!studentName) throw new BadRequestError('studentName is required');
+
+    const marking = await AIToolsService.markPaperFromImages(getUser(req).id, schoolId, {
+      paperId,
+      paperType: paperType ?? 'assessment',
+      studentName,
+      studentId: studentId ?? null,
+      classId: classId ?? null,
+      files,
+    });
+    res.status(201).json(apiResponse(true, marking, 'Paper marked successfully'));
   }
 
   static async listMarkings(req: Request, res: Response): Promise<void> {

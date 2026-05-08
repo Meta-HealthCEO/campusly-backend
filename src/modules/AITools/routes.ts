@@ -1,14 +1,16 @@
 import express, { Request, Response } from 'express';
+import path from 'path';
+import os from 'os';
 import { authenticate } from '../../middleware/auth.js';
 import { authorize } from '../../middleware/rbac.js';
 import { validate } from '../../middleware/validate.js';
 import { AIToolsController } from './controller.js';
+import { createMarkingUpload } from './service-marking-images.js';
 import {
   gradeSubmissionSchema,
   bulkGradeSchema,
   reviewGradeSchema,
   publishGradeSchema,
-  markPaperSchema,
   updateMarkingSchema,
   publishMarkingSchema,
   createRubricTemplateSchema,
@@ -77,12 +79,20 @@ router.get('/papers/:id/memo-pdf', (req: Request, res: Response) => {
 
 // ─── OCR Paper Marking ───────────────────────────────────────────────────────
 
-// POST /mark-paper — OCR-based paper marking from images
+// One-shot Multer instance reused for incoming /mark-paper uploads. Files
+// land in a temp staging dir; finaliseImages() (called inside the service)
+// moves them into the per-marking archive dir at uploads/markings/<id>/.
+const markingStagingDir = path.join(os.tmpdir(), 'campusly-marking-staging');
+const markingUpload = createMarkingUpload(markingStagingDir);
+
+// POST /mark-paper — OCR-based paper marking from images (multipart/form-data).
+// Form fields: paperId, paperType, studentName, studentId?, classId?
+// File field: files[] (max 8 pages per single-student marking)
 router.post(
   '/mark-paper',
   authenticate,
   authorize('teacher', 'school_admin', 'super_admin'),
-  validate(markPaperSchema),
+  markingUpload.array('files', 8),
   AIToolsController.markPaper,
 );
 

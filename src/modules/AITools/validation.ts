@@ -112,21 +112,9 @@ export const reviewGradeSchema = z.object({
 export type ReviewGradeInput = z.infer<typeof reviewGradeSchema>;
 
 // ─── Mark Paper from Images (OCR, multi-image) ───────────────────────────────
-
-export const markPaperSchema = z.object({
-  body: z.object({
-    paperId: z.string().min(1),
-    studentName: z.string().min(1),
-    studentId: z.string().optional(),
-    images: z.array(z.string().min(1)).min(1).max(8),
-    imageTypes: z.array(z.enum(['image/jpeg', 'image/png', 'image/webp'])).min(1).max(8),
-  }).refine((data) => data.images.length === data.imageTypes.length, {
-    message: 'images and imageTypes arrays must have the same length',
-    path: ['imageTypes'],
-  }),
-});
-
-export type MarkPaperInput = z.infer<typeof markPaperSchema>;
+// NOTE: /mark-paper is a multipart/form-data endpoint (Multer-handled). The
+// previous Zod schema for a JSON base64 body has been removed; the controller
+// validates the parsed text fields inline.
 
 // ─── Update Marking (teacher overrides) ──────────────────────────────────────
 

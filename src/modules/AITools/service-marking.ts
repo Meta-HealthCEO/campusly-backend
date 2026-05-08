@@ -1,4 +1,6 @@
 // src/modules/AITools/service-marking.ts
+import fs from 'fs';
+import path from 'path';
 import mongoose from 'mongoose';
 import { PaperMarking } from './model-marking.js';
 import { GeneratedPaper } from './model.js';
@@ -6,13 +8,15 @@ import { AssessmentPaper, Question } from '../QuestionBank/model.js';
 import { AIService } from '../../services/ai.service.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
 import { MarkingResponseSchema } from './validation-marking.js';
+import { finaliseImages, markingDir } from './service-marking-images.js';
 
 export interface MarkPapersPayload {
   paperId: string;
+  paperType?: 'generated' | 'assessment';
   studentName: string;
-  studentId?: string;
-  images: string[];
-  imageTypes: Array<'image/jpeg' | 'image/png' | 'image/webp'>;
+  studentId?: string | null;
+  classId?: string | null;
+  files: Express.Multer.File[];
 }
 
 export interface MarkPaperQuestionResult {
@@ -42,38 +46,54 @@ export async function markPaperFromImages(
   schoolId: string,
   payload: MarkPapersPayload,
 ): Promise<MarkPaperResult> {
-  if (payload.images.length === 0) {
+  if (!payload.files || payload.files.length === 0) {
     throw new BadRequestError('At least one image is required.');
-  }
-  if (payload.images.length !== payload.imageTypes.length) {
-    throw new BadRequestError('images and imageTypes arrays must have the same length.');
   }
 
   const paperInfo = await loadPaperInfo(payload.paperId, schoolId);
   if (!paperInfo) throw new NotFoundError('Paper not found');
 
+  const paperVersion = await loadPaperVersion(payload.paperId, paperInfo.kind);
+
+  // Step 1: pre-create the marking doc (status: processing) so we have an ID
+  // to use as the on-disk archive directory.
   const marking = await PaperMarking.create({
     paperId: new mongoose.Types.ObjectId(payload.paperId),
     paperType: paperInfo.kind,
     studentId: payload.studentId ? new mongoose.Types.ObjectId(payload.studentId) : undefined,
     studentName: payload.studentName,
+    classId: payload.classId ? new mongoose.Types.ObjectId(payload.classId) : null,
     teacherId: new mongoose.Types.ObjectId(teacherId),
     schoolId: new mongoose.Types.ObjectId(schoolId),
-    imageCount: payload.images.length,
+    imageCount: payload.files.length,
     totalMarks: 0,
     maxMarks: paperInfo.totalMarks,
     percentage: 0,
     questions: [],
     status: 'processing',
+    paperVersion,
+    images: [],
   });
 
   try {
+    // Step 2: move uploaded files from staging into the marking's archive dir.
+    const dir = markingDir(String(marking._id));
+    const images = finaliseImages(payload.files, dir);
+    marking.images = images;
+    await marking.save();
+
+    // Step 3: build base64 + mediaTypes for Claude by reading from disk.
+    const claudePayload = images.map((img) => ({
+      mediaType: img.mimeType as 'image/jpeg' | 'image/png' | 'image/webp',
+      base64: fs.readFileSync(path.join(dir, img.filename)).toString('base64'),
+    }));
+
     const { systemPrompt, userPrompt } = buildPrompts(paperInfo);
 
     const { text } = await AIService.generateVisionCompletionWithImages(
       systemPrompt,
       userPrompt,
-      payload.images.map((b, i) => ({ base64: b, mediaType: payload.imageTypes[i] })),
+      claudePayload,
       { maxTokens: 4096, temperature: 0.2 },
     );
 
@@ -137,6 +157,18 @@ interface PaperInfo {
   topic: string;
   totalMarks: number;
   memoLines: string[];
+}
+
+async function loadPaperVersion(
+  paperId: string,
+  paperType: 'generated' | 'assessment',
+): Promise<number> {
+  if (paperType === 'assessment') {
+    const p = await AssessmentPaper.findById(paperId).select('version').lean();
+    return p?.version ?? 1;
+  }
+  // legacy generated paper has no version
+  return 1;
 }
 
 async function loadPaperInfo(paperId: string, schoolId: string): Promise<PaperInfo | null> {
