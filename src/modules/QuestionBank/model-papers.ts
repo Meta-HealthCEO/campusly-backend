@@ -87,6 +87,8 @@ export interface IAssessmentPaper extends Document {
   status: PaperStatus;
   aiGenerated: boolean;
   difficulty: PaperDifficulty;
+  version: number;
+  assessmentId?: Types.ObjectId | null;
   createdBy: Types.ObjectId;
   isDeleted: boolean;
   createdAt: Date;
@@ -213,6 +215,12 @@ const assessmentPaperSchema = new Schema<IAssessmentPaper>(
       type: String,
       enum: PAPER_DIFFICULTIES,
       default: 'medium',
+    },
+    version: { type: Number, required: true, default: 1, min: 1 },
+    assessmentId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Assessment',
+      default: null,
     },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     isDeleted: { type: Boolean, default: false },
