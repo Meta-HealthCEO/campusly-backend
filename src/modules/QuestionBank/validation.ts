@@ -22,6 +22,9 @@ const questionStatusEnum = z.enum([
   'draft', 'pending_review', 'approved', 'rejected',
 ]);
 
+// NOTE: paperType values match `model-papers.ts` PAPER_TYPES exactly.
+// Module 2 plan listed simpler labels but the model is source of truth.
+// Frontend types in Task 13 must mirror these legacy values.
 const paperTypeEnum = z.enum([
   'class_test', 'assignment', 'mid_year', 'trial', 'final', 'custom',
 ]);
@@ -108,7 +111,7 @@ export const questionQuerySchema = z.object({
   mine: z.preprocess((val) => val === 'true', z.boolean()).optional(),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),
-});
+}).strict();
 
 // ─── Paper Question / Section (NEW SHAPE — Task 1) ────────────────────────
 
@@ -132,7 +135,7 @@ const paperQuestionXorRefinement = (
   q: { questionId?: string; questionText?: string },
 ) => (Boolean(q.questionId) !== Boolean(q.questionText));
 
-const paperQuestionInputSchema = z.object(paperQuestionBaseShape).refine(
+const paperQuestionInputSchema = z.object(paperQuestionBaseShape).strict().refine(
   paperQuestionXorRefinement,
   { message: 'Exactly one of questionId or questionText must be set' },
 );
@@ -164,8 +167,10 @@ export const createPaperSchema = z.object({
 
 export const updatePaperSchema = createPaperSchema.partial().strict();
 
-// Legacy add-question schema (sectionIndex + questionNumber) — preserved for
-// existing routes/services until Task 4 swaps to addQuestionToPaperSchema.
+// DEPRECATED: superseded by addQuestionToPaperSchema.
+// Remove once Task 4 (AI gen refactor) and Task 9 (route wiring) land.
+// Legacy shape (sectionIndex + questionNumber) — preserved so existing
+// routes/services continue to compile until those tasks land.
 export const addQuestionSchema = z.object({
   sectionIndex: z.number().int().min(0),
   questionId: objectIdSchema,
@@ -181,7 +186,7 @@ export const paperQuerySchema = z.object({
   search: z.string().optional(),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),
-});
+}).strict();
 
 // ─── AI Paper Generation ──────────────────────────────────────────────────
 
@@ -222,8 +227,9 @@ export const generatePaperSchema = z.object({
 // Add: must pass exactly-one-of refinement.
 export const addQuestionToPaperSchema = paperQuestionInputSchema;
 
-// Update: all fields optional, NO refinement (so { marks: 5 } validates).
-// Built fresh — does NOT inherit from paperQuestionInputSchema.
+// Update: all fields optional, NO XOR refinement (so { marks: 5 } validates).
+// Built fresh — does NOT inherit from paperQuestionInputSchema. A min-keys
+// refinement still rejects an empty body so PATCH without changes 400s.
 export const updatePaperQuestionSchema = z.object({
   questionId: objectIdSchema.optional(),
   questionText: z.string().min(1).max(5000).optional(),
@@ -231,8 +237,14 @@ export const updatePaperQuestionSchema = z.object({
   position: z.number().int().min(0).optional(),
   modelAnswer: z.string().max(5000).optional(),
   markingGuideline: z.string().max(5000).optional(),
-  diagram: paperQuestionDiagramSchema.optional(),
-}).strict();
+  diagram: z.object({
+    tikz: z.string().max(20000),
+    caption: z.string().max(500).optional(),
+  }).strict().optional(),
+}).strict().refine(
+  (obj) => Object.keys(obj).length > 0,
+  { message: 'At least one field must be provided to update' },
+);
 
 // ─── Memo update (NEW — Task 2) ───────────────────────────────────────────
 
