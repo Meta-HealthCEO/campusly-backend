@@ -8,6 +8,7 @@ export const MarkingQuestionSchema = z.object({
   marksAwarded: z.number().nonnegative(),
   maxMarks: z.number().nonnegative(),
   feedback: z.string().default(''),
+  rationale: z.string().optional(),
 });
 
 export const MarkingResponseSchema = z.object({

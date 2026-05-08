@@ -26,6 +26,7 @@ export interface MarkPaperQuestionResult {
   marksAwarded: number;
   maxMarks: number;
   feedback: string;
+  rationale?: string;
 }
 
 export interface MarkPaperResult {
@@ -131,6 +132,7 @@ export async function markPaperFromImages(
       marksAwarded: q.marksAwarded,
       maxMarks: q.maxMarks,
       feedback: q.feedback,
+      rationale: q.rationale,
     }));
     marking.extractedHeader = validated.extractedHeader || null;
     marking.paperMismatch = validated.paperMismatch;
@@ -260,7 +262,7 @@ Return ONLY valid JSON with this exact structure:
   "maxMarks": 0,
   "percentage": 0,
   "questions": [
-    { "questionNumber": "1", "studentAnswer": "...", "correctAnswer": "...", "marksAwarded": 0, "maxMarks": 0, "feedback": "..." }
+    { "questionNumber": "1", "studentAnswer": "...", "correctAnswer": "...", "marksAwarded": 0, "maxMarks": 0, "feedback": "...", "rationale": "1-2 sentence justification of the awarded mark." }
   ]
 }
 
@@ -269,6 +271,7 @@ Rules:
 - Match each visible answer to the corresponding question number.
 - If a question appears unanswered, award 0 and set feedback "No answer provided".
 - percentage = totalMarks / maxMarks * 100 rounded to 1 decimal.
+- rationale: provide a 1-2 sentence justification explaining why the awarded mark was given (e.g. what was correct, what was missing, or why partial credit applies).
 - Return ONLY JSON. No markdown fences, no explanation.`;
 
   const userPrompt = `Expected paper metadata:
@@ -299,6 +302,7 @@ function toResult(marking: InstanceType<typeof PaperMarking>): MarkPaperResult {
       marksAwarded: q.marksAwarded,
       maxMarks: q.maxMarks,
       feedback: q.feedback,
+      rationale: q.rationale,
     })),
     extractedHeader: marking.extractedHeader,
     paperMismatch: marking.paperMismatch,

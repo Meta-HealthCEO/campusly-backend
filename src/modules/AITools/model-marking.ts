@@ -7,6 +7,7 @@ export interface IMarkingQuestion {
   marksAwarded: number;
   maxMarks: number;
   feedback: string;
+  rationale?: string;
 }
 
 export interface PaperMarkingImage {
@@ -62,6 +63,7 @@ const markingQuestionSchema = new Schema<IMarkingQuestion>(
     marksAwarded: { type: Number, required: true, min: 0 },
     maxMarks: { type: Number, required: true, min: 0 },
     feedback: { type: String, default: '' },
+    rationale: { type: String },
   },
   { _id: false },
 );
