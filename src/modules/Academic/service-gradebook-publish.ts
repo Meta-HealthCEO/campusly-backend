@@ -85,6 +85,7 @@ export async function findOrCreateAssessmentForPaper(input: {
   if (paper.assessmentId) {
     const existing = await Assessment.findOne({
       _id: paper.assessmentId,
+      schoolId: new mongoose.Types.ObjectId(input.schoolId),
       isDeleted: false,
     });
     if (existing) {
