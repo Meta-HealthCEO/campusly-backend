@@ -86,79 +86,174 @@ homeworkSchema.index({ type: 1, schoolId: 1 });
 
 export const Homework = mongoose.model<IHomework>('Homework', homeworkSchema);
 
-// ─── Homework Submission ─────────────────────────────────────────────────────
+// ─── HomeworkSubmission base + variants (discriminated by type) ──────────
 
-export interface IHomeworkSubmission extends Document {
+export type HomeworkSubmissionType = 'quiz' | 'reading' | 'exercise';
+export type GradingStatus = 'pending' | 'graded' | 'failed';
+export type GradingMethod = 'deterministic' | 'ai' | 'teacher' | 'pending';
+
+export interface IGradedAnswer {
+  studentAnswer: string;
+  questionSnapshot: string;
+  awarded?: number;
+  maxMarks: number;
+  rationale?: string;
+  gradingMethod: GradingMethod;
+}
+
+export interface IQuizAnswer extends IGradedAnswer {
+  questionIndex: number;
+}
+
+export interface IExerciseAnswer extends IGradedAnswer {
+  questionId: Types.ObjectId;
+}
+
+export interface IReadingAnswer extends IGradedAnswer {
+  questionId: Types.ObjectId;
+}
+
+export interface ILateMarkAdjustment {
+  rawMark: number;
+  penaltyPercent: number;
+  finalMark: number;
+}
+
+export interface IHomeworkSubmissionBase extends Document {
   homeworkId: Types.ObjectId;
   studentId: Types.ObjectId;
   schoolId: Types.ObjectId;
-  files: string[];
+  type: HomeworkSubmissionType;
+  homeworkVersion: number;
   submittedAt: Date;
   isLate: boolean;
+  gradingStatus: GradingStatus;
+  gradingGeneration: number;
   mark?: number;
+  maxMarks: number;
   feedback?: string;
   gradedAt?: Date;
-  gradedBy?: Types.ObjectId;
+  gradedBy?: Types.ObjectId | null;
+  errorMessage?: string;
+  lateMarkAdjustment?: ILateMarkAdjustment;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
 
-const homeworkSubmissionSchema = new Schema<IHomeworkSubmission>(
+export interface IQuizSubmission extends IHomeworkSubmissionBase {
+  type: 'quiz';
+  answers: IQuizAnswer[];
+}
+
+export interface IExerciseSubmission extends IHomeworkSubmissionBase {
+  type: 'exercise';
+  answers: IExerciseAnswer[];
+}
+
+export interface IReadingSubmission extends IHomeworkSubmissionBase {
+  type: 'reading';
+  markedReadAt: Date;
+  comprehensionAnswers: IReadingAnswer[];
+}
+
+export type IHomeworkSubmission =
+  | IQuizSubmission
+  | IExerciseSubmission
+  | IReadingSubmission;
+
+const lateMarkAdjustmentSchema = new Schema<ILateMarkAdjustment>(
   {
-    homeworkId: {
-      type: Schema.Types.ObjectId,
-      ref: 'Homework',
-      required: true,
-    },
-    studentId: {
-      type: Schema.Types.ObjectId,
-      ref: 'Student',
-      required: true,
-    },
-    schoolId: {
-      type: Schema.Types.ObjectId,
-      ref: 'School',
-      required: true,
-    },
-    files: {
-      type: [String],
-      default: [],
-    },
-    submittedAt: {
-      type: Date,
-      required: true,
-    },
-    isLate: {
-      type: Boolean,
-      default: false,
-    },
-    mark: {
-      type: Number,
-    },
-    feedback: {
-      type: String,
-      trim: true,
-    },
-    gradedAt: {
-      type: Date,
-    },
-    gradedBy: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-    },
-    isDeleted: {
-      type: Boolean,
-      default: false,
-    },
+    rawMark: { type: Number, required: true },
+    penaltyPercent: { type: Number, required: true },
+    finalMark: { type: Number, required: true },
   },
-  { timestamps: true },
+  { _id: false },
 );
 
-homeworkSubmissionSchema.index({ homeworkId: 1, studentId: 1 }, { unique: true });
-homeworkSubmissionSchema.index({ studentId: 1 });
+const baseAnswerFields = {
+  studentAnswer: { type: String, required: true, default: '' },
+  questionSnapshot: { type: String, required: true, default: '' },
+  awarded: { type: Number, default: undefined },
+  maxMarks: { type: Number, required: true, min: 0 },
+  rationale: { type: String, default: undefined },
+  gradingMethod: {
+    type: String,
+    enum: ['deterministic', 'ai', 'teacher', 'pending'],
+    required: true,
+    default: 'pending' as GradingMethod,
+  },
+};
 
-export const HomeworkSubmission = mongoose.model<IHomeworkSubmission>(
+const quizAnswerSchema = new Schema<IQuizAnswer>(
+  { ...baseAnswerFields, questionIndex: { type: Number, required: true, min: 0 } },
+  { _id: false },
+);
+
+const exerciseAnswerSchema = new Schema<IExerciseAnswer>(
+  { ...baseAnswerFields, questionId: { type: Schema.Types.ObjectId, ref: 'Question', required: true } },
+  { _id: false },
+);
+
+const readingAnswerSchema = new Schema<IReadingAnswer>(
+  { ...baseAnswerFields, questionId: { type: Schema.Types.ObjectId, ref: 'Question', required: true } },
+  { _id: false },
+);
+
+const homeworkSubmissionBaseSchema = new Schema<IHomeworkSubmissionBase>(
+  {
+    homeworkId: { type: Schema.Types.ObjectId, ref: 'Homework', required: true },
+    studentId: { type: Schema.Types.ObjectId, ref: 'Student', required: true },
+    schoolId: { type: Schema.Types.ObjectId, ref: 'School', required: true },
+    homeworkVersion: { type: Number, required: true, min: 1 },
+    submittedAt: { type: Date, required: true },
+    isLate: { type: Boolean, default: false },
+    gradingStatus: {
+      type: String,
+      enum: ['pending', 'graded', 'failed'],
+      required: true,
+      default: 'pending',
+    },
+    gradingGeneration: { type: Number, required: true, default: 1, min: 1 },
+    mark: { type: Number, default: undefined },
+    maxMarks: { type: Number, required: true, min: 0 },
+    feedback: { type: String, trim: true },
+    gradedAt: { type: Date },
+    gradedBy: { type: Schema.Types.ObjectId, ref: 'User', default: null },
+    errorMessage: { type: String, default: undefined },
+    lateMarkAdjustment: { type: lateMarkAdjustmentSchema, default: undefined },
+    isDeleted: { type: Boolean, default: false },
+  },
+  { timestamps: true, discriminatorKey: 'type' },
+);
+
+homeworkSubmissionBaseSchema.index({ homeworkId: 1, studentId: 1 }, { unique: true });
+homeworkSubmissionBaseSchema.index({ studentId: 1 });
+homeworkSubmissionBaseSchema.index({ schoolId: 1, gradingStatus: 1 });
+homeworkSubmissionBaseSchema.index({ homeworkId: 1, gradingStatus: 1 });
+
+export const HomeworkSubmission = mongoose.model<IHomeworkSubmissionBase>(
   'HomeworkSubmission',
-  homeworkSubmissionSchema,
+  homeworkSubmissionBaseSchema,
+);
+
+export const QuizSubmissionModel = HomeworkSubmission.discriminator<IQuizSubmission>(
+  'quiz',
+  new Schema({ answers: { type: [quizAnswerSchema], default: [] } }, { _id: false }),
+);
+
+export const ExerciseSubmissionModel = HomeworkSubmission.discriminator<IExerciseSubmission>(
+  'exercise',
+  new Schema({ answers: { type: [exerciseAnswerSchema], default: [] } }, { _id: false }),
+);
+
+export const ReadingSubmissionModel = HomeworkSubmission.discriminator<IReadingSubmission>(
+  'reading',
+  new Schema(
+    {
+      markedReadAt: { type: Date, required: true },
+      comprehensionAnswers: { type: [readingAnswerSchema], default: [] },
+    },
+    { _id: false },
+  ),
 );
