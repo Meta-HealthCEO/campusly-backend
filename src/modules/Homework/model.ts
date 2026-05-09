@@ -12,6 +12,7 @@ export interface IHomework extends Document {
   contentResourceId?: Types.ObjectId | null;
   pageRange?: string | null;
   exerciseQuestionIds: Types.ObjectId[];
+  comprehensionQuestionIds?: Types.ObjectId[];
   subjectId: Types.ObjectId;
   classId: Types.ObjectId;
   schoolId: Types.ObjectId;
@@ -20,10 +21,11 @@ export interface IHomework extends Document {
   totalMarks: number;
   status: HomeworkStatus;
   attachments: string[];
-  peerReviewEnabled: boolean;
-  groupAssignment: boolean;
-  maxFileSize?: number;
-  allowedFileTypes: string[];
+  latePolicy: 'block' | 'penalty' | 'accept';
+  latePenaltyPercent?: number;
+  gradebookAutoPublish: boolean;
+  assessmentId?: Types.ObjectId | null;
+  version: number;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -45,6 +47,11 @@ const homeworkSchema = new Schema<IHomework>(
       ref: 'Question',
       default: [],
     },
+    comprehensionQuestionIds: {
+      type: [Schema.Types.ObjectId],
+      ref: 'Question',
+      default: undefined,
+    },
     subjectId: { type: Schema.Types.ObjectId, ref: 'Subject', required: true },
     classId: { type: Schema.Types.ObjectId, ref: 'Class', required: true },
     schoolId: { type: Schema.Types.ObjectId, ref: 'School', required: true },
@@ -57,10 +64,16 @@ const homeworkSchema = new Schema<IHomework>(
       default: [],
       validate: [(v: string[]) => v.length <= 20, 'Maximum 20 attachments allowed'],
     },
-    peerReviewEnabled: { type: Boolean, default: false },
-    groupAssignment: { type: Boolean, default: false },
-    maxFileSize: { type: Number },
-    allowedFileTypes: { type: [String], default: [] },
+    latePolicy: {
+      type: String,
+      enum: ['block', 'penalty', 'accept'],
+      default: 'block',
+      required: true,
+    },
+    latePenaltyPercent: { type: Number, min: 0, max: 100, default: undefined },
+    gradebookAutoPublish: { type: Boolean, default: true },
+    assessmentId: { type: Schema.Types.ObjectId, ref: 'Assessment', default: null },
+    version: { type: Number, default: 1, min: 1 },
     isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true },
