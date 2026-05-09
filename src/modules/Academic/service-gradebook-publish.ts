@@ -2,6 +2,8 @@ import mongoose, { type Types as MTypes } from 'mongoose';
 import { Assessment, Mark, type IMark } from './model.js';
 import { AssessmentPaper } from '../QuestionBank/model.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
+import { logger } from '../../common/logger.js';
+import { Homework, type IHomework } from '../Homework/model.js';
 
 export interface PublishMarkInput {
   schoolId: string;
@@ -129,4 +131,89 @@ export async function findOrCreateAssessmentForPaper(input: {
   paper.assessmentId = created._id as MTypes.ObjectId;
   await paper.save();
   return { _id: created._id as MTypes.ObjectId, totalMarks: created.totalMarks };
+}
+
+/**
+ * Find or lazily create an Assessment record linked to a homework assignment.
+ * Idempotent — caches the link on Homework.assessmentId.
+ *
+ * Note: Assessment.type enum is ('test' | 'exam' | 'assignment' | 'practical' | 'project').
+ * 'homework' is not a valid value, so we use 'assignment' as the closest semantic match.
+ */
+export async function findOrCreateAssessmentForHomework(
+  homework: IHomework,
+): Promise<mongoose.Types.ObjectId> {
+  if (homework.assessmentId) return homework.assessmentId as mongoose.Types.ObjectId;
+
+  // Derive term from due date month (1-12 → term 1-4)
+  const due = homework.dueDate;
+  const month = due.getMonth() + 1;
+  const term = month <= 3 ? 1 : month <= 6 ? 2 : month <= 9 ? 3 : 4;
+  const academicYear = due.getFullYear();
+
+  const assessment = await Assessment.create({
+    name: homework.title,
+    schoolId: homework.schoolId,
+    classId: homework.classId,
+    subjectId: homework.subjectId,
+    totalMarks: homework.totalMarks,
+    term,
+    academicYear,
+    // 'homework' is not in the Assessment type enum; 'assignment' is the closest value
+    type: 'assignment',
+    weight: 1,
+    date: homework.dueDate,
+    paperId: null,
+    isDeleted: false,
+  });
+
+  try {
+    await Homework.updateOne(
+      { _id: homework._id, schoolId: homework.schoolId },
+      { $set: { assessmentId: assessment._id } },
+    );
+  } catch (err: unknown) {
+    // Compensation: roll back the new assessment
+    try {
+      await Assessment.deleteOne({ _id: assessment._id });
+    } catch (delErr: unknown) {
+      logger.error({ delErr, assessmentId: assessment._id }, 'Assessment rollback failed');
+    }
+    throw err;
+  }
+
+  return assessment._id as mongoose.Types.ObjectId;
+}
+
+export async function publishHomeworkGrade(
+  submission: {
+    _id: mongoose.Types.ObjectId;
+    studentId: mongoose.Types.ObjectId;
+    schoolId: mongoose.Types.ObjectId;
+    mark?: number;
+    maxMarks: number;
+  },
+  homework: IHomework,
+): Promise<void> {
+  if (submission.mark === undefined) return;
+
+  const assessmentId = await findOrCreateAssessmentForHomework(homework);
+  const percentage =
+    submission.maxMarks > 0
+      ? Math.round((submission.mark / submission.maxMarks) * 100)
+      : 0;
+
+  await Mark.findOneAndUpdate(
+    { assessmentId, studentId: submission.studentId, schoolId: submission.schoolId },
+    {
+      $set: {
+        mark: submission.mark,
+        total: submission.maxMarks,
+        percentage,
+        isAbsent: false,
+        isDeleted: false,
+      },
+    },
+    { upsert: true, new: true, runValidators: true },
+  );
 }
