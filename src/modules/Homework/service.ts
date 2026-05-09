@@ -220,7 +220,7 @@ export class HomeworkService {
 
     void gradeSubmissionAsync(submissionId);
 
-    const fresh = await HomeworkSubmission.findOne({ _id: submissionId, isDeleted: false });
+    const fresh = await HomeworkSubmission.findOne({ _id: submissionId, schoolId, isDeleted: false });
     if (!fresh) throw new NotFoundError('Submission disappeared');
     return fresh;
   }

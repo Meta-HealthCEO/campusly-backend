@@ -85,6 +85,8 @@ interface GradedItem {
  * student has resubmitted mid-grade.
  */
 export async function gradeSubmissionAsync(submissionId: string): Promise<void> {
+  // Initial load: no schoolId in scope yet — submissionId comes from an internal
+  // call (submitHomework / regrade) which has already validated school access.
   const submission = await HomeworkSubmission.findOne({ _id: submissionId, isDeleted: false });
   if (!submission) {
     logger.warn({ submissionId }, 'gradeSubmissionAsync: submission not found');
@@ -115,7 +117,7 @@ export async function gradeSubmissionAsync(submissionId: string): Promise<void> 
       .filter((i) => i >= 0);
 
     if (pendingIndices.length === 0) {
-      await finalizeSubmission(submissionId, capturedGeneration);
+      await finalizeSubmission(submissionId, capturedGeneration, schoolId);
       return;
     }
 
@@ -170,8 +172,8 @@ export async function gradeSubmissionAsync(submissionId: string): Promise<void> 
       PER_SUBMISSION_CAP,
     );
 
-    // Re-load + generation guard
-    const fresh = await HomeworkSubmission.findOne({ _id: submissionId });
+    // Re-load + generation guard (scoped to school now that we have submission.schoolId)
+    const fresh = await HomeworkSubmission.findOne({ _id: submissionId, schoolId: submission.schoolId });
     if (!fresh) return;
     if (fresh.gradingGeneration !== capturedGeneration) {
       logger.info({ submissionId }, 'Submission was resubmitted mid-grading; aborting');
@@ -194,7 +196,7 @@ export async function gradeSubmissionAsync(submissionId: string): Promise<void> 
 
     fresh.markModified(answersField);
     await fresh.save();
-    await finalizeSubmission(submissionId, capturedGeneration);
+    await finalizeSubmission(submissionId, capturedGeneration, schoolId);
   } catch (err: unknown) {
     logger.error({ err, submissionId }, 'gradeSubmissionAsync top-level error');
     await HomeworkSubmission.updateOne(
@@ -211,8 +213,8 @@ export async function gradeSubmissionAsync(submissionId: string): Promise<void> 
   }
 }
 
-async function finalizeSubmission(submissionId: string, capturedGeneration: number): Promise<void> {
-  const sub = await HomeworkSubmission.findOne({ _id: submissionId, isDeleted: false });
+async function finalizeSubmission(submissionId: string, capturedGeneration: number, schoolId: string): Promise<void> {
+  const sub = await HomeworkSubmission.findOne({ _id: submissionId, schoolId, isDeleted: false });
   if (!sub) return;
   if (sub.gradingGeneration !== capturedGeneration) return;
   const homework = await Homework.findOne({
