@@ -1,6 +1,7 @@
 import { BadRequestError } from '../../common/errors.js';
 import type { IQuestion, QuestionType } from '../QuestionBank/model.js';
 import type { IHomework } from './model.js';
+import { gradeWithAI } from './service-homework-grading-ai.js';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -59,6 +60,20 @@ export function gradeFillBlank(question: IQuestion, studentAnswer: string): Grad
   return matched
     ? { awarded: question.marks, rationale: 'Correct', gradingMethod: 'deterministic' }
     : { awarded: 0, rationale: `Answered "${studentAnswer}", expected one of: ${question.answer}`, gradingMethod: 'deterministic' };
+}
+
+// ─── Top-level dispatcher ───────────────────────────────────────────────────
+
+export async function gradeAnswer(
+  question: IQuestion,
+  studentAnswer: string,
+): Promise<GradingResult> {
+  if (DETERMINISTIC_TYPES.has(question.type)) {
+    if (question.type === 'mcq') return gradeMcq(question, studentAnswer);
+    if (question.type === 'true_false') return gradeTrueFalse(question, studentAnswer);
+    return gradeFillBlank(question, studentAnswer); // type === 'fill_blank'
+  }
+  return gradeWithAI(question, studentAnswer);
 }
 
 // ─── Late penalty ───────────────────────────────────────────────────────────
