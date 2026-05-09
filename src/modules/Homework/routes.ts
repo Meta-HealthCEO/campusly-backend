@@ -101,6 +101,13 @@ router.get(
 );
 
 router.post(
+  '/submissions/:id/regrade',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  HomeworkController.regradeSubmission,
+);
+
+router.post(
   '/comprehension-questions',
   authenticate,
   authorize('teacher', 'school_admin', 'super_admin'),
@@ -142,13 +149,6 @@ router.post(
   authorize('student'),
   validate(submitHomeworkSchema),
   HomeworkController.submit,
-);
-
-router.post(
-  '/:id/regrade',
-  authenticate,
-  authorize('teacher', 'school_admin', 'super_admin'),
-  HomeworkController.regradeSubmission,
 );
 
 router.get(
