@@ -10,6 +10,7 @@ import {
   updateHomeworkSchema,
   submitHomeworkSchema,
   gradeSubmissionSchema,
+  generateComprehensionSchema,
 } from './validation.js';
 import {
   createTemplateSchema,
@@ -80,6 +81,34 @@ router.get(
 );
 
 router.get(
+  '/student/dashboard',
+  authenticate,
+  authorize('student'),
+  HomeworkController.studentDashboard,
+);
+
+router.get(
+  '/parent/dashboard',
+  authenticate,
+  authorize('parent'),
+  HomeworkController.parentDashboard,
+);
+
+router.get(
+  '/submissions/:id',
+  authenticate,
+  HomeworkController.getSubmissionById,
+);
+
+router.post(
+  '/comprehension-questions',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  validate(generateComprehensionSchema),
+  HomeworkController.generateComprehension,
+);
+
+router.get(
   '/:id',
   authenticate,
   HomeworkController.getById,
@@ -113,6 +142,13 @@ router.post(
   authorize('student'),
   validate(submitHomeworkSchema),
   HomeworkController.submit,
+);
+
+router.post(
+  '/:id/regrade',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  HomeworkController.regradeSubmission,
 );
 
 router.get(

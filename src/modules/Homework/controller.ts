@@ -1,7 +1,12 @@
 import type { Request } from 'express';
 import { Response } from 'express';
 import { getUser } from '../../types/authenticated-request.js';
-import { HomeworkService } from './service.js';
+import {
+  HomeworkService,
+  getStudentDashboardCounts,
+  getParentDashboardCounts,
+} from './service.js';
+import { generateComprehensionQuestions } from './service-homework-comprehension.js';
 import { apiResponse } from '../../common/utils.js';
 
 export class HomeworkController {
@@ -44,18 +49,20 @@ export class HomeworkController {
   }
 
   static async submit(req: Request, res: Response): Promise<void> {
-    const homeworkId = req.params.id as string;
-    const { files } = req.body;
-    const studentId = getUser(req).id;
-    const schoolId = getUser(req).schoolId ?? '';
-
+    const schoolId = req.user!.schoolId!;
+    const { Student } = await import('../Student/model.js');
+    const student = await Student.findOne({ userId: req.user!.id, schoolId, isDeleted: false }).lean();
+    if (!student) {
+      res.status(404).json({ error: 'Student profile not found' });
+      return;
+    }
     const submission = await HomeworkService.submitHomework(
-      homeworkId,
-      studentId,
+      req.params.id as string,
+      student._id.toString(),
       schoolId,
-      files,
+      req.body, // already Zod-validated
     );
-    res.status(201).json(apiResponse(true, submission, 'Homework submitted successfully'));
+    res.json({ data: submission });
   }
 
   static async grade(req: Request, res: Response): Promise<void> {
@@ -102,5 +109,62 @@ export class HomeworkController {
       schoolId,
     );
     res.json(apiResponse(true, submissions, 'Student submissions retrieved successfully'));
+  }
+
+  static async getSubmissionById(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const submission = await HomeworkService.getSubmissionById(req.params.id as string, schoolId);
+    res.json({ data: submission });
+  }
+
+  static async regradeSubmission(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const result = await HomeworkService.regrade(req.params.id as string, schoolId);
+    res.json({ data: result });
+  }
+
+  static async generateComprehension(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const teacherId = req.user!.id;
+    const { contentResourceId, count } = req.body as { contentResourceId: string; count: number };
+    const { subjectId, gradeId, curriculumNodeId } = req.query as Record<string, string>;
+    if (!subjectId || !gradeId || !curriculumNodeId) {
+      res.status(400).json({ error: 'subjectId, gradeId, curriculumNodeId required as query params' });
+      return;
+    }
+    const ids = await generateComprehensionQuestions(
+      contentResourceId,
+      schoolId,
+      teacherId,
+      subjectId,
+      gradeId,
+      curriculumNodeId,
+      count,
+    );
+    res.json({ data: { questionIds: ids } });
+  }
+
+  static async studentDashboard(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const { Student } = await import('../Student/model.js');
+    const student = await Student.findOne({ userId: req.user!.id, schoolId, isDeleted: false }).lean();
+    if (!student) {
+      res.status(404).json({ error: 'Student profile not found' });
+      return;
+    }
+    const counts = await getStudentDashboardCounts(student._id.toString(), schoolId);
+    res.json({ data: counts });
+  }
+
+  static async parentDashboard(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const { Parent } = await import('../Parent/model.js');
+    const parent = await Parent.findOne({ userId: req.user!.id, schoolId, isDeleted: false }).lean();
+    if (!parent) {
+      res.status(404).json({ error: 'Parent profile not found' });
+      return;
+    }
+    const data = await getParentDashboardCounts(parent._id.toString(), schoolId);
+    res.json({ data });
   }
 }

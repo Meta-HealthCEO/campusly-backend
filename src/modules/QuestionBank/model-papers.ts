@@ -1,7 +1,9 @@
 import mongoose, { Schema, Document, Types } from 'mongoose';
-import { DIAGRAM_RENDER_STATUSES, type DiagramRenderStatus } from './model.js';
 
 // ─── Enums ───────────────────────────────────────────────────────────────────
+
+export const DIAGRAM_RENDER_STATUSES = ['pending', 'rendered', 'failed'] as const;
+export type DiagramRenderStatus = (typeof DIAGRAM_RENDER_STATUSES)[number];
 
 export const PAPER_TYPES = [
   'class_test', 'assignment', 'mid_year', 'trial', 'final', 'custom',
