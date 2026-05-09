@@ -1,5 +1,6 @@
 import type { Request } from 'express';
 import { Response } from 'express';
+import mongoose from 'mongoose';
 import { getUser } from '../../types/authenticated-request.js';
 import {
   HomeworkService,
@@ -128,9 +129,22 @@ export class HomeworkController {
     const teacherId = req.user!.id;
     const { contentResourceId, count } = req.body as { contentResourceId: string; count: number };
     const { subjectId, gradeId, curriculumNodeId } = req.query as Record<string, string>;
-    if (!subjectId || !gradeId || !curriculumNodeId) {
-      res.status(400).json({ error: 'subjectId, gradeId, curriculumNodeId required as query params' });
+    if (!subjectId || !gradeId) {
+      res.status(400).json({ error: 'subjectId and gradeId required as query params' });
       return;
+    }
+    let resolvedNodeId = curriculumNodeId;
+    if (!resolvedNodeId) {
+      const { CurriculumNode } = await import('../CurriculumStructure/model.js');
+      const node = await CurriculumNode.findOne({
+        schoolId: new mongoose.Types.ObjectId(schoolId),
+        isDeleted: false,
+      }).sort({ createdAt: 1 }).lean();
+      if (!node) {
+        res.status(400).json({ error: 'No curriculum node available for this school. Create one first.' });
+        return;
+      }
+      resolvedNodeId = String(node._id);
     }
     const ids = await generateComprehensionQuestions(
       contentResourceId,
@@ -138,7 +152,7 @@ export class HomeworkController {
       teacherId,
       subjectId,
       gradeId,
-      curriculumNodeId,
+      resolvedNodeId,
       count,
     );
     res.json({ data: { questionIds: ids } });
