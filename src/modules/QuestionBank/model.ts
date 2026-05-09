@@ -33,8 +33,8 @@ export type QuestionStatus = (typeof QUESTION_STATUSES)[number];
 export const MEDIA_TYPES = ['image', 'diagram', 'table'] as const;
 export type MediaType = (typeof MEDIA_TYPES)[number];
 
-export const DIAGRAM_RENDER_STATUSES = ['pending', 'rendered', 'failed'] as const;
-export type DiagramRenderStatus = (typeof DIAGRAM_RENDER_STATUSES)[number];
+export { DIAGRAM_RENDER_STATUSES, type DiagramRenderStatus } from './model-shared.js';
+import { DIAGRAM_RENDER_STATUSES, type DiagramRenderStatus } from './model-shared.js';
 
 // ─── Question Interfaces ───────────────────────────────────────────────────
 

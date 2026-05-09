@@ -1,12 +1,5 @@
 import mongoose, { Schema, Document, Types } from 'mongoose';
-// TODO(bug): This import causes a circular ESM init crash at runtime:
-//   "Cannot access 'DIAGRAM_RENDER_STATUSES' before initialization"
-// Root cause: model.ts re-exports from model-papers.js, and model-papers.ts
-// imports from model.js — ESM circular dependency. Fix: extract shared
-// constants (DIAGRAM_RENDER_STATUSES, DiagramRenderStatus) into a separate
-// model-enums.ts file that neither model.ts nor model-papers.ts re-exports,
-// then both files import from model-enums.ts. Deferred — pre-dates Module 4.
-import { DIAGRAM_RENDER_STATUSES, type DiagramRenderStatus } from './model.js';
+import { DIAGRAM_RENDER_STATUSES, type DiagramRenderStatus } from './model-shared.js';
 
 // ─── Enums ───────────────────────────────────────────────────────────────────
 
