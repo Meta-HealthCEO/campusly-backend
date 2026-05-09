@@ -238,16 +238,31 @@ async function finalizeSubmission(submissionId: string, capturedGeneration: numb
     logger.error({ err, submissionId }, 'Late penalty threw at finalize');
   }
 
-  sub.mark = finalMark;
-  sub.gradingStatus = 'graded';
-  sub.gradedAt = new Date();
-  if (lateAdj) sub.lateMarkAdjustment = lateAdj;
-  await sub.save();
+  const updated = await HomeworkSubmission.findOneAndUpdate(
+    {
+      _id: submissionId,
+      schoolId: sub.schoolId,
+      gradingGeneration: capturedGeneration,
+    },
+    {
+      $set: {
+        mark: finalMark,
+        gradingStatus: 'graded',
+        gradedAt: new Date(),
+        ...(lateAdj ? { lateMarkAdjustment: lateAdj } : {}),
+      },
+    },
+    { new: true },
+  );
+  if (!updated) {
+    // Generation advanced (resubmit happened) — abort silently
+    return;
+  }
 
   if (homework.gradebookAutoPublish) {
     try {
       await publishHomeworkGrade(
-        sub as unknown as {
+        updated as unknown as {
           _id: mongoose.Types.ObjectId;
           studentId: mongoose.Types.ObjectId;
           schoolId: mongoose.Types.ObjectId;
