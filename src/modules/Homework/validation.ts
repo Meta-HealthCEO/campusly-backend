@@ -41,7 +41,10 @@ export const createHomeworkSchema = z.discriminatedUnion('type', [
   createQuizHomeworkSchema,
   createReadingHomeworkSchema,
   createExerciseHomeworkSchema,
-]);
+]).refine(
+  (data) => data.latePolicy !== 'penalty' || (typeof data.latePenaltyPercent === 'number' && data.latePenaltyPercent > 0),
+  { message: 'latePenaltyPercent must be > 0 when latePolicy is penalty', path: ['latePenaltyPercent'] },
+);
 
 export const updateHomeworkSchema = z.object({
   title: z.string().min(1).max(200).optional(),
@@ -52,7 +55,10 @@ export const updateHomeworkSchema = z.object({
   latePolicy: z.enum(['block', 'penalty', 'accept']).optional(),
   latePenaltyPercent: z.number().int().min(0).max(100).optional(),
   gradebookAutoPublish: z.boolean().optional(),
-}).strict();
+}).strict().refine(
+  (data) => data.latePolicy !== 'penalty' || (typeof data.latePenaltyPercent === 'number' && data.latePenaltyPercent > 0),
+  { message: 'latePenaltyPercent must be > 0 when latePolicy is penalty', path: ['latePenaltyPercent'] },
+);
 
 // ─── Submission payloads ────────────────────────────────────────────────────
 
