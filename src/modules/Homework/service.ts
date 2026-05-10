@@ -20,6 +20,7 @@ interface ListQuery {
   search?: string;
   classId?: string;
   subjectId?: string;
+  teacherId?: string;
 }
 
 interface PaginatedResult<T> {
@@ -92,6 +93,7 @@ export class HomeworkService {
     const filter: Record<string, unknown> = { schoolId, isDeleted: false };
     if (query.classId) filter.classId = query.classId;
     if (query.subjectId) filter.subjectId = query.subjectId;
+    if (query.teacherId) filter.teacherId = query.teacherId;
     if (query.search) filter.$or = [{ title: new RegExp(escapeRegex(query.search), 'i') }];
 
     const [data, total] = await Promise.all([
@@ -115,9 +117,9 @@ export class HomeworkService {
       .populate('classId', 'name')
       .populate('teacherId', 'firstName lastName email')
       .populate('contentResourceId', 'title type status blocks')
-      .populate('quizId', 'title totalPoints')
-      .populate('exerciseQuestionIds', 'stem type marks')
-      .populate('comprehensionQuestionIds', 'stem type marks')
+      .populate('quizId', 'title totalPoints questions')
+      .populate('exerciseQuestionIds', 'stem type marks options answer markingRubric')
+      .populate('comprehensionQuestionIds', 'stem type marks options answer markingRubric')
       .lean();
     if (!homework) throw new NotFoundError('Homework not found');
     return homework;
