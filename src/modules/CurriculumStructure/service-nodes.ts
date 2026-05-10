@@ -243,15 +243,55 @@ export class NodesService {
   static async bulkImport(schoolId: string | null, data: BulkImportInput) {
     const frameworkOid = new mongoose.Types.ObjectId(data.frameworkId);
     const codeToId = new Map<string, mongoose.Types.ObjectId>();
+    // Mirror schema for in-memory denormalization (since insertMany skips the
+    // pre-save hook). We track every node's lineage as we build the insert
+    // batch so children resolve their phase/grade/subject/term in O(1).
+    interface Lineage {
+      type: 'phase' | 'grade' | 'subject' | 'term' | 'topic' | 'subtopic' | 'outcome';
+      title: string;
+      parentId: mongoose.Types.ObjectId | null;
+      phaseId: mongoose.Types.ObjectId | null;
+      gradeId: mongoose.Types.ObjectId | null;
+      subjectId: mongoose.Types.ObjectId | null;
+      termNumber: number | null;
+    }
+    const lineageById = new Map<string, Lineage>();
+    const TERM_NUMBER_RE = /Term\s+(\d)/i;
+    const parseTermNumber = (title: string): number | null => {
+      const match = title.match(TERM_NUMBER_RE);
+      if (!match) return null;
+      const n = Number(match[1]);
+      if (Number.isNaN(n) || n < 1 || n > 4) return null;
+      return n;
+    };
 
     const existingNodes = await CurriculumNode.find({
       frameworkId: frameworkOid,
       isDeleted: false,
     })
-      .select('code _id')
-      .lean();
+      .select('code _id type title parentId phaseId gradeId subjectId termNumber')
+      .lean<Array<{
+        _id: mongoose.Types.ObjectId;
+        code: string;
+        type: Lineage['type'];
+        title: string;
+        parentId: mongoose.Types.ObjectId | null;
+        phaseId: mongoose.Types.ObjectId | null;
+        gradeId: mongoose.Types.ObjectId | null;
+        subjectId: mongoose.Types.ObjectId | null;
+        termNumber: number | null;
+      }>>();
     for (const n of existingNodes) {
-      codeToId.set(n.code, n._id as mongoose.Types.ObjectId);
+      codeToId.set(n.code, n._id);
+      lineageById.set(n._id.toString(), {
+        type: n.type,
+        title: n.title,
+        parentId: n.parentId,
+        phaseId: n.phaseId,
+        gradeId: n.gradeId,
+        subjectId: n.subjectId,
+        termNumber: n.termNumber,
+      });
     }
 
     const toInsert: Array<Record<string, unknown>> = [];
@@ -277,6 +317,29 @@ export class NodesService {
       const newId = new mongoose.Types.ObjectId();
       codeToId.set(node.code, newId);
 
+      // Inherit denormalized hierarchy from parent, applying self-counts.
+      const parentLineage = parentId ? lineageById.get(parentId.toString()) : undefined;
+      let phaseId = parentLineage?.phaseId ?? null;
+      let gradeId = parentLineage?.gradeId ?? null;
+      let subjectId = parentLineage?.subjectId ?? null;
+      let termNumber = parentLineage?.termNumber ?? null;
+      if (node.type === 'phase') phaseId = newId;
+      if (node.type === 'grade') gradeId = newId;
+      if (node.type === 'subject') subjectId = newId;
+      if (node.type === 'term' && termNumber === null) {
+        termNumber = parseTermNumber(node.title);
+      }
+
+      lineageById.set(newId.toString(), {
+        type: node.type,
+        title: node.title,
+        parentId,
+        phaseId,
+        gradeId,
+        subjectId,
+        termNumber,
+      });
+
       toInsert.push({
         _id: newId,
         frameworkId: frameworkOid,
@@ -288,6 +351,10 @@ export class NodesService {
         metadata: node.metadata,
         order: node.order,
         schoolId: schoolId ? new mongoose.Types.ObjectId(schoolId) : null,
+        phaseId,
+        gradeId,
+        subjectId,
+        termNumber,
         isDeleted: false,
       });
     }
