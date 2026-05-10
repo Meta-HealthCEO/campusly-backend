@@ -11,6 +11,10 @@ export function errorHandler(
   _next: NextFunction,
 ): void {
   if (config.nodeEnv === 'development') {
+    // pino's default {err} serializer can drop frames in some terminals; print
+    // to console too so dev never has to guess where 500s came from.
+    // eslint-disable-next-line no-console
+    console.error(`[${req.method}] ${req.originalUrl} — Error\n`, err);
     logger.error({ err }, `[${req.method}] ${req.originalUrl} — Error`);
   }
 

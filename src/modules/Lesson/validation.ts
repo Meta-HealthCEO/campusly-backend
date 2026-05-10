@@ -119,11 +119,11 @@ export const addReadingMaterialSchema = baseAddMaterial.extend({
 });
 export const addContentBackedMaterialSchema = baseAddMaterial.extend({
   kind: z.enum(['worksheet', 'activity', 'notes', 'worked_example']),
-  contentPayload: z.object({
-    type: z.string(),
-    prompt: z.string().max(4000).optional(),
-    difficulty: z.string().optional(),
-  }).loose(),
+  // Pass through the full contentPayload — GenerationService.generateContent
+  // applies its own strict schema (numeric difficulty 1-5, blockTypes enum,
+  // term 1-4, instructions string, etc.) downstream. Validating shape twice
+  // here just creates drift bugs.
+  contentPayload: z.record(z.string(), z.unknown()),
 });
 export const addQuizMaterialSchema = baseAddMaterial.extend({
   kind: z.literal('quiz'),
