@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { Lesson } from './model.js';
-import type { ILessonMaterial, ILesson, LessonPhase } from './types.js';
+import type { ILessonMaterial, ILesson, LessonPhase, LessonMaterialKind } from './types.js';
 import type { AddMaterialInput, UpdateMaterialInput } from './validation.js';
 import { GenerationService } from '../ContentLibrary/service-generation.js';
 import { HomeworkService } from '../Homework/service.js';
@@ -45,7 +45,7 @@ async function generatePaperWithAI(
 
 // ── Compensation ────────────────────────────────────────────────────────────
 async function softDeleteEntity(
-  kind: string,
+  kind: LessonMaterialKind,
   id: mongoose.Types.ObjectId | undefined,
 ): Promise<void> {
   if (!id) return;
@@ -53,6 +53,9 @@ async function softDeleteEntity(
     if (kind === 'worksheet' || kind === 'activity' || kind === 'notes' || kind === 'worked_example') {
       await ContentResource.updateOne({ _id: id }, { $set: { isDeleted: true } });
     } else if (kind === 'practice_questions') {
+      await Question.updateOne({ _id: id }, { $set: { isDeleted: true } });
+    } else if (kind === 'reading') {
+      // Comprehension questions stored on the reading material are Question docs
       await Question.updateOne({ _id: id }, { $set: { isDeleted: true } });
     } else if (kind === 'homework') {
       await Homework.updateOne({ _id: id }, { $set: { isDeleted: true } });
@@ -87,8 +90,8 @@ export async function addMaterial(
     generatedAt: new Date(),
   };
 
-  let cleanupId: mongoose.Types.ObjectId | undefined;
-  const cleanupKind: string = input.kind;
+  const cleanupIds: mongoose.Types.ObjectId[] = [];
+  const cleanupKind: LessonMaterialKind = input.kind;
 
   try {
     if (input.kind === 'reading') {
@@ -104,6 +107,7 @@ export async function addMaterial(
           input.comprehensionCount ?? 4,
         );
         baseMaterial.comprehensionQuestionIds = ids;
+        cleanupIds.push(...ids);
       }
     } else if (
       input.kind === 'worksheet'
@@ -119,7 +123,7 @@ export async function addMaterial(
       } as unknown as Parameters<typeof GenerationService.generateContent>[2];
       const resource = await GenerationService.generateContent(schoolId, teacherId, generationInput);
       baseMaterial.contentResourceId = resource._id;
-      cleanupId = resource._id as mongoose.Types.ObjectId;
+      cleanupIds.push(resource._id as mongoose.Types.ObjectId);
     } else if (input.kind === 'quiz') {
       baseMaterial.quizId = new mongoose.Types.ObjectId(input.quizId);
     } else if (input.kind === 'practice_questions') {
@@ -132,6 +136,7 @@ export async function addMaterial(
         curriculumNodeId: lesson.curriculumNodeId.toString(),
       });
       baseMaterial.questionIds = ids;
+      cleanupIds.push(...ids);
     } else if (input.kind === 'homework') {
       let homeworkId: mongoose.Types.ObjectId;
       if (input.existingHomeworkId) {
@@ -147,7 +152,7 @@ export async function addMaterial(
           teacherId,
         );
         homeworkId = hw._id as mongoose.Types.ObjectId;
-        cleanupId = homeworkId;
+        cleanupIds.push(homeworkId);
       }
       baseMaterial.homeworkId = homeworkId;
     } else if (input.kind === 'paper') {
@@ -161,7 +166,7 @@ export async function addMaterial(
           teacherId,
         });
         paperId = paper._id;
-        cleanupId = paperId;
+        cleanupIds.push(paperId);
       }
       baseMaterial.paperId = paperId;
     }
@@ -184,7 +189,9 @@ export async function addMaterial(
     if (!created) throw new Error('Material write inconsistency');
     return toPlainMaterial(created);
   } catch (err: unknown) {
-    if (cleanupId) await softDeleteEntity(cleanupKind, cleanupId);
+    for (const id of cleanupIds) {
+      await softDeleteEntity(cleanupKind, id);
+    }
     throw err;
   }
 }
@@ -244,11 +251,20 @@ export async function deleteMaterial(
   const material = lesson.materials.find((m) => m._id.toString() === materialId);
   if (!material) throw new Error('Material not found');
 
-  const refId =
-    (material as { contentResourceId?: mongoose.Types.ObjectId }).contentResourceId
-    ?? (material as { homeworkId?: mongoose.Types.ObjectId }).homeworkId
-    ?? undefined;
-  await softDeleteEntity(material.kind, refId);
+  const m = material as {
+    contentResourceId?: mongoose.Types.ObjectId;
+    homeworkId?: mongoose.Types.ObjectId;
+    questionIds?: mongoose.Types.ObjectId[];
+    comprehensionQuestionIds?: mongoose.Types.ObjectId[];
+  };
+  const refIds: mongoose.Types.ObjectId[] = [];
+  if (m.contentResourceId) refIds.push(m.contentResourceId);
+  if (m.homeworkId) refIds.push(m.homeworkId);
+  if (m.questionIds?.length) refIds.push(...m.questionIds);
+  if (m.comprehensionQuestionIds?.length) refIds.push(...m.comprehensionQuestionIds);
+  for (const id of refIds) {
+    await softDeleteEntity(material.kind, id);
+  }
 
   const matOid = new mongoose.Types.ObjectId(materialId);
   await Lesson.updateOne(
