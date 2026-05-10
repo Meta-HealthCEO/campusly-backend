@@ -76,8 +76,12 @@ const lessonSchema = new Schema<ILesson>(
   {
     schoolId: { type: Schema.Types.ObjectId, ref: 'School', required: true, index: true },
     teacherId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    subjectId: { type: Schema.Types.ObjectId, ref: 'Subject', required: true },
-    gradeId: { type: Schema.Types.ObjectId, ref: 'Grade', required: true },
+    // Optional: standalone teachers (no school Subject/Grade collections)
+    // derive subject/grade from the CAPS curriculum tree via curriculumNodeId.
+    // When set, these may reference either academic Subject/Grade docs or
+    // CurriculumNode subject/grade docs — treated as opaque IDs at this layer.
+    subjectId: { type: Schema.Types.ObjectId, ref: 'Subject', default: null },
+    gradeId: { type: Schema.Types.ObjectId, ref: 'Grade', default: null },
     curriculumNodeId: { type: Schema.Types.ObjectId, ref: 'CurriculumNode', required: true },
     termNumber: { type: Number, min: 1, max: 4, default: null },
     title: { type: String, required: true, trim: true, maxlength: 200 },

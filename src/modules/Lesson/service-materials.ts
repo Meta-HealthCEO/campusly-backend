@@ -5,10 +5,6 @@ import type { AddMaterialInput, UpdateMaterialInput } from './validation.js';
 import { GenerationService } from '../ContentLibrary/service-generation.js';
 import { HomeworkService } from '../Homework/service.js';
 import { generateComprehensionFromTextbook } from '../Homework/service-homework-comprehension.js';
-import { ContentResource } from '../ContentLibrary/model.js';
-import { Question, AssessmentPaper } from '../QuestionBank/model.js';
-import { Homework } from '../Homework/model.js';
-import { logger } from '../../common/logger.js';
 import {
   generateAIQuestions,
   type GenerateQuestionType,
@@ -20,36 +16,11 @@ import {
   type GeneratePaperSection,
   type SimplePaperType,
 } from '../QuestionBank/service-papers-generation.js';
-
-// ── Compensation ────────────────────────────────────────────────────────────
-async function softDeleteEntity(
-  kind: LessonMaterialKind,
-  id: mongoose.Types.ObjectId | undefined,
-): Promise<void> {
-  if (!id) return;
-  try {
-    if (kind === 'worksheet' || kind === 'activity' || kind === 'notes' || kind === 'worked_example') {
-      await ContentResource.updateOne({ _id: id }, { $set: { isDeleted: true } });
-    } else if (kind === 'practice_questions') {
-      await Question.updateOne({ _id: id }, { $set: { isDeleted: true } });
-    } else if (kind === 'reading') {
-      // Comprehension questions stored on the reading material are Question docs
-      await Question.updateOne({ _id: id }, { $set: { isDeleted: true } });
-    } else if (kind === 'homework') {
-      await Homework.updateOne({ _id: id }, { $set: { isDeleted: true } });
-    } else if (kind === 'paper') {
-      await AssessmentPaper.updateOne({ _id: id }, { $set: { isDeleted: true } });
-    }
-  } catch (err: unknown) {
-    logger.error({ kind, id: id.toString(), err }, '[lesson] compensation cleanup failed');
-  }
-}
-
-// ── Helpers ─────────────────────────────────────────────────────────────────
-function toPlainMaterial(m: ILessonMaterial): ILessonMaterial {
-  const maybeDoc = m as unknown as { toObject?: () => ILessonMaterial };
-  return typeof maybeDoc.toObject === 'function' ? maybeDoc.toObject() : m;
-}
+import {
+  softDeleteEntity,
+  toPlainMaterial,
+  resolveSubjectGradeForLesson,
+} from './service-materials-helpers.js';
 
 // ── addMaterial ─────────────────────────────────────────────────────────────
 export async function addMaterial(
@@ -77,12 +48,13 @@ export async function addMaterial(
     if (input.kind === 'reading') {
       baseMaterial.textbookRef = input.textbookRef;
       if (input.generateComprehension) {
+        const { subjectId, gradeId } = await resolveSubjectGradeForLesson(lesson);
         const ids = await generateComprehensionFromTextbook(
           input.textbookRef,
           schoolId,
           teacherId,
-          lesson.subjectId.toString(),
-          lesson.gradeId.toString(),
+          subjectId,
+          gradeId,
           lesson.curriculumNodeId.toString(),
           input.comprehensionCount ?? 4,
         );
@@ -95,10 +67,11 @@ export async function addMaterial(
       || input.kind === 'notes'
       || input.kind === 'worked_example'
     ) {
+      const { subjectId, gradeId } = await resolveSubjectGradeForLesson(lesson);
       const generationInput = {
         ...input.contentPayload,
-        subjectId: lesson.subjectId.toString(),
-        gradeId: lesson.gradeId.toString(),
+        subjectId,
+        gradeId,
         curriculumNodeId: lesson.curriculumNodeId.toString(),
       } as unknown as Parameters<typeof GenerationService.generateContent>[2];
       const resource = await GenerationService.generateContent(schoolId, teacherId, generationInput);
@@ -130,6 +103,7 @@ export async function addMaterial(
           : undefined;
       const topicHint =
         typeof payload.topicHint === 'string' ? payload.topicHint : undefined;
+      const { subjectId, gradeId } = await resolveSubjectGradeForLesson(lesson);
       const ids = await generateAIQuestions({
         count: typeof payload.count === 'number' ? payload.count : 5,
         questionTypes,
@@ -138,8 +112,8 @@ export async function addMaterial(
         topicHint,
         schoolId,
         teacherId,
-        subjectId: lesson.subjectId.toString(),
-        gradeId: lesson.gradeId.toString(),
+        subjectId,
+        gradeId,
         curriculumNodeId: lesson.curriculumNodeId.toString(),
       });
       baseMaterial.questionIds = ids;
@@ -158,12 +132,13 @@ export async function addMaterial(
             'Assign this lesson to at least one class before creating inline homework',
           );
         }
+        const { subjectId } = await resolveSubjectGradeForLesson(lesson);
         const hw = await HomeworkService.create(
           {
             ...input.createPayload,
             schoolId,
             classId: firstAssignment.classId.toString(),
-            subjectId: lesson.subjectId.toString(),
+            subjectId,
           } as never,
           teacherId,
         );
@@ -198,11 +173,12 @@ export async function addMaterial(
                 ),
             )
           : undefined;
+        const { subjectId, gradeId } = await resolveSubjectGradeForLesson(lesson);
         const paper = await generatePaperWithAI({
           schoolId,
           teacherId,
-          subjectId: lesson.subjectId.toString(),
-          gradeId: lesson.gradeId.toString(),
+          subjectId,
+          gradeId,
           curriculumNodeId: lesson.curriculumNodeId.toString(),
           paperType,
           totalMarks: typeof payload.totalMarks === 'number' ? payload.totalMarks : undefined,

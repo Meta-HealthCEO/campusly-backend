@@ -125,13 +125,29 @@ export class LessonService {
 
     // termNumber: prefer caller-supplied; otherwise derive from the topic's
     // denormalized termNumber. Either may be absent — that's fine.
+    // Also derive subjectId/gradeId from the topic when the caller (a
+    // standalone teacher with no school Subject/Grade docs) omitted them.
     let termNumber: number | null = data.termNumber ?? null;
-    if (termNumber === null) {
+    let subjectId: mongoose.Types.ObjectId | null = data.subjectId
+      ? new mongoose.Types.ObjectId(data.subjectId)
+      : null;
+    let gradeId: mongoose.Types.ObjectId | null = data.gradeId
+      ? new mongoose.Types.ObjectId(data.gradeId)
+      : null;
+    if (termNumber === null || !subjectId || !gradeId) {
       const node = await CurriculumNode.findById(data.curriculumNodeId)
-        .select('termNumber')
-        .lean<{ termNumber?: number | null } | null>();
-      if (node && typeof node.termNumber === 'number') {
-        termNumber = node.termNumber;
+        .select('termNumber subjectId gradeId')
+        .lean<{
+          termNumber?: number | null;
+          subjectId?: mongoose.Types.ObjectId | null;
+          gradeId?: mongoose.Types.ObjectId | null;
+        } | null>();
+      if (node) {
+        if (termNumber === null && typeof node.termNumber === 'number') {
+          termNumber = node.termNumber;
+        }
+        if (!subjectId && node.subjectId) subjectId = node.subjectId;
+        if (!gradeId && node.gradeId) gradeId = node.gradeId;
       }
     }
 
@@ -144,8 +160,8 @@ export class LessonService {
     const lesson = await Lesson.create({
       schoolId,
       teacherId,
-      subjectId: data.subjectId,
-      gradeId: data.gradeId,
+      subjectId,
+      gradeId,
       curriculumNodeId: data.curriculumNodeId,
       termNumber,
       title: data.title,

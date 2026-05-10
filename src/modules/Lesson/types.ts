@@ -125,8 +125,15 @@ export interface ILessonAssignment {
 export interface ILesson extends Document {
   schoolId: Types.ObjectId;
   teacherId: Types.ObjectId;
-  subjectId: Types.ObjectId;
-  gradeId: Types.ObjectId;
+  /**
+   * Optional: standalone teachers (no school subject/grade collections) source
+   * subject/grade from CAPS curriculum nodes via `curriculumNodeId`. When
+   * present these may point at academic Subject/Grade docs OR at CurriculumNode
+   * subject/grade docs (denormalized from the topic). The Lesson layer treats
+   * both as opaque IDs.
+   */
+  subjectId?: Types.ObjectId | null;
+  gradeId?: Types.ObjectId | null;
   curriculumNodeId: Types.ObjectId;
   /** SA school term derived from the topic on create (1-4). Optional. */
   termNumber?: number | null;

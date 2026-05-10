@@ -57,8 +57,11 @@ export const lessonAssignmentInputSchema = z.object({
 });
 
 export const createLessonSchema = z.object({
-  subjectId: objectId,
-  gradeId: objectId,
+  // Optional: standalone teachers source subject/grade from the CAPS tree via
+  // curriculumNodeId. The service derives the IDs from the topic node's
+  // denormalized refs when omitted.
+  subjectId: objectId.optional(),
+  gradeId: objectId.optional(),
   curriculumNodeId: objectId,
   title: trimmedString(200),
   termNumber: z.number().int().min(1).max(4).optional(),
@@ -94,8 +97,11 @@ export const patchStatusSchema = z.object({ status: lessonStatusEnum });
 
 export const scaffoldLessonSchema = z.object({
   curriculumNodeId: objectId,
-  subjectId: objectId,
-  gradeId: objectId,
+  // Optional: the AI scaffolder loads the curriculum node and uses its title /
+  // denormalized context. Subject/grade are not strictly required when the
+  // teacher has no school Subject/Grade collections (standalone portal).
+  subjectId: objectId.optional(),
+  gradeId: objectId.optional(),
   durationMinutes: z.number().int().min(5).max(480),
   hints: z.string().max(1000).optional(),
 });
