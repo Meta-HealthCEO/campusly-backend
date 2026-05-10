@@ -34,6 +34,19 @@ export class NodesService {
     const subjectIds = await resolveSubjectOrGradeIds(filters.subjectId, 'subject', soid);
     const gradeIds = await resolveSubjectOrGradeIds(filters.gradeId, 'grade', soid);
     const termIds = await resolveTermNumberToNodeIds(filters.termNumber, soid);
+    // eslint-disable-next-line no-console
+    console.log('[curriculum-list:debug]', {
+      filters: {
+        frameworkId: filters.frameworkId,
+        subjectId: filters.subjectId,
+        gradeId: filters.gradeId,
+        termNumber: filters.termNumber,
+        types: filters.types,
+      },
+      subjectIds: subjectIds === null ? 'null' : subjectIds === undefined ? 'undefined' : subjectIds.length,
+      gradeIds: gradeIds === null ? 'null' : gradeIds === undefined ? 'undefined' : gradeIds.length,
+      termIds: termIds === null ? 'null' : termIds === undefined ? 'undefined' : termIds.length,
+    });
     if (subjectIds === null || gradeIds === null || termIds === null) {
       return { nodes: [], total: 0, page: filters.page ?? 1, limit: filters.limit ?? 50 };
     }
@@ -69,6 +82,13 @@ export class NodesService {
         .lean(),
       CurriculumNode.countDocuments(query),
     ]);
+
+    // eslint-disable-next-line no-console
+    console.log('[curriculum-list:debug] final', {
+      query: JSON.stringify(query),
+      total,
+      returned: nodes.length,
+    });
 
     return { nodes, total, page: filters.page ?? 1, limit };
   }
