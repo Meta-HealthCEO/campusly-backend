@@ -8,11 +8,13 @@ import { Subject, Grade } from '../Academic/model.js';
  *
  * The Module 2 paper wizard sends academic Subject + Grade IDs from the
  * teacher's school to GET /curriculum-structure/nodes — but CurriculumNode
- * itself has no `subjectId` / `gradeId` fields. Instead the curriculum tree
- * stores subject/grade as nodes (`type: 'subject' | 'grade'`) linked through
- * `parentId`. This helper bridges the two by matching the academic record's
- * `name` to a curriculum node's `title` (case-insensitive, exact), then
- * `$graphLookup`s every descendant.
+ * itself stores subject/grade as nodes (`type: 'subject' | 'grade'`) linked
+ * through `parentId`. This helper bridges the two by matching the academic
+ * record's `name` to a curriculum node's `title` (case-insensitive, exact),
+ * then collects every descendant via the denormalized `subjectId` / `gradeId`
+ * refs on each node (self-ref convention: the subject/grade node also has
+ * `subjectId === _id` / `gradeId === _id`, so the find returns the matched
+ * node AND its descendants in one query).
  *
  * Returns:
  *   - `undefined` when caller did not pass this filter (no constraint)
@@ -39,32 +41,22 @@ export async function resolveAcademicAncestor(
     title: titleRegex,
     isDeleted: false,
     $or: [{ schoolId: null }, { schoolId: schoolOid }],
-  }).select('_id').lean();
+  }).select('_id').lean<{ _id: mongoose.Types.ObjectId }[]>();
   if (ancestorNodes.length === 0) return null;
 
   const ancestorIds = ancestorNodes.map((n: { _id: mongoose.Types.ObjectId }) => n._id);
-  const result = await CurriculumNode.aggregate([
-    { $match: { _id: { $in: ancestorIds }, isDeleted: false } },
-    {
-      $graphLookup: {
-        from: 'curriculumnodes',
-        startWith: '$_id',
-        connectFromField: '_id',
-        connectToField: 'parentId',
-        as: 'descendants',
-        restrictSearchWithMatch: {
-          isDeleted: false,
-          $or: [{ schoolId: null }, { schoolId: schoolOid }],
-        },
-      },
-    },
-    { $project: { ids: { $concatArrays: [['$_id'], '$descendants._id'] } } },
-  ]);
+  // Denormalized lookup: nodes carry subjectId/gradeId pointing at their
+  // ancestor subject/grade (and the ancestor itself, by self-ref convention).
+  // So a single find() returns the ancestor + every descendant.
+  const denormField = modelType === 'subject' ? 'subjectId' : 'gradeId';
+  const matches = await CurriculumNode.find({
+    [denormField]: { $in: ancestorIds },
+    isDeleted: false,
+    $or: [{ schoolId: null }, { schoolId: schoolOid }],
+  })
+    .select('_id')
+    .lean<{ _id: mongoose.Types.ObjectId }[]>();
 
-  const ids = new Set<string>();
-  for (const row of result as Array<{ ids: mongoose.Types.ObjectId[] }>) {
-    for (const id of row.ids) ids.add(id.toString());
-  }
-  if (ids.size === 0) return null;
-  return Array.from(ids).map((s: string) => new mongoose.Types.ObjectId(s));
+  if (matches.length === 0) return null;
+  return matches.map((m: { _id: mongoose.Types.ObjectId }) => m._id);
 }
