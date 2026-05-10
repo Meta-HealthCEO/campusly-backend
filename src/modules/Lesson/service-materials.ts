@@ -3,7 +3,6 @@ import { Lesson } from './model.js';
 import type { ILessonMaterial, ILesson, LessonPhase, LessonMaterialKind } from './types.js';
 import type { AddMaterialInput, UpdateMaterialInput } from './validation.js';
 import { GenerationService } from '../ContentLibrary/service-generation.js';
-import { HomeworkService } from '../Homework/service.js';
 import { generateComprehensionFromTextbook } from '../Homework/service-homework-comprehension.js';
 import {
   generateAIQuestions,
