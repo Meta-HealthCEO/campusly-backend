@@ -5,6 +5,29 @@ import { AIService } from '../../services/ai.service.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
 import { Question } from '../QuestionBank/model.js';
 import { ContentResource } from '../ContentLibrary/model.js';
+import { Textbook } from '../Textbook/model.js';
+
+// Accept TextbookRef-shaped input where ObjectId fields may arrive as either
+// hex strings (HTTP path, post-Zod) or Types.ObjectId (already-cast docs).
+export type TextbookRefInput =
+  | {
+      source: 'internal';
+      textbookId: string | mongoose.Types.ObjectId;
+      chapterId?: string | mongoose.Types.ObjectId;
+      pageStart?: number;
+      pageEnd?: number;
+      notes?: string;
+    }
+  | {
+      source: 'external';
+      title: string;
+      publisher?: string;
+      isbn?: string;
+      pageStart?: number;
+      pageEnd?: number;
+      excerpt?: string;
+      notes?: string;
+    };
 
 const SYSTEM_PROMPT = `You are a CAPS-aligned reading comprehension question writer.
 Given a piece of text, generate {count} mixed-type comprehension questions that test understanding.
@@ -41,28 +64,33 @@ function extractText(resource: ContentResourceLike): string {
   return parts.join('\n\n').slice(0, 12_000); // bound prompt size
 }
 
-export async function generateComprehensionQuestions(
-  contentResourceId: string,
-  schoolId: string,
-  teacherId: string,
-  subjectId: string,
-  gradeId: string,
-  curriculumNodeId: string,
-  count = 4,
-): Promise<mongoose.Types.ObjectId[]> {
-  const resource = await ContentResource.findOne({
-    _id: contentResourceId,
-    schoolId: new mongoose.Types.ObjectId(schoolId),
-    isDeleted: false,
-  }).lean();
-  if (!resource) throw new NotFoundError('Content resource not found');
+// ── Inner helper: AI call + Question.insertMany ────────────────────────────
+async function generateComprehensionFromText(args: {
+  sourceText: string;
+  sourceLabel: string;
+  schoolId: string;
+  teacherId: string;
+  subjectId: string;
+  gradeId: string;
+  curriculumNodeId: string;
+  count: number;
+}): Promise<mongoose.Types.ObjectId[]> {
+  const {
+    sourceText,
+    sourceLabel,
+    schoolId,
+    teacherId,
+    subjectId,
+    gradeId,
+    curriculumNodeId,
+    count,
+  } = args;
 
-  const text = extractText(resource as ContentResourceLike);
-  if (text.length < 50) {
+  if (sourceText.length < 50) {
     throw new BadRequestError('Resource text too short to generate questions');
   }
 
-  const userPrompt = `Generate ${count} comprehension questions for this text:\n\n${text}`;
+  const userPrompt = `Generate ${count} comprehension questions for: ${sourceLabel}\n\n${sourceText}`;
   const raw = await AIService.generateJSON<unknown>(SYSTEM_PROMPT, userPrompt);
   const parsed = aiResponseSchema.parse(raw);
 
@@ -110,4 +138,96 @@ export async function generateComprehensionQuestions(
     logger.error({ err }, 'Comprehension Q insertMany failed');
     throw err;
   }
+}
+
+export async function generateComprehensionQuestions(
+  contentResourceId: string,
+  schoolId: string,
+  teacherId: string,
+  subjectId: string,
+  gradeId: string,
+  curriculumNodeId: string,
+  count = 4,
+): Promise<mongoose.Types.ObjectId[]> {
+  const resource = await ContentResource.findOne({
+    _id: contentResourceId,
+    schoolId: new mongoose.Types.ObjectId(schoolId),
+    isDeleted: false,
+  }).lean();
+  if (!resource) throw new NotFoundError('Content resource not found');
+
+  const sourceText = extractText(resource as ContentResourceLike);
+  const sourceLabel = (resource as ContentResourceLike).title ?? 'Reading passage';
+
+  return generateComprehensionFromText({
+    sourceText,
+    sourceLabel,
+    schoolId,
+    teacherId,
+    subjectId,
+    gradeId,
+    curriculumNodeId,
+    count,
+  });
+}
+
+// ── New entry point: comprehension from a TextbookRef ──────────────────────
+export async function generateComprehensionFromTextbook(
+  textbookRef: TextbookRefInput,
+  schoolId: string,
+  teacherId: string,
+  subjectId: string,
+  gradeId: string,
+  curriculumNodeId: string,
+  count = 4,
+): Promise<mongoose.Types.ObjectId[]> {
+  let sourceText = '';
+  let sourceLabel = '';
+
+  if (textbookRef.source === 'internal') {
+    // Multi-tenancy: allow CAPS national textbooks (schoolId: null) and the
+    // teacher's own school textbooks. Always require isDeleted: false.
+    const soid = new mongoose.Types.ObjectId(schoolId);
+    const textbook = await Textbook.findOne({
+      _id: textbookRef.textbookId,
+      isDeleted: false,
+      $or: [{ schoolId: null }, { schoolId: soid }],
+    }).lean();
+    if (!textbook) throw new NotFoundError('Textbook not found');
+
+    const chapter = textbookRef.chapterId
+      ? textbook.chapters.find(
+          (c) => c._id?.toString() === textbookRef.chapterId?.toString(),
+        )
+      : undefined;
+    sourceLabel = `${textbook.title}${chapter ? ` — ${chapter.title}` : ''}`;
+    // Fallback chain: chapter description → textbook description → synthetic
+    // hint so the inner helper's min-length guard doesn't reject the request
+    // (mirrors the external "no excerpt" behavior).
+    const candidate = chapter?.description?.trim() || textbook.description?.trim() || '';
+    sourceText = candidate.length > 0
+      ? candidate
+      : `(no excerpt provided — generate generic comprehension questions about the topic of: ${sourceLabel})`;
+  } else {
+    sourceLabel = `${textbookRef.title}${textbookRef.publisher ? ` (${textbookRef.publisher})` : ''}`;
+    if (textbookRef.excerpt) {
+      sourceText = textbookRef.excerpt;
+    } else {
+      const range = textbookRef.pageStart && textbookRef.pageEnd
+        ? `pages ${textbookRef.pageStart}-${textbookRef.pageEnd}`
+        : 'this section';
+      sourceText = `(no excerpt provided — generate based on topic only, referencing ${range})`;
+    }
+  }
+
+  return generateComprehensionFromText({
+    sourceText,
+    sourceLabel,
+    schoolId,
+    teacherId,
+    subjectId,
+    gradeId,
+    curriculumNodeId,
+    count,
+  });
 }

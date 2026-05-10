@@ -4,25 +4,13 @@ import type { ILessonMaterial, ILesson, LessonPhase, LessonMaterialKind } from '
 import type { AddMaterialInput, UpdateMaterialInput } from './validation.js';
 import { GenerationService } from '../ContentLibrary/service-generation.js';
 import { HomeworkService } from '../Homework/service.js';
+import { generateComprehensionFromTextbook } from '../Homework/service-homework-comprehension.js';
 import { ContentResource } from '../ContentLibrary/model.js';
 import { Question } from '../QuestionBank/model.js';
 import { Homework } from '../Homework/model.js';
 import { logger } from '../../common/logger.js';
 
 // ── Stubs (real implementations land in later tasks) ────────────────────────
-// Forward declaration — real impl arrives in Task 7.
-async function generateComprehensionFromTextbook(
-  _ref: unknown,
-  _schoolId: string,
-  _teacherId: string,
-  _subjectId: string,
-  _gradeId: string,
-  _curriculumNodeId: string,
-  _count: number,
-): Promise<mongoose.Types.ObjectId[]> {
-  throw new Error('generateComprehensionFromTextbook not yet implemented (Task 7)');
-}
-
 // Stub — QuestionsService has no batch AI generator yet; planned for a later task.
 async function generateAIQuestions(
   _payload: Record<string, unknown> & {
