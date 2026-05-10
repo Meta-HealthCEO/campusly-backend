@@ -149,11 +149,20 @@ export async function addMaterial(
       if (input.existingHomeworkId) {
         homeworkId = new mongoose.Types.ObjectId(input.existingHomeworkId);
       } else {
+        // Inline homework creation requires a class — Homework is class-scoped
+        // but lessons no longer are. Use the lesson's first assigned class as
+        // the audience, and require at least one assignment to exist.
+        const firstAssignment = lesson.assignedClasses?.[0];
+        if (!firstAssignment) {
+          throw new Error(
+            'Assign this lesson to at least one class before creating inline homework',
+          );
+        }
         const hw = await HomeworkService.create(
           {
             ...input.createPayload,
             schoolId,
-            classId: lesson.classId.toString(),
+            classId: firstAssignment.classId.toString(),
             subjectId: lesson.subjectId.toString(),
           } as never,
           teacherId,

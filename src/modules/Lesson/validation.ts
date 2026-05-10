@@ -50,31 +50,50 @@ export const scaffoldedOutlineSchema = z.object({
   })).length(5),
 });
 
-export const createLessonSchema = z.object({
+export const lessonAssignmentInputSchema = z.object({
   classId: objectId,
+  scheduledDate: z.iso.datetime(),
+  status: z.enum(['planned', 'taught']).default('planned'),
+});
+
+export const createLessonSchema = z.object({
   subjectId: objectId,
   gradeId: objectId,
   curriculumNodeId: objectId,
   title: trimmedString(200),
-  date: z.iso.datetime(),
+  termNumber: z.number().int().min(1).max(4).optional(),
   durationMinutes: z.number().int().min(5).max(480),
   objectives: z.array(trimmedString(500)).max(10).optional(),
   scaffoldedOutline: scaffoldedOutlineSchema.optional(),
+  /** Optional initial schedule. A pack with no assignments is a library lesson. */
+  assignedClasses: z.array(lessonAssignmentInputSchema).optional().default([]),
 });
 
 export const updateLessonSchema = z.object({
   title: trimmedString(200).optional(),
-  date: z.iso.datetime().optional(),
+  termNumber: z.number().int().min(1).max(4).nullable().optional(),
   durationMinutes: z.number().int().min(5).max(480).optional(),
   objectives: z.array(trimmedString(500)).max(10).optional(),
   reflectionNotes: z.string().max(4000).optional(),
 });
 
+export const assignClassSchema = z.object({
+  classId: objectId,
+  scheduledDate: z.iso.datetime(),
+});
+
+export const updateAssignmentSchema = z.object({
+  scheduledDate: z.iso.datetime().optional(),
+  status: z.enum(['planned', 'taught']).optional(),
+}).refine(
+  (v) => v.scheduledDate !== undefined || v.status !== undefined,
+  { message: 'Provide at least one of scheduledDate or status' },
+);
+
 export const patchStatusSchema = z.object({ status: lessonStatusEnum });
 
 export const scaffoldLessonSchema = z.object({
   curriculumNodeId: objectId,
-  classId: objectId,
   subjectId: objectId,
   gradeId: objectId,
   durationMinutes: z.number().int().min(5).max(480),
@@ -166,3 +185,6 @@ export type UpdateMaterialInput = z.infer<typeof updateMaterialSchema>;
 export type MoveMaterialInput = z.infer<typeof moveMaterialSchema>;
 export type ListLessonsInput = z.infer<typeof listLessonsSchema>;
 export type ScaffoldedOutline = z.infer<typeof scaffoldedOutlineSchema>;
+export type AssignClassInput = z.infer<typeof assignClassSchema>;
+export type UpdateAssignmentInput = z.infer<typeof updateAssignmentSchema>;
+export type LessonAssignmentInput = z.infer<typeof lessonAssignmentInputSchema>;

@@ -22,6 +22,10 @@ router.patch('/:id/materials/:mid/move', LessonController.moveMaterial);
 router.post('/:id/materials/:mid/regenerate', LessonController.regenerateMaterial);
 router.delete('/:id/materials/:mid', LessonController.deleteMaterial);
 
+router.post('/:id/assignments', LessonController.assignClass);
+router.patch('/:id/assignments/:classId', LessonController.updateAssignment);
+router.delete('/:id/assignments/:classId', LessonController.unassignClass);
+
 router.get('/:id/export/teacher', LessonController.exportTeacher);
 router.get('/:id/export/student', LessonController.exportStudent);
 

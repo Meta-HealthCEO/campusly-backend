@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
 import { LessonService } from './service.js';
+import { LessonAssignmentService } from './service-assignments.js';
 import * as Materials from './service-materials.js';
 import { scaffoldLesson } from './service-scaffold.js';
 import { exportTeacherPack, exportStudentPack } from './service-export.js';
@@ -13,6 +14,8 @@ import {
   updateMaterialSchema,
   moveMaterialSchema,
   listLessonsSchema,
+  assignClassSchema,
+  updateAssignmentSchema,
 } from './validation.js';
 
 function getAuth(req: Request): { id: string; schoolId: string } {
@@ -206,6 +209,51 @@ export const LessonController = {
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `inline; filename="lesson-${lessonId}-student.pdf"`);
       res.send(buf);
+    } catch (err: unknown) {
+      next(err);
+    }
+  },
+
+  assignClass: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { schoolId } = getAuth(req);
+      const input = assignClassSchema.parse(req.body);
+      const lesson = await LessonAssignmentService.assignClass(
+        req.params.id as string,
+        schoolId,
+        input,
+      );
+      res.status(201).json({ data: lesson });
+    } catch (err: unknown) {
+      next(err);
+    }
+  },
+
+  updateAssignment: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { schoolId } = getAuth(req);
+      const patch = updateAssignmentSchema.parse(req.body);
+      const lesson = await LessonAssignmentService.updateAssignment(
+        req.params.id as string,
+        schoolId,
+        req.params.classId as string,
+        patch,
+      );
+      res.json({ data: lesson });
+    } catch (err: unknown) {
+      next(err);
+    }
+  },
+
+  unassignClass: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { schoolId } = getAuth(req);
+      const lesson = await LessonAssignmentService.unassignClass(
+        req.params.id as string,
+        schoolId,
+        req.params.classId as string,
+      );
+      res.json({ data: lesson });
     } catch (err: unknown) {
       next(err);
     }

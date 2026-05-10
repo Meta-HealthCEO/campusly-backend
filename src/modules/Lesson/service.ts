@@ -33,24 +33,33 @@ export class LessonService {
       isDeleted: false,
     };
     if (filters.teacherId) query.teacherId = new mongoose.Types.ObjectId(filters.teacherId);
-    if (filters.classId) query.classId = new mongoose.Types.ObjectId(filters.classId);
     if (filters.subjectId) query.subjectId = new mongoose.Types.ObjectId(filters.subjectId);
     if (filters.status) query.status = filters.status;
-    if (filters.dateFrom || filters.dateTo) {
-      const range: { $gte?: Date; $lte?: Date } = {};
-      if (filters.dateFrom) range.$gte = new Date(filters.dateFrom);
-      if (filters.dateTo) range.$lte = new Date(filters.dateTo);
-      query.date = range;
+
+    // Class filter + date range now resolve via the assignedClasses subdoc.
+    // When a classId is provided we use $elemMatch so the date filter (if any)
+    // applies to the SAME assignment as the class — not just any assignment
+    // that happens to satisfy either constraint independently.
+    if (filters.classId || filters.dateFrom || filters.dateTo) {
+      const elem: Record<string, unknown> = {};
+      if (filters.classId) elem.classId = new mongoose.Types.ObjectId(filters.classId);
+      if (filters.dateFrom || filters.dateTo) {
+        const range: { $gte?: Date; $lte?: Date } = {};
+        if (filters.dateFrom) range.$gte = new Date(filters.dateFrom);
+        if (filters.dateTo) range.$lte = new Date(filters.dateTo);
+        elem.scheduledDate = range;
+      }
+      query.assignedClasses = { $elemMatch: elem };
     }
     if (filters.search) query.title = { $regex: filters.search, $options: 'i' };
 
     const skip = (filters.page - 1) * filters.limit;
     const [items, total] = await Promise.all([
       Lesson.find(query)
-        .sort({ date: -1 })
+        .sort({ updatedAt: -1 })
         .skip(skip)
         .limit(filters.limit)
-        .populate('classId', 'name')
+        .populate('assignedClasses.classId', 'name')
         .populate('subjectId', 'name code')
         .populate('curriculumNodeId', 'title code')
         .lean<ILesson[]>(),
@@ -65,7 +74,7 @@ export class LessonService {
       schoolId: new mongoose.Types.ObjectId(schoolId),
       isDeleted: false,
     })
-      .populate('classId', 'name')
+      .populate('assignedClasses.classId', 'name')
       .populate('subjectId', 'name code')
       .populate('gradeId', 'name level')
       .populate('curriculumNodeId', 'title code')
@@ -114,21 +123,39 @@ export class LessonService {
       }
     }
 
+    // termNumber: prefer caller-supplied; otherwise derive from the topic's
+    // denormalized termNumber. Either may be absent — that's fine.
+    let termNumber: number | null = data.termNumber ?? null;
+    if (termNumber === null) {
+      const node = await CurriculumNode.findById(data.curriculumNodeId)
+        .select('termNumber')
+        .lean<{ termNumber?: number | null } | null>();
+      if (node && typeof node.termNumber === 'number') {
+        termNumber = node.termNumber;
+      }
+    }
+
+    const assignedClasses = (data.assignedClasses ?? []).map((a) => ({
+      classId: new mongoose.Types.ObjectId(a.classId),
+      scheduledDate: new Date(a.scheduledDate),
+      status: a.status,
+    }));
+
     const lesson = await Lesson.create({
       schoolId,
       teacherId,
-      classId: data.classId,
       subjectId: data.subjectId,
       gradeId: data.gradeId,
       curriculumNodeId: data.curriculumNodeId,
+      termNumber,
       title: data.title,
-      date: data.date,
       durationMinutes: data.durationMinutes,
       objectives,
       phases,
       materials,
       status: 'draft',
       aiGenerated,
+      assignedClasses,
     });
     return lesson.toObject() as ILesson;
   }
@@ -172,8 +199,13 @@ export class LessonService {
 
   /**
    * Returns the teacher's most recently used curriculum topics, deduplicated
-   * by curriculumNodeId, ordered by latest lesson date desc. Used by the
+   * by curriculumNodeId, ordered by latest lesson updatedAt desc. Used by the
    * new-lesson topic quick picker to surface "you've been here before" chips.
+   *
+   * Note: pre-refactor this sorted by lesson.date (the per-class scheduled
+   * date). With the decoupled model the pack itself has no date; sorting by
+   * updatedAt approximates "most recently worked on" which is the right
+   * recency signal for picker chips.
    */
   static async recentTopicsForTeacher(
     teacherId: string,
@@ -188,8 +220,8 @@ export class LessonService {
           isDeleted: false,
         },
       },
-      { $sort: { date: -1 } },
-      { $group: { _id: '$curriculumNodeId', latest: { $first: '$date' } } },
+      { $sort: { updatedAt: -1 } },
+      { $group: { _id: '$curriculumNodeId', latest: { $first: '$updatedAt' } } },
       { $sort: { latest: -1 } },
       { $limit: limit },
     ]);

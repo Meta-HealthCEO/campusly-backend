@@ -107,15 +107,30 @@ export interface ILessonPhaseEntry {
   materialIds: Types.ObjectId[];
 }
 
+export type LessonAssignmentStatus = 'planned' | 'taught';
+
+/**
+ * One delivery of a lesson pack to a single class on a single date. A lesson
+ * may have zero (library) or many of these — the pack itself is curriculum-
+ * scoped (grade + subject + term + topic), classes are just the audience.
+ */
+export interface ILessonAssignment {
+  _id?: Types.ObjectId;
+  classId: Types.ObjectId;
+  scheduledDate: Date;
+  status: LessonAssignmentStatus;
+  taughtAt?: Date;
+}
+
 export interface ILesson extends Document {
   schoolId: Types.ObjectId;
   teacherId: Types.ObjectId;
-  classId: Types.ObjectId;
   subjectId: Types.ObjectId;
   gradeId: Types.ObjectId;
   curriculumNodeId: Types.ObjectId;
+  /** SA school term derived from the topic on create (1-4). Optional. */
+  termNumber?: number | null;
   title: string;
-  date: Date;
   durationMinutes: number;
   objectives: string[];
   phases: ILessonPhaseEntry[];
@@ -124,6 +139,8 @@ export interface ILesson extends Document {
   reflectionNotes?: string;
   aiGenerated: boolean;
   isDeleted: boolean;
+  /** Per-class scheduling. Empty array == library lesson (unscheduled). */
+  assignedClasses: ILessonAssignment[];
   createdAt: Date;
   updatedAt: Date;
 }

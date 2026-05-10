@@ -64,10 +64,38 @@ function renderCoverPage(
     .text(opts.studentMode ? 'Student Pack' : 'Teacher Pack', { align: 'center' });
   doc.moveDown(2);
   doc.fontSize(11).fillColor('black');
-  doc.text(`Date: ${new Date(lesson.date).toLocaleDateString()}`);
   doc.text(`Duration: ${lesson.durationMinutes} minutes`);
   doc.text(`Status: ${lesson.status}`);
+
+  // List per-class assignments (if any). A pack with no assignments is a
+  // library lesson and we omit the section entirely rather than print "—".
+  if (lesson.assignedClasses && lesson.assignedClasses.length > 0) {
+    doc.moveDown(1);
+    doc.fontSize(13).text('Scheduled for', { underline: false });
+    doc.fontSize(11);
+    for (const a of lesson.assignedClasses) {
+      const className = readClassName(a.classId);
+      const date = new Date(a.scheduledDate).toLocaleDateString();
+      const taughtTag = a.status === 'taught' ? '  (taught)' : '';
+      doc.text(`• ${className}  —  ${date}${taughtTag}`);
+    }
+  }
   doc.addPage();
+}
+
+/**
+ * The classId field on each assignment is populated to `{ _id, name }` by the
+ * service; fall back to the raw id when populate didn't fire (defensive).
+ */
+function readClassName(classRef: unknown): string {
+  if (!classRef) return '—';
+  if (typeof classRef === 'string') return classRef;
+  if (typeof classRef === 'object') {
+    const obj = classRef as { name?: string; _id?: { toString(): string } };
+    if (obj.name) return obj.name;
+    if (obj._id) return obj._id.toString();
+  }
+  return '—';
 }
 
 function renderObjectives(doc: PDFKit.PDFDocument, lesson: ILesson): void {

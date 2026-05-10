@@ -57,16 +57,30 @@ const phaseEntrySchema = new Schema(
   { _id: false },
 );
 
+const assignmentSchema = new Schema(
+  {
+    classId: { type: Schema.Types.ObjectId, ref: 'Class', required: true },
+    scheduledDate: { type: Date, required: true },
+    status: {
+      type: String,
+      enum: ['planned', 'taught'],
+      default: 'planned',
+      required: true,
+    },
+    taughtAt: { type: Date },
+  },
+  { _id: true, timestamps: false },
+);
+
 const lessonSchema = new Schema<ILesson>(
   {
     schoolId: { type: Schema.Types.ObjectId, ref: 'School', required: true, index: true },
     teacherId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    classId: { type: Schema.Types.ObjectId, ref: 'Class', required: true },
     subjectId: { type: Schema.Types.ObjectId, ref: 'Subject', required: true },
     gradeId: { type: Schema.Types.ObjectId, ref: 'Grade', required: true },
     curriculumNodeId: { type: Schema.Types.ObjectId, ref: 'CurriculumNode', required: true },
+    termNumber: { type: Number, min: 1, max: 4, default: null },
     title: { type: String, required: true, trim: true, maxlength: 200 },
-    date: { type: Date, required: true },
     durationMinutes: { type: Number, required: true, min: 5, max: 480 },
     objectives: [{ type: String, trim: true, maxlength: 500 }],
     phases: {
@@ -83,14 +97,20 @@ const lessonSchema = new Schema<ILesson>(
     reflectionNotes: { type: String, maxlength: 4000 },
     aiGenerated: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false, index: true },
+    assignedClasses: { type: [assignmentSchema], default: [] },
   },
   { timestamps: true },
 );
 
-lessonSchema.index({ teacherId: 1, date: 1 });
-lessonSchema.index({ schoolId: 1, classId: 1, date: 1 });
 lessonSchema.index({ curriculumNodeId: 1 });
-lessonSchema.index({ schoolId: 1, status: 1, date: 1 });
+lessonSchema.index({ schoolId: 1, status: 1 });
 lessonSchema.index({ teacherId: 1, status: 1 });
+// Compound index for the per-class scheduled-date filter used by the
+// list endpoint when a classId filter is supplied.
+lessonSchema.index({
+  schoolId: 1,
+  'assignedClasses.classId': 1,
+  'assignedClasses.scheduledDate': 1,
+});
 
 export const Lesson = mongoose.model<ILesson>('Lesson', lessonSchema);
