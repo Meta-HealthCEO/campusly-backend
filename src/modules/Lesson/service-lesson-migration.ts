@@ -3,6 +3,7 @@ import { Lesson } from './model.js';
 import { LESSON_PHASES } from './types.js';
 import { LessonPlan } from '../LessonPlan/model.js';
 import type { ILessonPlan } from '../LessonPlan/model.js';
+import { Class } from '../Academic/model.js';
 import { hasRun, markComplete, tryClaim, releaseClaim } from '../../db/migrations/sentinel.js';
 import { logger } from '../../common/logger.js';
 
@@ -46,6 +47,24 @@ export async function runLessonPlanToLessonMigration(): Promise<void> {
       );
       return;
     }
+
+    // Resolve gradeId for each plan via its Class. Legacy LessonPlan documents
+    // do not store gradeId, so without this lookup we'd have to fall back to
+    // plan.subjectId — polluting Lesson.gradeId with a Subject _id. Bulk-fetch
+    // the classes once and build a Map for O(1) lookups in the per-plan loop.
+    const classIds = Array.from(
+      new Set(plans.map((p) => p.classId.toString())),
+    ).map((id) => new mongoose.Types.ObjectId(id));
+    const classes = await Class.find(
+      { _id: { $in: classIds } },
+      { _id: 1, gradeId: 1 },
+    ).lean<{ _id: mongoose.Types.ObjectId; gradeId: mongoose.Types.ObjectId }[]>();
+    const classGradeMap = new Map<string, mongoose.Types.ObjectId>();
+    for (const c of classes) {
+      if (c.gradeId) classGradeMap.set(c._id.toString(), c.gradeId);
+    }
+    let resolvedFromClass = 0;
+    let fallbackToSubject = 0;
 
     const lessonDocs = plans.map((plan) => {
       const phases = LESSON_PHASES.map((phase) => ({
@@ -95,13 +114,21 @@ export async function runLessonPlanToLessonMigration(): Promise<void> {
       }
 
       const lessonDate = new Date(plan.date);
+      const resolvedGradeId = classGradeMap.get(plan.classId.toString());
+      if (resolvedGradeId) {
+        resolvedFromClass++;
+      } else {
+        fallbackToSubject++;
+      }
       return {
         _id: plan._id,
         schoolId: plan.schoolId,
         teacherId: plan.teacherId,
         classId: plan.classId,
         subjectId: plan.subjectId,
-        gradeId: plan.subjectId, // best-effort fallback; will be patched by teacher on next edit
+        // Prefer the class's gradeId; fall back to subjectId only if the
+        // class is missing or has no gradeId (effectively never in production).
+        gradeId: resolvedGradeId ?? plan.subjectId,
         curriculumNodeId: plan.curriculumTopicId,
         title: plan.topic,
         date: lessonDate,
@@ -151,6 +178,10 @@ export async function runLessonPlanToLessonMigration(): Promise<void> {
       );
     }
 
+    logger.info(
+      { resolvedFromClass, fallbackToSubject },
+      '[migrations] gradeId resolution complete',
+    );
     await markComplete(MIGRATION_NAME);
     logger.info(
       { migrated: toInsert.length, total: plans.length },
