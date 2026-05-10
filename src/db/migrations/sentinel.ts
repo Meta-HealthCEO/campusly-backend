@@ -43,7 +43,7 @@ export async function tryClaim(name: string): Promise<boolean> {
     if (
       err instanceof Error &&
       'code' in err &&
-      (err as { code: number }).code === 11000
+      (err as Record<string, unknown>).code === 11000
     ) {
       return false;
     }
@@ -57,4 +57,14 @@ export async function markComplete(name: string): Promise<void> {
     { $set: { name, completedAt: new Date() } },
     { upsert: true },
   );
+}
+
+/**
+ * Release a previously-claimed lock by deleting the epoch-placeholder sentinel.
+ * Safe to call on failure: only deletes docs where completedAt is still the
+ * epoch placeholder; a successfully-completed sentinel (completedAt > epoch)
+ * is preserved so the migration is recognised as done.
+ */
+export async function releaseClaim(name: string): Promise<void> {
+  await MigrationSentinel.deleteOne({ name, completedAt: new Date(0) });
 }
