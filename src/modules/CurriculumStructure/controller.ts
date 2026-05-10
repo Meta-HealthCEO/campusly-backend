@@ -3,7 +3,7 @@ import { getUser } from '../../types/authenticated-request.js';
 import { apiResponse } from '../../common/utils.js';
 import { FrameworksService } from './service-frameworks.js';
 import { NodesService } from './service-nodes.js';
-import type { NodeQueryInput } from './validation.js';
+import { nodeQuerySchema } from './validation.js';
 
 export class CurriculumStructureController {
   // ─── Frameworks ──────────────────────────────────────────────────────────────
@@ -28,8 +28,10 @@ export class CurriculumStructureController {
 
   static async listNodes(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    // Query has been parsed & defaulted by validate({ query: nodeQuerySchema })
-    const filters = req.query as unknown as NodeQueryInput;
+    // Express 5: req.query is effectively read-only, so the validate
+    // middleware's Object.assign doesn't persist parsed values (CSV→array
+    // preprocessors etc). Re-parse here to get the typed shape.
+    const filters = nodeQuerySchema.parse(req.query);
     if (!user.schoolId) {
       res.status(400).json({ success: false, error: 'User must be assigned to a school' });
       return;
