@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { CurriculumNode } from './model.js';
-import { resolveSubjectOrGradeIds } from './service-academic-bridge.js';
+import { resolveSubjectOrGradeIds, resolveTermNumberToNodeIds } from './service-academic-bridge.js';
 import { NotFoundError, ConflictError, BadRequestError } from '../../common/errors.js';
 import { paginationHelper } from '../../common/utils.js';
 import type { CreateNodeInput, UpdateNodeInput, BulkImportInput, NodeQueryInput } from './validation.js';
@@ -28,27 +28,28 @@ export class NodesService {
     if (filters.search) {
       query.title = { $regex: filters.search, $options: 'i' };
     }
-    if (filters.termNumber !== undefined) {
-      query.termNumber = filters.termNumber;
-    }
-
-    // Subject / Grade ID filtering — try denormalized-ref match first (the IDs
-    // may already point at CurriculumNode subject/grade docs). If nothing
-    // matches, fall back to academic-record name resolution.
+    // Subject / Grade / Term filtering — each resolver tries denormalized-ref
+    // match first, then falls back to parentId tree traversal, then academic
+    // bridge. Resilient to migration state and data drift.
     const subjectIds = await resolveSubjectOrGradeIds(filters.subjectId, 'subject', soid);
     const gradeIds = await resolveSubjectOrGradeIds(filters.gradeId, 'grade', soid);
-    if (subjectIds === null || gradeIds === null) {
+    const termIds = await resolveTermNumberToNodeIds(filters.termNumber, soid);
+    if (subjectIds === null || gradeIds === null || termIds === null) {
       return { nodes: [], total: 0, page: filters.page ?? 1, limit: filters.limit ?? 50 };
     }
     const idConstraints: mongoose.Types.ObjectId[][] = [];
     if (subjectIds) idConstraints.push(subjectIds);
     if (gradeIds) idConstraints.push(gradeIds);
-    if (idConstraints.length === 1) {
-      query._id = { $in: idConstraints[0] };
-    } else if (idConstraints.length === 2) {
-      const subjectSet = new Set(idConstraints[0].map((o: mongoose.Types.ObjectId) => o.toString()));
-      const intersection = idConstraints[1].filter(
-        (o: mongoose.Types.ObjectId) => subjectSet.has(o.toString()),
+    if (termIds) idConstraints.push(termIds);
+    if (idConstraints.length > 0) {
+      // Intersect every set into one array.
+      const intersection = idConstraints.reduce<mongoose.Types.ObjectId[]>(
+        (acc, set) => {
+          if (acc.length === 0) return set;
+          const setKeys = new Set(set.map((o) => o.toString()));
+          return acc.filter((o) => setKeys.has(o.toString()));
+        },
+        [],
       );
       if (intersection.length === 0) {
         return { nodes: [], total: 0, page: filters.page ?? 1, limit: filters.limit ?? 50 };

@@ -85,7 +85,9 @@ export async function resolveSubjectOrGradeIds(
 
   const oid = new mongoose.Types.ObjectId(id);
   const denormField = modelType === 'subject' ? 'subjectId' : 'gradeId';
-  const matches = await CurriculumNode.find({
+
+  // Path 1 — denormalized self-ref (fast, post-migration).
+  const denormMatches = await CurriculumNode.find({
     [denormField]: oid,
     isDeleted: false,
     $or: [{ schoolId: null }, { schoolId: schoolOid }],
@@ -93,9 +95,111 @@ export async function resolveSubjectOrGradeIds(
     .select('_id')
     .lean<{ _id: mongoose.Types.ObjectId }[]>();
 
-  if (matches.length > 0) {
-    return matches.map((m: { _id: mongoose.Types.ObjectId }) => m._id);
+  if (denormMatches.length > 0) {
+    return denormMatches.map((m: { _id: mongoose.Types.ObjectId }) => m._id);
   }
 
+  // Path 2 — id is a CurriculumNode but denormalization hasn't populated its
+  // descendants yet. Walk via $graphLookup on parentId. Resilient to
+  // unmigrated data and any data-quality drift in the denorm fields.
+  const node = await CurriculumNode.findOne({
+    _id: oid,
+    type: modelType,
+    isDeleted: false,
+    $or: [{ schoolId: null }, { schoolId: schoolOid }],
+  }).select('_id').lean<{ _id: mongoose.Types.ObjectId } | null>();
+  if (node) {
+    const result = await CurriculumNode.aggregate([
+      { $match: { _id: node._id } },
+      {
+        $graphLookup: {
+          from: 'curriculumnodes',
+          startWith: '$_id',
+          connectFromField: '_id',
+          connectToField: 'parentId',
+          as: 'descendants',
+          restrictSearchWithMatch: {
+            isDeleted: false,
+            $or: [{ schoolId: null }, { schoolId: schoolOid }],
+          },
+        },
+      },
+      { $project: { ids: { $concatArrays: [['$_id'], '$descendants._id'] } } },
+    ]);
+    const ids = new Set<string>();
+    for (const row of result as Array<{ ids: mongoose.Types.ObjectId[] }>) {
+      for (const x of row.ids) ids.add(x.toString());
+    }
+    if (ids.size > 0) {
+      return Array.from(ids).map((s: string) => new mongoose.Types.ObjectId(s));
+    }
+  }
+
+  // Path 3 — id is an academic Subject/Grade record. Title-bridge to CAPS.
   return resolveAcademicAncestor(id, modelType, schoolOid);
+}
+
+/**
+ * Resolves `termNumber` (1-4) to the set of CurriculumNode IDs that fall
+ * under any matching term ancestor. Mirrors the resilience of
+ * resolveSubjectOrGradeIds: works whether the denormalized `termNumber`
+ * field is populated or not (uses $graphLookup over parentId).
+ *
+ * Same return convention: undefined = no filter, null = no matches, array
+ * otherwise.
+ */
+export async function resolveTermNumberToNodeIds(
+  termNumber: number | undefined,
+  schoolOid: mongoose.Types.ObjectId,
+): Promise<mongoose.Types.ObjectId[] | null | undefined> {
+  if (termNumber === undefined) return undefined;
+
+  // Path 1 — denormalized field (fast, post-migration).
+  const denormMatches = await CurriculumNode.find({
+    termNumber,
+    isDeleted: false,
+    $or: [{ schoolId: null }, { schoolId: schoolOid }],
+  })
+    .select('_id')
+    .lean<{ _id: mongoose.Types.ObjectId }[]>();
+
+  if (denormMatches.length > 0) {
+    return denormMatches.map((m: { _id: mongoose.Types.ObjectId }) => m._id);
+  }
+
+  // Path 2 — find term nodes whose title parses to the requested number,
+  // then $graphLookup their descendants.
+  const titleRegex = new RegExp(`^Term\\s+${termNumber}$`, 'i');
+  const termNodes = await CurriculumNode.find({
+    type: 'term',
+    title: titleRegex,
+    isDeleted: false,
+    $or: [{ schoolId: null }, { schoolId: schoolOid }],
+  }).select('_id').lean<{ _id: mongoose.Types.ObjectId }[]>();
+  if (termNodes.length === 0) return null;
+
+  const result = await CurriculumNode.aggregate([
+    { $match: { _id: { $in: termNodes.map((t) => t._id) } } },
+    {
+      $graphLookup: {
+        from: 'curriculumnodes',
+        startWith: '$_id',
+        connectFromField: '_id',
+        connectToField: 'parentId',
+        as: 'descendants',
+        restrictSearchWithMatch: {
+          isDeleted: false,
+          $or: [{ schoolId: null }, { schoolId: schoolOid }],
+        },
+      },
+    },
+    { $project: { ids: { $concatArrays: [['$_id'], '$descendants._id'] } } },
+  ]);
+
+  const ids = new Set<string>();
+  for (const row of result as Array<{ ids: mongoose.Types.ObjectId[] }>) {
+    for (const x of row.ids) ids.add(x.toString());
+  }
+  if (ids.size === 0) return null;
+  return Array.from(ids).map((s: string) => new mongoose.Types.ObjectId(s));
 }
