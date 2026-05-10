@@ -24,7 +24,6 @@ import feeRoutes from './modules/Fee/routes.js';
 import academicRoutes from './modules/Academic/routes.js';
 import homeworkRoutes from './modules/Homework/routes.js';
 import attendanceRoutes from './modules/Attendance/routes.js';
-import lessonPlanRoutes from './modules/LessonPlan/routes.js';
 import lessonRoutes from './modules/Lesson/routes.js';
 import tuckShopRoutes from './modules/TuckShop/routes.js';
 import notificationRoutes from './modules/Notification/routes.js';
