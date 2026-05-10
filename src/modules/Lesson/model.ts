@@ -44,7 +44,7 @@ const materialSchema = new Schema(
     quizId: { type: Schema.Types.ObjectId, ref: 'Quiz' },
     questionIds: [{ type: Schema.Types.ObjectId, ref: 'Question' }],
     homeworkId: { type: Schema.Types.ObjectId, ref: 'Homework' },
-    paperId: { type: Schema.Types.ObjectId, ref: 'GeneratedPaper' },
+    paperId: { type: Schema.Types.ObjectId, ref: 'AssessmentPaper' },
   },
   { timestamps: true },
 );
