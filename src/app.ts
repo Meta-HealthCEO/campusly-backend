@@ -25,6 +25,7 @@ import academicRoutes from './modules/Academic/routes.js';
 import homeworkRoutes from './modules/Homework/routes.js';
 import attendanceRoutes from './modules/Attendance/routes.js';
 import lessonPlanRoutes from './modules/LessonPlan/routes.js';
+import lessonRoutes from './modules/Lesson/routes.js';
 import tuckShopRoutes from './modules/TuckShop/routes.js';
 import notificationRoutes from './modules/Notification/routes.js';
 import announcementRoutes from './modules/Announcement/routes.js';
@@ -154,7 +155,15 @@ app.use('/api/academic', authenticate, requireModule('academic'), academicRoutes
 app.use('/api/timetable-builder', authenticate, requireModule('academic'), timetableBuilderRoutes);
 app.use('/api/homework', authenticate, requireModule('homework'), homeworkRoutes);
 app.use('/api/attendance', authenticate, requireModule('attendance'), attendanceRoutes);
-app.use('/api/lesson-plans', authenticate, requireModule('academic'), lessonPlanRoutes);
+// New canonical mount for lessons.
+app.use('/api/lessons', authenticate, requireModule('academic'), lessonRoutes);
+// Legacy /api/lesson-plans → /api/lessons (308 preserves method + body for POST/PUT/PATCH/DELETE).
+// Intentionally NOT authenticated — clients re-issue auth on the new URL.
+app.all('/api/lesson-plans', (_req, res) => res.redirect(308, '/api/lessons'));
+app.all('/api/lesson-plans/*splat', (req, res) => {
+  const tail = req.originalUrl.replace(/^\/api\/lesson-plans/, '/api/lessons');
+  res.redirect(308, tail);
+});
 app.use('/api/achiever', authenticate, requireModule('achiever'), achieverRoutes);
 app.use('/api/consent', authenticate, requireModule('consent'), consentRoutes);
 app.use('/api/sports', authenticate, requireModule('sport'), sportRoutes);
