@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from 'express';
 import { LessonService } from './service.js';
 import { LessonAssignmentService } from './service-assignments.js';
 import * as Materials from './service-materials.js';
+import { generateAllPlaceholders } from './service-materials-bulk.js';
 import { scaffoldLesson } from './service-scaffold.js';
 import { exportTeacherPack, exportStudentPack } from './service-export.js';
 import { getUser } from '../../types/authenticated-request.js';
@@ -183,6 +184,24 @@ export const LessonController = {
       const { schoolId } = getAuth(req);
       await Materials.deleteMaterial(req.params.id as string, req.params.mid as string, schoolId);
       res.json({ data: { ok: true } });
+    } catch (err: unknown) {
+      next(err);
+    }
+  },
+
+  generateAllPlaceholders: async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    try {
+      const { id: teacherId, schoolId } = getAuth(req);
+      const result = await generateAllPlaceholders(
+        req.params.id as string,
+        schoolId,
+        teacherId,
+      );
+      res.json({ data: result });
     } catch (err: unknown) {
       next(err);
     }

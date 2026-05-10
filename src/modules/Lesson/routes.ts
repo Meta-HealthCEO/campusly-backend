@@ -17,6 +17,7 @@ router.patch('/:id/status', LessonController.patchStatus);
 router.delete('/:id', LessonController.delete);
 
 router.post('/:id/materials', LessonController.addMaterial);
+router.post('/:id/materials/generate-all', LessonController.generateAllPlaceholders);
 router.patch('/:id/materials/:mid', LessonController.updateMaterial);
 router.patch('/:id/materials/:mid/move', LessonController.moveMaterial);
 router.post('/:id/materials/:mid/regenerate', LessonController.regenerateMaterial);
