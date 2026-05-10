@@ -98,7 +98,7 @@ export const addContentBackedMaterialSchema = baseAddMaterial.extend({
     type: z.string(),
     prompt: z.string().max(4000).optional(),
     difficulty: z.string().optional(),
-  }).passthrough(),
+  }).loose(),
 });
 export const addQuizMaterialSchema = baseAddMaterial.extend({
   kind: z.literal('quiz'),
@@ -109,7 +109,7 @@ export const addPracticeQuestionsSchema = baseAddMaterial.extend({
   questionPayload: z.object({
     count: z.number().int().min(1).max(50),
     questionTypes: z.array(z.string()).optional(),
-  }).passthrough(),
+  }).loose(),
 });
 export const addHomeworkMaterialSchema = baseAddMaterial.extend({
   kind: z.literal('homework'),
