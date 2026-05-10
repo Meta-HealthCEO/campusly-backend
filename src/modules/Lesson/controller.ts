@@ -45,9 +45,9 @@ export const LessonController = {
 
   scaffold: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      getAuth(req);
+      const { schoolId } = getAuth(req);
       const input = scaffoldLessonSchema.parse(req.body);
-      const outline = await scaffoldLesson(input);
+      const outline = await scaffoldLesson(input, schoolId);
       res.json({ data: outline });
     } catch (err: unknown) {
       next(err);

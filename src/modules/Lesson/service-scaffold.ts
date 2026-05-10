@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { AIService } from '../../services/ai.service.js';
 import { CurriculumNode } from '../CurriculumStructure/model.js';
 import { logger } from '../../common/logger.js';
@@ -42,8 +43,15 @@ const DEFAULT_FALLBACK: ScaffoldedOutline = {
   ],
 };
 
-export async function scaffoldLesson(input: ScaffoldLessonInput): Promise<ScaffoldedOutline> {
-  const node = await CurriculumNode.findById(input.curriculumNodeId).lean();
+export async function scaffoldLesson(
+  input: ScaffoldLessonInput,
+  schoolId: string,
+): Promise<ScaffoldedOutline> {
+  const node = await CurriculumNode.findOne({
+    _id: new mongoose.Types.ObjectId(input.curriculumNodeId),
+    $or: [{ schoolId: null }, { schoolId: new mongoose.Types.ObjectId(schoolId) }],
+    isDeleted: false,
+  }).lean();
   if (!node) throw new Error('Curriculum node not found');
 
   const userPrompt = [
