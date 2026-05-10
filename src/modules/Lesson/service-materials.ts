@@ -6,7 +6,7 @@ import { GenerationService } from '../ContentLibrary/service-generation.js';
 import { HomeworkService } from '../Homework/service.js';
 import { generateComprehensionFromTextbook } from '../Homework/service-homework-comprehension.js';
 import { ContentResource } from '../ContentLibrary/model.js';
-import { Question } from '../QuestionBank/model.js';
+import { Question, AssessmentPaper } from '../QuestionBank/model.js';
 import { Homework } from '../Homework/model.js';
 import { logger } from '../../common/logger.js';
 import {
@@ -15,14 +15,11 @@ import {
   type GenerateCognitiveLevel,
   type GenerateDifficulty,
 } from '../QuestionBank/service-questions-generation.js';
-
-// ── Stub (real implementation lands in the next task) ───────────────────────
-// Stub — PapersService.createPaper exists but no standalone AI helper export.
-async function generatePaperWithAI(
-  _payload: Record<string, unknown> & { schoolId: string; teacherId: string },
-): Promise<{ _id: mongoose.Types.ObjectId }> {
-  throw new Error('generatePaperWithAI not yet implemented (Task TBD)');
-}
+import {
+  generatePaperWithAI,
+  type GeneratePaperSection,
+  type SimplePaperType,
+} from '../QuestionBank/service-papers-generation.js';
 
 // ── Compensation ────────────────────────────────────────────────────────────
 async function softDeleteEntity(
@@ -40,6 +37,8 @@ async function softDeleteEntity(
       await Question.updateOne({ _id: id }, { $set: { isDeleted: true } });
     } else if (kind === 'homework') {
       await Homework.updateOne({ _id: id }, { $set: { isDeleted: true } });
+    } else if (kind === 'paper') {
+      await AssessmentPaper.updateOne({ _id: id }, { $set: { isDeleted: true } });
     }
   } catch (err: unknown) {
     logger.error({ kind, id: id.toString(), err }, '[lesson] compensation cleanup failed');
@@ -168,12 +167,43 @@ export async function addMaterial(
       if (input.existingPaperId) {
         paperId = new mongoose.Types.ObjectId(input.existingPaperId);
       } else {
+        const payload = (input.createPayload ?? {}) as Record<string, unknown>;
+        const paperType =
+          payload.paperType === 'test'
+          || payload.paperType === 'exam'
+          || payload.paperType === 'assessment'
+            ? (payload.paperType as SimplePaperType)
+            : undefined;
+        const sections = Array.isArray(payload.sections)
+          ? (payload.sections as unknown[]).filter(
+              (s): s is GeneratePaperSection =>
+                typeof s === 'object'
+                && s !== null
+                && typeof (s as GeneratePaperSection).title === 'string'
+                && typeof (s as GeneratePaperSection).questionCount === 'number'
+                && (
+                  (s as GeneratePaperSection).questionType === 'mcq'
+                  || (s as GeneratePaperSection).questionType === 'true_false'
+                  || (s as GeneratePaperSection).questionType === 'short_answer'
+                  || (s as GeneratePaperSection).questionType === 'structured'
+                ),
+            )
+          : undefined;
         const paper = await generatePaperWithAI({
-          ...input.createPayload,
           schoolId,
           teacherId,
+          subjectId: lesson.subjectId.toString(),
+          gradeId: lesson.gradeId.toString(),
+          curriculumNodeId: lesson.curriculumNodeId.toString(),
+          paperType,
+          totalMarks: typeof payload.totalMarks === 'number' ? payload.totalMarks : undefined,
+          durationMinutes:
+            typeof payload.durationMinutes === 'number' ? payload.durationMinutes : undefined,
+          sections,
+          topicHint: typeof payload.topicHint === 'string' ? payload.topicHint : undefined,
+          title: typeof payload.title === 'string' ? payload.title : undefined,
         });
-        paperId = paper._id;
+        paperId = paper._id as mongoose.Types.ObjectId;
         cleanupIds.push(paperId);
       }
       baseMaterial.paperId = paperId;
