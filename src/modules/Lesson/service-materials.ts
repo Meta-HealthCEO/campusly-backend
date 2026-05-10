@@ -9,21 +9,14 @@ import { ContentResource } from '../ContentLibrary/model.js';
 import { Question } from '../QuestionBank/model.js';
 import { Homework } from '../Homework/model.js';
 import { logger } from '../../common/logger.js';
+import {
+  generateAIQuestions,
+  type GenerateQuestionType,
+  type GenerateCognitiveLevel,
+  type GenerateDifficulty,
+} from '../QuestionBank/service-questions-generation.js';
 
-// ── Stubs (real implementations land in later tasks) ────────────────────────
-// Stub — QuestionsService has no batch AI generator yet; planned for a later task.
-async function generateAIQuestions(
-  _payload: Record<string, unknown> & {
-    schoolId: string;
-    teacherId: string;
-    subjectId: string;
-    gradeId: string;
-    curriculumNodeId: string;
-  },
-): Promise<mongoose.Types.ObjectId[]> {
-  throw new Error('generateAIQuestions not yet implemented (Task TBD)');
-}
-
+// ── Stub (real implementation lands in the next task) ───────────────────────
 // Stub — PapersService.createPaper exists but no standalone AI helper export.
 async function generatePaperWithAI(
   _payload: Record<string, unknown> & { schoolId: string; teacherId: string },
@@ -115,8 +108,35 @@ export async function addMaterial(
     } else if (input.kind === 'quiz') {
       baseMaterial.quizId = new mongoose.Types.ObjectId(input.quizId);
     } else if (input.kind === 'practice_questions') {
+      const payload = input.questionPayload as Record<string, unknown>;
+      const rawTypes = Array.isArray(payload.questionTypes)
+        ? (payload.questionTypes as unknown[]).filter(
+            (t): t is GenerateQuestionType =>
+              t === 'mcq' || t === 'true_false' || t === 'short_answer' || t === 'structured',
+          )
+        : [];
+      const questionTypes: GenerateQuestionType[] =
+        rawTypes.length > 0 ? rawTypes : ['mcq', 'short_answer'];
+      const cognitiveLevel =
+        payload.cognitiveLevel === 'recall'
+        || payload.cognitiveLevel === 'application'
+        || payload.cognitiveLevel === 'analysis'
+          ? (payload.cognitiveLevel as GenerateCognitiveLevel)
+          : undefined;
+      const difficulty =
+        payload.difficulty === 'easy'
+        || payload.difficulty === 'medium'
+        || payload.difficulty === 'hard'
+          ? (payload.difficulty as GenerateDifficulty)
+          : undefined;
+      const topicHint =
+        typeof payload.topicHint === 'string' ? payload.topicHint : undefined;
       const ids = await generateAIQuestions({
-        ...input.questionPayload,
+        count: typeof payload.count === 'number' ? payload.count : 5,
+        questionTypes,
+        cognitiveLevel,
+        difficulty,
+        topicHint,
         schoolId,
         teacherId,
         subjectId: lesson.subjectId.toString(),
