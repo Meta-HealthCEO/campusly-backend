@@ -79,6 +79,14 @@ export const bulkImportSchema = z.object({
 
 // ─── Query ───────────────────────────────────────────────────────────────────
 
+const nodeTypesCsvSchema = z.preprocess(
+  (val) => {
+    if (typeof val !== 'string' || !val.trim()) return undefined;
+    return val.split(',').map((s) => s.trim()).filter(Boolean);
+  },
+  z.array(nodeTypeEnum).min(1).optional(),
+);
+
 export const nodeQuerySchema = z.object({
   frameworkId: objectIdSchema.optional(),
   parentId: z.preprocess(
@@ -86,14 +94,21 @@ export const nodeQuerySchema = z.object({
     objectIdSchema.nullable(),
   ).optional(),
   type: nodeTypeEnum.optional(),
+  // Comma-separated form of `type` — e.g. ?types=topic,subtopic. Either field
+  // may be used; if both are passed, `types` wins.
+  types: nodeTypesCsvSchema,
   search: z.string().optional(),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(200).default(50),
   // Academic Subject / Grade IDs (NOT CurriculumNode IDs). When passed, the
   // service resolves these to matching curriculum subject/grade nodes by name
   // and traverses descendants — used by the Module 2 paper wizard topic picker.
+  // ALSO accepted: CurriculumNode subject/grade IDs (denormalized refs). The
+  // service tries denormalized-ref filtering first and falls back to academic
+  // ancestor resolution when the IDs don't match any node directly.
   subjectId: objectIdSchema.optional(),
   gradeId: objectIdSchema.optional(),
+  termNumber: z.coerce.number().int().min(1).max(4).optional(),
 }).strict();
 
 // ─── Framework ───────────────────────────────────────────────────────────────

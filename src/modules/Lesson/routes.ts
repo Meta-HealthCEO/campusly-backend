@@ -8,6 +8,7 @@ const router = Router();
 router.use(authenticate, authorize('teacher', 'school_admin', 'super_admin'));
 
 router.get('/', LessonController.list);
+router.get('/recent-topics', LessonController.recentTopics);
 router.post('/scaffold', LessonController.scaffold);
 router.post('/', LessonController.create);
 router.get('/:id', LessonController.getById);

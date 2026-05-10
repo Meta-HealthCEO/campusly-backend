@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { CurriculumNode } from './model.js';
-import { resolveAcademicAncestor } from './service-academic-bridge.js';
+import { resolveSubjectOrGradeIds } from './service-academic-bridge.js';
 import { NotFoundError, ConflictError, BadRequestError } from '../../common/errors.js';
 import { paginationHelper } from '../../common/utils.js';
 import type { CreateNodeInput, UpdateNodeInput, BulkImportInput, NodeQueryInput } from './validation.js';
@@ -19,17 +19,24 @@ export class NodesService {
         ? new mongoose.Types.ObjectId(pid)
         : null;
     }
-    if (filters.type) {
+    // `types` (CSV) wins over single `type`. Empty array means no constraint.
+    if (filters.types && filters.types.length > 0) {
+      query.type = { $in: filters.types };
+    } else if (filters.type) {
       query.type = filters.type;
     }
     if (filters.search) {
       query.title = { $regex: filters.search, $options: 'i' };
     }
+    if (filters.termNumber !== undefined) {
+      query.termNumber = filters.termNumber;
+    }
 
-    // Academic Subject / Grade ID filtering — resolve to curriculum-node
-    // ancestor + descendant ID sets, then constrain by intersection.
-    const subjectIds = await resolveAcademicAncestor(filters.subjectId, 'subject', soid);
-    const gradeIds = await resolveAcademicAncestor(filters.gradeId, 'grade', soid);
+    // Subject / Grade ID filtering — try denormalized-ref match first (the IDs
+    // may already point at CurriculumNode subject/grade docs). If nothing
+    // matches, fall back to academic-record name resolution.
+    const subjectIds = await resolveSubjectOrGradeIds(filters.subjectId, 'subject', soid);
+    const gradeIds = await resolveSubjectOrGradeIds(filters.gradeId, 'grade', soid);
     if (subjectIds === null || gradeIds === null) {
       return { nodes: [], total: 0, page: filters.page ?? 1, limit: filters.limit ?? 50 };
     }

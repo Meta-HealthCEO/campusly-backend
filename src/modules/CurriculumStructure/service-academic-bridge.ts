@@ -60,3 +60,42 @@ export async function resolveAcademicAncestor(
   if (matches.length === 0) return null;
   return matches.map((m: { _id: mongoose.Types.ObjectId }) => m._id);
 }
+
+/**
+ * Resolve a subject or grade filter ID to the set of CurriculumNode IDs it
+ * scopes a query to.
+ *
+ * The frontend may send EITHER:
+ *   1. A CurriculumNode ID (denormalized-ref form — preferred). Uses the
+ *      self-ref convention where a subject node has `subjectId === _id`, so a
+ *      single find returns the node and every descendant in one shot.
+ *   2. An academic Subject/Grade document ID. Falls back to name-matching via
+ *      {@link resolveAcademicAncestor} (older callers like the Module 2 paper
+ *      wizard, which only knows the academic IDs).
+ *
+ * Same return convention as `resolveAcademicAncestor`: undefined = no filter,
+ * null = filter passed but no matches, array otherwise.
+ */
+export async function resolveSubjectOrGradeIds(
+  id: string | undefined,
+  modelType: 'subject' | 'grade',
+  schoolOid: mongoose.Types.ObjectId,
+): Promise<mongoose.Types.ObjectId[] | null | undefined> {
+  if (!id) return undefined;
+
+  const oid = new mongoose.Types.ObjectId(id);
+  const denormField = modelType === 'subject' ? 'subjectId' : 'gradeId';
+  const matches = await CurriculumNode.find({
+    [denormField]: oid,
+    isDeleted: false,
+    $or: [{ schoolId: null }, { schoolId: schoolOid }],
+  })
+    .select('_id')
+    .lean<{ _id: mongoose.Types.ObjectId }[]>();
+
+  if (matches.length > 0) {
+    return matches.map((m: { _id: mongoose.Types.ObjectId }) => m._id);
+  }
+
+  return resolveAcademicAncestor(id, modelType, schoolOid);
+}

@@ -33,6 +33,20 @@ export const LessonController = {
     }
   },
 
+  recentTopics: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { id: teacherId, schoolId } = getAuth(req);
+      const rawLimit = Number(req.query.limit);
+      const limit = Number.isFinite(rawLimit) && rawLimit > 0
+        ? Math.min(Math.floor(rawLimit), 50)
+        : 8;
+      const items = await LessonService.recentTopicsForTeacher(teacherId, schoolId, limit);
+      res.json({ data: { items } });
+    } catch (err: unknown) {
+      next(err);
+    }
+  },
+
   getById: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { schoolId } = getAuth(req);

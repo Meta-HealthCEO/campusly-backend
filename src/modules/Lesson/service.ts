@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { Lesson } from './model.js';
+import { CurriculumNode } from '../CurriculumStructure/model.js';
 import type { ILesson, LessonStatus } from './types.js';
 import { LESSON_PHASES } from './types.js';
 import type {
@@ -7,6 +8,14 @@ import type {
   UpdateLessonInput,
   ListLessonsInput,
 } from './validation.js';
+
+export interface RecentTopicSummary {
+  id: string;
+  title: string;
+  termNumber: number | null;
+  subjectId: string | null;
+  gradeId: string | null;
+}
 
 const ALLOWED_TRANSITIONS: Record<LessonStatus, LessonStatus[]> = {
   draft: ['ready', 'taught'],
@@ -159,5 +168,62 @@ export class LessonService {
       { $set: { isDeleted: true } },
     );
     if (result.matchedCount === 0) throw new Error('Lesson not found');
+  }
+
+  /**
+   * Returns the teacher's most recently used curriculum topics, deduplicated
+   * by curriculumNodeId, ordered by latest lesson date desc. Used by the
+   * new-lesson topic quick picker to surface "you've been here before" chips.
+   */
+  static async recentTopicsForTeacher(
+    teacherId: string,
+    schoolId: string,
+    limit: number,
+  ): Promise<RecentTopicSummary[]> {
+    const aggResult = await Lesson.aggregate<{ _id: mongoose.Types.ObjectId; latest: Date }>([
+      {
+        $match: {
+          teacherId: new mongoose.Types.ObjectId(teacherId),
+          schoolId: new mongoose.Types.ObjectId(schoolId),
+          isDeleted: false,
+        },
+      },
+      { $sort: { date: -1 } },
+      { $group: { _id: '$curriculumNodeId', latest: { $first: '$date' } } },
+      { $sort: { latest: -1 } },
+      { $limit: limit },
+    ]);
+
+    if (aggResult.length === 0) return [];
+
+    const ids = aggResult.map((r) => r._id);
+    const nodes = await CurriculumNode.find({
+      _id: { $in: ids },
+      isDeleted: false,
+    })
+      .select('_id title termNumber subjectId gradeId')
+      .lean<Array<{
+        _id: mongoose.Types.ObjectId;
+        title: string;
+        termNumber: number | null;
+        subjectId: mongoose.Types.ObjectId | null;
+        gradeId: mongoose.Types.ObjectId | null;
+      }>>();
+
+    // Preserve aggregation order (latest first).
+    const byId = new Map(nodes.map((n) => [n._id.toString(), n]));
+    const out: RecentTopicSummary[] = [];
+    for (const r of aggResult) {
+      const n = byId.get(r._id.toString());
+      if (!n) continue;
+      out.push({
+        id: n._id.toString(),
+        title: n.title,
+        termNumber: n.termNumber ?? null,
+        subjectId: n.subjectId ? n.subjectId.toString() : null,
+        gradeId: n.gradeId ? n.gradeId.toString() : null,
+      });
+    }
+    return out;
   }
 }
