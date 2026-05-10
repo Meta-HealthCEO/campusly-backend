@@ -58,6 +58,12 @@ export interface ITextbook extends Document {
   frameworkId: Types.ObjectId;
   subjectId: Types.ObjectId;
   gradeId: Types.ObjectId;
+  // Denormalized CurriculumNode refs — mirror the pattern on CurriculumNode
+  // so a topic node (which references CurriculumNode subject/grade NODES, not
+  // academic Subject/Grade collections) can be resolved to its textbook.
+  // Populated by the `textbook-denormalize-curriculum-refs` backfill migration.
+  subjectNodeId?: Types.ObjectId | null;
+  gradeNodeId?: Types.ObjectId | null;
   coverImageUrl: string;
   chapters: mongoose.Types.DocumentArray<IChapter>;
   status: TextbookStatus;
@@ -79,6 +85,17 @@ const textbookSchema = new Schema<ITextbook>(
     },
     subjectId: { type: Schema.Types.ObjectId, ref: 'Subject', required: true },
     gradeId: { type: Schema.Types.ObjectId, ref: 'Grade', required: true },
+    // Denormalized CurriculumNode refs — see ITextbook for rationale.
+    subjectNodeId: {
+      type: Schema.Types.ObjectId,
+      ref: 'CurriculumNode',
+      default: null,
+    },
+    gradeNodeId: {
+      type: Schema.Types.ObjectId,
+      ref: 'CurriculumNode',
+      default: null,
+    },
     coverImageUrl: { type: String, default: '' },
     chapters: { type: [chapterSchema], default: [] },
     status: {
@@ -98,5 +115,8 @@ const textbookSchema = new Schema<ITextbook>(
 textbookSchema.index({ schoolId: 1, status: 1, isDeleted: 1 });
 textbookSchema.index({ subjectId: 1, gradeId: 1, isDeleted: 1 });
 textbookSchema.index({ frameworkId: 1, isDeleted: 1 });
+// Lookup path used by AI-generator textbook-context resolver: given a topic's
+// denormalized subject/grade NODE refs, find the matching textbook(s).
+textbookSchema.index({ subjectNodeId: 1, gradeNodeId: 1, isDeleted: 1 });
 
 export const Textbook = mongoose.model<ITextbook>('Textbook', textbookSchema);
