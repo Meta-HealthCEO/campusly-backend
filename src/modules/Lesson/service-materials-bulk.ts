@@ -63,14 +63,15 @@ const CONTENT_TYPE_BY_KIND: Record<
 
 /**
  * Build a sensible default `addMaterial` payload for a placeholder. Returns
- * `null` for kinds that REQUIRE teacher input we can't safely infer (reading
- * needs a textbook, quiz needs an existing quiz id, homework/paper need a
- * concrete create payload + assigned class).
+ * `{ ok: false }` only for kinds the bulk loop genuinely can't auto-infer:
+ * reading (needs a teacher-picked textbook ref) and quiz (needs an existing
+ * Learning-module quiz id). Homework + paper now have AI-generate paths.
  */
 function buildPayloadForPlaceholder(
   material: ILessonMaterial,
   phase: LessonPhase,
   termNumber: number,
+  lessonHasAssignedClass: boolean,
 ):
   | { ok: true; payload: AddMaterialInput }
   | { ok: false; reason: string } {
@@ -136,18 +137,45 @@ function buildPayloadForPlaceholder(
     };
   }
   if (kind === 'homework') {
-    return {
-      ok: false,
-      reason:
-        'Homework requires an assigned class and create payload — generate manually',
-    };
+    if (!lessonHasAssignedClass) {
+      return {
+        ok: false,
+        reason:
+          'Homework needs an assigned class — assign this lesson to a class first',
+      };
+    }
+    // AI-generate path: backend produces N questions on the topic and wraps
+    // them as an exercise homework. See service-materials-homework.ts.
+    const dueIso = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+    const payload = {
+      phase,
+      kind,
+      title,
+      teacherNotes,
+      createPayload: {
+        aiGenerate: true,
+        aiCount: 5,
+        topicHint: instructions,
+        dueDate: dueIso,
+        totalMarks: 10,
+      },
+    } as unknown as AddMaterialInput;
+    return { ok: true, payload };
   }
   if (kind === 'paper') {
-    return {
-      ok: false,
-      reason:
-        'Paper requires sections and totals — generate manually',
-    };
+    // Paper generator composes question generation across default sections.
+    // See service-papers-generation.ts for defaults.
+    const payload = {
+      phase,
+      kind,
+      title,
+      teacherNotes,
+      createPayload: {
+        paperType: 'test',
+        topicHint: instructions,
+      },
+    } as unknown as AddMaterialInput;
+    return { ok: true, payload };
   }
 
   return { ok: false, reason: `Unsupported kind: ${kind as string}` };
@@ -188,6 +216,7 @@ export async function generateAllPlaceholders(
   }));
 
   const termNumber = lesson.termNumber ?? 1;
+  const lessonHasAssignedClass = (lesson.assignedClasses?.length ?? 0) > 0;
 
   const failed: GenerateAllResult['failed'] = [];
   let succeeded = 0;
@@ -230,7 +259,7 @@ export async function generateAllPlaceholders(
         continue;
       }
 
-      const built = buildPayloadForPlaceholder(stillExists, phase, termNumber);
+      const built = buildPayloadForPlaceholder(stillExists, phase, termNumber, lessonHasAssignedClass);
       if (!built.ok) {
         failed.push({
           materialId: target.id,
