@@ -12,6 +12,11 @@ import {
   type BloomsLevel,
 } from './model.js';
 import { CurriculumNode } from '../CurriculumStructure/model.js';
+import {
+  resolveTextbookContextForTopic,
+  renderTextbookSourceSection,
+} from '../Textbook/service-textbook-context.js';
+import type { TextbookContext } from '../Textbook/service-textbook-context.js';
 
 // ── Public types ───────────────────────────────────────────────────────────
 export type GenerateQuestionType = 'mcq' | 'true_false' | 'short_answer' | 'structured';
@@ -100,12 +105,13 @@ Mark guidance:
   - mcq / true_false / short_answer: 1–3 marks
   - structured: 5–10 marks
 
-Anchor every question to the supplied curriculum topic. Do NOT include explanations, markdown, or commentary outside the JSON.`;
+Anchor every question to the supplied curriculum topic. When a TEXTBOOK SOURCE is provided, ground your questions in it. Do NOT include explanations, markdown, or commentary outside the JSON.`;
 
 function buildUserPrompt(
   input: GenerateQuestionsInput,
   topicTitle: string,
   topicCode: string,
+  textbookCtx: TextbookContext,
 ): string {
   const lines: string[] = [];
   lines.push(`Topic: ${topicTitle}${topicCode ? ` (${topicCode})` : ''}`);
@@ -121,6 +127,8 @@ function buildUserPrompt(
     lines.push(`Teacher hint: ${input.topicHint}`);
   }
   lines.push('Return ONLY a JSON object of shape { "questions": [...] }.');
+  const sourceSection = renderTextbookSourceSection(textbookCtx);
+  if (sourceSection) lines.push(sourceSection);
   return lines.join('\n');
 }
 
@@ -239,7 +247,17 @@ export async function generateAIQuestions(
     .lean();
   if (!node) throw new NotFoundError('Curriculum topic not found');
 
-  const userPrompt = buildUserPrompt(input, node.title, node.code);
+  // Resolve textbook context for grounding. Optional — when no textbook
+  // matches the topic, returns { source: 'none', text: '' } and the prompt
+  // is unchanged.
+  let textbookCtx: TextbookContext = { source: 'none', text: '' };
+  try {
+    textbookCtx = await resolveTextbookContextForTopic(input.curriculumNodeId, soid);
+  } catch (err: unknown) {
+    logger.warn({ err }, '[questions-gen] textbook-context resolver failed; continuing without');
+  }
+
+  const userPrompt = buildUserPrompt(input, node.title, node.code, textbookCtx);
 
   // Attempt parse + validate up to 2 times. The retry uses a stricter prompt.
   let lastError = '';

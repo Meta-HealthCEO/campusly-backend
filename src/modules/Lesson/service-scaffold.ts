@@ -3,12 +3,17 @@ import { AIService } from '../../services/ai.service.js';
 import { CurriculumNode } from '../CurriculumStructure/model.js';
 import { logger } from '../../common/logger.js';
 import {
+  resolveTextbookContextForTopic,
+  renderTextbookSourceSection,
+} from '../Textbook/service-textbook-context.js';
+import type { TextbookContext } from '../Textbook/service-textbook-context.js';
+import {
   scaffoldedOutlineSchema,
   type ScaffoldLessonInput,
   type ScaffoldedOutline,
 } from './validation.js';
 
-const SYSTEM_PROMPT = `You are a CAPS-aligned South African secondary school teacher. Given a curriculum topic, grade level, and lesson duration, produce a structured lesson outline.
+const SYSTEM_PROMPT = `You are a CAPS-aligned South African secondary school teacher. Given a curriculum topic, grade level, and lesson duration, produce a structured lesson outline. When a TEXTBOOK SOURCE is provided, ground objectives and suggestions in that chapter's scope and vocabulary.
 
 Output strict JSON matching this schema (no markdown, no commentary):
 {
@@ -54,11 +59,25 @@ export async function scaffoldLesson(
   }).lean();
   if (!node) throw new Error('Curriculum node not found');
 
+  // Optional textbook grounding so the scaffolded objectives + suggestions
+  // reflect the actual chapter scope, not just the topic name.
+  let textbookCtx: TextbookContext = { source: 'none', text: '' };
+  try {
+    textbookCtx = await resolveTextbookContextForTopic(
+      input.curriculumNodeId,
+      new mongoose.Types.ObjectId(schoolId),
+    );
+  } catch (err: unknown) {
+    logger.warn({ err }, '[scaffold] textbook-context resolver failed; continuing without');
+  }
+
+  const sourceSection = renderTextbookSourceSection(textbookCtx);
   const userPrompt = [
     `Topic: ${node.title}${node.code ? ` (${node.code})` : ''}`,
     `Type: ${node.type}`,
     `Duration: ${input.durationMinutes} minutes`,
     input.hints ? `Teacher hints: ${input.hints}` : '',
+    sourceSection,
   ].filter(Boolean).join('\n');
 
   const raw = await AIService.generateJSON<unknown>(SYSTEM_PROMPT, userPrompt);

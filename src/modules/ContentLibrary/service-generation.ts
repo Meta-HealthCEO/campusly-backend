@@ -3,11 +3,18 @@ import mongoose from 'mongoose';
 import { ContentResource } from './model.js';
 import type { IContentBlock, BlockType, ResourceFormat } from './model.js';
 import { CurriculumNode } from '../CurriculumStructure/model.js';
+import { LessonPlan } from '../LessonPlan/model.js';
 import { AIService } from '../../services/ai.service.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
 import type { ICurriculumNode } from '../CurriculumStructure/model.js';
 import type { GenerateContentInput, RefineResourceInput } from './validation.js';
 import { checkUsageLimit } from '../../middleware/usageLimits.js';
+import {
+  resolveTextbookContextForTopic,
+  renderTextbookSourceSection,
+} from '../Textbook/service-textbook-context.js';
+import type { TextbookContext } from '../Textbook/service-textbook-context.js';
+import { logger } from '../../common/logger.js';
 
 const INTERACTIVE_TYPES: ReadonlySet<string> = new Set([
   'quiz', 'fill_blank', 'drag_drop', 'match_columns', 'ordering', 'hotspot',
@@ -34,8 +41,29 @@ export class GenerationService {
 
     if (!node) throw new NotFoundError('Curriculum node not found');
 
+    if (data.lessonPlanId) {
+      const linkedLesson = await LessonPlan.findOne({
+        _id: data.lessonPlanId,
+        schoolId,
+        isDeleted: false,
+      }).select('_id').lean();
+      if (!linkedLesson) throw new BadRequestError('Lesson plan does not belong to this school');
+    }
+
+    // Optional textbook grounding — failures are logged and ignored so the
+    // generator falls back to the topic title + description only.
+    let textbookCtx: TextbookContext = { source: 'none', text: '' };
+    try {
+      textbookCtx = await resolveTextbookContextForTopic(
+        data.curriculumNodeId,
+        new mongoose.Types.ObjectId(schoolId),
+      );
+    } catch (err: unknown) {
+      logger.warn({ err }, '[content-gen] textbook-context resolver failed; continuing without');
+    }
+
     const systemPrompt = buildSystemPrompt();
-    const userPrompt = buildUserPrompt(data, node);
+    const userPrompt = buildUserPrompt(data, node, textbookCtx);
 
     const aiResponse = await AIService.generateCompletion(systemPrompt, userPrompt, {
       maxTokens: 8192,
@@ -49,6 +77,7 @@ export class GenerationService {
 
     const resource = await ContentResource.create({
       curriculumNodeId: new mongoose.Types.ObjectId(data.curriculumNodeId),
+      lessonPlanId: data.lessonPlanId ? new mongoose.Types.ObjectId(data.lessonPlanId) : null,
       schoolId: new mongoose.Types.ObjectId(schoolId),
       type: data.type,
       format,
@@ -61,7 +90,7 @@ export class GenerationService {
       tags: [],
       status: 'draft',
       createdBy: new mongoose.Types.ObjectId(userId),
-      aiModel: process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6',
+      aiModel: process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514',
       aiPrompt: userPrompt,
       difficulty: data.difficulty,
       estimatedMinutes: 0,
@@ -263,12 +292,15 @@ BLOCK COUNT REQUIREMENTS
 MANDATORY MINIMUMS
 - At least 2 interactive blocks (quiz or fill_blank) per resource
 - At least 1 Mermaid diagram (image block) when the topic benefits from visual representation (processes, hierarchies, cycles, relationships, data flow)
-- ALL mathematical expressions must use LaTeX notation (inline $ or display $$)`;
+- ALL mathematical expressions must use LaTeX notation (inline $ or display $$)
+
+When a TEXTBOOK SOURCE is provided in the user prompt, ground your content in it: reuse the source's vocabulary, examples, and conventions; do not contradict it.`;
 }
 
 function buildUserPrompt(
   data: GenerateContentInput,
   node: Pick<ICurriculumNode, 'title' | 'description'>,
+  textbookCtx: TextbookContext,
 ): string {
   const nodeTitle = node.title;
   const nodeDesc = node.description;
@@ -303,6 +335,9 @@ function buildUserPrompt(
   if (data.instructions) {
     lines.push(``, `ADDITIONAL TEACHER INSTRUCTIONS: ${data.instructions}`);
   }
+
+  const sourceSection = renderTextbookSourceSection(textbookCtx);
+  if (sourceSection) lines.push(sourceSection);
 
   return lines.join('\n');
 }
