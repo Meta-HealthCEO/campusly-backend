@@ -2,6 +2,12 @@ import { z } from 'zod/v4';
 
 const objectIdRegex = /^[0-9a-fA-F]{24}$/;
 const objectIdSchema = z.string().regex(objectIdRegex, 'Invalid ObjectId format');
+const timeSchema = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'Time must be in HH:MM format');
+
+function timeToMinutes(value: string): number {
+  const [hours, minutes] = value.split(':').map(Number);
+  return hours * 60 + minutes;
+}
 
 // ─── Grade ───────────────────────────────────────────────────────────────────
 
@@ -22,6 +28,7 @@ export const classSchema = z.object({
   teacherId: objectIdSchema,
   capacity: z.number().int().min(1, 'Capacity must be at least 1').max(200, 'Capacity cannot exceed 200'),
   subjectId: objectIdSchema.optional(),
+  isHomeroom: z.boolean().optional(),
 }).strict();
 
 export const updateClassSchema = classSchema.partial().strict();
@@ -39,19 +46,27 @@ export const updateSubjectSchema = subjectSchema.partial().strict();
 
 // ─── Timetable ───────────────────────────────────────────────────────────────
 
-export const timetableSchema = z.object({
-  schoolId: objectIdSchema,
+const timetableBaseSchema = z.object({
+  schoolId: objectIdSchema.optional(),
   classId: objectIdSchema,
   day: z.enum(['monday', 'tuesday', 'wednesday', 'thursday', 'friday']),
   period: z.number().int().min(1),
-  startTime: z.string().regex(/^\d{2}:\d{2}$/, 'Time must be in HH:MM format'),
-  endTime: z.string().regex(/^\d{2}:\d{2}$/, 'Time must be in HH:MM format'),
+  startTime: timeSchema,
+  endTime: timeSchema,
   subjectId: objectIdSchema,
   teacherId: objectIdSchema,
   room: z.string().trim().optional(),
 }).strict();
 
-export const updateTimetableSchema = timetableSchema.partial().strict();
+export const timetableSchema = timetableBaseSchema.refine(
+  (data) => timeToMinutes(data.endTime) > timeToMinutes(data.startTime),
+  { message: 'End time must be after start time', path: ['endTime'] },
+);
+
+export const updateTimetableSchema = timetableBaseSchema.partial().strict().refine(
+  (data) => !data.startTime || !data.endTime || timeToMinutes(data.endTime) > timeToMinutes(data.startTime),
+  { message: 'End time must be after start time', path: ['endTime'] },
+);
 
 // ─── Assessment ──────────────────────────────────────────────────────────────
 
