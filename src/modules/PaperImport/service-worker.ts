@@ -22,6 +22,32 @@ import { SEGMENT_SYSTEM, STRICTIFY_SUFFIX, transcribeSystem,
 import type { ResourceType } from '../ContentLibrary/model.js';
 import { ResourcesService } from '../ContentLibrary/service-resources.js';
 import { cropPageRegion } from './service-storage.js';
+import { AIUsageLog } from '../AITools/model.js';
+
+const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514';
+
+interface RunTotals { inputTokens: number; outputTokens: number; }
+
+async function logUsage(
+  job: IPaperImportJob,
+  usage: { input_tokens: number; output_tokens: number } | undefined,
+  totals: RunTotals,
+): Promise<void> {
+  if (!usage) return;
+  totals.inputTokens += usage.input_tokens;
+  totals.outputTokens += usage.output_tokens;
+  try {
+    await AIUsageLog.create({
+      schoolId: job.schoolId,
+      teacherId: job.teacherId,
+      type: 'paper_import',
+      tokensUsed: { input: usage.input_tokens, output: usage.output_tokens },
+      aiModel: ANTHROPIC_MODEL,
+    });
+  } catch (err: unknown) {
+    logger.warn(`[PaperImport] AIUsageLog write failed: ${(err as Error).message}`);
+  }
+}
 
 async function setProgress(
   job: IPaperImportJob,
@@ -56,7 +82,10 @@ async function stage1Render(job: IPaperImportJob): Promise<void> {
   await setProgress(job, { pagesTotal: job.source.pageCount });
 }
 
-async function stage2Segment(job: IPaperImportJob): Promise<SegmentResponse['resources']> {
+async function stage2Segment(
+  job: IPaperImportJob,
+  totals: RunTotals,
+): Promise<SegmentResponse['resources']> {
   await setProgress(job, { stage: 'segmenting', message: 'Detecting resource boundaries…' });
 
   const total = job.source.pageCount;
@@ -67,16 +96,18 @@ async function stage2Segment(job: IPaperImportJob): Promise<SegmentResponse['res
     const userText = `The document has ${total} page(s). Segment it.`;
     if (usePdf) {
       const base64 = fileToBase64(job.source.storagePath);
-      const { text } = await AIService.generateDocumentCompletion(
+      const { text, usage } = await AIService.generateDocumentCompletion(
         sys, userText, base64, 'application/pdf',
       );
+      await logUsage(job, usage, totals);
       return JSON.parse(text);
     }
     const images = Array.from({ length: total }, (_, i) => ({
       base64: fileToBase64(pagePath(String(job._id), i + 1)),
       mediaType: 'image/png' as const,
     }));
-    const { text } = await AIService.generateVisionCompletionWithImages(sys, userText, images);
+    const { text, usage } = await AIService.generateVisionCompletionWithImages(sys, userText, images);
+    await logUsage(job, usage, totals);
     return JSON.parse(text);
   }
 
@@ -105,6 +136,7 @@ interface TranscribedResource {
 async function stage3Transcribe(
   job: IPaperImportJob,
   segments: SegmentResponse['resources'],
+  totals: RunTotals,
 ): Promise<TranscribedResource[]> {
   await setProgress(job, { stage: 'transcribing', message: 'Transcribing pages…' });
   const out: TranscribedResource[] = [];
@@ -131,7 +163,8 @@ async function stage3Transcribe(
 
     async function callOnce(strict: boolean): Promise<unknown> {
       const fullSys = strict ? sys + STRICTIFY_SUFFIX : sys;
-      const { text } = await AIService.generateVisionCompletionWithImages(fullSys, userText, images);
+      const { text, usage } = await AIService.generateVisionCompletionWithImages(fullSys, userText, images);
+      await logUsage(job, usage, totals);
       return JSON.parse(text);
     }
 
@@ -163,13 +196,16 @@ async function stage3Transcribe(
 async function enhanceOne(
   systemPrompt: string,
   userPayload: unknown,
+  job: IPaperImportJob,
+  totals: RunTotals,
 ): Promise<unknown | null> {
   try {
-    const text = await AIService.generateCompletion(
+    const { text, usage } = await AIService.generateCompletionWithUsage(
       systemPrompt,
       JSON.stringify(userPayload),
       { temperature: 0.2 },
     );
+    await logUsage(job, usage, totals);
     return JSON.parse(text);
   } catch (err: unknown) {
     logger.warn(`[PaperImport] enhancement failed: ${(err as Error).message}`);
@@ -180,6 +216,7 @@ async function enhanceOne(
 async function stage4Enhance(
   job: IPaperImportJob,
   transcribed: TranscribedResource[],
+  totals: RunTotals,
 ): Promise<TranscribedResource[]> {
   await setProgress(job, { stage: 'enhancing', message: 'Adding answers, hints, explanations…' });
   const opts = job.options;
@@ -196,7 +233,7 @@ async function stage4Enhance(
 
     if (opts.generateAnswers) {
       enhancements.push((async () => {
-        const raw = await enhanceOne(ANSWERS_ENHANCEMENT_SYSTEM, { blocks: questionBlocks });
+        const raw = await enhanceOne(ANSWERS_ENHANCEMENT_SYSTEM, { blocks: questionBlocks }, job, totals);
         if (raw === null) return;
         const parsed = AnswersEnhancementSchema.safeParse(raw);
         if (parsed.success) {
@@ -210,7 +247,7 @@ async function stage4Enhance(
 
     if (opts.addHints) {
       enhancements.push((async () => {
-        const raw = await enhanceOne(HINTS_ENHANCEMENT_SYSTEM, { blocks: questionBlocks });
+        const raw = await enhanceOne(HINTS_ENHANCEMENT_SYSTEM, { blocks: questionBlocks }, job, totals);
         if (raw === null) return;
         const parsed = HintsEnhancementSchema.safeParse(raw);
         if (parsed.success) {
@@ -224,7 +261,7 @@ async function stage4Enhance(
 
     if (opts.addExplanations) {
       enhancements.push((async () => {
-        const raw = await enhanceOne(EXPLANATIONS_ENHANCEMENT_SYSTEM, { blocks: questionBlocks });
+        const raw = await enhanceOne(EXPLANATIONS_ENHANCEMENT_SYSTEM, { blocks: questionBlocks }, job, totals);
         if (raw === null) return;
         const parsed = ExplanationsEnhancementSchema.safeParse(raw);
         if (parsed.success) {
@@ -238,7 +275,7 @@ async function stage4Enhance(
 
     if (opts.addWorkedExample) {
       enhancements.push((async () => {
-        const raw = await enhanceOne(WORKED_EXAMPLE_ENHANCEMENT_SYSTEM, { resource: r.result });
+        const raw = await enhanceOne(WORKED_EXAMPLE_ENHANCEMENT_SYSTEM, { resource: r.result }, job, totals);
         if (raw === null) return;
         const parsed = WorkedExampleEnhancementSchema.safeParse(raw);
         if (parsed.success) {
@@ -391,30 +428,59 @@ async function stage5Finalise(
   await job.save();
 }
 
+async function rollbackPartialResources(jobId: string): Promise<void> {
+  const job = await PaperImportJob.findById(jobId);
+  if (!job) return;
+  if (job.resultResourceIds.length > 0) {
+    const { ContentResource } = await import('../ContentLibrary/model.js');
+    await ContentResource.updateMany(
+      { _id: { $in: job.resultResourceIds } },
+      { $set: { isDeleted: true } },
+    );
+    job.resultResourceIds = [];
+    await job.save();
+  }
+}
+
 export async function runConversion(job: IPaperImportJob): Promise<void> {
+  const jobId = String(job._id);
+  const startedAt = Date.now();
+  const totals: RunTotals = { inputTokens: 0, outputTokens: 0 };
   job.status = 'running';
   await job.save();
 
-  if (await isCancelled(String(job._id))) return;
-  await stage1Render(job);
+  try {
+    if (await isCancelled(jobId)) { await rollbackPartialResources(jobId); return; }
+    await stage1Render(job);
 
-  if (await isCancelled(String(job._id))) return;
-  const segments = await stage2Segment(job);
-  logger.info(`[PaperImport] stage2 segments=${segments.length} jobId=${String(job._id)}`);
+    if (await isCancelled(jobId)) { await rollbackPartialResources(jobId); return; }
+    const segments = await stage2Segment(job, totals);
 
-  if (await isCancelled(String(job._id))) return;
-  const transcribed = await stage3Transcribe(job, segments);
-  logger.info(`[PaperImport] stage3 resources=${transcribed.length} jobId=${String(job._id)}`);
-  if (transcribed.length === 0) {
+    if (await isCancelled(jobId)) { await rollbackPartialResources(jobId); return; }
+    const transcribed = await stage3Transcribe(job, segments, totals);
+    if (transcribed.length === 0) {
+      job.status = 'failed';
+      job.error = { code: 'transcribe_empty', message: 'Could not extract any content.' };
+      await job.save();
+      return;
+    }
+
+    if (await isCancelled(jobId)) { await rollbackPartialResources(jobId); return; }
+    const enhanced = await stage4Enhance(job, transcribed, totals);
+
+    if (await isCancelled(jobId)) { await rollbackPartialResources(jobId); return; }
+    await stage5Finalise(job, enhanced);
+
+    const duration = Date.now() - startedAt;
+    logger.info(
+      `[PaperImport] job=${jobId} resources=${job.resultResourceIds.length} pages=${job.source.pageCount} ` +
+      `tokens=${totals.inputTokens}/${totals.outputTokens} duration=${duration}ms`,
+    );
+  } catch (err: unknown) {
+    logger.error(`[PaperImport] runConversion failed jobId=${jobId}: ${(err as Error).message}`);
     job.status = 'failed';
-    job.error = { code: 'transcribe_empty', message: 'Could not extract any content from the file.' };
+    job.error = { code: 'unexpected', message: (err as Error).message };
     await job.save();
-    return;
+    throw err;
   }
-
-  if (await isCancelled(String(job._id))) return;
-  const enhanced = await stage4Enhance(job, transcribed);
-  logger.info(`[PaperImport] stage4 enhanced=${enhanced.length} jobId=${String(job._id)}`);
-
-  await stage5Finalise(job, enhanced);
 }
