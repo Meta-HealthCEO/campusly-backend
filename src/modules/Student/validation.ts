@@ -26,7 +26,7 @@ const medicalProfileSchema = z.object({
 export const createStudentSchema = z.object({
   firstName: z.string().trim().min(1, 'First name is required').optional(),
   lastName: z.string().trim().min(1, 'Last name is required').optional(),
-  email: z.string().trim().email().optional(),
+  email: z.email().optional(),
   phone: z.string().trim().optional(),
   userId: objectIdSchema.optional(),
   schoolId: objectIdSchema.optional(),
