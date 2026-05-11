@@ -29,5 +29,6 @@ router.delete('/:id/assignments/:classId', LessonController.unassignClass);
 
 router.get('/:id/export/teacher', LessonController.exportTeacher);
 router.get('/:id/export/student', LessonController.exportStudent);
+router.get('/:id/export/slides', LessonController.exportSlides);
 
 export default router;

@@ -5,6 +5,7 @@ import * as Materials from './service-materials.js';
 import { generateAllPlaceholders } from './service-materials-bulk.js';
 import { scaffoldLesson } from './service-scaffold.js';
 import { exportTeacherPack, exportStudentPack } from './service-export.js';
+import { generateSlideshow } from './service-slideshow.js';
 import { getUser } from '../../types/authenticated-request.js';
 import {
   createLessonSchema,
@@ -227,6 +228,33 @@ export const LessonController = {
       const buf = await exportStudentPack(lessonId, schoolId);
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `inline; filename="lesson-${lessonId}-student.pdf"`);
+      res.send(buf);
+    } catch (err: unknown) {
+      next(err);
+    }
+  },
+
+  exportSlides: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { schoolId } = getAuth(req);
+      const lessonId = req.params.id as string;
+      const buf = await generateSlideshow(lessonId, schoolId);
+      // Pull lesson title for a nicer filename. Slug it conservatively to
+      // avoid Content-Disposition header parsing issues with quotes/commas.
+      const lesson = await LessonService.getById(lessonId, schoolId);
+      const slug = lesson.title
+        .replace(/[^A-Za-z0-9 _-]+/g, '')
+        .trim()
+        .replace(/\s+/g, '-')
+        .slice(0, 80) || `lesson-${lessonId}`;
+      res.setHeader(
+        'Content-Type',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      );
+      res.setHeader(
+        'Content-Disposition',
+        `attachment; filename="${slug}.pptx"`,
+      );
       res.send(buf);
     } catch (err: unknown) {
       next(err);
