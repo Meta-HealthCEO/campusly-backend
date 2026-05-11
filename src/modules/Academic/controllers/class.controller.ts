@@ -155,7 +155,11 @@ export class ClassController {
     const user = getUser(req);
     let teacherId = (req.query.teacherId as string) ?? user.id;
     if (user.role === 'teacher') teacherId = user.id;
-    const load = await AcademicService.getTeacherTeachingLoad(teacherId, user.schoolId!);
+    const load = await AcademicService.getTeacherTeachingLoad(
+      teacherId,
+      user.schoolId!,
+      { isStandaloneTeacher: user.isStandaloneTeacher === true },
+    );
     res.json(apiResponse(true, load, 'Teaching load retrieved'));
   }
 }

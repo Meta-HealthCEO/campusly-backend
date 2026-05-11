@@ -367,8 +367,57 @@ export class GradeService {
 
   // ─── Teacher Scoping Helpers ────────────────────────────────────────────
 
-  static async getTeacherTeachingLoad(teacherId: string, schoolId: string) {
-    // 1. Find homeroom class
+  static async getTeacherTeachingLoad(
+    teacherId: string,
+    schoolId: string,
+    options: { isStandaloneTeacher?: boolean } = {},
+  ) {
+    // Standalone teachers don't have a "homeroom" — every class is a teaching
+    // group. Fetch all of their classes; flatten into subjectClasses with
+    // homeroom=null. School-affiliated teachers retain the original single-
+    // homeroom behaviour.
+    if (options.isStandaloneTeacher) {
+      const classes = await Class.find({ schoolId, teacherId, isDeleted: false })
+        .sort({ createdAt: -1 })
+        .lean();
+      await resolveClassGradeFields(classes as unknown as Array<Record<string, unknown>>);
+
+      const timetableRows = await Timetable.find({ schoolId, teacherId, isDeleted: false })
+        .populate('subjectId', 'name code')
+        .lean();
+      await resolveTimetableSubjectFields(timetableRows as unknown as Array<Record<string, unknown>>);
+
+      const subjectByClass = new Map<string, unknown>();
+      for (const row of timetableRows) {
+        const cid = String(row.classId);
+        if (row.subjectId && !subjectByClass.has(cid)) {
+          subjectByClass.set(cid, row.subjectId);
+        }
+      }
+
+      const classIds = classes.map((c) => String(c._id));
+      const students = classIds.length > 0
+        ? await Student.find({ schoolId, classId: { $in: classIds }, isDeleted: false })
+            .populate('userId', 'firstName lastName email profileImage').lean()
+        : [];
+      const studentsByClass = new Map<string, typeof students>();
+      for (const s of students) {
+        const cid = String(s.classId);
+        if (!studentsByClass.has(cid)) studentsByClass.set(cid, []);
+        studentsByClass.get(cid)!.push(s);
+      }
+
+      return {
+        homeroom: null,
+        subjectClasses: classes.map((cls) => ({
+          class: cls,
+          subject: subjectByClass.get(String(cls._id)) ?? null,
+          students: studentsByClass.get(String(cls._id)) ?? [],
+        })),
+      };
+    }
+
+    // 1. Find homeroom class (school-affiliated teachers)
     const homeroom = await Class.findOne({ schoolId, teacherId, isDeleted: false }).lean();
     if (homeroom) {
       await resolveClassGradeFields([homeroom as unknown as Record<string, unknown>]);
