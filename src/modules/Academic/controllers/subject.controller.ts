@@ -61,11 +61,8 @@ export class SubjectController {
 
     let teacherId: string | undefined = req.query.teacherId as string | undefined;
     if (teacherId === 'me') teacherId = user.id;
-    if (
-      user.role === 'teacher' &&
-      user.isStandaloneTeacher !== true &&
-      user.isSchoolPrincipal !== true
-    ) {
+    // user.isStandaloneTeacher is already proven false here — handled in the early branch above.
+    if (user.role === 'teacher' && user.isSchoolPrincipal !== true) {
       teacherId = user.id;
     }
 
