@@ -440,16 +440,32 @@ export class GradeService {
       studentsByClass.get(cid)!.push(student);
     }
 
-    // 7. Assemble response
+    // 7. Assemble response — but DON'T duplicate the homeroom class as a
+    // subjectClass entry if a Timetable row points back at it. For standalone
+    // teachers a teaching group is both "homeroom" AND has one subject; the
+    // frontend treats it as a single row. The homeroom entry absorbs the
+    // subject from its matching Timetable row (if any) and the subject-classes
+    // list excludes that overlap.
+    const homeroomIdStr = homeroom ? String(homeroom._id) : null;
+    const homeroomSubject = homeroomIdStr
+      ? uniqueEntries.find((e) => String(e.classId) === homeroomIdStr)?.subjectDoc ?? null
+      : null;
+
     return {
       homeroom: homeroom
-        ? { class: homeroom, students: studentsByClass.get(String(homeroom._id)) ?? [] }
+        ? {
+            class: homeroom,
+            subject: homeroomSubject,
+            students: studentsByClass.get(String(homeroom._id)) ?? [],
+          }
         : null,
-      subjectClasses: uniqueEntries.map((entry) => ({
-        class: entry.classDoc,
-        subject: entry.subjectDoc,
-        students: studentsByClass.get(String(entry.classId)) ?? [],
-      })),
+      subjectClasses: uniqueEntries
+        .filter((entry) => String(entry.classId) !== homeroomIdStr)
+        .map((entry) => ({
+          class: entry.classDoc,
+          subject: entry.subjectDoc,
+          students: studentsByClass.get(String(entry.classId)) ?? [],
+        })),
     };
   }
 
