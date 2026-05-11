@@ -1,7 +1,10 @@
 import fs from 'fs';
 import { logger } from '../../common/logger.js';
 import { PaperImportJob, type IPaperImportJob } from './model.js';
-import { renderPdfPages, pagePath } from './service-storage.js';
+import { renderPdfPages, pagePath, fileToBase64 } from './service-storage.js';
+import { AIService } from '../../services/ai.service.js';
+import { SegmentResponseSchema, type SegmentResponse } from './validation.js';
+import { SEGMENT_SYSTEM, STRICTIFY_SUFFIX } from './service-conversion-prompts.js';
 
 async function setProgress(
   job: IPaperImportJob,
@@ -36,6 +39,46 @@ async function stage1Render(job: IPaperImportJob): Promise<void> {
   await setProgress(job, { pagesTotal: job.source.pageCount });
 }
 
+async function stage2Segment(job: IPaperImportJob): Promise<SegmentResponse['resources']> {
+  await setProgress(job, { stage: 'segmenting', message: 'Detecting resource boundaries…' });
+
+  const total = job.source.pageCount;
+  const usePdf = job.source.mimeType === 'application/pdf' && total <= 20;
+
+  async function callOnce(strict: boolean): Promise<unknown> {
+    const sys = strict ? SEGMENT_SYSTEM + STRICTIFY_SUFFIX : SEGMENT_SYSTEM;
+    const userText = `The document has ${total} page(s). Segment it.`;
+    if (usePdf) {
+      const base64 = fileToBase64(job.source.storagePath);
+      const { text } = await AIService.generateDocumentCompletion(
+        sys, userText, base64, 'application/pdf',
+      );
+      return JSON.parse(text);
+    }
+    const images = Array.from({ length: total }, (_, i) => ({
+      base64: fileToBase64(pagePath(String(job._id), i + 1)),
+      mediaType: 'image/png' as const,
+    }));
+    const { text } = await AIService.generateVisionCompletionWithImages(sys, userText, images);
+    return JSON.parse(text);
+  }
+
+  let raw: unknown;
+  try {
+    raw = await callOnce(false);
+  } catch (err: unknown) {
+    logger.warn(`[PaperImport] segment first attempt failed: ${(err as Error).message}`);
+    raw = await callOnce(true);
+  }
+
+  const parsed = SegmentResponseSchema.safeParse(raw);
+  if (!parsed.success) {
+    logger.warn(`[PaperImport] segment parse failed, falling back to single worksheet`);
+    return [{ kind: 'worksheet', title: 'Imported worksheet', pageRange: [1, total], reasoning: 'fallback' }];
+  }
+  return parsed.data.resources;
+}
+
 export async function runConversion(job: IPaperImportJob): Promise<void> {
   job.status = 'running';
   await job.save();
@@ -43,5 +86,7 @@ export async function runConversion(job: IPaperImportJob): Promise<void> {
   if (await isCancelled(String(job._id))) return;
   await stage1Render(job);
 
-  logger.info(`[PaperImport] stage1 complete jobId=${String(job._id)} pages=${job.source.pageCount}`);
+  if (await isCancelled(String(job._id))) return;
+  const segments = await stage2Segment(job);
+  logger.info(`[PaperImport] stage2 segments=${segments.length} jobId=${String(job._id)}`);
 }
