@@ -23,7 +23,7 @@ const MAX_QUESTIONS_PREVIEW = 3;
  */
 export function renderMaterialBody(material: ILessonMaterial): SlideTextRun[] {
   switch (material.kind) {
-    case 'notes':
+    case 'study_notes':
     case 'worksheet':
     case 'activity':
     case 'worked_example':

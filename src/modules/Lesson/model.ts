@@ -26,7 +26,7 @@ const materialSchema = new Schema(
         'reading',
         'worksheet',
         'activity',
-        'notes',
+        'study_notes',
         'worked_example',
         'quiz',
         'practice_questions',

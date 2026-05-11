@@ -80,7 +80,7 @@ export async function runLessonPlanToLessonMigration(): Promise<void> {
         const id = new mongoose.Types.ObjectId();
         materials.push({
           _id: id,
-          kind: 'notes',
+          kind: 'study_notes',
           title: truncateTitle(text) || 'Resource',
           teacherNotes: text,
           createdAt: plan.createdAt,
@@ -92,7 +92,7 @@ export async function runLessonPlanToLessonMigration(): Promise<void> {
         const id = new mongoose.Types.ObjectId();
         materials.push({
           _id: id,
-          kind: 'notes',
+          kind: 'study_notes',
           title: truncateTitle(text) || 'Activity',
           teacherNotes: text,
           createdAt: plan.createdAt,

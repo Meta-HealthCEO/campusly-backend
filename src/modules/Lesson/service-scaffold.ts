@@ -28,7 +28,7 @@ Output strict JSON matching this schema (no markdown, no commentary):
 }
 
 Each phase has 1-3 suggestions. Each suggestion's "kind" must be one of:
-"reading" | "worksheet" | "activity" | "notes" | "worked_example" | "quiz" | "practice_questions" | "homework" | "paper".
+"reading" | "worksheet" | "activity" | "study_notes" | "worked_example" | "quiz" | "practice_questions" | "homework" | "paper".
 
 Pedagogical guidance per phase:
 - introduction: notes (hook / recap) or short activity
@@ -40,7 +40,7 @@ Pedagogical guidance per phase:
 const DEFAULT_FALLBACK: ScaffoldedOutline = {
   objectives: ['Understand key concepts of the topic'],
   phases: [
-    { phase: 'introduction',       suggestions: [{ kind: 'notes',              title: 'Topic introduction' }] },
+    { phase: 'introduction',       suggestions: [{ kind: 'study_notes',        title: 'Topic introduction' }] },
     { phase: 'direct_instruction', suggestions: [{ kind: 'worked_example',     title: 'Worked example' }] },
     { phase: 'practice',           suggestions: [{ kind: 'worksheet',          title: 'Practice worksheet' }] },
     { phase: 'assessment',         suggestions: [{ kind: 'practice_questions', title: 'Quick check' }] },

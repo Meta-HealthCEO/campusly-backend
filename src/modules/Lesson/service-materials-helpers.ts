@@ -21,7 +21,7 @@ export async function softDeleteEntity(
   try {
     if (
       kind === 'worksheet' || kind === 'activity'
-      || kind === 'notes' || kind === 'worked_example'
+      || kind === 'study_notes' || kind === 'worked_example'
     ) {
       await ContentResource.updateOne({ _id: id }, { $set: { isDeleted: true } });
     } else if (kind === 'practice_questions') {

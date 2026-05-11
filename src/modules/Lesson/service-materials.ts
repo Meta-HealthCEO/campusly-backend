@@ -64,7 +64,7 @@ export async function addMaterial(
     } else if (
       input.kind === 'worksheet'
       || input.kind === 'activity'
-      || input.kind === 'notes'
+      || input.kind === 'study_notes'
       || input.kind === 'worked_example'
     ) {
       const { subjectId, gradeId } = await resolveSubjectGradeForLesson(lesson);

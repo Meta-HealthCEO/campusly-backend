@@ -52,10 +52,10 @@ function findPhaseForMaterial(
 }
 
 const CONTENT_TYPE_BY_KIND: Record<
-  'notes' | 'worksheet' | 'activity' | 'worked_example',
+  'study_notes' | 'worksheet' | 'activity' | 'worked_example',
   'study_notes' | 'worksheet' | 'activity' | 'worked_example'
 > = {
-  notes: 'study_notes',
+  study_notes: 'study_notes',
   worksheet: 'worksheet',
   activity: 'activity',
   worked_example: 'worked_example',
@@ -82,7 +82,7 @@ function buildPayloadForPlaceholder(
   const kind: LessonMaterialKind = material.kind;
 
   if (
-    kind === 'notes'
+    kind === 'study_notes'
     || kind === 'worksheet'
     || kind === 'activity'
     || kind === 'worked_example'

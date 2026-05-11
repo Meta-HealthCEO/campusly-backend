@@ -61,7 +61,14 @@ export class LessonService {
         .limit(filters.limit)
         .populate('assignedClasses.classId', 'name')
         .populate('subjectId', 'name code')
-        .populate('curriculumNodeId', 'title code')
+        .populate({
+          path: 'curriculumNodeId',
+          select: 'title code subjectId gradeId',
+          populate: [
+            { path: 'subjectId', select: 'title code' },
+            { path: 'gradeId', select: 'title code' },
+          ],
+        })
         .lean<ILesson[]>(),
       Lesson.countDocuments(query),
     ]);

@@ -8,7 +8,7 @@ export const lessonMaterialKindEnum = z.enum([
   'reading',
   'worksheet',
   'activity',
-  'notes',
+  'study_notes',
   'worked_example',
   'quiz',
   'practice_questions',
@@ -118,7 +118,7 @@ export const addReadingMaterialSchema = baseAddMaterial.extend({
   comprehensionCount: z.number().int().min(1).max(10).optional(),
 });
 export const addContentBackedMaterialSchema = baseAddMaterial.extend({
-  kind: z.enum(['worksheet', 'activity', 'notes', 'worked_example']),
+  kind: z.enum(['worksheet', 'activity', 'study_notes', 'worked_example']),
   // Pass through the full contentPayload — GenerationService.generateContent
   // applies its own strict schema (numeric difficulty 1-5, blockTypes enum,
   // term 1-4, instructions string, etc.) downstream. Validating shape twice

@@ -18,7 +18,7 @@ export type LessonMaterialKind =
   | 'reading'
   | 'worksheet'
   | 'activity'
-  | 'notes'
+  | 'study_notes'
   | 'worked_example'
   | 'quiz'
   | 'practice_questions'
@@ -68,7 +68,7 @@ export interface IActivityMaterial extends ILessonMaterialBase {
   contentResourceId: Types.ObjectId;
 }
 export interface INotesMaterial extends ILessonMaterialBase {
-  kind: 'notes';
+  kind: 'study_notes';
   contentResourceId?: Types.ObjectId;
 }
 export interface IWorkedExampleMaterial extends ILessonMaterialBase {
