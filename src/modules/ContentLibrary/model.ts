@@ -24,6 +24,7 @@ export const RESOURCE_TYPES = [
   'worksheet',
   'worked_example',
   'activity',
+  'reading',
 ] as const;
 
 export type ResourceType = (typeof RESOURCE_TYPES)[number];

@@ -6,6 +6,7 @@ const BLOCK_TYPES_BY_RESOURCE: Record<ResourceType, string[]> = {
   activity: ['text', 'quiz', 'fill_blank', 'match_columns', 'image'],
   study_notes: ['text', 'image', 'quiz', 'step_reveal'],
   worked_example: ['text', 'step_reveal', 'quiz', 'image'],
+  reading: ['text', 'image', 'quiz'],
 };
 
 export const SEGMENT_SYSTEM = `You are segmenting a teacher's paper resource into one or more digital resources.
@@ -16,7 +17,7 @@ Schema:
 {
   "resources": [
     {
-      "kind": "lesson" | "worksheet" | "activity" | "study_notes" | "worked_example",
+      "kind": "lesson" | "worksheet" | "activity" | "study_notes" | "worked_example" | "reading",
       "title": string (max 200 chars),
       "pageRange": [startPage:int, endPage:int],
       "reasoning": string (short — for our debug logs)

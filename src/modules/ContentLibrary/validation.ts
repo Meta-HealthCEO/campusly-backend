@@ -9,7 +9,7 @@ const blockTypeEnum = z.enum([
 ]);
 
 const resourceTypeEnum = z.enum([
-  'lesson', 'study_notes', 'worksheet', 'worked_example', 'activity',
+  'lesson', 'study_notes', 'worksheet', 'worked_example', 'activity', 'reading',
 ]);
 
 const resourceFormatEnum = z.enum(['static', 'interactive']);
