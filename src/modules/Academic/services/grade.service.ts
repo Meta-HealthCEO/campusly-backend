@@ -2,9 +2,52 @@ import crypto from 'crypto';
 import type { Types } from 'mongoose';
 import { Grade, IGrade, Class, IClass, Timetable } from '../model.js';
 import { Student } from '../../Student/model.js';
+import { CurriculumNode } from '../../CurriculumStructure/model.js';
 import { NotFoundError, ConflictError, BadRequestError } from '../../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../../common/constants.js';
 import { escapeRegex } from '../../../common/utils.js';
+
+/**
+ * Resolves class.gradeId in place. Classes for standalone teachers point at a
+ * CurriculumNode (type='grade'); classes for school-affiliated teachers point
+ * at a Grade. We look up both and overwrite the gradeId field with a populated
+ * { _id, name, level } object so the frontend can render uniformly.
+ */
+async function resolveClassGradeFields(classes: Array<Record<string, unknown>>): Promise<void> {
+  const ids = classes
+    .map((c) => c.gradeId)
+    .filter((g): g is Types.ObjectId | string => Boolean(g));
+  if (ids.length === 0) return;
+
+  const [grades, nodes] = await Promise.all([
+    Grade.find({ _id: { $in: ids }, isDeleted: false }).select('_id name orderIndex').lean(),
+    CurriculumNode.find({ _id: { $in: ids }, type: 'grade', isDeleted: false })
+      .select('_id title').lean(),
+  ]);
+
+  const map = new Map<string, { _id: Types.ObjectId; name: string; level: number }>();
+  for (const g of grades) {
+    map.set(String(g._id), {
+      _id: g._id as Types.ObjectId,
+      name: g.name,
+      level: g.orderIndex ?? 0,
+    });
+  }
+  for (const n of nodes) {
+    const key = String(n._id);
+    if (map.has(key)) continue;
+    const match = n.title.match(/Grade\s+(\d+|R)/i);
+    const level = match ? (match[1].toUpperCase() === 'R' ? 0 : Number(match[1])) : 0;
+    map.set(key, { _id: n._id as Types.ObjectId, name: n.title, level });
+  }
+
+  for (const cls of classes) {
+    const id = cls.gradeId;
+    if (!id) continue;
+    const resolved = map.get(String(id));
+    if (resolved) cls.gradeId = resolved;
+  }
+}
 
 function generateClassroomCode(): string {
   return crypto.randomBytes(3).toString('hex').toUpperCase();
@@ -189,7 +232,6 @@ export class GradeService {
 
     const [data, total] = await Promise.all([
       Class.find(filter)
-        .populate('gradeId', 'name level')
         .populate('teacherId', 'firstName lastName email')
         .sort(sortField)
         .skip(skip)
@@ -198,16 +240,17 @@ export class GradeService {
         .exec(),
       Class.countDocuments(filter),
     ]);
+    await resolveClassGradeFields(data as unknown as Array<Record<string, unknown>>);
 
     return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
   static async getClassById(id: string, schoolId: string): Promise<IClass> {
     const cls = await Class.findOne({ _id: id, schoolId, isDeleted: false })
-      .populate('gradeId', 'name level')
       .populate('teacherId', 'firstName lastName email')
       .lean();
     if (!cls) throw new NotFoundError('Class not found');
+    await resolveClassGradeFields([cls as unknown as Record<string, unknown>]);
     return cls;
   }
 
@@ -217,10 +260,11 @@ export class GradeService {
       { $set: data },
       { new: true, runValidators: true },
     )
-      .populate('gradeId', 'name level')
-      .populate('teacherId', 'firstName lastName email');
+      .populate('teacherId', 'firstName lastName email')
+      .lean();
     if (!cls) throw new NotFoundError('Class not found');
-    return cls;
+    await resolveClassGradeFields([cls as unknown as Record<string, unknown>]);
+    return cls as IClass;
   }
 
   static async deleteClass(id: string, schoolId: string): Promise<IClass> {
