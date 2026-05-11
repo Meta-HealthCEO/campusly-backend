@@ -77,7 +77,17 @@ export class LessonService {
       .populate('assignedClasses.classId', 'name')
       .populate('subjectId', 'name code')
       .populate('gradeId', 'name level')
-      .populate('curriculumNodeId', 'title code')
+      // Deep-populate curriculum node so the frontend can fall back to the
+      // CAPS subject/grade titles when no academic Subject/Grade record
+      // exists (standalone teacher portal — no school collections).
+      .populate({
+        path: 'curriculumNodeId',
+        select: 'title code subjectId gradeId termNumber',
+        populate: [
+          { path: 'subjectId', select: 'title code' },
+          { path: 'gradeId', select: 'title code' },
+        ],
+      })
       .populate('teacherId', 'firstName lastName email')
       .populate('materials.contentResourceId')
       .populate('materials.homeworkId')
