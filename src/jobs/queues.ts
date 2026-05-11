@@ -95,3 +95,7 @@ export const communicationQueue = new Queue('communication-send', {
   connection: redisConnection,
   defaultJobOptions,
 });
+
+export const paperImportQueue = new Queue('paper-import', {
+  connection: redisConnection,
+});
