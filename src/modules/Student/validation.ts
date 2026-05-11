@@ -24,18 +24,22 @@ const medicalProfileSchema = z.object({
 });
 
 export const createStudentSchema = z.object({
+  firstName: z.string().trim().min(1, 'First name is required').optional(),
+  lastName: z.string().trim().min(1, 'Last name is required').optional(),
+  email: z.string().trim().email().optional(),
+  phone: z.string().trim().optional(),
   userId: objectIdSchema.optional(),
   schoolId: objectIdSchema.optional(),
   gradeId: objectIdSchema,
   classId: objectIdSchema,
   admissionNumber: z.string().min(1, 'Admission number is required'),
   guardianIds: z.array(objectIdSchema).optional(),
-  enrollmentDate: z.string().datetime().optional(),
+  enrollmentDate: z.iso.datetime().optional(),
   enrollmentStatus: z
     .enum(['active', 'transferred', 'graduated', 'expelled', 'withdrawn'])
     .optional(),
   medicalProfile: medicalProfileSchema.optional(),
-  dateOfBirth: z.string().datetime().optional(),
+  dateOfBirth: z.iso.datetime().optional(),
   gender: z.enum(['male', 'female', 'other']).optional(),
   previousSchool: z.string().trim().optional(),
   homeLanguage: z.string().trim().optional(),
