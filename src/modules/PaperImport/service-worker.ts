@@ -8,8 +8,17 @@ import {
   type SegmentResponse,
   TranscribeResponseSchema,
   type TranscribeResponse,
+  AnswersEnhancementSchema,
+  HintsEnhancementSchema,
+  ExplanationsEnhancementSchema,
+  WorkedExampleEnhancementSchema,
 } from './validation.js';
-import { SEGMENT_SYSTEM, STRICTIFY_SUFFIX, transcribeSystem } from './service-conversion-prompts.js';
+import { SEGMENT_SYSTEM, STRICTIFY_SUFFIX, transcribeSystem,
+  ANSWERS_ENHANCEMENT_SYSTEM,
+  HINTS_ENHANCEMENT_SYSTEM,
+  EXPLANATIONS_ENHANCEMENT_SYSTEM,
+  WORKED_EXAMPLE_ENHANCEMENT_SYSTEM,
+} from './service-conversion-prompts.js';
 import type { ResourceType } from '../ContentLibrary/model.js';
 
 async function setProgress(
@@ -149,6 +158,104 @@ async function stage3Transcribe(
   return out;
 }
 
+async function enhanceOne(
+  systemPrompt: string,
+  userPayload: unknown,
+): Promise<unknown | null> {
+  try {
+    const text = await AIService.generateCompletion(
+      systemPrompt,
+      JSON.stringify(userPayload),
+      { temperature: 0.2 },
+    );
+    return JSON.parse(text);
+  } catch (err: unknown) {
+    logger.warn(`[PaperImport] enhancement failed: ${(err as Error).message}`);
+    return null;
+  }
+}
+
+async function stage4Enhance(
+  job: IPaperImportJob,
+  transcribed: TranscribedResource[],
+): Promise<TranscribedResource[]> {
+  await setProgress(job, { stage: 'enhancing', message: 'Adding answers, hints, explanations…' });
+  const opts = job.options;
+
+  for (const r of transcribed) {
+    if (await isCancelled(String(job._id))) return transcribed;
+
+    const questionBlocks = r.result.blocks.filter((b) =>
+      ['quiz', 'fill_blank', 'match_columns', 'ordering'].includes(b.type),
+    );
+    if (questionBlocks.length === 0) continue;
+
+    const enhancements: Promise<void>[] = [];
+
+    if (opts.generateAnswers) {
+      enhancements.push((async () => {
+        const raw = await enhanceOne(ANSWERS_ENHANCEMENT_SYSTEM, { blocks: questionBlocks });
+        if (raw === null) return;
+        const parsed = AnswersEnhancementSchema.safeParse(raw);
+        if (parsed.success) {
+          for (const { blockId, answer } of parsed.data.answers) {
+            const target = r.result.blocks.find((b) => b.blockId === blockId);
+            if (target) target.content = answer;
+          }
+        }
+      })());
+    }
+
+    if (opts.addHints) {
+      enhancements.push((async () => {
+        const raw = await enhanceOne(HINTS_ENHANCEMENT_SYSTEM, { blocks: questionBlocks });
+        if (raw === null) return;
+        const parsed = HintsEnhancementSchema.safeParse(raw);
+        if (parsed.success) {
+          for (const { blockId, hints } of parsed.data.hints) {
+            const target = r.result.blocks.find((b) => b.blockId === blockId);
+            if (target) (target as unknown as { hints: string[] }).hints = hints;
+          }
+        }
+      })());
+    }
+
+    if (opts.addExplanations) {
+      enhancements.push((async () => {
+        const raw = await enhanceOne(EXPLANATIONS_ENHANCEMENT_SYSTEM, { blocks: questionBlocks });
+        if (raw === null) return;
+        const parsed = ExplanationsEnhancementSchema.safeParse(raw);
+        if (parsed.success) {
+          for (const { blockId, explanation } of parsed.data.explanations) {
+            const target = r.result.blocks.find((b) => b.blockId === blockId);
+            if (target) (target as unknown as { explanation: string }).explanation = explanation;
+          }
+        }
+      })());
+    }
+
+    if (opts.addWorkedExample) {
+      enhancements.push((async () => {
+        const raw = await enhanceOne(WORKED_EXAMPLE_ENHANCEMENT_SYSTEM, { resource: r.result });
+        if (raw === null) return;
+        const parsed = WorkedExampleEnhancementSchema.safeParse(raw);
+        if (parsed.success) {
+          r.result.blocks.push({
+            blockId: parsed.data.block.blockId,
+            type: 'step_reveal',
+            order: parsed.data.block.order,
+            content: parsed.data.block.content,
+            confidence: 1,
+          });
+        }
+      })());
+    }
+
+    await Promise.all(enhancements);
+  }
+  return transcribed;
+}
+
 export async function runConversion(job: IPaperImportJob): Promise<void> {
   job.status = 'running';
   await job.save();
@@ -169,4 +276,8 @@ export async function runConversion(job: IPaperImportJob): Promise<void> {
     await job.save();
     return;
   }
+
+  if (await isCancelled(String(job._id))) return;
+  const enhanced = await stage4Enhance(job, transcribed);
+  logger.info(`[PaperImport] stage4 enhanced=${enhanced.length} jobId=${String(job._id)}`);
 }
