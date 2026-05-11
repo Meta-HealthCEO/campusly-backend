@@ -61,7 +61,6 @@ export interface IContentBlock {
 
 export interface IContentResource extends Document {
   curriculumNodeId: Types.ObjectId;
-  lessonPlanId: Types.ObjectId | null;
   schoolId: Types.ObjectId | null;
   type: ResourceType;
   format: ResourceFormat;
@@ -136,11 +135,6 @@ const contentResourceSchema = new Schema<IContentResource>(
       ref: 'CurriculumNode',
       required: true,
     },
-    lessonPlanId: {
-      type: Schema.Types.ObjectId,
-      ref: 'LessonPlan',
-      default: null,
-    },
     schoolId: { type: Schema.Types.ObjectId, ref: 'School', default: null },
     type: { type: String, enum: RESOURCE_TYPES, required: true },
     format: { type: String, enum: RESOURCE_FORMATS, default: 'static' },
@@ -166,6 +160,7 @@ const contentResourceSchema = new Schema<IContentResource>(
     estimatedMinutes: { type: Number, default: 0 },
     prerequisites: [{ type: Schema.Types.ObjectId, ref: 'CurriculumNode' }],
     sourceImport: {
+      // Forward ref — PaperImportJob model is registered in the PaperImport module (Task 3)
       jobId: { type: Schema.Types.ObjectId, ref: 'PaperImportJob' },
       storagePath: { type: String },
       filename: { type: String },
@@ -185,7 +180,6 @@ const contentResourceSchema = new Schema<IContentResource>(
 
 contentResourceSchema.index({ schoolId: 1, status: 1, isDeleted: 1 });
 contentResourceSchema.index({ curriculumNodeId: 1, isDeleted: 1 });
-contentResourceSchema.index({ lessonPlanId: 1, isDeleted: 1 });
 contentResourceSchema.index({ createdBy: 1, status: 1, isDeleted: 1 });
 contentResourceSchema.index({ subjectId: 1, gradeId: 1, term: 1, isDeleted: 1 });
 contentResourceSchema.index({ tags: 1 });

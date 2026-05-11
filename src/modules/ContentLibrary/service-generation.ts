@@ -3,7 +3,6 @@ import mongoose from 'mongoose';
 import { ContentResource } from './model.js';
 import type { IContentBlock, BlockType, ResourceFormat } from './model.js';
 import { CurriculumNode } from '../CurriculumStructure/model.js';
-import { LessonPlan } from '../LessonPlan/model.js';
 import { AIService } from '../../services/ai.service.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
 import type { ICurriculumNode } from '../CurriculumStructure/model.js';
@@ -41,15 +40,6 @@ export class GenerationService {
 
     if (!node) throw new NotFoundError('Curriculum node not found');
 
-    if (data.lessonPlanId) {
-      const linkedLesson = await LessonPlan.findOne({
-        _id: data.lessonPlanId,
-        schoolId,
-        isDeleted: false,
-      }).select('_id').lean();
-      if (!linkedLesson) throw new BadRequestError('Lesson plan does not belong to this school');
-    }
-
     // Optional textbook grounding — failures are logged and ignored so the
     // generator falls back to the topic title + description only.
     let textbookCtx: TextbookContext = { source: 'none', text: '' };
@@ -77,7 +67,6 @@ export class GenerationService {
 
     const resource = await ContentResource.create({
       curriculumNodeId: new mongoose.Types.ObjectId(data.curriculumNodeId),
-      lessonPlanId: data.lessonPlanId ? new mongoose.Types.ObjectId(data.lessonPlanId) : null,
       schoolId: new mongoose.Types.ObjectId(schoolId),
       type: data.type,
       format,

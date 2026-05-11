@@ -42,7 +42,6 @@ const contentBlockSchema = z.object({
 
 export const createResourceSchema = z.object({
   curriculumNodeId: objectIdSchema,
-  lessonPlanId: objectIdSchema.nullable().optional(),
   type: resourceTypeEnum,
   format: resourceFormatEnum.default('static'),
   title: z.string().min(1, 'Title is required').trim(),
@@ -57,11 +56,12 @@ export const createResourceSchema = z.object({
   estimatedMinutes: z.number().int().min(0).default(0),
   prerequisites: z.array(objectIdSchema).default([]),
   sourceImport: z.object({
-    jobId: z.string(),
+    jobId: objectIdSchema,
     storagePath: z.string(),
     filename: z.string(),
     mimeType: z.string(),
-    pageRange: z.object({ start: z.number().int().min(1), end: z.number().int().min(1) }),
+    pageRange: z.object({ start: z.number().int().min(1), end: z.number().int().min(1) })
+      .refine((r) => r.end >= r.start, { message: 'pageRange.end must be >= pageRange.start' }),
   }).optional(),
   needsReview: z.boolean().default(false),
 }).strict();
@@ -89,7 +89,6 @@ export const reviewResourceSchema = z.object({
 
 export const generateContentSchema = z.object({
   curriculumNodeId: objectIdSchema,
-  lessonPlanId: objectIdSchema.optional(),
   type: resourceTypeEnum,
   gradeId: objectIdSchema,
   subjectId: objectIdSchema,
@@ -103,7 +102,6 @@ export const generateContentSchema = z.object({
 
 export const resourceQuerySchema = z.object({
   curriculumNodeId: objectIdSchema.optional(),
-  lessonPlanId: objectIdSchema.optional(),
   type: resourceTypeEnum.optional(),
   format: resourceFormatEnum.optional(),
   status: z.enum(['draft', 'pending_review', 'approved', 'rejected']).optional(),

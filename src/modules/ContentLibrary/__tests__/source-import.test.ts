@@ -37,4 +37,32 @@ describe('createResourceSchema source extensions', () => {
     expect(r.success).toBe(true);
     if (r.success) expect(r.data.needsReview).toBe(false);
   });
+  it('rejects pageRange with end < start', () => {
+    const r = createResourceSchema.safeParse({
+      ...base,
+      source: 'imported',
+      sourceImport: {
+        jobId: '64b0a0a0a0a0a0a0a0a0a0a3',
+        storagePath: 'p',
+        filename: 'f',
+        mimeType: 'application/pdf',
+        pageRange: { start: 5, end: 1 },
+      },
+    });
+    expect(r.success).toBe(false);
+  });
+  it('rejects sourceImport with invalid jobId', () => {
+    const r = createResourceSchema.safeParse({
+      ...base,
+      source: 'imported',
+      sourceImport: {
+        jobId: 'not-an-objectid',
+        storagePath: 'p',
+        filename: 'f',
+        mimeType: 'application/pdf',
+        pageRange: { start: 1, end: 2 },
+      },
+    });
+    expect(r.success).toBe(false);
+  });
 });

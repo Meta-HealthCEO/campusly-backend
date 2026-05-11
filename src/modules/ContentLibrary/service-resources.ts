@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import { ContentResource } from './model.js';
-import { LessonPlan } from '../LessonPlan/model.js';
 import { resolveAcademicFilterIds } from '../Academic/services/global-academic-lookup.js';
 import { NotFoundError, ForbiddenError } from '../../common/errors.js';
 import { paginationHelper } from '../../common/utils.js';
@@ -8,7 +7,6 @@ import type { CreateResourceInput, UpdateResourceInput, ResourceQueryInput } fro
 
 const POPULATE_LIST = [
   { path: 'curriculumNodeId', select: 'title code type' },
-  { path: 'lessonPlanId', select: 'topic date durationMinutes' },
   { path: 'subjectId', select: 'name' },
   { path: 'gradeId', select: 'name level' },
   { path: 'createdBy', select: 'firstName lastName email' },
@@ -60,9 +58,6 @@ export class ResourcesService {
     // ── Filters ──
     if (filters.curriculumNodeId) {
       query.curriculumNodeId = new mongoose.Types.ObjectId(filters.curriculumNodeId);
-    }
-    if (filters.lessonPlanId) {
-      query.lessonPlanId = new mongoose.Types.ObjectId(filters.lessonPlanId);
     }
     if (filters.type) query.type = filters.type;
     if (filters.format) query.format = filters.format;
@@ -117,18 +112,8 @@ export class ResourcesService {
     userId: string,
     data: CreateResourceInput,
   ) {
-    if (data.lessonPlanId) {
-      const linkedLesson = await LessonPlan.findOne({
-        _id: data.lessonPlanId,
-        schoolId,
-        isDeleted: false,
-      }).select('_id').lean();
-      if (!linkedLesson) throw new ForbiddenError('Lesson plan does not belong to this school');
-    }
-
     const resource = await ContentResource.create({
       curriculumNodeId: new mongoose.Types.ObjectId(data.curriculumNodeId),
-      lessonPlanId: data.lessonPlanId ? new mongoose.Types.ObjectId(data.lessonPlanId) : null,
       schoolId: new mongoose.Types.ObjectId(schoolId),
       type: data.type,
       format: data.format,
