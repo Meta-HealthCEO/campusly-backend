@@ -32,13 +32,15 @@ export class GradeController {
         _id: { $in: gradeIds },
         type: 'grade',
         isDeleted: false,
-      }).select('_id title code').sort({ title: 1 }).lean();
+      }).select('_id title code').lean();
 
-      const data = nodes.map((n) => ({
-        id: String(n._id),
-        name: n.title,
-        level: parseGradeLevel(n.title),
-      }));
+      const data = nodes
+        .map((n) => ({
+          id: String(n._id),
+          name: n.title,
+          level: parseGradeLevel(n.title),
+        }))
+        .sort((a, b) => b.level - a.level); // highest to lowest
       res.json(apiResponse(true, { data, total: data.length, page: 1, limit: data.length, totalPages: 1 }, 'Grades retrieved successfully'));
       return;
     }
