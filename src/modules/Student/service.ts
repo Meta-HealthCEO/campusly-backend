@@ -1,7 +1,22 @@
 import { Student, IStudent } from './model.js';
+import { User } from '../Auth/model.js';
 import { NotFoundError } from '../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../common/constants.js';
 import { escapeRegex } from '../../common/utils.js';
+import crypto from 'crypto';
+
+type CreateStudentData = Partial<IStudent> & {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+};
+
+type UpdateStudentData = Partial<IStudent> & {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+};
 
 interface ListQuery {
   page?: number;
@@ -11,8 +26,25 @@ interface ListQuery {
 }
 
 export class StudentService {
-  static async create(data: Partial<IStudent>): Promise<IStudent> {
-    const student = new Student(data);
+  static async create(data: CreateStudentData): Promise<IStudent> {
+    const { firstName, lastName, email, ...studentData } = data;
+
+    if (!studentData.userId && firstName && lastName && studentData.schoolId) {
+      const admission = studentData.admissionNumber ?? crypto.randomUUID();
+      const fallbackEmail = `${String(admission).toLowerCase()}@students.campusly.local`;
+      const user = await User.create({
+        email: (email ?? fallbackEmail).toLowerCase(),
+        password: crypto.randomUUID(),
+        firstName,
+        lastName,
+        role: 'student',
+        schoolId: studentData.schoolId,
+        isActive: true,
+      });
+      studentData.userId = user._id as IStudent['userId'];
+    }
+
+    const student = new Student(studentData);
     return student.save();
   }
 
@@ -85,21 +117,42 @@ export class StudentService {
     return student;
   }
 
-  static async update(id: string, schoolId: string, data: Partial<IStudent>): Promise<IStudent> {
+  static async update(id: string, schoolId: string, data: UpdateStudentData): Promise<IStudent> {
+    const { firstName, lastName, email, phone, ...studentData } = data;
+
+    // Update the student document (excluding User-record fields)
     const student = await Student.findOneAndUpdate(
       { _id: id, schoolId, isDeleted: false },
-      { $set: data },
+      { $set: studentData },
       { new: true, runValidators: true },
-    )
-      .populate('userId', 'firstName lastName email')
-      .populate('gradeId')
-      .populate('classId');
+    );
 
     if (!student) {
       throw new NotFoundError('Student not found');
     }
 
-    return student;
+    // Write name/email/phone through to the linked User record
+    if (student.userId && (firstName || lastName || email || phone !== undefined)) {
+      const userUpdate: Record<string, unknown> = {};
+      if (firstName) userUpdate.firstName = firstName;
+      if (lastName) userUpdate.lastName = lastName;
+      if (email) userUpdate.email = email.toLowerCase();
+      if (phone !== undefined) userUpdate.phone = phone;
+      if (Object.keys(userUpdate).length > 0) {
+        await User.findOneAndUpdate(
+          { _id: student.userId, isDeleted: false },
+          { $set: userUpdate },
+        );
+      }
+    }
+
+    // Return fully populated student
+    const populated = await Student.findById(student._id)
+      .populate('userId', 'firstName lastName email phone')
+      .populate('gradeId')
+      .populate('classId');
+
+    return populated as IStudent;
   }
 
   static async delete(id: string, schoolId: string): Promise<IStudent> {
