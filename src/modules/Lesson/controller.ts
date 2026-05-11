@@ -6,6 +6,7 @@ import { generateAllPlaceholders } from './service-materials-bulk.js';
 import { scaffoldLesson } from './service-scaffold.js';
 import { exportTeacherPack, exportStudentPack } from './service-export.js';
 import { generateSlideshow } from './service-slideshow.js';
+import { chatAboutLesson } from './service-chat.js';
 import { getUser } from '../../types/authenticated-request.js';
 import {
   createLessonSchema,
@@ -18,6 +19,7 @@ import {
   listLessonsSchema,
   assignClassSchema,
   updateAssignmentSchema,
+  chatLessonSchema,
 } from './validation.js';
 
 function getAuth(req: Request): { id: string; schoolId: string } {
@@ -301,6 +303,17 @@ export const LessonController = {
         req.params.classId as string,
       );
       res.json({ data: lesson });
+    } catch (err: unknown) {
+      next(err);
+    }
+  },
+
+  chat: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { schoolId } = getAuth(req);
+      const input = chatLessonSchema.parse(req.body);
+      const out = await chatAboutLesson(req.params.id as string, schoolId, input);
+      res.json({ data: out });
     } catch (err: unknown) {
       next(err);
     }

@@ -31,4 +31,6 @@ router.get('/:id/export/teacher', LessonController.exportTeacher);
 router.get('/:id/export/student', LessonController.exportStudent);
 router.get('/:id/export/slides', LessonController.exportSlides);
 
+router.post('/:id/chat', LessonController.chat);
+
 export default router;

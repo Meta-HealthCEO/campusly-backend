@@ -171,6 +171,14 @@ export const moveMaterialSchema = z.object({
   toIndex: z.number().int().min(0),
 });
 
+export const chatLessonSchema = z.object({
+  message: z.string().trim().min(1).max(4000),
+  history: z.array(z.object({
+    role: z.enum(['user', 'assistant']),
+    content: z.string().min(1).max(8000),
+  })).max(40).default([]),
+});
+
 export const listLessonsSchema = z.object({
   teacherId: objectId.optional(),
   classId: objectId.optional(),
@@ -194,3 +202,4 @@ export type ScaffoldedOutline = z.infer<typeof scaffoldedOutlineSchema>;
 export type AssignClassInput = z.infer<typeof assignClassSchema>;
 export type UpdateAssignmentInput = z.infer<typeof updateAssignmentSchema>;
 export type LessonAssignmentInput = z.infer<typeof lessonAssignmentInputSchema>;
+export type ChatLessonInput = z.infer<typeof chatLessonSchema>;
