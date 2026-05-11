@@ -78,6 +78,16 @@ export async function setupWorkers(): Promise<Worker[]> {
     const { createCommunicationSendWorker } = await import('./communication-send.job.js');
     workers.push(createCommunicationSendWorker());
 
+    const { createPaperImportWorker } = await import('./paper-import.job.js');
+    workers.push(createPaperImportWorker());
+
+    const { runPaperImportCleanup } = await import('./paper-import-cleanup.job.js');
+    setInterval(() => {
+      runPaperImportCleanup().catch((err: unknown) => {
+        logger.error(`[PaperImport] cleanup error: ${(err as Error).message}`);
+      });
+    }, 24 * 3600 * 1000);
+
     logger.info(`[Jobs] ${workers.length} workers started successfully`);
 
     // Schedule repeatable jobs
