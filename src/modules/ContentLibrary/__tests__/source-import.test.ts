@@ -13,9 +13,25 @@ const base = {
   prerequisites: [],
 };
 
+const validSourceImport = {
+  jobId: '64b0a0a0a0a0a0a0a0a0a0a3',
+  storagePath: 'uploads/paper-imports/abc/source.pdf',
+  filename: 'worksheet.pdf',
+  mimeType: 'application/pdf',
+  pageRange: { start: 1, end: 3 },
+};
+
 describe('createResourceSchema source extensions', () => {
-  it('accepts source: imported', () => {
-    expect(createResourceSchema.safeParse({ ...base, source: 'imported' }).success).toBe(true);
+  it('rejects source: imported without sourceImport', () => {
+    expect(createResourceSchema.safeParse({ ...base, source: 'imported' }).success).toBe(false);
+  });
+  it('rejects sourceImport when source !== imported', () => {
+    const r = createResourceSchema.safeParse({
+      ...base,
+      source: 'teacher',
+      sourceImport: validSourceImport,
+    });
+    expect(r.success).toBe(false);
   });
   it('accepts sourceImport block', () => {
     const r = createResourceSchema.safeParse({

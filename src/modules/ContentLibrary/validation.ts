@@ -57,14 +57,29 @@ export const createResourceSchema = z.object({
   prerequisites: z.array(objectIdSchema).default([]),
   sourceImport: z.object({
     jobId: objectIdSchema,
-    storagePath: z.string(),
-    filename: z.string(),
-    mimeType: z.string(),
+    storagePath: z.string().min(1),
+    filename: z.string().min(1),
+    mimeType: z.string().min(1),
     pageRange: z.object({ start: z.number().int().min(1), end: z.number().int().min(1) })
       .refine((r) => r.end >= r.start, { message: 'pageRange.end must be >= pageRange.start' }),
   }).optional(),
   needsReview: z.boolean().default(false),
-}).strict();
+}).strict().superRefine((val, ctx) => {
+  if (val.source === 'imported' && !val.sourceImport) {
+    ctx.addIssue({
+      code: 'custom',
+      path: ['sourceImport'],
+      message: 'sourceImport is required when source is "imported"',
+    });
+  }
+  if (val.source !== 'imported' && val.sourceImport) {
+    ctx.addIssue({
+      code: 'custom',
+      path: ['sourceImport'],
+      message: 'sourceImport is only valid when source is "imported"',
+    });
+  }
+});
 
 // ─── Update Resource ────────────────────────────────────────────────────────
 
