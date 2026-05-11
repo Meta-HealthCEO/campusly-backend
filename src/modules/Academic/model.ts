@@ -49,6 +49,7 @@ export interface IClass extends Document {
   teacherId: Types.ObjectId;
   capacity: number;
   classroomCode: string;
+  isHomeroom: boolean;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -87,6 +88,10 @@ const classSchema = new Schema<IClass>(
       uppercase: true,
       trim: true,
     },
+    isHomeroom: {
+      type: Boolean,
+      default: false,
+    },
     isDeleted: {
       type: Boolean,
       default: false,
@@ -99,6 +104,7 @@ classSchema.index({ gradeId: 1 });
 classSchema.index({ schoolId: 1 });
 classSchema.index({ schoolId: 1, gradeId: 1 });
 classSchema.index({ classroomCode: 1 }, { unique: true });
+classSchema.index({ schoolId: 1, teacherId: 1, isHomeroom: 1 });
 
 export const Class = mongoose.model<IClass>('Class', classSchema);
 
@@ -224,6 +230,7 @@ timetableSchema.index(
   { classId: 1, day: 1, period: 1 },
   { unique: true, partialFilterExpression: { isDeleted: false } },
 );
+timetableSchema.index({ schoolId: 1, teacherId: 1, day: 1, period: 1 });
 
 export const Timetable = mongoose.model<ITimetable>('Timetable', timetableSchema);
 

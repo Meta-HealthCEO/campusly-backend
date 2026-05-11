@@ -303,6 +303,18 @@ export class GradeService {
   }
 
   static async updateClass(id: string, schoolId: string, data: Partial<IClass>): Promise<IClass> {
+    // If a class is being marked as homeroom, clear the flag on every other
+    // class for the same teacher in the same school. (One homeroom max.)
+    if (data.isHomeroom === true) {
+      const target = await Class.findOne({ _id: id, schoolId, isDeleted: false }).select('teacherId').lean();
+      if (target?.teacherId) {
+        await Class.updateMany(
+          { schoolId, teacherId: target.teacherId, _id: { $ne: id }, isDeleted: false, isHomeroom: true },
+          { $set: { isHomeroom: false } },
+        );
+      }
+    }
+
     const cls = await Class.findOneAndUpdate(
       { _id: id, schoolId, isDeleted: false },
       { $set: data },
@@ -407,13 +419,26 @@ export class GradeService {
         studentsByClass.get(cid)!.push(s);
       }
 
+      // Pick the class explicitly flagged isHomeroom (if any) for the homeroom
+      // slot; everything else goes into subjectClasses.
+      const homeroomClass = classes.find((c) => c.isHomeroom === true) ?? null;
+      const homeroomIdStr = homeroomClass ? String(homeroomClass._id) : null;
+
       return {
-        homeroom: null,
-        subjectClasses: classes.map((cls) => ({
-          class: cls,
-          subject: subjectByClass.get(String(cls._id)) ?? null,
-          students: studentsByClass.get(String(cls._id)) ?? [],
-        })),
+        homeroom: homeroomClass
+          ? {
+              class: homeroomClass,
+              subject: subjectByClass.get(String(homeroomClass._id)) ?? null,
+              students: studentsByClass.get(String(homeroomClass._id)) ?? [],
+            }
+          : null,
+        subjectClasses: classes
+          .filter((cls) => String(cls._id) !== homeroomIdStr)
+          .map((cls) => ({
+            class: cls,
+            subject: subjectByClass.get(String(cls._id)) ?? null,
+            students: studentsByClass.get(String(cls._id)) ?? [],
+          })),
       };
     }
 
