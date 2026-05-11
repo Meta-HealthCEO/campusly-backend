@@ -20,6 +20,8 @@ import { SEGMENT_SYSTEM, STRICTIFY_SUFFIX, transcribeSystem,
   WORKED_EXAMPLE_ENHANCEMENT_SYSTEM,
 } from './service-conversion-prompts.js';
 import type { ResourceType } from '../ContentLibrary/model.js';
+import { ResourcesService } from '../ContentLibrary/service-resources.js';
+import { cropPageRegion } from './service-storage.js';
 
 async function setProgress(
   job: IPaperImportJob,
@@ -256,6 +258,139 @@ async function stage4Enhance(
   return transcribed;
 }
 
+const CONFIDENCE_THRESHOLD = Number(process.env.PAPER_IMPORT_CONFIDENCE_THRESHOLD ?? 0.55);
+
+function median(values: number[]): number {
+  if (values.length === 0) return 1;
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
+}
+
+function pageImageUrl(jobId: string, page: number): string {
+  return `/api/paper-imports/${jobId}/page/${page}`;
+}
+
+function cropImageUrl(jobId: string, blockId: string): string {
+  return `/api/paper-imports/${jobId}/crops/${blockId}.png`;
+}
+
+type FinalBlock = {
+  blockId: string;
+  type: string;
+  order: number;
+  content: string;
+  curriculumNodeId: null;
+  cognitiveLevel: null;
+  points: number;
+  hints: string[];
+  explanation: string;
+  metadata: Record<string, unknown>;
+};
+
+async function stage5Finalise(
+  job: IPaperImportJob,
+  enhanced: TranscribedResource[],
+): Promise<void> {
+  await setProgress(job, { stage: 'finalising', message: 'Saving resources…' });
+  const jobId = String(job._id);
+
+  for (const r of enhanced) {
+    if (await isCancelled(jobId)) return;
+
+    const confidences = r.result.blocks.map((b) => b.confidence ?? 1);
+    const medianConf = median(confidences);
+    const fallback = medianConf < CONFIDENCE_THRESHOLD;
+
+    let finalBlocks: FinalBlock[];
+
+    if (fallback) {
+      finalBlocks = [];
+      for (let p = r.pageRange[0]; p <= r.pageRange[1]; p += 1) {
+        finalBlocks.push({
+          blockId: `page-${p}-${jobId}`,
+          type: 'image',
+          order: p - r.pageRange[0],
+          content: JSON.stringify({ src: pageImageUrl(jobId, p), alt: `Page ${p}` }),
+          curriculumNodeId: null,
+          cognitiveLevel: null,
+          points: 0,
+          hints: [],
+          explanation: '',
+          metadata: { needsReview: true },
+        });
+      }
+    } else {
+      finalBlocks = [];
+      for (const b of r.result.blocks) {
+        const needsReview = (b.confidence ?? 1) < CONFIDENCE_THRESHOLD;
+        let content = b.content;
+        if (b.type === 'image' && b.cropBox) {
+          try {
+            await cropPageRegion(jobId, b.cropBox.page, b.blockId, {
+              x: b.cropBox.x, y: b.cropBox.y, w: b.cropBox.w, h: b.cropBox.h,
+            });
+            content = JSON.stringify({ src: cropImageUrl(jobId, b.blockId), alt: '' });
+          } catch (err: unknown) {
+            logger.warn(`[PaperImport] crop failed for ${b.blockId}: ${(err as Error).message}`);
+            content = JSON.stringify({ src: pageImageUrl(jobId, b.cropBox.page), alt: '' });
+          }
+        }
+        const blockHints = (b as unknown as { hints?: string[] }).hints;
+        const blockExplanation = (b as unknown as { explanation?: string }).explanation;
+        const block: FinalBlock = {
+          blockId: b.blockId,
+          type: b.type,
+          order: b.order,
+          content,
+          curriculumNodeId: null,
+          cognitiveLevel: null,
+          points: 0,
+          hints: blockHints ?? [],
+          explanation: blockExplanation ?? '',
+          metadata: needsReview ? { needsReview: true } : {},
+        };
+        finalBlocks.push(block);
+      }
+    }
+
+    const created = await ResourcesService.createResource(
+      String(job.schoolId),
+      String(job.teacherId),
+      {
+        curriculumNodeId: String(job.curriculum.curriculumNodeId),
+        type: r.segmentKind,
+        format: 'static',
+        title: r.result.title,
+        blocks: finalBlocks as never,
+        source: 'imported',
+        sourceAttribution: '',
+        gradeId: String(job.curriculum.gradeId),
+        subjectId: String(job.curriculum.subjectId),
+        term: job.curriculum.term,
+        tags: [],
+        difficulty: 3,
+        estimatedMinutes: 30,
+        prerequisites: [],
+        sourceImport: {
+          jobId,
+          storagePath: job.source.storagePath,
+          filename: job.source.filename,
+          mimeType: job.source.mimeType,
+          pageRange: { start: r.pageRange[0], end: r.pageRange[1] },
+        },
+        needsReview: fallback,
+      },
+    );
+    job.resultResourceIds.push(created._id);
+    await job.save();
+  }
+
+  job.status = 'completed';
+  job.completedAt = new Date();
+  await job.save();
+}
+
 export async function runConversion(job: IPaperImportJob): Promise<void> {
   job.status = 'running';
   await job.save();
@@ -280,4 +415,6 @@ export async function runConversion(job: IPaperImportJob): Promise<void> {
   if (await isCancelled(String(job._id))) return;
   const enhanced = await stage4Enhance(job, transcribed);
   logger.info(`[PaperImport] stage4 enhanced=${enhanced.length} jobId=${String(job._id)}`);
+
+  await stage5Finalise(job, enhanced);
 }
