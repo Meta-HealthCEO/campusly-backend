@@ -173,7 +173,6 @@ export class ResourcesService {
   ) {
     const oid = new mongoose.Types.ObjectId(id);
     const soid = new mongoose.Types.ObjectId(schoolId);
-    const uoid = new mongoose.Types.ObjectId(userId);
 
     const resource = await ContentResource.findOne({
       _id: oid,
