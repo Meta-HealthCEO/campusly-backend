@@ -26,6 +26,13 @@ export interface IUser extends Document {
   isStandaloneTeacher: boolean;
   isStandaloneCoach: boolean;
   onboardingDismissed: boolean;
+  teachingScope?: {
+    grades: Types.ObjectId[];
+    subjectsByGrade: Array<{
+      gradeId: Types.ObjectId;
+      subjectIds: Types.ObjectId[];
+    }>;
+  };
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -128,6 +135,17 @@ const userSchema = new Schema<IUser>(
     onboardingDismissed: {
       type: Boolean,
       default: false,
+    },
+    teachingScope: {
+      grades: { type: [Schema.Types.ObjectId], ref: 'CurriculumNode', default: [] },
+      subjectsByGrade: {
+        type: [{
+          _id: false,
+          gradeId: { type: Schema.Types.ObjectId, ref: 'CurriculumNode' },
+          subjectIds: { type: [Schema.Types.ObjectId], ref: 'CurriculumNode', default: [] },
+        }],
+        default: [],
+      },
     },
   },
   { timestamps: true },
