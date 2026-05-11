@@ -93,7 +93,8 @@ export class GradeService {
   // ─── Class CRUD ──────────────────────────────────────────────────────────
 
   static async createClass(data: Partial<IClass>): Promise<IClass> {
-    // Verify gradeId belongs to the same school
+    // Verify gradeId belongs to the same school (or is a valid CurriculumNode grade
+    // for standalone teachers who reference the CAPS tree instead of the Grade collection).
     if (data.gradeId && data.schoolId) {
       const grade = await Grade.findOne({
         _id: data.gradeId,
@@ -101,7 +102,16 @@ export class GradeService {
         isDeleted: false,
       });
       if (!grade) {
-        throw new BadRequestError('Grade not found in this school');
+        // Standalone teachers reference grades from the CurriculumNode tree.
+        const { CurriculumNode } = await import('../../CurriculumStructure/model.js');
+        const node = await CurriculumNode.findOne({
+          _id: data.gradeId,
+          type: 'grade',
+          isDeleted: false,
+        });
+        if (!node) {
+          throw new BadRequestError('Grade not found in this school');
+        }
       }
     }
 
