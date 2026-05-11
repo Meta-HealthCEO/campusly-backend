@@ -14,7 +14,7 @@ const resourceTypeEnum = z.enum([
 
 const resourceFormatEnum = z.enum(['static', 'interactive']);
 
-const resourceSourceEnum = z.enum(['oer', 'ai_generated', 'teacher', 'system']);
+const resourceSourceEnum = z.enum(['oer', 'ai_generated', 'teacher', 'system', 'imported']);
 
 // ─── Cognitive Level ────────────────────────────────────────────────────────
 
@@ -42,6 +42,7 @@ const contentBlockSchema = z.object({
 
 export const createResourceSchema = z.object({
   curriculumNodeId: objectIdSchema,
+  lessonPlanId: objectIdSchema.nullable().optional(),
   type: resourceTypeEnum,
   format: resourceFormatEnum.default('static'),
   title: z.string().min(1, 'Title is required').trim(),
@@ -55,6 +56,14 @@ export const createResourceSchema = z.object({
   difficulty: z.number().int().min(1).max(5).default(3),
   estimatedMinutes: z.number().int().min(0).default(0),
   prerequisites: z.array(objectIdSchema).default([]),
+  sourceImport: z.object({
+    jobId: z.string(),
+    storagePath: z.string(),
+    filename: z.string(),
+    mimeType: z.string(),
+    pageRange: z.object({ start: z.number().int().min(1), end: z.number().int().min(1) }),
+  }).optional(),
+  needsReview: z.boolean().default(false),
 }).strict();
 
 // ─── Update Resource ────────────────────────────────────────────────────────
@@ -80,6 +89,7 @@ export const reviewResourceSchema = z.object({
 
 export const generateContentSchema = z.object({
   curriculumNodeId: objectIdSchema,
+  lessonPlanId: objectIdSchema.optional(),
   type: resourceTypeEnum,
   gradeId: objectIdSchema,
   subjectId: objectIdSchema,
@@ -93,6 +103,7 @@ export const generateContentSchema = z.object({
 
 export const resourceQuerySchema = z.object({
   curriculumNodeId: objectIdSchema.optional(),
+  lessonPlanId: objectIdSchema.optional(),
   type: resourceTypeEnum.optional(),
   format: resourceFormatEnum.optional(),
   status: z.enum(['draft', 'pending_review', 'approved', 'rejected']).optional(),

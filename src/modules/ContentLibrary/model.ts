@@ -31,7 +31,7 @@ export type ResourceType = (typeof RESOURCE_TYPES)[number];
 export const RESOURCE_FORMATS = ['static', 'interactive'] as const;
 export type ResourceFormat = (typeof RESOURCE_FORMATS)[number];
 
-export const RESOURCE_SOURCES = ['oer', 'ai_generated', 'teacher', 'system'] as const;
+export const RESOURCE_SOURCES = ['oer', 'ai_generated', 'teacher', 'system', 'imported'] as const;
 export type ResourceSource = (typeof RESOURCE_SOURCES)[number];
 
 export const RESOURCE_STATUSES = ['draft', 'pending_review', 'approved', 'rejected'] as const;
@@ -61,6 +61,7 @@ export interface IContentBlock {
 
 export interface IContentResource extends Document {
   curriculumNodeId: Types.ObjectId;
+  lessonPlanId: Types.ObjectId | null;
   schoolId: Types.ObjectId | null;
   type: ResourceType;
   format: ResourceFormat;
@@ -85,6 +86,14 @@ export interface IContentResource extends Document {
   difficulty: number;
   estimatedMinutes: number;
   prerequisites: Types.ObjectId[];
+  sourceImport?: {
+    jobId: Types.ObjectId;
+    storagePath: string;
+    filename: string;
+    mimeType: string;
+    pageRange: { start: number; end: number };
+  };
+  needsReview: boolean;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -127,6 +136,11 @@ const contentResourceSchema = new Schema<IContentResource>(
       ref: 'CurriculumNode',
       required: true,
     },
+    lessonPlanId: {
+      type: Schema.Types.ObjectId,
+      ref: 'LessonPlan',
+      default: null,
+    },
     schoolId: { type: Schema.Types.ObjectId, ref: 'School', default: null },
     type: { type: String, enum: RESOURCE_TYPES, required: true },
     format: { type: String, enum: RESOURCE_FORMATS, default: 'static' },
@@ -151,6 +165,17 @@ const contentResourceSchema = new Schema<IContentResource>(
     difficulty: { type: Number, min: 1, max: 5, default: 3 },
     estimatedMinutes: { type: Number, default: 0 },
     prerequisites: [{ type: Schema.Types.ObjectId, ref: 'CurriculumNode' }],
+    sourceImport: {
+      jobId: { type: Schema.Types.ObjectId, ref: 'PaperImportJob' },
+      storagePath: { type: String },
+      filename: { type: String },
+      mimeType: { type: String },
+      pageRange: {
+        start: { type: Number },
+        end: { type: Number },
+      },
+    },
+    needsReview: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true },
@@ -160,6 +185,7 @@ const contentResourceSchema = new Schema<IContentResource>(
 
 contentResourceSchema.index({ schoolId: 1, status: 1, isDeleted: 1 });
 contentResourceSchema.index({ curriculumNodeId: 1, isDeleted: 1 });
+contentResourceSchema.index({ lessonPlanId: 1, isDeleted: 1 });
 contentResourceSchema.index({ createdBy: 1, status: 1, isDeleted: 1 });
 contentResourceSchema.index({ subjectId: 1, gradeId: 1, term: 1, isDeleted: 1 });
 contentResourceSchema.index({ tags: 1 });

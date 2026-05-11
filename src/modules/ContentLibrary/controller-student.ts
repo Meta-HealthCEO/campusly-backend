@@ -6,6 +6,7 @@ import { paginationHelper } from '../../common/utils.js';
 import { NotFoundError, BadRequestError, ForbiddenError } from '../../common/errors.js';
 import { ContentResource } from './model.js';
 import { Student } from '../Student/model.js';
+import { resolveAcademicFilterIds } from '../Academic/services/global-academic-lookup.js';
 import { AttemptsService } from './service-attempts.js';
 import { MasteryService } from './service-mastery.js';
 import type { StudentResourceQueryInput, MasteryQueryInput, SubmitAttemptInput } from './validation-student.js';
@@ -38,6 +39,10 @@ export class StudentContentController {
     const user = getUser(req);
     const filters = req.query as unknown as StudentResourceQueryInput;
     const schoolOid = new mongoose.Types.ObjectId(user.schoolId!);
+    const { subjectIds, gradeIds } = await resolveAcademicFilterIds({
+      subjectId: filters.subjectId,
+      gradeId: filters.gradeId,
+    });
 
     const query: Record<string, unknown> = {
       isDeleted: false,
@@ -48,12 +53,8 @@ export class StudentContentController {
       ],
     };
 
-    if (filters.subjectId) {
-      query.subjectId = new mongoose.Types.ObjectId(filters.subjectId);
-    }
-    if (filters.gradeId) {
-      query.gradeId = new mongoose.Types.ObjectId(filters.gradeId);
-    }
+    if (subjectIds) query.subjectId = { $in: subjectIds };
+    if (gradeIds) query.gradeId = { $in: gradeIds };
     if (filters.term) query.term = filters.term;
     if (filters.type) query.type = filters.type;
     if (filters.search) {

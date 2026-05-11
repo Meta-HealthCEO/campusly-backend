@@ -1,11 +1,14 @@
 import mongoose from 'mongoose';
 import { ContentResource } from './model.js';
+import { LessonPlan } from '../LessonPlan/model.js';
+import { resolveAcademicFilterIds } from '../Academic/services/global-academic-lookup.js';
 import { NotFoundError, ForbiddenError } from '../../common/errors.js';
 import { paginationHelper } from '../../common/utils.js';
 import type { CreateResourceInput, UpdateResourceInput, ResourceQueryInput } from './validation.js';
 
 const POPULATE_LIST = [
   { path: 'curriculumNodeId', select: 'title code type' },
+  { path: 'lessonPlanId', select: 'topic date durationMinutes' },
   { path: 'subjectId', select: 'name' },
   { path: 'gradeId', select: 'name level' },
   { path: 'createdBy', select: 'firstName lastName email' },
@@ -26,6 +29,10 @@ export class ResourcesService {
   ) {
     const soid = new mongoose.Types.ObjectId(schoolId);
     const uoid = new mongoose.Types.ObjectId(userId);
+    const { subjectIds, gradeIds } = await resolveAcademicFilterIds({
+      subjectId: filters.subjectId,
+      gradeId: filters.gradeId,
+    });
     const query: Record<string, unknown> = { isDeleted: false };
 
     // ── Visibility rules ──
@@ -54,15 +61,14 @@ export class ResourcesService {
     if (filters.curriculumNodeId) {
       query.curriculumNodeId = new mongoose.Types.ObjectId(filters.curriculumNodeId);
     }
+    if (filters.lessonPlanId) {
+      query.lessonPlanId = new mongoose.Types.ObjectId(filters.lessonPlanId);
+    }
     if (filters.type) query.type = filters.type;
     if (filters.format) query.format = filters.format;
     if (filters.status) query.status = filters.status;
-    if (filters.subjectId) {
-      query.subjectId = new mongoose.Types.ObjectId(filters.subjectId);
-    }
-    if (filters.gradeId) {
-      query.gradeId = new mongoose.Types.ObjectId(filters.gradeId);
-    }
+    if (subjectIds) query.subjectId = { $in: subjectIds };
+    if (gradeIds) query.gradeId = { $in: gradeIds };
     if (filters.term) query.term = filters.term;
     if (filters.source) query.source = filters.source;
     if (filters.search) {
@@ -111,8 +117,18 @@ export class ResourcesService {
     userId: string,
     data: CreateResourceInput,
   ) {
+    if (data.lessonPlanId) {
+      const linkedLesson = await LessonPlan.findOne({
+        _id: data.lessonPlanId,
+        schoolId,
+        isDeleted: false,
+      }).select('_id').lean();
+      if (!linkedLesson) throw new ForbiddenError('Lesson plan does not belong to this school');
+    }
+
     const resource = await ContentResource.create({
       curriculumNodeId: new mongoose.Types.ObjectId(data.curriculumNodeId),
+      lessonPlanId: data.lessonPlanId ? new mongoose.Types.ObjectId(data.lessonPlanId) : null,
       schoolId: new mongoose.Types.ObjectId(schoolId),
       type: data.type,
       format: data.format,
@@ -134,6 +150,16 @@ export class ResourcesService {
       difficulty: data.difficulty,
       estimatedMinutes: data.estimatedMinutes,
       prerequisites: data.prerequisites.map((p) => new mongoose.Types.ObjectId(p)),
+      sourceImport: data.sourceImport
+        ? {
+            jobId: new mongoose.Types.ObjectId(data.sourceImport.jobId),
+            storagePath: data.sourceImport.storagePath,
+            filename: data.sourceImport.filename,
+            mimeType: data.sourceImport.mimeType,
+            pageRange: data.sourceImport.pageRange,
+          }
+        : undefined,
+      needsReview: data.needsReview ?? false,
     });
 
     return resource.toObject();
