@@ -85,6 +85,7 @@ import courseRoutes from './modules/Course/routes.js';
 import courseStudentRoutes from './modules/Course/routes-student.js';
 import coursePublicRoutes from './modules/Course/routes-public.js';
 import assessmentStructureRoutes from './modules/AssessmentStructure/routes.js';
+import paperImportRouter from './modules/PaperImport/routes.js';
 
 const app = express();
 
@@ -205,6 +206,7 @@ app.use('/api/question-bank', authenticate, questionBankRoutes);
 app.use('/api/textbooks', authenticate, textbookRoutes);
 app.use('/api/courses', authenticate, requireModule('courses'), courseRoutes);
 app.use('/api/assessment-structures', authenticate, requireModule('academic'), assessmentStructureRoutes);
+app.use('/api/paper-imports', paperImportRouter);
 app.use('/api/enrolments', authenticate, requireModule('courses'), courseStudentRoutes);
 // PUBLIC — no authenticate, no requireModule. Certificate verification
 // must work for anyone holding a verification code, including unregistered
