@@ -28,6 +28,7 @@ export class AcademicService {
   static getClassById = GradeService.getClassById;
   static updateClass = GradeService.updateClass;
   static deleteClass = GradeService.deleteClass;
+  static syncTeachingGroupSubject = GradeService.syncTeachingGroupSubject;
   static getClassByCode = GradeService.getClassByCode;
   static regenerateClassroomCode = GradeService.regenerateClassroomCode;
   static getTeacherTeachingLoad = GradeService.getTeacherTeachingLoad;

@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import type { Types } from 'mongoose';
-import { Grade, IGrade, Class, IClass, Timetable } from '../model.js';
+import { Grade, IGrade, Class, IClass, Subject, Timetable } from '../model.js';
 import { Student } from '../../Student/model.js';
 import { CurriculumNode } from '../../CurriculumStructure/model.js';
 import { NotFoundError, ConflictError, BadRequestError } from '../../../common/errors.js';
@@ -46,6 +46,54 @@ async function resolveClassGradeFields(classes: Array<Record<string, unknown>>):
     if (!id) continue;
     const resolved = map.get(String(id));
     if (resolved) cls.gradeId = resolved;
+  }
+}
+
+/**
+ * Resolves timetableRow.subjectId in place. Standalone teachers' teaching groups
+ * point at a CurriculumNode (type='subject'); school-affiliated rows point at a
+ * Subject. Look up both, overwrite with a populated { _id, name, code } object.
+ */
+async function resolveTimetableSubjectFields(rows: Array<Record<string, unknown>>): Promise<void> {
+  // Skip rows that are already populated (subjectId is an object with name).
+  const ids: Array<Types.ObjectId | string> = [];
+  for (const row of rows) {
+    const s = row.subjectId;
+    if (!s) continue;
+    if (typeof s === 'object' && (s as Record<string, unknown>).name) continue;
+    ids.push(s as Types.ObjectId | string);
+  }
+  if (ids.length === 0) return;
+
+  const [subjects, nodes] = await Promise.all([
+    Subject.find({ _id: { $in: ids }, isDeleted: false }).select('_id name code').lean(),
+    CurriculumNode.find({ _id: { $in: ids }, type: 'subject', isDeleted: false })
+      .select('_id title code').lean(),
+  ]);
+
+  const map = new Map<string, { _id: Types.ObjectId; name: string; code: string }>();
+  for (const s of subjects) {
+    map.set(String(s._id), {
+      _id: s._id as Types.ObjectId,
+      name: s.name,
+      code: s.code ?? '',
+    });
+  }
+  for (const n of nodes) {
+    const key = String(n._id);
+    if (map.has(key)) continue;
+    map.set(key, {
+      _id: n._id as Types.ObjectId,
+      name: n.title,
+      code: n.code ?? '',
+    });
+  }
+
+  for (const row of rows) {
+    const id = row.subjectId;
+    if (!id || (typeof id === 'object' && (id as Record<string, unknown>).name)) continue;
+    const resolved = map.get(String(id));
+    if (resolved) row.subjectId = resolved;
   }
 }
 
@@ -277,19 +325,73 @@ export class GradeService {
     return cls;
   }
 
+  /**
+   * Standalone teaching groups have a single subject linked through Timetable.
+   * Replaces any existing teacher-owned timetable row for this class with one
+   * pointing at the new subject. School-managed multi-subject classes are not
+   * intended to call this — they have richer timetable management elsewhere.
+   */
+  static async syncTeachingGroupSubject(input: {
+    schoolId: string;
+    teacherId: string;
+    classId: string;
+    subjectId: string;
+  }): Promise<void> {
+    const { schoolId, teacherId, classId, subjectId } = input;
+
+    const existing = await Timetable.findOne({
+      schoolId, teacherId, classId, isDeleted: false,
+    });
+
+    if (existing) {
+      if (String(existing.subjectId) === subjectId) return;
+      existing.subjectId = subjectId as unknown as Types.ObjectId;
+      await existing.save();
+      return;
+    }
+
+    const periodCount = await Timetable.countDocuments({
+      schoolId, teacherId, day: 'monday', isDeleted: false,
+    });
+    await Timetable.create({
+      schoolId,
+      teacherId,
+      classId,
+      subjectId,
+      day: 'monday',
+      period: periodCount + 1,
+      startTime: '08:00',
+      endTime: '08:30',
+    });
+  }
+
   // ─── Teacher Scoping Helpers ────────────────────────────────────────────
 
   static async getTeacherTeachingLoad(teacherId: string, schoolId: string) {
     // 1. Find homeroom class
-    const homeroom = await Class.findOne({ schoolId, teacherId, isDeleted: false })
-      .populate('gradeId', 'name level')
-      .lean();
+    const homeroom = await Class.findOne({ schoolId, teacherId, isDeleted: false }).lean();
+    if (homeroom) {
+      await resolveClassGradeFields([homeroom as unknown as Record<string, unknown>]);
+    }
 
     // 2. Find timetable rows for this teacher
     const timetableRows = await Timetable.find({ schoolId, teacherId, isDeleted: false })
       .populate({ path: 'classId', match: { isDeleted: false } })
       .populate('subjectId', 'name code')
       .lean();
+
+    // Resolve gradeId on each populated classDoc (same Grade↔CurriculumNode duality)
+    const classDocs: Array<Record<string, unknown>> = [];
+    for (const row of timetableRows) {
+      if (row.classId && typeof row.classId === 'object' && !('_bsontype' in row.classId)) {
+        classDocs.push(row.classId as unknown as Record<string, unknown>);
+      }
+    }
+    if (classDocs.length > 0) await resolveClassGradeFields(classDocs);
+
+    // Resolve subjectId — Timetable.subjectId may also point to a CurriculumNode
+    // for standalone teachers' teaching groups.
+    await resolveTimetableSubjectFields(timetableRows as unknown as Array<Record<string, unknown>>);
 
     // 3. De-duplicate by classId::subjectId
     const seen = new Set<string>();

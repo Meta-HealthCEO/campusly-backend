@@ -37,7 +37,7 @@ export class ClassController {
           classId: populated._id as import('mongoose').Types.ObjectId,
           subjectId: data.subjectId as unknown as import('mongoose').Types.ObjectId,
           day: 'monday',
-          period: existingCount,
+          period: existingCount + 1,
           startTime: '08:00',
           endTime: '08:30',
         });
@@ -93,7 +93,27 @@ export class ClassController {
       const canAccess = await AcademicService.teacherCanAccessClass(user.id, req.params.id as string, schoolId);
       if (!canAccess) throw new ForbiddenError('You can only modify your own classes');
     }
-    const cls = await AcademicService.updateClass(req.params.id as string, schoolId, req.body);
+
+    // Class schema has no subjectId field — strip from payload before update so
+    // Mongoose strict mode doesn't have to silently drop it. We persist the
+    // subject linkage via Timetable below.
+    const { subjectId, ...rest } = req.body as Record<string, unknown>;
+    const cls = await AcademicService.updateClass(req.params.id as string, schoolId, rest);
+
+    if (subjectId && user.role === 'teacher') {
+      try {
+        await AcademicService.syncTeachingGroupSubject({
+          schoolId,
+          teacherId: user.id,
+          classId: req.params.id as string,
+          subjectId: subjectId as string,
+        });
+      } catch (err: unknown) {
+        // Non-fatal — class still updated; surface in logs
+        console.error('Failed to sync teaching-group subject', err);
+      }
+    }
+
     res.json(apiResponse(true, cls, 'Class updated successfully'));
   }
 
