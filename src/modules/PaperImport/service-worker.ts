@@ -3,8 +3,14 @@ import { logger } from '../../common/logger.js';
 import { PaperImportJob, type IPaperImportJob } from './model.js';
 import { renderPdfPages, pagePath, fileToBase64 } from './service-storage.js';
 import { AIService } from '../../services/ai.service.js';
-import { SegmentResponseSchema, type SegmentResponse } from './validation.js';
-import { SEGMENT_SYSTEM, STRICTIFY_SUFFIX } from './service-conversion-prompts.js';
+import {
+  SegmentResponseSchema,
+  type SegmentResponse,
+  TranscribeResponseSchema,
+  type TranscribeResponse,
+} from './validation.js';
+import { SEGMENT_SYSTEM, STRICTIFY_SUFFIX, transcribeSystem } from './service-conversion-prompts.js';
+import type { ResourceType } from '../ContentLibrary/model.js';
 
 async function setProgress(
   job: IPaperImportJob,
@@ -79,6 +85,70 @@ async function stage2Segment(job: IPaperImportJob): Promise<SegmentResponse['res
   return parsed.data.resources;
 }
 
+interface TranscribedResource {
+  segmentKind: ResourceType;
+  pageRange: [number, number];
+  result: TranscribeResponse;
+}
+
+async function stage3Transcribe(
+  job: IPaperImportJob,
+  segments: SegmentResponse['resources'],
+): Promise<TranscribedResource[]> {
+  await setProgress(job, { stage: 'transcribing', message: 'Transcribing pages…' });
+  const out: TranscribedResource[] = [];
+
+  for (let i = 0; i < segments.length; i += 1) {
+    if (await isCancelled(String(job._id))) return out;
+    const seg = segments[i];
+    const [startPage, endPage] = seg.pageRange;
+
+    await setProgress(job, {
+      pagesDone: startPage - 1,
+      message: `Transcribing pages ${startPage}-${endPage} (${i + 1}/${segments.length})`,
+    });
+
+    const images: Array<{ base64: string; mediaType: 'image/png' }> = [];
+    for (let p = startPage; p <= endPage; p += 1) {
+      images.push({
+        base64: fileToBase64(pagePath(String(job._id), p)),
+        mediaType: 'image/png' as const,
+      });
+    }
+    const sys = transcribeSystem(seg.kind);
+    const userText = `Transcribe these ${endPage - startPage + 1} page(s) into a "${seg.kind}" resource titled "${seg.title}".`;
+
+    async function callOnce(strict: boolean): Promise<unknown> {
+      const fullSys = strict ? sys + STRICTIFY_SUFFIX : sys;
+      const { text } = await AIService.generateVisionCompletionWithImages(fullSys, userText, images);
+      return JSON.parse(text);
+    }
+
+    let raw: unknown;
+    try {
+      raw = await callOnce(false);
+    } catch (err: unknown) {
+      logger.warn(`[PaperImport] transcribe attempt 1 failed (${seg.title}): ${(err as Error).message}`);
+      try {
+        raw = await callOnce(true);
+      } catch (err2: unknown) {
+        logger.error(`[PaperImport] transcribe attempt 2 failed (${seg.title}): ${(err2 as Error).message}`);
+        continue;
+      }
+    }
+
+    const parsed = TranscribeResponseSchema.safeParse(raw);
+    if (!parsed.success) {
+      logger.warn(`[PaperImport] transcribe parse failed (${seg.title})`);
+      continue;
+    }
+    out.push({ segmentKind: seg.kind, pageRange: seg.pageRange, result: parsed.data });
+  }
+
+  await setProgress(job, { pagesDone: job.source.pageCount });
+  return out;
+}
+
 export async function runConversion(job: IPaperImportJob): Promise<void> {
   job.status = 'running';
   await job.save();
@@ -89,4 +159,14 @@ export async function runConversion(job: IPaperImportJob): Promise<void> {
   if (await isCancelled(String(job._id))) return;
   const segments = await stage2Segment(job);
   logger.info(`[PaperImport] stage2 segments=${segments.length} jobId=${String(job._id)}`);
+
+  if (await isCancelled(String(job._id))) return;
+  const transcribed = await stage3Transcribe(job, segments);
+  logger.info(`[PaperImport] stage3 resources=${transcribed.length} jobId=${String(job._id)}`);
+  if (transcribed.length === 0) {
+    job.status = 'failed';
+    job.error = { code: 'transcribe_empty', message: 'Could not extract any content from the file.' };
+    await job.save();
+    return;
+  }
 }
