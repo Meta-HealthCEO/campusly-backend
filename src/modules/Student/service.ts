@@ -25,9 +25,36 @@ interface ListQuery {
   search?: string;
 }
 
+/**
+ * Generates a sequential admission number scoped per school. Format: S00001.
+ * Walks past collisions (e.g. when school already has S00042 imported manually,
+ * the next auto-assignment skips to S00043).
+ */
+async function nextAdmissionNumber(schoolId: string | { toString(): string }): Promise<string> {
+  const sid = String(schoolId);
+  const count = await Student.countDocuments({ schoolId: sid, isDeleted: false });
+  let next = count + 1;
+  // Defensive collision walk — handles deleted-rows-not-counted case + manual entries
+  for (let i = 0; i < 1000; i += 1) {
+    const candidate = `S${String(next).padStart(5, '0')}`;
+    const exists = await Student.exists({ schoolId: sid, admissionNumber: candidate });
+    if (!exists) return candidate;
+    next += 1;
+  }
+  // Fallback to a UUID-derived suffix if we somehow can't find a free slot
+  return `S-${crypto.randomUUID().slice(0, 8)}`;
+}
+
 export class StudentService {
   static async create(data: CreateStudentData): Promise<IStudent> {
     const { firstName, lastName, email, ...studentData } = data;
+
+    // Auto-generate an admission number if the caller didn't supply one.
+    // Standalone tutoring teachers don't run admission numbering systems and
+    // shouldn't have to invent one to add a learner.
+    if (!studentData.admissionNumber?.trim() && studentData.schoolId) {
+      studentData.admissionNumber = await nextAdmissionNumber(studentData.schoolId);
+    }
 
     if (!studentData.userId && firstName && lastName && studentData.schoolId) {
       const admission = studentData.admissionNumber ?? crypto.randomUUID();

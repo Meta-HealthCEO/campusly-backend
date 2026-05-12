@@ -32,7 +32,7 @@ export const createStudentSchema = z.object({
   schoolId: objectIdSchema.optional(),
   gradeId: objectIdSchema,
   classId: objectIdSchema,
-  admissionNumber: z.string().min(1, 'Admission number is required'),
+  admissionNumber: z.string().trim().optional(),
   guardianIds: z.array(objectIdSchema).optional(),
   enrollmentDate: z.iso.datetime().optional(),
   enrollmentStatus: z
