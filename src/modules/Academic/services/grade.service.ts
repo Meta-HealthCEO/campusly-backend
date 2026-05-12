@@ -394,9 +394,11 @@ export class GradeService {
         .lean();
       await resolveClassGradeFields(classes as unknown as Array<Record<string, unknown>>);
 
-      const timetableRows = await Timetable.find({ schoolId, teacherId, isDeleted: false })
-        .populate('subjectId', 'name code')
-        .lean();
+      // Don't .populate('subjectId') here — the schema's ref is 'Subject' but
+      // standalone teachers' rows point at CurriculumNode IDs. Mongoose populate
+      // would resolve those to null. resolveTimetableSubjectFields below queries
+      // both Subject and CurriculumNode collections.
+      const timetableRows = await Timetable.find({ schoolId, teacherId, isDeleted: false }).lean();
       await resolveTimetableSubjectFields(timetableRows as unknown as Array<Record<string, unknown>>);
 
       const subjectByClass = new Map<string, unknown>();
