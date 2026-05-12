@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import mongoose from 'mongoose';
 import { Lesson } from '../model.js';
 import { Student } from '../../Student/model.js';
-import { listLessonsForStudent } from '../service-student.js';
+import { listLessonsForStudent, getLessonForStudent } from '../service-student.js';
 
 beforeAll(async () => {
   if (mongoose.connection.readyState === 0) {
@@ -102,5 +102,59 @@ describe('listLessonsForStudent', () => {
     const result = await listLessonsForStudent(student, { subjectId: subjectId.toString() });
     expect(result).toHaveLength(1);
     expect(result[0].title).toBe('Match');
+  });
+});
+
+describe('getLessonForStudent', () => {
+  it('returns lesson detail with materials populated', async () => {
+    const { schoolId, classId, subjectId, teacherId, studentId } = await seed();
+    const lesson = await Lesson.create({
+      schoolId, teacherId, subjectId,
+      curriculumNodeId: new mongoose.Types.ObjectId(),
+      title: 'Detailed lesson',
+      objectives: ['Learn X', 'Learn Y'],
+      durationMinutes: 45,
+      status: 'ready',
+      materials: [{ kind: 'reading', title: 'Read this' }],
+      assignedClasses: [{ classId, scheduledDate: new Date(), status: 'planned' }],
+    });
+
+    const student = await Student.findById(studentId);
+    if (!student) throw new Error('seed failed');
+    const result = await getLessonForStudent(student, lesson._id.toString());
+    expect(result).not.toBeNull();
+    expect(result?.objectives).toEqual(['Learn X', 'Learn Y']);
+    expect(result?.materials).toHaveLength(1);
+    expect(result?.materials[0]?.kind).toBe('reading');
+    expect(result?.materials[0]?.title).toBe('Read this');
+  });
+
+  it('returns null when lesson is from another school (multi-tenancy)', async () => {
+    const { classId, teacherId, studentId } = await seed();
+    const otherSchoolId = new mongoose.Types.ObjectId();
+    const lesson = await Lesson.create({
+      schoolId: otherSchoolId, teacherId,
+      curriculumNodeId: new mongoose.Types.ObjectId(),
+      title: 'Other school', durationMinutes: 30, status: 'ready',
+      assignedClasses: [{ classId, scheduledDate: new Date(), status: 'planned' }],
+    });
+    const student = await Student.findById(studentId);
+    if (!student) throw new Error('seed failed');
+    const result = await getLessonForStudent(student, lesson._id.toString());
+    expect(result).toBeNull();
+  });
+
+  it('returns null when lesson is not assigned to the student class', async () => {
+    const { schoolId, teacherId, studentId } = await seed();
+    const lesson = await Lesson.create({
+      schoolId, teacherId,
+      curriculumNodeId: new mongoose.Types.ObjectId(),
+      title: 'Wrong class', durationMinutes: 30, status: 'ready',
+      assignedClasses: [{ classId: new mongoose.Types.ObjectId(), scheduledDate: new Date(), status: 'planned' }],
+    });
+    const student = await Student.findById(studentId);
+    if (!student) throw new Error('seed failed');
+    const result = await getLessonForStudent(student, lesson._id.toString());
+    expect(result).toBeNull();
   });
 });

@@ -1,11 +1,15 @@
 import mongoose from 'mongoose';
 import type { HydratedDocument } from 'mongoose';
 import { Lesson } from './model.js';
-// Side-effect import: ensures the Subject model is registered with Mongoose
-// so .populate('subjectId') works without a MissingSchemaError.
-import '../Academic/model.js';
+// Side-effect imports: ensure referenced models are registered with Mongoose
+// so .populate() works without a MissingSchemaError.
+import '../Academic/model.js'; // Subject
+import '../ContentLibrary/model.js'; // ContentResource
+import '../Learning/model.js'; // Quiz
+import '../Homework/model.js'; // Homework
+import '../QuestionBank/model-papers.js'; // AssessmentPaper
 import type { IStudent } from '../Student/model.js';
-import type { StudentLessonSummary } from './types-student.js';
+import type { StudentLessonSummary, StudentLessonDetail, StudentLessonMaterial } from './types-student.js';
 import type { StudentLessonListQuery } from './validation-student.js';
 
 interface PopulatedSubject {
@@ -89,4 +93,108 @@ export async function listLessonsForStudent(
     }
     return a.status === 'taught' ? -1 : 1;
   });
+}
+
+function materialToDto(
+  mat: Record<string, unknown>,
+  phase: string,
+): StudentLessonMaterial {
+  const base: StudentLessonMaterial = {
+    id: (mat._id as mongoose.Types.ObjectId).toString(),
+    kind: mat.kind as StudentLessonMaterial['kind'],
+    title: mat.title as string,
+    teacherNotes: mat.teacherNotes as string | undefined,
+    phase,
+  };
+
+  const resource = mat.contentResourceId as Record<string, unknown> | mongoose.Types.ObjectId | undefined;
+  if (resource && typeof resource === 'object' && !(resource instanceof mongoose.Types.ObjectId)) {
+    base.contentResource = {
+      id: (resource._id as mongoose.Types.ObjectId).toString(),
+      type: (resource.type as string) ?? 'unknown',
+      title: (resource.title as string) ?? base.title,
+      url: resource.url as string | undefined,
+    };
+  }
+
+  const quiz = mat.quizId as Record<string, unknown> | mongoose.Types.ObjectId | undefined;
+  if (quiz && typeof quiz === 'object' && !(quiz instanceof mongoose.Types.ObjectId)) {
+    const questions = (quiz.questions as unknown[]) ?? [];
+    base.quiz = {
+      id: (quiz._id as mongoose.Types.ObjectId).toString(),
+      title: (quiz.title as string) ?? base.title,
+      questionCount: questions.length,
+    };
+  }
+
+  const homework = mat.homeworkId as Record<string, unknown> | mongoose.Types.ObjectId | undefined;
+  if (homework && typeof homework === 'object' && !(homework instanceof mongoose.Types.ObjectId)) {
+    base.homework = {
+      id: (homework._id as mongoose.Types.ObjectId).toString(),
+      title: (homework.title as string) ?? base.title,
+      dueAt: (homework.dueDate as Date | undefined)?.toISOString(),
+      status: homework.status as string | undefined,
+    };
+  }
+
+  const paper = mat.paperId as Record<string, unknown> | mongoose.Types.ObjectId | undefined;
+  if (paper && typeof paper === 'object' && !(paper instanceof mongoose.Types.ObjectId)) {
+    base.paper = {
+      paperId: (paper._id as mongoose.Types.ObjectId).toString(),
+      title: (paper.title as string) ?? base.title,
+      releaseAt: (paper.releaseAt as Date | undefined)?.toISOString(),
+      dueAt: (paper.dueAt as Date | undefined)?.toISOString(),
+    };
+  }
+
+  const textbook = mat.textbookRef as Record<string, unknown> | undefined;
+  if (textbook) {
+    base.textbookRef = {
+      source: textbook.source as 'internal' | 'external',
+      title: textbook.title as string | undefined,
+      pageStart: textbook.pageStart as number | undefined,
+      pageEnd: textbook.pageEnd as number | undefined,
+      internalId: (textbook.textbookId as mongoose.Types.ObjectId | undefined)?.toString(),
+    };
+  }
+
+  return base;
+}
+
+export async function getLessonForStudent(
+  student: HydratedDocument<IStudent>,
+  lessonId: string,
+): Promise<StudentLessonDetail | null> {
+  const doc = await Lesson.findOne({
+    _id: lessonId,
+    schoolId: student.schoolId,
+    isDeleted: false,
+    status: { $in: ['ready', 'taught'] },
+    'assignedClasses.classId': student.classId,
+  })
+    .populate('subjectId', 'name title')
+    .populate('materials.contentResourceId')
+    .populate('materials.quizId', 'title questions')
+    .populate('materials.homeworkId', 'title dueDate status')
+    .populate('materials.paperId', 'title releaseAt dueAt')
+    .lean()
+    .exec();
+
+  if (!doc) return null;
+
+  const docRecord = doc as unknown as Record<string, unknown>;
+  const summary = lessonToSummary(docRecord, student.classId);
+  const materials = (docRecord.materials as Array<Record<string, unknown>>) ?? [];
+  const phaseLookup = new Map<string, string>();
+  const phases = (docRecord.phases as Array<{ phase: string; materialIds: mongoose.Types.ObjectId[] }>) ?? [];
+  for (const p of phases) {
+    for (const mid of p.materialIds) phaseLookup.set(mid.toString(), p.phase);
+  }
+
+  return {
+    ...summary,
+    objectives: (docRecord.objectives as string[]) ?? [],
+    durationMinutes: docRecord.durationMinutes as number,
+    materials: materials.map((m) => materialToDto(m, phaseLookup.get((m._id as mongoose.Types.ObjectId).toString()) ?? '')),
+  };
 }
