@@ -14,6 +14,12 @@ interface PopulatedSubject {
   title?: string;
 }
 
+function isPopulatedSubject(
+  subject: PopulatedSubject | mongoose.Types.ObjectId | null,
+): subject is PopulatedSubject {
+  return subject !== null && typeof subject === 'object' && !(subject instanceof mongoose.Types.ObjectId);
+}
+
 function lessonToSummary(
   doc: Record<string, unknown>,
   studentClassId: mongoose.Types.ObjectId,
@@ -27,14 +33,12 @@ function lessonToSummary(
   ).find((a) => a.classId.toString() === studentClassId.toString());
   const materials = (doc.materials as Array<{ kind: string }>) ?? [];
   const subject = doc.subjectId as PopulatedSubject | mongoose.Types.ObjectId | null;
-  const subjectName =
-    subject && typeof subject === 'object' && '_id' in subject
-      ? subject.name ?? subject.title ?? ''
+  const subjectName = isPopulatedSubject(subject) ? subject.name ?? subject.title ?? '' : '';
+  const subjectId = isPopulatedSubject(subject)
+    ? subject._id.toString()
+    : subject !== null
+      ? subject.toString()
       : '';
-  const subjectId =
-    subject && typeof subject === 'object' && '_id' in subject
-      ? subject._id.toString()
-      : subject?.toString() ?? '';
   return {
     id: (doc._id as mongoose.Types.ObjectId).toString(),
     title: doc.title as string,
@@ -70,7 +74,7 @@ export async function listLessonsForStudent(
     .lean()
     .exec();
 
-  const summaries = docs.map((d) => lessonToSummary(d as Record<string, unknown>, student.classId));
+  const summaries = docs.map((d) => lessonToSummary(d as unknown as Record<string, unknown>, student.classId));
 
   if (query.status && query.status !== 'all') {
     return summaries.filter((s) => s.status === query.status);
