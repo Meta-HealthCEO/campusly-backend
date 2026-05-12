@@ -26,6 +26,7 @@ import homeworkRoutes from './modules/Homework/routes.js';
 import attendanceRoutes from './modules/Attendance/routes.js';
 import lessonRoutes from './modules/Lesson/routes.js';
 import studentLessonRoutes from './modules/Lesson/routes-student.js';
+import studentDashboardRoutes from './modules/Student/routes-dashboard.js';
 import tuckShopRoutes from './modules/TuckShop/routes.js';
 import notificationRoutes from './modules/Notification/routes.js';
 import announcementRoutes from './modules/Announcement/routes.js';
@@ -212,6 +213,7 @@ app.use('/api/paper-imports', paperImportRouter);
 app.use('/api/teacher-settings', teacherSettingsRouter);
 app.use('/api/enrolments', authenticate, requireModule('courses'), courseStudentRoutes);
 app.use('/api/student/lessons', authenticate, studentLessonRoutes);
+app.use('/api/student/dashboard', authenticate, studentDashboardRoutes);
 // PUBLIC — no authenticate, no requireModule. Certificate verification
 // must work for anyone holding a verification code, including unregistered
 // users outside the school. A school that later disables the 'courses'
