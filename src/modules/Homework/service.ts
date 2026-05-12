@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { Homework, IHomework, HomeworkSubmission, IHomeworkSubmission, IHomeworkSubmissionBase } from './model.js';
+import { Lesson } from '../Lesson/model.js';
 import { NotFoundError, BadRequestError } from '../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../common/constants.js';
 import { escapeRegex } from '../../common/utils.js';
@@ -9,6 +10,10 @@ import { Question } from '../QuestionBank/model.js';
 import { logger } from '../../common/logger.js';
 import { submitHomework as _submitHomework } from './service-homework-submit.js';
 import type { CreateHomeworkInput, SubmitHomeworkInput } from './validation.js';
+
+export type IHomeworkWithSourceLesson = IHomework & {
+  sourceLesson: { id: string; title: string } | null;
+};
 
 // IHomeworkSubmission is re-exported for consumers of this module
 export type { IHomeworkSubmission };
@@ -111,7 +116,7 @@ export class HomeworkService {
     return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
-  static async getById(id: string, schoolId: string): Promise<IHomework> {
+  static async getById(id: string, schoolId: string): Promise<IHomeworkWithSourceLesson> {
     const homework = await Homework.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('subjectId', 'name code')
       .populate('classId', 'name')
@@ -122,7 +127,21 @@ export class HomeworkService {
       .populate('comprehensionQuestionIds', 'stem type marks options answer markingRubric')
       .lean();
     if (!homework) throw new NotFoundError('Homework not found');
-    return homework;
+
+    // Reverse-lookup parent lesson via Lesson.materials[].homeworkId (no FK on Homework).
+    const sourceLessonDoc = await Lesson.findOne({
+      schoolId,
+      isDeleted: false,
+      'materials.homeworkId': homework._id,
+    })
+      .select('_id title')
+      .lean() as { _id: mongoose.Types.ObjectId; title: string } | null;
+
+    const sourceLesson = sourceLessonDoc
+      ? { id: sourceLessonDoc._id.toString(), title: sourceLessonDoc.title }
+      : null;
+
+    return { ...homework, sourceLesson } as unknown as IHomeworkWithSourceLesson;
   }
 
   static async update(id: string, schoolId: string, data: Partial<IHomework>): Promise<IHomework> {
