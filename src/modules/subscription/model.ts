@@ -109,3 +109,65 @@ const SubscriptionSchema = new Schema<ISubscription>(
 );
 
 export const Subscription = model<ISubscription>('Subscription', SubscriptionSchema);
+
+export type InvoiceStatus = 'pending' | 'paid' | 'failed' | 'refunded' | 'partially_refunded';
+export type InvoicePurpose = 'verification' | 'subscription';
+
+export interface IInvoice extends Document {
+  subscriptionId: mongoose.Types.ObjectId;
+  schoolId: mongoose.Types.ObjectId;
+  planCode: string;
+  subtotal: number;
+  tax: number;
+  taxRate: number;
+  total: number;
+  currency: string;
+  status: InvoiceStatus;
+  merchantReference: string;
+  gatewayTransactionId: number | null;
+  gatewayReference: string | null;
+  gatewayResponse: unknown;
+  periodStart: Date;
+  periodEnd: Date;
+  attemptedAt: Date | null;
+  paidAt: Date | null;
+  failedAt: Date | null;
+  failureReason: string | null;
+  refundedAmount: number;
+  purpose: InvoicePurpose;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const InvoiceSchema = new Schema<IInvoice>(
+  {
+    subscriptionId: { type: Schema.Types.ObjectId, ref: 'Subscription', required: true, index: true },
+    schoolId: { type: Schema.Types.ObjectId, ref: 'School', required: true, index: true },
+    planCode: { type: String, required: true },
+    subtotal: { type: Number, required: true },
+    tax: { type: Number, required: true, default: 0 },
+    taxRate: { type: Number, required: true, default: 0 },
+    total: { type: Number, required: true },
+    currency: { type: String, required: true, default: 'ZAR' },
+    status: {
+      type: String,
+      enum: ['pending', 'paid', 'failed', 'refunded', 'partially_refunded'],
+      required: true,
+    },
+    merchantReference: { type: String, required: true, unique: true, index: true },
+    gatewayTransactionId: { type: Number, default: null, index: true },
+    gatewayReference: { type: String, default: null },
+    gatewayResponse: { type: Schema.Types.Mixed, default: null },
+    periodStart: { type: Date, required: true },
+    periodEnd: { type: Date, required: true },
+    attemptedAt: { type: Date, default: null },
+    paidAt: { type: Date, default: null },
+    failedAt: { type: Date, default: null },
+    failureReason: { type: String, default: null },
+    refundedAmount: { type: Number, default: 0 },
+    purpose: { type: String, enum: ['verification', 'subscription'], required: true },
+  },
+  { timestamps: true },
+);
+
+export const Invoice = model<IInvoice>('Invoice', InvoiceSchema);
