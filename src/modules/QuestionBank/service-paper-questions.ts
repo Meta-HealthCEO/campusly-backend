@@ -1,9 +1,11 @@
 import mongoose from 'mongoose';
-import { AssessmentPaper } from './model.js';
-import type { IAssessmentPaper, IPaperQuestion } from './model.js';
+import { AssessmentPaper, Question } from './model.js';
+import type { IAssessmentPaper, IPaperQuestion, IQuestion } from './model.js';
 import { PaperMemo } from '../TeacherWorkbench/model.assessment.js';
+import { resolveAcademicFilterIds } from '../Academic/services/global-academic-lookup.js';
 import type { IMemoAnswer } from '../TeacherWorkbench/model.assessment.js';
 import { logger } from '../../common/logger.js';
+import { BadRequestError } from '../../common/errors.js';
 import { assertCanEditPaper } from './service-papers-auth.js';
 import { regenerateSingleQuestion } from './service-paper-generation.js';
 import {
@@ -22,6 +24,37 @@ import type {
   UpdatePaperQuestionInput,
   UpdateMemoInput,
 } from './validation.js';
+
+async function loadBankQuestionForPaper(
+  paper: IAssessmentPaper,
+  questionId: string | undefined,
+): Promise<IQuestion | null> {
+  if (!questionId) return null;
+  const { subjectIds, gradeIds } = await resolveAcademicFilterIds({
+    subjectId: String(paper.subjectId),
+    gradeId: String(paper.gradeId),
+  });
+
+  const question = await Question.findOne({
+    _id: new mongoose.Types.ObjectId(questionId),
+    subjectId: { $in: subjectIds ?? [paper.subjectId] },
+    gradeId: { $in: gradeIds ?? [paper.gradeId] },
+    isDeleted: false,
+    status: 'approved',
+    $or: [{ schoolId: null }, { schoolId: paper.schoolId }],
+  }).lean() as IQuestion | null;
+
+  if (!question) {
+    throw new BadRequestError('Question is not available for this paper');
+  }
+
+  const paperTopicIds = new Set((paper.topicIds ?? []).map((id) => String(id)));
+  if (paperTopicIds.size > 0 && !paperTopicIds.has(String(question.curriculumNodeId))) {
+    throw new BadRequestError('Question topic does not match this paper');
+  }
+
+  return question;
+}
 
 // ─── addQuestionToPaper ──────────────────────────────────────────────────────
 
@@ -43,17 +76,19 @@ export async function addQuestionToPaper(
   const paper = await loadPaperOrThrow(paperId, schoolId);
   assertCanEditPaper(paper, actorId, actorRole, 'add-question');
   const section = assertSectionInBounds(paper, sectionIdx);
+  const bankQuestion = await loadBankQuestionForPaper(paper, input.questionId);
 
   const position = section.questions.length;
   const newQuestion: IPaperQuestion = {
     questionId: input.questionId
       ? new mongoose.Types.ObjectId(input.questionId)
       : null,
-    questionText: input.questionText ?? null,
+    questionText: input.questionText ?? bankQuestion?.stem ?? null,
+    options: input.options ?? bankQuestion?.options ?? [],
     marks: input.marks,
     position,
-    modelAnswer: input.modelAnswer ?? null,
-    markingGuideline: input.markingGuideline ?? null,
+    modelAnswer: input.modelAnswer ?? bankQuestion?.answer ?? null,
+    markingGuideline: input.markingGuideline ?? bankQuestion?.markingRubric ?? null,
     diagram: input.diagram
       ? {
           tikz: input.diagram.tikz,
@@ -119,6 +154,7 @@ export async function updatePaperQuestion(
   const question = assertQuestionInBounds(section, position);
 
   if (patch.questionText !== undefined) question.questionText = patch.questionText;
+  if (patch.options !== undefined) question.options = patch.options;
   if (patch.marks !== undefined) question.marks = patch.marks;
   if (patch.modelAnswer !== undefined) question.modelAnswer = patch.modelAnswer;
   if (patch.markingGuideline !== undefined) {
@@ -247,6 +283,7 @@ export async function regeneratePaperQuestion(
   const updated: IPaperQuestion = {
     questionId: null,
     questionText: replacement.questionText,
+    options: replacement.options ?? [],
     marks: replacement.marks,
     position,
     modelAnswer: replacement.modelAnswer ?? null,
@@ -310,8 +347,8 @@ export async function updatePaperMemo(
   const paper = await loadPaperOrThrow(paperId, schoolId);
   assertCanEditPaper(paper, actorId, actorRole, 'edit-memo');
   await PaperMemo.updateOne(
-    { paperId: paper._id },
-    { $set: { sections: patch.sections } },
+    { paperId: paper._id, schoolId: paper.schoolId, isDeleted: false },
+    { $set: { sections: patch.sections, totalMarks: paper.totalMarks } },
   );
   // Memo edits invalidate marking; $inc keeps version monotonic.
   await AssessmentPaper.updateOne(

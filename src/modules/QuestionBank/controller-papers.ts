@@ -28,7 +28,15 @@ import {
   addQuestionToPaperSchema,
   updatePaperQuestionSchema,
   updateMemoSchema,
+  createPaperAssignmentSchema,
 } from './validation.js';
+import {
+  listAssignments,
+  addAssignment,
+  removeAssignment,
+} from './service-paper-assignments.js';
+import { getPaperMarkingRoster } from './service-paper-marking-workspace.js';
+import { savePaperQuestionToBank } from './service-paper-question-bank.js';
 
 function requireSchoolId(req: Request, res: Response): string | null {
   const user = getUser(req);
@@ -218,4 +226,73 @@ export async function getMemoPdf(req: Request, res: Response): Promise<void> {
   res.setHeader('Content-Disposition', `inline; filename="memo-${req.params.id}.pdf"`);
   res.setHeader('Content-Length', buffer.length);
   res.send(buffer);
+}
+
+// ─── Paper Assignments to Class ──────────────────────────────────────────────
+
+export async function getPaperAssignments(req: Request, res: Response): Promise<void> {
+  const schoolId = requireSchoolId(req, res);
+  if (!schoolId) return;
+  const assignments = await listAssignments(req.params.id as string, schoolId);
+  res.json(apiResponse(true, assignments));
+}
+
+export async function postPaperAssignment(req: Request, res: Response): Promise<void> {
+  const schoolId = requireSchoolId(req, res);
+  if (!schoolId) return;
+  const user = getUser(req);
+  const parsed = createPaperAssignmentSchema.parse(req.body);
+  const assignments = await addAssignment(
+    req.params.id as string,
+    schoolId,
+    user.id,
+    parsed,
+  );
+  res.status(201).json(apiResponse(true, assignments, 'Paper assigned to class'));
+}
+
+export async function deletePaperAssignment(req: Request, res: Response): Promise<void> {
+  const schoolId = requireSchoolId(req, res);
+  if (!schoolId) return;
+  const assignments = await removeAssignment(
+    req.params.id as string,
+    schoolId,
+    req.params.assignmentId as string,
+  );
+  res.json(apiResponse(true, assignments, 'Assignment removed'));
+}
+
+// ─── Per-Paper Marking Workspace ─────────────────────────────────────────────
+
+export async function getMarkingRoster(req: Request, res: Response): Promise<void> {
+  const schoolId = requireSchoolId(req, res);
+  if (!schoolId) return;
+  const roster = await getPaperMarkingRoster(req.params.id as string, schoolId);
+  res.json(apiResponse(true, roster));
+}
+
+// ─── Save a paper question to the curated Question Bank ─────────────────────
+
+export async function postSavePaperQuestionToBank(req: Request, res: Response): Promise<void> {
+  const schoolId = requireSchoolId(req, res);
+  if (!schoolId) return;
+  const user = getUser(req);
+  const sectionIdx = Number(req.params.sectionIdx);
+  const position = Number(req.params.position);
+  if (
+    !Number.isInteger(sectionIdx) || sectionIdx < 0
+    || !Number.isInteger(position) || position < 0
+  ) {
+    res.status(400).json({ success: false, error: 'Invalid sectionIdx or position' });
+    return;
+  }
+  const result = await savePaperQuestionToBank(
+    req.params.id as string,
+    schoolId,
+    sectionIdx,
+    position,
+    user.id,
+  );
+  res.json(apiResponse(true, result, result.alreadyApproved
+    ? 'Question already in bank' : 'Question saved to bank'));
 }

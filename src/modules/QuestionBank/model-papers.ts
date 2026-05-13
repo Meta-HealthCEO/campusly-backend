@@ -24,9 +24,16 @@ export interface IPaperQuestionDiagram {
   renderStatus: DiagramRenderStatus;
 }
 
+export interface IPaperQuestionOption {
+  label: string;
+  text: string;
+  isCorrect: boolean;
+}
+
 export interface IPaperQuestion {
   questionId: Types.ObjectId | null;
   questionText: string | null;
+  options: IPaperQuestionOption[];
   marks: number;
   position: number;
   modelAnswer: string | null;
@@ -70,6 +77,19 @@ export interface ICapsComplianceReport {
   difficultySpread: IDifficultySpread;
 }
 
+export const PAPER_ASSIGNMENT_MODES = ['digital', 'paper'] as const;
+export type PaperAssignmentMode = (typeof PAPER_ASSIGNMENT_MODES)[number];
+
+export interface IPaperAssignment {
+  _id: Types.ObjectId;
+  classId: Types.ObjectId;
+  mode: PaperAssignmentMode;
+  releaseAt: Date | null;
+  dueAt: Date | null;
+  assignedBy: Types.ObjectId;
+  assignedAt: Date;
+}
+
 export interface IAssessmentPaper extends Document {
   schoolId: Types.ObjectId;
   title: string;
@@ -89,6 +109,11 @@ export interface IAssessmentPaper extends Document {
   difficulty: PaperDifficulty;
   version: number;
   assessmentId?: Types.ObjectId | null;
+  // Paper → class assignments. Each entry attaches the paper to a teaching
+  // group with a delivery mode (digital test-take on device, or printed
+  // copy). A paper can be assigned to multiple classes; the same class
+  // can be assigned the same paper at most once.
+  assignments: IPaperAssignment[];
   createdBy: Types.ObjectId;
   isDeleted: boolean;
   createdAt: Date;
@@ -111,6 +136,15 @@ const paperQuestionDiagramSchema = new Schema<IPaperQuestionDiagram>(
   { _id: false },
 );
 
+const paperQuestionOptionSchema = new Schema<IPaperQuestionOption>(
+  {
+    label: { type: String, required: true },
+    text: { type: String, required: true },
+    isCorrect: { type: Boolean, required: true },
+  },
+  { _id: false },
+);
+
 const paperQuestionSchema = new Schema<IPaperQuestion>(
   {
     questionId: {
@@ -119,6 +153,7 @@ const paperQuestionSchema = new Schema<IPaperQuestion>(
       default: null,
     },
     questionText: { type: String, default: null },
+    options: { type: [paperQuestionOptionSchema], default: [] },
     marks: { type: Number, required: true, min: 0 },
     position: { type: Number, required: true, min: 0 },
     modelAnswer: { type: String, default: null },
@@ -182,6 +217,18 @@ const capsComplianceSchema = new Schema<ICapsComplianceReport>(
   { _id: false },
 );
 
+const paperAssignmentSchema = new Schema<IPaperAssignment>(
+  {
+    classId: { type: Schema.Types.ObjectId, ref: 'Class', required: true },
+    mode: { type: String, enum: PAPER_ASSIGNMENT_MODES, required: true },
+    releaseAt: { type: Date, default: null },
+    dueAt: { type: Date, default: null },
+    assignedBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    assignedAt: { type: Date, default: () => new Date() },
+  },
+  { _id: true },
+);
+
 const assessmentPaperSchema = new Schema<IAssessmentPaper>(
   {
     schoolId: {
@@ -222,6 +269,7 @@ const assessmentPaperSchema = new Schema<IAssessmentPaper>(
       ref: 'Assessment',
       default: null,
     },
+    assignments: { type: [paperAssignmentSchema], default: [] },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     isDeleted: { type: Boolean, default: false },
   },
@@ -230,6 +278,9 @@ const assessmentPaperSchema = new Schema<IAssessmentPaper>(
 
 assessmentPaperSchema.index({ schoolId: 1, createdBy: 1, isDeleted: 1 });
 assessmentPaperSchema.index({ schoolId: 1, status: 1, isDeleted: 1 });
+// Fast lookup for "papers assigned to this class" — e.g. student dashboard
+// later in phase 2 listing their available digital tests.
+assessmentPaperSchema.index({ schoolId: 1, 'assignments.classId': 1, isDeleted: 1 });
 
 export const AssessmentPaper = mongoose.model<IAssessmentPaper>(
   'AssessmentPaper',

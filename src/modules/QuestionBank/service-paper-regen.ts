@@ -32,6 +32,7 @@ export interface RegenerateInput {
 export interface RegenerateResult {
   questionText: string;
   marks: number;
+  options?: Array<{ label: string; text: string; isCorrect: boolean }>;
   modelAnswer?: string;
   markingGuideline?: string;
   diagram?: { tikz: string; caption?: string };
@@ -40,6 +41,7 @@ export interface RegenerateResult {
 interface AIRegeneratedQuestion {
   questionText: string;
   marks: number;
+  options?: Array<{ label?: unknown; text?: unknown; isCorrect?: unknown }>;
   modelAnswer?: string;
   markingGuideline?: string;
   diagram?: {
@@ -87,10 +89,12 @@ Return JSON with this exact structure:
 {
   "questionText": "...",
   "marks": ${targetMarks},
+  "options": [{ "label": "A", "text": "...", "isCorrect": false }],
   "modelAnswer": "...",
   "markingGuideline": "...",
   "diagram": { "tikz": "...", "caption": "..." }
 }
+For multiple-choice questions, include exactly 4 options and mark one correct option. For non-multiple-choice questions, use an empty options array.
 The "diagram" field is optional — only include it when the question genuinely benefits from a visual.${diagramInstructions}`;
 
   const userPrompt = `Generate a replacement question for:
@@ -168,6 +172,17 @@ function validateAndShape(
     // a paper's totalMarks invariant depends on this slot keeping its marks.
     marks: targetMarks,
   };
+  if (Array.isArray(aiResult.options)) {
+    result.options = aiResult.options
+      .map((option, index) => ({
+        label: typeof option.label === 'string' && option.label.trim()
+          ? option.label.trim()
+          : String.fromCharCode(65 + index),
+        text: typeof option.text === 'string' ? option.text.trim() : '',
+        isCorrect: option.isCorrect === true,
+      }))
+      .filter((option) => option.text.length > 0);
+  }
   if (typeof aiResult.modelAnswer === 'string') {
     result.modelAnswer = aiResult.modelAnswer;
   }

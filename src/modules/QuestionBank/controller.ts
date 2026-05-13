@@ -122,6 +122,21 @@ export class QuestionBankController {
     res.json(apiResponse(true, question, 'Question reviewed successfully'));
   }
 
+  static async saveQuestionToBank(req: Request, res: Response): Promise<void> {
+    const user = getUser(req);
+    const schoolId = user.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
+    const question = await QuestionsService.saveQuestionToBank(
+      req.params.id as string,
+      schoolId,
+      user.id,
+    );
+    res.json(apiResponse(true, question, 'Question saved to bank'));
+  }
+
   // ─── AI Generation ───────────────────────────────────────────────────────
 
   static async generateQuestions(req: Request, res: Response): Promise<void> {
@@ -199,7 +214,9 @@ export class QuestionBankController {
     const paper = await PapersService.createPaper(
       schoolId,
       user.id,
+      user.role,
       req.body,
+      user.isStandaloneTeacher === true,
     );
     res.status(201).json(apiResponse(true, paper, 'Paper created successfully'));
   }
@@ -217,6 +234,7 @@ export class QuestionBankController {
       user.id,
       user.role,
       req.body,
+      user.isStandaloneTeacher === true,
     );
     res.json(apiResponse(true, paper, 'Paper updated successfully'));
   }
@@ -285,7 +303,9 @@ export class QuestionBankController {
     const paper = await PaperGenerationService.generatePaper(
       schoolId,
       user.id,
+      user.role,
       req.body,
+      user.isStandaloneTeacher === true,
     );
     res.status(201).json(apiResponse(true, paper, 'Paper generated successfully'));
   }

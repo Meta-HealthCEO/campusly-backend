@@ -10,7 +10,7 @@ import { AssessmentPaper, type IAssessmentPaper } from './model.js';
 import { Assessment } from '../Academic/model.js';
 import { PaperMemo, type IPaperMemo } from '../TeacherWorkbench/model.assessment.js';
 import { School } from '../School/model.js';
-import { ForbiddenError, NotFoundError } from '../../common/errors.js';
+import { BadRequestError, ForbiddenError, NotFoundError } from '../../common/errors.js';
 import { logger } from '../../common/logger.js';
 import { assertCanEditPaper, PAPER_ADMIN_ROLES } from './service-papers-auth.js';
 import { PdfService } from './service-pdf.js';
@@ -56,6 +56,27 @@ async function ensureLinkedAssessment(paper: IAssessmentPaper): Promise<void> {
   });
 }
 
+function assertPaperReadyToFinalise(paper: IAssessmentPaper): void {
+  const questionCount = paper.sections.reduce(
+    (sum, section) => sum + section.questions.length,
+    0,
+  );
+  const actualTotal = paper.sections.reduce(
+    (sum, section) => sum + section.questions.reduce((total, question) => total + question.marks, 0),
+    0,
+  );
+
+  if (questionCount === 0) {
+    throw new BadRequestError('Add at least one question before finalising this paper');
+  }
+  if (actualTotal <= 0) {
+    throw new BadRequestError('Paper total marks must be greater than zero before finalising');
+  }
+  if (paper.totalMarks !== actualTotal) {
+    paper.totalMarks = actualTotal;
+  }
+}
+
 // ─── finalisePaper (solo-principal bypass) ───────────────────────────────────
 
 /**
@@ -84,6 +105,7 @@ export async function finalisePaper(
   assertCanEditPaper(paper, actorId, actorRole, 'finalise');
 
   if (paper.status === 'finalised') return paper;
+  assertPaperReadyToFinalise(paper);
 
   // Solo-principal bypass: auto-finalise without moderation.
   if (actorIsPrincipal || PAPER_ADMIN_ROLES.has(actorRole)) {
@@ -140,7 +162,7 @@ export async function getPaperPdfBuffer(
     isDeleted: false,
   }).lean();
   if (!paper) throw new NotFoundError('Paper not found');
-  assertCanEditPaper(paper, actorId, actorRole, 'update');
+  assertCanEditPaper(paper, actorId, actorRole, 'read');
 
   return PdfService.generatePaperPdf(paperId, schoolId);
 }
@@ -164,9 +186,9 @@ export async function getPaperMemo(
     isDeleted: false,
   }).lean();
   if (!paper) throw new NotFoundError('Paper not found');
-  assertCanEditPaper(paper, actorId, actorRole, 'update');
+  assertCanEditPaper(paper, actorId, actorRole, 'read');
 
-  return PaperMemo.findOne({ paperId, isDeleted: false });
+  return PaperMemo.findOne({ paperId, schoolId, isDeleted: false });
 }
 
 // ─── getMemoPdfBuffer ────────────────────────────────────────────────────────
@@ -191,9 +213,9 @@ export async function getMemoPdfBuffer(
     .populate('gradeId', 'name')
     .lean();
   if (!paper) throw new NotFoundError('Paper not found');
-  assertCanEditPaper(paper, actorId, actorRole, 'update');
+  assertCanEditPaper(paper, actorId, actorRole, 'read');
 
-  const memo = await PaperMemo.findOne({ paperId, isDeleted: false }).lean();
+  const memo = await PaperMemo.findOne({ paperId, schoolId, isDeleted: false }).lean();
   if (!memo) throw new NotFoundError('Memo not found');
 
   const school = await School.findById(paper.schoolId).select('name').lean();

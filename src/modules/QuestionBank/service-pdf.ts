@@ -94,20 +94,25 @@ function normaliseQuestions(
     if (pq.questionId) {
       const qId = resolveQuestionId(pq.questionId);
       const q = qMap.get(qId);
-      if (!q) continue;
+      const stem = q?.stem ?? pq.questionText ?? '';
+      if (!stem) continue;
 
-      const diagram: NormalisedDiagram | null = pickDiagram(pq, q);
+      const diagram: NormalisedDiagram | null = pickDiagram(pq, q ?? null);
+
+      const options = (q?.options?.length ? q.options : pq.options ?? []).map((o) => ({
+        label: o.label,
+        text: o.text,
+        isCorrect: o.isCorrect,
+      }));
 
       result.push({
         number,
         marks: pq.marks,
-        stem: q.stem,
-        type: mapType(q.type),
-        options: (q.options ?? []).map((o) => ({
-          label: o.label, text: o.text, isCorrect: o.isCorrect,
-        })),
-        answer: pq.modelAnswer ?? q.answer ?? '',
-        markingRubric: pq.markingGuideline ?? q.markingRubric ?? '',
+        stem,
+        type: q ? mapType(q.type) : options.length > 0 ? 'mcq' : 'short',
+        options,
+        answer: pq.modelAnswer ?? q?.answer ?? '',
+        markingRubric: pq.markingGuideline ?? q?.markingRubric ?? '',
         diagram,
       });
       continue;
@@ -123,7 +128,11 @@ function normaliseQuestions(
       marks: pq.marks,
       stem: pq.questionText,
       type: 'short',
-      options: [],
+      options: (pq.options ?? []).map((o) => ({
+        label: o.label,
+        text: o.text,
+        isCorrect: o.isCorrect,
+      })),
       answer: pq.modelAnswer ?? '',
       markingRubric: pq.markingGuideline ?? '',
       diagram: pickDiagram(pq, null),
@@ -158,8 +167,9 @@ function pickDiagram(
 function mapType(t: string): NormalisedQuestionType {
   if (t === 'mcq') return 'mcq';
   if (t === 'true_false') return 'true_false';
-  if (t === 'long') return 'long';
-  if (t === 'structured') return 'structured';
+  if (t === 'long' || t === 'essay') return 'long';
+  if (t === 'structured' || t === 'calculation') return 'structured';
+  // short_answer + anything else falls through to 'short'.
   return 'short';
 }
 

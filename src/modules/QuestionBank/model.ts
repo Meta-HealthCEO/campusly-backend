@@ -190,6 +190,7 @@ export type {
   PaperStatus,
   PaperDifficulty,
   IPaperQuestionDiagram,
+  IPaperQuestionOption,
   IPaperQuestion,
   IPaperSection,
   ITopicCoverage,

@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { Question } from './model.js';
+import { resolveAcademicFilterIds } from '../Academic/services/global-academic-lookup.js';
 import { NotFoundError, ForbiddenError, BadRequestError } from '../../common/errors.js';
 import { paginationHelper } from '../../common/utils.js';
 import type {
@@ -30,6 +31,10 @@ export class QuestionsService {
   ) {
     const soid = new mongoose.Types.ObjectId(schoolId);
     const uoid = new mongoose.Types.ObjectId(userId);
+    const { subjectIds, gradeIds } = await resolveAcademicFilterIds({
+      subjectId: filters.subjectId,
+      gradeId: filters.gradeId,
+    });
     const query: Record<string, unknown> = { isDeleted: false };
 
     // ── Visibility rules ──
@@ -57,12 +62,8 @@ export class QuestionsService {
     if (filters.type) query.type = filters.type;
     if (filters.capsLevel) query['cognitiveLevel.caps'] = filters.capsLevel;
     if (filters.difficulty) query.difficulty = filters.difficulty;
-    if (filters.subjectId) {
-      query.subjectId = new mongoose.Types.ObjectId(filters.subjectId);
-    }
-    if (filters.gradeId) {
-      query.gradeId = new mongoose.Types.ObjectId(filters.gradeId);
-    }
+    if (subjectIds) query.subjectId = { $in: subjectIds };
+    if (gradeIds) query.gradeId = { $in: gradeIds };
     if (filters.status) query.status = filters.status;
     if (filters.search) {
       query.stem = { $regex: filters.search, $options: 'i' };
@@ -235,6 +236,48 @@ export class QuestionsService {
     const updated = await Question.findOneAndUpdate(
       { _id: oid, schoolId: soid, isDeleted: false },
       { $set: { status: 'pending_review' } },
+      { new: true },
+    ).lean();
+
+    return updated;
+  }
+
+  /**
+   * One-step teacher commit: promote a draft / pending question straight to
+   * `approved`. Used by the per-question "Save to bank" button on the paper
+   * detail page. Bypasses the HOD review workflow because the standalone
+   * teacher persona has no HOD. Auth: must be the question creator OR
+   * carry a HOD-level role (gated at the route layer).
+   */
+  static async saveQuestionToBank(
+    id: string,
+    schoolId: string,
+    reviewerId: string,
+  ) {
+    const oid = new mongoose.Types.ObjectId(id);
+    const soid = new mongoose.Types.ObjectId(schoolId);
+
+    const question = await Question.findOne({
+      _id: oid,
+      schoolId: soid,
+      isDeleted: false,
+    }).lean();
+
+    if (!question) throw new NotFoundError('Question not found');
+    if (question.status === 'approved') return question;
+    if (question.status === 'rejected') {
+      throw new BadRequestError('Rejected questions cannot be saved to the bank.');
+    }
+
+    const updated = await Question.findOneAndUpdate(
+      { _id: oid, schoolId: soid, isDeleted: false },
+      {
+        $set: {
+          status: 'approved',
+          reviewedBy: new mongoose.Types.ObjectId(reviewerId),
+          reviewedAt: new Date(),
+        },
+      },
       { new: true },
     ).lean();
 

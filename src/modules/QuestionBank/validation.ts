@@ -124,6 +124,7 @@ const paperQuestionDiagramSchema = z.object({
 const paperQuestionBaseShape = {
   questionId: objectIdSchema.optional(),
   questionText: z.string().min(1).max(5000).optional(),
+  options: z.array(optionSchema).default([]),
   marks: z.number().int().min(0).max(100),
   position: z.number().int().min(0),
   modelAnswer: z.string().max(5000).optional(),
@@ -141,8 +142,8 @@ const paperQuestionInputSchema = z.object(paperQuestionBaseShape).strict().refin
 );
 
 const paperSectionInputSchema = z.object({
-  title: z.string().min(1).max(200),
-  instructions: z.string().max(2000).optional(),
+  title: z.string().trim().min(1).max(200),
+  instructions: z.string().trim().max(2000).optional(),
   questions: z.array(paperQuestionInputSchema).max(100),
 }).strict();
 
@@ -150,7 +151,7 @@ const paperSectionInputSchema = z.object({
 
 export const createPaperSchema = z.object({
   title: z.string().min(1).max(200).trim(),
-  schoolId: objectIdSchema,
+  schoolId: objectIdSchema.optional(),
   subjectId: objectIdSchema,
   gradeId: objectIdSchema,
   topicIds: z.array(objectIdSchema).min(1).max(20),
@@ -162,10 +163,23 @@ export const createPaperSchema = z.object({
   difficulty: paperDifficultyEnum.default('medium'),
   aiGenerated: z.boolean().default(false),
   sections: z.array(paperSectionInputSchema).min(0).max(20).default([]),
-  instructions: z.string().max(5000).optional(),
+  instructions: z.string().trim().max(5000).optional(),
 }).strict();
 
-export const updatePaperSchema = createPaperSchema.partial().strict();
+export const updatePaperSchema = z.object({
+  title: z.string().min(1).max(200).trim().optional(),
+  subjectId: objectIdSchema.optional(),
+  gradeId: objectIdSchema.optional(),
+  topicIds: z.array(objectIdSchema).min(1).max(20).optional(),
+  term: z.number().int().min(1).max(4).optional(),
+  year: z.number().int().min(2000).max(2100).optional(),
+  paperType: paperTypeEnum.optional(),
+  duration: z.number().int().min(5).max(480).optional(),
+  totalMarks: z.number().int().min(0).max(500).optional(),
+  difficulty: paperDifficultyEnum.optional(),
+  sections: z.array(paperSectionInputSchema).min(0).max(20).optional(),
+  instructions: z.string().trim().max(5000).optional(),
+}).strict();
 
 // DEPRECATED: superseded by addQuestionToPaperSchema.
 // Remove once Task 4 (AI gen refactor) and Task 9 (route wiring) land.
@@ -181,9 +195,11 @@ export const addQuestionSchema = z.object({
 export const paperQuerySchema = z.object({
   subjectId: objectIdSchema.optional(),
   gradeId: objectIdSchema.optional(),
+  term: z.coerce.number().int().min(1).max(4).optional(),
+  year: z.coerce.number().int().min(2000).max(2100).optional(),
   status: z.enum(['draft', 'finalised', 'archived']).optional(),
   paperType: paperTypeEnum.optional(),
-  search: z.string().optional(),
+  search: z.string().trim().max(100).optional(),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),
 }).strict();
@@ -191,14 +207,27 @@ export const paperQuerySchema = z.object({
 // ─── AI Paper Generation ──────────────────────────────────────────────────
 
 const sectionConfigSchema = z.object({
-  title: z.string().min(1).max(200),
-  instructions: z.string().max(2000).optional(),
+  title: z.string().trim().min(1).max(200),
+  instructions: z.string().trim().max(2000).optional(),
   questionCount: z.number().int().min(1).max(50),
   sectionMarks: z.number().int().min(1).max(200),
 }).strict();
 
+// Question types the AI generator can actually produce + score reliably.
+// Subset of the full Question.type enum — drops formats (true_false, match,
+// fill_blank, diagram_label) that the AI prompt and parser don't cover today.
+export const PAPER_QUESTION_TYPES = [
+  'mcq', 'short_answer', 'structured', 'essay', 'calculation',
+] as const;
+export type PaperQuestionType = (typeof PAPER_QUESTION_TYPES)[number];
+
+const questionTypeWeightSchema = z.object({
+  type: z.enum(PAPER_QUESTION_TYPES),
+  weight: z.number().min(0).max(100),
+}).strict();
+
 export const generatePaperSchema = z.object({
-  schoolId: objectIdSchema,
+  schoolId: objectIdSchema.optional(),
   subjectId: objectIdSchema,
   gradeId: objectIdSchema,
   topicIds: z.array(objectIdSchema).min(1).max(20),
@@ -208,9 +237,21 @@ export const generatePaperSchema = z.object({
   duration: z.number().int().min(5).max(480),
   totalMarks: z.number().int().min(1).max(500),
   difficulty: paperDifficultyEnum.default('medium'),
-  title: z.string().min(1).max(200),
+  title: z.string().trim().min(1).max(200),
   sectionConfig: z.array(sectionConfigSchema).min(1).max(10),
-  instructions: z.string().max(5000).optional(),
+  instructions: z.string().trim().max(5000).optional(),
+  // Optional question-type mix. Each entry weights one paper question type
+  // as a percentage of total marks. Weights should sum to ~100 (a ±2 slack
+  // is allowed for rounding). When omitted the generator falls back to the
+  // legacy "ignore type during selection, group post-hoc" behaviour.
+  questionTypeMix: z.array(questionTypeWeightSchema).min(1).max(PAPER_QUESTION_TYPES.length).optional(),
+  // Opt-in seeding from the teacher's curated Question Bank. When false
+  // (default), every question on the paper is freshly AI-generated and
+  // saved as a draft on the paper — nothing is pulled from prior approved
+  // questions. When true, the generator first selects matching approved
+  // bank questions, then AI-fills any deficit. Lets teachers run "fresh"
+  // and "reuse" generations side-by-side without committing to one mode.
+  useExistingBank: z.boolean().default(false).optional(),
   // Legacy fields kept for backward compatibility with existing AI generator.
   // TODO(Task 12): drop once service-paper-generation.ts is rewritten.
   topicNodeIds: z.array(objectIdSchema).default([]).optional(),
@@ -220,7 +261,54 @@ export const generatePaperSchema = z.object({
     complex: z.number().min(0).max(100),
     problemSolving: z.number().min(0).max(100),
   }).optional(),
+}).strict().superRefine((data, ctx) => {
+  const configuredMarks = data.sectionConfig.reduce(
+    (sum, section) => sum + section.sectionMarks,
+    0,
+  );
+  if (configuredMarks !== data.totalMarks) {
+    ctx.addIssue({
+      code: 'custom',
+      path: ['sectionConfig'],
+      message: 'Section marks must add up to totalMarks',
+    });
+  }
+  if (data.questionTypeMix) {
+    const sum = data.questionTypeMix.reduce((acc, m) => acc + m.weight, 0);
+    if (Math.abs(sum - 100) > 2) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['questionTypeMix'],
+        message: `Question-type weights must sum to ~100 (got ${sum.toFixed(1)})`,
+      });
+    }
+    const seen = new Set<string>();
+    for (const m of data.questionTypeMix) {
+      if (seen.has(m.type)) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['questionTypeMix'],
+          message: `Duplicate question type in mix: ${m.type}`,
+        });
+        break;
+      }
+      seen.add(m.type);
+    }
+  }
+});
+
+// ─── Paper Assignment to Class (Phase 1) ──────────────────────────────────
+
+export const PAPER_ASSIGNMENT_MODES = ['digital', 'paper'] as const;
+
+export const createPaperAssignmentSchema = z.object({
+  classId: objectIdSchema,
+  mode: z.enum(PAPER_ASSIGNMENT_MODES),
+  releaseAt: z.iso.datetime().nullable().optional(),
+  dueAt: z.iso.datetime().nullable().optional(),
 }).strict();
+
+export type CreatePaperAssignmentInput = z.infer<typeof createPaperAssignmentSchema>;
 
 // ─── Question CRUD on existing paper (NEW — Task 2) ───────────────────────
 
@@ -233,6 +321,7 @@ export const addQuestionToPaperSchema = paperQuestionInputSchema;
 export const updatePaperQuestionSchema = z.object({
   questionId: objectIdSchema.optional(),
   questionText: z.string().min(1).max(5000).optional(),
+  options: z.array(optionSchema).optional(),
   marks: z.number().int().min(0).max(100).optional(),
   position: z.number().int().min(0).optional(),
   modelAnswer: z.string().max(5000).optional(),
@@ -253,16 +342,16 @@ export const updatePaperQuestionSchema = z.object({
 // truth. Min/max bounds tighten the model's permissive Mongoose defaults
 // for sensible write-time UX (e.g. a memo with zero sections is meaningless).
 const memoMarkAllocationSchema = z.object({
-  criterion: z.string().min(1).max(500),
+  criterion: z.string().trim().max(500),
   marks: z.number().int().min(0).max(100),
 }).strict();
 
 const memoAnswerSchema = z.object({
   questionNumber: z.string().min(1).max(20),  // e.g. "1", "1.a", "2.b.iii"
-  expectedAnswer: z.string().min(1).max(5000),
-  markAllocation: z.array(memoMarkAllocationSchema).min(1).max(20),
-  commonMistakes: z.array(z.string().max(500)).max(10).optional(),
-  acceptableAlternatives: z.array(z.string().max(500)).max(10).optional(),
+  expectedAnswer: z.string().trim().max(5000),
+  markAllocation: z.array(memoMarkAllocationSchema).max(20),
+  commonMistakes: z.array(z.string().trim().max(500)).max(10).optional(),
+  acceptableAlternatives: z.array(z.string().trim().max(500)).max(10).optional(),
 }).strict();
 
 const memoSectionSchema = z.object({

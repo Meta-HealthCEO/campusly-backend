@@ -11,7 +11,21 @@ import {
   postFinalisePaper,
   getPaperPdf,
   getMemoPdf,
+  getPaperAssignments,
+  postPaperAssignment,
+  deletePaperAssignment,
+  getMarkingRoster,
+  postSavePaperQuestionToBank,
 } from './controller-papers.js';
+import {
+  getStudentAssignedPapers,
+  getStudentPaperViewHandler,
+  postStartSubmission,
+  putSaveSubmission,
+  postSubmitSubmission,
+  getPaperSubmissions,
+  getSubmissionHandler,
+} from './controller-submissions.js';
 import {
   createQuestionSchema,
   updateQuestionSchema,
@@ -98,6 +112,15 @@ router.patch(
   authorize(...HOD_ROLES),
   validate(reviewQuestionSchema),
   QuestionBankController.reviewQuestion,
+);
+
+// Per-question "Save to bank" — one-step commit from draft/pending → approved.
+// Used by the Save-to-bank button on the paper-detail Paper tab. Open to
+// any read-role; the service scopes by schoolId.
+router.post(
+  '/questions/:id/save-to-bank',
+  authorize(...READ_ROLES),
+  QuestionBankController.saveQuestionToBank,
 );
 
 // ─── AI Paper Generation (BEFORE :id to avoid route shadowing) ────────────
@@ -188,6 +211,93 @@ router.delete(
   deleteRemovePaperQuestion,
 );
 
+// Per-paper-question commit-to-bank. Promotes inline questions into the
+// curated Question Bank as approved entries (and swaps the paper section's
+// question to reference the new bank doc); for already-bank-ref questions
+// it just flips status to approved. See service-paper-question-bank.ts.
+router.post(
+  '/papers/:id/sections/:sectionIdx/questions/:position/save-to-bank',
+  authorize(...READ_ROLES),
+  postSavePaperQuestionToBank,
+);
+
+// ─── Paper Assignments to Class ────────────────────────────────────────────
+
+router.get(
+  '/papers/:id/assignments',
+  authorize(...READ_ROLES),
+  getPaperAssignments,
+);
+
+router.post(
+  '/papers/:id/assignments',
+  authorize(...READ_ROLES),
+  postPaperAssignment,
+);
+
+router.delete(
+  '/papers/:id/assignments/:assignmentId',
+  authorize(...READ_ROLES),
+  deletePaperAssignment,
+);
+
+// ─── Per-Paper Marking Workspace (roster + status) ────────────────────────
+
+router.get(
+  '/papers/:id/marking-roster',
+  authorize(...READ_ROLES),
+  getMarkingRoster,
+);
+
+// ─── Teacher-facing Submission Review ──────────────────────────────────────
+
+router.get(
+  '/papers/:id/submissions',
+  authorize(...READ_ROLES),
+  getPaperSubmissions,
+);
+
+router.get(
+  '/submissions/:submissionId',
+  authorize(...READ_ROLES),
+  getSubmissionHandler,
+);
+
+// ─── Student Test-Take ────────────────────────────────────────────────────
+//
+// Distinct path prefix `/student/*` so the role guard is unambiguous and
+// the routes don't collide with teacher paper CRUD.
+
+router.get(
+  '/student/papers',
+  authorize('student'),
+  getStudentAssignedPapers,
+);
+
+router.get(
+  '/student/papers/:paperId',
+  authorize('student'),
+  getStudentPaperViewHandler,
+);
+
+router.post(
+  '/student/papers/:paperId/start',
+  authorize('student'),
+  postStartSubmission,
+);
+
+router.put(
+  '/student/submissions/:submissionId',
+  authorize('student'),
+  putSaveSubmission,
+);
+
+router.post(
+  '/student/submissions/:submissionId/submit',
+  authorize('student'),
+  postSubmitSubmission,
+);
+
 // ─── Papers CRUD ───────────────────────────────────────────────────────────
 
 router.get(
@@ -219,7 +329,7 @@ router.put(
 
 router.delete(
   '/papers/:id',
-  authorize(...ADMIN_ROLES),
+  authorize(...READ_ROLES),
   QuestionBankController.deletePaper,
 );
 

@@ -1,7 +1,8 @@
 import mongoose from 'mongoose';
 import { Question, AssessmentPaper } from './model.js';
-import type { IQuestion, IAssessmentPaper, IPaperQuestion } from './model.js';
+import type { IQuestion, IAssessmentPaper, IPaperQuestion, IPaperSection } from './model.js';
 import { Grade } from '../Academic/model.js';
+import { resolveAcademicFilterIds } from '../Academic/services/global-academic-lookup.js';
 import { PaperMemo } from '../TeacherWorkbench/model.assessment.js';
 import { ComplianceService } from './service-compliance.js';
 import { BadRequestError } from '../../common/errors.js';
@@ -10,9 +11,15 @@ import {
   selectQuestions,
   generateMissingQuestions,
   organiseSections,
+  toPaperQuestion,
 } from './service-paper-gen-helpers.js';
 import type { CognitiveWeighting } from './service-paper-gen-helpers.js';
 import type { GeneratePaperInput } from './validation.js';
+import {
+  assertCanCreateForSubjectGrade,
+  normaliseSubjectGradeIds,
+  verifyPaperRefs,
+} from './service-papers.js';
 
 // Single-question regeneration lives in service-paper-regen.ts to keep this
 // file under the 350-line cap. Re-exported here so callers using the
@@ -36,10 +43,23 @@ export class PaperGenerationService {
   static async generatePaper(
     schoolId: string,
     userId: string,
+    userRole: string,
     data: GeneratePaperInput,
+    isStandaloneTeacher = false,
   ) {
     // ── Rate limit: 20 AI generations per day per teacher ──
     await enforceRateLimit(userId);
+
+    // Standalone teachers send CurriculumNode subject/grade IDs (their
+    // `/academic/subjects` endpoint returns curriculum nodes, not school-side
+    // Subject docs). Bridge those to school-side records lazily so the rest
+    // of the pipeline (verifyPaperRefs, gradebook publishing, etc.) sees
+    // proper Subject/Grade IDs.
+    const normalised = await normaliseSubjectGradeIds(
+      schoolId, data.subjectId, data.gradeId,
+    );
+    data.subjectId = normalised.subjectId;
+    data.gradeId = normalised.gradeId;
 
     const soid = new mongoose.Types.ObjectId(schoolId);
     const suboid = new mongoose.Types.ObjectId(data.subjectId);
@@ -50,28 +70,51 @@ export class PaperGenerationService {
     // legacy `topicNodeIds` is still in the validation schema (optional) for
     // backward compatibility — callers may pass either. Normalise here.
     const topicIds = (data.topicIds ?? data.topicNodeIds ?? []) as string[];
+    await verifyPaperRefs(schoolId, data.subjectId, data.gradeId, topicIds);
+    await assertCanCreateForSubjectGrade(
+      schoolId,
+      userId,
+      userRole,
+      data.subjectId,
+      data.gradeId,
+      isStandaloneTeacher,
+    );
 
     // ── Fetch approved questions matching criteria ──
-    const baseFilter: Record<string, unknown> = {
-      subjectId: suboid,
-      gradeId: groid,
-      isDeleted: false,
-      status: 'approved',
-      $or: [{ schoolId: null }, { schoolId: soid }],
-    };
+    // Bank seeding is OPT-IN. The teacher's curated Question Bank only
+    // contributes when `data.useExistingBank === true`. Otherwise the entire
+    // paper is freshly authored by Claude (grounded in textbook + lessons)
+    // and saved back as `status: 'draft'` questions for later curation.
+    let bankQuestions: IQuestion[] = [];
+    if (data.useExistingBank === true) {
+      const { subjectIds, gradeIds } = await resolveAcademicFilterIds({
+        subjectId: data.subjectId,
+        gradeId: data.gradeId,
+      });
 
-    if (topicIds.length > 0) {
-      baseFilter.curriculumNodeId = {
-        $in: topicIds.map((id) => new mongoose.Types.ObjectId(id)),
+      const baseFilter: Record<string, unknown> = {
+        subjectId: { $in: subjectIds ?? [suboid] },
+        gradeId: { $in: gradeIds ?? [groid] },
+        isDeleted: false,
+        status: 'approved',
+        $or: [{ schoolId: null }, { schoolId: soid }],
       };
+
+      if (topicIds.length > 0) {
+        baseFilter.curriculumNodeId = {
+          $in: topicIds.map((id) => new mongoose.Types.ObjectId(id)),
+        };
+      }
+
+      bankQuestions = await Question.find(baseFilter)
+        .populate({ path: 'curriculumNodeId', select: 'title code type' })
+        .lean() as IQuestion[];
     }
 
-    const bankQuestions = await Question.find(baseFilter)
-      .populate({ path: 'curriculumNodeId', select: 'title code type' })
-      .lean() as IQuestion[];
-
-    // ── Select questions that fit target marks + cognitive weighting ──
-    const selected = selectQuestions(bankQuestions, data.totalMarks, weighting, data.difficulty);
+    // ── Select questions that fit target marks + cognitive weighting + type mix ──
+    const selected = selectQuestions(
+      bankQuestions, data.totalMarks, weighting, data.difficulty, data.questionTypeMix,
+    );
     const selectedMarks = selected.reduce((sum, q) => sum + q.marks, 0);
     const deficit = data.totalMarks - selectedMarks;
 
@@ -79,7 +122,7 @@ export class PaperGenerationService {
     let allQuestions = [...selected];
     if (deficit > 0) {
       const generated = await generateMissingQuestions(
-        schoolId, userId, data, weighting, deficit, selected,
+        schoolId, userId, data, weighting, deficit, selected, data.questionTypeMix,
       );
       allQuestions = [...selected, ...generated];
     }
@@ -89,7 +132,9 @@ export class PaperGenerationService {
     }
 
     // ── Organise into sections by question type ──
-    const sections = organiseSections(allQuestions);
+    const sections = data.sectionConfig?.length
+      ? organiseSectionsFromConfig(allQuestions, data)
+      : organiseSections(allQuestions);
 
     // ── Build title ──
     const gradeDoc = await Grade.findById(groid).lean();
@@ -97,7 +142,8 @@ export class PaperGenerationService {
     const paperTypeLabel = data.paperType
       .replace(/_/g, ' ')
       .replace(/\b\w/g, (c) => c.toUpperCase());
-    const title = `${gradeLabel} – ${paperTypeLabel} – Term ${data.term} ${data.year}`;
+    const title = data.title?.trim()
+      || `${gradeLabel} - ${paperTypeLabel} - Term ${data.term} ${data.year}`;
 
     const actualTotal = allQuestions.reduce((sum, q) => sum + q.marks, 0);
     const topicObjectIds = topicIds.map((id) => new mongoose.Types.ObjectId(id));
@@ -214,7 +260,7 @@ async function enforceRateLimit(userId: string): Promise<void> {
  * from `markingRubric`. Used immediately after AssessmentPaper creation.
  */
 function buildMemoSections(
-  sections: ReturnType<typeof organiseSections>,
+  sections: IPaperSection[],
   allQuestions: IQuestion[],
 ): Array<{
   sectionTitle: string;
@@ -240,12 +286,62 @@ function buildMemoSections(
         expectedAnswer: q?.answer ?? pq.modelAnswer ?? '',
         markAllocation: q?.markingRubric
           ? [{ criterion: q.markingRubric, marks: pq.marks }]
-          : [],
+          : [{ criterion: pq.markingGuideline ?? 'Full marks', marks: pq.marks }],
         commonMistakes: [],
         acceptableAlternatives: [],
       };
     }),
   }));
+}
+
+function organiseSectionsFromConfig(
+  questions: IQuestion[],
+  data: GeneratePaperInput,
+): IPaperSection[] {
+  const remaining = [...questions];
+  const sections = data.sectionConfig.map((config, sectionIndex) => {
+    const allocated: IQuestion[] = [];
+    let allocatedMarks = 0;
+    const isLastSection = sectionIndex === data.sectionConfig.length - 1;
+
+    while (remaining.length > 0 && allocated.length < config.questionCount) {
+      const fittingIndex = remaining.findIndex(
+        (question) => allocatedMarks + question.marks <= config.sectionMarks,
+      );
+      const nextIndex = fittingIndex >= 0 ? fittingIndex : (isLastSection ? 0 : -1);
+      if (nextIndex < 0) break;
+
+      const [question] = remaining.splice(nextIndex, 1);
+      if (!question) break;
+      allocated.push(question);
+      allocatedMarks += question.marks;
+
+      if (allocatedMarks >= config.sectionMarks && !isLastSection) break;
+    }
+
+    const sectionQuestions: IPaperQuestion[] = allocated.map(
+      (question, index) => toPaperQuestion(question, index),
+    );
+
+    return {
+      title: config.title,
+      instructions: config.instructions ?? '',
+      order: sectionIndex,
+      questions: sectionQuestions,
+    };
+  });
+
+  const lastSection = sections[sections.length - 1];
+  if (lastSection && remaining.length > 0) {
+    const startPosition = lastSection.questions.length;
+    lastSection.questions.push(
+      ...remaining.map((question, index) => toPaperQuestion(question, startPosition + index)),
+    );
+  }
+
+  return sections.some((section) => section.questions.length > 0)
+    ? sections
+    : organiseSections(questions);
 }
 
 /**
