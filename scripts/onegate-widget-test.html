@@ -3,9 +3,12 @@
 <html><head><meta charset="utf-8"><title>OneGate Widget Spike</title></head>
 <body style="font-family:system-ui;padding:24px;max-width:800px">
 <h1>OneGate Widget Spike</h1>
-<p>Paste the <code>payment_key</code> from <code>npx tsx scripts/onegate-spike.ts</code>, then click "Pay".</p>
+<p>Paste the <code>payment_key</code> from <code>npx tsx scripts/onegate-spike.ts</code>.</p>
 <input id="key" placeholder="payment_key" style="width:100%;padding:8px;font-family:monospace" />
-<button id="pay" style="margin-top:12px;padding:8px 16px">Pay with widget</button>
+<div style="margin-top:12px;display:flex;gap:8px">
+  <button id="pay-widget" style="padding:8px 16px">A: Try widget (modal)</button>
+  <button id="pay-redirect" style="padding:8px 16px">B: Try redirect (hosted page)</button>
+</div>
 <h3>Result</h3>
 <pre id="result" style="background:#f5f5f5;padding:12px;border-radius:4px;white-space:pre-wrap;word-break:break-all"></pre>
 <h3>Log</h3>
@@ -19,51 +22,67 @@
   };
 
   window.addEventListener('load', () => {
-    log('Page loaded. Globals available: ' +
-      ['EftSecureCheckout', 'Checkout', 'OneGateCheckout']
-        .filter((n) => typeof window[n] !== 'undefined').join(', ') || '(none — script may have failed to load)');
+    const globals = ['EftSecureCheckout', 'Checkout', 'OneGateCheckout', 'Eftx']
+      .filter((n) => typeof window[n] !== 'undefined');
+    log('Page loaded. Globals available: ' + (globals.join(', ') || '(none — script may have failed to load)'));
   });
 
-  document.getElementById('pay').addEventListener('click', () => {
-    const key = document.getElementById('key').value.trim();
-    if (!key) { alert('Paste a payment_key first.'); return; }
+  function getKey() {
+    const k = document.getElementById('key').value.trim();
+    if (!k) { alert('Paste a payment_key first.'); return null; }
+    return k;
+  }
 
-    document.getElementById('result').textContent = '(opening modal...)';
-    log('Click → instantiating EftSecureCheckout');
+  // A: WIDGET (modal) flow
+  document.getElementById('pay-widget').addEventListener('click', () => {
+    const key = getKey(); if (!key) return;
+
+    document.getElementById('result').textContent = '(opening widget modal...)';
+    log('A: Click → instantiating EftSecureCheckout');
+    log('   serviceUrl = https://payments.onegate.co.za/rpp-transaction/create-from-key');
 
     try {
       const checkout = new EftSecureCheckout({
-        serviceUrl: 'https://payments.onegate.co.za',
+        serviceUrl: 'https://payments.onegate.co.za/rpp-transaction/create-from-key',
         paymentKey: key,
-        onLoad: () => log('onLoad fired'),
+        paymentType: 'credit_card',
+        onLoad: () => log('A: onLoad fired'),
         onComplete: (data) => {
-          log('onComplete fired');
-          document.getElementById('result').textContent = 'COMPLETE:\n' + JSON.stringify(data, null, 2);
+          log('A: onComplete fired');
+          document.getElementById('result').textContent = 'A.COMPLETE:\n' + JSON.stringify(data, null, 2);
         },
         onError: (data) => {
-          log('onError fired');
-          document.getElementById('result').textContent = 'ERROR:\n' + JSON.stringify(data, null, 2);
+          log('A: onError fired');
+          document.getElementById('result').textContent = 'A.ERROR:\n' + JSON.stringify(data, null, 2);
         },
-        onHide: () => log('onHide fired'),
+        onHide: () => log('A: onHide fired'),
       });
-      log('Calling .init()');
+      log('A: Calling .init()');
       checkout.init()
         .then((result) => {
-          log('.init() resolved');
+          log('A: .init() resolved');
           document.getElementById('result').textContent =
             (document.getElementById('result').textContent || '') +
-            '\n\nINIT RESOLVED:\n' + JSON.stringify(result, null, 2);
+            '\n\nA.INIT RESOLVED:\n' + JSON.stringify(result, null, 2);
         })
         .catch((err) => {
-          log('.init() rejected: ' + (err?.message ?? err));
+          log('A: .init() rejected: ' + (err?.message ?? JSON.stringify(err)));
           document.getElementById('result').textContent =
             (document.getElementById('result').textContent || '') +
-            '\n\nINIT REJECTED:\n' + JSON.stringify(err, null, 2);
+            '\n\nA.INIT REJECTED:\n' + JSON.stringify(err, null, 2);
         });
     } catch (err) {
-      log('Exception: ' + err.message);
-      document.getElementById('result').textContent = 'EXCEPTION:\n' + err.message + '\n\n' + err.stack;
+      log('A: Exception: ' + err.message);
+      document.getElementById('result').textContent = 'A.EXCEPTION:\n' + err.message + '\n\n' + err.stack;
     }
+  });
+
+  // B: REDIRECT (hosted page) flow — fallback if widget misbehaves
+  document.getElementById('pay-redirect').addEventListener('click', () => {
+    const key = getKey(); if (!key) return;
+    const url = 'https://payments.onegate.co.za/pay/hosted?payment_key=' + encodeURIComponent(key) + '&payment_type=credit_card';
+    log('B: Redirecting to ' + url);
+    window.location.href = url;
   });
 </script>
 </body></html>
