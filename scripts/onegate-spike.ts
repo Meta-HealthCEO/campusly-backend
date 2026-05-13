@@ -39,10 +39,60 @@ async function mintKey(): Promise<string> {
   return res.data.key as string;
 }
 
+async function listRecentTransactions(): Promise<void> {
+  console.log(`\nSpike 3: GET /organisation/${ORG}/gateway-transaction (recent)`);
+  const res = await axios.get(`${BASE}/api/v2/organisation/${ORG}/gateway-transaction`, {
+    headers: signHeaders(),
+    params: { per_page: 5, page: 1 },
+  });
+  console.log('Recent transactions:', JSON.stringify(res.data, null, 2));
+}
+
+async function inspectTransaction(id: string): Promise<void> {
+  console.log(`\nSpike 4: GET /gateway-transaction/${id}`);
+  const res = await axios.get(`${BASE}/api/v2/gateway-transaction/${id}`, { headers: signHeaders() });
+  console.log('Transaction detail:', JSON.stringify(res.data, null, 2));
+}
+
+async function chargeToken(guid: string, amount = 1.0): Promise<void> {
+  console.log(`\nSpike 5: POST /customer-token/${guid}/pay (R${amount})`);
+  const body = new URLSearchParams({
+    amount: amount.toFixed(2),
+    reference: 'tok_test_' + Math.random().toString(36).slice(2, 10),
+  });
+  const res = await axios.post(`${BASE}/api/v2/customer-token/${guid}/pay`, body.toString(), {
+    headers: { ...signHeaders(), 'Content-Type': 'application/x-www-form-urlencoded' },
+  });
+  console.log('Charge result:', JSON.stringify(res.data, null, 2));
+}
+
 async function main(): Promise<void> {
-  await listServices();
-  const key = await mintKey();
-  console.log(`\nNext: open scripts/onegate-widget-test.html in a browser, paste this key into the prompt:\n  ${key}\n`);
+  const cmd = process.argv[2] ?? 'mint';
+  const arg = process.argv[3];
+
+  switch (cmd) {
+    case 'services':
+      await listServices();
+      break;
+    case 'mint':
+      await listServices();
+      const key = await mintKey();
+      console.log(`\nNext: open http://localhost:8000/onegate-widget-test.html, paste this key:\n  ${key}\n`);
+      break;
+    case 'recent':
+      await listRecentTransactions();
+      break;
+    case 'tx':
+      if (!arg) throw new Error('Usage: npx tsx scripts/onegate-spike.ts tx <transaction_id>');
+      await inspectTransaction(arg);
+      break;
+    case 'charge':
+      if (!arg) throw new Error('Usage: npx tsx scripts/onegate-spike.ts charge <token_guid> [amount]');
+      await chargeToken(arg, process.argv[4] ? parseFloat(process.argv[4]) : 1.0);
+      break;
+    default:
+      throw new Error(`Unknown command: ${cmd}. Use: services | mint | recent | tx <id> | charge <guid> [amount]`);
+  }
 }
 
 main().catch((err) => { console.error(err.response?.data ?? err); process.exit(1); });
