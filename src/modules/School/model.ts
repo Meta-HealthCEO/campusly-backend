@@ -15,8 +15,11 @@ export interface IContactInfo {
 }
 
 export interface ISubscription {
-  tier: 'basic' | 'standard' | 'premium';
-  expiresAt: Date;
+  tier: string;
+  status?: string;
+  planCode?: string;
+  expiresAt: Date | null;
+  currentPeriodEnd?: Date | null;
 }
 
 export interface ISettings {
@@ -77,12 +80,11 @@ const contactInfoSchema = new Schema<IContactInfo>(
 
 const subscriptionSchema = new Schema<ISubscription>(
   {
-    tier: {
-      type: String,
-      enum: ['basic', 'standard', 'premium'],
-      required: true,
-    },
-    expiresAt: { type: Date, required: true },
+    tier: { type: String, required: true },
+    status: { type: String, default: null },
+    planCode: { type: String, default: null },
+    expiresAt: { type: Date, default: null },
+    currentPeriodEnd: { type: Date, default: null },
   },
   { _id: false },
 );

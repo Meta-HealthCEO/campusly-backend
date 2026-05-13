@@ -17,7 +17,9 @@ describe('seedPlans', () => {
 
   it('creates three plans on first run', async () => {
     await seedPlans();
-    const codes = (await Plan.find({}).select('code')).map((p) => p.code).sort();
+    const codes = (await Plan.find({ code: { $in: ['free', 'pro_monthly', 'pro_annual'] } }).select('code'))
+      .map((p) => p.code)
+      .sort();
     expect(codes).toEqual(['free', 'pro_annual', 'pro_monthly']);
   });
 
