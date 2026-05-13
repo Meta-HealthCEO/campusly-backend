@@ -26,8 +26,11 @@ export const updateReferralSchema = z.object({
 export type UpdateReferralInput = z.infer<typeof updateReferralSchema>;
 
 export const resolveReferralSchema = z.object({
+  status: z.enum(['resolved', 'closed']).optional(),
   outcome: z.enum(['positive', 'ongoing', 'referred_external', 'no_further_action']),
   resolutionNotes: z.string().min(1, 'Resolution notes are required'),
+  notifyReferrer: z.boolean().optional(),
+  notifyParent: z.boolean().optional(),
 }).strict();
 
 export type ResolveReferralInput = z.infer<typeof resolveReferralSchema>;
@@ -45,6 +48,8 @@ export const createSessionSchema = z.object({
   followUpDate: z.string().optional(),
   confidentialityLevel: z.enum(['standard', 'sensitive', 'restricted']),
   parentNotified: z.boolean().optional(),
+  notifyParent: z.boolean().optional(),
+  parentNotificationMessage: z.string().nullable().optional(),
 }).strict();
 
 export type CreateSessionInput = z.infer<typeof createSessionSchema>;
@@ -72,6 +77,7 @@ export const referralQuerySchema = z.object({
   ]).optional(),
   urgency: z.enum(['low', 'medium', 'high', 'critical']).optional(),
   studentId: objectIdSchema.optional(),
+  assigned: z.enum(['true', 'false']).optional(),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),
 }).strict();

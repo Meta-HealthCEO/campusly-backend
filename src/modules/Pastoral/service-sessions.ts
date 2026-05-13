@@ -1,21 +1,36 @@
 import mongoose from 'mongoose';
-import { CounselorSession } from './model.js';
+import { CounselorSession, PastoralReferral } from './model.js';
 import { AuditLog } from '../Audit/model.js';
-import { NotFoundError, ForbiddenError } from '../../common/errors.js';
+import { NotFoundError, ForbiddenError, BadRequestError } from '../../common/errors.js';
 import { paginationHelper } from '../../common/utils.js';
+import {
+  assertCanAccessStudent,
+  assertCanManageReferral,
+  formatSession,
+  SESSION_POPULATE,
+  type PastoralUser,
+} from './helpers.js';
 import type { CreateSessionInput, UpdateSessionInput } from './validation.js';
-import type { AuthenticatedUser } from '../../types/authenticated-request.js';
-
-// Extended user type — includes JWT permission flags set by authenticate middleware
-interface PastoralUser extends AuthenticatedUser {
-  isCounselor?: boolean;
-  isSchoolPrincipal?: boolean;
-}
 
 export class SessionService {
   static async createSession(user: PastoralUser, data: CreateSessionInput) {
     const schoolOid = new mongoose.Types.ObjectId(user.schoolId!);
     const counselorOid = new mongoose.Types.ObjectId(user.id);
+
+    await assertCanAccessStudent(user, data.studentId);
+
+    if (data.referralId) {
+      const referral = await PastoralReferral.findOne({
+        _id: data.referralId,
+        schoolId: schoolOid,
+        studentId: new mongoose.Types.ObjectId(data.studentId),
+        isDeleted: false,
+      }).lean();
+      if (!referral) {
+        throw new BadRequestError('Referral does not belong to this learner');
+      }
+      assertCanManageReferral(user, referral);
+    }
 
     const session = await CounselorSession.create({
       studentId: new mongoose.Types.ObjectId(data.studentId),
@@ -29,10 +44,9 @@ export class SessionService {
       followUpActions: data.followUpActions ?? '',
       followUpDate: data.followUpDate ? new Date(data.followUpDate) : undefined,
       confidentialityLevel: data.confidentialityLevel,
-      parentNotified: data.parentNotified ?? false,
+      parentNotified: data.parentNotified ?? data.notifyParent ?? false,
     });
 
-    // Audit log for sensitive record creation
     await AuditLog.create({
       schoolId: schoolOid,
       userId: counselorOid,
@@ -44,11 +58,12 @@ export class SessionService {
         sessionType: data.sessionType,
         confidentialityLevel: data.confidentialityLevel,
       },
-    }).catch(() => {
-      // Audit log failure should not block session creation
-    });
+    }).catch(() => undefined);
 
-    return session.toObject();
+    const populated = await CounselorSession.findById(session._id)
+      .populate(SESSION_POPULATE)
+      .lean();
+    return formatSession(populated ?? session.toObject());
   }
 
   static async listSessions(
@@ -72,10 +87,8 @@ export class SessionService {
       user.role === 'super_admin';
 
     if (isCounselor) {
-      // Counselors see only their own sessions
       query.counselorId = new mongoose.Types.ObjectId(user.id);
     } else if (isPrincipal) {
-      // Principal sees all except restricted-level sessions
       query.confidentialityLevel = { $ne: 'restricted' };
     }
 
@@ -96,12 +109,16 @@ export class SessionService {
         .sort({ sessionDate: -1 })
         .skip(skip)
         .limit(limit)
-        .populate('studentId', 'firstName lastName grade')
-        .populate('counselorId', 'firstName lastName')
+        .populate(SESSION_POPULATE)
         .lean(),
       CounselorSession.countDocuments(query),
     ]);
-    return { sessions, total, page: filters.page ?? 1, limit };
+    return {
+      sessions: sessions.map(formatSession),
+      total,
+      page: filters.page ?? 1,
+      limit,
+    };
   }
 
   static async updateSession(
@@ -121,7 +138,6 @@ export class SessionService {
     }).lean();
     if (!existing) throw new NotFoundError('Session not found');
 
-    // Only the owning counselor can update
     if (!existing.counselorId.equals(counselorOid)) {
       throw new ForbiddenError('Only the owning counselor can update this session');
     }
@@ -133,9 +149,7 @@ export class SessionService {
     if (data.summary !== undefined) update.summary = data.summary;
     if (data.followUpActions !== undefined) update.followUpActions = data.followUpActions;
     if (data.followUpDate !== undefined) update.followUpDate = new Date(data.followUpDate);
-    if (data.confidentialityLevel !== undefined) {
-      update.confidentialityLevel = data.confidentialityLevel;
-    }
+    if (data.confidentialityLevel !== undefined) update.confidentialityLevel = data.confidentialityLevel;
     if (data.parentNotified !== undefined) update.parentNotified = data.parentNotified;
 
     const session = await CounselorSession.findOneAndUpdate(
@@ -143,10 +157,9 @@ export class SessionService {
       { $set: update },
       { new: true },
     )
-      .populate('studentId', 'firstName lastName grade')
-      .populate('counselorId', 'firstName lastName')
+      .populate(SESSION_POPULATE)
       .lean();
     if (!session) throw new NotFoundError('Session not found');
-    return session;
+    return formatSession(session);
   }
 }

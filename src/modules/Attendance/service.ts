@@ -1,7 +1,9 @@
 import mongoose from 'mongoose';
 import { Attendance, IAttendance, AttendanceStatus } from './model.js';
 import { AttendanceStatsService } from './service-stats.js';
-
+import { Student } from '../Student/model.js';
+import { Class } from '../Academic/model.js';
+import { BadRequestError } from '../../common/errors.js';
 
 interface AttendanceReportFilters {
   schoolId: string;
@@ -30,7 +32,58 @@ interface DailyClassSummary {
   excused: number;
 }
 
+function normalizeAttendanceDate(date: string | Date): Date {
+  const normalized = new Date(date);
+  if (Number.isNaN(normalized.getTime())) {
+    throw new BadRequestError('Invalid attendance date');
+  }
+  normalized.setUTCHours(0, 0, 0, 0);
+  return normalized;
+}
+
+function endOfAttendanceDate(date: string | Date): Date {
+  const normalized = normalizeAttendanceDate(date);
+  normalized.setUTCHours(23, 59, 59, 999);
+  return normalized;
+}
+
+function hasOwnProperty<T extends object>(value: T, key: PropertyKey): boolean {
+  return Object.prototype.hasOwnProperty.call(value, key);
+}
+
 export class AttendanceService {
+  private static async assertClassStudentsBelongToSchool(data: {
+    schoolId: string;
+    classId: string;
+    studentIds: string[];
+  }): Promise<void> {
+    const uniqueStudentIds = Array.from(new Set(data.studentIds));
+
+    const classExists = await Class.exists({
+      _id: data.classId,
+      schoolId: data.schoolId,
+      isDeleted: false,
+    });
+
+    if (!classExists) {
+      throw new BadRequestError('Class not found for this school');
+    }
+
+    const matchingStudents = await Student.find({
+      _id: { $in: uniqueStudentIds },
+      schoolId: data.schoolId,
+      classId: data.classId,
+      enrollmentStatus: 'active',
+      isDeleted: false,
+    })
+      .select('_id')
+      .lean();
+
+    if (matchingStudents.length !== uniqueStudentIds.length) {
+      throw new BadRequestError('All attendance students must be active learners in the selected class');
+    }
+  }
+
   static async record(
     data: {
       studentId: string;
@@ -44,10 +97,18 @@ export class AttendanceService {
     recordedBy: string,
   ): Promise<IAttendance> {
     const recordedByOid = new mongoose.Types.ObjectId(recordedBy);
+    const dateObj = normalizeAttendanceDate(data.date);
+
+    await AttendanceService.assertClassStudentsBelongToSchool({
+      schoolId: data.schoolId,
+      classId: data.classId,
+      studentIds: [data.studentId],
+    });
+
     const existing = await Attendance.findOne({
       studentId: data.studentId,
       schoolId: data.schoolId,
-      date: new Date(data.date),
+      date: dateObj,
       period: data.period,
       isDeleted: false,
     });
@@ -58,7 +119,7 @@ export class AttendanceService {
       }
       existing.status = data.status;
       existing.classId = new mongoose.Types.ObjectId(data.classId);
-      existing.notes = data.notes ?? existing.notes;
+      if (hasOwnProperty(data, 'notes')) existing.notes = data.notes;
       existing.lastModifiedBy = recordedByOid;
       existing.lastModifiedAt = new Date();
       await existing.save();
@@ -69,7 +130,7 @@ export class AttendanceService {
       studentId: data.studentId,
       classId: data.classId,
       schoolId: data.schoolId,
-      date: new Date(data.date),
+      date: dateObj,
       period: data.period,
       status: data.status,
       recordedBy,
@@ -93,16 +154,22 @@ export class AttendanceService {
     recordedBy: string,
   ): Promise<{ saved: Array<{ studentId: string; status: string }>; failed: Array<{ studentId: string; error: string }> }> {
     const teacherOid = new mongoose.Types.ObjectId(recordedBy);
-    const dateObj = data.date instanceof Date ? data.date : new Date(data.date);
+    const dateObj = normalizeAttendanceDate(data.date);
     const saved: Array<{ studentId: string; status: string }> = [];
     const failed: Array<{ studentId: string; error: string }> = [];
+    const studentIds = data.records.map((r) => r.studentId);
+
+    await AttendanceService.assertClassStudentsBelongToSchool({
+      schoolId: data.schoolId,
+      classId: data.classId,
+      studentIds,
+    });
 
     for (const record of data.records) {
       try {
         const existing = await Attendance.findOne({
           studentId: record.studentId,
           schoolId: data.schoolId,
-          classId: data.classId,
           date: dateObj,
           period: data.period,
           isDeleted: false,
@@ -142,7 +209,6 @@ export class AttendanceService {
     }
 
     // Fire-and-forget stats update — does not block the response
-    const studentIds = data.records.map((r) => r.studentId);
     AttendanceStatsService.updateStatsForStudents(studentIds, data.schoolId).catch((err: unknown) => {
       console.error('Failed to update attendance stats:', err);
     });
@@ -159,7 +225,7 @@ export class AttendanceService {
     const records = await Attendance.find({
       studentId,
       schoolId,
-      date: { $gte: new Date(startDate), $lte: new Date(endDate) },
+      date: { $gte: normalizeAttendanceDate(startDate), $lte: endOfAttendanceDate(endDate) },
       isDeleted: false,
     })
       .sort({ date: 1, period: 1 })
@@ -173,7 +239,7 @@ export class AttendanceService {
     const records = await Attendance.find({
       classId,
       schoolId,
-      date: new Date(date),
+      date: normalizeAttendanceDate(date),
       isDeleted: false,
     })
       .sort({ period: 1 })
@@ -186,7 +252,10 @@ export class AttendanceService {
   static async getReport(filters: AttendanceReportFilters): Promise<AttendanceStats> {
     const match: Record<string, unknown> = {
       schoolId: new mongoose.Types.ObjectId(filters.schoolId),
-      date: { $gte: new Date(filters.startDate), $lte: new Date(filters.endDate) },
+      date: {
+        $gte: normalizeAttendanceDate(filters.startDate),
+        $lte: endOfAttendanceDate(filters.endDate),
+      },
       isDeleted: false,
     };
 
@@ -226,16 +295,21 @@ export class AttendanceService {
     schoolId: string,
     date: string,
     period?: number,
+    classId?: string,
   ): Promise<IAttendance[]> {
     const query: Record<string, unknown> = {
       schoolId,
-      date: new Date(date),
+      date: normalizeAttendanceDate(date),
       status: 'absent',
       isDeleted: false,
     };
 
     if (period !== undefined) {
       query.period = period;
+    }
+
+    if (classId) {
+      query.classId = classId;
     }
 
     const absentees = await Attendance.find(query)
@@ -254,7 +328,7 @@ export class AttendanceService {
       {
         $match: {
           schoolId: new mongoose.Types.ObjectId(schoolId),
-          date: new Date(date),
+          date: normalizeAttendanceDate(date),
           isDeleted: false,
         },
       },

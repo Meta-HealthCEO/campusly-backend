@@ -24,6 +24,7 @@ const router = Router();
 router.get(
   '/stats/student/:studentId',
   authenticate,
+  authorize('parent', 'student', 'teacher', 'school_admin', 'super_admin'),
   requireParentOwnership('studentId'),
   AttendanceController.getStudentStats,
 );
@@ -49,6 +50,7 @@ router.post(
   authenticate,
   authorize('teacher', 'school_admin', 'super_admin'),
   validate(recordAttendanceSchema),
+  requireTeacherClassOwnership('classId'),
   AttendanceController.record,
 );
 
@@ -57,12 +59,14 @@ router.post(
   authenticate,
   authorize('teacher', 'school_admin', 'super_admin'),
   validate(bulkAttendanceSchema),
+  requireTeacherClassOwnership('classId'),
   AttendanceController.bulkRecord,
 );
 
 router.get(
   '/student/:studentId',
   authenticate,
+  authorize('parent', 'student', 'teacher', 'school_admin', 'super_admin'),
   requireParentOwnership('studentId'),
   AttendanceController.getByStudent,
 );
@@ -95,6 +99,7 @@ router.get(
   '/absentees',
   authenticate,
   authorize('teacher', 'school_admin', 'super_admin'),
+  requireTeacherClassOwnership('classId'),
   AttendanceController.getAbsentees,
 );
 
@@ -109,6 +114,7 @@ router.get(
   '/chronic-absentees',
   authenticate,
   authorize('teacher', 'school_admin', 'super_admin'),
+  requireTeacherClassOwnership('classId'),
   AttendanceController.getChronicAbsentees,
 );
 
@@ -194,7 +200,7 @@ router.post(
 router.get(
   '/substitutes',
   authenticate,
-  authorize('teacher', 'school_admin', 'super_admin'),
+  authorize('school_admin', 'super_admin'),
   AttendanceController.listSubstitutes,
 );
 
@@ -231,7 +237,7 @@ router.post(
 router.get(
   '/substitutes/:id',
   authenticate,
-  authorize('teacher', 'school_admin', 'super_admin'),
+  authorize('school_admin', 'super_admin'),
   AttendanceController.getSubstitute,
 );
 

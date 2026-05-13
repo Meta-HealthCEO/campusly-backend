@@ -1,12 +1,22 @@
 import { Request, Response } from 'express';
 import { ReportService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
+import { getUser } from '../../types/authenticated-request.js';
+import { assertCanAccessStudentReport } from './helpers.js';
+
+function getScopedSchoolId(req: Request): string | undefined {
+  const user = getUser(req);
+  if (user.role === 'super_admin') {
+    return (req.query.schoolId as string | undefined) ?? user.schoolId;
+  }
+  return user.schoolId;
+}
 
 export class ReportController {
   // ─── Dashboard Stats ────────────────────────────────────────────────────────
 
   static async getDashboardStats(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const schoolId = getScopedSchoolId(req);
     if (!schoolId) {
       res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
       return;
@@ -18,7 +28,7 @@ export class ReportController {
   // ─── Revenue Report ─────────────────────────────────────────────────────────
 
   static async getRevenueReport(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const schoolId = getScopedSchoolId(req);
     if (!schoolId) {
       res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
       return;
@@ -34,7 +44,7 @@ export class ReportController {
   // ─── Attendance Report ──────────────────────────────────────────────────────
 
   static async getAttendanceReport(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const schoolId = getScopedSchoolId(req);
     if (!schoolId) {
       res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
       return;
@@ -52,7 +62,7 @@ export class ReportController {
   // ─── Academic Performance Report ────────────────────────────────────────────
 
   static async getAcademicPerformanceReport(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const schoolId = getScopedSchoolId(req);
     if (!schoolId) {
       res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
       return;
@@ -71,14 +81,15 @@ export class ReportController {
     const studentId = req.params.studentId as string;
     const term = Number(req.query.term);
     const academicYear = Number(req.query.academicYear);
-    const schoolId = req.user?.schoolId;
+    const user = getUser(req);
 
     if (!term || !academicYear) {
       res.status(400).json(apiResponse(false, undefined, undefined, 'term and academicYear are required'));
       return;
     }
 
-    const reportCard = await ReportService.getStudentReportCard(studentId, term, academicYear, schoolId);
+    const access = await assertCanAccessStudentReport(user, studentId);
+    const reportCard = await ReportService.getStudentReportCard(studentId, term, academicYear, access.schoolId);
     res.json(apiResponse(true, reportCard, 'Student report card retrieved successfully'));
   }
 
@@ -86,12 +97,9 @@ export class ReportController {
 
   static async getStudent360(req: Request, res: Response): Promise<void> {
     const studentId = req.params.studentId as string;
-    const schoolId = req.user?.schoolId;
-    if (!schoolId) {
-      res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
-      return;
-    }
-    const data = await ReportService.getStudent360(schoolId, studentId);
+    const user = getUser(req);
+    const access = await assertCanAccessStudentReport(user, studentId);
+    const data = await ReportService.getStudent360(access.schoolId, studentId);
     if (!data) {
       res.status(404).json(apiResponse(false, undefined, undefined, 'Student not found'));
       return;
@@ -102,7 +110,7 @@ export class ReportController {
   // ─── Debtors Report ─────────────────────────────────────────────────────────
 
   static async getDebtorsReport(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const schoolId = getScopedSchoolId(req);
     if (!schoolId) {
       res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
       return;
@@ -116,7 +124,7 @@ export class ReportController {
   // ─── Tuck Shop Sales Report ─────────────────────────────────────────────────
 
   static async getTuckShopSalesReport(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const schoolId = getScopedSchoolId(req);
     if (!schoolId) {
       res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
       return;

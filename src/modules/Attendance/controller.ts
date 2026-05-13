@@ -8,16 +8,95 @@ import { SubstituteService } from './service-substitute.js';
 import { AttendanceStatsService } from './service-stats.js';
 import { ChronicAbsenceService } from './chronic-absence.service.js';
 import { apiResponse } from '../../common/utils.js';
-import { BadRequestError } from '../../common/errors.js';
+import { BadRequestError, ForbiddenError, NotFoundError } from '../../common/errors.js';
+import type { AuthenticatedUser } from '../../types/authenticated-request.js';
+import { Student } from '../Student/model.js';
+import { Class, Timetable } from '../Academic/model.js';
+import type { ISubstituteTeacher } from './model.js';
+
+function firstQueryValue(value: unknown): string | undefined {
+  if (Array.isArray(value)) {
+    const first = value[0];
+    return typeof first === 'string' ? first : undefined;
+  }
+  return typeof value === 'string' ? value : undefined;
+}
+
+async function assertCanReadStudentAttendance(
+  user: AuthenticatedUser,
+  studentId: string,
+  schoolId: string,
+): Promise<void> {
+  const student = await Student.findOne({
+    _id: studentId,
+    schoolId,
+    isDeleted: false,
+  })
+    .select('_id userId classId')
+    .lean();
+
+  if (!student) {
+    throw new NotFoundError('Student not found');
+  }
+
+  if (user.role === 'school_admin' || user.role === 'super_admin' || user.role === 'parent') {
+    return;
+  }
+
+  if (user.role === 'student') {
+    if (student.userId?.toString() === user.id) return;
+    throw new ForbiddenError('You can only access your own attendance');
+  }
+
+  if (user.role === 'teacher') {
+    const classId = student.classId.toString();
+    const [homeroom, timetableEntry] = await Promise.all([
+      Class.findOne({ _id: classId, schoolId, teacherId: user.id, isDeleted: false }).lean(),
+      Timetable.findOne({ schoolId, teacherId: user.id, classId, isDeleted: false }).lean(),
+    ]);
+
+    if (homeroom || timetableEntry) return;
+    throw new ForbiddenError('You can only access attendance for learners in your classes');
+  }
+
+  throw new ForbiddenError('You do not have access to this attendance data');
+}
+
+function requireTeacherScopedQuery(user: AuthenticatedUser, classId?: string, studentId?: string): void {
+  if (user.role === 'teacher' && !classId && !studentId) {
+    throw new BadRequestError('classId or studentId is required for teacher attendance queries');
+  }
+}
+
+function queueAttendanceAlerts(schoolId: string, date: Date | string, period: number): void {
+  const alertDate = new Date(date);
+  if (Number.isNaN(alertDate.getTime())) return;
+  alertDate.setUTCHours(0, 0, 0, 0);
+
+  void import('../../jobs/attendance-alert.job.js')
+    .then(({ addAttendanceAlertJob }) => addAttendanceAlertJob({
+      schoolId,
+      date: alertDate.toISOString(),
+      period,
+    }))
+    .catch((err: unknown) => {
+      console.error('Failed to queue attendance alerts:', err);
+    });
+}
 
 export class AttendanceController {
   static async record(req: Request, res: Response): Promise<void> {
-    const attendance = await AttendanceService.record(req.body, getUser(req).id);
+    const user = getUser(req);
+    const attendance = await AttendanceService.record({ ...req.body, schoolId: user.schoolId }, user.id);
+    if (attendance.status === 'absent' && user.schoolId) {
+      queueAttendanceAlerts(user.schoolId, attendance.date, attendance.period);
+    }
     res.status(201).json(apiResponse(true, attendance, 'Attendance recorded successfully'));
   }
 
   static async bulkRecord(req: Request, res: Response): Promise<void> {
-    const result = await AttendanceService.bulkRecord(req.body, getUser(req).id);
+    const user = getUser(req);
+    const result = await AttendanceService.bulkRecord({ ...req.body, schoolId: user.schoolId }, user.id);
     const hasPartialFailure = result.failed.length > 0 && result.saved.length > 0;
     const allFailed = result.failed.length > 0 && result.saved.length === 0;
     const status = allFailed ? 500 : hasPartialFailure ? 207 : 201;
@@ -26,17 +105,23 @@ export class AttendanceController {
       : hasPartialFailure
         ? `Bulk attendance partially recorded: ${result.saved.length} saved, ${result.failed.length} failed`
         : 'Bulk attendance recorded successfully';
+    if (!allFailed && user.schoolId && result.saved.some((record) => record.status === 'absent')) {
+      queueAttendanceAlerts(user.schoolId, req.body.date as string, req.body.period as number);
+    }
     res.status(status).json(apiResponse(!allFailed, result, message));
   }
 
   static async getByStudent(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
+    const user = getUser(req);
+    const schoolId = user.schoolId!;
     const studentId = req.params.studentId as string;
     const { startDate, endDate } = req.query;
 
     if (!startDate || !endDate) {
       throw new BadRequestError('startDate and endDate are required');
     }
+
+    await assertCanReadStudentAttendance(user, studentId, schoolId);
 
     const records = await AttendanceService.getByStudent(
       studentId,
@@ -61,17 +146,25 @@ export class AttendanceController {
   }
 
   static async getReport(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
-    const { studentId, classId, startDate, endDate } = req.query;
+    const user = getUser(req);
+    const schoolId = user.schoolId!;
+    const { startDate, endDate } = req.query;
+    const studentId = firstQueryValue(req.query.studentId);
+    const classId = firstQueryValue(req.query.classId);
 
     if (!startDate || !endDate) {
       throw new BadRequestError('startDate and endDate are required');
     }
 
+    requireTeacherScopedQuery(user, classId, studentId);
+    if (studentId) {
+      await assertCanReadStudentAttendance(user, studentId, schoolId);
+    }
+
     const report = await AttendanceService.getReport({
       schoolId,
-      studentId: studentId as string | undefined,
-      classId: classId as string | undefined,
+      studentId,
+      classId,
       startDate: startDate as string,
       endDate: endDate as string,
     });
@@ -79,17 +172,27 @@ export class AttendanceController {
   }
 
   static async getAbsentees(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
-    const { date, period } = req.query;
+    const user = getUser(req);
+    const schoolId = user.schoolId!;
+    const { date } = req.query;
+    const periodValue = firstQueryValue(req.query.period);
+    const classId = firstQueryValue(req.query.classId);
 
     if (!date) {
       throw new BadRequestError('date is required');
     }
+    const parsedPeriod = periodValue ? Number(periodValue) : undefined;
+    if (parsedPeriod !== undefined && (!Number.isInteger(parsedPeriod) || parsedPeriod <= 0)) {
+      throw new BadRequestError('period must be a positive integer');
+    }
+
+    requireTeacherScopedQuery(user, classId);
 
     const absentees = await AttendanceService.getAbsentees(
       schoolId,
       date as string,
-      period ? Number(period) : undefined,
+      parsedPeriod,
+      classId,
     );
     res.json(apiResponse(true, absentees, 'Absentees retrieved successfully'));
   }
@@ -104,15 +207,23 @@ export class AttendanceController {
   // ─── Chronic Absence ────────────────────────────────────────────────────────
 
   static async getChronicAbsentees(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
+    const user = getUser(req);
+    const schoolId = user.schoolId!;
     const threshold = req.query.threshold ? Number(req.query.threshold) : 80;
-    const absentees = await ChronicAbsenceService.getChronicAbsentees(schoolId, threshold);
+    if (!Number.isFinite(threshold) || threshold <= 0 || threshold > 100) {
+      throw new BadRequestError('threshold must be between 1 and 100');
+    }
+    const classId = firstQueryValue(req.query.classId);
+    requireTeacherScopedQuery(user, classId);
+    const absentees = await ChronicAbsenceService.getChronicAbsentees(schoolId, threshold, classId);
     res.json(apiResponse(true, absentees, 'Chronic absentees retrieved successfully'));
   }
 
   static async getStudentPatterns(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
+    const user = getUser(req);
+    const schoolId = user.schoolId!;
     const studentId = req.params.studentId as string;
+    await assertCanReadStudentAttendance(user, studentId, schoolId);
     const patterns = await ChronicAbsenceService.getStudentPatterns(studentId, schoolId);
     res.json(apiResponse(true, patterns, 'Attendance patterns retrieved successfully'));
   }
@@ -120,14 +231,13 @@ export class AttendanceController {
   // ─── Discipline ─────────────────────────────────────────────────────────────
 
   static async createDiscipline(req: Request, res: Response): Promise<void> {
-    const record = await DisciplineService.createDiscipline(req.body, getUser(req).id);
+    const record = await DisciplineService.createDiscipline(req.body, getUser(req));
     res.status(201).json(apiResponse(true, record, 'Discipline record created successfully'));
   }
 
   static async listDiscipline(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
     const result = await DisciplineService.listDiscipline(
-      schoolId,
+      getUser(req),
       { studentId: req.query.studentId as string, status: req.query.status as string, type: req.query.type as string },
       req.query.page ? Number(req.query.page) : undefined,
       req.query.limit ? Number(req.query.limit) : undefined,
@@ -136,20 +246,17 @@ export class AttendanceController {
   }
 
   static async getDiscipline(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
-    const record = await DisciplineService.getDisciplineById(req.params.id as string, schoolId);
+    const record = await DisciplineService.getDisciplineById(req.params.id as string, getUser(req));
     res.json(apiResponse(true, record, 'Discipline record retrieved successfully'));
   }
 
   static async updateDiscipline(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
-    const record = await DisciplineService.updateDiscipline(req.params.id as string, schoolId, req.body);
+    const record = await DisciplineService.updateDiscipline(req.params.id as string, getUser(req), req.body);
     res.json(apiResponse(true, record, 'Discipline record updated successfully'));
   }
 
   static async deleteDiscipline(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
-    await DisciplineService.deleteDiscipline(req.params.id as string, schoolId);
+    await DisciplineService.deleteDiscipline(req.params.id as string, getUser(req));
     res.json(apiResponse(true, undefined, 'Discipline record deleted successfully'));
   }
 
@@ -180,7 +287,8 @@ export class AttendanceController {
   // ─── Substitute Teacher ───────────────────────────────────────────────────
 
   static async createSubstitute(req: Request, res: Response): Promise<void> {
-    const sub = await SubstituteService.createSubstitute(req.body);
+    const schoolId = req.user!.schoolId!;
+    const sub = await SubstituteService.createSubstitute({ ...req.body, schoolId });
     res.status(201).json(apiResponse(true, sub, 'Substitute teacher recorded successfully'));
   }
 
@@ -207,7 +315,13 @@ export class AttendanceController {
 
   static async updateSubstitute(req: Request, res: Response): Promise<void> {
     const schoolId = req.user!.schoolId!;
-    const sub = await SubstituteService.updateSubstitute(req.params.id as string, schoolId, req.body);
+    const patch = { ...(req.body as Record<string, unknown>) };
+    delete patch.schoolId;
+    const sub = await SubstituteService.updateSubstitute(
+      req.params.id as string,
+      schoolId,
+      patch as Partial<ISubstituteTeacher>,
+    );
     res.json(apiResponse(true, sub, 'Substitute record updated successfully'));
   }
 
@@ -262,8 +376,10 @@ export class AttendanceController {
   // ─── Attendance Stats ────────────────────────────────────────────────────────
 
   static async getStudentStats(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
+    const user = getUser(req);
+    const schoolId = user.schoolId!;
     const studentId = req.params.studentId as string;
+    await assertCanReadStudentAttendance(user, studentId, schoolId);
     const stats = await AttendanceStatsService.getStudentStats(studentId, schoolId);
     res.json(apiResponse(true, stats, 'Student attendance stats retrieved successfully'));
   }

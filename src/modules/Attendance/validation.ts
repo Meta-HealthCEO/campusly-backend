@@ -4,35 +4,65 @@ const objectIdRegex = /^[0-9a-fA-F]{24}$/;
 const objectIdSchema = z.string().regex(objectIdRegex, 'Invalid ObjectId format');
 
 const attendanceStatusSchema = z.enum(['present', 'absent', 'late', 'excused']);
+const attendanceNotesSchema = z.string().trim().max(500, 'Notes must be 500 characters or fewer').optional();
+const attendanceDateSchema = z.string().datetime().refine(
+  (value) => {
+    const attendanceDate = new Date(value);
+    if (Number.isNaN(attendanceDate.getTime())) return false;
+    const todayEnd = new Date();
+    todayEnd.setHours(23, 59, 59, 999);
+    return attendanceDate <= todayEnd;
+  },
+  { message: 'Attendance date cannot be in the future' },
+);
+const attendancePeriodSchema = z
+  .int()
+  .positive('Period must be a positive integer')
+  .max(12, 'Period must be 12 or lower');
 
 export const recordAttendanceSchema = z.object({
   studentId: objectIdSchema,
   classId: objectIdSchema,
-  schoolId: objectIdSchema,
-  date: z.string().datetime(),
-  period: z.int().positive('Period must be a positive integer'),
+  schoolId: objectIdSchema.optional(),
+  date: attendanceDateSchema,
+  period: attendancePeriodSchema,
   status: attendanceStatusSchema,
-  notes: z.string().optional(),
+  notes: attendanceNotesSchema,
   earlyDeparture: z.boolean().optional(),
-  reason: z.string().optional(),
+  reason: attendanceNotesSchema,
   verifiedByParent: z.boolean().optional(),
   arrivalTime: z.string().optional(),
   departureTime: z.string().optional(),
 }).strict();
 
-export const bulkAttendanceSchema = z.object({
-  classId: objectIdSchema,
-  schoolId: objectIdSchema,
-  date: z.string().datetime(),
-  period: z.int().positive('Period must be a positive integer'),
-  records: z.array(
-    z.object({
-      studentId: objectIdSchema,
-      status: attendanceStatusSchema,
-      notes: z.string().optional(),
-    }),
-  ).min(1, 'At least one record is required'),
-}).strict();
+export const bulkAttendanceSchema = z
+  .object({
+    classId: objectIdSchema,
+    schoolId: objectIdSchema.optional(),
+    date: attendanceDateSchema,
+    period: attendancePeriodSchema,
+    records: z.array(
+      z.object({
+        studentId: objectIdSchema,
+        status: attendanceStatusSchema,
+        notes: attendanceNotesSchema,
+      }),
+    ).min(1, 'At least one record is required'),
+  })
+  .strict()
+  .superRefine((data, ctx) => {
+    const seen = new Set<string>();
+    data.records.forEach((record, index) => {
+      if (seen.has(record.studentId)) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['records', index, 'studentId'],
+          message: 'Duplicate student in attendance payload',
+        });
+      }
+      seen.add(record.studentId);
+    });
+  });
 
 export const attendanceReportSchema = z.object({
   studentId: objectIdSchema.optional(),
@@ -45,7 +75,7 @@ export const attendanceReportSchema = z.object({
 
 export const createDisciplineSchema = z.object({
   studentId: objectIdSchema,
-  schoolId: objectIdSchema,
+  schoolId: objectIdSchema.optional(),
   type: z.enum(['misconduct', 'bullying', 'vandalism', 'truancy', 'dress_code', 'late', 'other']),
   severity: z.enum(['minor', 'moderate', 'serious', 'critical']),
   description: z.string().min(1, 'Description is required'),
@@ -92,7 +122,7 @@ export const createSubstituteSchema = z
   .object({
     originalTeacherId: objectIdSchema,
     substituteTeacherId: objectIdSchema,
-    schoolId: objectIdSchema,
+    schoolId: objectIdSchema.optional(),
     date: z.string().datetime(),
     periods: z.array(z.number().int().positive()).default([]),
     reason: z.string().optional(),
@@ -119,7 +149,6 @@ export const updateSubstituteSchema = z
   .object({
     originalTeacherId: objectIdSchema.optional(),
     substituteTeacherId: objectIdSchema.optional(),
-    schoolId: objectIdSchema.optional(),
     date: z.string().datetime().optional(),
     periods: z.array(z.number().int().positive()).optional(),
     reason: z.string().optional(),

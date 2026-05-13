@@ -37,20 +37,20 @@ export class PastoralController {
   }
 
   static async updateReferral(req: Request, res: Response): Promise<void> {
-    const user = getUser(req);
+    const user = getUser(req) as PastoralUser;
     const referral = await ReferralService.updateReferral(
       req.params.id as string,
-      user.schoolId!,
+      user,
       req.body,
     );
     res.json(apiResponse(true, referral, 'Referral updated successfully'));
   }
 
   static async resolveReferral(req: Request, res: Response): Promise<void> {
-    const user = getUser(req);
+    const user = getUser(req) as PastoralUser;
     const referral = await ReferralService.resolveReferral(
       req.params.id as string,
-      user.schoolId!,
+      user,
       req.body,
     );
     res.json(apiResponse(true, referral, 'Referral resolved successfully'));
@@ -92,10 +92,10 @@ export class PastoralController {
   // ─── Wellbeing ───────────────────────────────────────────────────────────
 
   static async getWellbeingProfile(req: Request, res: Response): Promise<void> {
-    const user = getUser(req);
+    const user = getUser(req) as PastoralUser;
     const profile = await WellbeingService.getWellbeingProfile(
+      user,
       req.params.studentId as string,
-      user.schoolId!,
     );
     res.json(apiResponse(true, profile));
   }

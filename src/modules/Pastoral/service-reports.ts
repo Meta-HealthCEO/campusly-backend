@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 import { PastoralReferral, CounselorSession } from './model.js';
 
+const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
 export class ReportService {
   static async getReport(
     schoolId: string,
@@ -57,8 +59,8 @@ export class ReportService {
       year,
       total,
       data: results.map((r: { _id: string; count: number; criticalCount: number; highCount: number }) => ({
-        reason: r._id,
-        count: r.count,
+        name: r._id,
+        value: r.count,
         criticalCount: r.criticalCount,
         highCount: r.highCount,
         percentage: total > 0 ? Math.round((r.count / total) * 100) : 0,
@@ -83,10 +85,7 @@ export class ReportService {
       },
       {
         $group: {
-          _id: {
-            month: { $month: '$sessionDate' },
-            sessionType: '$sessionType',
-          },
+          _id: { month: { $month: '$sessionDate' } },
           count: { $sum: 1 },
           totalDuration: { $sum: '$duration' },
         },
@@ -98,12 +97,11 @@ export class ReportService {
       reportType: 'sessions_monthly',
       year,
       data: results.map((r: {
-        _id: { month: number; sessionType: string };
+        _id: { month: number };
         count: number;
         totalDuration: number;
       }) => ({
-        month: r._id.month,
-        sessionType: r._id.sessionType,
+        month: MONTH_LABELS[r._id.month - 1] ?? String(r._id.month),
         count: r.count,
         totalDuration: r.totalDuration,
       })),
@@ -141,8 +139,8 @@ export class ReportService {
       year,
       total,
       data: results.map((r: { _id: string | null; count: number }) => ({
-        outcome: r._id ?? 'not_set',
-        count: r.count,
+        name: r._id ?? 'not_set',
+        value: r.count,
         percentage: total > 0 ? Math.round((r.count / total) * 100) : 0,
       })),
     };

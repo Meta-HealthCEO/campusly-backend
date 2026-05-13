@@ -17,7 +17,7 @@ export class IncidentController {
     const user = getUser(req);
     const data: CreateIncidentInput = req.body;
     const incident = await IncidentService.create(
-      user.schoolId as string, user.id, data,
+      user, data,
     );
     res.status(201).json(apiResponse(true, incident, 'Incident reported successfully'));
   }
@@ -25,7 +25,6 @@ export class IncidentController {
   static async list(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
     const query = {
-      schoolId: (req.query.schoolId as string) ?? (user.schoolId as string),
       status: req.query.status as string | undefined,
       type: req.query.type as string | undefined,
       severity: req.query.severity as string | undefined,
@@ -36,14 +35,14 @@ export class IncidentController {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
     };
-    const result = await IncidentService.list(query);
+    const result = await IncidentService.list(user, query);
     res.json(apiResponse(true, result, 'Incidents retrieved'));
   }
 
   static async getById(req: Request, res: Response): Promise<void> {
-    const { schoolId } = getUser(req);
     const incident = await IncidentService.getById(
-      req.params.id as string, schoolId as string,
+      req.params.id as string,
+      getUser(req),
     );
     res.json(apiResponse(true, incident, 'Incident retrieved'));
   }
@@ -52,23 +51,22 @@ export class IncidentController {
     const user = getUser(req);
     const data: UpdateIncidentInput = req.body;
     const incident = await IncidentService.update(
-      req.params.id as string, user.schoolId as string, user.id, data,
+      req.params.id as string, user, data,
     );
     res.json(apiResponse(true, incident, 'Incident updated'));
   }
 
   static async remove(req: Request, res: Response): Promise<void> {
-    const { schoolId } = getUser(req);
-    await IncidentService.softDelete(req.params.id as string, schoolId as string);
+    await IncidentService.softDelete(req.params.id as string, getUser(req));
     res.json(apiResponse(true, undefined, 'Incident deleted'));
   }
 
   // ─── Follow-up Actions ─────────────────────────────────────────────────
 
   static async listActions(req: Request, res: Response): Promise<void> {
-    const { schoolId } = getUser(req);
     const actions = await IncidentService.listActions(
-      req.params.id as string, schoolId as string,
+      req.params.id as string,
+      getUser(req),
     );
     res.json(apiResponse(true, actions, 'Actions retrieved'));
   }
@@ -77,17 +75,17 @@ export class IncidentController {
     const user = getUser(req);
     const data: CreateActionInput = req.body;
     const action = await IncidentService.createAction(
-      req.params.id as string, user.schoolId as string, user.id, data,
+      req.params.id as string, user, data,
     );
     res.status(201).json(apiResponse(true, action, 'Action created'));
   }
 
   static async updateAction(req: Request, res: Response): Promise<void> {
-    const { schoolId } = getUser(req);
+    const user = getUser(req);
     const data: UpdateActionInput = req.body;
     const action = await IncidentService.updateAction(
       req.params.id as string, req.params.actionId as string,
-      schoolId as string, data,
+      user, data,
     );
     res.json(apiResponse(true, action, 'Action updated'));
   }

@@ -2,20 +2,19 @@ import mongoose from 'mongoose';
 import { PastoralReferral } from './model.js';
 import { NotFoundError, BadRequestError, ForbiddenError } from '../../common/errors.js';
 import { paginationHelper } from '../../common/utils.js';
+import {
+  assertCanAccessStudent,
+  assertCanManageReferral,
+  formatReferral,
+  REFERRAL_POPULATE,
+  type PastoralUser,
+} from './helpers.js';
 import type {
   CreateReferralInput,
   UpdateReferralInput,
   ResolveReferralInput,
 } from './validation.js';
-import type { AuthenticatedUser } from '../../types/authenticated-request.js';
 
-// Extended user type — includes JWT permission flags set by authenticate middleware
-interface PastoralUser extends AuthenticatedUser {
-  isCounselor?: boolean;
-  isSchoolPrincipal?: boolean;
-}
-
-// Valid workflow transitions
 const STATUS_TRANSITIONS: Record<string, string[]> = {
   referred: ['acknowledged'],
   acknowledged: ['in_progress'],
@@ -27,6 +26,8 @@ const STATUS_TRANSITIONS: Record<string, string[]> = {
 export class ReferralService {
   static async createReferral(user: PastoralUser, data: CreateReferralInput) {
     const schoolOid = new mongoose.Types.ObjectId(user.schoolId!);
+    await assertCanAccessStudent(user, data.studentId);
+
     const referral = await PastoralReferral.create({
       studentId: new mongoose.Types.ObjectId(data.studentId),
       schoolId: schoolOid,
@@ -37,7 +38,11 @@ export class ReferralService {
       referrerNotes: data.referrerNotes ?? '',
       status: 'referred',
     });
-    return referral.toObject();
+
+    const populated = await PastoralReferral.findById(referral._id)
+      .populate(REFERRAL_POPULATE)
+      .lean();
+    return formatReferral(populated ?? referral.toObject());
   }
 
   static async listReferrals(
@@ -54,19 +59,15 @@ export class ReferralService {
     const schoolOid = new mongoose.Types.ObjectId(user.schoolId!);
     const query: Record<string, unknown> = { schoolId: schoolOid, isDeleted: false };
 
-    // Role-based visibility
     if (user.role === 'teacher' && !user.isCounselor && !user.isSchoolPrincipal) {
-      // Regular teacher sees only their own referrals
       query.referredBy = new mongoose.Types.ObjectId(user.id);
     } else if (user.role === 'teacher' && user.isCounselor) {
-      // Counselor sees assigned or unassigned referrals
       query.$or = [
         { assignedCounselorId: new mongoose.Types.ObjectId(user.id) },
         { assignedCounselorId: { $exists: false } },
         { assignedCounselorId: null },
       ];
     }
-    // school_admin / principal / super_admin see all
 
     if (filters.status) query.status = filters.status;
     if (filters.reason) query.reason = filters.reason;
@@ -79,21 +80,25 @@ export class ReferralService {
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
-        .populate('studentId', 'firstName lastName grade')
-        .populate('referredBy', 'firstName lastName')
-        .populate('assignedCounselorId', 'firstName lastName')
+        .populate(REFERRAL_POPULATE)
         .lean(),
       PastoralReferral.countDocuments(query),
     ]);
-    return { referrals, total, page: filters.page ?? 1, limit };
+
+    return {
+      referrals: referrals.map(formatReferral),
+      total,
+      page: filters.page ?? 1,
+      limit,
+    };
   }
 
   static async updateReferral(
     id: string,
-    schoolId: string,
+    user: PastoralUser,
     data: UpdateReferralInput,
   ) {
-    const schoolOid = new mongoose.Types.ObjectId(schoolId);
+    const schoolOid = new mongoose.Types.ObjectId(user.schoolId!);
     const oid = new mongoose.Types.ObjectId(id);
 
     const existing = await PastoralReferral.findOne({
@@ -102,8 +107,8 @@ export class ReferralService {
       isDeleted: false,
     }).lean();
     if (!existing) throw new NotFoundError('Referral not found');
+    assertCanManageReferral(user, existing);
 
-    // Enforce status workflow
     if (data.status !== undefined && data.status !== existing.status) {
       const allowed = STATUS_TRANSITIONS[existing.status] ?? [];
       if (!allowed.includes(data.status)) {
@@ -116,7 +121,18 @@ export class ReferralService {
     const update: Record<string, unknown> = {};
     if (data.status !== undefined) update.status = data.status;
     if (data.assignedCounselorId !== undefined) {
+      if (user.role === 'teacher' && user.isCounselor && data.assignedCounselorId !== user.id) {
+        throw new ForbiddenError('Counselors can only assign referrals to themselves');
+      }
       update.assignedCounselorId = new mongoose.Types.ObjectId(data.assignedCounselorId);
+    } else if (
+      user.role === 'teacher' &&
+      user.isCounselor &&
+      data.status !== undefined &&
+      ['acknowledged', 'in_progress'].includes(data.status) &&
+      !existing.assignedCounselorId
+    ) {
+      update.assignedCounselorId = new mongoose.Types.ObjectId(user.id);
     }
     if (data.counselorNotes !== undefined) update.counselorNotes = data.counselorNotes;
     if (data.urgency !== undefined) update.urgency = data.urgency;
@@ -126,20 +142,18 @@ export class ReferralService {
       { $set: update },
       { new: true },
     )
-      .populate('studentId', 'firstName lastName grade')
-      .populate('referredBy', 'firstName lastName')
-      .populate('assignedCounselorId', 'firstName lastName')
+      .populate(REFERRAL_POPULATE)
       .lean();
     if (!referral) throw new NotFoundError('Referral not found');
-    return referral;
+    return formatReferral(referral);
   }
 
   static async resolveReferral(
     id: string,
-    schoolId: string,
+    user: PastoralUser,
     data: ResolveReferralInput,
   ) {
-    const schoolOid = new mongoose.Types.ObjectId(schoolId);
+    const schoolOid = new mongoose.Types.ObjectId(user.schoolId!);
     const oid = new mongoose.Types.ObjectId(id);
 
     const existing = await PastoralReferral.findOne({
@@ -148,6 +162,7 @@ export class ReferralService {
       isDeleted: false,
     }).lean();
     if (!existing) throw new NotFoundError('Referral not found');
+    assertCanManageReferral(user, existing);
 
     if (!['in_progress', 'acknowledged'].includes(existing.status)) {
       throw new BadRequestError(
@@ -163,16 +178,15 @@ export class ReferralService {
           outcome: data.outcome,
           resolutionNotes: data.resolutionNotes,
           resolvedAt: new Date(),
+          assignedCounselorId: existing.assignedCounselorId ?? new mongoose.Types.ObjectId(user.id),
         },
       },
       { new: true },
     )
-      .populate('studentId', 'firstName lastName grade')
-      .populate('referredBy', 'firstName lastName')
-      .populate('assignedCounselorId', 'firstName lastName')
+      .populate(REFERRAL_POPULATE)
       .lean();
     if (!referral) throw new NotFoundError('Referral not found');
-    return referral;
+    return formatReferral(referral);
   }
 }
 

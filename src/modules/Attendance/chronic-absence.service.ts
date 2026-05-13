@@ -53,12 +53,14 @@ export class ChronicAbsenceService {
   static async getChronicAbsentees(
     schoolId: string,
     threshold = 80,
+    classId?: string,
   ): Promise<ChronicAbsentee[]> {
     const schoolOid = new mongoose.Types.ObjectId(schoolId);
 
     // Get active students with their enrollment dates
     const students = await Student.find({
       schoolId,
+      ...(classId ? { classId } : {}),
       isDeleted: false,
       enrollmentStatus: 'active',
     })
@@ -68,6 +70,7 @@ export class ChronicAbsenceService {
       .lean();
 
     if (students.length === 0) return [];
+    const studentObjectIds = students.map((student) => student._id);
 
     // Get term start — use start of current year as a reasonable approximation
     const now = new Date();
@@ -84,6 +87,7 @@ export class ChronicAbsenceService {
       {
         $match: {
           schoolId: schoolOid,
+          studentId: { $in: studentObjectIds },
           isDeleted: false,
           date: { $gte: termStart },
           period: 1,

@@ -5,8 +5,53 @@ import { Attendance, Merit } from '../../Attendance/model.js';
 import { Mark, Assessment } from '../../Academic/model.js';
 import { Homework, HomeworkSubmission } from '../../Homework/model.js';
 import { Wallet } from '../../Wallet/model.js';
+import { NotFoundError } from '../../../common/errors.js';
 import type { PopulatedSubject } from '../../../types/populated.js';
 import { getPopulated } from '../../../types/populated.js';
+
+type PopulatedReportSubject = {
+  _id?: mongoose.Types.ObjectId | string;
+  id?: string;
+  name?: string;
+  code?: string;
+};
+
+type PopulatedReportAssessment = {
+  _id?: mongoose.Types.ObjectId | string;
+  name?: string;
+  type?: string;
+  totalMarks?: number;
+  weight?: number;
+  subjectId?: PopulatedReportSubject | mongoose.Types.ObjectId | string | null;
+};
+
+type PopulatedReportPerson = {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+};
+
+type PopulatedReportLookup = {
+  name?: string;
+};
+
+function toObjectIdString(value: unknown): string | undefined {
+  if (!value) return undefined;
+  if (typeof value === 'string') return value;
+  if (typeof value === 'object' && '_id' in value && value._id) return String(value._id);
+  if (typeof value === 'object' && 'id' in value && value.id) return String(value.id);
+  if (typeof value === 'object' && !(value instanceof mongoose.Types.ObjectId)) return undefined;
+  return String(value);
+}
+
+function roundPercentage(value: number): number {
+  return Math.round(value * 100) / 100;
+}
+
+function percentageFromMark(mark: number, total: number, savedPercentage?: number): number {
+  if (Number.isFinite(savedPercentage)) return savedPercentage ?? 0;
+  return total > 0 ? (mark / total) * 100 : 0;
+}
 
 export class AcademicReportService {
   static async getAttendanceReport(
@@ -114,25 +159,133 @@ export class AcademicReportService {
   }
 
   static async getStudentReportCard(studentId: string, term: number, academicYear: number, schoolId?: string) {
+    const studentObjId = new mongoose.Types.ObjectId(studentId);
+    const studentFilter: Record<string, unknown> = { _id: studentObjId, isDeleted: false };
+    if (schoolId) studentFilter.schoolId = new mongoose.Types.ObjectId(schoolId);
+
+    const student = await Student.findOne(studentFilter)
+      .populate('userId', 'firstName lastName email')
+      .populate('gradeId', 'name level')
+      .populate('classId', 'name')
+      .lean();
+
+    if (!student) {
+      throw new NotFoundError('Student not found');
+    }
+
+    const schoolObjId = new mongoose.Types.ObjectId(String(student.schoolId));
     const markFilter: Record<string, unknown> = {
-      studentId: new mongoose.Types.ObjectId(studentId),
+      studentId: studentObjId,
+      schoolId: schoolObjId,
       isDeleted: false,
     };
     const marks = await Mark.find(markFilter)
       .populate({
         path: 'assessmentId',
-        match: { term, academicYear, isDeleted: false },
+        match: { term, academicYear, schoolId: schoolObjId, isDeleted: false },
         populate: { path: 'subjectId', select: 'name code' },
       })
       .lean();
 
     const filteredMarks = marks.filter((m) => m.assessmentId !== null);
+    const subjectSummaries = new Map<string, {
+      subjectId: string;
+      subjectName: string;
+      subjectCode: string;
+      mark: number;
+      total: number;
+      percentageTotal: number;
+      weightedPercentageTotal: number;
+      weightTotal: number;
+      assessmentCount: number;
+    }>();
+
+    for (const mark of filteredMarks) {
+      const assessment = mark.assessmentId as unknown as PopulatedReportAssessment;
+      const subject = assessment.subjectId as PopulatedReportSubject | undefined;
+      const subjectId = toObjectIdString(subject) ?? 'unknown';
+      const subjectName = subject && typeof subject === 'object' && 'name' in subject
+        ? subject.name ?? 'Unknown subject'
+        : 'Unknown subject';
+      const subjectCode = subject && typeof subject === 'object' && 'code' in subject
+        ? subject.code ?? ''
+        : '';
+
+      const markValue = Number(mark.mark) || 0;
+      const totalValue = Number(mark.total) || Number(assessment.totalMarks) || 0;
+      const percentage = percentageFromMark(markValue, totalValue, Number(mark.percentage));
+      const weight = Math.max(Number(assessment.weight) || 0, 0);
+
+      if (!subjectSummaries.has(subjectId)) {
+        subjectSummaries.set(subjectId, {
+          subjectId,
+          subjectName,
+          subjectCode,
+          mark: 0,
+          total: 0,
+          percentageTotal: 0,
+          weightedPercentageTotal: 0,
+          weightTotal: 0,
+          assessmentCount: 0,
+        });
+      }
+
+      const summary = subjectSummaries.get(subjectId)!;
+      summary.mark += markValue;
+      summary.total += totalValue;
+      summary.percentageTotal += percentage;
+      summary.weightedPercentageTotal += percentage * weight;
+      summary.weightTotal += weight;
+      summary.assessmentCount += 1;
+    }
+
+    const subjectSummaryList = [...subjectSummaries.values()]
+      .map((summary) => {
+        const averagePercentage = summary.assessmentCount > 0
+          ? summary.percentageTotal / summary.assessmentCount
+          : 0;
+        const weightedPercentage = summary.weightTotal > 0
+          ? summary.weightedPercentageTotal / summary.weightTotal
+          : averagePercentage;
+
+        return {
+          subjectId: summary.subjectId,
+          subjectName: summary.subjectName,
+          subjectCode: summary.subjectCode,
+          mark: roundPercentage(summary.mark),
+          total: roundPercentage(summary.total),
+          averagePercentage: roundPercentage(averagePercentage),
+          weightedPercentage: roundPercentage(weightedPercentage),
+          assessmentCount: summary.assessmentCount,
+        };
+      })
+      .sort((a, b) => a.subjectName.localeCompare(b.subjectName));
+
+    const user = student.userId as unknown as PopulatedReportPerson | undefined;
+    const grade = student.gradeId as unknown as PopulatedReportLookup | undefined;
+    const classInfo = student.classId as unknown as PopulatedReportLookup | undefined;
+    const studentName = [user?.firstName, user?.lastName].filter(Boolean).join(' ').trim();
+    const overallAverage = subjectSummaryList.length > 0
+      ? subjectSummaryList.reduce((sum, summary) => sum + summary.weightedPercentage, 0) / subjectSummaryList.length
+      : 0;
 
     return {
       studentId,
+      student: {
+        id: String(student._id),
+        name: studentName || student.admissionNumber,
+        admissionNumber: student.admissionNumber,
+        gradeName: grade?.name ?? '',
+        className: classInfo?.name ?? '',
+      },
       term,
       academicYear,
       marks: filteredMarks,
+      summary: {
+        subjectSummaries: subjectSummaryList,
+        overallAverage: roundPercentage(overallAverage),
+        totalAssessments: filteredMarks.length,
+      },
     };
   }
 
