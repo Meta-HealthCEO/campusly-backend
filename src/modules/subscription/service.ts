@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import type mongoose from 'mongoose';
-import { Subscription, Plan, Invoice, type ISubscription, type IInvoice } from './model.js';
+import { Subscription, Plan, Invoice, CheckoutSession, type ISubscription, type IInvoice } from './model.js';
 import { School } from '../School/model.js';
 import { getOneGateClient } from '../../lib/onegate/index.js';
 import type { ChargeTokenResponse } from '../../lib/onegate/index.js';
@@ -13,6 +13,19 @@ export interface StartTrialInput {
   cardBrand: string;
   cardExpiryMonth: number;
   cardExpiryYear: number;
+}
+
+export interface StartCheckoutInput {
+  userId: mongoose.Types.ObjectId;
+  schoolId: mongoose.Types.ObjectId;
+  planCode: string;
+}
+
+export class SubscriptionStartCheckoutError extends Error {
+  constructor(message: string, public readonly code: 'CARD_EXISTS' | 'NOT_PURCHASABLE' | 'NO_SUBSCRIPTION' | 'PLAN_NOT_FOUND') {
+    super(message);
+    this.name = 'SubscriptionStartCheckoutError';
+  }
 }
 
 function nanoId(len = 8): string {
@@ -281,6 +294,61 @@ export class SubscriptionService {
 
     await sub.save();
     await SubscriptionService.syncSchoolCache(sub);
+  }
+
+  static async startCheckout(input: StartCheckoutInput): Promise<{ paymentKey: string; sessionId: string }> {
+    const sub = await Subscription.findOne({ schoolId: input.schoolId });
+    if (!sub) throw new SubscriptionStartCheckoutError('Subscription not found', 'NO_SUBSCRIPTION');
+    if (sub.cardTokenGuid) {
+      throw new SubscriptionStartCheckoutError('Subscription already has a card on file', 'CARD_EXISTS');
+    }
+
+    const existing = await CheckoutSession.findOne({
+      userId: input.userId,
+      planCode: input.planCode,
+      status: 'pending',
+      expiresAt: { $gt: new Date() },
+    });
+    if (existing) {
+      return { paymentKey: existing.paymentKey, sessionId: (existing._id as mongoose.Types.ObjectId).toString() };
+    }
+
+    const plan = await Plan.findOne({ code: input.planCode, isActive: true });
+    if (!plan) throw new SubscriptionStartCheckoutError('Plan not found', 'PLAN_NOT_FOUND');
+    if (!['pro_monthly', 'pro_annual'].includes(plan.code)) {
+      throw new SubscriptionStartCheckoutError('Plan is not purchasable', 'NOT_PURCHASABLE');
+    }
+
+    const merchantReference = 'sub_' + nanoId();
+    const frontend = process.env.FRONTEND_BASE_URL ?? 'http://localhost:3500';
+    const backend = process.env.BACKEND_BASE_URL ?? 'http://localhost:4500';
+
+    const session = await CheckoutSession.create({
+      userId: input.userId,
+      schoolId: input.schoolId,
+      planCode: input.planCode,
+      merchantReference,
+      paymentKey: 'pending',
+      purpose: 'tokenisation',
+      status: 'pending',
+      expiresAt: new Date(Date.now() + 30 * 60 * 1000),
+    });
+
+    const sessionId = (session._id as mongoose.Types.ObjectId).toString();
+    const result = await getOneGateClient().createPaymentKey({
+      payment_type: 'credit_card',
+      amount: '1.00',
+      merchant_reference: merchantReference,
+      success_url: `${frontend}/subscription/success?session=${sessionId}`,
+      error_url: `${frontend}/subscription/error?session=${sessionId}`,
+      pending_url: `${frontend}/subscription/pending?session=${sessionId}`,
+      notify_url: `${backend}/api/webhooks/onegate`,
+    });
+
+    session.paymentKey = result.key;
+    await session.save();
+
+    return { paymentKey: result.key, sessionId };
   }
 
   static async endSubscription(sub: ISubscription): Promise<void> {
