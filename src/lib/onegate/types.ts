@@ -63,6 +63,13 @@ export interface GatewayTransactionResponse {
   token?: string;
 }
 
+export interface CustomerTokenResponse {
+  guid: string;
+  expiry_date: string;
+  last_four?: string;
+  brand?: string;
+}
+
 export interface RefundResponse {
   success: 0 | 1;
   refunded_amount: string;

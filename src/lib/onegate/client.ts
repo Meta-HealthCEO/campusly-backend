@@ -5,6 +5,7 @@ import type {
   CreatePaymentKeyInput, PaymentKeyResponse,
   ChargeTokenInput, ChargeTokenResponse,
   GatewayTransactionResponse, RefundResponse,
+  CustomerTokenResponse,
 } from './types.js';
 
 export interface OneGateClientConfig {
@@ -63,6 +64,10 @@ export class OneGateClient {
 
   async chargeToken(guid: string, input: ChargeTokenInput): Promise<ChargeTokenResponse> {
     return this.wrap(this.http.post<ChargeTokenResponse>(`/api/v2/customer-token/${guid}/pay`, toForm(input as never), { headers: this.formHeaders() }));
+  }
+
+  async createCustomerToken(merchantReference: string): Promise<CustomerTokenResponse> {
+    return this.wrap(this.http.post<CustomerTokenResponse>('/api/v2/customer-token', toForm({ merchant_reference: merchantReference }), { headers: this.formHeaders() }));
   }
 
   async getTransaction(id: number): Promise<GatewayTransactionResponse> {
