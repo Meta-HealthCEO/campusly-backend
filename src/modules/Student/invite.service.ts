@@ -1,6 +1,7 @@
 import { Student } from './model.js';
 import { User } from '../Auth/model.js';
 import { NotFoundError, ConflictError, BadRequestError } from '../../common/errors.js';
+import { EmailService } from '../../services/email.service.js';
 import crypto from 'crypto';
 
 export class StudentInviteService {
@@ -8,29 +9,64 @@ export class StudentInviteService {
     studentId: string,
     schoolId: string,
     data: { email: string },
-  ): Promise<{ tempPassword: string }> {
+  ): Promise<{
+    loginEmail: string;
+    tempPassword: string;
+    emailSent: boolean;
+    whatsappSent: boolean;
+    whatsappSkippedReason: string;
+  }> {
     const student = await Student.findOne({ _id: studentId, schoolId, isDeleted: false });
     if (!student) throw new NotFoundError('Student not found');
-    if (student.userId) throw new ConflictError('Student already has a portal account');
     if (!data.email) throw new BadRequestError('Email is required to invite a student');
 
-    const existingUser = await User.findOne({ email: data.email.toLowerCase() });
-    if (existingUser) throw new ConflictError('A user with this email already exists');
+    const loginEmail = data.email.toLowerCase();
+    const existingUser = await User.findOne({ email: loginEmail, isDeleted: false });
+    if (existingUser && existingUser._id.toString() !== student.userId?.toString()) {
+      throw new ConflictError('A user with this email already exists');
+    }
 
-    const tempPassword = crypto.randomBytes(4).toString('hex');
+    const tempPassword = `Campus-${crypto.randomBytes(3).toString('hex')}`;
 
-    const user = await User.create({
-      email: data.email.toLowerCase(),
-      password: tempPassword,
-      firstName: student.admissionNumber,
-      lastName: '',
-      role: 'student',
-      schoolId,
-    });
+    let user = student.userId
+      ? await User.findOne({ _id: student.userId, schoolId, isDeleted: false }).select('+password')
+      : null;
 
-    student.userId = user._id;
-    await student.save();
+    if (user) {
+      user.email = loginEmail;
+      user.password = tempPassword;
+      await user.save();
+    } else {
+      user = await User.create({
+        email: loginEmail,
+        password: tempPassword,
+        firstName: student.admissionNumber,
+        lastName: '',
+        role: 'student',
+        schoolId,
+      });
+      student.userId = user._id;
+      await student.save();
+    }
 
-    return { tempPassword };
+    let emailSent = false;
+    try {
+      const result = await EmailService.sendStudentPortalCredentials(loginEmail, {
+        studentName: student.admissionNumber,
+        loginEmail,
+        tempPassword,
+      });
+      emailSent = result.success;
+    } catch {
+      emailSent = false;
+    }
+
+    return {
+      loginEmail,
+      tempPassword,
+      emailSent,
+      whatsappSent: false,
+      whatsappSkippedReason: 'WhatsApp login delivery needs school WhatsApp opt-in/configuration before it can be used.',
+    };
   }
 }

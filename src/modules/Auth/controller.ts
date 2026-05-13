@@ -79,6 +79,18 @@ export class AuthController {
     );
   }
 
+  static async getTeacherOnboardingStatus(req: Request, res: Response): Promise<void> {
+    const user = getUser(req);
+    const status = await StandaloneService.getOnboardingStatus(user.id, user.schoolId!);
+    res.status(200).json(apiResponse(true, status, 'Teacher onboarding status retrieved'));
+  }
+
+  static async dismissTeacherOnboarding(req: Request, res: Response): Promise<void> {
+    const user = getUser(req);
+    await StandaloneService.dismissOnboarding(user.id);
+    res.status(200).json(apiResponse(true, undefined, 'Onboarding dismissed'));
+  }
+
   static async getCoachOnboardingStatus(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
     const status = await StandaloneCoachService.getOnboardingStatus(user.id, user.schoolId!);

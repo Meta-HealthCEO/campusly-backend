@@ -34,6 +34,18 @@ export class StudentController {
       return;
     }
 
+    if (req.user?.role === 'student') {
+      const student = await StudentService.getByUserId(req.user.id, schoolId);
+      res.json(apiResponse(true, {
+        students: [student],
+        total: 1,
+        page: 1,
+        limit: 1,
+        totalPages: 1,
+      }, 'Students retrieved successfully'));
+      return;
+    }
+
     const query = {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
@@ -43,6 +55,17 @@ export class StudentController {
 
     const result = await StudentService.list(schoolId, query);
     res.json(apiResponse(true, result, 'Students retrieved successfully'));
+  }
+
+  static async me(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
+      return;
+    }
+
+    const student = await StudentService.getByUserId(req.user!.id, schoolId);
+    res.json(apiResponse(true, student, 'Student retrieved successfully'));
   }
 
   static async getById(req: Request, res: Response): Promise<void> {

@@ -3,12 +3,14 @@ import { User } from '../Auth/model.js';
 import { NotFoundError } from '../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../common/constants.js';
 import { escapeRegex } from '../../common/utils.js';
+import { EmailService } from '../../services/email.service.js';
 import crypto from 'crypto';
 
 type CreateStudentData = Partial<IStudent> & {
   firstName?: string;
   lastName?: string;
   email?: string;
+  phone?: string;
 };
 
 type UpdateStudentData = Partial<IStudent> & {
@@ -25,6 +27,19 @@ interface ListQuery {
   search?: string;
 }
 
+export interface StudentPortalCredentials {
+  loginEmail: string;
+  tempPassword: string;
+  emailSent: boolean;
+  whatsappSent: boolean;
+  whatsappSkippedReason?: string;
+}
+
+export interface CreateStudentResult {
+  student: IStudent;
+  credentials?: StudentPortalCredentials;
+}
+
 /**
  * Generates a sequential admission number scoped per school. Format: S00001.
  * Walks past collisions (e.g. when school already has S00042 imported manually,
@@ -34,7 +49,7 @@ async function nextAdmissionNumber(schoolId: string | { toString(): string }): P
   const sid = String(schoolId);
   const count = await Student.countDocuments({ schoolId: sid, isDeleted: false });
   let next = count + 1;
-  // Defensive collision walk — handles deleted-rows-not-counted case + manual entries
+  // Defensive collision walk - handles deleted-rows-not-counted case + manual entries
   for (let i = 0; i < 1000; i += 1) {
     const candidate = `S${String(next).padStart(5, '0')}`;
     const exists = await Student.exists({ schoolId: sid, admissionNumber: candidate });
@@ -45,9 +60,36 @@ async function nextAdmissionNumber(schoolId: string | { toString(): string }): P
   return `S-${crypto.randomUUID().slice(0, 8)}`;
 }
 
+function fallbackStudentEmail(
+  admissionNumber: string | { toString(): string },
+  schoolId: string | { toString(): string },
+): string {
+  const admission = String(admissionNumber)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '') || crypto.randomUUID().slice(0, 8);
+  const school = String(schoolId)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '')
+    .slice(-8);
+
+  return `${admission}.${school}@students.campusly.local`;
+}
+
+function generateTempPassword(): string {
+  return `Campus-${crypto.randomBytes(3).toString('hex')}`;
+}
+
+function shouldEmailCredentials(email: string | undefined, fallbackEmail: string): email is string {
+  return typeof email === 'string' &&
+    email.trim().length > 0 &&
+    email.toLowerCase() !== fallbackEmail.toLowerCase();
+}
+
 export class StudentService {
-  static async create(data: CreateStudentData): Promise<IStudent> {
-    const { firstName, lastName, email, ...studentData } = data;
+  static async create(data: CreateStudentData): Promise<CreateStudentResult> {
+    const { firstName, lastName, email, phone, ...studentData } = data;
+    let credentials: StudentPortalCredentials | undefined;
 
     // Auto-generate an admission number if the caller didn't supply one.
     // Standalone tutoring teachers don't run admission numbering systems and
@@ -58,21 +100,51 @@ export class StudentService {
 
     if (!studentData.userId && firstName && lastName && studentData.schoolId) {
       const admission = studentData.admissionNumber ?? crypto.randomUUID();
-      const fallbackEmail = `${String(admission).toLowerCase()}@students.campusly.local`;
+      const fallbackEmail = fallbackStudentEmail(admission, studentData.schoolId);
+      const tempPassword = generateTempPassword();
+      const loginEmail = (email ?? fallbackEmail).toLowerCase();
       const user = await User.create({
-        email: (email ?? fallbackEmail).toLowerCase(),
-        password: crypto.randomUUID(),
+        email: loginEmail,
+        password: tempPassword,
         firstName,
         lastName,
+        phone,
         role: 'student',
         schoolId: studentData.schoolId,
         isActive: true,
       });
       studentData.userId = user._id as IStudent['userId'];
+
+      let emailSent = false;
+      if (shouldEmailCredentials(email, fallbackEmail)) {
+        try {
+          const result = await EmailService.sendStudentPortalCredentials(loginEmail, {
+            studentName: `${firstName} ${lastName}`.trim(),
+            loginEmail,
+            tempPassword,
+          });
+          emailSent = result.success;
+        } catch {
+          emailSent = false;
+        }
+      }
+
+      credentials = {
+        loginEmail,
+        tempPassword,
+        emailSent,
+        whatsappSent: false,
+        whatsappSkippedReason: phone
+          ? 'WhatsApp login delivery needs school WhatsApp opt-in/configuration before it can be used.'
+          : 'No parent cell number supplied.',
+      };
     }
 
     const student = new Student(studentData);
-    return student.save();
+    return {
+      student: await student.save(),
+      credentials,
+    };
   }
 
   static async list(
@@ -214,8 +286,11 @@ export class StudentService {
     return student;
   }
 
-  static async getByUserId(userId: string): Promise<IStudent> {
-    const student = await Student.findOne({ userId, isDeleted: false })
+  static async getByUserId(userId: string, schoolId?: string): Promise<IStudent> {
+    const filter: Record<string, unknown> = { userId, isDeleted: false };
+    if (schoolId) filter.schoolId = schoolId;
+
+    const student = await Student.findOne(filter)
       .populate('userId', 'firstName lastName email phone profileImage')
       .populate('gradeId')
       .populate('classId')

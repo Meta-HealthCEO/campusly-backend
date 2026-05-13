@@ -81,11 +81,22 @@ export class AuthService {
       address: { street: 'TBD', city: 'TBD', province: 'TBD', postalCode: '0000', country: 'South Africa' },
       contactInfo: { email: data.email.toLowerCase(), phone: '0000000000' },
       subscription: { tier: 'basic', expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) },
-      modulesEnabled: ['auth', 'academic', 'ai_tools', 'teacher_workbench', 'learning'],
+      modulesEnabled: [
+        'auth',
+        'academic',
+        'ai_tools',
+        'teacher_workbench',
+        'learning',
+        'homework',
+        'attendance',
+        'incident_wellbeing',
+        'communication',
+      ],
       settings: { academicYear: new Date().getFullYear(), terms: 4, gradingSystem: 'percentage' },
       principal: `${data.firstName} ${data.lastName}`,
       joinCode: generateJoinCode(),
       isActive: true,
+      plan: 'standalone',
     });
 
     // Create user as teacher + school principal
@@ -97,7 +108,11 @@ export class AuthService {
       role: 'teacher',
       schoolId: school._id,
       isSchoolPrincipal: true,
+      isStandaloneTeacher: true,
     });
+
+    school.ownerUserId = user._id as typeof school.ownerUserId;
+    await school.save();
 
     const tokens = AuthService.generateTokenPair(user);
     user.refreshTokens.push(tokens.refreshToken);

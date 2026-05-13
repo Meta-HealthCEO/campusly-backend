@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, type Request, type Response, type NextFunction } from 'express';
 import { authenticate } from '../../middleware/auth.js';
 import { authorize } from '../../middleware/rbac.js';
 import { requireCapability } from '../../middleware/capability.js';
@@ -16,6 +16,15 @@ import {
 } from './validation.js';
 
 const router = Router();
+const requireManageUsers = requireCapability('manage_users');
+
+function requireStudentManagement(req: Request, res: Response, next: NextFunction): void {
+  if (req.user?.role === 'teacher' && req.user.isStandaloneTeacher === true) {
+    next();
+    return;
+  }
+  requireManageUsers(req, res, next);
+}
 
 // ─── CSV Export ─────────────────────────────────────────────────────────────
 
@@ -45,7 +54,7 @@ router.post(
 router.post(
   '/bulk-import',
   authenticate,
-  requireCapability('manage_users'),
+  requireManageUsers,
   BulkImportController.importStudents,
 );
 
@@ -54,7 +63,7 @@ router.post(
 router.post(
   '/',
   authenticate,
-  requireCapability('manage_users'),
+  requireStudentManagement,
   validate(createStudentSchema),
   StudentController.create,
 );
@@ -64,6 +73,13 @@ router.get(
   authenticate,
   authorize('super_admin', 'school_admin', 'teacher', 'student', 'parent', 'coach', 'sports_manager'),
   StudentController.list,
+);
+
+router.get(
+  '/me',
+  authenticate,
+  authorize('student'),
+  StudentController.me,
 );
 
 router.get(
@@ -77,7 +93,7 @@ router.get(
 router.put(
   '/:id',
   authenticate,
-  requireCapability('manage_users'),
+  requireStudentManagement,
   validate(updateStudentSchema),
   StudentController.update,
 );
@@ -85,14 +101,14 @@ router.put(
 router.delete(
   '/:id',
   authenticate,
-  requireCapability('manage_users'),
+  requireStudentManagement,
   StudentController.delete,
 );
 
 router.patch(
   '/:id/medical',
   authenticate,
-  requireCapability('manage_users'),
+  requireStudentManagement,
   validate(updateMedicalProfileSchema),
   StudentController.updateMedicalProfile,
 );
@@ -102,7 +118,7 @@ router.patch(
 router.post(
   '/:id/photo',
   authenticate,
-  requireCapability('manage_users'),
+  requireStudentManagement,
   PhotoController.uploadPhoto,
 );
 
@@ -126,7 +142,7 @@ router.get(
 router.post(
   '/:id/invite',
   authenticate,
-  requireCapability('manage_users'),
+  requireStudentManagement,
   StudentController.inviteStudent,
 );
 

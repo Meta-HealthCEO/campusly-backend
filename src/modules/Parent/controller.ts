@@ -11,7 +11,10 @@ export class ParentController {
   }
 
   static async list(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const user = getUser(req);
+    const schoolId = user.role === 'super_admin'
+      ? (req.query.schoolId as string) ?? user.schoolId
+      : user.schoolId;
 
     if (!schoolId) {
       res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
@@ -25,7 +28,9 @@ export class ParentController {
       search: req.query.search as string | undefined,
     };
 
-    const result = await ParentService.list(schoolId, query);
+    const result = user.role === 'teacher'
+      ? await ParentService.listForTeacher(schoolId, user.id, query)
+      : await ParentService.list(schoolId, query);
     res.json(apiResponse(true, result, 'Parents retrieved successfully'));
   }
 

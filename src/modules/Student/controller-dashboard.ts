@@ -6,8 +6,8 @@ import { buildStudentDashboard } from './service-dashboard.js';
 export class StudentDashboardController {
   static async get(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      if (!req.user?.id) throw new UnauthorizedError();
-      const student = await resolveStudentFromUserId(req.user.id);
+      if (!req.user?.id || !req.user.schoolId) throw new UnauthorizedError();
+      const student = await resolveStudentFromUserId(req.user.id, req.user.schoolId);
       if (!student) throw new NotFoundError('Student profile not found');
       const data = await buildStudentDashboard(student);
       res.json({ success: true, data });

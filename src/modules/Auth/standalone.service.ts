@@ -2,6 +2,7 @@ import { User } from './model.js';
 import { School, generateJoinCode } from '../School/model.js';
 import { Class } from '../Academic/model.js';
 import { Student } from '../Student/model.js';
+import { CurriculumFramework } from '../TeacherWorkbench/model.js';
 import { AuthService } from './service.js';
 import { ConflictError, NotFoundError } from '../../common/errors.js';
 
@@ -94,11 +95,15 @@ export class StandaloneService {
 
     const classCount = await Class.countDocuments({ schoolId, isDeleted: false });
     const studentCount = await Student.countDocuments({ schoolId, isDeleted: false });
+    const frameworkCount = await CurriculumFramework.countDocuments({
+      $or: [{ schoolId: null }, { schoolId }],
+      isDeleted: false,
+    });
 
     return {
       hasClass: classCount > 0,
       hasStudent: studentCount > 0,
-      hasFramework: false,
+      hasFramework: frameworkCount > 0,
       dismissed: user.onboardingDismissed,
     };
   }

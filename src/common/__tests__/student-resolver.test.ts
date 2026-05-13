@@ -41,21 +41,25 @@ describe('resolveStudentFromUserId', () => {
       enrollmentStatus: 'active',
     });
 
-    const resolved = await resolveStudentFromUserId(userId.toString());
+    const resolved = await resolveStudentFromUserId(userId.toString(), schoolId.toString());
     expect(resolved?._id.toString()).toBe(student._id.toString());
     expect(resolved?.schoolId.toString()).toBe(schoolId.toString());
   });
 
   it('returns null when no student is linked', async () => {
     const userId = new mongoose.Types.ObjectId();
-    const resolved = await resolveStudentFromUserId(userId.toString());
+    const resolved = await resolveStudentFromUserId(
+      userId.toString(),
+      new mongoose.Types.ObjectId().toString(),
+    );
     expect(resolved).toBeNull();
   });
 
   it('excludes soft-deleted students', async () => {
+    const schoolId = new mongoose.Types.ObjectId();
     const userId = new mongoose.Types.ObjectId();
     await Student.create({
-      schoolId: new mongoose.Types.ObjectId(),
+      schoolId,
       userId,
       gradeId: new mongoose.Types.ObjectId(),
       classId: new mongoose.Types.ObjectId(),
@@ -63,7 +67,24 @@ describe('resolveStudentFromUserId', () => {
       enrollmentStatus: 'active',
       isDeleted: true,
     });
-    const resolved = await resolveStudentFromUserId(userId.toString());
+    const resolved = await resolveStudentFromUserId(userId.toString(), schoolId.toString());
+    expect(resolved).toBeNull();
+  });
+
+  it('excludes students from another school', async () => {
+    const schoolId = new mongoose.Types.ObjectId();
+    const otherSchoolId = new mongoose.Types.ObjectId();
+    const userId = new mongoose.Types.ObjectId();
+    await Student.create({
+      schoolId: otherSchoolId,
+      userId,
+      gradeId: new mongoose.Types.ObjectId(),
+      classId: new mongoose.Types.ObjectId(),
+      admissionNumber: 'ADM-003',
+      enrollmentStatus: 'active',
+    });
+
+    const resolved = await resolveStudentFromUserId(userId.toString(), schoolId.toString());
     expect(resolved).toBeNull();
   });
 });

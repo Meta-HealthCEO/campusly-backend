@@ -44,6 +44,8 @@ router.post(
   validate(standaloneCoachSignupSchema),
   AuthController.signupStandaloneCoach,
 );
+router.get('/onboarding-status', authenticate, AuthController.getTeacherOnboardingStatus);
+router.post('/onboarding-dismiss', authenticate, AuthController.dismissTeacherOnboarding);
 router.get('/coach/onboarding-status', authenticate, AuthController.getCoachOnboardingStatus);
 router.post('/coach/onboarding-dismiss', authenticate, AuthController.dismissCoachOnboarding);
 

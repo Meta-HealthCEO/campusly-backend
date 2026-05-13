@@ -11,6 +11,13 @@ interface ListQuery {
   search?: string;
 }
 
+function resolveObjectId(value: unknown): string | null {
+  if (value && typeof value === 'object' && '_id' in value) {
+    return String((value as { _id: unknown })._id);
+  }
+  return value ? String(value) : null;
+}
+
 export class ParentService {
   static async create(data: Partial<IParent>): Promise<IParent> {
     const parent = new Parent(data);
@@ -36,6 +43,91 @@ export class ParentService {
     const sortField = query.sort ?? '-createdAt';
 
     const filter: Record<string, unknown> = {
+      schoolId,
+      isDeleted: false,
+    };
+
+    const [parents, total] = await Promise.all([
+      Parent.find(filter)
+        .populate('userId', 'firstName lastName email phone')
+        .populate({
+          path: 'childrenIds',
+          populate: { path: 'userId', select: 'firstName lastName email' },
+        })
+        .sort(sortField)
+        .skip(skip)
+        .limit(limit)
+        .lean()
+        .exec(),
+      Parent.countDocuments(filter),
+    ]);
+
+    return {
+      parents,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
+  static async listForTeacher(
+    schoolId: string,
+    teacherId: string,
+    query: ListQuery,
+  ): Promise<{
+    parents: IParent[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  }> {
+    const { AcademicService } = await import('../Academic/service.js');
+    const load = await AcademicService.getTeacherTeachingLoad(teacherId, schoolId);
+    const classIds = [
+      resolveObjectId(load.homeroom?.class),
+      ...load.subjectClasses.map((entry) => resolveObjectId(entry.class)),
+    ].filter((id): id is string => Boolean(id));
+
+    if (classIds.length === 0) {
+      const page = Math.max(query.page ?? PAGINATION_DEFAULTS.page, 1);
+      const limit = Math.min(
+        Math.max(query.limit ?? PAGINATION_DEFAULTS.limit, 1),
+        PAGINATION_DEFAULTS.maxLimit,
+      );
+      return { parents: [], total: 0, page, limit, totalPages: 0 };
+    }
+
+    const students = await Student.find({
+      schoolId,
+      classId: { $in: classIds },
+      enrollmentStatus: 'active',
+      isDeleted: false,
+    }).select('guardianIds').lean();
+
+    const guardianIds = [
+      ...new Set(students.flatMap((student) => student.guardianIds.map((id) => id.toString()))),
+    ];
+
+    if (guardianIds.length === 0) {
+      const page = Math.max(query.page ?? PAGINATION_DEFAULTS.page, 1);
+      const limit = Math.min(
+        Math.max(query.limit ?? PAGINATION_DEFAULTS.limit, 1),
+        PAGINATION_DEFAULTS.maxLimit,
+      );
+      return { parents: [], total: 0, page, limit, totalPages: 0 };
+    }
+
+    const page = Math.max(query.page ?? PAGINATION_DEFAULTS.page, 1);
+    const limit = Math.min(
+      Math.max(query.limit ?? PAGINATION_DEFAULTS.limit, 1),
+      PAGINATION_DEFAULTS.maxLimit,
+    );
+    const skip = (page - 1) * limit;
+    const sortField = query.sort ?? '-createdAt';
+
+    const filter: Record<string, unknown> = {
+      _id: { $in: guardianIds },
       schoolId,
       isDeleted: false,
     };
