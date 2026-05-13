@@ -61,9 +61,11 @@ describe('POST /api/subscriptions/checkout', () => {
 
     expect(res.status).toBe(200);
     expect(res.body.data.paymentKey).toBe('KEY-1');
+    expect(res.body.data.redirectUrl).toBe('https://og/pay');
     const session = await CheckoutSession.findOne({ paymentKey: 'KEY-1' });
     expect(session?.status).toBe('pending');
     expect(session?.merchantReference).toMatch(/^sub_/);
+    expect(session?.redirectUrl).toBe('https://og/pay');
   });
 
   it('rejects if user already has a card on file', async () => {

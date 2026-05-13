@@ -298,7 +298,7 @@ export class SubscriptionService {
     await SubscriptionService.syncSchoolCache(sub);
   }
 
-  static async startCheckout(input: StartCheckoutInput): Promise<{ paymentKey: string; sessionId: string }> {
+  static async startCheckout(input: StartCheckoutInput): Promise<{ paymentKey: string; sessionId: string; redirectUrl: string }> {
     const sub = await Subscription.findOne({ schoolId: input.schoolId });
     if (!sub) throw new SubscriptionStartCheckoutError('Subscription not found', 'NO_SUBSCRIPTION');
     if (sub.cardTokenGuid) {
@@ -311,8 +311,12 @@ export class SubscriptionService {
       status: 'pending',
       expiresAt: { $gt: new Date() },
     });
-    if (existing) {
-      return { paymentKey: existing.paymentKey, sessionId: (existing._id as mongoose.Types.ObjectId).toString() };
+    if (existing && existing.redirectUrl) {
+      return {
+        paymentKey: existing.paymentKey,
+        sessionId: (existing._id as mongoose.Types.ObjectId).toString(),
+        redirectUrl: existing.redirectUrl,
+      };
     }
 
     const plan = await Plan.findOne({ code: input.planCode, isActive: true });
@@ -348,9 +352,10 @@ export class SubscriptionService {
     });
 
     session.paymentKey = result.key;
+    session.redirectUrl = result.url;
     await session.save();
 
-    return { paymentKey: result.key, sessionId };
+    return { paymentKey: result.key, sessionId, redirectUrl: result.url };
   }
 
   static async endSubscription(sub: ISubscription): Promise<void> {

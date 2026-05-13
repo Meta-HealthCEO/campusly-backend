@@ -207,6 +207,7 @@ export interface ICheckoutSession extends Document {
   planCode: string;
   merchantReference: string;
   paymentKey: string;
+  redirectUrl: string | null;
   purpose: CheckoutSessionPurpose;
   status: CheckoutSessionStatus;
   expiresAt: Date;
@@ -221,6 +222,7 @@ const CheckoutSessionSchema = new Schema<ICheckoutSession>(
     planCode: { type: String, required: true },
     merchantReference: { type: String, required: true, unique: true, index: true },
     paymentKey: { type: String, required: true },
+    redirectUrl: { type: String, default: null },
     purpose: { type: String, enum: ['tokenisation', 'update_card'], required: true },
     status: {
       type: String,
