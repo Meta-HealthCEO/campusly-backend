@@ -68,6 +68,7 @@ async function chargeToken(guid: string, amount = 1.0): Promise<void> {
   const body = new URLSearchParams({
     amount: amount.toFixed(2),
     reference: 'tok_test_' + Math.random().toString(36).slice(2, 10),
+    return_url: 'https://example.com/spike/recurring',
   });
   const res = await axios.post(`${BASE}/api/v2/customer-token/${guid}/pay`, body.toString(), {
     headers: { ...signHeaders(), 'Content-Type': 'application/x-www-form-urlencoded' },
