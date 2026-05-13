@@ -77,8 +77,12 @@ const invokedPath = process.argv[1]?.replace(/\\/g, '/') ?? '';
 const moduleUrl = import.meta.url;
 if (invokedPath && (moduleUrl === `file:///${invokedPath}` || moduleUrl === `file://${invokedPath}` || moduleUrl.endsWith(invokedPath))) {
   (async () => {
+    const dotenv = await import('dotenv');
+    dotenv.config();
     const m = await import('mongoose');
-    await m.default.connect(process.env.MONGODB_URI ?? 'mongodb://localhost:27017/campusly');
+    const uri = process.env.MONGODB_URI ?? 'mongodb://localhost:27017/campusly';
+    await m.default.connect(uri);
+    console.log(`Connected to ${uri}`);
     await seedPlans();
     console.log('Plans seeded');
     await m.default.disconnect();

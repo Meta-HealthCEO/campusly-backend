@@ -58,8 +58,12 @@ if (
     moduleUrl.endsWith(invokedPath))
 ) {
   (async () => {
+    const dotenv = await import('dotenv');
+    dotenv.config();
     const m = await import('mongoose');
-    await m.default.connect(process.env.MONGODB_URI ?? 'mongodb://localhost:27017/campusly');
+    const uri = process.env.MONGODB_URI ?? 'mongodb://localhost:27017/campusly';
+    await m.default.connect(uri);
+    console.log(`Connected to ${uri}`);
     const result = await migrateGrandfather();
     console.log('Migration result:', result);
     await m.default.disconnect();
