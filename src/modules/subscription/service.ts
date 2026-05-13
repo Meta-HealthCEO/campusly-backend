@@ -1,6 +1,9 @@
+import crypto from 'crypto';
 import type mongoose from 'mongoose';
-import { Subscription, Plan, type ISubscription } from './model.js';
+import { Subscription, Plan, Invoice, type ISubscription, type IInvoice } from './model.js';
 import { School } from '../School/model.js';
+import { getOneGateClient } from '../../lib/onegate/index.js';
+import type { ChargeTokenResponse } from '../../lib/onegate/index.js';
 
 export interface StartTrialInput {
   schoolId: mongoose.Types.ObjectId;
@@ -10,6 +13,24 @@ export interface StartTrialInput {
   cardBrand: string;
   cardExpiryMonth: number;
   cardExpiryYear: number;
+}
+
+function nanoId(len = 8): string {
+  return crypto.randomBytes(len).toString('hex').slice(0, len);
+}
+
+function addInterval(date: Date, interval: 'month' | 'year' | null): Date {
+  const d = new Date(date);
+  if (interval === 'month') d.setMonth(d.getMonth() + 1);
+  else if (interval === 'year') d.setFullYear(d.getFullYear() + 1);
+  return d;
+}
+
+const RETRY_INTERVALS_DAYS = [2, 4, 7];
+const MAX_RETRIES = 3;
+
+function recurringReturnUrl(): string {
+  return process.env.ONEGATE_RECURRING_RETURN_URL ?? 'https://campusly.app/billing/return';
 }
 
 export class SubscriptionService {
@@ -101,5 +122,182 @@ export class SubscriptionService {
     await sub.save();
     await SubscriptionService.syncSchoolCache(sub);
     return sub;
+  }
+
+  static isCardExpired(sub: ISubscription): boolean {
+    if (!sub.cardExpiryYear || !sub.cardExpiryMonth) return false;
+    const now = new Date();
+    const expEnd = new Date(sub.cardExpiryYear, sub.cardExpiryMonth, 0, 23, 59, 59);
+    return expEnd.getTime() < now.getTime();
+  }
+
+  static async chargeSubscription(subId: mongoose.Types.ObjectId): Promise<void> {
+    const sub = await Subscription.findById(subId);
+    if (!sub) return;
+
+    if (sub.status === 'canceled') {
+      if (sub.currentPeriodEnd && sub.currentPeriodEnd.getTime() <= Date.now()) {
+        await SubscriptionService.endSubscription(sub);
+      }
+      return;
+    }
+
+    if (SubscriptionService.isCardExpired(sub)) {
+      sub.status = 'past_due';
+      sub.lastFailureReason = 'card_expired';
+      sub.nextRetryAt = null;
+      sub.nextBillingAt = null;
+      await sub.save();
+      await SubscriptionService.syncSchoolCache(sub);
+      return;
+    }
+
+    if (!sub.cardTokenGuid) {
+      sub.status = 'free';
+      sub.nextBillingAt = null;
+      await sub.save();
+      await SubscriptionService.syncSchoolCache(sub);
+      return;
+    }
+
+    const plan = await Plan.findOne({ code: sub.planCode });
+    if (!plan) throw new Error(`Plan ${sub.planCode} not found`);
+
+    const merchantReference = 'inv_' + nanoId();
+    const periodStart = sub.currentPeriodEnd ?? new Date();
+    const periodEnd = addInterval(periodStart, plan.interval);
+    const subtotal = plan.amountExclTax;
+    const tax = Math.round(subtotal * plan.taxRate);
+    const total = subtotal + tax;
+
+    const invoice = await Invoice.create({
+      subscriptionId: sub._id,
+      schoolId: sub.schoolId,
+      planCode: sub.planCode,
+      subtotal,
+      tax,
+      taxRate: plan.taxRate,
+      total,
+      currency: plan.currency,
+      status: 'pending',
+      merchantReference,
+      periodStart,
+      periodEnd,
+      attemptedAt: new Date(),
+      purpose: 'subscription',
+    });
+
+    try {
+      const result: ChargeTokenResponse = await getOneGateClient().chargeToken(sub.cardTokenGuid, {
+        amount: total / 100,
+        reference: merchantReference,
+        return_url: recurringReturnUrl(),
+      });
+
+      if (result.type === '3ds_redirect') {
+        await SubscriptionService.handleChargeFailure(sub, invoice, 'requires_3ds', result);
+        return;
+      }
+
+      if (result.success === 1) {
+        await SubscriptionService.markPaid(sub, invoice, result, periodEnd);
+      } else {
+        await SubscriptionService.handleChargeFailure(sub, invoice, result.reason ?? 'declined', result);
+      }
+    } catch (err: unknown) {
+      const reason = err instanceof Error ? err.message : 'gateway_error';
+      await SubscriptionService.handleChargeFailure(sub, invoice, reason, { error: reason });
+    }
+  }
+
+  static async markPaid(
+    sub: ISubscription,
+    invoice: IInvoice,
+    result: { callpay_transaction_id: number; gateway_reference: string; gateway_response: unknown },
+    periodEnd: Date,
+  ): Promise<void> {
+    invoice.status = 'paid';
+    invoice.paidAt = new Date();
+    invoice.gatewayTransactionId = result.callpay_transaction_id;
+    invoice.gatewayReference = result.gateway_reference;
+    invoice.gatewayResponse = result.gateway_response;
+    await invoice.save();
+
+    sub.status = 'active';
+    sub.currentPeriodStart = invoice.periodStart;
+    sub.currentPeriodEnd = periodEnd;
+    sub.nextBillingAt = periodEnd;
+    sub.trialEndsAt = null;
+    sub.retryCount = 0;
+    sub.nextRetryAt = null;
+    sub.lastFailureReason = null;
+    await sub.save();
+    await SubscriptionService.syncSchoolCache(sub);
+  }
+
+  static async handleChargeFailure(
+    sub: ISubscription,
+    invoice: IInvoice,
+    reason: string,
+    raw: unknown,
+  ): Promise<void> {
+    invoice.status = 'failed';
+    invoice.failedAt = new Date();
+    invoice.failureReason = reason;
+    invoice.gatewayResponse = raw;
+    await invoice.save();
+
+    sub.lastFailureReason = reason;
+
+    if (sub.status === 'trialing') {
+      sub.status = 'free';
+      sub.planCode = 'free';
+      sub.cardTokenGuid = null;
+      sub.cardLastFour = null;
+      sub.cardBrand = null;
+      sub.cardExpiryMonth = null;
+      sub.cardExpiryYear = null;
+      sub.trialEndsAt = null;
+      sub.nextBillingAt = null;
+    } else {
+      sub.retryCount = (sub.retryCount ?? 0) + 1;
+      if (sub.retryCount > MAX_RETRIES) {
+        sub.status = 'free';
+        sub.planCode = 'free';
+        sub.cardTokenGuid = null;
+        sub.cardLastFour = null;
+        sub.cardBrand = null;
+        sub.cardExpiryMonth = null;
+        sub.cardExpiryYear = null;
+        sub.nextBillingAt = null;
+        sub.nextRetryAt = null;
+      } else {
+        sub.status = 'past_due';
+        const days = RETRY_INTERVALS_DAYS[Math.min(sub.retryCount - 1, RETRY_INTERVALS_DAYS.length - 1)];
+        sub.nextRetryAt = new Date(Date.now() + days * 86400000);
+        sub.nextBillingAt = sub.nextRetryAt;
+      }
+    }
+
+    await sub.save();
+    await SubscriptionService.syncSchoolCache(sub);
+  }
+
+  static async endSubscription(sub: ISubscription): Promise<void> {
+    sub.status = 'free';
+    sub.endedAt = new Date();
+    sub.planCode = 'free';
+    sub.cardTokenGuid = null;
+    sub.cardLastFour = null;
+    sub.cardBrand = null;
+    sub.cardExpiryMonth = null;
+    sub.cardExpiryYear = null;
+    sub.currentPeriodStart = null;
+    sub.currentPeriodEnd = null;
+    sub.nextBillingAt = null;
+    sub.trialEndsAt = null;
+    sub.cancelAtPeriodEnd = false;
+    await sub.save();
+    await SubscriptionService.syncSchoolCache(sub);
   }
 }
