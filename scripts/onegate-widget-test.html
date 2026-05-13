@@ -1,19 +1,69 @@
 <!-- campusly-backend/scripts/onegate-widget-test.html -->
 <!doctype html>
 <html><head><meta charset="utf-8"><title>OneGate Widget Spike</title></head>
-<body>
-<button id="pay">Pay with widget</button>
-<pre id="result"></pre>
+<body style="font-family:system-ui;padding:24px;max-width:800px">
+<h1>OneGate Widget Spike</h1>
+<p>Paste the <code>payment_key</code> from <code>npx tsx scripts/onegate-spike.ts</code>, then click "Pay".</p>
+<input id="key" placeholder="payment_key" style="width:100%;padding:8px;font-family:monospace" />
+<button id="pay" style="margin-top:12px;padding:8px 16px">Pay with widget</button>
+<h3>Result</h3>
+<pre id="result" style="background:#f5f5f5;padding:12px;border-radius:4px;white-space:pre-wrap;word-break:break-all"></pre>
+<h3>Log</h3>
+<pre id="log" style="background:#f5f5f5;padding:12px;border-radius:4px;font-size:11px"></pre>
 <script src="https://payments.onegate.co.za/ext/checkout/v4/checkout.js"></script>
 <script>
-document.getElementById('pay').onclick = () => {
-  const key = prompt('Paste payment_key:');
-  if (!key) return;
-  Checkout.init({
-    paymentKey: key,
-    onComplete: (data) => { document.getElementById('result').textContent = 'COMPLETE: ' + JSON.stringify(data, null, 2); },
-    onError:    (data) => { document.getElementById('result').textContent = 'ERROR: '    + JSON.stringify(data, null, 2); },
+  const log = (msg) => {
+    const el = document.getElementById('log');
+    el.textContent += '[' + new Date().toISOString().slice(11,19) + '] ' + msg + '\n';
+    console.log(msg);
+  };
+
+  window.addEventListener('load', () => {
+    log('Page loaded. Globals available: ' +
+      ['EftSecureCheckout', 'Checkout', 'OneGateCheckout']
+        .filter((n) => typeof window[n] !== 'undefined').join(', ') || '(none — script may have failed to load)');
   });
-};
+
+  document.getElementById('pay').addEventListener('click', () => {
+    const key = document.getElementById('key').value.trim();
+    if (!key) { alert('Paste a payment_key first.'); return; }
+
+    document.getElementById('result').textContent = '(opening modal...)';
+    log('Click → instantiating EftSecureCheckout');
+
+    try {
+      const checkout = new EftSecureCheckout({
+        serviceUrl: 'https://payments.onegate.co.za',
+        paymentKey: key,
+        onLoad: () => log('onLoad fired'),
+        onComplete: (data) => {
+          log('onComplete fired');
+          document.getElementById('result').textContent = 'COMPLETE:\n' + JSON.stringify(data, null, 2);
+        },
+        onError: (data) => {
+          log('onError fired');
+          document.getElementById('result').textContent = 'ERROR:\n' + JSON.stringify(data, null, 2);
+        },
+        onHide: () => log('onHide fired'),
+      });
+      log('Calling .init()');
+      checkout.init()
+        .then((result) => {
+          log('.init() resolved');
+          document.getElementById('result').textContent =
+            (document.getElementById('result').textContent || '') +
+            '\n\nINIT RESOLVED:\n' + JSON.stringify(result, null, 2);
+        })
+        .catch((err) => {
+          log('.init() rejected: ' + (err?.message ?? err));
+          document.getElementById('result').textContent =
+            (document.getElementById('result').textContent || '') +
+            '\n\nINIT REJECTED:\n' + JSON.stringify(err, null, 2);
+        });
+    } catch (err) {
+      log('Exception: ' + err.message);
+      document.getElementById('result').textContent = 'EXCEPTION:\n' + err.message + '\n\n' + err.stack;
+    }
+  });
 </script>
 </body></html>
