@@ -152,7 +152,7 @@ export async function markPaperFromImages(
 
 // ─── Helpers ──────────────────────────────────────────────────────
 
-interface PaperInfo {
+export interface PaperInfo {
   kind: 'generated' | 'assessment';
   subject: string;
   grade: string;
@@ -161,7 +161,7 @@ interface PaperInfo {
   memoLines: string[];
 }
 
-async function loadPaperVersion(
+export async function loadPaperVersion(
   paperId: string,
   paperType: 'generated' | 'assessment',
 ): Promise<number> {
@@ -173,7 +173,7 @@ async function loadPaperVersion(
   return 1;
 }
 
-async function loadPaperInfo(paperId: string, schoolId: string): Promise<PaperInfo | null> {
+export async function loadPaperInfo(paperId: string, schoolId: string): Promise<PaperInfo | null> {
   const oid = new mongoose.Types.ObjectId(paperId);
   const soid = new mongoose.Types.ObjectId(schoolId);
 
@@ -288,7 +288,7 @@ Please read the student's handwritten answers from the attached images and grade
   return { systemPrompt, userPrompt };
 }
 
-function toResult(marking: InstanceType<typeof PaperMarking>): MarkPaperResult {
+export function toResult(marking: InstanceType<typeof PaperMarking>): MarkPaperResult {
   return {
     id: marking._id.toString(),
     studentName: marking.studentName,

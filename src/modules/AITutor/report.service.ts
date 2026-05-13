@@ -10,7 +10,7 @@ import { ReportComment } from './model-report-comments.js';
 import type { IReportComment } from './model-report-comments.js';
 import type { GenerateReportCommentsInput } from './validation.js';
 
-const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
+const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514';
 
 interface ReportCommentResult {
   id: string;

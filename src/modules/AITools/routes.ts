@@ -102,6 +102,18 @@ router.post(
   AIToolsController.markPaper,
 );
 
+// POST /mark-paper-text — Digital marking from typed answers (application/json).
+// Body: { paperId, paperType, studentName, studentId?, classId?, answers: [{ questionNumber, answer }] }
+// Used when the student answered the paper digitally — no OCR required.
+// The Marking record is structurally identical to OCR markings (so the same
+// review/publish UI works) but with images=[] and imageCount=0.
+router.post(
+  '/mark-paper-text',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  AIToolsController.markPaperText,
+);
+
 // ─── Bulk Batch Marking ──────────────────────────────────────────────────────
 //
 // Separate Multer instance for batch uploads — higher per-request file limit

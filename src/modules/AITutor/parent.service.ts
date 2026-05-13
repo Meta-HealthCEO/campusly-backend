@@ -10,7 +10,7 @@ import { NotFoundError, BadRequestError } from '../../common/errors.js';
 import { paginationHelper } from '../../common/utils.js';
 import type { ParentChatInput } from './validation.js';
 
-const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
+const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514';
 const MAX_CONTEXT_MESSAGES = 20;
 
 export class ParentService {

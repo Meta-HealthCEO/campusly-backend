@@ -10,6 +10,7 @@ import {
   updateMarking,
   publishMarking,
 } from './service-marking-queries.js';
+import { markPaperFromText } from './service-marking-text.js';
 
 // Paper generation, regeneration, and CRUD handlers have been removed.
 // All paper routes (/api/ai-tools/papers/*, /api/ai-tools/generate-paper)
@@ -131,6 +132,46 @@ export class AIToolsController {
       studentId: studentId ?? null,
       classId: classId ?? null,
       files,
+    });
+    res.status(201).json(apiResponse(true, marking, 'Paper marked successfully'));
+  }
+
+  static async markPaperText(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
+      return;
+    }
+    const { paperId, paperType, studentName, studentId, classId, answers } = req.body as {
+      paperId?: string;
+      paperType?: 'generated' | 'assessment';
+      studentName?: string;
+      studentId?: string;
+      classId?: string;
+      answers?: Array<{ questionNumber?: string; answer?: string }>;
+    };
+    if (!paperId) throw new BadRequestError('paperId is required');
+    if (!studentName) throw new BadRequestError('studentName is required');
+    if (!Array.isArray(answers) || answers.length === 0) {
+      throw new BadRequestError('answers must be a non-empty array');
+    }
+    const cleanedAnswers = answers
+      .map((a) => ({
+        questionNumber: String(a.questionNumber ?? '').trim(),
+        answer: String(a.answer ?? ''),
+      }))
+      .filter((a) => a.questionNumber.length > 0);
+    if (cleanedAnswers.length === 0) {
+      throw new BadRequestError('answers must include at least one questionNumber');
+    }
+
+    const marking = await markPaperFromText(getUser(req).id, schoolId, {
+      paperId,
+      paperType: paperType ?? 'assessment',
+      studentName,
+      studentId: studentId ?? null,
+      classId: classId ?? null,
+      answers: cleanedAnswers,
     });
     res.status(201).json(apiResponse(true, marking, 'Paper marked successfully'));
   }
