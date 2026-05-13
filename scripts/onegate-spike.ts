@@ -21,14 +21,16 @@ async function listServices(): Promise<void> {
 
 async function mintKey(): Promise<string> {
   const ref = 'spike_' + Math.random().toString(36).slice(2, 10);
+  // OneGate UAT rejects http://localhost URLs. Widget flow uses JS callbacks anyway,
+  // so these only need to be valid public-looking URLs.
   const body = new URLSearchParams({
     payment_type: 'credit_card',
     amount: '1.00',
     merchant_reference: ref,
-    success_url: 'http://localhost:3500/spike/success',
-    error_url: 'http://localhost:3500/spike/error',
-    pending_url: 'http://localhost:3500/spike/pending',
-    notify_url: 'http://localhost:4500/api/webhooks/onegate-spike',
+    success_url: 'https://example.com/spike/success',
+    error_url: 'https://example.com/spike/error',
+    pending_url: 'https://example.com/spike/pending',
+    notify_url: 'https://example.com/spike/webhook',
   });
   const res = await axios.post(`${BASE}/api/v2/payment-key`, body.toString(), {
     headers: { ...signHeaders(), 'Content-Type': 'application/x-www-form-urlencoded' },
