@@ -171,3 +171,66 @@ const InvoiceSchema = new Schema<IInvoice>(
 );
 
 export const Invoice = model<IInvoice>('Invoice', InvoiceSchema);
+
+export type WebhookEventStatus = 'pending' | 'processed' | 'failed' | 'ignored';
+
+export interface IWebhookEvent extends Document {
+  gatewayTransactionId: number;
+  payloadHash: string;
+  rawPayload: unknown;
+  receivedAt: Date;
+  processedAt: Date | null;
+  status: WebhookEventStatus;
+  error: string | null;
+  verifiedViaLookup: boolean;
+}
+
+const WebhookEventSchema = new Schema<IWebhookEvent>({
+  gatewayTransactionId: { type: Number, required: true, unique: true, index: true },
+  payloadHash: { type: String, required: true },
+  rawPayload: { type: Schema.Types.Mixed, required: true },
+  receivedAt: { type: Date, default: () => new Date() },
+  processedAt: { type: Date, default: null },
+  status: { type: String, enum: ['pending', 'processed', 'failed', 'ignored'], required: true },
+  error: { type: String, default: null },
+  verifiedViaLookup: { type: Boolean, default: false },
+});
+
+export const WebhookEvent = model<IWebhookEvent>('WebhookEvent', WebhookEventSchema);
+
+export type CheckoutSessionPurpose = 'tokenisation' | 'update_card';
+export type CheckoutSessionStatus = 'pending' | 'completed' | 'failed' | 'expired';
+
+export interface ICheckoutSession extends Document {
+  userId: mongoose.Types.ObjectId;
+  schoolId: mongoose.Types.ObjectId;
+  planCode: string;
+  merchantReference: string;
+  paymentKey: string;
+  purpose: CheckoutSessionPurpose;
+  status: CheckoutSessionStatus;
+  expiresAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const CheckoutSessionSchema = new Schema<ICheckoutSession>(
+  {
+    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
+    schoolId: { type: Schema.Types.ObjectId, ref: 'School', required: true, index: true },
+    planCode: { type: String, required: true },
+    merchantReference: { type: String, required: true, unique: true, index: true },
+    paymentKey: { type: String, required: true },
+    purpose: { type: String, enum: ['tokenisation', 'update_card'], required: true },
+    status: {
+      type: String,
+      enum: ['pending', 'completed', 'failed', 'expired'],
+      required: true,
+      default: 'pending',
+    },
+    expiresAt: { type: Date, required: true },
+  },
+  { timestamps: true },
+);
+
+export const CheckoutSession = model<ICheckoutSession>('CheckoutSession', CheckoutSessionSchema);
