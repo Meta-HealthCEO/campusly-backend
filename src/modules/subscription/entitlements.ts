@@ -30,6 +30,16 @@ export function requireEntitlement(feature: string) {
       res.status(401).json({ error: 'Unauthorized' });
       return;
     }
+
+    // Subscription gating currently applies only to standalone teachers
+    // (the teacher-first GTM cohort). Real schools — school admins, HODs,
+    // bursars, etc. — operate under the school-tier subscription model and
+    // are not subject to per-feature entitlement gating here.
+    if (req.user?.isStandaloneTeacher !== true) {
+      next();
+      return;
+    }
+
     const ents = await resolveEntitlements(schoolId);
     if (ents[feature] === true) {
       next();

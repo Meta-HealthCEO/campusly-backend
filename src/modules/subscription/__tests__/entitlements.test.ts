@@ -24,7 +24,7 @@ afterAll(async () => {
   if (mongoose.connection.readyState !== 0) await mongoose.disconnect();
 });
 
-function makeApp(feature: string) {
+function makeApp(feature: string, isStandaloneTeacher = true) {
   const a = express();
   a.use(express.json());
   a.use((req: Request, _res: Response, next: NextFunction) => {
@@ -34,6 +34,7 @@ function makeApp(feature: string) {
       email: 'test@test.test',
       role: 'teacher' as never,
       schoolId: typeof schoolId === 'string' ? schoolId : undefined,
+      isStandaloneTeacher,
     };
     next();
   });
@@ -87,6 +88,22 @@ describe('requireEntitlement middleware', () => {
       gatewayProvider: 'onegate',
     });
     const res = await request(makeApp('aiGeneration'))
+      .get('/protected')
+      .set('x-school-id', schoolId.toString());
+    expect(res.status).toBe(200);
+  });
+
+  it('passes through non-standalone-teacher users even on free plan', async () => {
+    const schoolId = new mongoose.Types.ObjectId();
+    await Subscription.create({
+      schoolId,
+      subscriberType: 'teacher',
+      planCode: 'free',
+      status: 'free',
+      retryCount: 0,
+      gatewayProvider: 'onegate',
+    });
+    const res = await request(makeApp('aiGeneration', false))
       .get('/protected')
       .set('x-school-id', schoolId.toString());
     expect(res.status).toBe(200);

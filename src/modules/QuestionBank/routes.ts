@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { authorize, validate } from '../../middleware/index.js';
+import { requireEntitlement } from '../subscription/entitlements.js';
 import { QuestionBankController } from './controller.js';
 import {
   postAddQuestionToPaper,
@@ -53,6 +54,7 @@ const READ_ROLES = ['super_admin', 'school_admin', 'principal', 'hod', 'teacher'
 router.post(
   '/questions/generate',
   authorize(...READ_ROLES),
+  requireEntitlement('aiGeneration'),
   validate(generateQuestionsSchema),
   QuestionBankController.generateQuestions,
 );
@@ -60,6 +62,7 @@ router.post(
 router.post(
   '/questions/extract-from-paper',
   authorize(...READ_ROLES),
+  requireEntitlement('aiGeneration'),
   validate(extractFromPaperSchema),
   QuestionBankController.extractFromPaper,
 );
@@ -128,6 +131,7 @@ router.post(
 router.post(
   '/papers/generate',
   authorize(...READ_ROLES),
+  requireEntitlement('paperGeneration'),
   validate(generatePaperSchema),
   QuestionBankController.generatePaper,
 );

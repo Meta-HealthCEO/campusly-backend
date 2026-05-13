@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { authorize, validate } from '../../middleware/index.js';
+import { requireEntitlement } from '../subscription/entitlements.js';
 import { CourseController } from './controller.js';
 import { CourseStudentController } from './controller-student.js';
 import {
@@ -187,6 +188,7 @@ router.get(
 router.get(
   '/:id/analytics',
   authorize(...COURSE_ROLES),
+  requireEntitlement('advancedAnalytics'),
   CourseController.getCourseAnalytics,
 );
 

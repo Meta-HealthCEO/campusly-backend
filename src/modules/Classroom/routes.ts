@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { authorize, validate } from '../../middleware/index.js';
+import { requireEntitlement } from '../subscription/entitlements.js';
 import { ClassroomController } from './controller.js';
 import { RecordingController } from './controller-recording.js';
 import {
@@ -219,12 +220,14 @@ router.patch(
 router.get(
   '/analytics/teacher/:teacherId',
   authorize(...TEACHER_ROLES),
+  requireEntitlement('advancedAnalytics'),
   ClassroomController.getTeacherStats,
 );
 
 router.get(
   '/analytics/class/:classId',
   authorize(...ADMIN_ROLES, 'teacher'),
+  requireEntitlement('advancedAnalytics'),
   ClassroomController.getClassStats,
 );
 
