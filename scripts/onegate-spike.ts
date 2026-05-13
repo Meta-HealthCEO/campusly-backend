@@ -21,7 +21,7 @@ async function listServices(): Promise<void> {
 
 async function mintKey(): Promise<string> {
   const ref = 'spike_' + Math.random().toString(36).slice(2, 10);
-  const res = await axios.post(`${BASE}/api/v2/payment-key`, {
+  const body = new URLSearchParams({
     payment_type: 'credit_card',
     amount: '1.00',
     merchant_reference: ref,
@@ -29,7 +29,10 @@ async function mintKey(): Promise<string> {
     error_url: 'http://localhost:3500/spike/error',
     pending_url: 'http://localhost:3500/spike/pending',
     notify_url: 'http://localhost:4500/api/webhooks/onegate-spike',
-  }, { headers: signHeaders() });
+  });
+  const res = await axios.post(`${BASE}/api/v2/payment-key`, body.toString(), {
+    headers: { ...signHeaders(), 'Content-Type': 'application/x-www-form-urlencoded' },
+  });
   console.log('Payment key response:', JSON.stringify(res.data, null, 2));
   return res.data.key as string;
 }
