@@ -1,0 +1,19 @@
+<!-- campusly-backend/scripts/onegate-widget-test.html -->
+<!doctype html>
+<html><head><meta charset="utf-8"><title>OneGate Widget Spike</title></head>
+<body>
+<button id="pay">Pay with widget</button>
+<pre id="result"></pre>
+<script src="https://payments.onegate.co.za/ext/checkout/v4/checkout.js"></script>
+<script>
+document.getElementById('pay').onclick = () => {
+  const key = prompt('Paste payment_key:');
+  if (!key) return;
+  Checkout.init({
+    paymentKey: key,
+    onComplete: (data) => { document.getElementById('result').textContent = 'COMPLETE: ' + JSON.stringify(data, null, 2); },
+    onError:    (data) => { document.getElementById('result').textContent = 'ERROR: '    + JSON.stringify(data, null, 2); },
+  });
+};
+</script>
+</body></html>
