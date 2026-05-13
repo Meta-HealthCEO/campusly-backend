@@ -54,6 +54,15 @@ async function inspectTransaction(id: string): Promise<void> {
   console.log('Transaction detail:', JSON.stringify(res.data, null, 2));
 }
 
+async function createCustomerToken(merchantReference: string): Promise<void> {
+  console.log(`\nSpike 5a: POST /customer-token (merchant_reference=${merchantReference})`);
+  const body = new URLSearchParams({ merchant_reference: merchantReference });
+  const res = await axios.post(`${BASE}/api/v2/customer-token`, body.toString(), {
+    headers: { ...signHeaders(), 'Content-Type': 'application/x-www-form-urlencoded' },
+  });
+  console.log('Customer-token response:', JSON.stringify(res.data, null, 2));
+}
+
 async function chargeToken(guid: string, amount = 1.0): Promise<void> {
   console.log(`\nSpike 5: POST /customer-token/${guid}/pay (R${amount})`);
   const body = new URLSearchParams({
@@ -86,12 +95,16 @@ async function main(): Promise<void> {
       if (!arg) throw new Error('Usage: npx tsx scripts/onegate-spike.ts tx <transaction_id>');
       await inspectTransaction(arg);
       break;
+    case 'tokenize':
+      if (!arg) throw new Error('Usage: npx tsx scripts/onegate-spike.ts tokenize <merchant_reference>');
+      await createCustomerToken(arg);
+      break;
     case 'charge':
       if (!arg) throw new Error('Usage: npx tsx scripts/onegate-spike.ts charge <token_guid> [amount]');
       await chargeToken(arg, process.argv[4] ? parseFloat(process.argv[4]) : 1.0);
       break;
     default:
-      throw new Error(`Unknown command: ${cmd}. Use: services | mint | recent | tx <id> | charge <guid> [amount]`);
+      throw new Error(`Unknown command: ${cmd}. Use: services | mint | recent | tx <id> | tokenize <ref> | charge <guid> [amount]`);
   }
 }
 
