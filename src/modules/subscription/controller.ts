@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 import { Subscription, Plan, Invoice, CheckoutSession } from './model.js';
 import { SubscriptionService, SubscriptionStartCheckoutError } from './service.js';
 import { checkoutInputSchema } from './validation.js';
+import { OneGateError } from '../../lib/onegate/index.js';
+import { logger } from '../../common/logger.js';
 
 function schoolIdFromReq(req: Request): mongoose.Types.ObjectId {
   const raw = req.user!.schoolId;
@@ -52,6 +54,18 @@ export class SubscriptionController {
         if (err.code === 'NOT_PURCHASABLE') { res.status(400).json({ error: err.message }); return; }
         if (err.code === 'PLAN_NOT_FOUND') { res.status(404).json({ error: err.message }); return; }
         if (err.code === 'NO_SUBSCRIPTION') { res.status(404).json({ error: err.message }); return; }
+      }
+      if (err instanceof OneGateError) {
+        logger.error(
+          { statusCode: err.statusCode, gatewayCode: err.gatewayCode, raw: err.raw },
+          'OneGate /payment-key rejected checkout',
+        );
+        res.status(502).json({
+          error: 'Payment provider rejected the checkout request',
+          detail: err.message,
+          gateway: { statusCode: err.statusCode, code: err.gatewayCode },
+        });
+        return;
       }
       throw err;
     }
