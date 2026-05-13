@@ -1,10 +1,13 @@
 import type { Request } from 'express';
 import { Response } from 'express';
+import mongoose from 'mongoose';
 import { getUser } from '../../types/authenticated-request.js';
 import { AuthService } from './service.js';
 import { StandaloneService } from './standalone.service.js';
 import { StandaloneCoachService } from './standalone-coach.service.js';
 import { apiResponse } from '../../common/utils.js';
+import { Subscription, Plan } from '../subscription/model.js';
+import { SubscriptionService } from '../subscription/service.js';
 
 const REFRESH_COOKIE_OPTIONS = {
   httpOnly: true,
@@ -164,7 +167,18 @@ export class AuthController {
 
   static async getMe(req: Request, res: Response): Promise<void> {
     const user = await AuthService.getMe(getUser(req).id);
-    res.status(200).json(apiResponse(true, { user }, 'User retrieved successfully'));
+
+    let subscription = null;
+    let plan = null;
+    if (user.schoolId) {
+      const schoolId = user.schoolId as mongoose.Types.ObjectId;
+      subscription =
+        (await Subscription.findOne({ schoolId })) ??
+        (await SubscriptionService.createInitialFreeSubscription(schoolId));
+      plan = await Plan.findOne({ code: subscription.planCode });
+    }
+
+    res.status(200).json(apiResponse(true, { user, subscription, plan }, 'User retrieved successfully'));
   }
 
   static async registerStudent(req: Request, res: Response): Promise<void> {
