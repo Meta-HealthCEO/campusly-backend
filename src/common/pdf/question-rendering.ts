@@ -67,6 +67,9 @@ function renderQuestion(
 
   if (q.type === 'mcq' || q.type === 'true_false') {
     renderOptions(doc, q.options);
+    renderMcqAnswerSlot(doc);
+  } else {
+    renderAnswerLines(doc, q);
   }
   doc.moveDown(0.5);
 }
@@ -77,6 +80,55 @@ function renderOptions(doc: PDFKit.PDFDocument, options: NormalisedQuestionOptio
       `     ${opt.label}.  ${opt.text}`,
       { width: CONTENT_WIDTH - 40 },
     );
+  }
+}
+
+// "Answer: ___" slot below MCQ options so students can write the chosen
+// letter directly on the paper instead of circling.
+function renderMcqAnswerSlot(doc: PDFKit.PDFDocument): void {
+  doc.moveDown(0.3);
+  doc.font(FONT_ITALIC).fontSize(9).text('Answer:  ____', { indent: 20 });
+}
+
+// Blank lines proportional to the question's marks + type. Heuristic mapping:
+//   short_answer  → 2 lines/mark, min 2, max 6
+//   structured    → 1.5 lines/mark, min 4, max 14
+//   calculation   → 2 lines/mark, min 4, max 16 (room for working)
+//   essay         → 5 lines/mark, capped to roughly a full A4 page
+//   other         → 1 line/mark, min 3
+function renderAnswerLines(doc: PDFKit.PDFDocument, q: NormalisedQuestion): void {
+  const lines = computeAnswerLines(q);
+  const lineSpacing = 18; // px between writing lines
+  const x = doc.page.margins.left + 20;
+  const width = CONTENT_WIDTH - 20;
+
+  for (let i = 0; i < lines; i += 1) {
+    checkPageSpace(doc, lineSpacing + 4);
+    const y = doc.y;
+    doc.save();
+    doc.lineWidth(0.5).strokeColor('#9CA3AF');
+    doc.moveTo(x, y + lineSpacing - 4).lineTo(x + width, y + lineSpacing - 4).stroke();
+    doc.restore();
+    doc.moveDown(lineSpacing / 13);
+  }
+}
+
+function computeAnswerLines(q: NormalisedQuestion): number {
+  // Type values are the PDF normaliser's collapsed set
+  // ('short' / 'long' / 'structured' / 'mcq' / 'true_false') — see
+  // src/common/pdf/types.ts and mapType() in service-pdf.ts. We tune answer
+  // space by both the type and the marks awarded.
+  const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, n));
+  switch (q.type) {
+    case 'short':
+      return clamp(Math.ceil(q.marks * 2), 2, 6);
+    case 'structured':
+      return clamp(Math.ceil(q.marks * 1.5), 4, 14);
+    case 'long':
+      // Essay / long-form — leave roughly an A4 page worth of writing space.
+      return clamp(Math.ceil(q.marks * 4), 12, 35);
+    default:
+      return clamp(Math.ceil(q.marks), 3, 10);
   }
 }
 

@@ -2,6 +2,7 @@ import express from 'express';
 import { authenticate } from '../../middleware/auth.js';
 import { authorize } from '../../middleware/rbac.js';
 import { validate } from '../../middleware/validate.js';
+import { requireTeacherClassOwnership } from '../../middleware/teacherClassOwnership.js';
 import {
   CurriculumController,
   QuestionController,
@@ -216,6 +217,7 @@ router.get(
   '/planner/clashes/:classId/:date',
   authenticate,
   allRoles,
+  requireTeacherClassOwnership(),
   PlannerController.checkClashes,
 );
 
@@ -224,6 +226,7 @@ router.get(
   '/planner/weightings/:subjectId',
   authenticate,
   allRoles,
+  requireTeacherClassOwnership(),
   PlannerController.getWeightings,
 );
 
@@ -232,6 +235,7 @@ router.get(
   '/planner/:classId/:term/:year',
   authenticate,
   allRoles,
+  requireTeacherClassOwnership(),
   PlannerController.getPlan,
 );
 
@@ -240,6 +244,7 @@ router.post(
   '/planner',
   authenticate,
   allRoles,
+  requireTeacherClassOwnership(),
   validate(createPlanSchema),
   PlannerController.createOrUpdatePlan,
 );

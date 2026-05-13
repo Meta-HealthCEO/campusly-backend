@@ -23,6 +23,7 @@ import walletRoutes from './modules/Wallet/routes.js';
 import feeRoutes from './modules/Fee/routes.js';
 import academicRoutes from './modules/Academic/routes.js';
 import homeworkRoutes from './modules/Homework/routes.js';
+import assignmentRoutes from './modules/Assignment/routes.js';
 import attendanceRoutes from './modules/Attendance/routes.js';
 import lessonRoutes from './modules/Lesson/routes.js';
 import studentLessonRoutes from './modules/Lesson/routes-student.js';
@@ -157,6 +158,10 @@ app.use('/api/tuck-shop', authenticate, requireModule('tuckshop'), tuckShopRoute
 app.use('/api/academic', authenticate, requireModule('academic'), academicRoutes);
 app.use('/api/timetable-builder', authenticate, requireModule('academic'), timetableBuilderRoutes);
 app.use('/api/homework', authenticate, requireModule('homework'), homeworkRoutes);
+// Assignments are gated under the same `homework` bolt-on — they're both
+// student-work artefacts. If we monetise assignments separately later,
+// add a dedicated 'assignment' module key here.
+app.use('/api/assignments', authenticate, requireModule('homework'), assignmentRoutes);
 app.use('/api/attendance', authenticate, requireModule('attendance'), attendanceRoutes);
 // New canonical mount for lessons.
 app.use('/api/lessons', authenticate, requireModule('academic'), lessonRoutes);

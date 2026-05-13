@@ -2,6 +2,8 @@ import mongoose from 'mongoose';
 import { User } from '../Auth/model.js';
 import { CurriculumNode } from '../CurriculumStructure/model.js';
 import { NotFoundError, BadRequestError } from '../../common/errors.js';
+import { materialiseTeachingScope } from '../Academic/services/materialise-from-curriculum.service.js';
+import { logger } from '../../common/logger.js';
 import type { UpdateTeachingScopeInput } from './validation.js';
 
 export class TeacherSettingsService {
@@ -93,9 +95,35 @@ export class TeacherSettingsService {
         },
       },
       { new: true },
-    ).select('teachingScope').lean();
+    ).select('teachingScope schoolId').lean();
 
     if (!updated) throw new NotFoundError('User not found');
+
+    // Eagerly materialise the matching school-side Grade and Subject rows
+    // from the supplied curriculum nodes. Once these rows exist, every other
+    // endpoint (papers, marks, timetable, etc.) sees a normal school Subject
+    // and Grade — no more controller-level masking required.
+    if (updated.schoolId) {
+      const pairs = input.subjectsByGrade.flatMap((g) =>
+        g.subjectIds.map((sid) => ({
+          curriculumGradeId: g.gradeId,
+          curriculumSubjectId: sid,
+        })),
+      );
+      if (pairs.length > 0) {
+        try {
+          await materialiseTeachingScope(updated.schoolId, pairs);
+        } catch (err: unknown) {
+          // Log but don't fail the scope update — the lazy bridge at
+          // paper-generation time covers this. We just lose the eagerness.
+          logger.error(
+            { err, userId, schoolId: updated.schoolId },
+            'Failed to materialise teaching scope; relying on lazy bridge',
+          );
+        }
+      }
+    }
+
     return updated.teachingScope;
   }
 }

@@ -4,6 +4,8 @@ import { runStripGradeSuffixFromSubjects } from '../../modules/CurriculumStructu
 import { runDenormalizeCurriculumHierarchy } from '../../modules/CurriculumStructure/service-denormalize-hierarchy.js';
 import { runBackfillTopicTermFromCode } from '../../modules/CurriculumStructure/service-backfill-term-from-code.js';
 import { runDenormalizeTextbookCurriculumRefs } from '../../modules/Textbook/service-denormalize-curriculum-refs.js';
+import { runBackfillStandaloneAcademicRows } from '../../modules/Academic/services/backfill-standalone-scope.service.js';
+import { runSweepCurriculumNodeForeignKeys } from '../../modules/Academic/services/sweep-curriculum-fks.service.js';
 import { logger } from '../../common/logger.js';
 
 export async function runMigrations(): Promise<void> {
@@ -26,6 +28,16 @@ export async function runMigrations(): Promise<void> {
     // is available to backfill) AND AFTER runLessonPlanToLessonMigration (so all
     // legacy LessonPlans have been promoted to Lessons before we reshape them).
     await runLessonAssignmentsMigration();
+    // Must run AFTER runDenormalizeCurriculumHierarchy so the standalone
+    // teacher's scope (CurriculumNode IDs) resolves to nodes with valid
+    // title fields. Materialises school-side Subject/Grade rows so other
+    // modules (papers, marks, timetable) see normal data shapes.
+    await runBackfillStandaloneAcademicRows();
+    // Must run AFTER the standalone-row backfill so the curriculumNodeId
+    // lookup tables on Subject and Grade are populated. Rewrites any stale
+    // FKs in downstream collections that were captured during the era when
+    // /academic/subjects and /academic/grades returned CurriculumNode rows.
+    await runSweepCurriculumNodeForeignKeys();
   } catch (err: unknown) {
     logger.error({ err }, '[migrations] failed');
     throw err;

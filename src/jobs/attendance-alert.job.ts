@@ -50,6 +50,7 @@ export function createAttendanceAlertWorker(): Worker {
         childrenIds: { $in: absentStudentIds },
         isDeleted: false,
       }).lean();
+      const parentUserIds = Array.from(new Set(allParents.map((parent) => parent.userId.toString())));
 
       // Build a map: studentId -> parent records
       const parentsByStudent = new Map<string, typeof allParents>();
@@ -60,6 +61,24 @@ export function createAttendanceAlertWorker(): Worker {
           parentsByStudent.get(key)!.push(parent);
         }
       }
+
+      const existingAlerts = parentUserIds.length > 0
+        ? await Notification.find({
+          recipientId: { $in: parentUserIds },
+          schoolId,
+          title: 'Absence Alert',
+          'data.date': date,
+          'data.period': period,
+          'data.status': 'absent',
+          isDeleted: false,
+        })
+          .select('recipientId data.studentId')
+          .lean()
+        : [];
+      const existingAlertKeys = new Set(
+        existingAlerts.map((alert) => `${alert.recipientId.toString()}:${String(alert.data?.studentId ?? '')}`),
+      );
+      const displayDate = date.slice(0, 10);
 
       const notifications: Array<{
         recipientId: unknown;
@@ -82,12 +101,16 @@ export function createAttendanceAlertWorker(): Worker {
         const studentParents = parentsByStudent.get(student._id.toString()) ?? [];
 
         for (const parent of studentParents) {
+          const alertKey = `${parent.userId.toString()}:${student._id.toString()}`;
+          if (existingAlertKeys.has(alertKey)) continue;
+          existingAlertKeys.add(alertKey);
+
           notifications.push({
             recipientId: parent.userId,
             schoolId,
             type: 'in_app',
             title: 'Absence Alert',
-            message: `${studentName} was marked absent on ${date} (period ${period}).`,
+            message: `${studentName} was marked absent on ${displayDate} (period ${period}).`,
             data: {
               studentId: student._id,
               date,

@@ -6,7 +6,7 @@ const objectIdSchema = z.string().regex(objectIdRegex, 'Invalid ObjectId format'
 // ─── Message Template ───────────────────────────────────────────────────────
 
 export const createTemplateSchema = z.object({
-  schoolId: objectIdSchema,
+  schoolId: objectIdSchema.optional(),
   name: z.string().min(3, 'Name must be at least 3 characters').max(100),
   description: z.string().max(500).optional(),
   type: z.enum(['fee_reminder', 'absence', 'general', 'event', 'emergency']).default('general'),
@@ -30,7 +30,7 @@ export const previewTemplateSchema = z.object({
 // ─── Bulk Message ───────────────────────────────────────────────────────────
 
 export const sendBulkMessageSchema = z.object({
-  schoolId: objectIdSchema,
+  schoolId: objectIdSchema.optional(),
   templateId: objectIdSchema.optional(),
   subject: z.string().min(1, 'Subject is required'),
   body: z.string().min(1, 'Body is required'),
@@ -44,7 +44,7 @@ export const sendBulkMessageSchema = z.object({
 // ─── Schedule Message ──────────────────────────────────────────────────────
 
 export const scheduleMessageSchema = z.object({
-  schoolId: objectIdSchema,
+  schoolId: objectIdSchema.optional(),
   templateId: objectIdSchema.optional(),
   subject: z.string().min(1, 'Subject is required'),
   body: z.string().min(1, 'Body is required'),

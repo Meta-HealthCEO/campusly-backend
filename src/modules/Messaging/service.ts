@@ -25,6 +25,18 @@ export class MessagingService {
     const sender = await resolveUserInfo(userId, schoolId);
     const recipient = await resolveUserInfo(recipientId, schoolId);
 
+    if (userRole === 'teacher') {
+      const { AcademicService } = await import('../Academic/service.js');
+      const canAccess = await AcademicService.teacherCanAccessClass(
+        userId,
+        student.classId.toString(),
+        schoolId,
+      );
+      if (!canAccess) {
+        throw new ForbiddenError('You can only message parents for learners in your classes');
+      }
+    }
+
     // If sender is parent, verify they own this child
     if (sender.role === 'parent') {
       await verifyParentOwnsStudent(userId, studentId, schoolId);

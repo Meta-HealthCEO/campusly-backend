@@ -10,6 +10,34 @@ import {
 import { generateComprehensionQuestions } from './service-homework-comprehension.js';
 import { apiResponse } from '../../common/utils.js';
 
+interface StudentAccessRecord {
+  _id: mongoose.Types.ObjectId;
+  classId: mongoose.Types.ObjectId | string;
+}
+
+function readObjectId(value: unknown): string {
+  if (!value) return '';
+  if (typeof value === 'string') return value;
+  if (value instanceof mongoose.Types.ObjectId) return value.toString();
+  if (typeof value === 'object') {
+    const record = value as { _id?: unknown; id?: unknown };
+    const id = record._id ?? record.id;
+    return id ? String(id) : '';
+  }
+  return String(value);
+}
+
+async function findStudentForUser(
+  userId: string,
+  schoolId: string,
+): Promise<StudentAccessRecord | null> {
+  const { Student } = await import('../Student/model.js');
+  return Student.findOne({ userId, schoolId, isDeleted: false })
+    .select('_id classId')
+    .lean<StudentAccessRecord>()
+    .exec();
+}
+
 export class HomeworkController {
   static async create(req: Request, res: Response): Promise<void> {
     const homework = await HomeworkService.create(req.body, getUser(req).id);
@@ -25,7 +53,19 @@ export class HomeworkController {
       search: req.query.search as string | undefined,
       classId: req.query.classId as string | undefined,
       subjectId: req.query.subjectId as string | undefined,
+      teacherId: req.query.teacherId as string | undefined,
     };
+
+    if (req.user?.role === 'student') {
+      const student = await findStudentForUser(req.user.id, schoolId);
+      if (!student) {
+        res.status(404).json(apiResponse(false, undefined, undefined, 'Student profile not found'));
+        return;
+      }
+      query.classId = readObjectId(student.classId);
+    } else if (req.user?.role === 'teacher') {
+      query.teacherId = getUser(req).id;
+    }
 
     const result = await HomeworkService.list(schoolId, query);
     res.json(apiResponse(true, result, 'Homework list retrieved successfully'));
@@ -34,6 +74,17 @@ export class HomeworkController {
   static async getById(req: Request, res: Response): Promise<void> {
     const schoolId = req.user!.schoolId!;
     const homework = await HomeworkService.getById(req.params.id as string, schoolId);
+
+    if (req.user?.role === 'student') {
+      const student = await findStudentForUser(req.user.id, schoolId);
+      const studentClassId = readObjectId(student?.classId);
+      const homeworkClassId = readObjectId((homework as { classId?: unknown }).classId);
+      if (!student || !studentClassId || homeworkClassId !== studentClassId) {
+        res.status(404).json(apiResponse(false, undefined, undefined, 'Homework not found'));
+        return;
+      }
+    }
+
     res.json(apiResponse(true, homework, 'Homework retrieved successfully'));
   }
 
@@ -105,6 +156,13 @@ export class HomeworkController {
       res.status(400).json({ success: false, error: 'User must be assigned to a school' });
       return;
     }
+    if (req.user?.role === 'student') {
+      const student = await findStudentForUser(req.user.id, schoolId);
+      if (!student || readObjectId(student._id) !== req.params.studentId) {
+        res.status(403).json(apiResponse(false, undefined, undefined, 'You can only view your own submissions'));
+        return;
+      }
+    }
     const submissions = await HomeworkService.getStudentSubmissions(
       req.params.studentId as string,
       schoolId,
@@ -115,6 +173,14 @@ export class HomeworkController {
   static async getSubmissionById(req: Request, res: Response): Promise<void> {
     const schoolId = req.user!.schoolId!;
     const submission = await HomeworkService.getSubmissionById(req.params.id as string, schoolId);
+    if (req.user?.role === 'student') {
+      const student = await findStudentForUser(req.user.id, schoolId);
+      const submissionStudentId = readObjectId((submission as { studentId?: unknown }).studentId);
+      if (!student || submissionStudentId !== readObjectId(student._id)) {
+        res.status(403).json(apiResponse(false, undefined, undefined, 'You can only view your own submission'));
+        return;
+      }
+    }
     res.json({ data: submission });
   }
 

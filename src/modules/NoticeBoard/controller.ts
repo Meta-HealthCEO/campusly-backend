@@ -32,7 +32,7 @@ export class NoticeBoardController {
     const result = await NoticeBoardService.listPosts(schoolId, scope, scopeId, {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
-    });
+    }, { userId: getUser(req).id, userRole: getUser(req).role });
     res.json(apiResponse(true, result, 'Posts retrieved successfully'));
   }
 
@@ -51,8 +51,9 @@ export class NoticeBoardController {
   }
 
   static async togglePin(req: Request, res: Response): Promise<void> {
+    const user = getUser(req);
     const schoolId = req.user!.schoolId!;
-    const post = await NoticeBoardService.togglePin(req.params.id as string, schoolId);
+    const post = await NoticeBoardService.togglePin(req.params.id as string, user.id, user.role, schoolId);
     res.json(apiResponse(true, post, 'Post pin status toggled'));
   }
 

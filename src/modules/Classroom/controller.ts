@@ -10,7 +10,7 @@ export class ClassroomController {
 
   static async createSession(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    const session = await SessionService.createSession(user.schoolId!, user.id, req.body);
+    const session = await SessionService.createSession(user.schoolId!, user.id, user.role, req.body);
     res.status(201).json(apiResponse(true, session, 'Session created successfully'));
   }
 
@@ -28,7 +28,12 @@ export class ClassroomController {
 
   static async getSession(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    const session = await SessionService.getSession(req.params.id as string, user.schoolId!);
+    const session = await SessionService.getSession(
+      req.params.id as string,
+      user.schoolId!,
+      user.id,
+      user.role,
+    );
     res.json(apiResponse(true, session));
   }
 
@@ -37,6 +42,8 @@ export class ClassroomController {
     const session = await SessionService.updateSession(
       req.params.id as string,
       user.schoolId!,
+      user.id,
+      user.role,
       req.body,
     );
     res.json(apiResponse(true, session, 'Session updated successfully'));
@@ -44,13 +51,18 @@ export class ClassroomController {
 
   static async deleteSession(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    await SessionService.cancelSession(req.params.id as string, user.schoolId!);
+    await SessionService.cancelSession(req.params.id as string, user.schoolId!, user.id, user.role);
     res.json(apiResponse(true, undefined, 'Session cancelled successfully'));
   }
 
   static async startSession(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    const session = await SessionService.startSession(req.params.id as string, user.schoolId!);
+    const session = await SessionService.startSession(
+      req.params.id as string,
+      user.schoolId!,
+      user.id,
+      user.role,
+    );
     res.json(apiResponse(true, session, 'Session started'));
   }
 
@@ -59,6 +71,8 @@ export class ClassroomController {
     const session = await SessionService.endSession(
       req.params.id as string,
       user.schoolId!,
+      user.id,
+      user.role,
       req.body,
     );
     res.json(apiResponse(true, session, 'Session ended'));
@@ -70,6 +84,7 @@ export class ClassroomController {
       req.params.id as string,
       user.schoolId!,
       user.id,
+      user.role,
     );
     // Record join if student role
     if (user.role === 'student') {
@@ -80,7 +95,12 @@ export class ClassroomController {
 
   static async getAttendance(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    const records = await SessionService.getAttendance(req.params.id as string, user.schoolId!);
+    const records = await SessionService.getAttendance(
+      req.params.id as string,
+      user.schoolId!,
+      user.id,
+      user.role,
+    );
     res.json(apiResponse(true, records));
   }
 
@@ -89,6 +109,8 @@ export class ClassroomController {
     const poll = await SessionService.createPoll(
       req.params.id as string,
       user.schoolId!,
+      user.id,
+      user.role,
       req.body,
     );
     res.status(201).json(apiResponse(true, poll, 'Poll created'));
@@ -101,12 +123,15 @@ export class ClassroomController {
       req.params.pollId as string,
       user.schoolId!,
       user.id,
+      user.role,
       req.body,
     );
     res.json(apiResponse(true, result, 'Response recorded'));
   }
 
   static async getChatHistory(req: Request, res: Response): Promise<void> {
+    const user = getUser(req);
+    await SessionService.getSession(req.params.id as string, user.schoolId!, user.id, user.role);
     const { SessionChatMessage } = await import('./model-chat.js');
     const messages = await SessionChatMessage.find({ sessionId: req.params.id })
       .sort({ timestamp: 1 })
@@ -118,10 +143,12 @@ export class ClassroomController {
 
   static async listVideos(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    const result = await VideoService.listVideos(user.schoolId!, {
+    const result = await VideoService.listVideos(user.schoolId!, user.id, user.role, {
       subjectId: req.query.subjectId as string | undefined,
       gradeId: req.query.gradeId as string | undefined,
       classId: req.query.classId as string | undefined,
+      videoType: req.query.videoType as string | undefined,
+      search: req.query.search as string | undefined,
       published: req.query.published !== undefined ? req.query.published === 'true' : undefined,
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
@@ -131,13 +158,18 @@ export class ClassroomController {
 
   static async createVideo(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    const video = await VideoService.createVideo(user.schoolId!, user.id, req.body);
+    const video = await VideoService.createVideo(user.schoolId!, user.id, user.role, req.body);
     res.status(201).json(apiResponse(true, video, 'Video created successfully'));
   }
 
   static async getVideo(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    const video = await VideoService.getVideo(req.params.id as string, user.schoolId!);
+    const video = await VideoService.getVideo(
+      req.params.id as string,
+      user.schoolId!,
+      user.id,
+      user.role,
+    );
     res.json(apiResponse(true, video));
   }
 
@@ -146,6 +178,8 @@ export class ClassroomController {
     const video = await VideoService.updateVideo(
       req.params.id as string,
       user.schoolId!,
+      user.id,
+      user.role,
       req.body,
     );
     res.json(apiResponse(true, video, 'Video updated successfully'));
@@ -153,7 +187,7 @@ export class ClassroomController {
 
   static async deleteVideo(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    await VideoService.deleteVideo(req.params.id as string, user.schoolId!);
+    await VideoService.deleteVideo(req.params.id as string, user.schoolId!, user.id, user.role);
     res.json(apiResponse(true, undefined, 'Video deleted successfully'));
   }
 
@@ -173,6 +207,8 @@ export class ClassroomController {
     const history = await VideoService.getWatchHistory(
       req.params.studentId as string,
       user.schoolId!,
+      user.id,
+      user.role,
     );
     res.json(apiResponse(true, history));
   }

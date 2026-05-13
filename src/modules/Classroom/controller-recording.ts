@@ -4,16 +4,21 @@ import { getUser } from '../../types/authenticated-request.js';
 import { apiResponse } from '../../common/utils.js';
 import { logger } from '../../common/logger.js';
 import { RecordingService } from './service-recording.js';
+import { SessionService } from './service-sessions.js';
 
 export class RecordingController {
   static async startRecording(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const session = await SessionService.getSession(req.params.id as string, user.schoolId!, user.id, user.role);
+    SessionService.assertCanManageSession(session, user.id, user.role);
     await RecordingService.startRecording(req.params.id as string, user.schoolId!);
     res.json(apiResponse(true, undefined, 'Recording started'));
   }
 
   static async stopRecording(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const session = await SessionService.getSession(req.params.id as string, user.schoolId!, user.id, user.role);
+    SessionService.assertCanManageSession(session, user.id, user.role);
     await RecordingService.stopRecording(req.params.id as string, user.schoolId!);
     res.json(apiResponse(true, undefined, 'Recording stopped'));
   }
@@ -58,12 +63,19 @@ export class RecordingController {
 
   static async getLessonNotes(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    await SessionService.getSession(req.params.id as string, user.schoolId!, user.id, user.role);
     const note = await RecordingService.getLessonNote(req.params.id as string, user.schoolId!);
     res.json(apiResponse(true, note));
   }
 
   static async getClassLessonNotes(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    await SessionService.assertCanAccessClass(
+      user.schoolId!,
+      user.id,
+      user.role,
+      req.params.classId as string,
+    );
     const notes = await RecordingService.getClassLessonNotes(
       req.params.classId as string,
       user.schoolId!,
@@ -73,6 +85,8 @@ export class RecordingController {
 
   static async retryLessonNotes(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const session = await SessionService.getSession(req.params.id as string, user.schoolId!, user.id, user.role);
+    SessionService.assertCanManageSession(session, user.id, user.role);
     await RecordingService.retryLessonNotes(req.params.id as string, user.schoolId!);
     res.json(apiResponse(true, undefined, 'Lesson notes retry queued'));
   }

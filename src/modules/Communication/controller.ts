@@ -9,13 +9,16 @@ export class CommunicationController {
 
   static async createTemplate(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    const data = { ...req.body, createdBy: user.id };
+    const data = { ...req.body, schoolId: user.schoolId, createdBy: user.id };
     const template = await CommunicationModuleService.createTemplate(data);
     res.status(201).json(apiResponse(true, template, 'Template created successfully'));
   }
 
   static async listTemplates(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? getUser(req).schoolId;
+    const user = getUser(req);
+    const schoolId = user.role === 'super_admin'
+      ? (req.query.schoolId as string) ?? user.schoolId
+      : user.schoolId;
     if (!schoolId) { res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required')); return; }
     const result = await CommunicationModuleService.listTemplates(schoolId, {
       page: req.query.page ? Number(req.query.page) : undefined,
@@ -60,18 +63,26 @@ export class CommunicationController {
   // ─── Bulk Messages ────────────────────────────────────────────────────────
 
   static async sendBulkMessage(req: Request, res: Response): Promise<void> {
-    const message = await CommunicationModuleService.sendBulkMessage(req.body, getUser(req).id);
+    const user = getUser(req);
+    const message = await CommunicationModuleService.sendBulkMessage(
+      { ...req.body, schoolId: user.schoolId! },
+      user.id,
+      user.role,
+    );
     res.status(201).json(apiResponse(true, message, 'Bulk message sent successfully'));
   }
 
   static async listMessages(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? getUser(req).schoolId;
+    const user = getUser(req);
+    const schoolId = user.role === 'super_admin'
+      ? (req.query.schoolId as string) ?? user.schoolId
+      : user.schoolId;
     if (!schoolId) { res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required')); return; }
-    const result = await CommunicationModuleService.listMessages(schoolId, {
+    const result = await CommunicationModuleService.listMessagesForViewer(schoolId, {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
       status: req.query.status as string | undefined,
-    });
+    }, { userId: user.id, role: user.role });
     res.json(apiResponse(true, result, 'Messages retrieved successfully'));
   }
 
@@ -84,7 +95,12 @@ export class CommunicationController {
   // ─── Scheduling ────────────────────────────────────────────────────────────
 
   static async scheduleMessage(req: Request, res: Response): Promise<void> {
-    const message = await CommunicationModuleService.scheduleMessage(req.body, getUser(req).id);
+    const user = getUser(req);
+    const message = await CommunicationModuleService.scheduleMessage(
+      { ...req.body, schoolId: user.schoolId! },
+      user.id,
+      user.role,
+    );
     res.status(201).json(apiResponse(true, message, 'Message scheduled successfully'));
   }
 
@@ -106,14 +122,24 @@ export class CommunicationController {
   }
 
   static async getReadReceipts(req: Request, res: Response): Promise<void> {
-    const schoolId = getUser(req).schoolId!;
-    const receipts = await CommunicationModuleService.getReadReceipts(schoolId, req.params.id as string);
+    const user = getUser(req);
+    const schoolId = user.schoolId!;
+    const receipts = await CommunicationModuleService.getReadReceipts(
+      schoolId,
+      req.params.id as string,
+      { userId: user.id, role: user.role },
+    );
     res.json(apiResponse(true, receipts, 'Read receipts retrieved successfully'));
   }
 
   static async getReadReceiptStats(req: Request, res: Response): Promise<void> {
-    const schoolId = getUser(req).schoolId!;
-    const stats = await CommunicationModuleService.getReadReceiptStats(schoolId, req.params.id as string);
+    const user = getUser(req);
+    const schoolId = user.schoolId!;
+    const stats = await CommunicationModuleService.getReadReceiptStats(
+      schoolId,
+      req.params.id as string,
+      { userId: user.id, role: user.role },
+    );
     res.json(apiResponse(true, stats, 'Read receipt stats retrieved successfully'));
   }
 
@@ -126,11 +152,12 @@ export class CommunicationController {
   }
 
   static async getMessageLogs(req: Request, res: Response): Promise<void> {
-    const schoolId = getUser(req).schoolId ?? '';
+    const user = getUser(req);
+    const schoolId = user.schoolId ?? '';
     const logs = await CommunicationModuleService.getMessageLogs(req.params.id as string, schoolId, {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
-    });
+    }, { userId: user.id, role: user.role });
     res.json(apiResponse(true, logs, 'Message logs retrieved successfully'));
   }
 

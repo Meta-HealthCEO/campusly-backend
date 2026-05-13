@@ -131,6 +131,8 @@ export const videoQuerySchema = z.object({
   subjectId: objectIdSchema.optional(),
   gradeId: objectIdSchema.optional(),
   classId: objectIdSchema.optional(),
+  videoType: z.enum(['upload', 'youtube', 'vimeo', 'recording']).optional(),
+  search: z.string().trim().max(120).optional(),
   published: z.coerce.boolean().optional(),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),

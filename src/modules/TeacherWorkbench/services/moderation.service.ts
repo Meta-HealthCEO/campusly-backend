@@ -1,5 +1,6 @@
-import { PaperModeration, IPaperModeration } from '../model.assessment.js';
-import { NotFoundError } from '../../../common/errors.js';
+import { PaperMemo, PaperModeration, IPaperModeration } from '../model.assessment.js';
+import { AssessmentPaper } from '../../QuestionBank/model.js';
+import { BadRequestError, ForbiddenError, NotFoundError } from '../../../common/errors.js';
 
 export class ModerationService {
   static async submitForModeration(
@@ -7,8 +8,26 @@ export class ModerationService {
     teacherId: string,
     schoolId: string,
   ): Promise<IPaperModeration> {
+    const paper = await AssessmentPaper.findOne({
+      _id: paperId,
+      schoolId,
+      createdBy: teacherId,
+      isDeleted: false,
+    }).lean();
+    if (!paper) throw new NotFoundError('Paper not found');
+    if (paper.status === 'finalised') {
+      throw new BadRequestError('Paper has already been finalised');
+    }
+    const questionCount = paper.sections.reduce(
+      (sum, section) => sum + section.questions.length,
+      0,
+    );
+    if (questionCount === 0) {
+      throw new BadRequestError('Add questions before submitting for moderation');
+    }
+
     const moderation = await PaperModeration.findOneAndUpdate(
-      { paperId },
+      { paperId, schoolId },
       {
         $set: {
           paperId,
@@ -57,6 +76,22 @@ export class ModerationService {
     comments: string,
     schoolId: string,
   ): Promise<IPaperModeration> {
+    const paper = await AssessmentPaper.findOne({
+      _id: paperId,
+      schoolId,
+      isDeleted: false,
+    });
+    if (!paper) throw new NotFoundError('Paper not found');
+    const existing = await PaperModeration.findOne({
+      paperId,
+      schoolId,
+      isDeleted: false,
+    }).lean();
+    if (!existing) throw new NotFoundError('Moderation record not found');
+    if (existing.status !== 'pending') {
+      throw new ForbiddenError('Only pending papers can be reviewed');
+    }
+
     const historyEntry = {
       moderatorId,
       action: status,
@@ -79,6 +114,14 @@ export class ModerationService {
     ).lean().exec();
 
     if (!moderation) throw new NotFoundError('Moderation record not found');
+    if (status === 'approved') {
+      paper.status = 'finalised';
+      await paper.save();
+      await PaperMemo.updateOne(
+        { paperId, schoolId, isDeleted: false },
+        { $set: { status: 'final' } },
+      );
+    }
     return moderation as IPaperModeration;
   }
 }

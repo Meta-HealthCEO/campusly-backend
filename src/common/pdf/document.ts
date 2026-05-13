@@ -22,11 +22,14 @@ export function finalise(doc: PDFKit.PDFDocument): Promise<Buffer> {
       doc.switchToPage(pages.start + i);
       doc.save();
       doc.font('Helvetica').fontSize(8);
+      // Keep the footer inside PDFKit's writable page area. Writing below the
+      // bottom margin makes PDFKit auto-add a fresh page for the footer, which
+      // doubles the page count with blank pages.
       doc.text(
         `Page ${i + 1} of ${pages.count}`,
         MARGIN,
-        doc.page.height - FOOTER_RESERVE,
-        { width: CONTENT_WIDTH, align: 'center' },
+        doc.page.height - MARGIN - 20,
+        { width: CONTENT_WIDTH, align: 'center', lineBreak: false },
       );
       doc.restore();
     }

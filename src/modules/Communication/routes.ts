@@ -112,7 +112,7 @@ router.post(
 router.post(
   '/send',
   authenticate,
-  authorize('school_admin', 'super_admin'),
+  authorize('school_admin', 'super_admin', 'teacher'),
   validate(sendBulkMessageSchema),
   CommunicationController.sendBulkMessage,
 );

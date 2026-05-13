@@ -63,13 +63,32 @@ router.delete(
   ClassroomController.deleteSession,
 );
 
+router.patch(
+  '/sessions/:id/cancel',
+  authorize(...TEACHER_ROLES),
+  ClassroomController.deleteSession,
+);
+
 router.post(
   '/sessions/:id/start',
   authorize(...TEACHER_ROLES),
   ClassroomController.startSession,
 );
 
+router.patch(
+  '/sessions/:id/start',
+  authorize(...TEACHER_ROLES),
+  ClassroomController.startSession,
+);
+
 router.post(
+  '/sessions/:id/end',
+  authorize(...TEACHER_ROLES),
+  validate(endSessionSchema),
+  ClassroomController.endSession,
+);
+
+router.patch(
   '/sessions/:id/end',
   authorize(...TEACHER_ROLES),
   validate(endSessionSchema),
@@ -169,6 +188,13 @@ router.get(
 );
 
 router.put(
+  '/videos/:id',
+  authorize(...TEACHER_ROLES),
+  validate(updateVideoSchema),
+  ClassroomController.updateVideo,
+);
+
+router.patch(
   '/videos/:id',
   authorize(...TEACHER_ROLES),
   validate(updateVideoSchema),

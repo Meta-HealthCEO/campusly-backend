@@ -1,6 +1,9 @@
 import mongoose from 'mongoose';
+import { Student } from '../Student/model.js';
+import { Parent } from '../Parent/model.js';
 import { VideoLesson, VideoProgress } from './model.js';
-import { NotFoundError } from '../../common/errors.js';
+import { SessionService } from './service-sessions.js';
+import { NotFoundError, ForbiddenError, BadRequestError } from '../../common/errors.js';
 import { paginationHelper } from '../../common/utils.js';
 import type {
   CreateVideoInput,
@@ -8,47 +11,137 @@ import type {
   UpdateProgressInput,
 } from './validation.js';
 
-// ─── Videos ───────────────────────────────────────────────────────────────────
+const ADMIN_ROLES = new Set(['super_admin', 'school_admin', 'principal']);
+
+function asObjectId(id: string) {
+  return new mongoose.Types.ObjectId(id);
+}
+
+function idToString(value: unknown): string {
+  if (!value) return '';
+  if (typeof value === 'string') return value;
+  if (value instanceof mongoose.Types.ObjectId) return value.toString();
+  if (typeof value === 'object') {
+    const record = value as { _id?: unknown; id?: unknown };
+    if (record._id) return idToString(record._id);
+    if (record.id) return String(record.id);
+  }
+  return String(value);
+}
+
+function isAdminRole(role: string): boolean {
+  return ADMIN_ROLES.has(role);
+}
+
+function escapeRegex(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
 export class VideoService {
-  static async createVideo(schoolId: string, teacherId: string, data: CreateVideoInput) {
+  static async assertCanAccessVideo(
+    video: { classId?: unknown; teacherId?: unknown; isPublished?: unknown },
+    schoolId: string,
+    userId: string,
+    role: string,
+  ): Promise<void> {
+    if (isAdminRole(role)) return;
+
+    if (role === 'teacher') {
+      if (idToString(video.teacherId) === userId) return;
+      const classId = idToString(video.classId);
+      if (video.isPublished && classId) {
+        await SessionService.assertCanAccessClass(schoolId, userId, role, classId);
+        return;
+      }
+      throw new ForbiddenError('You do not have access to this video');
+    }
+
+    if ((role === 'student' || role === 'parent') && video.isPublished) {
+      const classId = idToString(video.classId);
+      if (!classId) throw new ForbiddenError('You do not have access to this video');
+      await SessionService.assertCanAccessClass(schoolId, userId, role, classId);
+      return;
+    }
+
+    throw new ForbiddenError('You do not have access to this video');
+  }
+
+  static assertCanManageVideo(video: { teacherId?: unknown }, userId: string, role: string): void {
+    if (isAdminRole(role)) return;
+    if (role === 'teacher' && idToString(video.teacherId) === userId) return;
+    throw new ForbiddenError('Only the video owner can manage this video');
+  }
+
+  static async createVideo(
+    schoolId: string,
+    teacherId: string,
+    role: string,
+    data: CreateVideoInput,
+  ) {
+    if (data.classId) {
+      await SessionService.assertCanAccessClass(schoolId, teacherId, role, data.classId);
+    }
+
     const video = await VideoLesson.create({
-      schoolId: new mongoose.Types.ObjectId(schoolId),
+      schoolId: asObjectId(schoolId),
       title: data.title,
       description: data.description,
-      subjectId: data.subjectId ? new mongoose.Types.ObjectId(data.subjectId) : undefined,
-      gradeId: data.gradeId ? new mongoose.Types.ObjectId(data.gradeId) : undefined,
-      classId: data.classId ? new mongoose.Types.ObjectId(data.classId) : undefined,
-      teacherId: new mongoose.Types.ObjectId(teacherId),
+      subjectId: data.subjectId ? asObjectId(data.subjectId) : undefined,
+      gradeId: data.gradeId ? asObjectId(data.gradeId) : undefined,
+      classId: data.classId ? asObjectId(data.classId) : undefined,
+      teacherId: asObjectId(teacherId),
       videoUrl: data.videoUrl,
       videoType: data.videoType,
       thumbnailUrl: data.thumbnailUrl,
       durationSeconds: data.durationSeconds,
       isPublished: data.isPublished ?? false,
       tags: data.tags ?? [],
-      sessionId: data.sessionId ? new mongoose.Types.ObjectId(data.sessionId) : undefined,
+      sessionId: data.sessionId ? asObjectId(data.sessionId) : undefined,
     });
     return video.toObject();
   }
 
   static async listVideos(
     schoolId: string,
+    userId: string,
+    role: string,
     filters: {
       subjectId?: string;
       gradeId?: string;
       classId?: string;
+      videoType?: string;
+      search?: string;
       published?: boolean;
       page?: number;
       limit?: number;
     },
   ) {
-    const soid = new mongoose.Types.ObjectId(schoolId);
+    const soid = asObjectId(schoolId);
     const query: Record<string, unknown> = { schoolId: soid, isDeleted: false };
 
-    if (filters.subjectId) query.subjectId = new mongoose.Types.ObjectId(filters.subjectId);
-    if (filters.gradeId) query.gradeId = new mongoose.Types.ObjectId(filters.gradeId);
-    if (filters.classId) query.classId = new mongoose.Types.ObjectId(filters.classId);
-    if (filters.published !== undefined) query.isPublished = filters.published;
+    if (role === 'teacher') {
+      query.teacherId = asObjectId(userId);
+    } else if (!isAdminRole(role)) {
+      const visibleClassIds = await SessionService.getVisibleClassIds(schoolId, userId, role);
+      query.isPublished = true;
+      query.classId = { $in: (visibleClassIds ?? []).map((id) => asObjectId(id)) };
+    }
+
+    if (filters.classId) {
+      await SessionService.assertCanAccessClass(schoolId, userId, role, filters.classId);
+      query.classId = asObjectId(filters.classId);
+    }
+
+    if (filters.subjectId) query.subjectId = asObjectId(filters.subjectId);
+    if (filters.gradeId) query.gradeId = asObjectId(filters.gradeId);
+    if (filters.videoType) query.videoType = filters.videoType;
+    if (filters.published !== undefined && (role === 'teacher' || isAdminRole(role))) {
+      query.isPublished = filters.published;
+    }
+    if (filters.search?.trim()) {
+      const regex = new RegExp(escapeRegex(filters.search.trim()), 'i');
+      query.$or = [{ title: regex }, { description: regex }, { tags: regex }];
+    }
 
     const { skip, limit } = paginationHelper(filters.page, filters.limit);
 
@@ -58,7 +151,9 @@ export class VideoService {
         .skip(skip)
         .limit(limit)
         .populate('teacherId', 'firstName lastName')
-        .populate('subjectId', 'name')
+        .populate('subjectId', 'name code')
+        .populate('gradeId', 'name')
+        .populate('classId', 'name')
         .lean(),
       VideoLesson.countDocuments(query),
     ]);
@@ -66,36 +161,53 @@ export class VideoService {
     return { videos, total, page: filters.page ?? 1, limit };
   }
 
-  static async getVideo(id: string, schoolId: string) {
+  static async getVideo(id: string, schoolId: string, userId: string, role: string) {
     const video = await VideoLesson.findOne({
-      _id: new mongoose.Types.ObjectId(id),
-      schoolId: new mongoose.Types.ObjectId(schoolId),
+      _id: asObjectId(id),
+      schoolId: asObjectId(schoolId),
       isDeleted: false,
     })
       .populate('teacherId', 'firstName lastName')
-      .populate('subjectId', 'name')
+      .populate('subjectId', 'name code')
+      .populate('gradeId', 'name')
+      .populate('classId', 'name')
       .lean();
     if (!video) throw new NotFoundError('Video not found');
 
-    // Increment view count
+    await VideoService.assertCanAccessVideo(video, schoolId, userId, role);
+
     await VideoLesson.findOneAndUpdate(
-      { _id: new mongoose.Types.ObjectId(id), schoolId: new mongoose.Types.ObjectId(schoolId) },
+      { _id: asObjectId(id), schoolId: asObjectId(schoolId) },
       { $inc: { viewCount: 1 } },
     );
 
     return video;
   }
 
-  static async updateVideo(id: string, schoolId: string, data: UpdateVideoInput) {
-    const soid = new mongoose.Types.ObjectId(schoolId);
-    const oid = new mongoose.Types.ObjectId(id);
+  static async updateVideo(
+    id: string,
+    schoolId: string,
+    userId: string,
+    role: string,
+    data: UpdateVideoInput,
+  ) {
+    const soid = asObjectId(schoolId);
+    const oid = asObjectId(id);
+
+    const existing = await VideoLesson.findOne({ _id: oid, schoolId: soid, isDeleted: false }).lean();
+    if (!existing) throw new NotFoundError('Video not found');
+    VideoService.assertCanManageVideo(existing, userId, role);
+
+    if (data.classId) {
+      await SessionService.assertCanAccessClass(schoolId, userId, role, data.classId);
+    }
 
     const update: Record<string, unknown> = {};
     if (data.title !== undefined) update.title = data.title;
     if (data.description !== undefined) update.description = data.description;
-    if (data.subjectId !== undefined) update.subjectId = new mongoose.Types.ObjectId(data.subjectId);
-    if (data.gradeId !== undefined) update.gradeId = new mongoose.Types.ObjectId(data.gradeId);
-    if (data.classId !== undefined) update.classId = new mongoose.Types.ObjectId(data.classId);
+    if (data.subjectId !== undefined) update.subjectId = asObjectId(data.subjectId);
+    if (data.gradeId !== undefined) update.gradeId = asObjectId(data.gradeId);
+    if (data.classId !== undefined) update.classId = asObjectId(data.classId);
     if (data.videoUrl !== undefined) update.videoUrl = data.videoUrl;
     if (data.videoType !== undefined) update.videoType = data.videoType;
     if (data.thumbnailUrl !== undefined) update.thumbnailUrl = data.thumbnailUrl;
@@ -112,11 +224,13 @@ export class VideoService {
     return video;
   }
 
-  static async deleteVideo(id: string, schoolId: string) {
-    const soid = new mongoose.Types.ObjectId(schoolId);
-    const oid = new mongoose.Types.ObjectId(id);
+  static async deleteVideo(id: string, schoolId: string, userId: string, role: string) {
+    const soid = asObjectId(schoolId);
+    const oid = asObjectId(id);
     const video = await VideoLesson.findOne({ _id: oid, schoolId: soid, isDeleted: false }).lean();
     if (!video) throw new NotFoundError('Video not found');
+    VideoService.assertCanManageVideo(video, userId, role);
+
     await VideoLesson.findOneAndUpdate(
       { _id: oid, schoolId: soid },
       { $set: { isDeleted: true } },
@@ -129,9 +243,13 @@ export class VideoService {
     schoolId: string,
     data: UpdateProgressInput,
   ) {
-    const soid = new mongoose.Types.ObjectId(schoolId);
-    const vidOid = new mongoose.Types.ObjectId(videoId);
-    const studOid = new mongoose.Types.ObjectId(studentId);
+    await VideoService.getVideo(videoId, schoolId, studentId, 'student');
+
+    const soid = asObjectId(schoolId);
+    const vidOid = asObjectId(videoId);
+    const studOid = asObjectId(studentId);
+
+    if (data.totalSeconds <= 0) throw new BadRequestError('totalSeconds must be greater than 0');
 
     const progressPercent = Math.min(
       100,
@@ -157,10 +275,52 @@ export class VideoService {
     return progress;
   }
 
-  static async getWatchHistory(studentId: string, schoolId: string) {
+  static async getWatchHistory(
+    studentId: string,
+    schoolId: string,
+    requesterId: string,
+    requesterRole: string,
+  ) {
+    const schoolObjectId = asObjectId(schoolId);
+    const requestedObjectId = asObjectId(studentId);
+    const student = await Student.findOne({
+      $or: [{ _id: requestedObjectId }, { userId: requestedObjectId }],
+      schoolId: schoolObjectId,
+      isDeleted: false,
+    })
+      .select('_id userId classId')
+      .lean();
+
+    if (requesterRole === 'student' && requesterId !== idToString(student?.userId ?? studentId)) {
+      throw new ForbiddenError('You can only view your own watch history');
+    }
+
+    if (requesterRole === 'parent') {
+      const parent = await Parent.findOne({
+        userId: asObjectId(requesterId),
+        schoolId: schoolObjectId,
+        childrenIds: student?._id,
+        isDeleted: false,
+      }).lean();
+      if (!parent) throw new ForbiddenError('You can only view your children watch history');
+    }
+
+    if (requesterRole === 'teacher') {
+      if (!student) throw new NotFoundError('Student not found');
+      await SessionService.assertCanAccessClass(
+        schoolId,
+        requesterId,
+        requesterRole,
+        idToString(student.classId),
+      );
+    }
+
+    if (!student && requesterRole !== 'student') throw new NotFoundError('Student not found');
+    const progressUserId = idToString(student?.userId ?? studentId);
+
     return VideoProgress.find({
-      studentId: new mongoose.Types.ObjectId(studentId),
-      schoolId: new mongoose.Types.ObjectId(schoolId),
+      studentId: asObjectId(progressUserId),
+      schoolId: schoolObjectId,
       isDeleted: false,
     })
       .populate('videoId', 'title thumbnailUrl durationSeconds videoType')

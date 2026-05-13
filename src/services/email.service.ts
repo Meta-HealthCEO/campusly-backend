@@ -12,6 +12,15 @@ const resend = process.env.RESEND_API_KEY
 
 const DEFAULT_FROM = process.env.EMAIL_FROM ?? 'Campusly <noreply@campusly.co.za>';
 
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 export class EmailService {
   static async sendEmail(
     to: string,
@@ -20,7 +29,7 @@ export class EmailService {
     options?: { from?: string; replyTo?: string },
   ): Promise<EmailResult> {
     if (!resend) {
-      logger.info({ to, subject }, 'Email (dev mode — no RESEND_API_KEY)');
+      logger.info({ to, subject }, 'Email (dev mode - no RESEND_API_KEY)');
       return { success: true, messageId: `dev-${Date.now()}` };
     }
 
@@ -58,6 +67,38 @@ export class EmailService {
       <a href="${resetUrl}">Reset Password</a>
       <p>This link expires in 1 hour.</p>
       <p>If you did not request this, please ignore this email.</p>
+    `;
+    return EmailService.sendEmail(to, subject, html);
+  }
+
+  static async sendStudentPortalCredentials(
+    to: string,
+    data: {
+      studentName: string;
+      loginEmail: string;
+      tempPassword: string;
+      teacherName?: string;
+    },
+  ): Promise<EmailResult> {
+    const appUrl = process.env.APP_URL ?? 'http://localhost:3500';
+    const appName = process.env.APP_NAME ?? 'Campusly';
+    const subject = `${appName} - Student portal login details`;
+    const safeAppName = escapeHtml(appName);
+    const safeAppUrl = escapeHtml(appUrl);
+    const safeStudentName = escapeHtml(data.studentName);
+    const safeLoginEmail = escapeHtml(data.loginEmail);
+    const safeTempPassword = escapeHtml(data.tempPassword);
+    const teacherLine = data.teacherName
+      ? `<p>${escapeHtml(data.teacherName)} has created a student portal account for you.</p>`
+      : '<p>A student portal account has been created for you.</p>';
+    const html = `
+      <h2>Welcome to ${safeAppName}</h2>
+      ${teacherLine}
+      <p><strong>Student:</strong> ${safeStudentName}</p>
+      <p><strong>Login page:</strong> <a href="${safeAppUrl}/login">${safeAppUrl}/login</a></p>
+      <p><strong>Email:</strong> ${safeLoginEmail}</p>
+      <p><strong>Temporary password:</strong> ${safeTempPassword}</p>
+      <p>Please sign in and change this password as soon as possible.</p>
     `;
     return EmailService.sendEmail(to, subject, html);
   }

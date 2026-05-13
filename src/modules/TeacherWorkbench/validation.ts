@@ -211,7 +211,9 @@ export type ReviewPaperInput = z.infer<typeof reviewPaperSchema>;
 const plannedAssessmentItemSchema = z.object({
   title: z.string().min(1).trim(),
   type: z.enum(assessmentTypes),
-  plannedDate: z.string().datetime(),
+  plannedDate: z.string().refine((value) => !Number.isNaN(Date.parse(value)), {
+    message: 'Invalid plannedDate',
+  }),
   marks: z.number().int().min(1),
   weight: z.number().min(0).max(100),
   topicIds: z.array(objectIdSchema).default([]),
@@ -221,7 +223,7 @@ const plannedAssessmentItemSchema = z.object({
 
 export const createPlanSchema = z
   .object({
-    schoolId: objectIdSchema,
+    schoolId: objectIdSchema.optional(),
     subjectId: objectIdSchema,
     classId: objectIdSchema,
     term: z.number().int().min(1).max(4),

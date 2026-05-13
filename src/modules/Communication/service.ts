@@ -11,10 +11,11 @@ import { DeviceRegistration } from './delivery-model.js';
 import { Student } from '../Student/model.js';
 import { Parent } from '../Parent/model.js';
 import { User } from '../Auth/model.js';
+import { Class, Timetable } from '../Academic/model.js';
 import { EmailService } from '../../services/email.service.js';
 import { SmsService } from '../../services/sms.service.js';
 import { PushService } from '../../services/push.service.js';
-import { NotFoundError, BadRequestError } from '../../common/errors.js';
+import { NotFoundError, BadRequestError, ForbiddenError } from '../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../common/constants.js';
 import { logger } from '../../common/logger.js';
 import { communicationQueue } from '../../jobs/queues.js';
@@ -32,6 +33,11 @@ interface ListQuery {
   status?: string;
 }
 
+interface ViewerScope {
+  userId: string;
+  role: string;
+}
+
 function getPagination(query: ListQuery) {
   const page = Math.max(query.page ?? PAGINATION_DEFAULTS.page, 1);
   const limit = Math.min(
@@ -39,6 +45,70 @@ function getPagination(query: ListQuery) {
     PAGINATION_DEFAULTS.maxLimit,
   );
   return { page, limit, skip: (page - 1) * limit };
+}
+
+async function getTeacherClassIds(schoolId: string, teacherId: string): Promise<string[]> {
+  const [homeroomClassIds, subjectClassIds] = await Promise.all([
+    Class.distinct('_id', { schoolId, teacherId, isDeleted: false }),
+    Timetable.distinct('classId', { schoolId, teacherId, isDeleted: false }),
+  ]);
+  return [...new Set([...homeroomClassIds, ...subjectClassIds].map((id) => id.toString()))];
+}
+
+async function getTeacherParentUserIds(schoolId: string, teacherId: string): Promise<Set<string>> {
+  const classIds = await getTeacherClassIds(schoolId, teacherId);
+  if (classIds.length === 0) return new Set();
+
+  const students = await Student.find({
+    schoolId,
+    classId: { $in: classIds },
+    enrollmentStatus: 'active',
+    isDeleted: false,
+  }).select('guardianIds').lean();
+
+  const guardianIds = [
+    ...new Set(students.flatMap((student) => student.guardianIds.map((id) => id.toString()))),
+  ];
+  if (guardianIds.length === 0) return new Set();
+
+  const parents = await Parent.find({
+    _id: { $in: guardianIds },
+    schoolId,
+    isDeleted: false,
+  }).select('userId').lean();
+
+  return new Set(parents.map((parent) => parent.userId.toString()));
+}
+
+async function assertTeacherCanTargetRecipients(
+  schoolId: string,
+  teacherId: string,
+  recipients: { type: string; targetIds?: string[] },
+) {
+  const targetIds = recipients.targetIds ?? [];
+  if (recipients.type === 'school' || recipients.type === 'grade') {
+    throw new ForbiddenError('Teachers can only message parents linked to their own classes');
+  }
+
+  if (recipients.type === 'class') {
+    const classIds = new Set(await getTeacherClassIds(schoolId, teacherId));
+    const unauthorized = targetIds.some((id) => !classIds.has(id));
+    if (targetIds.length === 0 || unauthorized) {
+      throw new ForbiddenError('You can only message classes you teach');
+    }
+    return;
+  }
+
+  if (recipients.type === 'custom') {
+    const allowedParentUserIds = await getTeacherParentUserIds(schoolId, teacherId);
+    const unauthorized = targetIds.some((id) => !allowedParentUserIds.has(id));
+    if (targetIds.length === 0 || unauthorized) {
+      throw new ForbiddenError('You can only message parents linked to learners in your classes');
+    }
+    return;
+  }
+
+  throw new BadRequestError('Unsupported recipient target');
 }
 
 // ─── Recipient Resolution ────────────────────────────────────────────────────
@@ -66,7 +136,13 @@ async function resolveRecipientIds(
     const parents = await Parent.find({ _id: { $in: guardians }, isDeleted: false }).select('userId').lean();
     userIds = parents.map((p) => p.userId);
   } else if (recipients.type === 'custom') {
-    userIds = (recipients.targetIds ?? []).map((id) => new mongoose.Types.ObjectId(id));
+    const targetUserIds = (recipients.targetIds ?? []).map((id) => new mongoose.Types.ObjectId(id));
+    const parents = await Parent.find({
+      schoolId: schoolObjId,
+      userId: { $in: targetUserIds },
+      isDeleted: false,
+    }).select('userId').lean();
+    userIds = parents.map((p) => p.userId);
   }
 
   return [...new Set(userIds.map((id) => id.toString()))];
@@ -209,8 +285,15 @@ export class CommunicationModuleService {
   static async sendBulkMessage(
     data: { schoolId: string; templateId?: string; subject: string; body: string; channel?: string; recipients: { type: string; targetIds?: string[] } },
     sentBy: string,
+    actorRole = 'school_admin',
   ): Promise<IBulkMessage> {
+    if (actorRole === 'teacher') {
+      await assertTeacherCanTargetRecipients(data.schoolId, sentBy, data.recipients);
+    }
     const uniqueIds = await resolveRecipientIds(data.schoolId, data.recipients);
+    if (uniqueIds.length === 0) {
+      throw new BadRequestError('No valid parent recipients found');
+    }
     const channel = data.channel ?? 'all';
     const bulkMessage = new BulkMessage({
       schoolId: data.schoolId, templateId: data.templateId, subject: data.subject, body: data.body,
@@ -234,6 +317,18 @@ export class CommunicationModuleService {
     return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
+  static async listMessagesForViewer(schoolId: string, query: ListQuery, viewer: ViewerScope) {
+    const { page, limit, skip } = getPagination(query);
+    const filter: Record<string, unknown> = { schoolId, isDeleted: false };
+    if (query.status) filter.status = query.status;
+    if (viewer.role === 'teacher') filter.sentBy = new mongoose.Types.ObjectId(viewer.userId);
+    const [data, total] = await Promise.all([
+      BulkMessage.find(filter).populate('sentBy', 'firstName lastName email').populate('templateId', 'name').sort('-createdAt').skip(skip).limit(limit).lean(),
+      BulkMessage.countDocuments(filter),
+    ]);
+    return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
+  }
+
   static async getMessageById(id: string, schoolId: string): Promise<IBulkMessage> {
     const m = await BulkMessage.findOne({ _id: id, schoolId, isDeleted: false }).populate('sentBy', 'firstName lastName email').populate('templateId', 'name');
     if (!m) throw new NotFoundError('Message not found');
@@ -245,10 +340,17 @@ export class CommunicationModuleService {
   static async scheduleMessage(
     data: { schoolId: string; templateId?: string; subject: string; body: string; channel?: string; recipients: { type: string; targetIds?: string[] }; scheduledFor: string },
     sentBy: string,
+    actorRole = 'school_admin',
   ): Promise<IBulkMessage> {
     const scheduledDate = new Date(data.scheduledFor);
     if (scheduledDate <= new Date()) throw new BadRequestError('Scheduled date must be in the future');
+    if (actorRole === 'teacher') {
+      await assertTeacherCanTargetRecipients(data.schoolId, sentBy, data.recipients);
+    }
     const uniqueIds = await resolveRecipientIds(data.schoolId, data.recipients);
+    if (uniqueIds.length === 0) {
+      throw new BadRequestError('No valid parent recipients found');
+    }
     const channel = data.channel ?? 'all';
     const bulkMessage = new BulkMessage({
       schoolId: data.schoolId, templateId: data.templateId, subject: data.subject, body: data.body,

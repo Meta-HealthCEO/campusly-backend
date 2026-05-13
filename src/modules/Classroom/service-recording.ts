@@ -44,7 +44,7 @@ export class RecordingService {
       throw new BadRequestError('Already recording');
     }
 
-    const roomName = session.roomId ?? `session_${String(session._id)}`;
+    const roomName = `session_${String(session._id)}`;
     const output = new EncodedFileOutput({ fileType: EncodedFileType.MP4 });
 
     const client = RecordingService.getEgressClient();

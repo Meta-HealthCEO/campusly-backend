@@ -11,6 +11,13 @@ function getEnv(key: string, fallback?: string): string {
   return value;
 }
 
+function getEnvList(key: string, fallback?: string): string[] {
+  return getEnv(key, fallback)
+    .split(',')
+    .map((value) => value.trim())
+    .filter(Boolean);
+}
+
 export const config = {
   port: parseInt(getEnv('PORT', '3000'), 10),
   nodeEnv: getEnv('NODE_ENV', 'development'),
@@ -32,7 +39,7 @@ export const config = {
   },
 
   cors: {
-    origin: getEnv('CORS_ORIGIN', 'http://localhost:3000'),
+    origin: getEnvList('CORS_ORIGIN', 'http://localhost:3000'),
   },
 
   smtp: {
@@ -54,7 +61,7 @@ export const config = {
 
   anthropic: {
     apiKey: getEnv('ANTHROPIC_API_KEY', ''),
-    model: getEnv('ANTHROPIC_MODEL', 'claude-sonnet-4-6'),
+    model: getEnv('ANTHROPIC_MODEL', 'claude-sonnet-4-20250514'),
   },
 
   resend: {
@@ -83,7 +90,7 @@ export type Config = typeof config;
 // Validate critical config at startup
 if (config.nodeEnv === 'production') {
   if (!config.anthropic.apiKey) logger.warn('WARNING: ANTHROPIC_API_KEY not set');
-  if (config.cors.origin === '*') {
+  if (config.cors.origin.includes('*')) {
     throw new Error('FATAL: CORS origin cannot be "*" in production. Set CORS_ORIGIN env var.');
   }
 }
