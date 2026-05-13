@@ -55,6 +55,7 @@ import communicationRoutes from './modules/Communication/routes.js';
 import aiTutorRoutes from './modules/AITutor/routes.js';
 import messagingRoutes from './modules/Messaging/routes.js';
 import paymentGatewayRoutes from './modules/PaymentGateway/routes.js';
+import subscriptionRoutes from './modules/subscription/routes.js';
 import meetingRoutes from './modules/Meetings/routes.js';
 import whatsappRoutes from './modules/WhatsApp/routes.js';
 import noticeBoardRoutes from './modules/NoticeBoard/routes.js';
@@ -191,6 +192,7 @@ app.use('/api/communication', authenticate, requireModule('communication'), comm
 app.use('/api/ai-tutor', authenticate, requireModule('ai_tools'), aiTutorRoutes);
 app.use('/api/messaging', authenticate, messagingRoutes);
 app.use('/api/payment-gateway', paymentGatewayRoutes); // No global authenticate — webhook route needs to be unauthenticated; individual routes handle auth
+app.use('/api', subscriptionRoutes); // Mounted at /api so paths like /api/plans + /api/subscriptions/* + /api/webhooks/onegate resolve. Auth handled per-route.
 app.use('/api/whatsapp', whatsappRoutes); // No global authenticate — webhook route needs to be unauthenticated; individual routes handle auth
 app.use('/api/incidents', authenticate, requireModule('incident_wellbeing'), incidentRoutes);
 app.use('/api/wellbeing', authenticate, requireModule('incident_wellbeing'), wellbeingRoutes);

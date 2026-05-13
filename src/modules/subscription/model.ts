@@ -170,7 +170,7 @@ const InvoiceSchema = new Schema<IInvoice>(
   { timestamps: true },
 );
 
-export const Invoice = model<IInvoice>('Invoice', InvoiceSchema);
+export const Invoice = model<IInvoice>('SubscriptionInvoice', InvoiceSchema);
 
 export type WebhookEventStatus = 'pending' | 'processed' | 'failed' | 'ignored';
 
