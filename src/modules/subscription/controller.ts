@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import mongoose from 'mongoose';
-import { Subscription, Plan } from './model.js';
+import { Subscription, Plan, Invoice, CheckoutSession } from './model.js';
 import { SubscriptionService, SubscriptionStartCheckoutError } from './service.js';
 import { checkoutInputSchema } from './validation.js';
 
@@ -55,5 +55,39 @@ export class SubscriptionController {
       }
       throw err;
     }
+  }
+
+  static async cancel(req: Request, res: Response): Promise<void> {
+    const sub = await SubscriptionService.cancel(schoolIdFromReq(req));
+    res.json({ data: sub });
+  }
+
+  static async resume(req: Request, res: Response): Promise<void> {
+    const sub = await SubscriptionService.resume(schoolIdFromReq(req));
+    res.json({ data: sub });
+  }
+
+  static async listInvoices(req: Request, res: Response): Promise<void> {
+    const invoices = await Invoice.find({
+      schoolId: schoolIdFromReq(req),
+      purpose: 'subscription',
+    })
+      .sort({ createdAt: -1 })
+      .limit(50);
+    res.json({ data: invoices });
+  }
+
+  static async getCheckoutSession(req: Request, res: Response): Promise<void> {
+    const id = req.params.id;
+    if (typeof id !== 'string' || !mongoose.Types.ObjectId.isValid(id)) {
+      res.status(400).json({ error: 'Invalid session id' });
+      return;
+    }
+    const session = await CheckoutSession.findOne({ _id: id, schoolId: schoolIdFromReq(req) });
+    if (!session) {
+      res.status(404).json({ error: 'Not found' });
+      return;
+    }
+    res.json({ data: session });
   }
 }
