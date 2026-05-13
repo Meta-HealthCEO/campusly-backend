@@ -81,6 +81,14 @@ export async function setupWorkers(): Promise<Worker[]> {
     const { createPaperImportWorker } = await import('./paper-import.job.js');
     workers.push(createPaperImportWorker());
 
+    if (process.env.SUBSCRIPTION_CRON_ENABLED === 'true') {
+      const { createSubscriptionBillingWorker, scheduleSubscriptionBilling } = await import(
+        '../modules/subscription/cron.js'
+      );
+      workers.push(createSubscriptionBillingWorker());
+      await scheduleSubscriptionBilling();
+    }
+
     const { runPaperImportCleanup } = await import('./paper-import-cleanup.job.js');
     setInterval(() => {
       runPaperImportCleanup().catch((err: unknown) => {
