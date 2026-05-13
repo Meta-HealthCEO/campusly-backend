@@ -68,4 +68,38 @@ export class SubscriptionService {
     await SubscriptionService.syncSchoolCache(sub);
     return sub;
   }
+
+  static async cancel(schoolId: mongoose.Types.ObjectId): Promise<ISubscription> {
+    const sub = await Subscription.findOne({ schoolId });
+    if (!sub) throw new Error('Subscription not found');
+    if (sub.status !== 'active' && sub.status !== 'trialing' && sub.status !== 'past_due') {
+      throw new Error(`Cannot cancel from status ${sub.status}`);
+    }
+    if (!sub.currentPeriodEnd && !sub.trialEndsAt) {
+      throw new Error('Subscription has no period end');
+    }
+    sub.status = 'canceled';
+    sub.cancelAtPeriodEnd = true;
+    sub.canceledAt = new Date();
+    sub.nextBillingAt = sub.currentPeriodEnd ?? sub.trialEndsAt;
+    await sub.save();
+    await SubscriptionService.syncSchoolCache(sub);
+    return sub;
+  }
+
+  static async resume(schoolId: mongoose.Types.ObjectId): Promise<ISubscription> {
+    const sub = await Subscription.findOne({ schoolId });
+    if (!sub) throw new Error('Subscription not found');
+    if (sub.status !== 'canceled') throw new Error(`Cannot resume from status ${sub.status}`);
+    if (sub.currentPeriodEnd && sub.currentPeriodEnd.getTime() <= Date.now()) {
+      throw new Error('Subscription period has ended; resubscribe instead');
+    }
+    sub.status = 'active';
+    sub.cancelAtPeriodEnd = false;
+    sub.canceledAt = null;
+    sub.nextBillingAt = sub.currentPeriodEnd;
+    await sub.save();
+    await SubscriptionService.syncSchoolCache(sub);
+    return sub;
+  }
 }
