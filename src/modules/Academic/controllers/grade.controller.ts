@@ -2,15 +2,7 @@ import type { Request } from 'express';
 import { Response } from 'express';
 import { getUser } from '../../../types/authenticated-request.js';
 import { AcademicService } from '../service.js';
-import { TeacherSettingsService } from '../../TeacherSettings/service.js';
-import { CurriculumNode } from '../../CurriculumStructure/model.js';
 import { apiResponse } from '../../../common/utils.js';
-
-function parseGradeLevel(title: string): number {
-  const match = title.match(/Grade\s+(\d+|R)/i);
-  if (!match) return 0;
-  return match[1].toUpperCase() === 'R' ? 0 : Number(match[1]);
-}
 
 export class GradeController {
   static async createGrade(req: Request, res: Response): Promise<void> {
@@ -21,29 +13,10 @@ export class GradeController {
   static async listGrades(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
 
-    if (user.isStandaloneTeacher) {
-      const scope = await TeacherSettingsService.getTeachingScope(user.id);
-      const gradeIds = scope.grades ?? [];
-      if (gradeIds.length === 0) {
-        res.json(apiResponse(true, { data: [], total: 0, page: 1, limit: 0, totalPages: 0 }, 'Grades retrieved successfully'));
-        return;
-      }
-      const nodes = await CurriculumNode.find({
-        _id: { $in: gradeIds },
-        type: 'grade',
-        isDeleted: false,
-      }).select('_id title code').lean();
-
-      const data = nodes
-        .map((n) => ({
-          id: String(n._id),
-          name: n.title,
-          level: parseGradeLevel(n.title),
-        }))
-        .sort((a, b) => b.level - a.level); // highest to lowest
-      res.json(apiResponse(true, { data, total: data.length, page: 1, limit: data.length, totalPages: 1 }, 'Grades retrieved successfully'));
-      return;
-    }
+    // Standalone teachers used to receive a CurriculumNode-masked response
+    // here. Their teaching scope now materialises real Grade rows via the
+    // bridge in services/materialise-from-curriculum.service.ts, so this
+    // endpoint returns the same school-side shape for every role.
 
     const schoolId = (req.query.schoolId as string) ?? user.schoolId;
     if (!schoolId) {

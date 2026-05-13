@@ -35,11 +35,25 @@ export const updateClassSchema = classSchema.partial().strict();
 
 // ─── Subject ─────────────────────────────────────────────────────────────────
 
+export const PAPER_QUESTION_TYPES = [
+  'mcq', 'short_answer', 'structured', 'essay', 'calculation',
+] as const;
+
+export const paperDefaultsSchema = z.object({
+  questionTypeMix: z.array(
+    z.object({
+      type: z.enum(PAPER_QUESTION_TYPES),
+      weight: z.number().min(0).max(100),
+    }).strict(),
+  ).max(PAPER_QUESTION_TYPES.length).default([]),
+}).strict();
+
 export const subjectSchema = z.object({
   name: z.string().min(1, 'Name is required').trim(),
   code: z.string().min(1, 'Code is required').trim(),
   schoolId: objectIdSchema,
   gradeIds: z.array(objectIdSchema).min(1, 'At least one grade is required'),
+  paperDefaults: paperDefaultsSchema.nullable().optional(),
 }).strict();
 
 export const updateSubjectSchema = subjectSchema.partial().strict();

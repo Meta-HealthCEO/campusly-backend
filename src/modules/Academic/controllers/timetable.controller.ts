@@ -8,16 +8,15 @@ import { ConfigService } from '../../TimetableBuilder/services/config.service.js
 export class TimetableController {
   static async createTimetable(req: Request, res: Response): Promise<void> {
     const user = req.user!;
-    const data = { ...req.body };
+    const schoolId = user.schoolId!;
+    const data = { ...req.body, schoolId };
 
     // Teachers can only create entries for themselves
     if (user.role === 'teacher') {
       data.teacherId = user.id;
-      data.schoolId = user.schoolId;
     }
 
     // Validate class belongs to the school
-    const schoolId = data.schoolId ?? req.user!.schoolId!;
     try {
       await AcademicService.getClassById(data.classId, schoolId);
     } catch {
@@ -84,6 +83,7 @@ export class TimetableController {
   static async updateTimetable(req: Request, res: Response): Promise<void> {
     const user = req.user!;
     const schoolId = user.schoolId!;
+    const data = { ...req.body, schoolId };
 
     // Teachers can only update their own entries
     if (user.role === 'teacher') {
@@ -98,9 +98,10 @@ export class TimetableController {
         res.status(403).json(apiResponse(false, undefined, undefined, 'You can only edit your own timetable entries'));
         return;
       }
+      data.teacherId = user.id;
     }
 
-    const entry = await AcademicService.updateTimetable(req.params.id as string, schoolId, req.body);
+    const entry = await AcademicService.updateTimetable(req.params.id as string, schoolId, data);
     res.json(apiResponse(true, entry, 'Timetable entry updated successfully'));
   }
 

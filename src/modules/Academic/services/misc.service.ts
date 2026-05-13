@@ -1,11 +1,15 @@
 import {
   Timetable, ITimetable,
+  Class,
+  Subject,
   PastPaper, IPastPaper,
   SubjectWeighting, ISubjectWeighting,
   RemedialTracking, IRemedialTracking,
 } from '../model.js';
 import { Student } from '../../Student/model.js';
-import { NotFoundError } from '../../../common/errors.js';
+import { User } from '../../Auth/model.js';
+import { ConfigService } from '../../TimetableBuilder/services/config.service.js';
+import { BadRequestError, NotFoundError } from '../../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../../common/constants.js';
 import type { PopulatedUser, PopulatedGrade } from '../../../types/populated.js';
 import { getPopulated } from '../../../types/populated.js';
@@ -37,19 +41,100 @@ function getPagination(query: ListQuery) {
   return { page, limit, skip, sortField };
 }
 
+const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
+
+function timeToMinutes(value: string): number {
+  if (!TIME_RE.test(value)) return Number.NaN;
+  const [hours, minutes] = value.split(':').map(Number);
+  return hours * 60 + minutes;
+}
+
+function validateTimeRange(startTime: string | undefined, endTime: string | undefined): void {
+  if (!startTime || !endTime || !TIME_RE.test(startTime) || !TIME_RE.test(endTime)) {
+    throw new BadRequestError('Timetable entries need valid start and end times');
+  }
+  if (timeToMinutes(endTime) <= timeToMinutes(startTime)) {
+    throw new BadRequestError('Timetable entry end time must be after start time');
+  }
+}
+
 export class MiscAcademicService {
+  private static async normalizeTimetableData(
+    schoolId: string,
+    data: Partial<ITimetable>,
+    existing?: Partial<ITimetable> | null,
+  ): Promise<Partial<ITimetable>> {
+    if (!schoolId || schoolId === 'undefined') {
+      throw new BadRequestError('School is required');
+    }
+    const resolvedSchoolId = (data.schoolId ?? existing?.schoolId ?? schoolId) as ITimetable['schoolId'];
+    const next: Partial<ITimetable> = { ...data, schoolId: resolvedSchoolId };
+    const classId = next.classId ?? existing?.classId;
+    const subjectId = next.subjectId ?? existing?.subjectId;
+    const teacherId = next.teacherId ?? existing?.teacherId;
+    const day = next.day ?? existing?.day;
+    const period = next.period ?? existing?.period;
+
+    if (!classId) throw new BadRequestError('Class is required');
+    if (!subjectId) throw new BadRequestError('Subject is required');
+    if (!teacherId) throw new BadRequestError('Teacher is required');
+    if (!day || period === undefined) throw new BadRequestError('Day and period are required');
+
+    const [classDoc, subjectDoc, teacherDoc] = await Promise.all([
+      Class.findOne({ _id: classId, schoolId, isDeleted: false }).select('name gradeId').lean(),
+      Subject.findOne({ _id: subjectId, schoolId, isDeleted: false }).select('name gradeIds').lean(),
+      User.findOne({
+        _id: teacherId,
+        schoolId,
+        role: 'teacher',
+        isDeleted: false,
+        isActive: true,
+      }).select('_id').lean(),
+    ]);
+
+    if (!classDoc) throw new BadRequestError('Class not found in your school');
+    if (!subjectDoc) throw new BadRequestError('Subject not found in your school');
+    if (!teacherDoc) throw new BadRequestError('Teacher not found in your school');
+
+    const classGradeId = String(classDoc.gradeId);
+    const subjectGradeIds = (subjectDoc.gradeIds ?? []).map((gradeId) => String(gradeId));
+    if (subjectGradeIds.length > 0 && !subjectGradeIds.includes(classGradeId)) {
+      throw new BadRequestError('Subject is not linked to the selected class grade');
+    }
+
+    const timetableConfig = await ConfigService.getConfig(schoolId);
+    const periodsPerDay = timetableConfig.periodsPerDay as unknown as Record<string, number>;
+    const maxPeriods = periodsPerDay?.[day] ?? 0;
+    if (period < 1 || (maxPeriods > 0 && period > maxPeriods)) {
+      throw new BadRequestError(`Period ${period} exceeds the configured ${maxPeriods} periods for ${day}`);
+    }
+
+    const configuredPeriodTime = timetableConfig.periodTimes?.find((pt) => pt.period === period);
+    if (configuredPeriodTime) {
+      next.startTime = configuredPeriodTime.startTime;
+      next.endTime = configuredPeriodTime.endTime;
+    } else {
+      validateTimeRange(
+        String(next.startTime ?? existing?.startTime ?? ''),
+        String(next.endTime ?? existing?.endTime ?? ''),
+      );
+    }
+
+    return next;
+  }
   // ─── Timetable CRUD ─────────────────────────────────────────────────────
 
   static async createTimetable(data: Partial<ITimetable>): Promise<ITimetable> {
+    const normalized = await MiscAcademicService.normalizeTimetableData(String(data.schoolId), data);
     // Validate no clashes before saving
     await TimetableClashService.validateNoClash(
-      String(data.schoolId),
-      String(data.teacherId),
-      String(data.classId),
-      data.day as string,
-      data.period as number,
+      String(normalized.schoolId ?? data.schoolId),
+      String(normalized.teacherId),
+      String(normalized.classId),
+      normalized.day as string,
+      normalized.period as number,
     );
-    const entry = new Timetable(data);
+    const entry = new Timetable({ ...data, ...normalized });
     return entry.save();
   }
 
@@ -107,23 +192,23 @@ export class MiscAcademicService {
   }
 
   static async updateTimetable(id: string, schoolId: string, data: Partial<ITimetable>): Promise<ITimetable> {
-    // If day/period/teacher/class are changing, validate no clashes
-    if (data.teacherId || data.classId || data.day || data.period !== undefined) {
-      const existing = await Timetable.findOne({ _id: id, schoolId, isDeleted: false }).lean();
-      if (existing) {
-        await TimetableClashService.validateNoClash(
-          schoolId,
-          String(data.teacherId ?? existing.teacherId),
-          String(data.classId ?? existing.classId),
-          (data.day ?? existing.day) as string,
-          data.period ?? existing.period,
-          id,
-        );
-      }
-    }
+    const existing = await Timetable.findOne({ _id: id, schoolId, isDeleted: false }).lean();
+    if (!existing) throw new NotFoundError('Timetable entry not found');
+
+    const normalized = await MiscAcademicService.normalizeTimetableData(schoolId, data, existing);
+    await TimetableClashService.validateNoClash(
+      schoolId,
+      String(normalized.teacherId ?? existing.teacherId),
+      String(normalized.classId ?? existing.classId),
+      (normalized.day ?? existing.day) as string,
+      normalized.period ?? existing.period,
+      id,
+    );
+    delete (normalized as Record<string, unknown>).schoolId;
+
     const entry = await Timetable.findOneAndUpdate(
       { _id: id, schoolId, isDeleted: false },
-      { $set: data },
+      { $set: normalized },
       { new: true, runValidators: true },
     )
       .populate('classId', 'name gradeId')

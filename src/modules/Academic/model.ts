@@ -6,6 +6,10 @@ export interface IGrade extends Document {
   name: string;
   schoolId: Types.ObjectId;
   orderIndex: number;
+  // Optional bridge to the canonical CAPS CurriculumNode (type='grade').
+  // Materialised eagerly from a standalone teacher's scope; left null when a
+  // school admin creates a custom Grade row that doesn't map to CAPS.
+  curriculumNodeId: Types.ObjectId | null;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -28,6 +32,11 @@ const gradeSchema = new Schema<IGrade>(
       required: true,
       min: 0,
     },
+    curriculumNodeId: {
+      type: Schema.Types.ObjectId,
+      ref: 'CurriculumNode',
+      default: null,
+    },
     isDeleted: {
       type: Boolean,
       default: false,
@@ -37,6 +46,8 @@ const gradeSchema = new Schema<IGrade>(
 );
 
 gradeSchema.index({ schoolId: 1, orderIndex: 1 });
+// Fast lookup when bridging a curriculum-node grade to its school-side row.
+gradeSchema.index({ schoolId: 1, curriculumNodeId: 1 });
 
 export const Grade = mongoose.model<IGrade>('Grade', gradeSchema);
 
@@ -110,15 +121,50 @@ export const Class = mongoose.model<IClass>('Class', classSchema);
 
 // ─── Subject ─────────────────────────────────────────────────────────────────
 
+export interface IPaperQuestionTypeWeight {
+  type: 'mcq' | 'short_answer' | 'structured' | 'essay' | 'calculation';
+  weight: number;
+}
+
+export interface IPaperDefaults {
+  questionTypeMix: IPaperQuestionTypeWeight[];
+}
+
 export interface ISubject extends Document {
   name: string;
   code: string;
   schoolId: Types.ObjectId;
   gradeIds: Types.ObjectId[];
+  // Optional bridge to the canonical CAPS CurriculumNode (type='subject').
+  // See IGrade.curriculumNodeId for the same convention.
+  curriculumNodeId: Types.ObjectId | null;
+  // Per-subject defaults that pre-fill the AI paper-generation wizard. Stored
+  // here (not on School.settings) because the right MCQ/essay/calculation
+  // ratio is subject-shaped: Math papers ≠ History papers structurally.
+  paperDefaults: IPaperDefaults | null;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
+
+const paperQuestionTypeWeightSchema = new Schema<IPaperQuestionTypeWeight>(
+  {
+    type: {
+      type: String,
+      enum: ['mcq', 'short_answer', 'structured', 'essay', 'calculation'],
+      required: true,
+    },
+    weight: { type: Number, required: true, min: 0, max: 100 },
+  },
+  { _id: false },
+);
+
+const paperDefaultsSchema = new Schema<IPaperDefaults>(
+  {
+    questionTypeMix: { type: [paperQuestionTypeWeightSchema], default: [] },
+  },
+  { _id: false },
+);
 
 const subjectSchema = new Schema<ISubject>(
   {
@@ -142,6 +188,15 @@ const subjectSchema = new Schema<ISubject>(
       ref: 'Grade',
       default: [],
     },
+    curriculumNodeId: {
+      type: Schema.Types.ObjectId,
+      ref: 'CurriculumNode',
+      default: null,
+    },
+    paperDefaults: {
+      type: paperDefaultsSchema,
+      default: null,
+    },
     isDeleted: {
       type: Boolean,
       default: false,
@@ -152,6 +207,8 @@ const subjectSchema = new Schema<ISubject>(
 
 subjectSchema.index({ schoolId: 1 });
 subjectSchema.index({ code: 1, schoolId: 1 });
+// Fast lookup when bridging a curriculum-node subject to its school-side row.
+subjectSchema.index({ schoolId: 1, curriculumNodeId: 1 });
 
 export const Subject = mongoose.model<ISubject>('Subject', subjectSchema);
 

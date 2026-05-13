@@ -4,6 +4,7 @@ import { AssessmentPaper } from '../QuestionBank/model.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
 import { logger } from '../../common/logger.js';
 import { Homework, type IHomework } from '../Homework/model.js';
+import { Assignment, type IAssignment } from '../Assignment/model.js';
 
 export interface PublishMarkInput {
   schoolId: string;
@@ -209,6 +210,96 @@ export async function publishHomeworkGrade(
       $set: {
         mark: submission.mark,
         total: submission.maxMarks,
+        percentage,
+        isAbsent: false,
+        isDeleted: false,
+      },
+    },
+    { upsert: true, new: true, runValidators: true },
+  );
+}
+
+// ─── Assignment ─────────────────────────────────────────────────────────────
+// Mirrors the homework helpers above. Lazily creates an Assessment doc the
+// first time we publish a grade for this assignment, caches the link on
+// Assignment.assessmentId for idempotency. Same blast-radius caveat: if the
+// assignment is later deleted, the Assessment is not cascaded — gradebook
+// retains the historical mark on purpose.
+
+export async function findOrCreateAssessmentForAssignment(
+  assignment: IAssignment,
+  classId: mongoose.Types.ObjectId,
+): Promise<mongoose.Types.ObjectId> {
+  if (assignment.assessmentId) return assignment.assessmentId as mongoose.Types.ObjectId;
+
+  // Pick the most relevant due date — the assignment for the supplied class.
+  const classAssignment = assignment.assignedClasses.find(
+    (a) => String(a.classId) === String(classId),
+  );
+  const due = classAssignment?.dueAt ?? new Date();
+  const month = due.getMonth() + 1;
+  const term = month <= 3 ? 1 : month <= 6 ? 2 : month <= 9 ? 3 : 4;
+  const academicYear = due.getFullYear();
+
+  const assessment = await Assessment.create({
+    name: assignment.title,
+    schoolId: assignment.schoolId,
+    classId,
+    subjectId: assignment.subjectId,
+    totalMarks: assignment.totalMarks,
+    term,
+    academicYear,
+    type: 'assignment',
+    weight: 1,
+    date: due,
+    paperId: null,
+    isDeleted: false,
+  });
+
+  try {
+    await Assignment.updateOne(
+      { _id: assignment._id, schoolId: assignment.schoolId },
+      { $set: { assessmentId: assessment._id } },
+    );
+  } catch (err: unknown) {
+    try {
+      await Assessment.deleteOne({ _id: assessment._id });
+    } catch (delErr: unknown) {
+      logger.error(
+        { delErr, assessmentId: assessment._id },
+        'Assessment rollback failed for assignment',
+      );
+    }
+    throw err;
+  }
+
+  return assessment._id as mongoose.Types.ObjectId;
+}
+
+export async function publishAssignmentGrade(
+  submission: {
+    _id: mongoose.Types.ObjectId;
+    studentId: mongoose.Types.ObjectId;
+    schoolId: mongoose.Types.ObjectId;
+    classId: mongoose.Types.ObjectId;
+    totalMark?: number;
+  },
+  assignment: IAssignment,
+): Promise<void> {
+  if (submission.totalMark === undefined) return;
+
+  const assessmentId = await findOrCreateAssessmentForAssignment(assignment, submission.classId);
+  const percentage =
+    assignment.totalMarks > 0
+      ? Math.round((submission.totalMark / assignment.totalMarks) * 100)
+      : 0;
+
+  await Mark.findOneAndUpdate(
+    { assessmentId, studentId: submission.studentId, schoolId: submission.schoolId },
+    {
+      $set: {
+        mark: submission.totalMark,
+        total: assignment.totalMarks,
         percentage,
         isAbsent: false,
         isDeleted: false,
