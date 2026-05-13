@@ -50,7 +50,7 @@ export class SubscriptionService {
   static async createInitialFreeSubscription(schoolId: mongoose.Types.ObjectId): Promise<ISubscription> {
     const existing = await Subscription.findOne({ schoolId });
     if (existing) return existing;
-    return Subscription.create({
+    const sub = await Subscription.create({
       schoolId,
       subscriberType: 'teacher',
       planCode: 'free',
@@ -58,6 +58,8 @@ export class SubscriptionService {
       retryCount: 0,
       gatewayProvider: 'onegate',
     });
+    await SubscriptionService.syncSchoolCache(sub);
+    return sub;
   }
 
   static async syncSchoolCache(sub: ISubscription): Promise<void> {

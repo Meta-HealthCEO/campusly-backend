@@ -15,6 +15,7 @@ import mongoose from 'mongoose';
 import { School, generateJoinCode } from '../School/model.js';
 import { Class } from '../Academic/model.js';
 import { Student } from '../Student/model.js';
+import { SubscriptionService } from '../subscription/service.js';
 
 export interface TokenPair {
   accessToken: string;
@@ -80,7 +81,6 @@ export class AuthService {
       type: 'combined',
       address: { street: 'TBD', city: 'TBD', province: 'TBD', postalCode: '0000', country: 'South Africa' },
       contactInfo: { email: data.email.toLowerCase(), phone: '0000000000' },
-      subscription: { tier: 'basic', expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) },
       modulesEnabled: [
         'auth',
         'academic',
@@ -98,6 +98,8 @@ export class AuthService {
       isActive: true,
       plan: 'standalone',
     });
+
+    await SubscriptionService.createInitialFreeSubscription(school._id as mongoose.Types.ObjectId);
 
     // Create user as teacher + school principal
     const user = await User.create({

@@ -1,9 +1,11 @@
+import type mongoose from 'mongoose';
 import { User } from './model.js';
 import { School, generateJoinCode } from '../School/model.js';
 import { Class } from '../Academic/model.js';
 import { Student } from '../Student/model.js';
 import { CurriculumFramework } from '../TeacherWorkbench/model.js';
 import { AuthService } from './service.js';
+import { SubscriptionService } from '../subscription/service.js';
 import { ConflictError, NotFoundError } from '../../common/errors.js';
 
 interface StandaloneSignupInput {
@@ -40,10 +42,6 @@ export class StandaloneService {
         country: data.country ?? 'South Africa',
       },
       contactInfo: { email: data.email.toLowerCase(), phone: '0000000000' },
-      subscription: {
-        tier: 'basic',
-        expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
-      },
       modulesEnabled: [
         'auth',
         'academic',
@@ -65,6 +63,8 @@ export class StandaloneService {
       isActive: true,
       plan: 'standalone',
     });
+
+    await SubscriptionService.createInitialFreeSubscription(school._id as mongoose.Types.ObjectId);
 
     const user = await User.create({
       email: data.email.toLowerCase(),

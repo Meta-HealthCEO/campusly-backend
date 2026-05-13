@@ -33,7 +33,7 @@ export interface ISchool extends Document {
   address: IAddress;
   logo?: string;
   contactInfo: IContactInfo;
-  subscription: ISubscription;
+  subscription?: ISubscription;
   modulesEnabled: string[];
   settings: ISettings;
   principal?: string;
@@ -122,7 +122,7 @@ const schoolSchema = new Schema<ISchool>(
     },
     subscription: {
       type: subscriptionSchema,
-      required: true,
+      default: undefined,
     },
     modulesEnabled: {
       type: [String],
