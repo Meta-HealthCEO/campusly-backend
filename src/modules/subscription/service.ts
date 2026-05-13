@@ -328,6 +328,11 @@ export class SubscriptionService {
     const merchantReference = 'sub_' + nanoId();
     const frontend = process.env.FRONTEND_BASE_URL ?? 'http://localhost:3500';
     const backend = process.env.BACKEND_BASE_URL ?? 'http://localhost:4500';
+    // Log so .env reload mistakes are immediately visible in dev. OneGate
+    // UAT rejects http://localhost URLs — if you see one of those below,
+    // restart the backend after editing .env (tsx watch does not reload .env).
+    // eslint-disable-next-line no-console
+    console.log('[subscription.startCheckout] frontend=' + frontend + ' backend=' + backend);
 
     const session = await CheckoutSession.create({
       userId: input.userId,
