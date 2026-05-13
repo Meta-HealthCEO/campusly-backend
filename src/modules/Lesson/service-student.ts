@@ -9,7 +9,12 @@ import '../Learning/model.js'; // Quiz
 import '../Homework/model.js'; // Homework
 import '../QuestionBank/model-papers.js'; // AssessmentPaper
 import type { IStudent } from '../Student/model.js';
-import type { StudentLessonSummary, StudentLessonDetail, StudentLessonMaterial } from './types-student.js';
+import type {
+  StudentContentBlock,
+  StudentLessonSummary,
+  StudentLessonDetail,
+  StudentLessonMaterial,
+} from './types-student.js';
 import type { StudentLessonListQuery } from './validation-student.js';
 
 interface PopulatedSubject {
@@ -109,11 +114,13 @@ function materialToDto(
 
   const resource = mat.contentResourceId as Record<string, unknown> | mongoose.Types.ObjectId | undefined;
   if (resource && typeof resource === 'object' && !(resource instanceof mongoose.Types.ObjectId)) {
+    const rawBlocks = Array.isArray(resource.blocks) ? resource.blocks : [];
     base.contentResource = {
       id: (resource._id as mongoose.Types.ObjectId).toString(),
       type: (resource.type as string) ?? 'unknown',
       title: (resource.title as string) ?? base.title,
       url: resource.url as string | undefined,
+      blocks: rawBlocks.map((block) => contentBlockToDto(block as Record<string, unknown>)),
     };
   }
 
@@ -161,6 +168,25 @@ function materialToDto(
   return base;
 }
 
+function contentBlockToDto(block: Record<string, unknown>): StudentContentBlock {
+  const curriculumNodeId = block.curriculumNodeId;
+  return {
+    blockId: String(block.blockId ?? ''),
+    type: String(block.type ?? 'text'),
+    order: typeof block.order === 'number' ? block.order : 0,
+    content: typeof block.content === 'string' ? block.content : '',
+    curriculumNodeId: curriculumNodeId ? String(curriculumNodeId) : null,
+    cognitiveLevel: (block.cognitiveLevel as StudentContentBlock['cognitiveLevel']) ?? null,
+    points: typeof block.points === 'number' ? block.points : 0,
+    hints: Array.isArray(block.hints) ? block.hints.map(String) : [],
+    explanation: typeof block.explanation === 'string' ? block.explanation : '',
+    metadata:
+      block.metadata && typeof block.metadata === 'object'
+        ? (block.metadata as Record<string, unknown>)
+        : {},
+  };
+}
+
 export async function getLessonForStudent(
   student: HydratedDocument<IStudent>,
   lessonId: string,
@@ -186,15 +212,36 @@ export async function getLessonForStudent(
   const summary = lessonToSummary(docRecord, student.classId);
   const materials = (docRecord.materials as Array<Record<string, unknown>>) ?? [];
   const phaseLookup = new Map<string, string>();
+  const materialLookup = new Map<string, Record<string, unknown>>();
+  for (const material of materials) {
+    materialLookup.set((material._id as mongoose.Types.ObjectId).toString(), material);
+  }
+
+  const orderedMaterials: Array<Record<string, unknown>> = [];
+  const orderedMaterialIds = new Set<string>();
   const phases = (docRecord.phases as Array<{ phase: string; materialIds: mongoose.Types.ObjectId[] }>) ?? [];
   for (const p of phases) {
-    for (const mid of p.materialIds) phaseLookup.set(mid.toString(), p.phase);
+    for (const mid of p.materialIds) {
+      const id = mid.toString();
+      phaseLookup.set(id, p.phase);
+      const material = materialLookup.get(id);
+      if (material) {
+        orderedMaterials.push(material);
+        orderedMaterialIds.add(id);
+      }
+    }
+  }
+  for (const material of materials) {
+    const id = (material._id as mongoose.Types.ObjectId).toString();
+    if (!orderedMaterialIds.has(id)) {
+      orderedMaterials.push(material);
+    }
   }
 
   return {
     ...summary,
     objectives: (docRecord.objectives as string[]) ?? [],
     durationMinutes: docRecord.durationMinutes as number,
-    materials: materials.map((m) => materialToDto(m, phaseLookup.get((m._id as mongoose.Types.ObjectId).toString()) ?? '')),
+    materials: orderedMaterials.map((m) => materialToDto(m, phaseLookup.get((m._id as mongoose.Types.ObjectId).toString()) ?? '')),
   };
 }

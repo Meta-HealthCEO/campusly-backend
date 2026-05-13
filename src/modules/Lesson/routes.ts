@@ -15,6 +15,7 @@ router.get('/:id', LessonController.getById);
 router.put('/:id', LessonController.update);
 router.patch('/:id/status', LessonController.patchStatus);
 router.delete('/:id', LessonController.delete);
+router.post('/:id/clone', LessonController.clone);
 
 router.post('/:id/materials', LessonController.addMaterial);
 router.post('/:id/materials/generate-all', LessonController.generateAllPlaceholders);

@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import { LessonService } from './service.js';
 import { LessonAssignmentService } from './service-assignments.js';
+import { cloneLesson } from './service-clone.js';
 import * as Materials from './service-materials.js';
 import { generateAllPlaceholders } from './service-materials-bulk.js';
 import { scaffoldLesson } from './service-scaffold.js';
@@ -113,6 +114,22 @@ export const LessonController = {
       const { schoolId } = getAuth(req);
       await LessonService.delete(req.params.id as string, schoolId);
       res.json({ data: { ok: true } });
+    } catch (err: unknown) {
+      next(err);
+    }
+  },
+
+  // POST /lessons/:id/clone — duplicate the lesson for re-use (e.g. next
+  // year). Materials are copied (with fresh ids), assignments + reflection
+  // notes + status are reset; external content refs are preserved.
+  clone: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { schoolId } = getAuth(req);
+      const body = (req.body ?? {}) as { title?: string };
+      const lesson = await cloneLesson(req.params.id as string, schoolId, {
+        title: body.title,
+      });
+      res.status(201).json({ data: lesson });
     } catch (err: unknown) {
       next(err);
     }

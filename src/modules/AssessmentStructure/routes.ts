@@ -25,7 +25,7 @@ import {
 
 const router = Router();
 
-const roles = ['super_admin', 'school_admin', 'teacher'] as const;
+const roles = ['super_admin', 'school_admin', 'principal', 'hod', 'teacher'] as const;
 
 // ─── Template routes (before /:id to avoid param conflict) ───────────────────
 

@@ -4,27 +4,34 @@ import { LessonPlanService } from './service.js';
 import { createLessonPlanWithStagedHomework } from './service-compensation.js';
 import { LessonPlanAIService } from './service-ai.js';
 import { createHomeworkSchema } from '../Homework/validation.js';
+import type { CreateHomeworkInput } from '../Homework/validation.js';
+import type { ILessonPlan } from './model.js';
 import { apiResponse } from '../../common/utils.js';
 
 export class LessonPlanController {
   static async create(req: Request, res: Response): Promise<void> {
-    const actorId = getUser(req).id;
-    const body = req.body as { stagedHomework?: unknown[] };
+    const user = getUser(req);
+    const actorId = user.id;
+    const body = { ...req.body, schoolId: user.schoolId } as Partial<ILessonPlan> & {
+      stagedHomework?: CreateHomeworkInput[];
+    };
     const staged = Array.isArray(body.stagedHomework) ? body.stagedHomework : [];
     const plan = staged.length > 0
-      ? await createLessonPlanWithStagedHomework(req.body, actorId)
-      : await LessonPlanService.createLessonPlan(req.body, actorId);
+      ? await createLessonPlanWithStagedHomework(body, actorId, user.role)
+      : await LessonPlanService.createLessonPlan(body, actorId, user.role);
     res.status(201).json(apiResponse(true, plan, 'Lesson plan created successfully'));
   }
 
   static async list(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
+    const user = getUser(req);
+    const schoolId = user.schoolId!;
     const result = await LessonPlanService.listLessonPlans(
       {
         schoolId,
-        teacherId: req.query.teacherId as string,
+        teacherId: user.role === 'teacher' ? user.id : req.query.teacherId as string,
         classId: req.query.classId as string,
         subjectId: req.query.subjectId as string,
+        search: req.query.search as string,
       },
       req.query.page ? Number(req.query.page) : undefined,
       req.query.limit ? Number(req.query.limit) : undefined,
@@ -33,17 +40,26 @@ export class LessonPlanController {
   }
 
   static async get(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
-    const plan = await LessonPlanService.getLessonPlanById(req.params.id as string, schoolId);
+    const user = getUser(req);
+    const schoolId = user.schoolId!;
+    const plan = await LessonPlanService.getLessonPlanById(
+      req.params.id as string,
+      schoolId,
+      user.id,
+      user.role,
+    );
     res.json(apiResponse(true, plan, 'Lesson plan retrieved successfully'));
   }
 
   static async update(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
+    const { schoolId: _schoolId, stagedHomework: _stagedHomework, ...safeBody } = req.body;
+    void _schoolId;
+    void _stagedHomework;
     const plan = await LessonPlanService.updateLessonPlan(
       req.params.id as string,
       user.schoolId!,
-      req.body,
+      safeBody,
       user.id,
       user.role,
     );
@@ -62,7 +78,12 @@ export class LessonPlanController {
   }
 
   static async aiGenerate(req: Request, res: Response): Promise<void> {
-    const draft = await LessonPlanAIService.generate(req.body, getUser(req).id);
+    const user = getUser(req);
+    const draft = await LessonPlanAIService.generate(
+      { ...req.body, schoolId: user.schoolId },
+      user.id,
+      user.role,
+    );
     res.json(apiResponse(true, draft, 'Lesson plan draft generated successfully'));
   }
 
@@ -80,6 +101,18 @@ export class LessonPlanController {
       `inline; filename="lesson-plan-${req.params.id}.pdf"`,
     );
     res.send(buf);
+  }
+
+  static async generateMaterial(req: Request, res: Response): Promise<void> {
+    const user = getUser(req);
+    const resource = await LessonPlanService.generateLessonMaterial(
+      req.params.id as string,
+      user.schoolId!,
+      user.id,
+      user.role,
+      req.body,
+    );
+    res.status(201).json(apiResponse(true, resource, 'Lesson material generated successfully'));
   }
 
   static async attachHomework(req: Request, res: Response): Promise<void> {

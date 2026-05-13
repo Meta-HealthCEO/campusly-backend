@@ -2,6 +2,7 @@ import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import mongoose from 'mongoose';
 import { Lesson } from '../model.js';
 import { Student } from '../../Student/model.js';
+import { ContentResource } from '../../ContentLibrary/model.js';
 import { listLessonsForStudent, getLessonForStudent } from '../service-student.js';
 
 beforeAll(async () => {
@@ -15,6 +16,7 @@ afterAll(async () => {
 beforeEach(async () => {
   await Lesson.deleteMany({});
   await Student.deleteMany({});
+  await ContentResource.deleteMany({});
 });
 
 async function seed() {
@@ -127,6 +129,59 @@ describe('getLessonForStudent', () => {
     expect(result?.materials).toHaveLength(1);
     expect(result?.materials[0]?.kind).toBe('reading');
     expect(result?.materials[0]?.title).toBe('Read this');
+  });
+
+  it('returns generated content blocks and orders materials by lesson phase', async () => {
+    const { schoolId, classId, subjectId, teacherId, studentId } = await seed();
+    const curriculumNodeId = new mongoose.Types.ObjectId();
+    const resource = await ContentResource.create({
+      schoolId,
+      curriculumNodeId,
+      subjectId,
+      gradeId: new mongoose.Types.ObjectId(),
+      term: 1,
+      type: 'worksheet',
+      format: 'static',
+      title: 'Worksheet resource',
+      source: 'ai_generated',
+      status: 'approved',
+      createdBy: teacherId,
+      blocks: [{
+        blockId: 'block-1',
+        type: 'text',
+        order: 0,
+        content: 'Student-facing worksheet content',
+        points: 0,
+      }],
+    });
+    const lesson = await Lesson.create({
+      schoolId, teacherId, subjectId, curriculumNodeId,
+      title: 'Block lesson',
+      durationMinutes: 45,
+      status: 'ready',
+      materials: [
+        { kind: 'worksheet', title: 'Worksheet', contentResourceId: resource._id },
+        { kind: 'reading', title: 'Read first' },
+      ],
+      assignedClasses: [{ classId, scheduledDate: new Date(), status: 'planned' }],
+    });
+
+    const worksheetId = lesson.materials[0]?._id;
+    const readingId = lesson.materials[1]?._id;
+    if (!worksheetId || !readingId) throw new Error('material seed failed');
+    lesson.phases = [
+      { phase: 'practice', materialIds: [worksheetId] },
+      { phase: 'introduction', materialIds: [readingId] },
+    ];
+    await lesson.save();
+
+    const student = await Student.findById(studentId);
+    if (!student) throw new Error('seed failed');
+    const result = await getLessonForStudent(student, lesson._id.toString());
+
+    expect(result?.materials.map((m) => m.phase)).toEqual(['practice', 'introduction']);
+    expect(result?.materials[0]?.contentResource?.blocks?.[0]?.content)
+      .toBe('Student-facing worksheet content');
   });
 
   it('returns null when lesson is from another school (multi-tenancy)', async () => {

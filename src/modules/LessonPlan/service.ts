@@ -1,15 +1,17 @@
 import mongoose from 'mongoose';
 import { LessonPlan, ILessonPlan } from './model.js';
-import { Class } from '../Academic/model.js';
-import { Subject } from '../Academic/model.js';
+import { Class, Subject, Timetable } from '../Academic/model.js';
 import { CurriculumNode, ICurriculumNode } from '../CurriculumStructure/model.js';
 import { Homework, IHomework } from '../Homework/model.js';
 import { School } from '../School/model.js';
 import { User } from '../Auth/model.js';
 import type { CreateHomeworkInput } from '../Homework/validation.js';
+import { GenerationService } from '../ContentLibrary/service-generation.js';
+import type { GenerateLessonMaterialInput } from './validation.js';
 import { generateLessonPlanPdf } from './pdf-generator.js';
 import { NotFoundError, BadRequestError, ForbiddenError } from '../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../common/constants.js';
+import { escapeRegex } from '../../common/utils.js';
 
 const ADMIN_ROLES = new Set(['school_admin', 'super_admin']);
 
@@ -40,7 +42,9 @@ export function assertLessonPlanAccess(
   }
 }
 
-/** Verify a class, subject, and (optionally) curriculum topic all belong to the school. */
+const LESSON_PLAN_CURRICULUM_NODE_TYPES = ['topic', 'subtopic', 'outcome'] as const;
+
+/** Verify a class, subject, and (optionally) curriculum node all belong to the school or the global library. */
 export async function verifyRefs(schoolId: string, classId: string, subjectId: string, curriculumTopicId?: string): Promise<void> {
   const [cls, subject] = await Promise.all([
     Class.findOne({ _id: classId, schoolId, isDeleted: false }).lean(),
@@ -49,13 +53,19 @@ export async function verifyRefs(schoolId: string, classId: string, subjectId: s
   if (!cls) throw new BadRequestError('Class does not belong to this school');
   if (!subject) throw new BadRequestError('Subject does not belong to this school');
 
+  const subjectGradeIds = (subject.gradeIds ?? []).map((gradeId) => String(gradeId));
+  if (subjectGradeIds.length > 0 && !subjectGradeIds.includes(String(cls.gradeId))) {
+    throw new BadRequestError('Subject is not available for this class grade');
+  }
+
   if (curriculumTopicId) {
     const topic = await CurriculumNode.findOne({
       _id: curriculumTopicId,
+      type: { $in: LESSON_PLAN_CURRICULUM_NODE_TYPES },
       isDeleted: false,
       $or: [{ schoolId }, { schoolId: null }],
     }).lean();
-    if (!topic) throw new BadRequestError('Curriculum topic does not belong to this school');
+    if (!topic) throw new BadRequestError('Curriculum item does not belong to this school');
   }
 }
 
@@ -110,14 +120,99 @@ export async function assertTopicMatchesClassGrade(
 
   const classGradeName = (cls.gradeId as unknown as { name: string } | null)?.name;
   if (classGradeName && gradeNode.title !== classGradeName) {
+    const normalize = (value: string) => value.trim().toLowerCase();
+    if (normalize(gradeNode.title) === normalize(classGradeName)) return;
     throw new BadRequestError(
       `Curriculum topic is for ${gradeNode.title}, but class is ${classGradeName}`,
     );
   }
 }
 
+export async function assertTeacherCanPlanForClassSubject(
+  teacherId: string,
+  actorRole: string,
+  schoolId: string,
+  classId: string,
+  subjectId: string,
+): Promise<void> {
+  if (ADMIN_ROLES.has(actorRole)) return;
+
+  const [homeroom, timetableEntry] = await Promise.all([
+    Class.findOne({ _id: classId, schoolId, teacherId, isDeleted: false }).select('_id').lean(),
+    Timetable.findOne({ schoolId, teacherId, classId, subjectId, isDeleted: false }).select('_id').lean(),
+  ]);
+
+  if (homeroom || timetableEntry) return;
+  throw new ForbiddenError('You can only create lesson plans for classes and subjects you teach');
+}
+
+function parseTermNumber(value: string | null | undefined): number | null {
+  if (!value) return null;
+  const direct = value.match(/\bT([1-4])\b/i);
+  if (direct?.[1]) return Number(direct[1]);
+  const labelled = value.match(/\bterm\s*([1-4])\b/i);
+  if (labelled?.[1]) return Number(labelled[1]);
+  return null;
+}
+
+async function resolveTermForCurriculumNode(curriculumNodeId: string): Promise<number> {
+  let current = await CurriculumNode.findById(curriculumNodeId)
+    .select('type title code parentId')
+    .lean();
+
+  for (let depth = 0; current && depth < 8; depth += 1) {
+    const parsed = parseTermNumber(`${current.code} ${current.title}`);
+    if (parsed) return parsed;
+    if (!current.parentId) break;
+    current = await CurriculumNode.findById(current.parentId)
+      .select('type title code parentId')
+      .lean();
+  }
+
+  return 1;
+}
+
+function resolveObjectId(value: unknown): string {
+  if (value && typeof value === 'object' && '_id' in value) {
+    return String((value as { _id: unknown })._id);
+  }
+  return String(value);
+}
+
+function buildLessonMaterialInstructions(
+  plan: Pick<ILessonPlan, 'topic' | 'durationMinutes' | 'objectives' | 'activities' | 'resources'>,
+  teacherInstructions: string,
+): string {
+  const lines = [
+    'This resource must support this saved lesson plan.',
+    `LESSON TITLE: ${plan.topic}`,
+    `LESSON DURATION: ${plan.durationMinutes} minutes`,
+  ];
+
+  if (plan.objectives?.length) {
+    lines.push(`LESSON OBJECTIVES:\n- ${plan.objectives.join('\n- ')}`);
+  }
+  if (plan.activities?.length) {
+    lines.push(`PLANNED LESSON ACTIVITIES:\n- ${plan.activities.join('\n- ')}`);
+  }
+  if (plan.resources?.length) {
+    lines.push(`EXISTING RESOURCE NOTES:\n- ${plan.resources.join('\n- ')}`);
+  }
+  if (teacherInstructions.trim()) {
+    lines.push(`ADDITIONAL TEACHER INSTRUCTIONS:\n${teacherInstructions.trim()}`);
+  }
+
+  lines.push('The generated material should feel like part of the same lesson workspace, not a generic standalone resource.');
+
+  return lines.join('\n\n');
+}
+
 export class LessonPlanService {
-  static async createLessonPlan(data: Partial<ILessonPlan>, teacherId: string): Promise<ILessonPlan> {
+  static async createLessonPlan(
+    data: Partial<ILessonPlan>,
+    teacherId: string,
+    actorRole = 'teacher',
+  ): Promise<ILessonPlan> {
     if (!data.schoolId || !data.classId || !data.subjectId) {
       throw new BadRequestError('schoolId, classId, and subjectId are required');
     }
@@ -134,6 +229,13 @@ export class LessonPlanService {
         String(data.schoolId),
       );
     }
+    await assertTeacherCanPlanForClassSubject(
+      teacherId,
+      actorRole,
+      String(data.schoolId),
+      String(data.classId),
+      String(data.subjectId),
+    );
     const plan = await LessonPlan.create({
       teacherId,
       schoolId: data.schoolId,
@@ -154,7 +256,7 @@ export class LessonPlanService {
   }
 
   static async listLessonPlans(
-    filters: { schoolId: string; teacherId?: string; classId?: string; subjectId?: string },
+    filters: { schoolId: string; teacherId?: string; classId?: string; subjectId?: string; search?: string },
     page = 1,
     limit = 20,
   ) {
@@ -166,6 +268,9 @@ export class LessonPlanService {
     if (filters.teacherId) filter.teacherId = filters.teacherId;
     if (filters.classId) filter.classId = filters.classId;
     if (filters.subjectId) filter.subjectId = filters.subjectId;
+    if (filters.search) {
+      filter.topic = new RegExp(escapeRegex(filters.search), 'i');
+    }
 
     const [data, total] = await Promise.all([
       LessonPlan.find(filter)
@@ -183,14 +288,23 @@ export class LessonPlanService {
     return { data, total, page: sanitizedPage, limit: sanitizedLimit, totalPages: Math.ceil(total / sanitizedLimit) };
   }
 
-  static async getLessonPlanById(id: string, schoolId: string): Promise<ILessonPlan> {
+  static async getLessonPlanById(
+    id: string,
+    schoolId: string,
+    actorId?: string,
+    actorRole?: string,
+  ): Promise<ILessonPlan> {
     const plan = await LessonPlan.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('subjectId', 'name code')
       .populate('classId', 'name')
       .populate('teacherId', 'firstName lastName email')
       .populate('curriculumTopicId', 'title code')
+      .populate({ path: 'homeworkIds', match: { isDeleted: false } })
       .lean();
     if (!plan) throw new NotFoundError('Lesson plan not found');
+    if (actorId && actorRole) {
+      assertLessonPlanAccess(plan, actorId, actorRole, 'access');
+    }
     return plan;
   }
 
@@ -213,6 +327,16 @@ export class LessonPlanService {
         String(data.classId ?? existing.classId),
         String(data.subjectId ?? existing.subjectId),
         data.curriculumTopicId ? String(data.curriculumTopicId) : undefined,
+      );
+    }
+
+    if (data.classId || data.subjectId) {
+      await assertTeacherCanPlanForClassSubject(
+        actorId,
+        actorRole,
+        schoolId,
+        String(data.classId ?? existing.classId),
+        String(data.subjectId ?? existing.subjectId),
       );
     }
 
@@ -251,7 +375,7 @@ export class LessonPlanService {
     // Submissions are preserved (we only soft-delete homework, not submissions).
     if (existing.homeworkIds && existing.homeworkIds.length) {
       await Homework.updateMany(
-        { _id: { $in: existing.homeworkIds }, isDeleted: false },
+        { _id: { $in: existing.homeworkIds }, schoolId, isDeleted: false },
         { $set: { isDeleted: true } },
       );
     }
@@ -289,6 +413,42 @@ export class LessonPlanService {
 
     // The generator expects a PopulatedPlan shape — the populate calls above match it.
     return generateLessonPlanPdf(plan as never, school, teacher);
+  }
+
+  static async generateLessonMaterial(
+    id: string,
+    schoolId: string,
+    actorId: string,
+    actorRole: string,
+    data: GenerateLessonMaterialInput,
+  ) {
+    const plan = await LessonPlan.findOne({ _id: id, schoolId, isDeleted: false })
+      .populate('classId', 'name gradeId')
+      .populate('subjectId', 'name code')
+      .populate('curriculumTopicId', 'title code parentId type description')
+      .lean();
+
+    if (!plan) throw new NotFoundError('Lesson plan not found');
+    assertLessonPlanAccess(plan, actorId, actorRole, 'access');
+
+    const classRef = plan.classId as unknown as { _id: unknown; gradeId?: unknown };
+    if (!classRef?.gradeId) {
+      throw new BadRequestError('Lesson teaching group is missing a grade');
+    }
+
+    const curriculumNodeId = resolveObjectId(plan.curriculumTopicId);
+    const term = await resolveTermForCurriculumNode(curriculumNodeId);
+
+    return GenerationService.generateContent(schoolId, actorId, {
+      curriculumNodeId,
+      type: data.type,
+      gradeId: String(classRef.gradeId),
+      subjectId: resolveObjectId(plan.subjectId),
+      term,
+      blockTypes: data.blockTypes,
+      difficulty: data.difficulty,
+      instructions: buildLessonMaterialInstructions(plan, data.instructions),
+    });
   }
 
   /**
@@ -343,6 +503,6 @@ export class LessonPlanService {
     }
     plan.homeworkIds = filtered as ILessonPlan['homeworkIds'];
     await plan.save();
-    await Homework.updateOne({ _id: homeworkId }, { $set: { isDeleted: true } });
+    await Homework.updateOne({ _id: homeworkId, schoolId }, { $set: { isDeleted: true } });
   }
 }

@@ -7,6 +7,7 @@ import {
   createLessonPlanSchema,
   updateLessonPlanSchema,
   aiGenerateLessonPlanSchema,
+  generateLessonMaterialSchema,
 } from './validation.js';
 
 const router = Router();
@@ -61,6 +62,14 @@ router.get(
   authenticate,
   authorize('teacher', 'school_admin', 'super_admin'),
   LessonPlanController.getPdf,
+);
+
+router.post(
+  '/:id/materials/generate',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
+  validate(generateLessonMaterialSchema),
+  LessonPlanController.generateMaterial,
 );
 
 router.post(

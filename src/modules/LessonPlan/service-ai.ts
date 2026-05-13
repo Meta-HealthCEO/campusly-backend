@@ -4,8 +4,13 @@ import { AIService } from '../../services/ai.service.js';
 import { CurriculumNode } from '../CurriculumStructure/model.js';
 import { AIUsageLog } from '../AITools/model.js';
 import { NotFoundError, BadRequestError, ForbiddenError } from '../../common/errors.js';
+import {
+  verifyRefs,
+  assertTopicMatchesClassGrade,
+  assertTeacherCanPlanForClassSubject,
+} from './service.js';
 
-const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
+const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514';
 
 /** Max AI lesson-plan generations per teacher per hour. */
 const RATE_LIMIT_PER_HOUR = 30;
@@ -68,7 +73,7 @@ const draftSchema = z.object({
 });
 
 export class LessonPlanAIService {
-  static async generate(input: GenerateInput, teacherId: string): Promise<GeneratedDraft> {
+  static async generate(input: GenerateInput, teacherId: string, actorRole = 'teacher'): Promise<GeneratedDraft> {
     // Rate limit check — per teacher, last hour
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
     const recentCount = await AIUsageLog.countDocuments({
@@ -81,6 +86,16 @@ export class LessonPlanAIService {
         `AI generation rate limit reached (${RATE_LIMIT_PER_HOUR}/hour). Please try again later.`,
       );
     }
+
+    await verifyRefs(input.schoolId, input.classId, input.subjectId, input.curriculumTopicId);
+    await assertTopicMatchesClassGrade(input.curriculumTopicId, input.classId, input.schoolId);
+    await assertTeacherCanPlanForClassSubject(
+      teacherId,
+      actorRole,
+      input.schoolId,
+      input.classId,
+      input.subjectId,
+    );
 
     // Curriculum topic must either belong to this school OR be a school-agnostic
     // reference (schoolId: null). This prevents leaking another school's

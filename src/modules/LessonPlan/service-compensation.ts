@@ -8,6 +8,7 @@ import {
   LessonPlanService,
   verifyRefs,
   assertTopicMatchesClassGrade,
+  assertTeacherCanPlanForClassSubject,
 } from './service.js';
 
 /**
@@ -45,6 +46,7 @@ async function rollbackStagedHomework(
 export async function createLessonPlanWithStagedHomework(
   data: Partial<ILessonPlan> & { stagedHomework?: CreateHomeworkInput[] },
   teacherId: string,
+  actorRole = 'teacher',
 ): Promise<ILessonPlan> {
   if (!data.schoolId || !data.classId || !data.subjectId) {
     throw new BadRequestError('schoolId, classId, and subjectId are required');
@@ -66,6 +68,13 @@ export async function createLessonPlanWithStagedHomework(
       String(data.schoolId),
     );
   }
+  await assertTeacherCanPlanForClassSubject(
+    teacherId,
+    actorRole,
+    String(data.schoolId),
+    String(data.classId),
+    String(data.subjectId),
+  );
 
   // C1: multi-tenancy — each staged homework must target the same school/class/subject
   // as the lesson plan. Prevents a teacher from injecting homework into another school.
@@ -107,6 +116,7 @@ export async function createLessonPlanWithStagedHomework(
         homeworkIds: createdHomeworkIds as unknown as ILessonPlan['homeworkIds'],
       },
       teacherId,
+      actorRole,
     );
   } catch (err: unknown) {
     await rollbackStagedHomework(createdHomeworkIds, err, 'phase-2 plan create');

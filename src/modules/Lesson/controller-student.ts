@@ -10,8 +10,8 @@ import {
 export class StudentLessonController {
   static async list(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      if (!req.user?.id) throw new UnauthorizedError();
-      const student = await resolveStudentFromUserId(req.user.id);
+      if (!req.user?.id || !req.user.schoolId) throw new UnauthorizedError();
+      const student = await resolveStudentFromUserId(req.user.id, req.user.schoolId);
       if (!student) throw new NotFoundError('Student profile not found');
 
       const query = studentLessonListQuerySchema.parse(req.query);
@@ -24,8 +24,8 @@ export class StudentLessonController {
 
   static async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      if (!req.user?.id) throw new UnauthorizedError();
-      const student = await resolveStudentFromUserId(req.user.id);
+      if (!req.user?.id || !req.user.schoolId) throw new UnauthorizedError();
+      const student = await resolveStudentFromUserId(req.user.id, req.user.schoolId);
       if (!student) throw new NotFoundError('Student profile not found');
 
       const { id } = studentLessonParamSchema.parse(req.params);

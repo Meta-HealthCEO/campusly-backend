@@ -21,8 +21,27 @@ export interface StudentLessonMaterialBase {
   phase: string;
 }
 
+export interface StudentContentBlock {
+  blockId: string;
+  type: string;
+  order: number;
+  content: string;
+  curriculumNodeId: string | null;
+  cognitiveLevel: { caps: string | null; blooms: string | null } | null;
+  points: number;
+  hints: string[];
+  explanation: string;
+  metadata: Record<string, unknown>;
+}
+
 export interface StudentLessonMaterial extends StudentLessonMaterialBase {
-  contentResource?: { id: string; type: string; title: string; url?: string };
+  contentResource?: {
+    id: string;
+    type: string;
+    title: string;
+    url?: string;
+    blocks?: StudentContentBlock[];
+  };
   quiz?: { id: string; title: string; questionCount: number };
   homework?: { id: string; title: string; dueAt?: string; status?: string };
   paper?: { paperId: string; title: string; releaseAt?: string; dueAt?: string };

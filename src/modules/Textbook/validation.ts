@@ -41,6 +41,7 @@ export type AddChapterInput = z.infer<typeof addChapterSchema>;
 export const updateChapterSchema = z.object({
   title: z.string().min(1, 'Title is required').trim().optional(),
   description: z.string().optional(),
+  curriculumNodeId: objectIdSchema.nullable().optional(),
   order: z.number().int().min(0).optional(),
 }).strict();
 
@@ -72,7 +73,7 @@ export const textbookQuerySchema = z.object({
   status: z.enum(['draft', 'published', 'archived']).optional(),
   search: z.string().optional(),
   page: z.coerce.number().int().min(1).optional(),
-  limit: z.coerce.number().int().min(1).optional(),
+  limit: z.coerce.number().int().min(1).max(1000).optional(),
 });
 
 export type TextbookQueryInput = z.infer<typeof textbookQuerySchema>;

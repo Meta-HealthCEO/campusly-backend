@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { Textbook } from './model.js';
 import type { IChapter } from './model.js';
 import { ContentResource } from '../ContentLibrary/model.js';
+import { resolveAcademicFilterIds } from '../Academic/services/global-academic-lookup.js';
 import { NotFoundError, BadRequestError } from '../../common/errors.js';
 import { escapeRegex } from '../../common/utils.js';
 import type {
@@ -15,7 +16,7 @@ import type {
 // ─── Populate Config ───────────────────────────────────────────────────────
 
 const POPULATE_DETAIL = [
-  { path: 'chapters.resources.resourceId', select: 'title type format' },
+  { path: 'chapters.resources.resourceId', select: 'title type format status' },
   { path: 'chapters.curriculumNodeId', select: 'title code' },
   { path: 'subjectId', select: 'name' },
   { path: 'gradeId', select: 'name level' },
@@ -57,6 +58,16 @@ async function getOwnedTextbookOrThrow(id: string, schoolId: string) {
 export class TextbookService {
   static async listTextbooks(schoolId: string, filters: TextbookQueryInput) {
     const soid = new mongoose.Types.ObjectId(schoolId);
+    const { subjectIds, gradeIds } = await resolveAcademicFilterIds({
+      subjectId: filters.subjectId,
+      gradeId: filters.gradeId,
+    });
+    const page = Math.max(filters.page ?? 1, 1);
+    // Textbook libraries are bounded; the shelf view doesn't paginate, so we
+    // raise the cap well above the per-grade textbook count to keep the full
+    // CAPS library visible in one fetch.
+    const limit = Math.min(Math.max(filters.limit ?? 200, 1), 1000);
+    const skip = (page - 1) * limit;
     const query: Record<string, unknown> = {
       isDeleted: false,
       $or: [
@@ -68,29 +79,30 @@ export class TextbookService {
     if (filters.frameworkId) {
       query.frameworkId = new mongoose.Types.ObjectId(filters.frameworkId);
     }
-    if (filters.subjectId) {
-      query.subjectId = new mongoose.Types.ObjectId(filters.subjectId);
-    }
-    if (filters.gradeId) {
-      query.gradeId = new mongoose.Types.ObjectId(filters.gradeId);
-    }
+    if (subjectIds) query.subjectId = { $in: subjectIds };
+    if (gradeIds) query.gradeId = { $in: gradeIds };
     if (filters.status) query.status = filters.status;
     if (filters.search) {
       query.title = { $regex: escapeRegex(filters.search), $options: 'i' };
     }
 
-    const textbooks = await Textbook.find(query)
-      .select('-chapters.resources')
-      .populate([
-        { path: 'subjectId', select: 'name' },
-        { path: 'gradeId', select: 'name level' },
-        { path: 'frameworkId', select: 'name' },
-        { path: 'createdBy', select: 'firstName lastName' },
-      ])
-      .sort({ createdAt: -1 })
-      .lean();
+    const [textbooks, total] = await Promise.all([
+      Textbook.find(query)
+        .select('-chapters.resources')
+        .populate([
+          { path: 'subjectId', select: 'name' },
+          { path: 'gradeId', select: 'name level' },
+          { path: 'frameworkId', select: 'name' },
+          { path: 'createdBy', select: 'firstName lastName' },
+        ])
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Textbook.countDocuments(query),
+    ]);
 
-    return { textbooks, total: textbooks.length };
+    return { textbooks, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
   static async getTextbook(id: string, schoolId: string) {
@@ -173,6 +185,11 @@ export class TextbookService {
     if (!chapter) throw new NotFoundError('Chapter not found');
     if (data.title !== undefined) chapter.title = data.title;
     if (data.description !== undefined) chapter.description = data.description;
+    if (data.curriculumNodeId !== undefined) {
+      chapter.curriculumNodeId = data.curriculumNodeId
+        ? new mongoose.Types.ObjectId(data.curriculumNodeId)
+        : null;
+    }
     if (data.order !== undefined) chapter.order = data.order;
     await textbook.save();
     return chapter;
@@ -209,6 +226,7 @@ export class TextbookService {
     const resource = await ContentResource.findOne({
       _id: roid,
       isDeleted: false,
+      status: 'approved',
       $or: [{ schoolId: null }, { schoolId: soid }],
     }).lean();
     if (!resource) throw new NotFoundError('Resource not found');
