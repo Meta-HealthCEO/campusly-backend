@@ -12,6 +12,7 @@ import {
   postConfirmBatch,
   deleteBatchHandler,
 } from './controller-marking-batch.js';
+import { listStudentMarkings, getStudentMarking } from './controller-student-markings.js';
 import {
   gradeSubmissionSchema,
   bulkGradeSchema,
@@ -190,6 +191,38 @@ router.post(
   authorize('teacher', 'school_admin', 'super_admin'),
   validate(issueMarkingSchema),
   AIToolsController.issueMarking,
+);
+
+// GET /markings/:id/pdf — stitched PDF of uploaded page images
+router.get(
+  '/markings/:id/pdf',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin', 'student'),
+  AIToolsController.getMarkingPdf,
+);
+
+// GET /markings/:id/image/:filename — gated image bytes
+router.get(
+  '/markings/:id/image/:filename',
+  authenticate,
+  authorize('teacher', 'school_admin', 'super_admin', 'student'),
+  AIToolsController.getMarkingImage,
+);
+
+// GET /students/me/markings — list issued markings for current student
+router.get(
+  '/students/me/markings',
+  authenticate,
+  authorize('student'),
+  listStudentMarkings,
+);
+
+// GET /students/me/markings/:id — single issued marking for current student
+router.get(
+  '/students/me/markings/:id',
+  authenticate,
+  authorize('student'),
+  getStudentMarking,
 );
 
 // ─── AI Grading ───────────────────────────────────────────────────────────────
