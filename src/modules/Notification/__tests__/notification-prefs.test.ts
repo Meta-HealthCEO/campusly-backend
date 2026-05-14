@@ -1,6 +1,7 @@
 import { afterEach, beforeAll, afterAll, describe, expect, it } from 'vitest';
 import mongoose from 'mongoose';
 import { NotificationPreference } from '../model.js';
+import { NotificationService } from '../service.js';
 
 const TEST_URI = process.env.MONGODB_TEST_URI ?? 'mongodb://localhost:27017/campusly-test';
 
@@ -63,5 +64,29 @@ describe('NotificationPreference.categories', () => {
     });
     expect(pref.schoolId).toBeUndefined();
     expect(pref.categories.homework).toBe(true);
+  });
+
+  it('NotificationService.getPreferences persists schoolId on lazy-create', async () => {
+    const userId = new mongoose.Types.ObjectId();
+    const schoolId = new mongoose.Types.ObjectId();
+
+    const pref = await NotificationService.getPreferences(String(userId), String(schoolId));
+
+    expect(pref.schoolId?.toString()).toBe(String(schoolId));
+  });
+
+  it('NotificationService.updatePreferences accepts categories and stores them with schoolId', async () => {
+    const userId = new mongoose.Types.ObjectId();
+    const schoolId = new mongoose.Types.ObjectId();
+
+    const pref = await NotificationService.updatePreferences(
+      String(userId),
+      String(schoolId),
+      { categories: { homework: false } } as Parameters<typeof NotificationService.updatePreferences>[2],
+    );
+
+    expect(pref.schoolId?.toString()).toBe(String(schoolId));
+    expect(pref.categories.homework).toBe(false);
+    expect(pref.categories.grades).toBe(true); // defaults preserved
   });
 });

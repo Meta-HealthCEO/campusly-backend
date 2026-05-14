@@ -149,6 +149,9 @@ const notificationPreferenceSchema = new Schema<INotificationPreference>(
   { timestamps: true },
 );
 
+// TODO(Task 5): tighten to `{ userId: 1, schoolId: 1 }` once the backfill
+// completes; current single-key unique index can let a user-in-two-schools
+// overwrite their first school's preferences.
 notificationPreferenceSchema.index({ userId: 1 }, { unique: true });
 
 export const NotificationPreference = mongoose.model<INotificationPreference>(

@@ -27,6 +27,13 @@ export const updatePreferenceSchema = z.object({
   sms: z.boolean().optional(),
   push: z.boolean().optional(),
   inApp: z.boolean().optional(),
+  categories: z.object({
+    homework: z.boolean(),
+    grades: z.boolean(),
+    attendance: z.boolean(),
+    billing: z.boolean(),
+    announcements: z.boolean(),
+  }).partial().optional(),
 }).strict();
 
 export type CreateNotificationInput = z.infer<typeof createNotificationSchema>;

@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { Notification, NotificationPreference, INotification, INotificationPreference, INotificationData } from './model.js';
 import { Student } from '../Student/model.js';
 import { NotFoundError } from '../../common/errors.js';
@@ -131,14 +132,17 @@ export class NotificationService {
     return { count: created.length };
   }
 
-  static async getPreferences(userId: string): Promise<INotificationPreference> {
+  static async getPreferences(userId: string, schoolId: string): Promise<INotificationPreference> {
+    const schoolOid = new mongoose.Types.ObjectId(schoolId);
+
     let preferences = await NotificationPreference.findOne({
       userId,
+      schoolId: schoolOid,
       isDeleted: false,
     });
 
     if (!preferences) {
-      preferences = await NotificationPreference.create({ userId });
+      preferences = await NotificationPreference.create({ userId, schoolId: schoolOid });
     }
 
     return preferences;
@@ -146,11 +150,14 @@ export class NotificationService {
 
   static async updatePreferences(
     userId: string,
+    schoolId: string,
     data: UpdatePreferenceInput,
   ): Promise<INotificationPreference> {
+    const schoolOid = new mongoose.Types.ObjectId(schoolId);
+
     const preferences = await NotificationPreference.findOneAndUpdate(
-      { userId, isDeleted: false },
-      { $set: data },
+      { userId, schoolId: schoolOid, isDeleted: false },
+      { $set: { ...data, schoolId: schoolOid } },
       { new: true, upsert: true },
     );
 

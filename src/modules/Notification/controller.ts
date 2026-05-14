@@ -43,12 +43,22 @@ export class NotificationController {
   }
 
   static async getPreferences(req: Request, res: Response): Promise<void> {
-    const preferences = await NotificationService.getPreferences(getUser(req).id);
+    const user = getUser(req);
+    if (!user.schoolId) {
+      res.status(400).json(apiResponse(false, null, 'schoolId missing from token'));
+      return;
+    }
+    const preferences = await NotificationService.getPreferences(user.id, user.schoolId);
     res.json(apiResponse(true, preferences, 'Preferences retrieved successfully'));
   }
 
   static async updatePreferences(req: Request, res: Response): Promise<void> {
-    const preferences = await NotificationService.updatePreferences(getUser(req).id, req.body);
+    const user = getUser(req);
+    if (!user.schoolId) {
+      res.status(400).json(apiResponse(false, null, 'schoolId missing from token'));
+      return;
+    }
+    const preferences = await NotificationService.updatePreferences(user.id, user.schoolId, req.body);
     res.json(apiResponse(true, preferences, 'Preferences updated successfully'));
   }
 }
