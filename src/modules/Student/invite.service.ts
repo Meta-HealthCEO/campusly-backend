@@ -43,6 +43,7 @@ export class StudentInviteService {
         lastName: '',
         role: 'student',
         schoolId,
+        mustChangePassword: true,
       });
       student.userId = user._id;
       await student.save();
