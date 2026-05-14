@@ -194,6 +194,27 @@ describe('OneGate parent payment endpoints', () => {
 
       expect(res.status).toBe(400);
     });
+
+    it('passes a fee_-prefixed merchant_reference to OneGate', async () => {
+      const schoolId = new mongoose.Types.ObjectId();
+      const inv = await Invoice.create({
+        schoolId, studentId: new mongoose.Types.ObjectId(), feeScheduleId: new mongoose.Types.ObjectId(),
+        invoiceNumber: `INV-REF-${Date.now()}`, items: [{ description: 'Tuition', amount: 100000 }],
+        totalAmount: 100000, paidAmount: 0, status: 'pending',
+        dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        lateFeeAmount: 0, discountAmount: 0, writeOffAmount: 0,
+      });
+      spyOnClient();
+      const token = signTestToken({ id: String(new mongoose.Types.ObjectId()), schoolId: String(schoolId), role: 'parent' });
+      await request(app)
+        .post('/api/payment-gateway/onegate/fee-payment')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ invoiceIds: [String(inv._id)], returnUrl: 'campusly://payment-return' })
+        .expect(200);
+      expect(mockOneGateClient.createPaymentKey).toHaveBeenCalledTimes(1);
+      const arg = mockOneGateClient.createPaymentKey.mock.calls[0][0] as { merchant_reference: string };
+      expect(arg.merchant_reference).toMatch(/^fee_[a-f0-9]{24}$/);
+    });
   });
 
   // ─── Wallet Topup ───────────────────────────────────────────────────────────
@@ -305,6 +326,25 @@ describe('OneGate parent payment endpoints', () => {
         });
 
       expect(res.status).toBe(401);
+    });
+
+    it('passes a top_-prefixed merchant_reference to OneGate for wallet topup', async () => {
+      const schoolId = new mongoose.Types.ObjectId();
+      const wallet = await Wallet.create({
+        schoolId, studentId: new mongoose.Types.ObjectId(),
+        balance: 0, dailyLimit: 10000, currency: 'ZAR',
+        autoTopUpEnabled: false, isActive: true, isDeleted: false,
+      });
+      spyOnClient();
+      const token = signTestToken({ id: String(new mongoose.Types.ObjectId()), schoolId: String(schoolId), role: 'parent' });
+      await request(app)
+        .post('/api/payment-gateway/onegate/wallet-topup')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ walletId: String(wallet._id), amount: 5000, returnUrl: 'campusly://payment-return' })
+        .expect(200);
+      expect(mockOneGateClient.createPaymentKey).toHaveBeenCalledTimes(1);
+      const arg = mockOneGateClient.createPaymentKey.mock.calls[0][0] as { merchant_reference: string };
+      expect(arg.merchant_reference).toMatch(/^top_[a-f0-9]{24}$/);
     });
   });
 });
