@@ -98,7 +98,7 @@ export class EmailService {
       <p><strong>Login page:</strong> <a href="${safeAppUrl}/login">${safeAppUrl}/login</a></p>
       <p><strong>Email:</strong> ${safeLoginEmail}</p>
       <p><strong>Temporary password:</strong> ${safeTempPassword}</p>
-      <p>Please sign in and change this password as soon as possible.</p>
+      <p>You will be required to change this password on first login.</p>
     `;
     return EmailService.sendEmail(to, subject, html);
   }
