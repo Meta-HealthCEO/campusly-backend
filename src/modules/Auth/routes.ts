@@ -28,6 +28,7 @@ router.post('/refresh', createRateLimiter(15 * 60 * 1000, 30), AuthController.re
 router.post('/logout', authenticate, AuthController.logout);
 router.post('/forgot-password', authRateLimiter, validate(forgotPasswordSchema), AuthController.forgotPassword);
 router.post('/reset-password', authRateLimiter, validate(resetPasswordSchema), AuthController.resetPassword);
+router.post('/change-password', authenticate, AuthController.changePassword);
 router.get('/me', authenticate, AuthController.getMe);
 router.post('/join-school', authenticate, validate(joinSchoolSchema), AuthController.joinSchool);
 

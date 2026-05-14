@@ -1,4 +1,4 @@
-import type { Request } from 'express';
+import type { Request, NextFunction } from 'express';
 import { Response } from 'express';
 import mongoose from 'mongoose';
 import { getUser } from '../../types/authenticated-request.js';
@@ -8,6 +8,8 @@ import { StandaloneCoachService } from './standalone-coach.service.js';
 import { apiResponse } from '../../common/utils.js';
 import { Subscription, Plan } from '../subscription/model.js';
 import { SubscriptionService } from '../subscription/service.js';
+import { changePasswordSchema } from './validation.js';
+import { UnauthorizedError } from '../../common/errors.js';
 
 const REFRESH_COOKIE_OPTIONS = {
   httpOnly: true,
@@ -211,5 +213,16 @@ export class AuthController {
         accessToken: tokens.accessToken,
       }, 'Successfully joined school'),
     );
+  }
+
+  static async changePassword(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      if (!req.user?.id) throw new UnauthorizedError();
+      const { currentPassword, newPassword } = changePasswordSchema.parse(req.body);
+      await AuthService.changePassword(req.user.id, currentPassword, newPassword);
+      res.json({ success: true });
+    } catch (err: unknown) {
+      next(err);
+    }
   }
 }
