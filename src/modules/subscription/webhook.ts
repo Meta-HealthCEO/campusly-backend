@@ -50,11 +50,25 @@ export async function handleOneGateWebhook(req: Request, res: Response): Promise
     } else if (ref.startsWith('inv_') && isRefund) {
       await processInvoiceRefund(ref, lookup);
     } else if (ref.startsWith('fee_') && !isRefund) {
-      const onlinePaymentId = ref.slice('fee_'.length);
-      await PaymentCompletionService.completeFeePayment(onlinePaymentId);
+      if (lookup.successful !== 1) {
+        logger.warn(
+          { merchantReference: ref, callpayTxId: payload.callpay_transaction_id, successful: lookup.successful },
+          'OneGate fee webhook: transaction not successful; skipping completion',
+        );
+      } else {
+        const onlinePaymentId = ref.slice('fee_'.length);
+        await PaymentCompletionService.completeFeePayment(onlinePaymentId);
+      }
     } else if (ref.startsWith('top_') && !isRefund) {
-      const onlinePaymentId = ref.slice('top_'.length);
-      await PaymentCompletionService.completeWalletTopup(onlinePaymentId);
+      if (lookup.successful !== 1) {
+        logger.warn(
+          { merchantReference: ref, callpayTxId: payload.callpay_transaction_id, successful: lookup.successful },
+          'OneGate wallet topup webhook: transaction not successful; skipping completion',
+        );
+      } else {
+        const onlinePaymentId = ref.slice('top_'.length);
+        await PaymentCompletionService.completeWalletTopup(onlinePaymentId);
+      }
     } else if ((ref.startsWith('fee_') || ref.startsWith('top_')) && isRefund) {
       logger.warn({ ref }, 'Refund received for fee_/top_ payment — not yet handled');
     }
