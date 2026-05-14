@@ -7,6 +7,8 @@ import {
   publishMarkToGradebook,
   findOrCreateAssessmentForPaper,
 } from '../Academic/service-gradebook-publish.js';
+import { Student } from '../Student/model.js';
+import { NotificationService } from '../Notification/service.js';
 
 export async function listMarkings(
   schoolId: string,
@@ -86,9 +88,10 @@ export async function updateMarking(
   return marking.toObject() as IPaperMarking;
 }
 
-export async function publishMarking(
+export async function issueMarking(
   markingId: string,
   schoolId: string,
+  teacherUserId: string,
   assessmentId: string | undefined,
   studentId?: string,
   comment?: string,
@@ -99,8 +102,12 @@ export async function publishMarking(
     isDeleted: false,
   });
   if (!marking) throw new NotFoundError('Marking not found');
-  if (marking.status !== 'completed' && marking.status !== 'needs_review') {
-    throw new BadRequestError('Only completed or needs_review markings can be published');
+  if (
+    marking.status !== 'completed' &&
+    marking.status !== 'needs_review' &&
+    marking.status !== 'published'
+  ) {
+    throw new BadRequestError('Only completed, needs_review, or published markings can be issued');
   }
 
   const resolvedStudentId = studentId ?? marking.studentId?.toString();
@@ -151,7 +158,43 @@ export async function publishMarking(
     comment: comment ?? `AI-marked paper for ${marking.studentName}`,
   });
 
+  const wasIssuedBefore = marking.issuedToStudent === true;
   marking.status = 'published';
+  marking.issuedToStudent = true;
+  marking.issuedBy = new mongoose.Types.ObjectId(teacherUserId);
+  if (!wasIssuedBefore) marking.issuedAt = new Date();
   await marking.save();
+
+  if (!wasIssuedBefore) {
+    // Fire-and-forget notification dispatch — failure should not roll back the
+    // gradebook publish. The student can still see the marking via their tests
+    // page; the notification is a nice-to-have nudge.
+    void dispatchIssueNotification(marking, resolvedStudentId).catch((err: unknown) => {
+      console.error('Failed to dispatch issue notification', err);
+    });
+  }
+
   return marking.toObject() as IPaperMarking;
+}
+
+async function dispatchIssueNotification(
+  marking: IPaperMarking,
+  studentId: string,
+): Promise<void> {
+  const student = await Student.findOne({ _id: studentId, isDeleted: false })
+    .select('userId')
+    .lean();
+  if (!student?.userId) return;
+  const paper = await AssessmentPaper.findOne({ _id: marking.paperId, isDeleted: false })
+    .select('title')
+    .lean();
+  const title = paper?.title ?? marking.studentName;
+  await NotificationService.create({
+    recipientId: String(student.userId),
+    schoolId: String(marking.schoolId),
+    type: 'in_app',
+    title: `${title} result available`,
+    message: 'Your marked paper is ready to review.',
+    data: { url: `/student/tests/${String(marking.paperId)}`, entityType: 'marking_result_issued' },
+  });
 }
