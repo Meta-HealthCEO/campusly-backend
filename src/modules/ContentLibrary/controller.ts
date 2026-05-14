@@ -4,6 +4,7 @@ import { apiResponse } from '../../common/utils.js';
 import { ResourcesService } from './service-resources.js';
 import { ReviewService } from './service-review.js';
 import { GenerationService } from './service-generation.js';
+import { gradeAttempt } from './service-grade-attempt.js';
 import type { ResourceQueryInput } from './validation.js';
 
 export class ContentLibraryController {
@@ -152,5 +153,28 @@ export class ContentLibraryController {
       req.body,
     );
     res.json(apiResponse(true, resource, 'Resource refined successfully'));
+  }
+
+  // ─── Grade Attempt ────────────────────────────────────────────────────────
+  // Single source of truth for grading a learner's response to an interactive
+  // content block. Used by both the teacher preview (in the lesson workspace)
+  // and the real student-attempt flow.
+
+  static async gradeAttempt(req: Request, res: Response): Promise<void> {
+    const { blockContent, blockType, response } = req.body as {
+      blockContent?: string;
+      blockType?: string;
+      response?: string;
+    };
+    if (typeof blockContent !== 'string' || typeof blockType !== 'string' || typeof response !== 'string') {
+      res.status(400).json({ success: false, error: 'blockContent, blockType, and response are required' });
+      return;
+    }
+    if (response.trim().length === 0) {
+      res.status(400).json({ success: false, error: 'response must not be empty' });
+      return;
+    }
+    const result = await gradeAttempt({ blockContent, blockType, response });
+    res.json(apiResponse(true, result, 'Attempt graded'));
   }
 }

@@ -26,6 +26,17 @@ router.post(
   ContentLibraryController.generateContent,
 );
 
+// ─── Grade Attempt ──────────────────────────────────────────────────────────
+// AI-graded short-answer / quiz response. Routed under the content library
+// because that's where the block schemas live. Available to teachers (for
+// preview / QA) and students (for real attempts).
+
+router.post(
+  '/grade-attempt',
+  authorize('super_admin', 'school_admin', 'principal', 'hod', 'teacher', 'student'),
+  ContentLibraryController.gradeAttempt,
+);
+
 // ─── CRUD ───────────────────────────────────────────────────────────────────
 
 router.get(
