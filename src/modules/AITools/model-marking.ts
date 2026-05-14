@@ -41,6 +41,9 @@ export interface IPaperMarking extends Document {
   paperVersion: number;
   classId?: Types.ObjectId | null;
   batchId?: Types.ObjectId | null;
+  issuedToStudent: boolean;
+  issuedAt?: Date;
+  issuedBy?: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -97,6 +100,9 @@ const paperMarkingSchema = new Schema<IPaperMarking>(
     paperVersion: { type: Number, required: true, default: 1, min: 1 },
     classId: { type: Schema.Types.ObjectId, ref: 'Class', default: null },
     batchId: { type: Schema.Types.ObjectId, ref: 'MarkingBatch', default: null },
+    issuedToStudent: { type: Boolean, default: false },
+    issuedAt: { type: Date },
+    issuedBy: { type: Schema.Types.ObjectId, ref: 'User' },
   },
   { timestamps: true },
 );
@@ -105,5 +111,6 @@ paperMarkingSchema.index({ paperId: 1, schoolId: 1 });
 paperMarkingSchema.index({ teacherId: 1, schoolId: 1 });
 paperMarkingSchema.index({ studentId: 1, paperId: 1 });
 paperMarkingSchema.index({ batchId: 1 });
+paperMarkingSchema.index({ studentId: 1, issuedToStudent: 1 });
 
 export const PaperMarking = mongoose.model<IPaperMarking>('PaperMarking', paperMarkingSchema);
