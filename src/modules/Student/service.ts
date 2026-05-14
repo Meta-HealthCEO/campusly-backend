@@ -1,9 +1,10 @@
 import { Student, IStudent } from './model.js';
-import { User } from '../Auth/model.js';
+import { User, type IUser } from '../Auth/model.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../common/constants.js';
 import { escapeRegex } from '../../common/utils.js';
 import { EmailService } from '../../services/email.service.js';
+import { regenerateCredentials } from './service-regenerate.js';
 import crypto from 'crypto';
 import type { Types } from 'mongoose';
 
@@ -75,19 +76,64 @@ function sanitiseForSyntheticEmail(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
 }
 
-function buildSyntheticLoginEmail(firstName: string, lastName: string, admissionNumber: string): string {
+const SYNTHETIC_STUDENT_EMAIL_DOMAIN = 'students.campusly.local';
+
+function buildSyntheticLoginLocalPart(firstName: string, lastName: string, admissionNumber: string): string {
   const first = sanitiseForSyntheticEmail(firstName);
   const last = sanitiseForSyntheticEmail(lastName);
   const base = [first, last].filter(Boolean).join('.');
-  const local = base ? `${base}.${admissionNumber.toLowerCase()}` : admissionNumber.toLowerCase();
-  return `${local}@students.campusly.local`;
+  return base ? `${base}.${admissionNumber.toLowerCase()}` : admissionNumber.toLowerCase();
+}
+
+function syntheticLoginCandidate(baseLocalPart: string, attempt: number): string {
+  if (attempt === 0) return baseLocalPart;
+
+  const admissionWithPrefix = /^s(\d+)$/i.exec(baseLocalPart);
+  if (admissionWithPrefix) {
+    const digits = admissionWithPrefix[1];
+    const next = Number.parseInt(digits, 10) + attempt;
+    return `s${String(next).padStart(digits.length, '0')}`;
+  }
+
+  const admissionOnly = /^(\d+)$/.exec(baseLocalPart);
+  if (admissionOnly) {
+    const digits = admissionOnly[1];
+    const next = Number.parseInt(digits, 10) + attempt;
+    return String(next).padStart(digits.length, '0');
+  }
+
+  return `${baseLocalPart}.${attempt + 1}`;
+}
+
+async function buildUniqueSyntheticLoginEmail(
+  firstName: string,
+  lastName: string,
+  admissionNumber: string,
+): Promise<string> {
+  const baseLocalPart = buildSyntheticLoginLocalPart(firstName, lastName, admissionNumber);
+
+  for (let attempt = 0; attempt < 1000; attempt += 1) {
+    const localPart = syntheticLoginCandidate(baseLocalPart, attempt);
+    const email = `${localPart}@${SYNTHETIC_STUDENT_EMAIL_DOMAIN}`;
+    const existingUser = await User.exists({ email });
+    if (!existingUser) return email;
+  }
+
+  const fallback = `${baseLocalPart}.${crypto.randomUUID().slice(0, 8)}`;
+  return `${fallback}@${SYNTHETIC_STUDENT_EMAIL_DOMAIN}`;
 }
 
 function generateTempPassword(): string {
   return `Campus-${crypto.randomBytes(3).toString('hex')}`;
 }
 
+function isDuplicateKeyError(err: unknown): boolean {
+  return typeof err === 'object' && err !== null && 'code' in err && err.code === 11000;
+}
+
 export class StudentService {
+  static regenerateCredentials = regenerateCredentials;
+
   static async create(data: CreateStudentData): Promise<CreateStudentResult> {
     const { firstName, lastName, email, phone, deliveryMethod, ...studentData } = data;
     let credentials: StudentPortalCredentials | undefined;
@@ -114,22 +160,36 @@ export class StudentService {
         }
         loginEmail = email.trim().toLowerCase();
       } else {
-        loginEmail = buildSyntheticLoginEmail(firstName, lastName, admission);
+        loginEmail = await buildUniqueSyntheticLoginEmail(firstName, lastName, admission);
         isSyntheticEmail = true;
       }
 
       const tempPassword = generateTempPassword();
-      const user = await User.create({
-        email: loginEmail,
-        password: tempPassword,
-        firstName,
-        lastName,
-        phone,
-        role: 'student',
-        schoolId: studentData.schoolId,
-        isActive: true,
-        mustChangePassword: true,
-      });
+      let user: IUser | null = null;
+      for (let attempt = 0; attempt < 5; attempt += 1) {
+        try {
+          user = await User.create({
+            email: loginEmail,
+            password: tempPassword,
+            firstName,
+            lastName,
+            phone,
+            role: 'student',
+            schoolId: studentData.schoolId,
+            isActive: true,
+            mustChangePassword: true,
+          });
+          break;
+        } catch (err: unknown) {
+          if (!isSyntheticEmail || !isDuplicateKeyError(err)) {
+            throw err;
+          }
+          loginEmail = await buildUniqueSyntheticLoginEmail(firstName, lastName, admission);
+        }
+      }
+      if (!user) {
+        throw new BadRequestError('Unable to create a unique student login email');
+      }
       studentData.userId = user._id as IStudent['userId'];
 
       let emailSent = false;
