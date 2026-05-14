@@ -227,8 +227,15 @@ app.use('/api/student/dashboard', authenticate, studentDashboardRoutes);
 // module should still have its previously-issued certificates verifiable.
 app.use('/api/certificates', coursePublicRoutes);
 
-// Static file serving — uploaded assets
-app.use('/uploads', (_req, res, next) => {
+// Static file serving — uploaded assets.
+// Marking images (uploads/markings/, uploads/markings-batch/) are NOT served
+// statically because they may contain student work that must be auth-gated.
+// Use the AITools controller routes for those instead.
+app.use('/uploads', (req, res, next) => {
+  if (req.path.startsWith('/markings/') || req.path.startsWith('/markings-batch/')) {
+    res.status(404).json({ success: false, error: 'Use the API endpoint to access marking images' });
+    return;
+  }
   res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
   next();
 }, express.static('uploads'));
