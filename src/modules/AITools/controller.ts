@@ -8,7 +8,7 @@ import {
   listMarkings,
   getMarkingById,
   updateMarking,
-  publishMarking,
+  issueMarking,
 } from './service-marking-queries.js';
 import { markPaperFromText } from './service-marking-text.js';
 
@@ -216,19 +216,20 @@ export class AIToolsController {
     res.json(apiResponse(true, marking, 'Marking updated successfully'));
   }
 
-  static async publishMarking(req: Request, res: Response): Promise<void> {
+  static async issueMarking(req: Request, res: Response): Promise<void> {
     const schoolId = req.user?.schoolId;
     if (!schoolId) {
       res.status(400).json({ success: false, error: 'User must be assigned to a school' });
       return;
     }
+    const teacherUserId = getUser(req).id;
     const { assessmentId, studentId, comment } = req.body as {
       assessmentId?: string;
       studentId?: string;
       comment?: string;
     };
-    const marking = await publishMarking(req.params.id as string, schoolId, assessmentId, studentId, comment);
-    res.json(apiResponse(true, marking, 'Marking published to gradebook'));
+    const marking = await issueMarking(req.params.id as string, schoolId, teacherUserId, assessmentId, studentId, comment);
+    res.json(apiResponse(true, marking, 'Marking issued'));
   }
 
   static async listRubricTemplates(req: Request, res: Response): Promise<void> {

@@ -183,13 +183,13 @@ router.put(
   AIToolsController.updateMarking,
 );
 
-// POST /markings/:id/publish — publish marking result to gradebook
+// POST /markings/:id/issue — issue marking to student + publish mark to gradebook
 router.post(
-  '/markings/:id/publish',
+  '/markings/:id/issue',
   authenticate,
   authorize('teacher', 'school_admin', 'super_admin'),
   validate(issueMarkingSchema),
-  AIToolsController.publishMarking,
+  AIToolsController.issueMarking,
 );
 
 // ─── AI Grading ───────────────────────────────────────────────────────────────
