@@ -1,16 +1,28 @@
 import { Student, IStudent } from './model.js';
 import { User } from '../Auth/model.js';
-import { NotFoundError } from '../../common/errors.js';
+import { BadRequestError, NotFoundError } from '../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../common/constants.js';
 import { escapeRegex } from '../../common/utils.js';
 import { EmailService } from '../../services/email.service.js';
 import crypto from 'crypto';
+import type { Types } from 'mongoose';
 
-type CreateStudentData = Partial<IStudent> & {
+export type StudentDeliveryMethod = 'email' | 'slip';
+
+type ObjectIdInput = string | Types.ObjectId;
+type StudentIdFields = {
+  schoolId?: ObjectIdInput;
+  gradeId?: ObjectIdInput;
+  classId?: ObjectIdInput;
+  userId?: ObjectIdInput;
+  guardianIds?: ObjectIdInput[];
+};
+type CreateStudentData = Omit<Partial<IStudent>, keyof StudentIdFields> & StudentIdFields & {
   firstName?: string;
   lastName?: string;
   email?: string;
   phone?: string;
+  deliveryMethod?: StudentDeliveryMethod;
 };
 
 type UpdateStudentData = Partial<IStudent> & {
@@ -31,6 +43,7 @@ export interface StudentPortalCredentials {
   loginEmail: string;
   tempPassword: string;
   emailSent: boolean;
+  emailError?: string;
 }
 
 export interface CreateStudentResult {
@@ -58,35 +71,25 @@ async function nextAdmissionNumber(schoolId: string | { toString(): string }): P
   return `S-${crypto.randomUUID().slice(0, 8)}`;
 }
 
-function fallbackStudentEmail(
-  admissionNumber: string | { toString(): string },
-  schoolId: string | { toString(): string },
-): string {
-  const admission = String(admissionNumber)
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '') || crypto.randomUUID().slice(0, 8);
-  const school = String(schoolId)
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '')
-    .slice(-8);
+function sanitiseForSyntheticEmail(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+}
 
-  return `${admission}.${school}@students.campusly.local`;
+function buildSyntheticLoginEmail(firstName: string, lastName: string, admissionNumber: string): string {
+  const first = sanitiseForSyntheticEmail(firstName);
+  const last = sanitiseForSyntheticEmail(lastName);
+  const base = [first, last].filter(Boolean).join('.');
+  const local = base ? `${base}.${admissionNumber.toLowerCase()}` : admissionNumber.toLowerCase();
+  return `${local}@students.campusly.local`;
 }
 
 function generateTempPassword(): string {
   return `Campus-${crypto.randomBytes(3).toString('hex')}`;
 }
 
-function shouldEmailCredentials(email: string | undefined, fallbackEmail: string): email is string {
-  return typeof email === 'string' &&
-    email.trim().length > 0 &&
-    email.toLowerCase() !== fallbackEmail.toLowerCase();
-}
-
 export class StudentService {
   static async create(data: CreateStudentData): Promise<CreateStudentResult> {
-    const { firstName, lastName, email, phone, ...studentData } = data;
+    const { firstName, lastName, email, phone, deliveryMethod, ...studentData } = data;
     let credentials: StudentPortalCredentials | undefined;
 
     // Auto-generate an admission number if the caller didn't supply one.
@@ -98,9 +101,24 @@ export class StudentService {
 
     if (!studentData.userId && firstName && lastName && studentData.schoolId) {
       const admission = studentData.admissionNumber ?? crypto.randomUUID();
-      const fallbackEmail = fallbackStudentEmail(admission, studentData.schoolId);
+      // Branch on deliveryMethod. 'email' requires a real email + sends via
+      // Resend; 'slip' builds a synthetic @students.campusly.local login and
+      // skips email send.
+      let loginEmail: string;
+      let isSyntheticEmail = false;
+      const selectedDeliveryMethod: StudentDeliveryMethod =
+        deliveryMethod ?? (email?.trim() ? 'email' : 'slip');
+      if (selectedDeliveryMethod === 'email') {
+        if (!email || !email.trim()) {
+          throw new BadRequestError('email is required when deliveryMethod is "email"');
+        }
+        loginEmail = email.trim().toLowerCase();
+      } else {
+        loginEmail = buildSyntheticLoginEmail(firstName, lastName, admission);
+        isSyntheticEmail = true;
+      }
+
       const tempPassword = generateTempPassword();
-      const loginEmail = (email ?? fallbackEmail).toLowerCase();
       const user = await User.create({
         email: loginEmail,
         password: tempPassword,
@@ -110,13 +128,13 @@ export class StudentService {
         role: 'student',
         schoolId: studentData.schoolId,
         isActive: true,
+        mustChangePassword: true,
       });
       studentData.userId = user._id as IStudent['userId'];
 
       let emailSent = false;
-      // Phase 2: WhatsApp delivery (per-school WhatsApp credentials,
-      // phone capture, template approval). Removed from Phase 1.
-      if (shouldEmailCredentials(email, fallbackEmail)) {
+      let emailError: string | undefined;
+      if (!isSyntheticEmail) {
         try {
           const result = await EmailService.sendStudentPortalCredentials(loginEmail, {
             studentName: `${firstName} ${lastName}`.trim(),
@@ -124,8 +142,12 @@ export class StudentService {
             tempPassword,
           });
           emailSent = result.success;
-        } catch {
+          if (!result.success) {
+            emailError = 'Email provider reported failure';
+          }
+        } catch (err: unknown) {
           emailSent = false;
+          emailError = err instanceof Error ? err.message : 'Unknown email error';
         }
       }
 
@@ -133,6 +155,7 @@ export class StudentService {
         loginEmail,
         tempPassword,
         emailSent,
+        ...(emailError ? { emailError } : {}),
       };
     }
 
@@ -146,6 +169,7 @@ export class StudentService {
   static async list(
     schoolId: string,
     query: ListQuery,
+    filters?: { classIds?: Array<string | Types.ObjectId> },
   ): Promise<{
     students: IStudent[];
     total: number;
@@ -165,6 +189,19 @@ export class StudentService {
       schoolId,
       isDeleted: false,
     };
+
+    if (filters?.classIds) {
+      if (filters.classIds.length === 0) {
+        return {
+          students: [],
+          total: 0,
+          page,
+          limit,
+          totalPages: 0,
+        };
+      }
+      filter.classId = { $in: filters.classIds };
+    }
 
     if (query.search) {
       const searchRegex = new RegExp(escapeRegex(query.search), 'i');
