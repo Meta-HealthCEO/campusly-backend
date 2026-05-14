@@ -1,14 +1,24 @@
 import mongoose from 'mongoose';
+import { BadRequestError } from '../../common/errors.js';
+import { Homework } from '../Homework/model.js';
 import { HomeworkService } from '../Homework/service.js';
+import { Class } from '../Academic/model.js';
 import { generateAIQuestions } from '../QuestionBank/service-questions-generation.js';
 import { resolveSubjectGradeForLesson } from './service-materials-helpers.js';
 import type { ILesson } from './types.js';
 import type { AddMaterialInput } from './validation.js';
+import {
+  ownerFilterForScope,
+  schoolObjectId,
+  toObjectId,
+  type LessonActor,
+} from './service-access.js';
 
 interface BuildHomeworkArgs {
   lesson: ILesson;
   schoolId: string;
   teacherId: string;
+  actor: LessonActor;
   input: Extract<AddMaterialInput, { kind: 'homework' }>;
   cleanupIds: mongoose.Types.ObjectId[];
 }
@@ -25,22 +35,30 @@ interface BuildHomeworkArgs {
 export async function buildHomeworkRef(
   args: BuildHomeworkArgs,
 ): Promise<mongoose.Types.ObjectId> {
-  const { lesson, schoolId, teacherId, input, cleanupIds } = args;
+  const { lesson, schoolId, teacherId, actor, input, cleanupIds } = args;
 
   if (input.existingHomeworkId) {
-    return new mongoose.Types.ObjectId(input.existingHomeworkId);
+    const homeworkId = toObjectId(input.existingHomeworkId, 'homeworkId');
+    const ok = await Homework.exists({
+      _id: homeworkId,
+      schoolId: schoolObjectId(actor),
+      isDeleted: false,
+      ...ownerFilterForScope(actor, 'teacherId'),
+    });
+    if (!ok) throw new BadRequestError('Homework is not available for this lesson');
+    return homeworkId;
   }
 
   const aiPayload = input.createPayload as Record<string, unknown> | undefined;
   if (aiPayload && aiPayload.aiGenerate === true) {
-    return await aiGenerateHomework({ lesson, schoolId, teacherId, input, cleanupIds });
+    return await aiGenerateHomework({ lesson, schoolId, teacherId, actor, input, cleanupIds });
   }
 
   // Manual quick-create path. Lesson must be assigned to at least one
   // class — Homework is class-scoped.
   const firstAssignment = lesson.assignedClasses?.[0];
   if (!firstAssignment) {
-    throw new Error(
+    throw new BadRequestError(
       'Assign this lesson to at least one class before creating inline homework',
     );
   }
@@ -65,11 +83,25 @@ async function aiGenerateHomework(
   const { lesson, schoolId, teacherId, input, cleanupIds } = args;
   const firstAssignment = lesson.assignedClasses?.[0];
   if (!firstAssignment) {
-    throw new Error(
+    throw new BadRequestError(
       'Assign this lesson to a class first — homework needs an audience',
     );
   }
-  const { subjectId, gradeId } = await resolveSubjectGradeForLesson(lesson);
+  const { subjectId } = await resolveSubjectGradeForLesson(lesson);
+  // Resolve gradeId from the CLASS (not the lesson). HomeworkService.create
+  // validates exercise questions against the class's gradeId, so the
+  // generation and validation paths must agree — otherwise every question
+  // is rejected as "unavailable" when the lesson and class live in
+  // different grade namespaces (e.g. imported lesson + local class).
+  const classDoc = await Class.findOne({
+    _id: firstAssignment.classId,
+    schoolId: new mongoose.Types.ObjectId(schoolId),
+    isDeleted: false,
+  })
+    .select('gradeId')
+    .lean<{ gradeId: mongoose.Types.ObjectId } | null>();
+  if (!classDoc) throw new BadRequestError('Assigned class not found');
+  const gradeId = classDoc.gradeId.toString();
   const aiPayload = input.createPayload as Record<string, unknown>;
   const count = typeof aiPayload.aiCount === 'number' ? aiPayload.aiCount : 5;
   const topicHint =
