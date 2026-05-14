@@ -118,57 +118,51 @@ export type ReviewGradeInput = z.infer<typeof reviewGradeSchema>;
 
 // ─── Update Marking (teacher overrides) ──────────────────────────────────────
 
+// Flat body schemas — see note on issueMarkingSchema below for why.
+
 export const updateMarkingSchema = z.object({
-  body: z.object({
-    questions: z.array(z.object({
-      questionNumber: z.string(),
-      marksAwarded: z.number().nonnegative(),
-      maxMarks: z.number().nonnegative(),
-      feedback: z.string().optional(),
-    })).optional(),
-    status: z.enum(['completed', 'needs_review']).optional(),
-  }),
-  params: z.object({
-    id: z.string().min(1),
-  }),
+  questions: z.array(z.object({
+    questionNumber: z.string(),
+    marksAwarded: z.number().nonnegative(),
+    maxMarks: z.number().nonnegative(),
+    feedback: z.string().optional(),
+  })).optional(),
+  status: z.enum(['completed', 'needs_review']).optional(),
 });
 
 // ─── Publish Grade ───────────────────────────────────────────────────────────
 
 export const publishGradeSchema = z.object({
-  params: z.object({ jobId: z.string().min(1) }),
-  body: z.object({
-    assessmentId: z.string().min(1),
-    comment: z.string().optional(),
-  }),
+  assessmentId: z.string().min(1),
+  comment: z.string().optional(),
 });
 
-// ─── Publish Marking ─────────────────────────────────────────────────────────
+// ─── Issue Marking ───────────────────────────────────────────────────────────
+//
+// Flat body schema — the `validate` middleware (when given a single Zod
+// schema) calls `safeParse(req.body)`. The previous wrapped form of
+// `z.object({ params, body })` always failed because params/body aren't
+// present on req.body itself. Route-level :id capture is enforced by Express.
 
-export const publishMarkingSchema = z.object({
-  params: z.object({ id: z.string().min(1) }),
-  body: z.object({
-    // Optional — if omitted, the service will lazily find or create an
-    // Assessment record from the linked paper's metadata.
-    assessmentId: z.string().min(1).optional(),
-    studentId: z.string().min(1).optional(),
-    comment: z.string().optional(),
-  }),
+export const issueMarkingSchema = z.object({
+  // Optional — if omitted, the service will lazily find or create an
+  // Assessment record from the linked paper's metadata.
+  assessmentId: z.string().min(1).optional(),
+  studentId: z.string().min(1).optional(),
+  comment: z.string().optional(),
 });
 
 // ─── Rubric Templates ─────────────────────────────────────────────────────────
 
 export const createRubricTemplateSchema = z.object({
-  body: z.object({
-    name: z.string().min(1).max(100),
-    description: z.string().max(500).optional(),
-    criteria: z.array(z.object({
-      criterion: z.string().min(1).max(200),
-      maxScore: z.number().int().positive().max(100),
-      description: z.string().max(500).default(''),
-    })).min(1).max(20),
-    isShared: z.boolean().optional(),
-  }),
+  name: z.string().min(1).max(100),
+  description: z.string().max(500).optional(),
+  criteria: z.array(z.object({
+    criterion: z.string().min(1).max(200),
+    maxScore: z.number().int().positive().max(100),
+    description: z.string().max(500).default(''),
+  })).min(1).max(20),
+  isShared: z.boolean().optional(),
 });
 
 export type CreateRubricTemplateInput = z.infer<typeof createRubricTemplateSchema>;

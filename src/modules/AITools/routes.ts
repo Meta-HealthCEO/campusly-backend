@@ -18,7 +18,7 @@ import {
   reviewGradeSchema,
   publishGradeSchema,
   updateMarkingSchema,
-  publishMarkingSchema,
+  issueMarkingSchema,
   createRubricTemplateSchema,
 } from './validation.js';
 
@@ -188,7 +188,7 @@ router.post(
   '/markings/:id/publish',
   authenticate,
   authorize('teacher', 'school_admin', 'super_admin'),
-  validate(publishMarkingSchema),
+  validate(issueMarkingSchema),
   AIToolsController.publishMarking,
 );
 
