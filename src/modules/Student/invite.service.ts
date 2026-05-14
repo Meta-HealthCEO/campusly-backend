@@ -33,6 +33,7 @@ export class StudentInviteService {
     if (user) {
       user.email = loginEmail;
       user.password = tempPassword;
+      user.mustChangePassword = true;
       await user.save();
     } else {
       user = await User.create({
