@@ -22,6 +22,14 @@ export interface TokenPair {
   refreshToken: string;
 }
 
+function normalizePersonName(value: string | undefined): string {
+  return (value ?? '').trim().replace(/\s+/g, ' ').toLowerCase();
+}
+
+function isFallbackStudentEmail(email: string): boolean {
+  return email.toLowerCase().endsWith('@students.campusly.local');
+}
+
 export class AuthService {
   static generateTokenPair(user: IUser): TokenPair {
     const payload = {
@@ -239,12 +247,37 @@ export class AuthService {
     return user;
   }
 
+  static async changePassword(
+    userId: string,
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<void> {
+    if (currentPassword === newPassword) {
+      throw new BadRequestError('New password must be different from current password');
+    }
+
+    const user = await User.findById(userId).select('+password');
+    if (!user) {
+      throw new UnauthorizedError('User not found');
+    }
+
+    const ok = await user.comparePassword(currentPassword);
+    if (!ok) {
+      throw new UnauthorizedError('Current password is incorrect');
+    }
+
+    user.password = newPassword;
+    user.mustChangePassword = false;
+    await user.save();
+  }
+
   static async registerStudent(
     data: RegisterStudentInput,
   ): Promise<{ user: IUser; tokens: TokenPair }> {
-    const existingUser = await User.findOne({ email: data.email.toLowerCase() });
+    const loginEmail = data.email.toLowerCase();
+    const existingUser = await User.findOne({ email: loginEmail, isDeleted: false });
     if (existingUser) {
-      throw new ConflictError('A user with this email already exists');
+      throw new ConflictError('An account with this email already exists. Please sign in or ask your teacher to reset the portal password.');
     }
 
     // Find the class by classroom code
@@ -253,28 +286,81 @@ export class AuthService {
       throw new NotFoundError('No class found with that classroom code. Please check the code and try again.');
     }
 
-    // Create the user with role student
-    const user = await User.create({
-      email: data.email.toLowerCase(),
-      password: data.password,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      role: 'student',
+    const roster = await Student.find({
       schoolId: cls.schoolId,
-    });
-
-    // Generate a unique admission number
-    const admissionNumber = `STU-${Date.now().toString(36).toUpperCase()}`;
-
-    // Create the Student record linked to the class, grade, and school
-    await Student.create({
-      userId: user._id,
-      schoolId: cls.schoolId,
-      gradeId: cls.gradeId,
       classId: cls._id,
-      admissionNumber,
-      enrollmentStatus: 'active',
+      isDeleted: false,
+      userId: { $exists: true, $ne: null },
+    }).select('_id userId').lean();
+
+    const userIds: mongoose.Types.ObjectId[] = [];
+    for (const student of roster) {
+      if (student.userId) userIds.push(student.userId);
+    }
+    const rosterUsers = userIds.length > 0
+      ? await User.find({ _id: { $in: userIds }, role: 'student', isDeleted: false })
+          .select('_id email firstName lastName')
+          .lean()
+      : [];
+    const userById = new Map(rosterUsers.map((userDoc) => [String(userDoc._id), userDoc]));
+    const matchingRosterStudents = roster.filter((student) => {
+      const userDoc = userById.get(String(student.userId));
+      return normalizePersonName(userDoc?.firstName) === normalizePersonName(data.firstName) &&
+        normalizePersonName(userDoc?.lastName) === normalizePersonName(data.lastName);
     });
+
+    if (matchingRosterStudents.length > 1) {
+      throw new ConflictError('More than one learner in this group has that name. Ask your teacher to send your portal login details.');
+    }
+
+    let user: IUser;
+    if (matchingRosterStudents.length === 1) {
+      const matchedStudent = matchingRosterStudents[0];
+      const matchedUser = await User.findOne({
+        _id: matchedStudent.userId,
+        schoolId: cls.schoolId,
+        role: 'student',
+        isDeleted: false,
+      }).select('+password');
+      if (!matchedUser) {
+        throw new NotFoundError('Linked learner account not found');
+      }
+      if (!isFallbackStudentEmail(matchedUser.email)) {
+        throw new ConflictError('This learner already has portal login details. Please sign in or ask your teacher to reset them.');
+      }
+
+      matchedUser.email = loginEmail;
+      matchedUser.password = data.password;
+      matchedUser.firstName = data.firstName;
+      matchedUser.lastName = data.lastName;
+      matchedUser.isActive = true;
+      matchedUser.refreshTokens = [];
+      await matchedUser.save();
+      user = matchedUser;
+    } else {
+      // Create the user with role student
+      user = await User.create({
+        email: loginEmail,
+        password: data.password,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        role: 'student',
+        schoolId: cls.schoolId,
+      });
+
+      // Generate a unique admission number
+      const admissionNumber = `STU-${Date.now().toString(36).toUpperCase()}`;
+
+      // Create the Student record linked to the class, grade, and school
+      await Student.create({
+        userId: user._id,
+        schoolId: cls.schoolId,
+        gradeId: cls.gradeId,
+        classId: cls._id,
+        admissionNumber,
+        enrollmentStatus: 'active',
+      });
+    }
 
     const tokens = AuthService.generateTokenPair(user);
     user.refreshTokens.push(tokens.refreshToken);
