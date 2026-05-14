@@ -1,5 +1,4 @@
-import mongoose from 'mongoose';
-import { Student } from '../Student/model.js';
+import { resolveStudentFromUserId } from '../../common/student-resolver.js';
 import { NotFoundError } from '../../common/errors.js';
 
 export interface ResolvedStudent {
@@ -8,17 +7,15 @@ export interface ResolvedStudent {
 }
 
 /**
- * JWT carries the User._id, not the Student._id. Student-facing endpoints
- * use this resolver to convert userId → studentId before scoping marking
- * queries.
+ * Thin wrapper around the canonical resolver at src/common/student-resolver.ts.
+ * Returns plain string IDs and throws NotFoundError when no record exists,
+ * so student-facing controllers can use it without null-checking + casting.
  */
-export async function resolveStudentForUser(userId: string): Promise<ResolvedStudent> {
-  const student = await Student.findOne({
-    userId: new mongoose.Types.ObjectId(userId),
-    isDeleted: false,
-  })
-    .select('_id schoolId')
-    .lean();
+export async function resolveStudentForUser(
+  userId: string,
+  schoolId: string,
+): Promise<ResolvedStudent> {
+  const student = await resolveStudentFromUserId(userId, schoolId);
   if (!student) throw new NotFoundError('Student record not found for user');
   return {
     studentId: String(student._id),
