@@ -60,24 +60,32 @@ async function main(): Promise<void> {
   let schoolIdSkipped = 0;
 
   for (const pref of orphans) {
-    type UserLean = { schoolId?: mongoose.Types.ObjectId };
-    const user = await User.findById(pref.userId)
-      .select('schoolId')
-      .lean<UserLean | null>();
+    try {
+      type UserLean = { schoolId?: mongoose.Types.ObjectId };
+      const user = await User.findById(pref.userId)
+        .select('schoolId')
+        .lean<UserLean | null>();
 
-    if (!user || !user.schoolId) {
-      schoolIdSkipped += 1;
-      logger.warn(
-        `  skipping pref ${String(pref._id)} — user ${String(pref.userId)} not found or has no schoolId`,
+      if (!user || !user.schoolId) {
+        schoolIdSkipped += 1;
+        logger.warn(
+          `  skipping pref ${String(pref._id)} — user ${String(pref.userId)} not found or has no schoolId`,
+        );
+        continue;
+      }
+
+      await NotificationPreference.updateOne(
+        { _id: pref._id },
+        { $set: { schoolId: user.schoolId } },
       );
-      continue;
+      schoolIdBackfilled += 1;
+    } catch (err: unknown) {
+      logger.error(
+        { err, prefId: String(pref._id) },
+        'Failed to backfill schoolId on NotificationPreference',
+      );
+      schoolIdSkipped += 1;
     }
-
-    await NotificationPreference.updateOne(
-      { _id: pref._id },
-      { $set: { schoolId: user.schoolId } },
-    );
-    schoolIdBackfilled += 1;
   }
 
   logger.info(
