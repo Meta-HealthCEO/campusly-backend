@@ -25,6 +25,7 @@ export interface IUser extends Document {
   isCounselor: boolean;
   isStandaloneTeacher: boolean;
   isStandaloneCoach: boolean;
+  mustChangePassword: boolean;
   onboardingDismissed: boolean;
   teachingScope?: {
     grades: Types.ObjectId[];
@@ -129,6 +130,10 @@ const userSchema = new Schema<IUser>(
       default: false,
     },
     isStandaloneCoach: {
+      type: Boolean,
+      default: false,
+    },
+    mustChangePassword: {
       type: Boolean,
       default: false,
     },
