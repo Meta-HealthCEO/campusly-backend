@@ -5,6 +5,7 @@ import fs from 'fs';
 import { v4 as uuid } from 'uuid';
 import { Student } from './model.js';
 import { apiResponse } from '../../common/utils.js';
+import { ForbiddenError } from '../../common/errors.js';
 
 const UPLOAD_DIR = 'uploads/student-photos';
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
@@ -42,6 +43,19 @@ const uploadMiddleware = multer({
   fileFilter,
 }).single('photo');
 
+async function assertTeacherCanAccessStudent(req: Request, studentId: string): Promise<void> {
+  if (req.user?.role !== 'teacher') return;
+  const schoolId = req.user.schoolId;
+  if (!schoolId) throw new ForbiddenError('School context is required');
+  const student = await Student.findOne({ _id: studentId, schoolId, isDeleted: false })
+    .select('classId')
+    .lean();
+  if (!student) return;
+  const { AcademicService } = await import('../Academic/service.js');
+  const canAccess = await AcademicService.teacherCanAccessClass(req.user.id, String(student.classId), schoolId);
+  if (!canAccess) throw new ForbiddenError('You can only manage learners in your own teaching groups');
+}
+
 export class PhotoController {
   static uploadPhoto(req: Request, res: Response, next: NextFunction): void {
     uploadMiddleware(req, res, async (err: unknown) => {
@@ -64,6 +78,7 @@ export class PhotoController {
         const schoolId = req.user!.schoolId!;
         const studentId = req.params.id;
         const photoUrl = `/${UPLOAD_DIR}/${req.file.filename}`;
+        await assertTeacherCanAccessStudent(req, studentId as string);
 
         const student = await Student.findOneAndUpdate(
           { _id: studentId, schoolId, isDeleted: false },

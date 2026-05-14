@@ -2,7 +2,30 @@ import { Request, Response } from 'express';
 import { StudentService } from './service.js';
 import { StudentInviteService } from './invite.service.js';
 import { apiResponse } from '../../common/utils.js';
-import { ForbiddenError } from '../../common/errors.js';
+import { ForbiddenError, NotFoundError } from '../../common/errors.js';
+import { Student } from './model.js';
+
+async function assertTeacherCanAccessStudent(req: Request, studentId: string): Promise<void> {
+  if (req.user?.role !== 'teacher') return;
+
+  const schoolId = req.user.schoolId;
+  if (!schoolId) throw new ForbiddenError('School context is required');
+
+  const student = await Student.findOne({ _id: studentId, schoolId, isDeleted: false })
+    .select('classId')
+    .lean();
+  if (!student) throw new NotFoundError('Student not found');
+
+  const { AcademicService } = await import('../Academic/service.js');
+  const canAccess = await AcademicService.teacherCanAccessClass(
+    req.user.id,
+    String(student.classId),
+    schoolId,
+  );
+  if (!canAccess) {
+    throw new ForbiddenError('You can only manage learners in your own teaching groups');
+  }
+}
 
 export class StudentController {
   static async create(req: Request, res: Response): Promise<void> {
@@ -70,12 +93,14 @@ export class StudentController {
 
   static async getById(req: Request, res: Response): Promise<void> {
     const schoolId = req.user!.schoolId!;
+    await assertTeacherCanAccessStudent(req, req.params.id as string);
     const student = await StudentService.getById(req.params.id as string, schoolId);
     res.json(apiResponse(true, student, 'Student retrieved successfully'));
   }
 
   static async update(req: Request, res: Response): Promise<void> {
     const schoolId = req.user!.schoolId!;
+    await assertTeacherCanAccessStudent(req, req.params.id as string);
     // Verify teacher can access the target class when reassigning
     if (req.user?.role === 'teacher' && req.body.classId) {
       const { AcademicService } = await import('../Academic/service.js');
@@ -92,18 +117,21 @@ export class StudentController {
 
   static async delete(req: Request, res: Response): Promise<void> {
     const schoolId = req.user!.schoolId!;
+    await assertTeacherCanAccessStudent(req, req.params.id as string);
     await StudentService.delete(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Student deleted successfully'));
   }
 
   static async updateMedicalProfile(req: Request, res: Response): Promise<void> {
     const schoolId = req.user!.schoolId!;
+    await assertTeacherCanAccessStudent(req, req.params.id as string);
     const student = await StudentService.updateMedicalProfile(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, student, 'Medical profile updated successfully'));
   }
 
   static async inviteStudent(req: Request, res: Response): Promise<void> {
     const schoolId = req.user?.schoolId ?? '';
+    await assertTeacherCanAccessStudent(req, req.params.id as string);
     const result = await StudentInviteService.inviteStudent(
       req.params.id as string,
       schoolId,

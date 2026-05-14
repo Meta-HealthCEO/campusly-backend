@@ -31,8 +31,6 @@ export interface StudentPortalCredentials {
   loginEmail: string;
   tempPassword: string;
   emailSent: boolean;
-  whatsappSent: boolean;
-  whatsappSkippedReason?: string;
 }
 
 export interface CreateStudentResult {
@@ -116,6 +114,8 @@ export class StudentService {
       studentData.userId = user._id as IStudent['userId'];
 
       let emailSent = false;
+      // Phase 2: WhatsApp delivery (per-school WhatsApp credentials,
+      // phone capture, template approval). Removed from Phase 1.
       if (shouldEmailCredentials(email, fallbackEmail)) {
         try {
           const result = await EmailService.sendStudentPortalCredentials(loginEmail, {
@@ -133,10 +133,6 @@ export class StudentService {
         loginEmail,
         tempPassword,
         emailSent,
-        whatsappSent: false,
-        whatsappSkippedReason: phone
-          ? 'WhatsApp login delivery needs school WhatsApp opt-in/configuration before it can be used.'
-          : 'No parent cell number supplied.',
       };
     }
 
@@ -263,6 +259,13 @@ export class StudentService {
 
     if (!student) {
       throw new NotFoundError('Student not found');
+    }
+
+    if (student.userId) {
+      await User.findOneAndUpdate(
+        { _id: student.userId, schoolId, role: 'student', isDeleted: false },
+        { $set: { isActive: false, refreshTokens: [] } },
+      );
     }
 
     return student;

@@ -13,8 +13,6 @@ export class StudentInviteService {
     loginEmail: string;
     tempPassword: string;
     emailSent: boolean;
-    whatsappSent: boolean;
-    whatsappSkippedReason: string;
   }> {
     const student = await Student.findOne({ _id: studentId, schoolId, isDeleted: false });
     if (!student) throw new NotFoundError('Student not found');
@@ -65,8 +63,6 @@ export class StudentInviteService {
       loginEmail,
       tempPassword,
       emailSent,
-      whatsappSent: false,
-      whatsappSkippedReason: 'WhatsApp login delivery needs school WhatsApp opt-in/configuration before it can be used.',
     };
   }
 }
