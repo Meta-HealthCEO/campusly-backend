@@ -1,8 +1,10 @@
+import mongoose from 'mongoose';
 import { logger } from '../common/logger.js';
 import { EmailService } from './email.service.js';
 import { SmsService } from './sms.service.js';
 import { PushService } from './push.service.js';
 import { DeviceRegistration } from '../modules/Communication/delivery-model.js';
+import { NotificationPreference } from '../modules/Notification/model.js';
 
 interface NotificationPayload {
   type: 'email' | 'sms' | 'push' | 'in_app' | 'whatsapp';
@@ -74,6 +76,29 @@ export class NotificationDispatchService {
           break;
         }
         const tokens = devices.map((d) => d.deviceToken);
+
+        // Category gating — skip push if user has disabled this category
+        const category = (notification.data as { category?: string } | undefined)?.category;
+        if (category) {
+          type CategoryKey = 'homework' | 'grades' | 'attendance' | 'billing' | 'announcements';
+          const KNOWN_CATEGORIES: CategoryKey[] = [
+            'homework', 'grades', 'attendance', 'billing', 'announcements',
+          ];
+          if ((KNOWN_CATEGORIES as string[]).includes(category)) {
+            const prefQuery: { userId: mongoose.Types.ObjectId; schoolId?: mongoose.Types.ObjectId } = {
+              userId: new mongoose.Types.ObjectId(userId),
+            };
+            if (notification.schoolId) {
+              prefQuery.schoolId = new mongoose.Types.ObjectId(notification.schoolId);
+            }
+            const pref = await NotificationPreference.findOne(prefQuery).lean();
+            if (pref?.categories?.[category as CategoryKey] === false) {
+              logger.info({ userId, category }, 'NotificationDispatch: Push skipped — category disabled by user');
+              break;
+            }
+          }
+        }
+
         const bodyText = notification.message.replace(/<[^>]+>/g, '');
         await PushService.sendPushBatch(
           tokens,
