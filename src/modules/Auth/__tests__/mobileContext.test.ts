@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import request from 'supertest';
 import app from '../../../app.js';
 import { User } from '../model.js';
-import { School } from '../../School/model.js';
+import { School, generateJoinCode } from '../../School/model.js';
 import { Parent } from '../../Parent/model.js';
 import { Student } from '../../Student/model.js';
 import { signTestToken } from '../../../test-utils/auth.js';
@@ -21,7 +21,7 @@ function schoolFixture(name: string) {
     address: { street: '1 Test St', city: 'Cape Town', province: 'WC', postalCode: '8001', country: 'ZA' },
     contactInfo: { email: 'school@test.com', phone: '0210000000' },
     settings: { academicYear: 2025, terms: 4, gradingSystem: 'percentage' as const },
-    joinCode: `JC${Date.now()}${Math.floor(Math.random() * 1000)}`,
+    joinCode: generateJoinCode(),
   };
 }
 
@@ -135,6 +135,8 @@ describe('GET /api/auth/me/mobile-context', () => {
 
     expect(res.status).toBe(200);
     expect(res.body.student).not.toBeNull();
+    expect(res.body.student.classId).toBe(String(DUMMY_CLASS_ID));
+    expect(res.body.student.gradeId).toBe(String(DUMMY_GRADE_ID));
     expect(res.body.parent).toBeNull();
   });
 
@@ -145,7 +147,7 @@ describe('GET /api/auth/me/mobile-context', () => {
 
   it('does not leak children from another school', async () => {
     const schoolA = await School.create(schoolFixture('A'));
-    const schoolB = await School.create({ ...schoolFixture('B'), joinCode: `JC${Date.now()}B` });
+    const schoolB = await School.create({ ...schoolFixture('B'), joinCode: generateJoinCode() });
 
     const parentUser = await User.create({
       email: 'p@a.com', password: 'x', firstName: 'P', lastName: 'A',
@@ -184,5 +186,44 @@ describe('GET /api/auth/me/mobile-context', () => {
 
     expect(res.status).toBe(200);
     expect(res.body.parent.children).toHaveLength(0);
+  });
+
+  it('returns null parent and null student for a teacher account', async () => {
+    const school = await School.create(schoolFixture('Teacher School'));
+
+    const user = await User.create({
+      email: 'teacher@test.com',
+      password: 'irrelevant',
+      firstName: 'Tee',
+      lastName: 'Cher',
+      role: 'teacher',
+      schoolId: school._id,
+    });
+
+    const token = signTestToken({
+      id: String(user._id),
+      schoolId: String(school._id),
+      role: 'teacher',
+    });
+
+    const res = await request(app)
+      .get('/api/auth/me/mobile-context')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.user.role).toBe('teacher');
+    expect(res.body.parent).toBeNull();
+    expect(res.body.student).toBeNull();
+  });
+
+  it('returns 403 when the token has no schoolId', async () => {
+    // standalone teachers can have a token without a schoolId
+    const token = signTestToken({ id: String(new mongoose.Types.ObjectId()), role: 'teacher' });
+
+    const res = await request(app)
+      .get('/api/auth/me/mobile-context')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.status).toBe(403);
   });
 });

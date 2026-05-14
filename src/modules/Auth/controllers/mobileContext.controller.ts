@@ -1,15 +1,10 @@
 import type { Request, Response } from 'express';
 import mongoose from 'mongoose';
+import { getUser } from '../../../types/authenticated-request.js';
 import { User } from '../model.js';
 import { School } from '../../School/model.js';
 import { Parent } from '../../Parent/model.js';
 import { Student } from '../../Student/model.js';
-
-interface AuthedUser {
-  id: string;
-  schoolId?: string;
-  role: string;
-}
 
 interface ChildSummary {
   id: string;
@@ -21,8 +16,8 @@ interface ChildSummary {
 }
 
 export async function getMobileContext(req: Request, res: Response): Promise<void> {
-  const authed = req.user as AuthedUser;
-  const { id, schoolId: rawSchoolId } = authed;
+  // Errors propagate to the global errorHandler via Express 5's native async-handler support.
+  const { id, schoolId: rawSchoolId } = getUser(req);
 
   if (!rawSchoolId) {
     res.status(403).json({ message: 'No school associated with this account' });
@@ -113,6 +108,7 @@ export async function getMobileContext(req: Request, res: Response): Promise<voi
         gradingSystem: school.settings?.gradingSystem ?? 'percentage',
         academicYear: school.settings?.academicYear ?? null,
         terms: school.settings?.terms ?? null,
+        // TODO: wire to school.subscription or a config when multi-gateway support lands; hardcoded for mobile MVP.
         paymentProviders: ['onegate'],
       },
     },
