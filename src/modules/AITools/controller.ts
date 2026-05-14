@@ -1,3 +1,6 @@
+import fs from 'fs';
+import path from 'path';
+import mongoose from 'mongoose';
 import type { Request } from 'express';
 import { Response } from 'express';
 import { getUser } from '../../types/authenticated-request.js';
@@ -11,6 +14,11 @@ import {
   issueMarking,
 } from './service-marking-queries.js';
 import { markPaperFromText } from './service-marking-text.js';
+import { PaperMarking } from './model-marking.js';
+import { AssessmentPaper } from '../QuestionBank/model-papers.js';
+import { markingDir } from './service-marking-images.js';
+import { buildMarkingPdf } from './service-marking-pdf.js';
+import { resolveStudentForUser } from './service-student-ownership.js';
 
 // Paper generation, regeneration, and CRUD handlers have been removed.
 // All paper routes (/api/ai-tools/papers/*, /api/ai-tools/generate-paper)
@@ -214,6 +222,85 @@ export class AIToolsController {
     }
     const marking = await updateMarking(req.params.id as string, schoolId, req.body);
     res.json(apiResponse(true, marking, 'Marking updated successfully'));
+  }
+
+  private static async findCallerAccessibleMarking(req: Request, markingId: string) {
+    const role = req.user?.role;
+    if (!mongoose.Types.ObjectId.isValid(markingId)) return null;
+    const _id = new mongoose.Types.ObjectId(markingId);
+
+    if (role === 'student') {
+      const userSchoolId = req.user?.schoolId;
+      if (!userSchoolId) return null;
+      const { studentId, schoolId } = await resolveStudentForUser(getUser(req).id, userSchoolId);
+      return PaperMarking.findOne({
+        _id,
+        studentId: new mongoose.Types.ObjectId(studentId),
+        schoolId: new mongoose.Types.ObjectId(schoolId),
+        issuedToStudent: true,
+        isDeleted: false,
+      });
+    }
+
+    // teacher / school_admin / super_admin — scope by schoolId
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) return null;
+    return PaperMarking.findOne({
+      _id,
+      schoolId: new mongoose.Types.ObjectId(schoolId),
+      isDeleted: false,
+    });
+  }
+
+  static async getMarkingPdf(req: Request, res: Response): Promise<void> {
+    const marking = await AIToolsController.findCallerAccessibleMarking(req, req.params.id as string);
+    if (!marking) {
+      res.status(404).json({ success: false, error: 'Marking not found' });
+      return;
+    }
+    if (!marking.images || marking.images.length === 0) {
+      res.status(404).json({ success: false, error: 'No marked pages to render' });
+      return;
+    }
+    const paper = await AssessmentPaper.findOne({
+      _id: marking.paperId,
+      schoolId: marking.schoolId,
+      isDeleted: false,
+    })
+      .select('title')
+      .lean();
+    const pdf = await buildMarkingPdf(marking, { paperTitle: paper?.title ?? 'Marked paper' });
+    if (!pdf) {
+      res.status(404).json({ success: false, error: 'No marked pages to render' });
+      return;
+    }
+    const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    const filename = `${slug(marking.studentName)}-${slug(paper?.title ?? 'paper')}-marked.pdf`;
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `inline; filename="${filename}"`);
+    res.send(pdf);
+  }
+
+  static async getMarkingImage(req: Request, res: Response): Promise<void> {
+    const marking = await AIToolsController.findCallerAccessibleMarking(req, req.params.id as string);
+    if (!marking) {
+      res.status(404).json({ success: false, error: 'Marking not found' });
+      return;
+    }
+    const filename = req.params.filename as string;
+    const entry = marking.images.find((img) => img.filename === filename);
+    if (!entry) {
+      res.status(404).json({ success: false, error: 'Page not found' });
+      return;
+    }
+    const absPath = path.join(markingDir(String(marking._id)), filename);
+    if (!fs.existsSync(absPath)) {
+      res.status(404).json({ success: false, error: 'Page file missing' });
+      return;
+    }
+    res.setHeader('Content-Type', entry.mimeType);
+    res.setHeader('Cache-Control', 'private, max-age=300');
+    fs.createReadStream(absPath).pipe(res);
   }
 
   static async issueMarking(req: Request, res: Response): Promise<void> {
