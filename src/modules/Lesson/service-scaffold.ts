@@ -28,13 +28,13 @@ Output strict JSON matching this schema (no markdown, no commentary):
 }
 
 Each phase has 1-3 suggestions. Each suggestion's "kind" must be one of:
-"reading" | "worksheet" | "activity" | "study_notes" | "worked_example" | "quiz" | "practice_questions" | "homework" | "paper".
+"reading" | "worksheet" | "activity" | "study_notes" | "worked_example" | "practice_questions" | "homework" | "paper".
 
 Pedagogical guidance per phase:
 - introduction: notes (hook / recap) or short activity
 - direct_instruction: notes (concept exposition) or worked_example
 - practice: worksheet or activity or practice_questions
-- assessment: quiz or practice_questions or paper
+- assessment: practice_questions or paper
 - homework: homework (always)`;
 
 const DEFAULT_FALLBACK: ScaffoldedOutline = {
