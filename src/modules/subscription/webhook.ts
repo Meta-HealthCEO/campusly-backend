@@ -6,6 +6,7 @@ import { getOneGateClient } from '../../lib/onegate/index.js';
 import type { GatewayTransactionResponse } from '../../lib/onegate/index.js';
 import { onegateWebhookSchema } from './validation.js';
 import { logger } from '../../common/logger.js';
+import { PaymentCompletionService } from '../PaymentGateway/services/payment-completion.service.js';
 
 function hashPayload(payload: unknown): string {
   return crypto.createHash('sha256').update(JSON.stringify(payload)).digest('hex');
@@ -48,6 +49,14 @@ export async function handleOneGateWebhook(req: Request, res: Response): Promise
       await processInvoiceCharge(ref, lookup);
     } else if (ref.startsWith('inv_') && isRefund) {
       await processInvoiceRefund(ref, lookup);
+    } else if (ref.startsWith('fee_') && !isRefund) {
+      const onlinePaymentId = ref.slice('fee_'.length);
+      await PaymentCompletionService.completeFeePayment(onlinePaymentId);
+    } else if (ref.startsWith('top_') && !isRefund) {
+      const onlinePaymentId = ref.slice('top_'.length);
+      await PaymentCompletionService.completeWalletTopup(onlinePaymentId);
+    } else if ((ref.startsWith('fee_') || ref.startsWith('top_')) && isRefund) {
+      logger.warn({ ref }, 'Refund received for fee_/top_ payment — not yet handled');
     }
 
     event.status = 'processed';
