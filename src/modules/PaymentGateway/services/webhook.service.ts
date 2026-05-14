@@ -1,12 +1,13 @@
 import crypto from 'crypto';
 import mongoose from 'mongoose';
 import { OnlinePayment, PaymentGatewayConfig } from '../model.js';
-import type { IOnlinePayment, OnlinePaymentStatus } from '../model.js';
+import type { IOnlinePayment } from '../model.js';
 import { Invoice, Payment } from '../../Fee/model.js';
 import { Wallet, WalletTransaction } from '../../Wallet/model.js';
 import { InvoiceStatus, TransactionType } from '../../../common/enums.js';
 import { NotFoundError, BadRequestError } from '../../../common/errors.js';
 import { PayFastService } from './payfast.service.js';
+import { PaymentCompletionService } from './payment-completion.service.js';
 
 export class WebhookService {
   /**
@@ -91,8 +92,10 @@ export class WebhookService {
     session.startTransaction();
 
     try {
-      onlinePayment.status = 'completed' as OnlinePaymentStatus;
-      onlinePayment.completedAt = new Date();
+      // Set PayFast-specific enrichment fields on the in-memory document so that
+      // PaymentCompletionService picks them up (receiptNumber in particular) when
+      // it reads the document from DB — we persist them first, then let the
+      // service handle status='completed' and invoice/wallet logic.
       onlinePayment.receiptNumber = receiptNumber;
       onlinePayment.externalTransactionId = data.pf_payment_id ?? '';
       onlinePayment.paymentMethod = pfPaymentMethod
@@ -101,6 +104,8 @@ export class WebhookService {
       onlinePayment.gatewayFee = Math.round(parseFloat(data.amount_fee ?? '0') * 100);
       onlinePayment.netAmount = Math.round(parseFloat(data.amount_net ?? '0') * 100);
       onlinePayment.gatewayResponse = data as Record<string, unknown>;
+      // Persist PayFast-specific fields (status stays non-completed for now so
+      // the idempotency guard in PaymentCompletionService does not short-circuit).
       await onlinePayment.save({ session });
 
       if (onlinePayment.paymentType === 'fee_payment') {
@@ -122,94 +127,27 @@ export class WebhookService {
   }
 
   // ─── Record Fee Payments ───────────────────────────────────────────────────
+  // Delegates to PaymentCompletionService so the same logic is reused by all
+  // payment providers (PayFast, OneGate, etc.).
 
   static async recordFeePayments(
     onlinePayment: IOnlinePayment,
     session: mongoose.ClientSession,
-  ) {
-    const invoices = await Invoice.find({
-      _id: { $in: onlinePayment.invoiceIds },
-      schoolId: onlinePayment.schoolId,
-      isDeleted: false,
-    }).session(session);
-
-    let remaining = onlinePayment.amount;
-
-    for (const invoice of invoices) {
-      if (remaining <= 0) break;
-
-      const outstanding =
-        invoice.totalAmount -
-        invoice.paidAmount -
-        (invoice.discountAmount ?? 0) -
-        (invoice.writeOffAmount ?? 0);
-      const allocation = Math.min(remaining, Math.max(0, outstanding));
-
-      if (allocation <= 0) continue;
-
-      await Payment.create(
-        [
-          {
-            invoiceId: invoice._id,
-            studentId: invoice.studentId,
-            schoolId: invoice.schoolId,
-            amount: allocation,
-            paymentMethod: 'card',
-            reference: `Online: ${onlinePayment.receiptNumber}`,
-            receiptNumber: onlinePayment.receiptNumber,
-            paymentDate: new Date(),
-            recordedBy: onlinePayment.parentId,
-          },
-        ],
-        { session },
-      );
-
-      const newPaid = invoice.paidAmount + allocation;
-      const newStatus =
-        newPaid + (invoice.discountAmount ?? 0) + (invoice.writeOffAmount ?? 0) >= invoice.totalAmount
-          ? InvoiceStatus.PAID
-          : InvoiceStatus.PARTIAL;
-
-      await Invoice.findByIdAndUpdate(
-        invoice._id,
-        { $inc: { paidAmount: allocation }, $set: { status: newStatus } },
-        { session },
-      );
-
-      remaining -= allocation;
-    }
+  ): Promise<void> {
+    // The caller (handleCompleted) has already set receiptNumber on the document
+    // and called save() within the same transaction — pass the session through
+    // so all writes remain in the same atomic unit.
+    await PaymentCompletionService.completeFeePayment(String(onlinePayment._id), session);
   }
 
   // ─── Credit Wallet ─────────────────────────────────────────────────────────
+  // Delegates to PaymentCompletionService — same reasoning as above.
 
   static async creditWallet(
     onlinePayment: IOnlinePayment,
     session: mongoose.ClientSession,
-  ) {
-    const wallet = await Wallet.findOneAndUpdate(
-      { _id: onlinePayment.walletId, isDeleted: false, isActive: true },
-      { $inc: { balance: onlinePayment.amount } },
-      { new: true, session },
-    );
-
-    if (!wallet) {
-      throw new NotFoundError('Wallet not found or inactive during top-up');
-    }
-
-    await WalletTransaction.create(
-      [
-        {
-          walletId: wallet._id,
-          type: TransactionType.LOAD,
-          amount: onlinePayment.amount,
-          description: `Online top-up: ${onlinePayment.receiptNumber}`,
-          reference: onlinePayment.receiptNumber,
-          balanceAfter: wallet.balance,
-          performedBy: onlinePayment.parentId,
-        },
-      ],
-      { session },
-    );
+  ): Promise<void> {
+    await PaymentCompletionService.completeWalletTopup(String(onlinePayment._id), session);
   }
 
   // ─── Reverse Wallet Top-up ─────────────────────────────────────────────────
