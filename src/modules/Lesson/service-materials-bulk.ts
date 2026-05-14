@@ -1,7 +1,9 @@
 import { Lesson } from './model.js';
+import { NotFoundError } from '../../common/errors.js';
 import type { ILesson, ILessonMaterial, LessonMaterialKind, LessonPhase } from './types.js';
 import type { AddMaterialInput } from './validation.js';
 import { regenerateMaterial } from './service-materials.js';
+import { lessonAccessFilter, toObjectId, type LessonActor } from './service-access.js';
 
 export interface GenerateAllResult {
   total: number;
@@ -188,21 +190,18 @@ function buildPayloadForPlaceholder(
  * the rest. A single placeholder's failure does NOT abort the batch; the
  * error is captured per-material and returned in `failed[]`.
  *
- * Successful generations replace the placeholder in-place via
- * `regenerateMaterial` (delete-old + addMaterial-new), so the lesson's phase
- * ordering stays intact and `materialIds` slots stay filled.
+   * Successful generations replace the placeholder via `regenerateMaterial`;
+   * the old placeholder is removed only after the replacement is created.
  */
 export async function generateAllPlaceholders(
   lessonId: string,
-  schoolId: string,
-  teacherId: string,
+  actor: LessonActor,
 ): Promise<GenerateAllResult> {
   const lesson = await Lesson.findOne({
-    _id: lessonId,
-    schoolId,
-    isDeleted: false,
+    _id: toObjectId(lessonId, 'lessonId'),
+    ...lessonAccessFilter(actor),
   });
-  if (!lesson) throw new Error('Lesson not found');
+  if (!lesson) throw new NotFoundError('Lesson not found');
 
   const placeholders = lesson.materials.filter(isPlaceholder);
   // Snapshot the IDs/titles up front. `regenerateMaterial` mutates the
@@ -221,71 +220,59 @@ export async function generateAllPlaceholders(
   const failed: GenerateAllResult['failed'] = [];
   let succeeded = 0;
 
-  for (const target of targets) {
+  // Process placeholders with bounded parallelism. The AI calls are the
+  // bottleneck (~30-60s each) so sequential gives ~5min for a 5-placeholder
+  // lesson. Each placeholder targets a different material._id and the
+  // lesson writes use atomic $push/$pull, so concurrent regenerations don't
+  // corrupt the document. Cap at 3 to stay well under typical LLM RPM/TPM
+  // budgets — 3 × 5k input + 2k output ≈ 21k tokens/min, comfortably below
+  // standard tier limits.
+  const CONCURRENCY = 3;
+
+  async function processOne(target: typeof targets[number]): Promise<void> {
     try {
-      // Re-resolve the phase from a fresh lesson read each iteration —
-      // earlier successes have already changed phase.materialIds.
       const fresh = await Lesson.findOne({
-        _id: lessonId,
-        schoolId,
-        isDeleted: false,
+        _id: toObjectId(lessonId, 'lessonId'),
+        ...lessonAccessFilter(actor),
       });
       if (!fresh) {
-        failed.push({
-          materialId: target.id,
-          title: target.title,
-          error: 'Lesson disappeared mid-batch',
-        });
-        continue;
+        failed.push({ materialId: target.id, title: target.title, error: 'Lesson disappeared mid-batch' });
+        return;
       }
-      const stillExists = fresh.materials.find(
-        (m) => m._id.toString() === target.id,
-      );
+      const stillExists = fresh.materials.find((m) => m._id.toString() === target.id);
       if (!stillExists) {
-        failed.push({
-          materialId: target.id,
-          title: target.title,
-          error: 'Placeholder no longer exists',
-        });
-        continue;
+        failed.push({ materialId: target.id, title: target.title, error: 'Placeholder no longer exists' });
+        return;
       }
       const phase = findPhaseForMaterial(fresh, target.id);
       if (!phase) {
-        failed.push({
-          materialId: target.id,
-          title: target.title,
-          error: 'Placeholder is not assigned to any phase',
-        });
-        continue;
+        failed.push({ materialId: target.id, title: target.title, error: 'Placeholder is not assigned to any phase' });
+        return;
       }
-
       const built = buildPayloadForPlaceholder(stillExists, phase, termNumber, lessonHasAssignedClass);
       if (!built.ok) {
-        failed.push({
-          materialId: target.id,
-          title: target.title,
-          error: built.reason,
-        });
-        continue;
+        failed.push({ materialId: target.id, title: target.title, error: built.reason });
+        return;
       }
-
-      await regenerateMaterial(
-        lessonId,
-        target.id,
-        schoolId,
-        teacherId,
-        built.payload,
-      );
+      await regenerateMaterial(lessonId, target.id, actor, built.payload);
       succeeded += 1;
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Generation failed';
-      failed.push({
-        materialId: target.id,
-        title: target.title,
-        error: message,
-      });
+      failed.push({ materialId: target.id, title: target.title, error: message });
     }
   }
+
+  // Worker-pool pattern: spawn N workers that each pull the next pending
+  // target until the queue is drained.
+  const queue = [...targets];
+  const workers = Array.from({ length: Math.min(CONCURRENCY, queue.length) }, async () => {
+    while (queue.length > 0) {
+      const next = queue.shift();
+      if (!next) return;
+      await processOne(next);
+    }
+  });
+  await Promise.all(workers);
 
   return {
     total: targets.length,
