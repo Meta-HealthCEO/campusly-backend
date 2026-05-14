@@ -97,6 +97,7 @@ describe('GET /api/auth/me/mobile-context', () => {
     expect(res.body.school.name).toBe('Test High');
     expect(res.body.school.settings).toBeDefined();
     expect(res.body.school.settings.gradingSystem).toBe('percentage');
+    expect(res.body.school.settings.currency).toBe('ZAR');
     expect(res.body.parent).not.toBeNull();
     expect(res.body.parent.children).toHaveLength(1);
     expect(res.body.parent.children[0].firstName).toBe('Child');

@@ -108,6 +108,9 @@ export async function getMobileContext(req: Request, res: Response): Promise<voi
         gradingSystem: school.settings?.gradingSystem ?? 'percentage',
         academicYear: school.settings?.academicYear ?? null,
         terms: school.settings?.terms ?? null,
+        // TODO: replace with per-school currency setting when multi-currency support is added.
+        // For v1 all customers are in South Africa so ZAR is the only valid value.
+        currency: 'ZAR',
         // TODO: wire to school.subscription or a config when multi-gateway support lands; hardcoded for mobile MVP.
         paymentProviders: ['onegate'],
       },

@@ -1,4 +1,26 @@
 /**
+ * DEPLOY ORDER (CRITICAL):
+ *
+ * This migration MUST be run BEFORE the new mobile backend code goes live.
+ * Otherwise, the upsert paths in NotificationService can hit E11000 on the
+ * { userId: 1 } unique index when a legacy pref doc (no schoolId) collides
+ * with a new upsert attempt that includes schoolId.
+ *
+ * Step 1: Run this script against production:
+ *   MONGODB_URI=<prod-uri> npx tsx scripts/2026-05-15-notification-prefs-backfill.ts
+ *
+ * Step 2: Deploy the new server code.
+ *
+ * If you forget step 1, individual users will see 500 errors when first
+ * accessing /api/notifications/preferences.
+ *
+ * NOTE: This backfill is also registered in src/db/migrations/index.ts and
+ * runs automatically at server startup (guarded by a sentinel so it only runs
+ * once). The startup path is the safe fallback — but because it runs inside
+ * the live server process, any E11000 that fires between server start and the
+ * migration completing would still cause errors for those requests. Running
+ * this script manually before the deploy eliminates that window entirely.
+ *
  * Backfill NotificationPreference documents that pre-date the Task 4 fields.
  *
  * What it does (idempotent — safe to re-run):
