@@ -55,4 +55,13 @@ describe('NotificationPreference.categories', () => {
     expect(pref.push).toBe(false);
     expect(pref.categories.attendance).toBe(false);
   });
+
+  it('allows creating a preference without schoolId (legacy/pre-backfill state)', async () => {
+    const pref = await NotificationPreference.create({
+      userId: new mongoose.Types.ObjectId(),
+      // schoolId intentionally omitted
+    });
+    expect(pref.schoolId).toBeUndefined();
+    expect(pref.categories.homework).toBe(true);
+  });
 });

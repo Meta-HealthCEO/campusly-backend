@@ -87,7 +87,7 @@ export const Notification = mongoose.model<INotification>('Notification', notifi
 
 export interface INotificationPreference extends Document {
   userId: Types.ObjectId;
-  schoolId: Types.ObjectId;
+  schoolId?: Types.ObjectId;
   email: boolean;
   sms: boolean;
   push: boolean;
@@ -111,10 +111,12 @@ const notificationPreferenceSchema = new Schema<INotificationPreference>(
       ref: 'User',
       required: true,
     },
+    // schoolId is required by mobile multi-tenancy but loosened to optional
+    // until the backfill migration in Task 5 populates it for existing docs.
     schoolId: {
       type: Schema.Types.ObjectId,
       ref: 'School',
-      required: true,
+      required: false,
     },
     email: {
       type: Boolean,
