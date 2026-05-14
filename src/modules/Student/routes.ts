@@ -146,4 +146,11 @@ router.post(
   StudentController.inviteStudent,
 );
 
+router.post(
+  '/:id/regenerate-credentials',
+  authenticate,
+  requireStudentManagement,
+  StudentController.regenerateCredentials,
+);
+
 export default router;

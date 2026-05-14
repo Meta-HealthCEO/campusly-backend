@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import type { Types } from 'mongoose';
 import { StudentService } from './service.js';
 import { StudentInviteService } from './invite.service.js';
 import { apiResponse } from '../../common/utils.js';
@@ -50,7 +51,9 @@ export class StudentController {
   }
 
   static async list(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const schoolId = req.user?.role === 'teacher'
+      ? req.user.schoolId
+      : (req.query.schoolId as string) ?? req.user?.schoolId;
 
     if (!schoolId) {
       res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
@@ -76,7 +79,13 @@ export class StudentController {
       search: req.query.search as string | undefined,
     };
 
-    const result = await StudentService.list(schoolId, query);
+    let classIds: Types.ObjectId[] | undefined;
+    if (req.user?.role === 'teacher') {
+      const { AcademicService } = await import('../Academic/service.js');
+      classIds = await AcademicService.getTeacherAccessibleClassIds(req.user.id, schoolId);
+    }
+
+    const result = await StudentService.list(schoolId, query, { classIds });
     res.json(apiResponse(true, result, 'Students retrieved successfully'));
   }
 
@@ -138,5 +147,15 @@ export class StudentController {
       req.body,
     );
     res.json(apiResponse(true, result, 'Student invited successfully'));
+  }
+
+  static async regenerateCredentials(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user?.schoolId ?? '';
+    await assertTeacherCanAccessStudent(req, req.params.id as string);
+    const result = await StudentService.regenerateCredentials(
+      req.params.id as string,
+      schoolId,
+    );
+    res.json(apiResponse(true, result, 'Student credentials regenerated successfully'));
   }
 }
