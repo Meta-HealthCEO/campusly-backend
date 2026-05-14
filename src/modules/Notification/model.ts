@@ -87,10 +87,18 @@ export const Notification = mongoose.model<INotification>('Notification', notifi
 
 export interface INotificationPreference extends Document {
   userId: Types.ObjectId;
+  schoolId: Types.ObjectId;
   email: boolean;
   sms: boolean;
   push: boolean;
   inApp: boolean;
+  categories: {
+    homework: boolean;
+    grades: boolean;
+    attendance: boolean;
+    billing: boolean;
+    announcements: boolean;
+  };
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -101,6 +109,11 @@ const notificationPreferenceSchema = new Schema<INotificationPreference>(
     userId: {
       type: Schema.Types.ObjectId,
       ref: 'User',
+      required: true,
+    },
+    schoolId: {
+      type: Schema.Types.ObjectId,
+      ref: 'School',
       required: true,
     },
     email: {
@@ -118,6 +131,13 @@ const notificationPreferenceSchema = new Schema<INotificationPreference>(
     inApp: {
       type: Boolean,
       default: true,
+    },
+    categories: {
+      homework: { type: Boolean, default: true },
+      grades: { type: Boolean, default: true },
+      attendance: { type: Boolean, default: true },
+      billing: { type: Boolean, default: true },
+      announcements: { type: Boolean, default: true },
     },
     isDeleted: {
       type: Boolean,
