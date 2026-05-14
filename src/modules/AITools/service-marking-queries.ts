@@ -181,11 +181,19 @@ async function dispatchIssueNotification(
   marking: IPaperMarking,
   studentId: string,
 ): Promise<void> {
-  const student = await Student.findOne({ _id: studentId, isDeleted: false })
+  const student = await Student.findOne({
+    _id: studentId,
+    schoolId: marking.schoolId,
+    isDeleted: false,
+  })
     .select('userId')
     .lean();
   if (!student?.userId) return;
-  const paper = await AssessmentPaper.findOne({ _id: marking.paperId, isDeleted: false })
+  const paper = await AssessmentPaper.findOne({
+    _id: marking.paperId,
+    schoolId: marking.schoolId,
+    isDeleted: false,
+  })
     .select('title')
     .lean();
   const title = paper?.title ?? marking.studentName;
