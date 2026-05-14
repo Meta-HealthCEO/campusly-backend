@@ -41,7 +41,7 @@ router.get(
 router.get(
   '/:id',
   authenticate,
-  authorize('super_admin', 'school_admin', 'teacher'),
+  authorize('super_admin', 'school_admin', 'teacher', 'student', 'parent', 'coach', 'sports_manager'),
   SchoolController.getById,
 );
 

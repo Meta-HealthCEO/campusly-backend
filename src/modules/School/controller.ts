@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { SchoolService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
+import { ForbiddenError } from '../../common/errors.js';
 
 export class SchoolController {
   static async create(req: Request, res: Response): Promise<void> {
@@ -24,7 +25,19 @@ export class SchoolController {
   }
 
   static async getById(req: Request, res: Response): Promise<void> {
-    const school = await SchoolService.getById(req.params.id as string);
+    const requestedId = req.params.id as string;
+    const callerRole = req.user?.role;
+    const callerSchoolId = req.user?.schoolId;
+
+    // Non-admin roles can only fetch their own school.
+    const adminRoles = new Set(['super_admin', 'school_admin']);
+    if (callerRole && !adminRoles.has(callerRole)) {
+      if (!callerSchoolId || callerSchoolId.toString() !== requestedId) {
+        throw new ForbiddenError('Cannot fetch a school other than your own');
+      }
+    }
+
+    const school = await SchoolService.getById(requestedId);
     res.status(200).json(apiResponse(true, { school }, 'School retrieved successfully'));
   }
 
