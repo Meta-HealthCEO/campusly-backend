@@ -31,7 +31,20 @@ export const refundSchema = z.object({
   reason: z.string().min(1, 'Refund reason is required'),
 }).strict();
 
+export const onegateFeePaymentSchema = z.object({
+  invoiceIds: z.array(objectIdSchema).min(1, 'At least one invoice ID is required').max(20),
+  returnUrl: z.string().min(1, 'Return URL is required'),
+}).strict();
+
+export const onegateWalletTopupSchema = z.object({
+  walletId: objectIdSchema,
+  amount: z.number().int().positive('Amount must be a positive integer'),
+  returnUrl: z.string().min(1, 'Return URL is required'),
+}).strict();
+
 export type InitiatePaymentInput = z.infer<typeof initiatePaymentSchema>;
 export type InitiateWalletTopupInput = z.infer<typeof initiateWalletTopupSchema>;
 export type GatewayConfigInput = z.infer<typeof gatewayConfigSchema>;
 export type RefundInput = z.infer<typeof refundSchema>;
+export type OnegateFeePaymentInput = z.infer<typeof onegateFeePaymentSchema>;
+export type OnegateWalletTopupInput = z.infer<typeof onegateWalletTopupSchema>;

@@ -6,7 +6,13 @@ import {
   initiatePaymentSchema,
   initiateWalletTopupSchema,
   refundSchema,
+  onegateFeePaymentSchema,
+  onegateWalletTopupSchema,
 } from './validation.js';
+import {
+  initiateOneGateFeePayment,
+  initiateOneGateWalletTopup,
+} from './controllers/onegate.controller.js';
 
 const router = Router();
 
@@ -50,6 +56,24 @@ router.get(
   authenticate,
   authorize('super_admin', 'school_admin', 'parent'),
   PaymentGatewayController.getPaymentStatus,
+);
+
+// ─── OneGate Parent Payment Flows (mobile) ──────────────────────────────────
+
+router.post(
+  '/onegate/fee-payment',
+  authenticate,
+  authorize('parent'),
+  validate(onegateFeePaymentSchema),
+  initiateOneGateFeePayment,
+);
+
+router.post(
+  '/onegate/wallet-topup',
+  authenticate,
+  authorize('parent'),
+  validate(onegateWalletTopupSchema),
+  initiateOneGateWalletTopup,
 );
 
 // ─── Webhook (NO AUTH — PayFast calls this directly) ────────────────────────
