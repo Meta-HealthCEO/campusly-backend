@@ -18,9 +18,23 @@ import { Student } from '../Student/model.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
 import { markPaperFromText } from '../AITools/service-marking-text.js';
 import { logger } from '../../common/logger.js';
+import { PaperMarking } from '../AITools/model-marking.js';
 
 function toOid(id: string | mongoose.Types.ObjectId): mongoose.Types.ObjectId {
   return id instanceof mongoose.Types.ObjectId ? id : new mongoose.Types.ObjectId(id);
+}
+
+function deriveSubmissionStatus(
+  sub: IPaperSubmission | undefined,
+  issuedMarkingIds: Set<string>,
+): IPaperSubmission['status'] | 'not_started' {
+  if (!sub) return 'not_started';
+  // Don't show "graded" / "published" until the marking is actually issued
+  // to the student. Marking-in-progress should look like "submitted".
+  if ((sub.status === 'graded' || sub.status === 'published') && sub.markingId) {
+    return issuedMarkingIds.has(String(sub.markingId)) ? sub.status : 'submitted';
+  }
+  return sub.status;
 }
 
 interface StudentContext {
@@ -114,6 +128,16 @@ export async function listAssignedPapersForStudent(
     submissions.map((s) => [String(s.paperId), s as IPaperSubmission]),
   );
 
+  const markingIds = submissions
+    .map((s) => s.markingId)
+    .filter((id): id is mongoose.Types.ObjectId => id != null);
+  const issuedMarkings = markingIds.length
+    ? await PaperMarking.find({ _id: { $in: markingIds }, issuedToStudent: true, isDeleted: false })
+        .select('_id')
+        .lean()
+    : [];
+  const issuedSet = new Set(issuedMarkings.map((m) => String(m._id)));
+
   const result: AssignedPaperSummary[] = [];
   for (const paper of papers) {
     const assignment = paper.assignments?.find(
@@ -133,7 +157,7 @@ export async function listAssignedPapersForStudent(
       mode: assignment.mode,
       releaseAt: assignment.releaseAt ? assignment.releaseAt.toISOString() : null,
       dueAt: assignment.dueAt ? assignment.dueAt.toISOString() : null,
-      submissionStatus: sub?.status ?? 'not_started',
+      submissionStatus: deriveSubmissionStatus(sub, issuedSet),
       submissionId: sub ? String(sub._id) : null,
       submittedAt: sub?.submittedAt ? sub.submittedAt.toISOString() : null,
     });
