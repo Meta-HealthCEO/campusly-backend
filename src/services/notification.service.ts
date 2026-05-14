@@ -15,6 +15,30 @@ interface NotificationPayload {
   data?: unknown;
 }
 
+/**
+ * Build the FCM `data` payload for a push notification.
+ *
+ * Always includes `payload` (JSON-serialised `data`) for backwards compatibility.
+ * When `data` contains mobile-routing fields (`deepLink`, `category`,
+ * `notificationId`) they are promoted to top-level keys so the mobile app can
+ * read them without parsing `payload`.
+ *
+ * FCM requires all data values to be strings, so optional fields are only
+ * included in the returned object when they are present in the source data.
+ */
+export function buildPushExtra(data: unknown): Record<string, string> | undefined {
+  if (data === undefined || data === null) return undefined;
+
+  const d = data as Record<string, unknown>;
+  const extra: Record<string, string> = { payload: JSON.stringify(data) };
+
+  if (typeof d.deepLink === 'string') extra.deepLink = d.deepLink;
+  if (typeof d.category === 'string') extra.category = d.category;
+  if (typeof d.notificationId === 'string') extra.notificationId = d.notificationId;
+
+  return extra;
+}
+
 export class NotificationDispatchService {
   static async dispatch(notification: NotificationPayload): Promise<void> {
     switch (notification.type) {
@@ -55,7 +79,7 @@ export class NotificationDispatchService {
           tokens,
           notification.title,
           bodyText,
-          notification.data ? { payload: JSON.stringify(notification.data) } : undefined,
+          buildPushExtra(notification.data),
         );
         break;
       }
