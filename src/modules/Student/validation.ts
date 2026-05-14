@@ -23,7 +23,7 @@ const medicalProfileSchema = z.object({
   medicalAidInfo: medicalAidInfoSchema.optional(),
 });
 
-export const createStudentSchema = z.object({
+const studentBaseSchema = z.object({
   firstName: z.string().trim().min(1, 'First name is required').optional(),
   lastName: z.string().trim().min(1, 'Last name is required').optional(),
   email: z.email().optional(),
@@ -48,9 +48,20 @@ export const createStudentSchema = z.object({
   afterCareRequired: z.boolean().optional(),
   saIdNumber: z.string().trim().optional(),
   luritsNumber: z.string().trim().optional(),
+  deliveryMethod: z.enum(['email', 'slip']),
 }).strict();
 
-export const updateStudentSchema = createStudentSchema.partial().strict();
+export const createStudentSchema = studentBaseSchema.superRefine((data, ctx) => {
+  if (data.deliveryMethod === 'email' && !data.email) {
+    ctx.addIssue({
+      code: 'custom',
+      path: ['email'],
+      message: 'Email is required when delivery method is email-invite',
+    });
+  }
+});
+
+export const updateStudentSchema = studentBaseSchema.partial().strict();
 
 export const updateMedicalProfileSchema = z.object({
   allergies: z.array(z.string()).default([]),
