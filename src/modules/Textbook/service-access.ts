@@ -19,8 +19,7 @@ export function canManageAllTextbooks(actor: TextbookActor): boolean {
     || role === 'principal'
     || role === 'hod'
     || actor.isSchoolPrincipal === true
-    || actor.isHOD === true
-    || actor.isStandaloneTeacher === true;
+    || actor.isHOD === true;
 }
 
 export function toObjectId(
@@ -89,18 +88,9 @@ export function textbookVisibilityFilter(scope: TextbookScope): Record<string, u
 }
 
 export function textbookMutationFilter(scope: TextbookActor): Record<string, unknown> {
-  const schoolId = schoolObjectId(scope);
-  // Standalone teachers are the de-facto admin of their single-teacher school —
-  // they have no super-admin above them, so let them also manage national
-  // (schoolId: null) textbooks that live in their environment.
-  const schoolMatches: Record<string, unknown>[] = [{ schoolId }];
-  if (scope.isStandaloneTeacher) {
-    schoolMatches.push({ schoolId: null });
-  }
-
   const filter: Record<string, unknown> = {
+    schoolId: schoolObjectId(scope),
     isDeleted: false,
-    $or: schoolMatches,
   };
 
   if (scope.role === 'teacher' && !canManageAllTextbooks(scope)) {
