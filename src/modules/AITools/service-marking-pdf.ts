@@ -1,6 +1,13 @@
 import path from 'path';
 import fs from 'fs';
 import { createDocument, finalise } from '../../common/pdf/document.js';
+
+function toISODateLocal(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
 import { MARGIN, CONTENT_WIDTH, PAGE_HEIGHT, FONT_TITLE, FONT_NORMAL, FOOTER_RESERVE } from '../../common/pdf/constants.js';
 import { markingDir } from './service-marking-images.js';
 import type { IPaperMarking } from './model-marking.js';
@@ -31,7 +38,7 @@ export async function buildMarkingPdf(
     `Score: ${marking.totalMarks}/${marking.maxMarks} (${Math.round(marking.percentage)}%)`,
     { width: CONTENT_WIDTH },
   );
-  doc.text(`Marked: ${marking.updatedAt.toISOString().slice(0, 10)}`, { width: CONTENT_WIDTH });
+  doc.text(`Marked: ${toISODateLocal(marking.updatedAt)}`, { width: CONTENT_WIDTH });
   doc.moveDown(1);
 
   const usableHeight = PAGE_HEIGHT - MARGIN * 2 - FOOTER_RESERVE - 100; // leave room for header on first page
