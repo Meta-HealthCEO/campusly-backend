@@ -1,25 +1,5 @@
 import mongoose, { Schema, Document, Types } from 'mongoose';
 
-export interface IEmergencyContact {
-  name: string;
-  relationship: string;
-  phone: string;
-}
-
-export interface IMedicalAidInfo {
-  provider: string;
-  memberNumber: string;
-  mainMember: string;
-}
-
-export interface IMedicalProfile {
-  allergies: string[];
-  conditions: string[];
-  bloodType?: string;
-  emergencyContacts: IEmergencyContact[];
-  medicalAidInfo?: IMedicalAidInfo;
-}
-
 export type EnrollmentStatus =
   | 'active'
   | 'transferred'
@@ -34,9 +14,9 @@ export interface IStudent extends Document {
   classId: Types.ObjectId;
   admissionNumber: string;
   guardianIds: Types.ObjectId[];
+  subjectClassIds: Types.ObjectId[];
   enrollmentDate: Date;
   enrollmentStatus: EnrollmentStatus;
-  medicalProfile: IMedicalProfile;
   dateOfBirth?: Date;
   gender?: 'male' | 'female' | 'other';
   previousSchool?: string;
@@ -51,35 +31,6 @@ export interface IStudent extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
-
-const emergencyContactSchema = new Schema<IEmergencyContact>(
-  {
-    name: { type: String, required: true },
-    relationship: { type: String, required: true },
-    phone: { type: String, required: true },
-  },
-  { _id: false },
-);
-
-const medicalAidInfoSchema = new Schema<IMedicalAidInfo>(
-  {
-    provider: { type: String, required: true },
-    memberNumber: { type: String, required: true },
-    mainMember: { type: String, required: true },
-  },
-  { _id: false },
-);
-
-const medicalProfileSchema = new Schema<IMedicalProfile>(
-  {
-    allergies: { type: [String], default: [] },
-    conditions: { type: [String], default: [] },
-    bloodType: { type: String },
-    emergencyContacts: { type: [emergencyContactSchema], default: [] },
-    medicalAidInfo: { type: medicalAidInfoSchema },
-  },
-  { _id: false },
-);
 
 const studentSchema = new Schema<IStudent>(
   {
@@ -113,6 +64,11 @@ const studentSchema = new Schema<IStudent>(
       ref: 'Parent',
       default: [],
     },
+    subjectClassIds: {
+      type: [Schema.Types.ObjectId],
+      ref: 'Class',
+      default: [],
+    },
     enrollmentDate: {
       type: Date,
       default: () => new Date(),
@@ -121,14 +77,6 @@ const studentSchema = new Schema<IStudent>(
       type: String,
       enum: ['active', 'transferred', 'graduated', 'expelled', 'withdrawn'],
       default: 'active',
-    },
-    medicalProfile: {
-      type: medicalProfileSchema,
-      default: () => ({
-        allergies: [],
-        conditions: [],
-        emergencyContacts: [],
-      }),
     },
     dateOfBirth: {
       type: Date,
@@ -180,6 +128,7 @@ const studentSchema = new Schema<IStudent>(
 studentSchema.index({ schoolId: 1, admissionNumber: 1 }, { unique: true });
 studentSchema.index({ userId: 1 });
 studentSchema.index({ gradeId: 1, classId: 1 });
+studentSchema.index({ subjectClassIds: 1, schoolId: 1 });
 studentSchema.index({ schoolId: 1, isDeleted: 1, createdAt: -1 });
 
 export const Student = mongoose.model<IStudent>('Student', studentSchema);
