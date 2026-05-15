@@ -4,6 +4,9 @@ import { School, generateJoinCode } from '../School/model.js';
 import { Class } from '../Academic/model.js';
 import { Student } from '../Student/model.js';
 import { CurriculumFramework } from '../TeacherWorkbench/model.js';
+import { Lesson } from '../Lesson/model.js';
+import { Homework } from '../Homework/model.js';
+import { GeneratedPaper } from '../AITools/model.js';
 import { AuthService } from './service.js';
 import { SubscriptionService } from '../subscription/service.js';
 import { ConflictError, NotFoundError } from '../../common/errors.js';
@@ -21,6 +24,7 @@ interface OnboardingStatus {
   hasClass: boolean;
   hasStudent: boolean;
   hasFramework: boolean;
+  hasFirstContent: boolean;
   dismissed: boolean;
 }
 
@@ -99,11 +103,16 @@ export class StandaloneService {
       $or: [{ schoolId: null }, { schoolId }],
       isDeleted: false,
     });
+    const contentCount =
+      (await Lesson.countDocuments({ schoolId, isDeleted: false }).limit(1)) +
+      (await Homework.countDocuments({ schoolId, isDeleted: false }).limit(1)) +
+      (await GeneratedPaper.countDocuments({ schoolId, isDeleted: false }).limit(1));
 
     return {
       hasClass: classCount > 0,
       hasStudent: studentCount > 0,
       hasFramework: frameworkCount > 0,
+      hasFirstContent: contentCount > 0,
       dismissed: user.onboardingDismissed,
     };
   }
