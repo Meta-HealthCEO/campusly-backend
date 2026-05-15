@@ -1,5 +1,25 @@
 import mongoose, { Schema, Document, Types } from 'mongoose';
 
+export interface IEmergencyContact {
+  name: string;
+  relationship: string;
+  phone: string;
+}
+
+export interface IMedicalAidInfo {
+  provider: string;
+  memberNumber: string;
+  mainMember: string;
+}
+
+export interface IMedicalProfile {
+  allergies: string[];
+  conditions: string[];
+  bloodType?: string;
+  emergencyContacts: IEmergencyContact[];
+  medicalAidInfo?: IMedicalAidInfo;
+}
+
 export type EnrollmentStatus =
   | 'active'
   | 'transferred'
@@ -17,6 +37,7 @@ export interface IStudent extends Document {
   subjectClassIds: Types.ObjectId[];
   enrollmentDate: Date;
   enrollmentStatus: EnrollmentStatus;
+  medicalProfile: IMedicalProfile;
   dateOfBirth?: Date;
   gender?: 'male' | 'female' | 'other';
   previousSchool?: string;
@@ -31,6 +52,35 @@ export interface IStudent extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
+
+const emergencyContactSchema = new Schema<IEmergencyContact>(
+  {
+    name: { type: String, required: true },
+    relationship: { type: String, required: true },
+    phone: { type: String, required: true },
+  },
+  { _id: false },
+);
+
+const medicalAidInfoSchema = new Schema<IMedicalAidInfo>(
+  {
+    provider: { type: String, required: true },
+    memberNumber: { type: String, required: true },
+    mainMember: { type: String, required: true },
+  },
+  { _id: false },
+);
+
+const medicalProfileSchema = new Schema<IMedicalProfile>(
+  {
+    allergies: { type: [String], default: [] },
+    conditions: { type: [String], default: [] },
+    bloodType: { type: String },
+    emergencyContacts: { type: [emergencyContactSchema], default: [] },
+    medicalAidInfo: { type: medicalAidInfoSchema },
+  },
+  { _id: false },
+);
 
 const studentSchema = new Schema<IStudent>(
   {
@@ -77,6 +127,14 @@ const studentSchema = new Schema<IStudent>(
       type: String,
       enum: ['active', 'transferred', 'graduated', 'expelled', 'withdrawn'],
       default: 'active',
+    },
+    medicalProfile: {
+      type: medicalProfileSchema,
+      default: () => ({
+        allergies: [],
+        conditions: [],
+        emergencyContacts: [],
+      }),
     },
     dateOfBirth: {
       type: Date,
