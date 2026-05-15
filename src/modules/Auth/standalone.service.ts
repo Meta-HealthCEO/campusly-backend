@@ -103,16 +103,18 @@ export class StandaloneService {
       $or: [{ schoolId: null }, { schoolId }],
       isDeleted: false,
     });
-    const contentCount =
-      (await Lesson.countDocuments({ schoolId, isDeleted: false }).limit(1)) +
-      (await Homework.countDocuments({ schoolId, isDeleted: false }).limit(1)) +
-      (await GeneratedPaper.countDocuments({ schoolId, isDeleted: false }).limit(1));
+    const [hasLesson, hasHomework, hasPaper] = await Promise.all([
+      Lesson.exists({ schoolId, isDeleted: false }),
+      Homework.exists({ schoolId, isDeleted: false }),
+      GeneratedPaper.exists({ schoolId, isDeleted: false }),
+    ]);
+    const hasFirstContent = Boolean(hasLesson || hasHomework || hasPaper);
 
     return {
       hasClass: classCount > 0,
       hasStudent: studentCount > 0,
       hasFramework: frameworkCount > 0,
-      hasFirstContent: contentCount > 0,
+      hasFirstContent,
       dismissed: user.onboardingDismissed,
     };
   }

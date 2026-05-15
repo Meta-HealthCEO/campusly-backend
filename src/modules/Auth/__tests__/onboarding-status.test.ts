@@ -7,6 +7,8 @@ import { Lesson } from '../../Lesson/model.js';
 import { Homework } from '../../Homework/model.js';
 import { GeneratedPaper } from '../../AITools/model.js';
 
+const createdSchoolIds: mongoose.Types.ObjectId[] = [];
+
 beforeAll(async () => {
   if (mongoose.connection.readyState === 0) {
     await mongoose.connect(
@@ -16,6 +18,11 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  await Lesson.deleteMany({ schoolId: { $in: createdSchoolIds } });
+  await Homework.deleteMany({ schoolId: { $in: createdSchoolIds } });
+  await GeneratedPaper.deleteMany({ schoolId: { $in: createdSchoolIds } });
+  await User.deleteMany({ email: /^obs\+/ });
+  await School.deleteMany({ name: /^t_obs_/ });
   if (mongoose.connection.readyState !== 0) await mongoose.disconnect();
 });
 
@@ -32,6 +39,7 @@ async function makeTeacher() {
     isActive: true,
     plan: 'standalone',
   });
+  createdSchoolIds.push(school._id as mongoose.Types.ObjectId);
   const user = await User.create({
     email: `obs+${stamp}@test.local`,
     password: 'Password1!',
@@ -52,6 +60,10 @@ describe('getOnboardingStatus.hasFirstContent', () => {
       String(school._id),
     );
     expect(status.hasFirstContent).toBe(false);
+    expect(status.hasClass).toBe(false);
+    expect(status.hasStudent).toBe(false);
+    // hasFramework is system-seeded (CurriculumFramework rows with schoolId: null exist),
+    // so the test environment may have it true — assert only what's deterministic.
   });
 
   it('returns true when teacher has at least one lesson', async () => {
