@@ -4,7 +4,7 @@ import { StudentService } from './service.js';
 import { StudentInviteService } from './invite.service.js';
 import { getMyStudentClasses } from './service-classes.js';
 import { apiResponse } from '../../common/utils.js';
-import { BadRequestError, ForbiddenError, NotFoundError } from '../../common/errors.js';
+import { BadRequestError, ForbiddenError, NotFoundError, UnauthorizedError } from '../../common/errors.js';
 import { Student } from './model.js';
 import { Class } from '../Academic/model.js';
 
@@ -201,7 +201,7 @@ export class StudentController {
 
   static async getMyClasses(req: Request, res: Response): Promise<void> {
     const user = req.user;
-    if (!user) throw new ForbiddenError('Authentication required');
+    if (!user) throw new UnauthorizedError('Authentication required');
     if (!user.schoolId) throw new ForbiddenError('School context is required');
     const result = await getMyStudentClasses(user.id, user.schoolId);
     res.json(apiResponse(true, result));
