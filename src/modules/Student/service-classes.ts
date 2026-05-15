@@ -59,7 +59,7 @@ export async function getMyStudentClasses(
   const homeroomDoc = student.classId
     ? await Class.findOne({
         _id: student.classId,
-        schoolId,
+        schoolId: new mongoose.Types.ObjectId(schoolId),
         isDeleted: false,
       })
         .populate<{ teacherId: PopulatedClassDoc['teacherId'] }>('teacherId', 'firstName lastName')
