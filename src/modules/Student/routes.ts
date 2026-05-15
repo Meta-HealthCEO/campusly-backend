@@ -12,7 +12,6 @@ import { TranscriptController } from './transcript.controller.js';
 import {
   createStudentSchema,
   updateStudentSchema,
-  updateMedicalProfileSchema,
 } from './validation.js';
 
 const router = Router();
@@ -25,6 +24,15 @@ function requireStudentManagement(req: Request, res: Response, next: NextFunctio
   }
   requireManageUsers(req, res, next);
 }
+
+// ─── Self-service ───────────────────────────────────────────────────────────
+
+router.get(
+  '/me/classes',
+  authenticate,
+  authorize('student'),
+  StudentController.getMyClasses,
+);
 
 // ─── CSV Export ─────────────────────────────────────────────────────────────
 
@@ -83,6 +91,13 @@ router.get(
 );
 
 router.get(
+  '/search-roster',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'teacher'),
+  StudentController.searchSchoolRoster,
+);
+
+router.get(
   '/:id',
   authenticate,
   authorize('super_admin', 'school_admin', 'teacher', 'parent', 'coach', 'sports_manager'),
@@ -103,14 +118,6 @@ router.delete(
   authenticate,
   requireStudentManagement,
   StudentController.delete,
-);
-
-router.patch(
-  '/:id/medical',
-  authenticate,
-  requireStudentManagement,
-  validate(updateMedicalProfileSchema),
-  StudentController.updateMedicalProfile,
 );
 
 // ─── Photo Upload ───────────────────────────────────────────────────────────

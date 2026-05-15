@@ -2,9 +2,11 @@ import { Request, Response } from 'express';
 import type { Types } from 'mongoose';
 import { StudentService } from './service.js';
 import { StudentInviteService } from './invite.service.js';
+import { getMyStudentClasses } from './service-classes.js';
 import { apiResponse } from '../../common/utils.js';
-import { ForbiddenError, NotFoundError } from '../../common/errors.js';
+import { BadRequestError, ForbiddenError, NotFoundError } from '../../common/errors.js';
 import { Student } from './model.js';
+import { Class } from '../Academic/model.js';
 
 async function assertTeacherCanAccessStudent(req: Request, studentId: string): Promise<void> {
   if (req.user?.role !== 'teacher') return;
@@ -28,24 +30,54 @@ async function assertTeacherCanAccessStudent(req: Request, studentId: string): P
   }
 }
 
+async function resolveTeacherTargetClass(req: Request, classId: string): Promise<{
+  schoolId: string;
+  classId: string;
+  gradeId: string;
+}> {
+  if (req.user?.role !== 'teacher') {
+    throw new BadRequestError('Teacher context is required');
+  }
+
+  const schoolId = req.user.schoolId;
+  if (!schoolId) throw new ForbiddenError('School context is required');
+
+  const cls = await Class.findOne({ _id: classId, schoolId, isDeleted: false })
+    .select('_id gradeId')
+    .lean();
+  if (!cls) throw new NotFoundError('Teaching group not found');
+
+  const { AcademicService } = await import('../Academic/service.js');
+  const canAccess = await AcademicService.teacherCanAccessClass(
+    req.user.id,
+    String(cls._id),
+    schoolId,
+  );
+  if (!canAccess) {
+    throw new ForbiddenError('You can only manage learners in your own teaching groups');
+  }
+
+  return {
+    schoolId,
+    classId: String(cls._id),
+    gradeId: String(cls.gradeId),
+  };
+}
+
 export class StudentController {
   static async create(req: Request, res: Response): Promise<void> {
     const data = { ...req.body };
-    // Auto-fill schoolId from the authenticated user if not provided
-    if (!data.schoolId && req.user?.schoolId) {
+
+    if (req.user?.role === 'teacher') {
+      const target = await resolveTeacherTargetClass(req, data.classId as string);
+      data.schoolId = target.schoolId;
+      data.classId = target.classId;
+      data.gradeId = target.gradeId;
+    } else if (!data.schoolId && req.user?.schoolId) {
+      // Auto-fill schoolId from the authenticated user if not provided.
       data.schoolId = req.user.schoolId;
     }
-    const schoolId = data.schoolId as string;
-    // Verify teacher can access the target class
-    if (req.user?.role === 'teacher' && data.classId) {
-      const { AcademicService } = await import('../Academic/service.js');
-      const canAccess = await AcademicService.teacherCanAccessClass(
-        req.user.id, data.classId as string, schoolId,
-      );
-      if (!canAccess) {
-        throw new ForbiddenError('You can only add students to your own classes');
-      }
-    }
+
     const student = await StudentService.create(data);
     res.status(201).json(apiResponse(true, student, 'Student created successfully'));
   }
@@ -89,6 +121,18 @@ export class StudentController {
     res.json(apiResponse(true, result, 'Students retrieved successfully'));
   }
 
+  static async searchSchoolRoster(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) {
+      res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
+      return;
+    }
+    const q = (req.query.q as string | undefined) ?? '';
+    const limit = req.query.limit ? Number(req.query.limit) : undefined;
+    const rows = await StudentService.searchSchoolRoster(schoolId, q, limit);
+    res.json(apiResponse(true, rows, 'Students retrieved successfully'));
+  }
+
   static async me(req: Request, res: Response): Promise<void> {
     const schoolId = req.user?.schoolId;
     if (!schoolId) {
@@ -110,17 +154,20 @@ export class StudentController {
   static async update(req: Request, res: Response): Promise<void> {
     const schoolId = req.user!.schoolId!;
     await assertTeacherCanAccessStudent(req, req.params.id as string);
-    // Verify teacher can access the target class when reassigning
-    if (req.user?.role === 'teacher' && req.body.classId) {
-      const { AcademicService } = await import('../Academic/service.js');
-      const canAccess = await AcademicService.teacherCanAccessClass(
-        req.user.id, req.body.classId as string, schoolId,
-      );
-      if (!canAccess) {
-        throw new ForbiddenError('You can only move students to your own classes');
+    const data = { ...req.body };
+
+    if (req.user?.role === 'teacher') {
+      delete data.schoolId;
+      if (data.classId) {
+        const target = await resolveTeacherTargetClass(req, data.classId as string);
+        data.classId = target.classId;
+        data.gradeId = target.gradeId;
+      } else {
+        delete data.gradeId;
       }
     }
-    const student = await StudentService.update(req.params.id as string, schoolId, req.body);
+
+    const student = await StudentService.update(req.params.id as string, schoolId, data);
     res.json(apiResponse(true, student, 'Student updated successfully'));
   }
 
@@ -129,13 +176,6 @@ export class StudentController {
     await assertTeacherCanAccessStudent(req, req.params.id as string);
     await StudentService.delete(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Student deleted successfully'));
-  }
-
-  static async updateMedicalProfile(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
-    await assertTeacherCanAccessStudent(req, req.params.id as string);
-    const student = await StudentService.updateMedicalProfile(req.params.id as string, schoolId, req.body);
-    res.json(apiResponse(true, student, 'Medical profile updated successfully'));
   }
 
   static async inviteStudent(req: Request, res: Response): Promise<void> {
@@ -157,5 +197,13 @@ export class StudentController {
       schoolId,
     );
     res.json(apiResponse(true, result, 'Student credentials regenerated successfully'));
+  }
+
+  static async getMyClasses(req: Request, res: Response): Promise<void> {
+    const user = req.user;
+    if (!user) throw new ForbiddenError('Authentication required');
+    if (!user.schoolId) throw new ForbiddenError('School context is required');
+    const result = await getMyStudentClasses(user.id, user.schoolId);
+    res.json(apiResponse(true, result));
   }
 }
