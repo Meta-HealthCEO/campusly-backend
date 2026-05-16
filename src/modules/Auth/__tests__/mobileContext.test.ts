@@ -102,6 +102,7 @@ describe('GET /api/auth/me/mobile-context', () => {
     expect(res.body.parent.children).toHaveLength(1);
     expect(res.body.parent.children[0].firstName).toBe('Child');
     expect(res.body.student).toBeNull();
+    expect(res.body.teacher).toBeNull();
   });
 
   it('returns student profile for a student account', async () => {
@@ -139,6 +140,7 @@ describe('GET /api/auth/me/mobile-context', () => {
     expect(res.body.student.classId).toBe(String(DUMMY_CLASS_ID));
     expect(res.body.student.gradeId).toBe(String(DUMMY_GRADE_ID));
     expect(res.body.parent).toBeNull();
+    expect(res.body.teacher).toBeNull();
   });
 
   it('returns 401 without a token', async () => {
@@ -189,7 +191,7 @@ describe('GET /api/auth/me/mobile-context', () => {
     expect(res.body.parent.children).toHaveLength(0);
   });
 
-  it('returns null parent and null student for a teacher account', async () => {
+  it('returns teacher identity for a teacher account', async () => {
     const school = await School.create(schoolFixture('Teacher School'));
 
     const user = await User.create({
@@ -215,6 +217,11 @@ describe('GET /api/auth/me/mobile-context', () => {
     expect(res.body.user.role).toBe('teacher');
     expect(res.body.parent).toBeNull();
     expect(res.body.student).toBeNull();
+    expect(res.body.teacher).not.toBeNull();
+    expect(res.body.teacher.id).toBeDefined();
+    expect(Array.isArray(res.body.teacher.grades)).toBe(true);
+    expect(Array.isArray(res.body.teacher.subjectsByGrade)).toBe(true);
+    expect('departmentId' in res.body.teacher).toBe(true);
   });
 
   it('returns 403 when the token has no schoolId', async () => {

@@ -15,6 +15,13 @@ interface ChildSummary {
   gradeId: string | null;
 }
 
+interface TeacherIdentity {
+  id: string;
+  departmentId: string | null;
+  grades: string[];
+  subjectsByGrade: Array<{ gradeId: string; subjectIds: string[] }>;
+}
+
 export async function getMobileContext(req: Request, res: Response): Promise<void> {
   // Errors propagate to the global errorHandler via Express 5's native async-handler support.
   const { id, schoolId: rawSchoolId } = getUser(req);
@@ -27,7 +34,7 @@ export async function getMobileContext(req: Request, res: Response): Promise<voi
   const schoolObjectId = new mongoose.Types.ObjectId(rawSchoolId);
   const userObjectId = new mongoose.Types.ObjectId(id);
 
-  const [user, school, parentDoc, studentDoc] = await Promise.all([
+  const [user, school, parentDoc, studentDoc, teacherDoc] = await Promise.all([
     User.findOne({ _id: userObjectId, schoolId: schoolObjectId, isDeleted: false })
       .select('email firstName lastName role profileImage phone')
       .lean(),
@@ -39,6 +46,9 @@ export async function getMobileContext(req: Request, res: Response): Promise<voi
       .lean(),
     Student.findOne({ userId: userObjectId, schoolId: schoolObjectId, isDeleted: false })
       .select('classId gradeId')
+      .lean(),
+    User.findOne({ _id: userObjectId, schoolId: schoolObjectId, role: 'teacher', isDeleted: false })
+      .select('teachingScope departmentId')
       .lean(),
   ]);
 
@@ -127,6 +137,17 @@ export async function getMobileContext(req: Request, res: Response): Promise<voi
           classId: studentDoc.classId ? String(studentDoc.classId) : null,
           gradeId: studentDoc.gradeId ? String(studentDoc.gradeId) : null,
         }
+      : null,
+    teacher: teacherDoc
+      ? ((): TeacherIdentity => ({
+          id: String(teacherDoc._id),
+          departmentId: teacherDoc.departmentId ? String(teacherDoc.departmentId) : null,
+          grades: (teacherDoc.teachingScope?.grades ?? []).map((g) => String(g)),
+          subjectsByGrade: (teacherDoc.teachingScope?.subjectsByGrade ?? []).map((entry) => ({
+            gradeId: String(entry.gradeId),
+            subjectIds: entry.subjectIds.map((s) => String(s)),
+          })),
+        }))()
       : null,
   });
 }
