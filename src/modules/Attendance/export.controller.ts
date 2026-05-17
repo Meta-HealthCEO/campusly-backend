@@ -5,6 +5,7 @@ import { generateCSV, setCsvHeaders, type CSVColumn } from '../../common/csv-exp
 import { renderRegisterPdf, renderHistoryGridPdf, type RegisterRow, type HistoryCell } from './pdf-export.js';
 import { School } from '../School/model.js';
 import { Class } from '../Academic/model.js';
+import { Student } from '../Student/model.js';
 
 interface PopulatedAttendance {
   date: Date;
@@ -121,14 +122,55 @@ export class AttendanceExportController {
       }
     }
 
+    // Fetch full roster if a specific class was requested. Without it we keep
+    // the existing record-driven behavior (used when classId is unset and the
+    // export covers multiple classes).
+    let roster: Array<{ admissionNumber: string; studentName: string; studentId: string }> = [];
+    if (args.classId) {
+      const students = await Student.find({
+        classId: new mongoose.Types.ObjectId(args.classId),
+        schoolId: new mongoose.Types.ObjectId(args.schoolId),
+        isDeleted: false,
+      })
+        .select('admissionNumber userId')
+        .populate({ path: 'userId', select: 'firstName lastName' })
+        .lean();
+      roster = students
+        .map((s) => {
+          const u = (s as { userId?: { firstName?: string; lastName?: string } }).userId;
+          return {
+            studentId: String((s as { _id: unknown })._id),
+            admissionNumber: (s as { admissionNumber?: string }).admissionNumber ?? '',
+            studentName: u ? `${u.firstName ?? ''} ${u.lastName ?? ''}`.trim() : '',
+          };
+        })
+        .sort((a, b) => a.studentName.localeCompare(b.studentName));
+    }
+
     // Single-day register iff dateFrom === dateTo
     if (args.dateFrom === args.dateTo) {
-      const rows: RegisterRow[] = args.records.map((r) => ({
-        admissionNumber: r.studentId?.admissionNumber ?? '',
-        studentName: studentNameOf(r),
-        status: r.status,
-        notes: r.notes ?? '',
-      }));
+      // Build a quick lookup by studentId (admission number is unreliable for the join).
+      const byStudent = new Map<string, PopulatedAttendance>();
+      for (const r of args.records) {
+        const sid = (r.studentId as unknown as { _id?: unknown })?._id ?? r.studentId;
+        if (sid) byStudent.set(String(sid), r);
+      }
+      const rows: RegisterRow[] = roster.length > 0
+        ? roster.map((s) => {
+            const r = byStudent.get(s.studentId);
+            return {
+              admissionNumber: s.admissionNumber,
+              studentName: s.studentName,
+              status: r?.status ?? '',                // empty when not marked yet
+              notes: r?.notes ?? '',
+            };
+          })
+        : args.records.map((r) => ({
+            admissionNumber: r.studentId?.admissionNumber ?? '',
+            studentName: studentNameOf(r),
+            status: r.status,
+            notes: r.notes ?? '',
+          }));
       return renderRegisterPdf({
         schoolName,
         classLabel,
@@ -168,9 +210,9 @@ export class AttendanceExportController {
         status: r.status as 'present' | 'absent' | 'late' | 'excused',
       });
     }
-    const studentRows = Array.from(studentMap.values()).sort((a, b) =>
-      a.studentName.localeCompare(b.studentName),
-    );
+    const studentRows = roster.length > 0
+      ? roster
+      : Array.from(studentMap.values()).sort((a, b) => a.studentName.localeCompare(b.studentName));
     const cells: HistoryCell[][] = studentRows.map((row) => {
       const byDate = cellMap.get(row.admissionNumber || row.studentName) ?? new Map();
       return dates.map((d) => byDate.get(d) ?? { status: null });
