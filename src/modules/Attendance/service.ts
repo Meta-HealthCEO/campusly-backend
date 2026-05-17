@@ -235,14 +235,31 @@ export class AttendanceService {
     return records;
   }
 
-  static async getByClass(classId: string, date: string, schoolId: string): Promise<IAttendance[]> {
-    const records = await Attendance.find({
+  static async getByClass(
+    classId: string,
+    dateOrRange: string | { dateFrom: string; dateTo: string; period?: number },
+    schoolId: string,
+  ): Promise<IAttendance[]> {
+    const baseFilter: Record<string, unknown> = {
       classId,
       schoolId,
-      date: normalizeAttendanceDate(date),
       isDeleted: false,
-    })
-      .sort({ period: 1 })
+    };
+
+    if (typeof dateOrRange === 'string') {
+      baseFilter.date = normalizeAttendanceDate(dateOrRange);
+    } else {
+      baseFilter.date = {
+        $gte: normalizeAttendanceDate(dateOrRange.dateFrom),
+        $lte: endOfAttendanceDate(dateOrRange.dateTo),
+      };
+      if (typeof dateOrRange.period === 'number') {
+        baseFilter.period = dateOrRange.period;
+      }
+    }
+
+    const records = await Attendance.find(baseFilter)
+      .sort({ date: 1, period: 1 })
       .populate('studentId', 'admissionNumber userId gradeId classId')
       .lean();
 

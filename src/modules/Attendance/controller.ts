@@ -135,14 +135,32 @@ export class AttendanceController {
   static async getByClass(req: Request, res: Response): Promise<void> {
     const schoolId = req.user!.schoolId!;
     const classId = req.params.classId as string;
-    const { date } = req.query;
+    const date = firstQueryValue(req.query.date);
+    const dateFrom = firstQueryValue(req.query.dateFrom);
+    const dateTo = firstQueryValue(req.query.dateTo);
+    const periodValue = firstQueryValue(req.query.period);
 
-    if (!date) {
-      throw new BadRequestError('date is required');
+    if (date) {
+      const records = await AttendanceService.getByClass(classId, date, schoolId);
+      res.json(apiResponse(true, records, 'Class attendance retrieved successfully'));
+      return;
     }
 
-    const records = await AttendanceService.getByClass(classId, date as string, schoolId);
-    res.json(apiResponse(true, records, 'Class attendance retrieved successfully'));
+    if (dateFrom && dateTo) {
+      const parsedPeriod = periodValue ? Number(periodValue) : undefined;
+      if (parsedPeriod !== undefined && (!Number.isInteger(parsedPeriod) || parsedPeriod <= 0)) {
+        throw new BadRequestError('period must be a positive integer');
+      }
+      const records = await AttendanceService.getByClass(
+        classId,
+        { dateFrom, dateTo, period: parsedPeriod },
+        schoolId,
+      );
+      res.json(apiResponse(true, records, 'Class attendance retrieved successfully'));
+      return;
+    }
+
+    throw new BadRequestError('Either `date` or `dateFrom`+`dateTo` is required');
   }
 
   static async getReport(req: Request, res: Response): Promise<void> {
