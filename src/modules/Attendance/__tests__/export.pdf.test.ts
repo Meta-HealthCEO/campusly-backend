@@ -19,7 +19,7 @@ describe('renderRegisterPdf', () => {
     });
 
     expect(buffer.length).toBeGreaterThan(0);
-    expect(buffer.slice(0, 4).equals(PDF_MAGIC)).toBe(true);
+    expect(buffer.subarray(0, 4).equals(PDF_MAGIC)).toBe(true);
   });
 
   it('handles an empty class', async () => {
@@ -31,7 +31,7 @@ describe('renderRegisterPdf', () => {
       rows: [],
     });
     expect(buffer.length).toBeGreaterThan(0);
-    expect(buffer.slice(0, 4).equals(PDF_MAGIC)).toBe(true);
+    expect(buffer.subarray(0, 4).equals(PDF_MAGIC)).toBe(true);
   });
 });
 
@@ -61,6 +61,6 @@ describe('renderHistoryGridPdf', () => {
     });
 
     expect(buffer.length).toBeGreaterThan(0);
-    expect(buffer.slice(0, 4).equals(PDF_MAGIC)).toBe(true);
+    expect(buffer.subarray(0, 4).equals(PDF_MAGIC)).toBe(true);
   });
 });
