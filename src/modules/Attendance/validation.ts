@@ -5,16 +5,22 @@ const objectIdSchema = z.string().regex(objectIdRegex, 'Invalid ObjectId format'
 
 const attendanceStatusSchema = z.enum(['present', 'absent', 'late', 'excused']);
 const attendanceNotesSchema = z.string().trim().max(500, 'Notes must be 500 characters or fewer').optional();
-const attendanceDateSchema = z.string().datetime().refine(
-  (value) => {
-    const attendanceDate = new Date(value);
-    if (Number.isNaN(attendanceDate.getTime())) return false;
-    const todayEnd = new Date();
-    todayEnd.setHours(23, 59, 59, 999);
-    return attendanceDate <= todayEnd;
-  },
-  { message: 'Attendance date cannot be in the future' },
-);
+const dateOnlyRegex = /^\d{4}-\d{2}-\d{2}$/;
+const attendanceDateSchema = z
+  .union([
+    z.iso.datetime(),
+    z.string().regex(dateOnlyRegex, 'Date must be YYYY-MM-DD or ISO datetime'),
+  ])
+  .refine(
+    (value) => {
+      const attendanceDate = new Date(value);
+      if (Number.isNaN(attendanceDate.getTime())) return false;
+      const todayEnd = new Date();
+      todayEnd.setHours(23, 59, 59, 999);
+      return attendanceDate <= todayEnd;
+    },
+    { message: 'Attendance date cannot be in the future' },
+  );
 const attendancePeriodSchema = z
   .int()
   .positive('Period must be a positive integer')
