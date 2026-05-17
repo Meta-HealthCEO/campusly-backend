@@ -11,6 +11,7 @@ interface StudentMarkingSummary {
   id: string;
   paperId: string;
   paperTitle: string;
+  subjectId: string;
   subjectName: string;
   totalMarks: number;
   maxMarks: number;
@@ -69,6 +70,7 @@ export async function listStudentMarkings(req: Request, res: Response): Promise<
       id: String(m._id),
       paperId: String(m.paperId),
       paperTitle: paper?.title ?? 'Paper',
+      subjectId: paper ? String(paper.subjectId) : '',
       subjectName: paper ? subjectName.get(String(paper.subjectId)) ?? '' : '',
       totalMarks: m.totalMarks,
       maxMarks: m.maxMarks,
@@ -124,6 +126,7 @@ export async function getStudentMarking(req: Request, res: Response): Promise<vo
     apiResponse(true, {
       ...safe,
       paperTitle: paper?.title ?? 'Paper',
+      subjectId: paper ? String(paper.subjectId) : '',
       subjectName: subject?.name ?? '',
     }, 'Marking retrieved'),
   );

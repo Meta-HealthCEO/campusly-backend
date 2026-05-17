@@ -24,6 +24,14 @@ router.post(
   AITutorController.sendMessage,
 );
 
+// POST /chat/stream — same as /chat but streams the reply via SSE
+router.post(
+  '/chat/stream',
+  authorize('student'),
+  validate(sendMessageSchema),
+  AITutorController.streamMessage,
+);
+
 // GET /conversations — list student's conversations
 router.get(
   '/conversations',
@@ -59,6 +67,27 @@ router.get(
   '/weak-areas',
   authorize('student'),
   AITutorController.getWeakAreas,
+);
+
+// GET /practice/history — list past practice attempts (paginated)
+router.get(
+  '/practice/history',
+  authorize('student'),
+  AITutorController.getPracticeHistory,
+);
+
+// GET /mastery — per-subject + per-topic mastery snapshot
+router.get(
+  '/mastery',
+  authorize('student'),
+  AITutorController.getMastery,
+);
+
+// GET /recommendations — adaptive "what to work on next" suggestions
+router.get(
+  '/recommendations',
+  authorize('student'),
+  AITutorController.getRecommendations,
 );
 
 // ─── Teacher Routes ──────────────────────────────────────────────────────────
@@ -116,6 +145,13 @@ router.get(
   '/parent/conversations',
   authorize('parent'),
   AITutorController.listParentConversations,
+);
+
+// GET /parent/child/:studentId/insights — privacy-safe mastery snapshot
+router.get(
+  '/parent/child/:studentId/insights',
+  authorize('parent'),
+  AITutorController.getChildInsights,
 );
 
 export default router;

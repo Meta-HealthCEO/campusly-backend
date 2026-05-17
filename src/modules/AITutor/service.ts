@@ -1,11 +1,13 @@
-import { TutorConversation, ITutorConversation } from './model.js';
+import { TutorConversation, ITutorConversation, ITutorMessage } from './model.js';
 import { Mark } from '../Academic/model.js';
 import { Student } from '../Student/model.js';
+import { Homework, HomeworkSubmission } from '../Homework/model.js';
 import { AIUsageLog } from '../AITools/model.js';
 import { AIService } from '../../services/ai.service.js';
 import { NotFoundError } from '../../common/errors.js';
 import { paginationHelper } from '../../common/utils.js';
-import type { SendMessageInput } from './validation.js';
+import { buildSystemPrompt, TutorPromptContext } from './prompts.js';
+import type { SendMessageInput, BuddyContextInput } from './validation.js';
 
 const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514';
 const MAX_CONTEXT_MESSAGES = 20;
@@ -18,14 +20,165 @@ interface WeakArea {
   recommendation: string;
 }
 
+/** Map our internal student/assistant roles → Anthropic user/assistant roles. */
+function toAnthropicMessages(
+  messages: ITutorMessage[],
+): Array<{ role: 'user' | 'assistant'; content: string }> {
+  return messages.map((m) => ({
+    role: m.role === 'student' ? 'user' : 'assistant',
+    content: m.content,
+  }));
+}
+
+const SURFACE_LABELS: Record<string, string> = {
+  homework: 'HOMEWORK',
+  lesson: 'LESSON',
+  lesson_material: 'LESSON MATERIAL',
+  test_review: 'TEST REVIEW (this assessment has been marked)',
+  assignment_review: 'ASSIGNMENT REVIEW (this assessment has been marked)',
+  free: '',
+};
+
+/**
+ * Authoritative server-side check: is the surface this Buddy chat is anchored
+ * to still an "active" assessment that we must not leak answers for? For
+ * homework we look up the actual submission state. For test/assignment review
+ * surfaces, the student has already submitted and been marked — those are
+ * never active. Other surfaces fall back to the client-provided flag.
+ */
+async function resolveAssessmentActive(
+  _userId: string,
+  schoolId: string,
+  ctx: BuddyContextInput | undefined,
+  studentRecordId: string | null,
+): Promise<boolean> {
+  if (!ctx) return false;
+  if (ctx.surface === 'test_review' || ctx.surface === 'assignment_review') return false;
+  if (ctx.surface !== 'homework' || !ctx.surfaceId) {
+    return ctx.isAssessmentActive === true;
+  }
+  if (!studentRecordId) return ctx.isAssessmentActive === true;
+
+  const homework = await Homework.findOne({
+    _id: ctx.surfaceId,
+    schoolId,
+    isDeleted: false,
+  })
+    .select('status')
+    .lean();
+  if (!homework) return ctx.isAssessmentActive === true;
+
+  const alreadySubmitted = await HomeworkSubmission.exists({
+    homeworkId: homework._id,
+    studentId: studentRecordId,
+    isDeleted: false,
+  });
+
+  return !alreadySubmitted && homework.status === 'assigned';
+}
+
+/**
+ * Convert the structured BuddyContext into a few lines of natural language for
+ * the system prompt. We deliberately trim long fields — the surface context is
+ * background, not the primary message.
+ */
+function formatSurfaceContext(ctx: BuddyContextInput): string | undefined {
+  if (!ctx || ctx.surface === 'free') return undefined;
+
+  const label = SURFACE_LABELS[ctx.surface] ?? '';
+  const lines: string[] = [];
+  if (label) lines.push(`The student is currently on a ${label} page.`);
+  if (ctx.title) lines.push(`Title: "${ctx.title.slice(0, 200)}"`);
+  if (ctx.questionText) lines.push(`Current question: "${ctx.questionText.slice(0, 800)}"`);
+  if (ctx.studentDraft) lines.push(`Student's current draft answer: "${ctx.studentDraft.slice(0, 800)}"`);
+  if (ctx.correctAnswer) lines.push(`Correct/expected answer (already revealed to student): "${ctx.correctAnswer.slice(0, 800)}"`);
+  if (ctx.teacherFeedback) lines.push(`Teacher feedback on this question: "${ctx.teacherFeedback.slice(0, 500)}"`);
+  return lines.length > 0 ? lines.join('\n') : undefined;
+}
+
 export class AITutorService {
   // ─── Send Message (Student Chat) ─────────────────────────────────────────
 
+  /**
+   * Non-streaming send. Used by clients that haven't migrated to SSE yet.
+   * Internally calls the same helpers as the streaming path so behaviour stays
+   * in sync.
+   */
   static async sendMessage(
     userId: string,
     schoolId: string,
     input: SendMessageInput,
   ): Promise<ITutorConversation> {
+    const { conversation, systemPrompt, threadedMessages } =
+      await this.prepareSend(userId, schoolId, input);
+
+    // If the student attached an image, route through the vision path. We
+    // don't carry the image into future turns; the model sees it once and the
+    // text caption is what gets persisted in conversation history.
+    if (input.image) {
+      const { text, usage } = await AIService.generateVisionCompletionWithImages(
+        systemPrompt,
+        input.message,
+        [{ base64: input.image.base64, mediaType: input.image.mediaType }],
+      );
+      return this.finalizeSend(
+        conversation,
+        schoolId,
+        userId,
+        `${input.message}\n[Photo attached]`,
+        text,
+        usage,
+      );
+    }
+
+    const { text, usage } = await AIService.generateChatCompletionWithUsage(
+      systemPrompt,
+      threadedMessages,
+    );
+
+    return this.finalizeSend(conversation, schoolId, userId, input.message, text, usage);
+  }
+
+  /**
+   * Streaming send. The caller supplies an `onDelta` callback that receives
+   * each text chunk as Claude generates it. The conversation is persisted
+   * once the stream completes.
+   */
+  static async streamMessage(
+    userId: string,
+    schoolId: string,
+    input: SendMessageInput,
+    onDelta: (chunk: string) => void,
+    options?: { signal?: AbortSignal; onConversationReady?: (conv: ITutorConversation) => void },
+  ): Promise<ITutorConversation> {
+    const { conversation, systemPrompt, threadedMessages } =
+      await this.prepareSend(userId, schoolId, input);
+
+    // Surface the conversation id to the caller before streaming starts so the
+    // SSE handler can send it as the first event.
+    options?.onConversationReady?.(conversation);
+
+    const { text, usage } = await AIService.streamChatCompletion(
+      systemPrompt,
+      threadedMessages,
+      onDelta,
+      { signal: options?.signal },
+    );
+
+    return this.finalizeSend(conversation, schoolId, userId, input.message, text, usage);
+  }
+
+  // ─── Internal helpers shared by streaming and non-streaming sends ────────
+
+  private static async prepareSend(
+    userId: string,
+    schoolId: string,
+    input: SendMessageInput,
+  ): Promise<{
+    conversation: ITutorConversation;
+    systemPrompt: string;
+    threadedMessages: Array<{ role: 'user' | 'assistant'; content: string }>;
+  }> {
     let conversation: ITutorConversation | null = null;
 
     if (input.conversationId) {
@@ -44,13 +197,14 @@ export class AITutorService {
         subjectName: input.subjectName,
         grade: input.grade,
         mode: input.mode,
+        surface: input.context?.surface ?? 'free',
+        surfaceId: input.context?.surfaceId,
         title: input.message.slice(0, 60),
       });
     }
 
     const studentRecordId = await this.resolveStudentRecordId(userId, schoolId);
 
-    // Fetch recent marks for context
     const recentMarks = studentRecordId
       ? await Mark.find({
           studentId: studentRecordId,
@@ -64,48 +218,61 @@ export class AITutorService {
       : [];
 
     const marksSummary = recentMarks.length > 0
-      ? recentMarks.map((m) => {
-          const assessment = m.assessmentId as unknown as Record<string, unknown> | null;
-          const name = assessment?.name ?? 'Assessment';
-          return `${name}: ${m.mark}/${m.total} (${m.percentage}%)`;
-        }).join('; ')
+      ? recentMarks
+          .map((m) => {
+            const assessment = m.assessmentId as unknown as Record<string, unknown> | null;
+            const name = assessment?.name ?? 'Assessment';
+            return `${name}: ${m.mark}/${m.total} (${m.percentage}%)`;
+          })
+          .join('; ')
       : 'No recent marks available';
 
-    const systemPrompt = [
-      `You are a CAPS-aligned tutor for Grade ${input.grade} ${input.subjectName}.`,
-      'Use the Socratic method — guide the student to discover answers, do not give direct answers.',
-      'Be age-appropriate, encouraging, and patient.',
-      'Never reveal answers to active assessments.',
-      `Student's recent academic performance: ${marksSummary}`,
-      `Conversation mode: ${conversation.mode}`,
-    ].join('\n');
-
-    // Build context from last N messages
-    const contextMessages = conversation.messages
-      .slice(-MAX_CONTEXT_MESSAGES)
-      .map((m) => `${m.role}: ${m.content}`)
-      .join('\n');
-
-    const userPrompt = contextMessages
-      ? `${contextMessages}\nstudent: ${input.message}`
-      : input.message;
-
-    const { text, usage } = await AIService.generateCompletionWithUsage(
-      systemPrompt,
-      userPrompt,
+    // Server-side safety: don't trust the client's `isAssessmentActive` flag.
+    // For homework surfaces we look up the actual submission state. Any other
+    // surface defaults to the client-provided flag.
+    const serverIsActive = await resolveAssessmentActive(
+      userId,
+      schoolId,
+      input.context,
+      studentRecordId,
     );
 
-    // Push both messages
+    const ctx: TutorPromptContext = {
+      grade: input.grade,
+      subjectName: input.subjectName,
+      marksSummary,
+      surfaceContext: input.context ? formatSurfaceContext(input.context) : undefined,
+      isAssessmentActive: serverIsActive,
+    };
+
+    const systemPrompt = buildSystemPrompt(input.mode, ctx);
+
+    const threadedMessages = [
+      ...toAnthropicMessages(conversation.messages.slice(-MAX_CONTEXT_MESSAGES)),
+      { role: 'user' as const, content: input.message },
+    ];
+
+    return { conversation, systemPrompt, threadedMessages };
+  }
+
+  private static async finalizeSend(
+    conversation: ITutorConversation,
+    schoolId: string,
+    userId: string,
+    studentMessage: string,
+    assistantText: string,
+    usage: { input_tokens: number; output_tokens: number },
+  ): Promise<ITutorConversation> {
     conversation.messages.push(
       {
         role: 'student',
-        content: input.message,
+        content: studentMessage,
         timestamp: new Date(),
         tokensUsed: { input: 0, output: 0 },
       },
       {
         role: 'assistant',
-        content: text,
+        content: assistantText,
         timestamp: new Date(),
         tokensUsed: { input: usage.input_tokens, output: usage.output_tokens },
       },
@@ -116,7 +283,6 @@ export class AITutorService {
 
     await conversation.save();
 
-    // Log usage
     await AIUsageLog.create({
       schoolId,
       teacherId: userId,
@@ -150,6 +316,7 @@ export class AITutorService {
 
     const projected = conversations.map((c) => ({
       id: c._id,
+      subjectId: c.subjectId,
       subjectName: c.subjectName,
       mode: c.mode,
       title: c.title,
@@ -203,7 +370,6 @@ export class AITutorService {
 
     if (marks.length === 0) return [];
 
-    // Group by subject
     const bySubject = new Map<string, { total: number; count: number; subjectName: string }>();
 
     for (const m of marks) {

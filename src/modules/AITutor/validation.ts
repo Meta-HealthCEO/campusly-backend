@@ -3,7 +3,43 @@ import { z } from 'zod/v4';
 const objectIdRegex = /^[0-9a-fA-F]{24}$/;
 const oid = z.string().regex(objectIdRegex, 'Invalid ObjectId format');
 
+// ─── Buddy Context ───────────────────────────────────────────────────────────
+// Describes what the student is currently looking at so the tutor can give
+// surface-aware help (homework hints, test-review explanations, lesson
+// re-explanations, etc.) instead of behaving as a generic chatbot.
+
+const buddySurface = z.enum([
+  'free',
+  'homework',
+  'lesson',
+  'lesson_material',
+  'test_review',
+  'assignment_review',
+]);
+export type BuddySurface = z.infer<typeof buddySurface>;
+
+const buddyContextSchema = z.object({
+  surface: buddySurface.default('free'),
+  surfaceId: z.string().optional(),
+  title: z.string().max(500).optional(),
+  questionText: z.string().max(4000).optional(),
+  studentDraft: z.string().max(4000).optional(),
+  correctAnswer: z.string().max(4000).optional(),
+  teacherFeedback: z.string().max(2000).optional(),
+  curriculumNodeId: z.string().optional(),
+  isAssessmentActive: z.boolean().optional(),
+});
+export type BuddyContextInput = z.infer<typeof buddyContextSchema>;
+
 // ─── Send Message ────────────────────────────────────────────────────────────
+
+const imageMediaType = z.enum(['image/jpeg', 'image/png', 'image/webp']);
+
+const imagePayloadSchema = z.object({
+  mediaType: imageMediaType,
+  /** Base64-encoded image data (no `data:` prefix). Server caps at 4 MB. */
+  base64: z.string().min(1).max(8_000_000), // ~6 MB base64 ≈ 4.5 MB raw
+});
 
 export const sendMessageSchema = z.object({
   conversationId: oid.optional(),
@@ -12,6 +48,9 @@ export const sendMessageSchema = z.object({
   grade: z.number().int().min(1).max(12),
   message: z.string().min(1, 'Message is required').max(4000),
   mode: z.enum(['chat', 'homework_help', 'practice', 'exam_prep']).default('chat'),
+  context: buddyContextSchema.optional(),
+  /** Optional image attached by the student (e.g., a photo of a worksheet). */
+  image: imagePayloadSchema.optional(),
 }).strict();
 
 export type SendMessageInput = z.infer<typeof sendMessageSchema>;

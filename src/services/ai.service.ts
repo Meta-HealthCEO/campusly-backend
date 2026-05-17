@@ -106,6 +106,100 @@ export class AIService {
     }
   }
 
+  static async generateChatCompletionWithUsage(
+    systemPrompt: string,
+    messages: Array<{ role: 'user' | 'assistant'; content: string }>,
+    options?: { maxTokens?: number; temperature?: number },
+  ): Promise<{ text: string; usage: { input_tokens: number; output_tokens: number } }> {
+    await acquireSemaphore();
+    try {
+      const client = getClient();
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
+      const message = await callWithRetry(() =>
+        client.messages.create(
+          {
+            model: ANTHROPIC_MODEL,
+            max_tokens: options?.maxTokens ?? 2048,
+            temperature: options?.temperature ?? 0.7,
+            system: systemPrompt,
+            messages,
+          },
+          { signal: controller.signal },
+        ),
+      );
+
+      clearTimeout(timeout);
+
+      const inputTokens = message.usage?.input_tokens ?? 0;
+      const outputTokens = message.usage?.output_tokens ?? 0;
+      logger.info(
+        `[AIService] Chat tokens — input: ${inputTokens}, output: ${outputTokens}`,
+      );
+
+      const textBlock = message.content.find((b) => b.type === 'text');
+      return {
+        text: textBlock ? textBlock.text : '',
+        usage: { input_tokens: inputTokens, output_tokens: outputTokens },
+      };
+    } finally {
+      releaseSemaphore();
+    }
+  }
+
+  /**
+   * Stream a threaded chat completion. Calls `onDelta` for each text chunk as
+   * tokens arrive. Resolves with the final text + token usage once the stream
+   * completes. Errors propagate to the caller; the semaphore is always released.
+   */
+  static async streamChatCompletion(
+    systemPrompt: string,
+    messages: Array<{ role: 'user' | 'assistant'; content: string }>,
+    onDelta: (chunk: string) => void,
+    options?: { maxTokens?: number; temperature?: number; signal?: AbortSignal },
+  ): Promise<{ text: string; usage: { input_tokens: number; output_tokens: number } }> {
+    await acquireSemaphore();
+    try {
+      const client = getClient();
+
+      const stream = client.messages.stream(
+        {
+          model: ANTHROPIC_MODEL,
+          max_tokens: options?.maxTokens ?? 2048,
+          temperature: options?.temperature ?? 0.7,
+          system: systemPrompt,
+          messages,
+        },
+        options?.signal ? { signal: options.signal } : undefined,
+      );
+
+      let fullText = '';
+      stream.on('text', (delta: string) => {
+        fullText += delta;
+        try {
+          onDelta(delta);
+        } catch {
+          // swallow downstream write errors so the stream still finalizes cleanly
+        }
+      });
+
+      const finalMessage = await stream.finalMessage();
+      const inputTokens = finalMessage.usage?.input_tokens ?? 0;
+      const outputTokens = finalMessage.usage?.output_tokens ?? 0;
+      logger.info(
+        `[AIService] Stream tokens — input: ${inputTokens}, output: ${outputTokens}`,
+      );
+
+      return {
+        text: fullText,
+        usage: { input_tokens: inputTokens, output_tokens: outputTokens },
+      };
+    } finally {
+      releaseSemaphore();
+    }
+  }
+
   static async generateJSON<T>(
     systemPrompt: string,
     userPrompt: string,

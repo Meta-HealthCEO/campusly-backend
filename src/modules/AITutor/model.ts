@@ -28,13 +28,32 @@ const tutorMessageSchema = new Schema<ITutorMessage>(
 
 // ─── Tutor Conversation ──────────────────────────────────────────────────────
 
+export type TutorSurface =
+  | 'free'
+  | 'homework'
+  | 'lesson'
+  | 'lesson_material'
+  | 'test_review'
+  | 'assignment_review';
+
 export interface ITutorConversation extends Document {
   schoolId: Types.ObjectId;
+  /**
+   * Owner user id — the User._id of whoever is chatting (student OR parent).
+   * For parent-mode conversations, `aboutStudentId` records which child the
+   * conversation is about. We keep the field named `studentId` for
+   * backward-compat with existing indexes and data.
+   */
   studentId: Types.ObjectId;
+  aboutStudentId?: Types.ObjectId;
   subjectId: Types.ObjectId;
   subjectName: string;
   grade: number;
   mode: TutorMode;
+  /** Where the conversation was started from. Defaults to 'free' (standalone tutor page). */
+  surface?: TutorSurface;
+  /** The id of the homework / lesson / test the conversation is anchored to. */
+  surfaceId?: string;
   title: string;
   messages: ITutorMessage[];
   totalTokens: { input: number; output: number };
@@ -47,6 +66,7 @@ const tutorConversationSchema = new Schema<ITutorConversation>(
   {
     schoolId: { type: Schema.Types.ObjectId, ref: 'School', required: true },
     studentId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    aboutStudentId: { type: Schema.Types.ObjectId, ref: 'Student' },
     subjectId: { type: Schema.Types.ObjectId, ref: 'Subject', required: true },
     subjectName: { type: String, required: true, trim: true },
     grade: { type: Number, required: true },
@@ -55,6 +75,12 @@ const tutorConversationSchema = new Schema<ITutorConversation>(
       enum: ['chat', 'homework_help', 'practice', 'exam_prep', 'parent'],
       default: 'chat',
     },
+    surface: {
+      type: String,
+      enum: ['free', 'homework', 'lesson', 'lesson_material', 'test_review', 'assignment_review'],
+      default: 'free',
+    },
+    surfaceId: { type: String },
     title: { type: String, default: 'New conversation', trim: true },
     messages: [tutorMessageSchema],
     totalTokens: {
@@ -83,6 +109,10 @@ export interface IPracticeQuestion {
   correctAnswer: string;
   studentAnswer?: string;
   isCorrect?: boolean;
+  /** Marks actually awarded (supports partial credit). 0..marks inclusive. */
+  marksAwarded?: number;
+  /** Short marker-style feedback for the student (mainly short-answer). */
+  feedback?: string;
   explanation: string;
   marks: number;
 }
@@ -99,6 +129,8 @@ const practiceQuestionSchema = new Schema<IPracticeQuestion>(
     correctAnswer: { type: String, required: true },
     studentAnswer: { type: String },
     isCorrect: { type: Boolean },
+    marksAwarded: { type: Number },
+    feedback: { type: String },
     explanation: { type: String, required: true },
     marks: { type: Number, default: 1 },
   },

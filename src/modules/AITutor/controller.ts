@@ -5,6 +5,8 @@ import { AITutorService } from './service.js';
 import { PracticeService } from './practice.service.js';
 import { ReportService, listReportComments, updateReportComment, regenerateReportComment, deleteReportComment } from './report.service.js';
 import { ParentService } from './parent.service.js';
+import { MasteryService } from './mastery.service.js';
+import { RecommendationsService } from './recommendations.service.js';
 import { apiResponse } from '../../common/utils.js';
 
 export class AITutorController {
@@ -16,6 +18,52 @@ export class AITutorController {
       req.body,
     );
     res.status(201).json(apiResponse(true, conversation, 'Message sent successfully'));
+  }
+
+  /**
+   * Stream a chat reply to the client via Server-Sent Events. The HTTP body
+   * is a sequence of `event: <name>\ndata: <json>\n\n` frames. Frames:
+   *   - `meta`: `{ conversationId }` — sent immediately so the client can
+   *     associate the stream with a conversation before any text arrives.
+   *   - `delta`: `{ text }` — one per token chunk Claude emits.
+   *   - `done`: full final conversation document.
+   *   - `error`: `{ message }` — sent before the stream is closed on failure.
+   */
+  static async streamMessage(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const userId = getUser(req).id;
+
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no'); // tell nginx not to buffer
+    res.flushHeaders?.();
+
+    const send = (event: string, data: unknown): void => {
+      res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+    };
+
+    const abortController = new AbortController();
+    req.on('close', () => abortController.abort());
+
+    try {
+      const conversation = await AITutorService.streamMessage(
+        userId,
+        schoolId,
+        req.body,
+        (chunk) => send('delta', { text: chunk }),
+        {
+          signal: abortController.signal,
+          onConversationReady: (conv) => send('meta', { conversationId: conv._id }),
+        },
+      );
+      send('done', conversation);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Stream failed';
+      send('error', { message });
+    } finally {
+      res.end();
+    }
   }
 
   static async listConversations(req: Request, res: Response): Promise<void> {
@@ -69,6 +117,30 @@ export class AITutorController {
     res.json(apiResponse(true, areas, 'Weak areas retrieved successfully'));
   }
 
+  static async getPracticeHistory(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const { page, limit } = req.query;
+    const result = await MasteryService.listPracticeHistory(
+      getUser(req).id,
+      schoolId,
+      page ? parseInt(page as string, 10) : undefined,
+      limit ? parseInt(limit as string, 10) : undefined,
+    );
+    res.json(apiResponse(true, result, 'Practice history retrieved'));
+  }
+
+  static async getMastery(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const data = await MasteryService.getMastery(getUser(req).id, schoolId);
+    res.json(apiResponse(true, data, 'Mastery retrieved'));
+  }
+
+  static async getRecommendations(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const data = await RecommendationsService.getRecommendations(getUser(req).id, schoolId);
+    res.json(apiResponse(true, data, 'Recommendations retrieved'));
+  }
+
   static async generateReportComments(req: Request, res: Response): Promise<void> {
     const schoolId = req.user!.schoolId!;
     const comments = await ReportService.generateReportComments(
@@ -87,6 +159,17 @@ export class AITutorController {
       req.body,
     );
     res.status(201).json(apiResponse(true, conversation, 'Message sent successfully'));
+  }
+
+  static async getChildInsights(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const studentId = req.params.studentId as string;
+    const insights = await ParentService.getChildInsights(
+      getUser(req).id,
+      schoolId,
+      studentId,
+    );
+    res.json(apiResponse(true, insights, 'Child insights retrieved'));
   }
 
   static async listParentConversations(req: Request, res: Response): Promise<void> {
