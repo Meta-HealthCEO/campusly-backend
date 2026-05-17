@@ -20,8 +20,31 @@ import { markPaperFromText } from '../AITools/service-marking-text.js';
 import { logger } from '../../common/logger.js';
 import { PaperMarking } from '../AITools/model-marking.js';
 
+type PaperAssignmentLike = {
+  _id: mongoose.Types.ObjectId;
+  classId: unknown;
+  mode: PaperAssignmentMode;
+  releaseAt?: Date | null;
+  dueAt?: Date | null;
+};
+
 function toOid(id: string | mongoose.Types.ObjectId): mongoose.Types.ObjectId {
   return id instanceof mongoose.Types.ObjectId ? id : new mongoose.Types.ObjectId(id);
+}
+
+function findDigitalAssignment(
+  assignments: readonly PaperAssignmentLike[] | undefined,
+  classId: mongoose.Types.ObjectId,
+): PaperAssignmentLike | undefined {
+  return assignments?.find(
+    (a) => String(a.classId) === String(classId) && a.mode === 'digital',
+  );
+}
+
+function assertReleased(assignment: PaperAssignmentLike): void {
+  if (assignment.releaseAt && assignment.releaseAt.getTime() > Date.now()) {
+    throw new BadRequestError(`This test opens at ${assignment.releaseAt.toISOString()}.`);
+  }
 }
 
 function deriveSubmissionStatus(
@@ -140,9 +163,7 @@ export async function listAssignedPapersForStudent(
 
   const result: AssignedPaperSummary[] = [];
   for (const paper of papers) {
-    const assignment = paper.assignments?.find(
-      (a) => String(a.classId) === String(ctx.classId) && a.mode === 'digital',
-    );
+    const assignment = findDigitalAssignment(paper.assignments, ctx.classId);
     if (!assignment) continue;
     const sub = subByPaper.get(String(paper._id));
     result.push({
@@ -215,12 +236,11 @@ export async function getStudentPaperView(
     .lean();
 
   if (!paper) throw new NotFoundError('Paper not found');
-  const assignedToClass = paper.assignments?.some(
-    (a) => String(a.classId) === String(ctx.classId) && a.mode === 'digital',
-  );
-  if (!assignedToClass) {
+  const assignment = findDigitalAssignment(paper.assignments, ctx.classId);
+  if (!assignment) {
     throw new NotFoundError('Paper is not assigned to this class for digital take');
   }
+  assertReleased(assignment);
 
   return {
     paperId: String(paper._id),
@@ -285,10 +305,9 @@ export async function startSubmission(
     status: 'finalised',
   }).select('version assignments').lean();
   if (!paper) throw new NotFoundError('Paper not found');
-  const assignment = paper.assignments?.find(
-    (a) => String(a.classId) === String(ctx.classId) && a.mode === 'digital',
-  );
+  const assignment = findDigitalAssignment(paper.assignments, ctx.classId);
   if (!assignment) throw new NotFoundError('Paper is not assigned to this class for digital take');
+  assertReleased(assignment);
 
   const created = await PaperSubmission.create({
     paperId: toOid(paperId),

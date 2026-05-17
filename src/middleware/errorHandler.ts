@@ -24,6 +24,25 @@ export function errorHandler(
     return;
   }
 
+  // Zod request validation errors
+  if (
+    (err.name === 'ZodError' || err.name === '$ZodError')
+    && 'issues' in err
+    && Array.isArray((err as { issues?: unknown }).issues)
+  ) {
+    const zodErr = err as Error & {
+      issues: Array<{ path?: Array<string | number>; message: string }>;
+    };
+    const message = zodErr.issues
+      .map((issue) => {
+        const path = issue.path?.length ? `${issue.path.join('.')}: ` : '';
+        return `${path}${issue.message}`;
+      })
+      .join(', ') || 'Validation failed';
+    res.status(400).json(apiResponse(false, undefined, undefined, message));
+    return;
+  }
+
   // Mongoose ValidationError
   if (err.name === 'ValidationError' && 'errors' in err) {
     const mongooseErr = err as Error & { errors: Record<string, { message: string }> };

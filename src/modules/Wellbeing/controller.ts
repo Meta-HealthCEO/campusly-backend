@@ -1,11 +1,20 @@
 import type { Request, Response } from 'express';
 import { getUser } from '../../types/authenticated-request.js';
 import { apiResponse } from '../../common/utils.js';
+import { NotFoundError } from '../../common/errors.js';
 import { WellbeingService } from './service.js';
 import { MoodDashboardService } from './service-dashboard.js';
 import type {
   CreateSurveyInput, UpdateSurveyInput, SubmitResponseInput,
 } from './validation.js';
+
+async function findStudentIdForUser(userId: string, schoolId: string): Promise<string | null> {
+  const { Student } = await import('../Student/model.js');
+  const student = await Student.findOne({ userId, schoolId, isDeleted: false })
+    .select('_id')
+    .lean<{ _id: { toString(): string } } | null>();
+  return student?._id.toString() ?? null;
+}
 
 export class WellbeingController {
   // ─── Surveys ───────────────────────────────────────────────────────────
@@ -55,10 +64,12 @@ export class WellbeingController {
   static async submitResponse(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
     const data: SubmitResponseInput = req.body;
+    const studentId = await findStudentIdForUser(user.id, user.schoolId as string);
+    if (!studentId) throw new NotFoundError('Student profile not found');
     await WellbeingService.submitResponse(
       req.params.id as string,
       user.schoolId as string,
-      user.id, // Resolved to studentId in service if needed
+      studentId,
       data,
     );
     res.status(201).json(apiResponse(true, undefined, 'Response submitted'));
@@ -66,11 +77,10 @@ export class WellbeingController {
 
   /** Get active survey for student to complete */
   static async getActiveSurvey(req: Request, res: Response): Promise<void> {
-    const { schoolId } = getUser(req);
-    const surveys = await WellbeingService.listSurveys(schoolId as string);
-    const now = new Date();
-    const active = surveys.find(
-      (s) => s.status === 'active' && new Date(s.startDate) <= now && new Date(s.endDate) >= now,
+    const user = getUser(req);
+    const active = await WellbeingService.getActiveSurveyForStudent(
+      user.id,
+      user.schoolId as string,
     );
     res.json(apiResponse(true, active ?? null, 'Active survey retrieved'));
   }

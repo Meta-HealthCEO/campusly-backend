@@ -67,7 +67,8 @@ interface MakeLessonOpts {
   teacherId: mongoose.Types.ObjectId;
   subjectId: mongoose.Types.ObjectId;
   title: string;
-  status: 'draft' | 'ready' | 'taught';
+  /** Defaults to published-now if omitted. Pass null for unpublished drafts. */
+  publishedAt?: Date | null;
   classId: mongoose.Types.ObjectId;
   scheduledDate: Date;
   assignmentStatus: 'planned' | 'taught';
@@ -82,7 +83,7 @@ async function makeLesson(o: MakeLessonOpts): Promise<void> {
     curriculumNodeId: new mongoose.Types.ObjectId(),
     title: o.title,
     durationMinutes: 30,
-    status: o.status,
+    publishedAt: o.publishedAt === undefined ? new Date() : o.publishedAt,
     assignedClasses: [
       {
         classId: o.classId,
@@ -142,17 +143,17 @@ describe('buildStudentDashboard.recentLesson', () => {
 
     await makeLesson({
       schoolId, teacherId, subjectId, classId,
-      title: 'Older taught lesson', status: 'taught',
+      title: 'Older taught lesson',
       scheduledDate: twoDaysAgo, assignmentStatus: 'taught', taughtAt: twoDaysAgo,
     });
     await makeLesson({
       schoolId, teacherId, subjectId, classId,
-      title: 'Most recent taught lesson', status: 'taught',
+      title: 'Most recent taught lesson',
       scheduledDate: yesterday, assignmentStatus: 'taught', taughtAt: yesterday,
     });
     await makeLesson({
       schoolId, teacherId, subjectId, classId,
-      title: 'Planned lesson (should be ignored)', status: 'ready',
+      title: 'Planned lesson (should be ignored)',
       scheduledDate: new Date(), assignmentStatus: 'planned',
     });
 
@@ -165,7 +166,7 @@ describe('buildStudentDashboard.recentLesson', () => {
     const { schoolId, classId, subjectId, teacherId, student } = await seed();
     await makeLesson({
       schoolId, teacherId, subjectId, classId,
-      title: 'Planned only', status: 'ready',
+      title: 'Planned only',
       scheduledDate: new Date(), assignmentStatus: 'planned',
     });
 
@@ -182,24 +183,24 @@ describe('buildStudentDashboard.counts.lessonsThisWeek', () => {
 
     await makeLesson({
       schoolId, teacherId, subjectId, classId,
-      title: 'In-week 1', status: 'ready',
+      title: 'In-week 1',
       scheduledDate: today, assignmentStatus: 'planned',
     });
     await makeLesson({
       schoolId, teacherId, subjectId, classId,
-      title: 'In-week 2', status: 'taught',
+      title: 'In-week 2',
       scheduledDate: today, assignmentStatus: 'taught', taughtAt: today,
     });
     await makeLesson({
       schoolId, teacherId, subjectId, classId,
-      title: 'Old', status: 'taught',
+      title: 'Old',
       scheduledDate: tenDaysAgo, assignmentStatus: 'taught', taughtAt: tenDaysAgo,
     });
     // Wrong class — should not count.
     await makeLesson({
       schoolId, teacherId, subjectId,
       classId: new mongoose.Types.ObjectId(),
-      title: 'Wrong class', status: 'ready',
+      title: 'Wrong class',
       scheduledDate: today, assignmentStatus: 'planned',
     });
 
@@ -265,7 +266,7 @@ describe('buildStudentDashboard.homework exclusion', () => {
 describe('buildStudentDashboard.nextTest', () => {
   it('returns the upcoming assessment paper assigned to the student class', async () => {
     const { schoolId, classId, subjectId, gradeId, teacherId, student } = await seed();
-    const release = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    const release = new Date(Date.now() - 60 * 60 * 1000);
     const due = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
 
     await AssessmentPaper.create({
@@ -311,7 +312,7 @@ describe('buildStudentDashboard.multi-tenancy', () => {
 
     await makeLesson({
       schoolId: otherSchool, teacherId, subjectId, classId,
-      title: 'Other school taught', status: 'taught',
+      title: 'Other school taught',
       scheduledDate: new Date(), assignmentStatus: 'taught', taughtAt: new Date(),
     });
     await makeHomework({

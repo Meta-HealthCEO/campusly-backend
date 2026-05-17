@@ -1,8 +1,19 @@
 import mongoose from 'mongoose';
 import { Lesson } from './model.js';
 import { CurriculumNode } from '../CurriculumStructure/model.js';
-import type { ILesson, LessonStatus } from './types.js';
+import { NotFoundError } from '../../common/errors.js';
+import type { ILesson } from './types.js';
 import { LESSON_PHASES } from './types.js';
+import {
+  assertCanUseClasses,
+  canManageAllLessons,
+  isLessonActor,
+  lessonAccessFilter,
+  schoolObjectId,
+  toObjectId,
+  type LessonActor,
+  type LessonScope,
+} from './service-access.js';
 import type {
   CreateLessonInput,
   UpdateLessonInput,
@@ -17,24 +28,22 @@ export interface RecentTopicSummary {
   gradeId: string | null;
 }
 
-const ALLOWED_TRANSITIONS: Record<LessonStatus, LessonStatus[]> = {
-  draft: ['ready', 'taught'],
-  ready: ['draft', 'taught'],
-  taught: ['ready'],
-};
-
 export class LessonService {
   static async list(
-    schoolId: string,
+    scope: LessonScope,
     filters: ListLessonsInput,
   ): Promise<{ items: ILesson[]; total: number; page: number; limit: number }> {
-    const query: Record<string, unknown> = {
-      schoolId: new mongoose.Types.ObjectId(schoolId),
-      isDeleted: false,
-    };
-    if (filters.teacherId) query.teacherId = new mongoose.Types.ObjectId(filters.teacherId);
-    if (filters.subjectId) query.subjectId = new mongoose.Types.ObjectId(filters.subjectId);
-    if (filters.status) query.status = filters.status;
+    const query = lessonAccessFilter(scope);
+    if (
+      filters.teacherId
+      && (!isLessonActor(scope) || scope.role !== 'teacher' || canManageAllLessons(scope))
+    ) {
+      query.teacherId = toObjectId(filters.teacherId, 'teacherId');
+    }
+    if (filters.subjectId) query.subjectId = toObjectId(filters.subjectId, 'subjectId');
+    if (filters.published !== undefined) {
+      query.publishedAt = filters.published ? { $ne: null } : null;
+    }
 
     // Class filter + date range now resolve via the assignedClasses subdoc.
     // When a classId is provided we use $elemMatch so the date filter (if any)
@@ -42,7 +51,7 @@ export class LessonService {
     // that happens to satisfy either constraint independently.
     if (filters.classId || filters.dateFrom || filters.dateTo) {
       const elem: Record<string, unknown> = {};
-      if (filters.classId) elem.classId = new mongoose.Types.ObjectId(filters.classId);
+      if (filters.classId) elem.classId = toObjectId(filters.classId, 'classId');
       if (filters.dateFrom || filters.dateTo) {
         const range: { $gte?: Date; $lte?: Date } = {};
         if (filters.dateFrom) range.$gte = new Date(filters.dateFrom);
@@ -75,11 +84,10 @@ export class LessonService {
     return { items, total, page: filters.page, limit: filters.limit };
   }
 
-  static async getById(id: string, schoolId: string): Promise<ILesson> {
+  static async getById(id: string, scope: LessonScope): Promise<ILesson> {
     const lesson = await Lesson.findOne({
-      _id: new mongoose.Types.ObjectId(id),
-      schoolId: new mongoose.Types.ObjectId(schoolId),
-      isDeleted: false,
+      _id: toObjectId(id, 'lessonId'),
+      ...lessonAccessFilter(scope),
     })
       .populate('assignedClasses.classId', 'name')
       .populate('subjectId', 'name code')
@@ -104,15 +112,20 @@ export class LessonService {
       .populate('materials.comprehensionQuestionIds')
       .populate('materials.textbookRef.textbookId', 'title')
       .lean<ILesson>();
-    if (!lesson) throw new Error('Lesson not found');
+    if (!lesson) throw new NotFoundError('Lesson not found');
     return lesson;
   }
 
   static async create(
     data: CreateLessonInput,
-    teacherId: string,
-    schoolId: string,
+    actor: LessonActor,
   ): Promise<ILesson> {
+    const teacherId = actor.id;
+    await assertCanUseClasses(
+      actor,
+      (data.assignedClasses ?? []).map((a) => a.classId),
+    );
+
     const phases = LESSON_PHASES.map((p) => ({
       phase: p,
       materialIds: [] as mongoose.Types.ObjectId[],
@@ -175,8 +188,8 @@ export class LessonService {
     }));
 
     const lesson = await Lesson.create({
-      schoolId,
-      teacherId,
+      schoolId: schoolObjectId(actor),
+      teacherId: toObjectId(teacherId, 'teacherId'),
       subjectId,
       gradeId,
       curriculumNodeId: data.curriculumNodeId,
@@ -186,7 +199,7 @@ export class LessonService {
       objectives,
       phases,
       materials,
-      status: 'draft',
+      publishedAt: null,
       aiGenerated,
       assignedClasses,
     });
@@ -195,39 +208,60 @@ export class LessonService {
 
   static async update(
     id: string,
-    schoolId: string,
+    scope: LessonScope,
     data: UpdateLessonInput,
   ): Promise<ILesson> {
     const updated = await Lesson.findOneAndUpdate(
-      { _id: id, schoolId, isDeleted: false },
+      { _id: toObjectId(id, 'lessonId'), ...lessonAccessFilter(scope) },
       { $set: data },
       { new: true },
     ).lean<ILesson>();
-    if (!updated) throw new Error('Lesson not found');
+    if (!updated) throw new NotFoundError('Lesson not found');
     return updated;
   }
 
-  static async patchStatus(
-    id: string,
-    schoolId: string,
-    newStatus: LessonStatus,
-  ): Promise<ILesson> {
-    const lesson = await Lesson.findOne({ _id: id, schoolId, isDeleted: false });
-    if (!lesson) throw new Error('Lesson not found');
-    if (!ALLOWED_TRANSITIONS[lesson.status].includes(newStatus)) {
-      throw new Error(`Invalid status transition: ${lesson.status} -> ${newStatus}`);
-    }
-    lesson.status = newStatus;
-    await lesson.save();
-    return lesson.toObject() as ILesson;
+  /**
+   * Publish gates student visibility. Idempotent — re-publishing leaves the
+   * original publishedAt timestamp untouched so the "published on" stamp
+   * remains accurate.
+   */
+  static async publish(id: string, scope: LessonScope): Promise<ILesson> {
+    const updated = await Lesson.findOneAndUpdate(
+      {
+        _id: toObjectId(id, 'lessonId'),
+        ...lessonAccessFilter(scope),
+        publishedAt: null,
+      },
+      { $set: { publishedAt: new Date() } },
+      { new: true },
+    ).lean<ILesson>();
+    if (updated) return updated;
+    // Already published — return current state.
+    const existing = await Lesson.findOne({
+      _id: toObjectId(id, 'lessonId'),
+      ...lessonAccessFilter(scope),
+    }).lean<ILesson>();
+    if (!existing) throw new NotFoundError('Lesson not found');
+    return existing;
   }
 
-  static async delete(id: string, schoolId: string): Promise<void> {
+  /** Revoke student visibility. Idempotent — repeat calls leave publishedAt null. */
+  static async unpublish(id: string, scope: LessonScope): Promise<ILesson> {
+    const updated = await Lesson.findOneAndUpdate(
+      { _id: toObjectId(id, 'lessonId'), ...lessonAccessFilter(scope) },
+      { $set: { publishedAt: null } },
+      { new: true },
+    ).lean<ILesson>();
+    if (!updated) throw new NotFoundError('Lesson not found');
+    return updated;
+  }
+
+  static async delete(id: string, scope: LessonScope): Promise<void> {
     const result = await Lesson.updateOne(
-      { _id: id, schoolId, isDeleted: false },
+      { _id: toObjectId(id, 'lessonId'), ...lessonAccessFilter(scope) },
       { $set: { isDeleted: true } },
     );
-    if (result.matchedCount === 0) throw new Error('Lesson not found');
+    if (result.matchedCount === 0) throw new NotFoundError('Lesson not found');
   }
 
   /**

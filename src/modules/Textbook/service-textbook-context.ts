@@ -125,6 +125,7 @@ export async function resolveTextbookContextForTopic(
     subjectNodeId: topic.subjectId,
     gradeNodeId: topic.gradeId,
     isDeleted: false,
+    status: 'published',
     $or: [{ schoolId: null }, { schoolId: schoolOid }],
   })
     .select('_id title chapters schoolId updatedAt')
@@ -189,6 +190,8 @@ export async function resolveTextbookContextForTopic(
       const resources = await ContentResource.find({
         _id: { $in: resourceIds },
         isDeleted: false,
+        status: 'approved',
+        $or: [{ schoolId: null }, { schoolId: schoolOid }],
       })
         .select('title blocks')
         .lean<Array<{ _id: mongoose.Types.ObjectId; title: string; blocks: Array<{ type?: string; content?: string }> }>>();

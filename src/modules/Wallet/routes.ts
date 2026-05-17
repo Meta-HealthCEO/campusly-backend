@@ -22,6 +22,7 @@ router.post(
 router.get(
   '/student/:studentId',
   authenticate,
+  authorize('super_admin', 'school_admin', 'parent', 'student'),
   requireParentOwnership('studentId'),
   WalletController.getWallet,
 );
@@ -46,6 +47,7 @@ router.post(
 router.get(
   '/:walletId/transactions',
   authenticate,
+  authorize('super_admin', 'school_admin', 'parent', 'student'),
   requireParentWalletOwnership('walletId'),
   WalletController.getTransactions,
 );

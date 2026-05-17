@@ -92,12 +92,7 @@ const lessonSchema = new Schema<ILesson>(
       default: () => LESSON_PHASES.map((p) => ({ phase: p, materialIds: [] })),
     },
     materials: { type: [materialSchema], default: [] },
-    status: {
-      type: String,
-      enum: ['draft', 'ready', 'taught'],
-      default: 'draft',
-      required: true,
-    },
+    publishedAt: { type: Date, default: null },
     reflectionNotes: { type: String, maxlength: 4000 },
     aiGenerated: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false, index: true },
@@ -107,8 +102,8 @@ const lessonSchema = new Schema<ILesson>(
 );
 
 lessonSchema.index({ curriculumNodeId: 1 });
-lessonSchema.index({ schoolId: 1, status: 1 });
-lessonSchema.index({ teacherId: 1, status: 1 });
+lessonSchema.index({ schoolId: 1, publishedAt: 1 });
+lessonSchema.index({ teacherId: 1, publishedAt: 1 });
 // Compound index for the per-class scheduled-date filter used by the
 // list endpoint when a classId filter is supplied.
 lessonSchema.index({

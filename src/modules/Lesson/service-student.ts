@@ -68,7 +68,7 @@ export async function listLessonsForStudent(
   const filter: Record<string, unknown> = {
     schoolId: student.schoolId,
     isDeleted: false,
-    status: { $in: ['ready', 'taught'] },
+    publishedAt: { $ne: null },
     'assignedClasses.classId': student.classId,
   };
   if (query.subjectId) {
@@ -108,7 +108,6 @@ function materialToDto(
     id: (mat._id as mongoose.Types.ObjectId).toString(),
     kind: mat.kind as StudentLessonMaterial['kind'],
     title: mat.title as string,
-    teacherNotes: mat.teacherNotes as string | undefined,
     phase,
   };
 
@@ -187,6 +186,25 @@ function contentBlockToDto(block: Record<string, unknown>): StudentContentBlock 
   };
 }
 
+/**
+ * Visibility check for student-side access (used by the student PDF export
+ * route). Returns true if the lesson is published and assigned to the
+ * student's class within their school.
+ */
+export async function isLessonVisibleToStudent(
+  student: HydratedDocument<IStudent>,
+  lessonId: string,
+): Promise<boolean> {
+  const found = await Lesson.exists({
+    _id: lessonId,
+    schoolId: student.schoolId,
+    isDeleted: false,
+    publishedAt: { $ne: null },
+    'assignedClasses.classId': student.classId,
+  });
+  return found !== null;
+}
+
 export async function getLessonForStudent(
   student: HydratedDocument<IStudent>,
   lessonId: string,
@@ -195,14 +213,29 @@ export async function getLessonForStudent(
     _id: lessonId,
     schoolId: student.schoolId,
     isDeleted: false,
-    status: { $in: ['ready', 'taught'] },
+    publishedAt: { $ne: null },
     'assignedClasses.classId': student.classId,
   })
     .populate('subjectId', 'name title')
-    .populate('materials.contentResourceId')
-    .populate('materials.quizId', 'title questions')
-    .populate('materials.homeworkId', 'title dueDate status')
-    .populate('materials.paperId', 'title releaseAt dueAt')
+    .populate({
+      path: 'materials.contentResourceId',
+      match: { schoolId: student.schoolId, isDeleted: false },
+    })
+    .populate({
+      path: 'materials.quizId',
+      select: 'title questions',
+      match: { schoolId: student.schoolId, isDeleted: false },
+    })
+    .populate({
+      path: 'materials.homeworkId',
+      select: 'title dueDate status',
+      match: { schoolId: student.schoolId, isDeleted: false },
+    })
+    .populate({
+      path: 'materials.paperId',
+      select: 'title releaseAt dueAt',
+      match: { schoolId: student.schoolId, isDeleted: false },
+    })
     .lean()
     .exec();
 

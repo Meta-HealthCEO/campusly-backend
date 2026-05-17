@@ -33,6 +33,7 @@ export class AcademicController {
   static deleteClass = ClassController.deleteClass;
   static getClassJoinCode = ClassController.getClassJoinCode;
   static regenerateClassJoinCode = ClassController.regenerateClassJoinCode;
+  static joinClassByCode = ClassController.joinClassByCode;
   static getTeacherTeachingLoad = ClassController.getTeacherTeachingLoad;
 
   // ─── Subject ───────────────────────────────────────────────────────────
@@ -58,6 +59,9 @@ export class AcademicController {
   static getAssessment = MiscController.getAssessment;
   static updateAssessment = MiscController.updateAssessment;
   static deleteAssessment = MiscController.deleteAssessment;
+  static getTermSummary = MiscController.getTermSummary;
+  static getSubjectTrend = MiscController.getSubjectTrend;
+  static getStudentTermDetail = MiscController.getStudentTermDetail;
 
   // ─── Marks ─────────────────────────────────────────────────────────────
   static captureMark = MiscController.captureMark;
@@ -92,6 +96,8 @@ export class AcademicController {
   static listSubjectWeightings = MiscController.listSubjectWeightings;
   static updateSubjectWeighting = MiscController.updateSubjectWeighting;
   static deleteSubjectWeighting = MiscController.deleteSubjectWeighting;
+  static getSubjectWeightingMatrix = MiscController.getSubjectWeightingMatrix;
+  static setSubjectWeightingTermBuckets = MiscController.setSubjectWeightingTermBuckets;
 
   // ─── Remedial ──────────────────────────────────────────────────────────
   static createRemedial = MiscController.createRemedial;

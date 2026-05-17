@@ -8,6 +8,7 @@ import {
 } from '../Textbook/service-textbook-context.js';
 import { logger } from '../../common/logger.js';
 import type { ILesson, ILessonMaterial } from './types.js';
+import { schoolIdFromScope, type LessonScope } from './service-access.js';
 
 // ── Public types ─────────────────────────────────────────────────────────
 export interface ChatMessage {
@@ -35,10 +36,11 @@ const COMPLETION_TEMPERATURE = 0.6;
 // ── Public API ───────────────────────────────────────────────────────────
 export async function chatAboutLesson(
   lessonId: string,
-  schoolId: string,
+  scope: LessonScope,
   input: ChatInput,
 ): Promise<ChatOutput> {
-  const lesson = await LessonService.getById(lessonId, schoolId);
+  const lesson = await LessonService.getById(lessonId, scope);
+  const schoolId = schoolIdFromScope(scope);
 
   const topicTitle = readPopulatedTitle(lesson.curriculumNodeId);
   const topicDescription = await loadTopicDescription(lesson.curriculumNodeId);

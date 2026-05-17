@@ -6,6 +6,30 @@ import type {
   CreateSurveyInput, UpdateSurveyInput, SubmitResponseInput,
 } from './validation.js';
 
+type StudentSurveyProfile = {
+  _id: mongoose.Types.ObjectId;
+  gradeId?: mongoose.Types.ObjectId | {
+    _id?: mongoose.Types.ObjectId;
+    name?: string;
+    orderIndex?: number;
+  };
+};
+
+function gradeTargetsFromStudent(student: StudentSurveyProfile): number[] {
+  const grade = student.gradeId;
+  if (!grade || grade instanceof mongoose.Types.ObjectId) return [];
+
+  const targets = new Set<number>();
+  if (typeof grade.orderIndex === 'number') targets.add(grade.orderIndex);
+
+  const gradeNameMatch = typeof grade.name === 'string'
+    ? grade.name.match(/\d+/)
+    : null;
+  if (gradeNameMatch?.[0]) targets.add(Number(gradeNameMatch[0]));
+
+  return [...targets].filter((target) => Number.isFinite(target));
+}
+
 export class WellbeingService {
   // ─── Survey CRUD ───────────────────────────────────────────────────────
 
@@ -96,6 +120,49 @@ export class WellbeingService {
 
   // ─── Response Submission ───────────────────────────────────────────────
 
+  static async getActiveSurveyForStudent(userId: string, schoolId: string) {
+    const schoolObjectId = new mongoose.Types.ObjectId(schoolId);
+    const { Student } = await import('../Student/model.js');
+    const student = await Student.findOne({
+      userId: new mongoose.Types.ObjectId(userId),
+      schoolId: schoolObjectId,
+      enrollmentStatus: 'active',
+      isDeleted: false,
+    })
+      .select('_id gradeId')
+      .populate('gradeId', 'name orderIndex')
+      .lean<StudentSurveyProfile | null>();
+
+    if (!student) return null;
+
+    const now = new Date();
+    const filter: Record<string, unknown> = {
+      schoolId: schoolObjectId,
+      isDeleted: false,
+      status: 'active',
+      startDate: { $lte: now },
+      endDate: { $gte: now },
+    };
+
+    const targetGrades = gradeTargetsFromStudent(student);
+    if (targetGrades.length > 0) {
+      filter.targetGrades = { $in: targetGrades };
+    }
+
+    const respondedSurveyIds = await SurveyResponse.distinct('surveyId', {
+      schoolId: schoolObjectId,
+      studentId: student._id,
+      isDeleted: false,
+    });
+    if (respondedSurveyIds.length > 0) {
+      filter._id = { $nin: respondedSurveyIds };
+    }
+
+    return WellbeingSurvey.findOne(filter)
+      .sort({ startDate: -1, createdAt: -1 })
+      .lean();
+  }
+
   static async submitResponse(
     surveyId: string, schoolId: string,
     studentId: string | null, data: SubmitResponseInput,
@@ -107,6 +174,9 @@ export class WellbeingService {
       status: 'active',
     }).lean();
     if (!survey) throw new NotFoundError('Survey not found or not active');
+    if (!survey.isAnonymous && !studentId) {
+      throw new BadRequestError('Student profile is required for this survey');
+    }
 
     // Check date range
     const now = new Date();

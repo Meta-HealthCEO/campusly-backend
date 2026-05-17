@@ -59,6 +59,12 @@ export interface IAssignmentClassAssignment {
   assignedAt: Date;
 }
 
+export interface IAssignmentAssessmentLink {
+  _id: Types.ObjectId;
+  classId: Types.ObjectId;
+  assessmentId: Types.ObjectId;
+}
+
 const classAssignmentSchema = new Schema<IAssignmentClassAssignment>(
   {
     classId: { type: Schema.Types.ObjectId, ref: 'Class', required: true },
@@ -66,6 +72,14 @@ const classAssignmentSchema = new Schema<IAssignmentClassAssignment>(
     dueAt: { type: Date, default: null },
     assignedBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     assignedAt: { type: Date, required: true, default: () => new Date() },
+  },
+  { _id: true },
+);
+
+const assessmentLinkSchema = new Schema<IAssignmentAssessmentLink>(
+  {
+    classId: { type: Schema.Types.ObjectId, ref: 'Class', required: true },
+    assessmentId: { type: Schema.Types.ObjectId, ref: 'Assessment', required: true },
   },
   { _id: true },
 );
@@ -80,7 +94,10 @@ export interface IAssignment extends Document {
   brief: string;
   subjectId: Types.ObjectId;
   gradeId: Types.ObjectId;
-  curriculumNodeId?: Types.ObjectId | null;
+  // One assignment can span several CAPS topics — same shape as papers.
+  // Service-level validation verifies topic availability and, where academic
+  // rows are bridged to CAPS nodes, subject/grade/term alignment.
+  topicIds: Types.ObjectId[];
   totalMarks: number;
   rubric: IAssignmentRubricCriterion[];
   submissionFormat: AssignmentSubmissionFormat;
@@ -92,6 +109,7 @@ export interface IAssignment extends Document {
   // Cached link to the gradebook Assessment doc (lazily created on first
   // publish, mirrors Homework.assessmentId).
   assessmentId?: Types.ObjectId | null;
+  assessmentLinks: IAssignmentAssessmentLink[];
   version: number;
   isDeleted: boolean;
   createdAt: Date;
@@ -106,7 +124,11 @@ const assignmentSchema = new Schema<IAssignment>(
     brief: { type: String, required: true, maxlength: 20000 },
     subjectId: { type: Schema.Types.ObjectId, ref: 'Subject', required: true },
     gradeId: { type: Schema.Types.ObjectId, ref: 'Grade', required: true },
-    curriculumNodeId: { type: Schema.Types.ObjectId, ref: 'CurriculumNode', default: null },
+    topicIds: {
+      type: [Schema.Types.ObjectId],
+      ref: 'CurriculumNode',
+      default: [],
+    },
     totalMarks: { type: Number, required: true, min: 1, max: 1000 },
     rubric: { type: [rubricCriterionSchema], default: [] },
     submissionFormat: {
@@ -130,6 +152,7 @@ const assignmentSchema = new Schema<IAssignment>(
     latePenaltyPercent: { type: Number, min: 0, max: 100, default: undefined },
     gradebookAutoPublish: { type: Boolean, default: true },
     assessmentId: { type: Schema.Types.ObjectId, ref: 'Assessment', default: null },
+    assessmentLinks: { type: [assessmentLinkSchema], default: [] },
     version: { type: Number, default: 1, min: 1 },
     isDeleted: { type: Boolean, default: false },
   },
@@ -140,6 +163,7 @@ assignmentSchema.index({ schoolId: 1, teacherId: 1, createdAt: -1 });
 assignmentSchema.index({ schoolId: 1, status: 1, isDeleted: 1 });
 assignmentSchema.index({ schoolId: 1, isDeleted: 1, createdAt: -1 });
 assignmentSchema.index({ 'assignedClasses.classId': 1, schoolId: 1 });
+assignmentSchema.index({ 'assessmentLinks.classId': 1, schoolId: 1 });
 
 // Registered as 'TeacherAssignment' to avoid colliding with the Learning
 // module's pre-existing 'AssignmentSubmission' model (and the same naming

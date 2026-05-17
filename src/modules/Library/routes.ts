@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { authenticate } from '../../middleware/auth.js';
 import { authorize } from '../../middleware/rbac.js';
 import { requireCapability } from '../../middleware/capability.js';
+import { requireParentOwnership } from '../../middleware/parentOwnership.js';
 import { validate } from '../../middleware/validate.js';
 import { LibraryController } from './controller.js';
 import {
@@ -32,7 +33,13 @@ router.post('/loans/issue', authenticate, authorize('school_admin', 'super_admin
 router.patch('/loans/:id/return', authenticate, authorize('school_admin', 'super_admin', 'teacher'), validate(returnBookSchema), LibraryController.returnBook);
 router.patch('/loans/:id/lost', authenticate, requireCapability('manage_library'), LibraryController.markLost);
 router.get('/loans/overdue', authenticate, authorize('school_admin', 'super_admin', 'teacher'), LibraryController.getOverdueLoans);
-router.get('/loans/student/:studentId', authenticate, LibraryController.getStudentLoans);
+router.get(
+  '/loans/student/:studentId',
+  authenticate,
+  authorize('student', 'parent', 'teacher', 'school_admin', 'super_admin'),
+  requireParentOwnership('studentId'),
+  LibraryController.getStudentLoans,
+);
 
 // ─── Reading Challenge Routes ───────────────────────────────────────────────
 
@@ -46,7 +53,13 @@ router.delete('/challenges/:id', authenticate, requireCapability('manage_library
 // ─── Reading Log Routes ─────────────────────────────────────────────────────
 
 router.post('/reading-logs', authenticate, validate(createReadingLogSchema), LibraryController.createReadingLog);
-router.get('/reading-logs/student/:studentId', authenticate, LibraryController.getStudentReadingLogs);
+router.get(
+  '/reading-logs/student/:studentId',
+  authenticate,
+  authorize('student', 'parent', 'teacher', 'school_admin', 'super_admin'),
+  requireParentOwnership('studentId'),
+  LibraryController.getStudentReadingLogs,
+);
 
 // ─── Leaderboard ────────────────────────────────────────────────────────────
 

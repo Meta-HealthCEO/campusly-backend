@@ -24,14 +24,18 @@ export const updateGradeSchema = gradeSchema.partial().strict();
 export const classSchema = z.object({
   name: z.string().min(1, 'Name is required').max(50, 'Name must be 50 characters or fewer').trim(),
   gradeId: objectIdSchema,
-  schoolId: objectIdSchema,
-  teacherId: objectIdSchema,
+  schoolId: objectIdSchema.optional(),
+  teacherId: objectIdSchema.optional(),
   capacity: z.number().int().min(1, 'Capacity must be at least 1').max(200, 'Capacity cannot exceed 200'),
-  subjectId: objectIdSchema.optional(),
+  subjectId: objectIdSchema.nullable().optional(),
   isHomeroom: z.boolean().optional(),
 }).strict();
 
 export const updateClassSchema = classSchema.partial().strict();
+
+export const joinClassByCodeSchema = z.object({
+  code: z.string().min(1, 'Classroom code is required').max(20).trim(),
+}).strict();
 
 // ─── Subject ─────────────────────────────────────────────────────────────────
 
@@ -94,7 +98,7 @@ export const assessmentSchema = z.object({
   weight: z.number().min(0).max(100, 'Weight must be between 0 and 100'),
   term: z.number().int().min(1),
   academicYear: z.number().int().min(2000),
-  date: z.string().datetime(),
+  date: z.iso.datetime(),
 }).strict();
 
 export const updateAssessmentSchema = assessmentSchema.partial().strict();
@@ -132,8 +136,8 @@ export const examCreateSchema = z.object({
   name: z.string().min(1, 'Name is required').trim(),
   term: z.number().int().min(1).max(4),
   year: z.number().int().min(2000),
-  startDate: z.string().datetime(),
-  endDate: z.string().datetime(),
+  startDate: z.iso.datetime(),
+  endDate: z.iso.datetime(),
   status: z.enum(['scheduled', 'in_progress', 'completed']).optional(),
 }).strict();
 
@@ -145,7 +149,7 @@ export const examTimetableCreateSchema = z.object({
   examId: objectIdSchema,
   subjectId: objectIdSchema,
   gradeId: objectIdSchema,
-  date: z.string().datetime(),
+  date: z.iso.datetime(),
   startTime: z.string().regex(/^\d{2}:\d{2}$/, 'Time must be in HH:MM format'),
   endTime: z.string().regex(/^\d{2}:\d{2}$/, 'Time must be in HH:MM format'),
   venue: z.string().min(1, 'Venue is required'),
@@ -181,18 +185,33 @@ export const subjectWeightingCreateSchema = z.object({
 
 export const subjectWeightingUpdateSchema = subjectWeightingCreateSchema.partial().strict();
 
+// Atomic upsert of all 5 type buckets for a single (subject, grade, term).
+// Sum-to-100 is enforced server-side too — the service is the source of
+// truth for that invariant.
+export const subjectWeightingBulkSetSchema = z.object({
+  subjectId: objectIdSchema,
+  gradeId: objectIdSchema,
+  term: z.number().int().min(1).max(4),
+  buckets: z.array(
+    z.object({
+      assessmentType: z.enum(['test', 'exam', 'assignment', 'practical', 'project']),
+      weightPercentage: z.number().min(0).max(100),
+    }).strict(),
+  ).min(1),
+}).strict();
+
 // ─── Remedial Tracking ──────────────────────────────────────────────────────
 
 export const remedialCreateSchema = z.object({
   studentId: objectIdSchema,
   subjectId: objectIdSchema,
   schoolId: objectIdSchema,
-  identifiedDate: z.string().datetime(),
+  identifiedDate: z.iso.datetime(),
   areas: z.array(z.string()).min(1, 'At least one area is required'),
   interventions: z.array(z.string()).optional(),
   progress: z.array(z.string()).optional(),
   status: z.enum(['identified', 'in_progress', 'resolved']).optional(),
-  reviewDate: z.string().datetime().optional(),
+  reviewDate: z.iso.datetime().optional(),
 }).strict();
 
 export const remedialUpdateSchema = remedialCreateSchema.partial().strict();

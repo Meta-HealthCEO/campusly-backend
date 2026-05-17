@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import { getUser } from '../../types/authenticated-request.js';
 import { apiResponse } from '../../common/utils.js';
 import { TrainingService } from './service-training.js';
+import { resolveScopedStudentId } from './student-access.js';
 
 export class TrainingController {
   static async createSession(req: Request, res: Response): Promise<void> {
@@ -13,10 +14,14 @@ export class TrainingController {
   static async listSessions(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
     const { teamId, studentId, from, to, status } = req.query;
+    const scopedStudentId = await resolveScopedStudentId(
+      user,
+      typeof studentId === 'string' ? studentId : undefined,
+    );
     const sessions = await TrainingService.listSessions({
       schoolId: user.schoolId!,
       teamId: typeof teamId === 'string' ? teamId : undefined,
-      studentId: typeof studentId === 'string' ? studentId : undefined,
+      studentId: scopedStudentId,
       from: typeof from === 'string' ? from : undefined,
       to: typeof to === 'string' ? to : undefined,
       status: typeof status === 'string' ? status : undefined,

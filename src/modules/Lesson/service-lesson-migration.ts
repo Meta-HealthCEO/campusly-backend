@@ -136,7 +136,10 @@ export async function runLessonPlanToLessonMigration(): Promise<void> {
         objectives: plan.objectives ?? [],
         phases,
         materials,
-        status: lessonDate >= today ? 'draft' : 'taught',
+        // Lessons whose scheduled date is already in the past were "taught",
+        // and a taught lesson is by definition something students could see.
+        // Stamp publishedAt with the lesson date so the audit trail matches.
+        publishedAt: lessonDate >= today ? null : lessonDate,
         reflectionNotes: plan.reflectionNotes,
         aiGenerated: plan.aiGenerated ?? false,
         isDeleted: false,

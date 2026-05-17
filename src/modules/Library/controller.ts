@@ -6,6 +6,13 @@ import { LibraryFineService } from './fine.service.js';
 import { apiResponse } from '../../common/utils.js';
 import { UserRole } from '../../common/enums.js';
 
+function scopedSchoolId(req: Request): string | undefined {
+  if (req.user?.role === UserRole.SUPER_ADMIN && typeof req.query.schoolId === 'string') {
+    return req.query.schoolId;
+  }
+  return req.user?.schoolId;
+}
+
 export class LibraryController {
   // ─── Books ────────────────────────────────────────────────────────────────
 
@@ -15,7 +22,7 @@ export class LibraryController {
   }
 
   static async listBooks(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const schoolId = scopedSchoolId(req);
     if (!schoolId) { res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required')); return; }
     const result = await LibraryService.listBooks(schoolId, {
       page: req.query.page ? Number(req.query.page) : undefined,
@@ -65,7 +72,7 @@ export class LibraryController {
   }
 
   static async getOverdueLoans(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const schoolId = scopedSchoolId(req);
     if (!schoolId) { res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required')); return; }
     const result = await LibraryService.getOverdueLoans(schoolId, {
       page: req.query.page ? Number(req.query.page) : undefined,
@@ -91,7 +98,7 @@ export class LibraryController {
   }
 
   static async listChallenges(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const schoolId = scopedSchoolId(req);
     if (!schoolId) { res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required')); return; }
     const result = await LibraryService.listChallenges(schoolId, {
       page: req.query.page ? Number(req.query.page) : undefined,
@@ -124,7 +131,11 @@ export class LibraryController {
     } else {
       // Students can only join themselves — resolve studentId from their user record
       const { Student } = await import('../Student/model.js');
-      const student = await Student.findOne({ userId: user.id, isDeleted: false }).lean();
+      const student = await Student.findOne({
+        userId: user.id,
+        schoolId,
+        isDeleted: false,
+      }).lean();
       if (!student) {
         res.status(403).json(apiResponse(false, undefined, undefined, 'Student record not found for this user'));
         return;

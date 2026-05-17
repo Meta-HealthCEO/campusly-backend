@@ -33,7 +33,11 @@ router.post(
   authorize('teacher', 'school_admin', 'super_admin'),
   postCreateAssignment,
 );
-router.get('/', getListAssignments);
+router.get(
+  '/',
+  authorize('teacher', 'school_admin', 'super_admin'),
+  getListAssignments,
+);
 
 // Static routes must sit above /:id to avoid the param swallowing.
 router.get('/student/mine', authorize('student'), getStudentAssignments);
@@ -55,7 +59,11 @@ router.post(
   postMarkSubmission,
 );
 
-router.get('/:id', getAssignment);
+router.get(
+  '/:id',
+  authorize('student', 'teacher', 'school_admin', 'super_admin'),
+  getAssignment,
+);
 router.put(
   '/:id',
   authorize('teacher', 'school_admin', 'super_admin'),

@@ -122,9 +122,6 @@ export async function markPaperFromImages(
 
     const terminalStatus = validated.paperMismatch ? 'needs_review' : 'completed';
 
-    marking.totalMarks = validated.totalMarks;
-    marking.maxMarks = validated.maxMarks || paperInfo.totalMarks;
-    marking.percentage = validated.percentage;
     marking.questions = validated.questions.map((q) => ({
       questionNumber: String(q.questionNumber),
       studentAnswer: q.studentAnswer,
@@ -134,6 +131,18 @@ export async function markPaperFromImages(
       feedback: q.feedback,
       rationale: q.rationale,
     }));
+
+    // Compute totalMarks / maxMarks / percentage deterministically from the
+    // per-question marks. The AI returns these aggregates too, but it's
+    // unreliable at arithmetic — we've seen 54/55 reported as 87.3% when
+    // the correct value is 98.2%. Trust the per-question numbers (which the
+    // memo grading produces directly) and derive everything from them.
+    marking.totalMarks = marking.questions.reduce((s, q) => s + (q.marksAwarded ?? 0), 0);
+    const derivedMax = marking.questions.reduce((s, q) => s + (q.maxMarks ?? 0), 0);
+    marking.maxMarks = derivedMax > 0 ? derivedMax : (validated.maxMarks || paperInfo.totalMarks);
+    marking.percentage = marking.maxMarks > 0
+      ? Math.round((marking.totalMarks / marking.maxMarks) * 1000) / 10
+      : 0;
     marking.extractedHeader = validated.extractedHeader || null;
     marking.paperMismatch = validated.paperMismatch;
     marking.mismatchReason = validated.mismatchReason || null;

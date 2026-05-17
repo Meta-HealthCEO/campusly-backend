@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document, Types } from 'mongoose';
+import type { HomeworkType } from './model.js';
 
 // ─── Homework Template ──────────────────────────────────────────────────────
 
@@ -12,10 +13,19 @@ export interface IHomeworkTemplate extends Document {
   teacherId: Types.ObjectId;
   title: string;
   description?: string;
+  type?: HomeworkType;
+  quizId?: Types.ObjectId | null;
+  contentResourceId?: Types.ObjectId | null;
+  pageRange?: string | null;
+  exerciseQuestionIds?: Types.ObjectId[];
+  comprehensionQuestionIds?: Types.ObjectId[];
   subjectId: Types.ObjectId;
   totalMarks: number;
   rubric?: string;
   attachments: ITemplateAttachment[];
+  latePolicy?: 'block' | 'penalty' | 'accept';
+  latePenaltyPercent?: number;
+  gradebookAutoPublish?: boolean;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -50,6 +60,24 @@ const homeworkTemplateSchema = new Schema<IHomeworkTemplate>(
       type: String,
       trim: true,
     },
+    type: {
+      type: String,
+      enum: ['quiz', 'reading', 'exercise'],
+      default: undefined,
+    },
+    quizId: { type: Schema.Types.ObjectId, ref: 'Quiz', default: null },
+    contentResourceId: { type: Schema.Types.ObjectId, ref: 'ContentResource', default: null },
+    pageRange: { type: String, default: null, trim: true },
+    exerciseQuestionIds: {
+      type: [Schema.Types.ObjectId],
+      ref: 'Question',
+      default: [],
+    },
+    comprehensionQuestionIds: {
+      type: [Schema.Types.ObjectId],
+      ref: 'Question',
+      default: [],
+    },
     subjectId: {
       type: Schema.Types.ObjectId,
       ref: 'Subject',
@@ -66,6 +94,13 @@ const homeworkTemplateSchema = new Schema<IHomeworkTemplate>(
       type: [templateAttachmentSchema],
       default: [],
     },
+    latePolicy: {
+      type: String,
+      enum: ['block', 'penalty', 'accept'],
+      default: 'block',
+    },
+    latePenaltyPercent: { type: Number, min: 0, max: 100, default: undefined },
+    gradebookAutoPublish: { type: Boolean, default: true },
     isDeleted: {
       type: Boolean,
       default: false,

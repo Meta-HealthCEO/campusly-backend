@@ -2,7 +2,7 @@
 //
 // "Reuse this lesson next year" — duplicate an entire lesson record with
 // every material, phase ordering, and curriculum link intact, but reset the
-// per-class scheduled assignments, reflection notes, and status to 'draft'.
+// per-class scheduled assignments, reflection notes, and publish state.
 //
 // Materials reference EXTERNAL docs (ContentResource, Homework, Quiz, Paper)
 // — those refs are kept as-is, not deep-copied. Reusing a lesson typically
@@ -13,6 +13,13 @@ import mongoose from 'mongoose';
 import { Lesson } from './model.js';
 import type { ILesson } from './types.js';
 import { NotFoundError } from '../../common/errors.js';
+import {
+  canManageAllLessons,
+  isLessonActor,
+  lessonAccessFilter,
+  toObjectId,
+  type LessonScope,
+} from './service-access.js';
 
 interface CloneOptions {
   /** Override the cloned title; default is `Copy of <original>`. */
@@ -49,13 +56,12 @@ interface CloneSourceLesson {
 
 export async function cloneLesson(
   sourceId: string,
-  schoolId: string,
+  scope: LessonScope,
   options: CloneOptions = {},
 ): Promise<ILesson> {
   const source = await Lesson.findOne({
-    _id: new mongoose.Types.ObjectId(sourceId),
-    schoolId: new mongoose.Types.ObjectId(schoolId),
-    isDeleted: false,
+    _id: toObjectId(sourceId, 'lessonId'),
+    ...lessonAccessFilter(scope),
   }).lean<CloneSourceLesson | null>();
   if (!source) throw new NotFoundError('Lesson not found');
 
@@ -93,7 +99,9 @@ export async function cloneLesson(
 
   const lesson = await Lesson.create({
     schoolId: source.schoolId,
-    teacherId: source.teacherId,
+    teacherId: isLessonActor(scope) && scope.role === 'teacher' && !canManageAllLessons(scope)
+      ? toObjectId(scope.id, 'teacherId')
+      : source.teacherId,
     subjectId: source.subjectId,
     gradeId: source.gradeId,
     curriculumNodeId: source.curriculumNodeId,
@@ -103,8 +111,8 @@ export async function cloneLesson(
     objectives: source.objectives ?? [],
     phases: clonedPhases,
     materials: clonedMaterials,
-    // Reset per-instance state — the clone is a fresh lesson:
-    status: 'draft',
+    // Reset per-instance state — the clone is a fresh, unpublished lesson:
+    publishedAt: null,
     aiGenerated: source.aiGenerated,
     assignedClasses: [],
     reflectionNotes: undefined,

@@ -15,8 +15,6 @@ export const lessonMaterialKindEnum = z.enum([
   'homework',
   'paper',
 ]);
-export const lessonStatusEnum = z.enum(['draft', 'ready', 'taught']);
-
 const internalTextbookRef = z.object({
   source: z.literal('internal'),
   textbookId: objectId,
@@ -92,8 +90,6 @@ export const updateAssignmentSchema = z.object({
   (v) => v.scheduledDate !== undefined || v.status !== undefined,
   { message: 'Provide at least one of scheduledDate or status' },
 );
-
-export const patchStatusSchema = z.object({ status: lessonStatusEnum });
 
 export const scaffoldLessonSchema = z.object({
   curriculumNodeId: objectId,
@@ -183,7 +179,8 @@ export const listLessonsSchema = z.object({
   teacherId: objectId.optional(),
   classId: objectId.optional(),
   subjectId: objectId.optional(),
-  status: lessonStatusEnum.optional(),
+  /** Filter by publish state. `true` returns only published lessons. */
+  published: z.coerce.boolean().optional(),
   dateFrom: z.iso.datetime().optional(),
   dateTo: z.iso.datetime().optional(),
   search: z.string().max(200).optional(),

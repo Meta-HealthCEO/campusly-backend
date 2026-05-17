@@ -1,7 +1,20 @@
 import { z } from 'zod/v4';
 import { objectIdSchema } from '../../common/validation.js';
 
-// ─── Create Textbook ───────────────────────────────────────────────────────
+export const textbookIdParamsSchema = z.object({
+  id: objectIdSchema,
+}).strict();
+
+export const textbookChapterParamsSchema = z.object({
+  id: objectIdSchema,
+  chapterId: objectIdSchema,
+}).strict();
+
+export const textbookChapterResourceParamsSchema = z.object({
+  id: objectIdSchema,
+  chapterId: objectIdSchema,
+  resourceId: objectIdSchema,
+}).strict();
 
 export const createTextbookSchema = z.object({
   title: z.string().min(1, 'Title is required').trim(),
@@ -14,8 +27,6 @@ export const createTextbookSchema = z.object({
 
 export type CreateTextbookInput = z.infer<typeof createTextbookSchema>;
 
-// ─── Update Textbook ───────────────────────────────────────────────────────
-
 export const updateTextbookSchema = z.object({
   title: z.string().min(1, 'Title is required').trim().optional(),
   description: z.string().optional(),
@@ -24,8 +35,6 @@ export const updateTextbookSchema = z.object({
 }).strict();
 
 export type UpdateTextbookInput = z.infer<typeof updateTextbookSchema>;
-
-// ─── Add Chapter ───────────────────────────────────────────────────────────
 
 export const addChapterSchema = z.object({
   title: z.string().min(1, 'Title is required').trim(),
@@ -36,8 +45,6 @@ export const addChapterSchema = z.object({
 
 export type AddChapterInput = z.infer<typeof addChapterSchema>;
 
-// ─── Update Chapter ────────────────────────────────────────────────────────
-
 export const updateChapterSchema = z.object({
   title: z.string().min(1, 'Title is required').trim().optional(),
   description: z.string().optional(),
@@ -47,8 +54,6 @@ export const updateChapterSchema = z.object({
 
 export type UpdateChapterInput = z.infer<typeof updateChapterSchema>;
 
-// ─── Add Resource to Chapter ───────────────────────────────────────────────
-
 export const addResourceToChapterSchema = z.object({
   resourceId: objectIdSchema,
   order: z.number().int().min(0),
@@ -56,15 +61,15 @@ export const addResourceToChapterSchema = z.object({
 
 export type AddResourceToChapterInput = z.infer<typeof addResourceToChapterSchema>;
 
-// ─── Reorder Chapters ──────────────────────────────────────────────────────
-
 export const reorderChaptersSchema = z.object({
-  chapterIds: z.array(objectIdSchema).min(1, 'At least one chapter ID required'),
+  chapterIds: z.array(objectIdSchema)
+    .min(1, 'At least one chapter ID required')
+    .refine((ids) => new Set(ids).size === ids.length, {
+      message: 'chapterIds must be unique',
+    }),
 }).strict();
 
 export type ReorderChaptersInput = z.infer<typeof reorderChaptersSchema>;
-
-// ─── Query ─────────────────────────────────────────────────────────────────
 
 export const textbookQuerySchema = z.object({
   frameworkId: objectIdSchema.optional(),
@@ -74,6 +79,6 @@ export const textbookQuerySchema = z.object({
   search: z.string().optional(),
   page: z.coerce.number().int().min(1).optional(),
   limit: z.coerce.number().int().min(1).max(1000).optional(),
-});
+}).strict();
 
 export type TextbookQueryInput = z.infer<typeof textbookQuerySchema>;

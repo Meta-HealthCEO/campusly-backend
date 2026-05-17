@@ -5,13 +5,23 @@ import { School } from '../modules/School/model.js';
 import { redis } from '../config/redis.js';
 
 const SCHOOL_CACHE_TTL = 300; // 5 minutes
+const MODULE_ALIASES: Record<string, string> = {
+  fees: 'fee',
+  sports: 'sport',
+  events: 'event',
+  tuck_shop: 'tuckshop',
+};
+
+function normalizeModuleName(moduleName: string): string {
+  return MODULE_ALIASES[moduleName] ?? moduleName;
+}
 
 async function getSchoolModules(schoolId: string): Promise<string[]> {
   const cacheKey = `school:modules:${schoolId}`;
 
   const cached = await redis.get(cacheKey);
   if (cached) {
-    return JSON.parse(cached) as string[];
+    return (JSON.parse(cached) as string[]).map(normalizeModuleName);
   }
 
   const school = await School.findOne({ _id: schoolId, isDeleted: false, isActive: true })
@@ -22,7 +32,7 @@ async function getSchoolModules(schoolId: string): Promise<string[]> {
     return [];
   }
 
-  const modules = school.modulesEnabled ?? [];
+  const modules = (school.modulesEnabled ?? []).map(normalizeModuleName);
   await redis.set(cacheKey, JSON.stringify(modules), 'EX', SCHOOL_CACHE_TTL);
 
   return modules;
@@ -30,8 +40,9 @@ async function getSchoolModules(schoolId: string): Promise<string[]> {
 
 export function requireModule(moduleName: string) {
   return async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
+    const normalizedModuleName = normalizeModuleName(moduleName);
     // Core modules always pass
-    if (isCoreModule(moduleName)) {
+    if (isCoreModule(normalizedModuleName)) {
       next();
       return;
     }
@@ -54,7 +65,7 @@ export function requireModule(moduleName: string) {
 
     const enabledModules = await getSchoolModules(schoolId);
 
-    if (!enabledModules.includes(moduleName)) {
+    if (!enabledModules.includes(normalizedModuleName)) {
       throw new ForbiddenError(
         'This module is not enabled for your school. Contact your administrator.',
       );

@@ -25,8 +25,6 @@ export const submitApplicationSchema = z.object({
     province: z.string().min(1),
     postalCode: z.string().min(1),
   }).strict(),
-  medicalConditions: z.string().optional(),
-  allergies: z.string().optional(),
   specialNeeds: z.string().optional(),
   additionalNotes: z.string().optional(),
 }).strict();

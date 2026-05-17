@@ -16,23 +16,27 @@ import type { ILesson, ILessonMaterial, LessonMaterialKind } from './types.js';
 export async function softDeleteEntity(
   kind: LessonMaterialKind,
   id: mongoose.Types.ObjectId | undefined,
+  schoolId?: string,
 ): Promise<void> {
   if (!id) return;
+  const scoped = schoolId && mongoose.isValidObjectId(schoolId)
+    ? { _id: id, schoolId: new mongoose.Types.ObjectId(schoolId) }
+    : { _id: id };
   try {
     if (
       kind === 'worksheet' || kind === 'activity'
       || kind === 'study_notes' || kind === 'worked_example'
     ) {
-      await ContentResource.updateOne({ _id: id }, { $set: { isDeleted: true } });
+      await ContentResource.updateOne(scoped, { $set: { isDeleted: true } });
     } else if (kind === 'practice_questions') {
-      await Question.updateOne({ _id: id }, { $set: { isDeleted: true } });
+      await Question.updateOne(scoped, { $set: { isDeleted: true } });
     } else if (kind === 'reading') {
       // Comprehension questions stored on the reading material are Question docs
-      await Question.updateOne({ _id: id }, { $set: { isDeleted: true } });
+      await Question.updateOne(scoped, { $set: { isDeleted: true } });
     } else if (kind === 'homework') {
-      await Homework.updateOne({ _id: id }, { $set: { isDeleted: true } });
+      await Homework.updateOne(scoped, { $set: { isDeleted: true } });
     } else if (kind === 'paper') {
-      await AssessmentPaper.updateOne({ _id: id }, { $set: { isDeleted: true } });
+      await AssessmentPaper.updateOne(scoped, { $set: { isDeleted: true } });
     }
   } catch (err: unknown) {
     logger.error({ kind, id: id.toString(), err }, '[lesson] compensation cleanup failed');

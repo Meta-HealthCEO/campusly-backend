@@ -1,6 +1,13 @@
 import { HomeworkTemplate, IHomeworkTemplate } from './model-template.js';
 import { Homework } from './model.js';
-import { NotFoundError } from '../../common/errors.js';
+import { BadRequestError, NotFoundError } from '../../common/errors.js';
+import { HomeworkService } from './service.js';
+import {
+  canManageAllHomework,
+  homeworkAccessFilter,
+  toObjectId,
+  type HomeworkActor,
+} from './service-access.js';
 
 interface CreateTemplateData {
   title: string;
@@ -15,6 +22,17 @@ interface CloneOverrides {
   classId: string;
   dueDate: string;
   title?: string;
+}
+
+function templateAccessFilter(actor: HomeworkActor): Record<string, unknown> {
+  const filter: Record<string, unknown> = {
+    schoolId: toObjectId(actor.schoolId, 'schoolId'),
+    isDeleted: false,
+  };
+  if (actor.role === 'teacher' && !canManageAllHomework(actor)) {
+    filter.teacherId = toObjectId(actor.id, 'teacherId');
+  }
+  return filter;
 }
 
 export class HomeworkTemplateService {
@@ -67,75 +85,101 @@ export class HomeworkTemplateService {
     return template;
   }
 
-  /** Clone a template into a new homework assignment. */
+  /** Clone a typed template into a new homework assignment. */
   static async createFromTemplate(
-    teacherId: string,
-    schoolId: string,
+    actor: HomeworkActor,
     templateId: string,
     overrides: CloneOverrides,
   ): Promise<unknown> {
     const template = await HomeworkTemplate.findOne({
-      _id: templateId,
-      teacherId,
-      schoolId,
-      isDeleted: false,
+      _id: toObjectId(templateId, 'templateId'),
+      ...templateAccessFilter(actor),
     }).lean();
 
     if (!template) throw new NotFoundError('Template not found');
+    if (!template.type) {
+      throw new BadRequestError(
+        'This legacy template has no homework content. Save a typed homework as a template before cloning.',
+      );
+    }
 
-    // DEFERRED (tech debt): Templates don't yet have their own discriminator,
-    // so we default to 'reading' with no contentResourceId. This produces a
-    // structurally-invalid Homework (reading without a resource) that bypasses
-    // the Zod API layer. Future work: extend HomeworkTemplate with a type
-    // discriminator so cloned homeworks inherit the correct type + refs.
-    // Template-level description/rubric are intentionally NOT copied — those
-    // fields no longer exist on the Homework model.
-    const homework = new Homework({
+    const base = {
       title: overrides.title ?? template.title,
-      type: 'reading' as const,
-      subjectId: template.subjectId,
+      subjectId: template.subjectId.toString(),
       classId: overrides.classId,
-      schoolId,
-      teacherId,
-      dueDate: new Date(overrides.dueDate),
+      schoolId: actor.schoolId,
+      dueDate: overrides.dueDate,
       totalMarks: template.totalMarks,
       attachments: template.attachments.map((a) => a.url),
-      status: 'assigned',
-    });
+      latePolicy: template.latePolicy ?? 'block',
+      ...(template.latePolicy === 'penalty' && typeof template.latePenaltyPercent === 'number'
+        ? { latePenaltyPercent: template.latePenaltyPercent }
+        : {}),
+      gradebookAutoPublish: template.gradebookAutoPublish ?? true,
+    };
 
-    const saved = await homework.save();
+    const payload =
+      template.type === 'quiz'
+        ? {
+            ...base,
+            type: 'quiz' as const,
+            quizId: template.quizId?.toString() ?? '',
+          }
+        : template.type === 'reading'
+          ? {
+              ...base,
+              type: 'reading' as const,
+              contentResourceId: template.contentResourceId?.toString() ?? '',
+              ...(template.pageRange ? { pageRange: template.pageRange } : {}),
+              ...(template.comprehensionQuestionIds?.length
+                ? { comprehensionQuestionIds: template.comprehensionQuestionIds.map((id) => id.toString()) }
+                : {}),
+            }
+          : {
+              ...base,
+              type: 'exercise' as const,
+              exerciseQuestionIds: (template.exerciseQuestionIds ?? []).map((id) => id.toString()),
+            };
 
-    // Populate for response
-    return Homework.findById(saved._id)
-      .populate('subjectId', 'name code')
-      .populate('classId', 'name')
-      .populate('teacherId', 'firstName lastName email')
-      .lean();
+    const missingRef =
+      (payload.type === 'quiz' && !payload.quizId)
+      || (payload.type === 'reading' && !payload.contentResourceId)
+      || (payload.type === 'exercise' && payload.exerciseQuestionIds.length === 0);
+    if (missingRef) {
+      throw new BadRequestError('Template is missing the content needed to create homework');
+    }
+
+    const homework = await HomeworkService.create(payload, actor);
+    return HomeworkService.getById(homework._id.toString(), actor);
   }
 
-  /** Convert an existing homework into a template. */
+  /** Convert an existing homework into a typed template. */
   static async saveAsTemplate(
-    teacherId: string,
-    schoolId: string,
+    actor: HomeworkActor,
     homeworkId: string,
   ): Promise<IHomeworkTemplate> {
     const homework = await Homework.findOne({
-      _id: homeworkId,
-      schoolId,
-      isDeleted: false,
+      _id: toObjectId(homeworkId, 'homeworkId'),
+      ...homeworkAccessFilter(actor),
     }).lean();
 
     if (!homework) throw new NotFoundError('Homework not found');
 
-    // Homework no longer has description/rubric fields (typed discriminator
-    // refactor). Template description/rubric can be authored by the teacher
-    // separately via the templates UI.
     const template = new HomeworkTemplate({
-      schoolId,
-      teacherId,
+      schoolId: toObjectId(actor.schoolId, 'schoolId'),
+      teacherId: toObjectId(actor.id, 'teacherId'),
       title: homework.title,
+      type: homework.type,
+      quizId: homework.quizId ?? null,
+      contentResourceId: homework.contentResourceId ?? null,
+      pageRange: homework.pageRange ?? null,
+      exerciseQuestionIds: homework.exerciseQuestionIds ?? [],
+      comprehensionQuestionIds: homework.comprehensionQuestionIds ?? [],
       subjectId: homework.subjectId,
       totalMarks: homework.totalMarks,
+      latePolicy: homework.latePolicy,
+      latePenaltyPercent: homework.latePenaltyPercent,
+      gradebookAutoPublish: homework.gradebookAutoPublish,
       attachments: homework.attachments.map((url: string) => ({
         url,
         name: url.split('/').pop() ?? 'attachment',

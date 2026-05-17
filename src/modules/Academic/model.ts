@@ -95,7 +95,6 @@ const classSchema = new Schema<IClass>(
     classroomCode: {
       type: String,
       required: true,
-      unique: true,
       uppercase: true,
       trim: true,
     },
@@ -307,6 +306,7 @@ export interface IAssessment extends Document {
   academicYear: number;
   date: Date;
   paperId: Types.ObjectId | null;
+  assignmentId: Types.ObjectId | null;
   structureId?: Types.ObjectId;
   isDeleted: boolean;
   createdAt: Date;
@@ -367,6 +367,11 @@ const assessmentSchema = new Schema<IAssessment>(
       ref: 'AssessmentPaper',
       default: null,
     },
+    assignmentId: {
+      type: Schema.Types.ObjectId,
+      ref: 'TeacherAssignment',
+      default: null,
+    },
     structureId: {
       type: Schema.Types.ObjectId,
       ref: 'AssessmentStructure',
@@ -383,6 +388,11 @@ const assessmentSchema = new Schema<IAssessment>(
 assessmentSchema.index({ classId: 1, subjectId: 1, term: 1 });
 assessmentSchema.index({ schoolId: 1, isDeleted: 1, createdAt: -1 });
 assessmentSchema.index({ paperId: 1 }, { sparse: true });
+assessmentSchema.index({ assignmentId: 1, classId: 1 }, { sparse: true });
+// Drives the term-summary aggregate: filter by class+term+year for a
+// given school, then group marks per student per subject.
+assessmentSchema.index({ schoolId: 1, classId: 1, term: 1, academicYear: 1, isDeleted: 1 });
+assessmentSchema.index({ schoolId: 1, subjectId: 1, term: 1, academicYear: 1 });
 
 export const Assessment = mongoose.model<IAssessment>('Assessment', assessmentSchema);
 
@@ -449,6 +459,11 @@ const markSchema = new Schema<IMark>(
 
 markSchema.index({ assessmentId: 1, studentId: 1 }, { unique: true });
 markSchema.index({ studentId: 1 });
+// Cross-test queries (term summary / subject trends) drive lookups by
+// schoolId then join to Assessment. These compounds give the planner a
+// covering shape for the per-student and per-school slices.
+markSchema.index({ schoolId: 1, studentId: 1, isDeleted: 1 });
+markSchema.index({ schoolId: 1, isDeleted: 1, createdAt: -1 });
 
 export const Mark = mongoose.model<IMark>('Mark', markSchema);
 
@@ -593,6 +608,13 @@ const subjectWeightingSchema = new Schema<ISubjectWeighting>(
 );
 
 subjectWeightingSchema.index({ subjectId: 1, schoolId: 1, gradeId: 1, term: 1 });
+// One row per (subject, grade, term, type) within a school. Without this,
+// concurrent saves can produce duplicate buckets that silently corrupt the
+// weighted-average calc downstream.
+subjectWeightingSchema.index(
+  { schoolId: 1, subjectId: 1, gradeId: 1, term: 1, assessmentType: 1 },
+  { unique: true, partialFilterExpression: { isDeleted: false } },
+);
 
 export const SubjectWeighting = mongoose.model<ISubjectWeighting>('SubjectWeighting', subjectWeightingSchema);
 

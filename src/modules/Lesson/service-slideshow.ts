@@ -11,6 +11,7 @@ import {
   renderMaterialBody,
   type SlideTextRun,
 } from './service-slideshow-bodies.js';
+import type { LessonScope } from './service-access.js';
 
 const requireCJS = createRequire(import.meta.url);
 
@@ -29,9 +30,9 @@ const PptxGen = requireCJS('pptxgenjs') as { new (): Pptx };
 // ── Public API ────────────────────────────────────────────────────────────
 export async function generateSlideshow(
   lessonId: string,
-  schoolId: string,
+  scope: LessonScope,
 ): Promise<Buffer> {
-  const lesson = await LessonService.getById(lessonId, schoolId);
+  const lesson = await LessonService.getById(lessonId, scope);
   const pptx = buildPresentation(lesson);
 
   // pptxgenjs `write` returns a Buffer when outputType: 'nodebuffer' but the

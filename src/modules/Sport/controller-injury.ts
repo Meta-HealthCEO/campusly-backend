@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import { getUser } from '../../types/authenticated-request.js';
 import { apiResponse } from '../../common/utils.js';
 import { InjuryService } from './service-injury.js';
+import { resolveScopedStudentId } from './student-access.js';
 
 export class InjuryController {
   static async createInjury(req: Request, res: Response): Promise<void> {
@@ -17,9 +18,13 @@ export class InjuryController {
   static async listInjuries(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
     const { studentId, teamId, status } = req.query;
+    const scopedStudentId = await resolveScopedStudentId(
+      user,
+      typeof studentId === 'string' ? studentId : undefined,
+    );
     const injuries = await InjuryService.listInjuries({
       schoolId: user.schoolId!,
-      studentId: typeof studentId === 'string' ? studentId : undefined,
+      studentId: scopedStudentId,
       teamId: typeof teamId === 'string' ? teamId : undefined,
       status: typeof status === 'string' ? status : undefined,
     });

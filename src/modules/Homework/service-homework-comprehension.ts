@@ -6,6 +6,7 @@ import { BadRequestError, NotFoundError } from '../../common/errors.js';
 import { Question } from '../QuestionBank/model.js';
 import { ContentResource } from '../ContentLibrary/model.js';
 import { Textbook } from '../Textbook/model.js';
+import { resolveAcademicFilterIds } from '../Academic/services/global-academic-lookup.js';
 
 // Accept TextbookRef-shaped input where ObjectId fields may arrive as either
 // hex strings (HTTP path, post-Zod) or Types.ObjectId (already-cast docs).
@@ -149,10 +150,16 @@ export async function generateComprehensionQuestions(
   curriculumNodeId: string,
   count = 4,
 ): Promise<mongoose.Types.ObjectId[]> {
+  const { subjectIds, gradeIds } = await resolveAcademicFilterIds({ subjectId, gradeId });
   const resource = await ContentResource.findOne({
     _id: contentResourceId,
-    schoolId: new mongoose.Types.ObjectId(schoolId),
     isDeleted: false,
+    subjectId: { $in: subjectIds ?? [new mongoose.Types.ObjectId(subjectId)] },
+    gradeId: { $in: gradeIds ?? [new mongoose.Types.ObjectId(gradeId)] },
+    $or: [
+      { schoolId: null, status: 'approved' },
+      { schoolId: new mongoose.Types.ObjectId(schoolId), status: 'approved' },
+    ],
   }).lean();
   if (!resource) throw new NotFoundError('Content resource not found');
 
@@ -188,10 +195,15 @@ export async function generateComprehensionFromTextbook(
     // Multi-tenancy: allow CAPS national textbooks (schoolId: null) and the
     // teacher's own school textbooks. Always require isDeleted: false.
     const soid = new mongoose.Types.ObjectId(schoolId);
+    const tid = new mongoose.Types.ObjectId(teacherId);
     const textbook = await Textbook.findOne({
       _id: textbookRef.textbookId,
       isDeleted: false,
-      $or: [{ schoolId: null }, { schoolId: soid }],
+      $or: [
+        { schoolId: null, status: 'published' },
+        { schoolId: soid, status: 'published' },
+        { schoolId: soid, createdBy: tid },
+      ],
     }).lean();
     if (!textbook) throw new NotFoundError('Textbook not found');
 

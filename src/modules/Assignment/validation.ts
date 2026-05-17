@@ -22,9 +22,9 @@ const baseAssignmentFields = {
   brief: z.string().min(1).max(20_000),
   subjectId: objectIdSchema,
   gradeId: objectIdSchema,
-  curriculumNodeId: objectIdSchema.optional(),
+  topicIds: z.array(objectIdSchema).min(1).max(20),
   totalMarks: z.number().int().min(1).max(1000),
-  rubric: z.array(rubricCriterionInputSchema).max(20).default([]),
+  rubric: z.array(rubricCriterionInputSchema).min(1).max(20),
   submissionFormat: z.enum(ASSIGNMENT_SUBMISSION_FORMATS).default('both'),
   latePolicy: z.enum(ASSIGNMENT_LATE_POLICIES).default('block'),
   latePenaltyPercent: z.number().int().min(0).max(100).optional(),
@@ -53,7 +53,7 @@ export const updateAssignmentSchema = z.object({
   title: z.string().min(1).max(200).optional(),
   brief: z.string().min(1).max(20_000).optional(),
   totalMarks: z.number().int().min(1).max(1000).optional(),
-  rubric: z.array(rubricCriterionInputSchema).max(20).optional(),
+  rubric: z.array(rubricCriterionInputSchema).min(1).max(20).optional(),
   submissionFormat: z.enum(ASSIGNMENT_SUBMISSION_FORMATS).optional(),
   status: z.enum(ASSIGNMENT_STATUSES).optional(),
   latePolicy: z.enum(ASSIGNMENT_LATE_POLICIES).optional(),
@@ -75,14 +75,29 @@ export const createClassAssignmentSchema = z.object({
   classId: objectIdSchema,
   releaseAt: z.iso.datetime().nullable().optional(),
   dueAt: z.iso.datetime().nullable().optional(),
-}).strict();
+}).strict().refine(
+  (data) => {
+    if (!data.releaseAt || !data.dueAt) return true;
+    return new Date(data.releaseAt) <= new Date(data.dueAt);
+  },
+  {
+    message: 'releaseAt must be before dueAt',
+    path: ['releaseAt'],
+  },
+);
 
 // ─── Submit (student) ────────────────────────────────────────────────────────
 
 export const submitFileSchema = z.object({
   filename: z.string().min(1).max(300),
-  url: z.string().min(1).max(2000),
-  sizeBytes: z.number().int().min(0),
+  url: z.string()
+    .min(1)
+    .max(2000)
+    .regex(
+      /^\/uploads\/assignment-submissions\/[0-9a-f-]+\.[a-z0-9]+$/i,
+      'Invalid assignment upload URL',
+    ),
+  sizeBytes: z.number().int().min(1).max(25 * 1024 * 1024),
   mimeType: z.string().min(1).max(200),
 }).strict();
 
@@ -123,7 +138,7 @@ export type AssignmentLengthHint = (typeof ASSIGNMENT_LENGTHS)[number];
 export const generateAssignmentSchema = z.object({
   subjectId: objectIdSchema,
   gradeId: objectIdSchema,
-  curriculumNodeId: objectIdSchema.optional(),
+  topicIds: z.array(objectIdSchema).min(1).max(20),
   totalMarks: z.number().int().min(1).max(1000),
   // Length hint guides the AI: short=worksheet-scale, medium=essay/report,
   // long=long essay/case study, project=multi-week deliverable. Optional —

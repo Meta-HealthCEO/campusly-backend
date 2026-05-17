@@ -62,6 +62,7 @@ router.post(
 router.get(
   '/',
   authenticate,
+  authorize('teacher', 'student', 'school_admin', 'super_admin'),
   HomeworkController.list,
 );
 
@@ -76,6 +77,7 @@ router.get(
 router.get(
   '/student/:studentId/submissions',
   authenticate,
+  authorize('student', 'parent', 'school_admin', 'super_admin'),
   requireParentOwnership('studentId'),
   HomeworkController.getStudentSubmissions,
 );
@@ -97,6 +99,7 @@ router.get(
 router.get(
   '/submissions/:id',
   authenticate,
+  authorize('teacher', 'student', 'parent', 'school_admin', 'super_admin'),
   HomeworkController.getSubmissionById,
 );
 
@@ -118,6 +121,7 @@ router.post(
 router.get(
   '/:id',
   authenticate,
+  authorize('teacher', 'student', 'parent', 'school_admin', 'super_admin'),
   HomeworkController.getById,
 );
 

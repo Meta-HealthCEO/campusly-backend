@@ -24,6 +24,9 @@ import {
   MARGIN,
   PAGE_WIDTH,
 } from '../../common/pdf/constants.js';
+import { schoolIdFromScope, type LessonScope } from './service-access.js';
+import { logger } from '../../common/logger.js';
+import { renderPremiumLessonPdf } from './service-export-premium.js';
 
 const PHASE_LABELS: Record<LessonPhase, string> = {
   introduction: 'Introduction',
@@ -84,11 +87,12 @@ interface MermaidGraph {
 
 async function renderLessonPdf(
   lessonId: string,
-  schoolId: string,
+  scope: LessonScope,
   mode: PackMode,
 ): Promise<Buffer> {
+  const schoolId = schoolIdFromScope(scope);
   const [lesson, school] = await Promise.all([
-    LessonService.getById(lessonId, schoolId),
+    LessonService.getById(lessonId, scope),
     School.findOne({ _id: schoolId, isDeleted: false }).select('name').lean(),
   ]);
 
@@ -153,7 +157,6 @@ function renderCoverPage(doc: PDFKit.PDFDocument, ctx: PackContext): void {
     ['Term', lesson.termNumber ? `Term ${lesson.termNumber}` : 'Term not set'],
     ['Duration', `${lesson.durationMinutes} minutes`],
     ['Generated', formatDate(new Date())],
-    ['Status', titleCase(lesson.status)],
   ]);
 
   if (mode === 'student') {
@@ -1718,14 +1721,28 @@ function estimateTextHeight(text: string, fontSize: number): number {
 
 export async function exportTeacherPack(
   lessonId: string,
-  schoolId: string,
+  scope: LessonScope,
 ): Promise<Buffer> {
-  return renderLessonPdf(lessonId, schoolId, 'teacher');
+  if (process.env.LESSON_PDF_ENGINE !== 'legacy') {
+    try {
+      return await renderPremiumLessonPdf(lessonId, scope, 'teacher');
+    } catch (err: unknown) {
+      logger.warn({ err, lessonId }, 'Premium teacher lesson PDF render failed; using legacy renderer');
+    }
+  }
+  return renderLessonPdf(lessonId, scope, 'teacher');
 }
 
 export async function exportStudentPack(
   lessonId: string,
-  schoolId: string,
+  scope: LessonScope,
 ): Promise<Buffer> {
-  return renderLessonPdf(lessonId, schoolId, 'student');
+  if (process.env.LESSON_PDF_ENGINE !== 'legacy') {
+    try {
+      return await renderPremiumLessonPdf(lessonId, scope, 'student');
+    } catch (err: unknown) {
+      logger.warn({ err, lessonId }, 'Premium student lesson PDF render failed; using legacy renderer');
+    }
+  }
+  return renderLessonPdf(lessonId, scope, 'student');
 }

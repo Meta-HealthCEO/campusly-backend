@@ -256,17 +256,6 @@ async function seed() {
           additionalLanguages: sa.lang === 'English' ? ['Afrikaans'] : ['English'],
           transportRequired: sa.userIndex % 3 === 0,
           afterCareRequired: sa.userIndex % 4 === 0,
-          medicalProfile: {
-            allergies: sa.userIndex === 4 ? ['Peanuts'] : [],
-            conditions: sa.userIndex === 7 ? ['Asthma'] : [],
-            emergencyContacts: [
-              {
-                name: parentUserData[Math.min(sa.userIndex, 4)].firstName + ' ' + parentUserData[Math.min(sa.userIndex, 4)].lastName,
-                relationship: 'Parent',
-                phone: parentUserData[Math.min(sa.userIndex, 4)].phone,
-              },
-            ],
-          },
         }),
       ),
     );
@@ -498,7 +487,7 @@ async function seed() {
 
     for (const cls of classes) {
       // Find students assigned to this class
-      const classStudents = students.filter((s, i) =>
+      const classStudents = students.filter((_s, i) =>
         studentAssignments[i].classIndex === classes.indexOf(cls),
       );
       if (classStudents.length === 0) continue;

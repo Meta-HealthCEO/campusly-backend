@@ -2,8 +2,12 @@ import mongoose from 'mongoose';
 import { Lesson } from './model.js';
 import type { ILessonMaterial, ILesson, LessonPhase, LessonMaterialKind } from './types.js';
 import type { AddMaterialInput, UpdateMaterialInput } from './validation.js';
+import { BadRequestError, NotFoundError } from '../../common/errors.js';
 import { GenerationService } from '../ContentLibrary/service-generation.js';
 import { generateComprehensionFromTextbook } from '../Homework/service-homework-comprehension.js';
+import { Homework } from '../Homework/model.js';
+import { Quiz } from '../Learning/model.js';
+import { AssessmentPaper } from '../QuestionBank/model-papers.js';
 import {
   generateAIQuestions,
   type GenerateQuestionType,
@@ -21,16 +25,29 @@ import {
   resolveSubjectGradeForLesson,
 } from './service-materials-helpers.js';
 import { buildHomeworkRef } from './service-materials-homework.js';
+import {
+  lessonAccessFilter,
+  ownerFilterForScope,
+  schoolIdFromScope,
+  schoolObjectId,
+  toObjectId,
+  type LessonActor,
+  type LessonScope,
+} from './service-access.js';
 
 // ── addMaterial ─────────────────────────────────────────────────────────────
 export async function addMaterial(
   lessonId: string,
-  schoolId: string,
-  teacherId: string,
+  actor: LessonActor,
   input: AddMaterialInput,
 ): Promise<ILessonMaterial> {
-  const lesson = await Lesson.findOne({ _id: lessonId, schoolId, isDeleted: false });
-  if (!lesson) throw new Error('Lesson not found');
+  const schoolId = schoolIdFromScope(actor);
+  const teacherId = actor.id;
+  const lesson = await Lesson.findOne({
+    _id: toObjectId(lessonId, 'lessonId'),
+    ...lessonAccessFilter(actor),
+  });
+  if (!lesson) throw new NotFoundError('Lesson not found');
 
   const materialId = new mongoose.Types.ObjectId();
   const baseMaterial: Record<string, unknown> = {
@@ -78,7 +95,8 @@ export async function addMaterial(
       baseMaterial.contentResourceId = resource._id;
       cleanupIds.push(resource._id as mongoose.Types.ObjectId);
     } else if (input.kind === 'quiz') {
-      baseMaterial.quizId = new mongoose.Types.ObjectId(input.quizId);
+      await assertLinkedRefAvailable('quiz', input.quizId, actor);
+      baseMaterial.quizId = toObjectId(input.quizId, 'quizId');
     } else if (input.kind === 'practice_questions') {
       const payload = input.questionPayload as Record<string, unknown>;
       const rawTypes = Array.isArray(payload.questionTypes)
@@ -123,13 +141,15 @@ export async function addMaterial(
         lesson,
         schoolId,
         teacherId,
+        actor,
         input,
         cleanupIds,
       });
     } else if (input.kind === 'paper') {
       let paperId: mongoose.Types.ObjectId;
       if (input.existingPaperId) {
-        paperId = new mongoose.Types.ObjectId(input.existingPaperId);
+        await assertLinkedRefAvailable('paper', input.existingPaperId, actor);
+        paperId = toObjectId(input.existingPaperId, 'paperId');
       } else {
         const payload = (input.createPayload ?? {}) as Record<string, unknown>;
         const paperType =
@@ -175,7 +195,7 @@ export async function addMaterial(
     }
 
     const updated = await Lesson.findOneAndUpdate(
-      { _id: lessonId, schoolId, isDeleted: false },
+      { _id: toObjectId(lessonId, 'lessonId'), ...lessonAccessFilter(actor) },
       {
         $push: {
           materials: baseMaterial,
@@ -187,13 +207,13 @@ export async function addMaterial(
         arrayFilters: [{ 'ph.phase': input.phase }],
       },
     );
-    if (!updated) throw new Error('Lesson update failed');
+    if (!updated) throw new NotFoundError('Lesson not found');
     const created = updated.materials.find((m) => m._id.toString() === materialId.toString());
-    if (!created) throw new Error('Material write inconsistency');
+    if (!created) throw new BadRequestError('Material write inconsistency');
     return toPlainMaterial(created);
   } catch (err: unknown) {
     for (const id of cleanupIds) {
-      await softDeleteEntity(cleanupKind, id);
+      await softDeleteEntity(cleanupKind, id, schoolId);
     }
     throw err;
   }
@@ -203,21 +223,25 @@ export async function addMaterial(
 export async function updateMaterial(
   lessonId: string,
   materialId: string,
-  schoolId: string,
+  scope: LessonScope,
   patch: UpdateMaterialInput,
 ): Promise<ILessonMaterial> {
   const setOps: Record<string, unknown> = {};
   if (patch.title !== undefined) setOps['materials.$[m].title'] = patch.title;
   if (patch.teacherNotes !== undefined) setOps['materials.$[m].teacherNotes'] = patch.teacherNotes;
-  const matOid = new mongoose.Types.ObjectId(materialId);
+  const matOid = toObjectId(materialId, 'materialId');
   const updated = await Lesson.findOneAndUpdate(
-    { _id: lessonId, schoolId, isDeleted: false, 'materials._id': matOid },
+    {
+      _id: toObjectId(lessonId, 'lessonId'),
+      ...lessonAccessFilter(scope),
+      'materials._id': matOid,
+    },
     { $set: setOps },
     { new: true, arrayFilters: [{ 'm._id': matOid }] },
   );
-  if (!updated) throw new Error('Material not found');
+  if (!updated) throw new NotFoundError('Material not found');
   const m = updated.materials.find((x) => x._id.toString() === materialId);
-  if (!m) throw new Error('Material write inconsistency');
+  if (!m) throw new BadRequestError('Material write inconsistency');
   return toPlainMaterial(m);
 }
 
@@ -225,18 +249,21 @@ export async function updateMaterial(
 export async function moveMaterial(
   lessonId: string,
   materialId: string,
-  schoolId: string,
+  scope: LessonScope,
   toPhase: LessonPhase,
   toIndex: number,
 ): Promise<ILesson> {
-  const lesson = await Lesson.findOne({ _id: lessonId, schoolId, isDeleted: false });
-  if (!lesson) throw new Error('Lesson not found');
-  const matId = new mongoose.Types.ObjectId(materialId);
+  const lesson = await Lesson.findOne({
+    _id: toObjectId(lessonId, 'lessonId'),
+    ...lessonAccessFilter(scope),
+  });
+  if (!lesson) throw new NotFoundError('Lesson not found');
+  const matId = toObjectId(materialId, 'materialId');
   for (const phase of lesson.phases) {
     phase.materialIds = phase.materialIds.filter((id) => id.toString() !== matId.toString());
   }
   const target = lesson.phases.find((p) => p.phase === toPhase);
-  if (!target) throw new Error('Invalid phase');
+  if (!target) throw new BadRequestError('Invalid phase');
   const insertAt = Math.min(Math.max(toIndex, 0), target.materialIds.length);
   target.materialIds.splice(insertAt, 0, matId);
   await lesson.save();
@@ -247,31 +274,19 @@ export async function moveMaterial(
 export async function deleteMaterial(
   lessonId: string,
   materialId: string,
-  schoolId: string,
+  scope: LessonScope,
 ): Promise<void> {
-  const lesson = await Lesson.findOne({ _id: lessonId, schoolId, isDeleted: false });
-  if (!lesson) throw new Error('Lesson not found');
+  const lesson = await Lesson.findOne({
+    _id: toObjectId(lessonId, 'lessonId'),
+    ...lessonAccessFilter(scope),
+  });
+  if (!lesson) throw new NotFoundError('Lesson not found');
   const material = lesson.materials.find((m) => m._id.toString() === materialId);
-  if (!material) throw new Error('Material not found');
+  if (!material) throw new NotFoundError('Material not found');
 
-  const m = material as {
-    contentResourceId?: mongoose.Types.ObjectId;
-    homeworkId?: mongoose.Types.ObjectId;
-    questionIds?: mongoose.Types.ObjectId[];
-    comprehensionQuestionIds?: mongoose.Types.ObjectId[];
-  };
-  const refIds: mongoose.Types.ObjectId[] = [];
-  if (m.contentResourceId) refIds.push(m.contentResourceId);
-  if (m.homeworkId) refIds.push(m.homeworkId);
-  if (m.questionIds?.length) refIds.push(...m.questionIds);
-  if (m.comprehensionQuestionIds?.length) refIds.push(...m.comprehensionQuestionIds);
-  for (const id of refIds) {
-    await softDeleteEntity(material.kind, id);
-  }
-
-  const matOid = new mongoose.Types.ObjectId(materialId);
-  await Lesson.updateOne(
-    { _id: lessonId, schoolId },
+  const matOid = toObjectId(materialId, 'materialId');
+  const result = await Lesson.updateOne(
+    { _id: toObjectId(lessonId, 'lessonId'), ...lessonAccessFilter(scope) },
     {
       $pull: {
         materials: { _id: matOid },
@@ -279,28 +294,77 @@ export async function deleteMaterial(
       },
     },
   );
+  if (result.matchedCount === 0) throw new NotFoundError('Lesson not found');
 }
 
 // ── regenerateMaterial ──────────────────────────────────────────────────────
 export async function regenerateMaterial(
   lessonId: string,
   materialId: string,
-  schoolId: string,
-  teacherId: string,
+  actor: LessonActor,
   payload?: AddMaterialInput,
 ): Promise<ILessonMaterial> {
-  const lesson = await Lesson.findOne({ _id: lessonId, schoolId, isDeleted: false });
-  if (!lesson) throw new Error('Lesson not found');
+  const lesson = await Lesson.findOne({
+    _id: toObjectId(lessonId, 'lessonId'),
+    ...lessonAccessFilter(actor),
+  });
+  if (!lesson) throw new NotFoundError('Lesson not found');
   const existing = lesson.materials.find((m) => m._id.toString() === materialId);
-  if (!existing) throw new Error('Material not found');
-  if (!payload) throw new Error('Regenerate requires payload (v1)');
+  if (!existing) throw new NotFoundError('Material not found');
+  if (!payload) throw new BadRequestError('Regenerate requires payload (v1)');
 
   const phaseEntry = lesson.phases.find((p) =>
     p.materialIds.some((id) => id.toString() === materialId),
   );
-  await deleteMaterial(lessonId, materialId, schoolId);
-  return addMaterial(lessonId, schoolId, teacherId, {
+  const phase = phaseEntry?.phase ?? payload.phase ?? 'practice';
+  const originalIndex = Math.max(
+    0,
+    phaseEntry?.materialIds.findIndex((id) => id.toString() === materialId) ?? 0,
+  );
+  const replacement = await addMaterial(lessonId, actor, {
     ...payload,
-    phase: phaseEntry?.phase ?? 'practice',
+    phase,
   });
+  await deleteMaterial(lessonId, materialId, actor);
+  await moveMaterial(lessonId, replacement._id.toString(), actor, phase, originalIndex);
+  return replacement;
+}
+
+async function assertLinkedRefAvailable(
+  kind: 'quiz' | 'homework' | 'paper',
+  rawId: string,
+  scope: LessonScope,
+): Promise<void> {
+  const id = toObjectId(rawId, `${kind}Id`);
+  const schoolId = schoolObjectId(scope);
+
+  if (kind === 'quiz') {
+    const ok = await Quiz.exists({
+      _id: id,
+      schoolId,
+      isDeleted: false,
+      ...ownerFilterForScope(scope, 'teacherId'),
+    });
+    if (!ok) throw new BadRequestError('Quiz is not available for this lesson');
+    return;
+  }
+
+  if (kind === 'homework') {
+    const ok = await Homework.exists({
+      _id: id,
+      schoolId,
+      isDeleted: false,
+      ...ownerFilterForScope(scope, 'teacherId'),
+    });
+    if (!ok) throw new BadRequestError('Homework is not available for this lesson');
+    return;
+  }
+
+  const ok = await AssessmentPaper.exists({
+    _id: id,
+    schoolId,
+    isDeleted: false,
+    ...ownerFilterForScope(scope, 'createdBy'),
+  });
+  if (!ok) throw new BadRequestError('Paper is not available for this lesson');
 }

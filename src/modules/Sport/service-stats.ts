@@ -203,6 +203,7 @@ export class StatsService {
     sportCode?: string,
     page?: number,
     limit?: number,
+    studentId?: string,
   ): Promise<{
     cards: IPlayerCard[];
     total: number;
@@ -215,6 +216,7 @@ export class StatsService {
 
     const filter: Record<string, unknown> = { schoolId, isDeleted: false };
     if (sportCode) filter.sportCode = sportCode;
+    if (studentId) filter.studentId = studentId;
 
     const [cardsRaw, total] = await Promise.all([
       PlayerCard.find(filter)

@@ -5,45 +5,63 @@ import { AcademicService } from '../service.js';
 import { apiResponse } from '../../../common/utils.js';
 import { ForbiddenError, ConflictError } from '../../../common/errors.js';
 
+async function assertTeacherCanAccessClass(
+  user: ReturnType<typeof getUser>,
+  classId: string,
+  schoolId: string,
+): Promise<void> {
+  if (user.role !== 'teacher') return;
+  const canAccess = await AcademicService.teacherCanAccessClass(user.id, classId, schoolId);
+  if (!canAccess) throw new ForbiddenError('You can only access your own teaching groups');
+}
+
 export class ClassController {
   static async createClass(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
     const data = { ...req.body };
 
-    // If teacher is creating the class, auto-set themselves as the teacher
-    if (user.role === 'teacher' && !data.teacherId) {
+    // Scope teacher-created classes to the authenticated teacher, regardless
+    // of any client-supplied IDs.
+    if (user.role === 'teacher') {
       data.teacherId = user.id;
+      data.schoolId = user.schoolId;
     }
     if (!data.schoolId && user.schoolId) {
       data.schoolId = user.schoolId;
     }
 
+    if (user.role === 'teacher') {
+      await AcademicService.validateTeachingGroupGrade({
+        schoolId: data.schoolId,
+        teacherId: user.id,
+        gradeId: data.gradeId,
+      });
+      if (data.subjectId) {
+        await AcademicService.validateTeachingGroupSubjectChoice({
+          schoolId: data.schoolId,
+          teacherId: user.id,
+          gradeId: data.gradeId,
+          subjectId: String(data.subjectId),
+        });
+      }
+    }
+
     const cls = await AcademicService.createClass(data);
-    // Re-fetch populated so frontend gets grade/teacher objects
     const populated = await AcademicService.getClassById(String(cls._id), String(cls.schoolId));
 
-    // If a subjectId was provided, auto-create a timetable entry linking
-    // this teacher to this class + subject. This makes the class appear
-    // in the teacher's teaching-load under "subject classes".
     if (data.subjectId && user.role === 'teacher') {
       try {
-        // Find next available period to avoid clashes
-        const existingCount = await AcademicService.countTimetableEntries(
-          String(populated.schoolId), user.id, 'monday',
-        );
-        await AcademicService.createTimetable({
-          schoolId: populated.schoolId,
-          teacherId: user.id as unknown as import('mongoose').Types.ObjectId,
-          classId: populated._id as import('mongoose').Types.ObjectId,
-          subjectId: data.subjectId as unknown as import('mongoose').Types.ObjectId,
-          day: 'monday',
-          period: existingCount + 1,
-          startTime: '08:00',
-          endTime: '08:30',
+        await AcademicService.syncTeachingGroupSubject({
+          schoolId: String(populated.schoolId),
+          teacherId: user.id,
+          classId: String(populated._id),
+          subjectId: String(data.subjectId),
+          gradeId: String(cls.gradeId),
         });
       } catch (err: unknown) {
-        // Non-fatal — class was created, timetable linkage is a convenience
-        console.error('Failed to auto-create timetable entry', err);
+        // Roll back the group if its subject linkage cannot be created.
+        await AcademicService.deleteClass(String(populated._id), String(populated.schoolId));
+        throw err;
       }
     }
 
@@ -81,7 +99,9 @@ export class ClassController {
   }
 
   static async getClass(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
+    const user = getUser(req);
+    const schoolId = user.schoolId!;
+    await assertTeacherCanAccessClass(user, req.params.id as string, schoolId);
     const cls = await AcademicService.getClassById(req.params.id as string, schoolId);
     res.json(apiResponse(true, cls, 'Class retrieved successfully'));
   }
@@ -89,28 +109,64 @@ export class ClassController {
   static async updateClass(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
     const schoolId = user.schoolId!;
-    if (user.role === 'teacher') {
-      const canAccess = await AcademicService.teacherCanAccessClass(user.id, req.params.id as string, schoolId);
-      if (!canAccess) throw new ForbiddenError('You can only modify your own classes');
+    await assertTeacherCanAccessClass(user, req.params.id as string, schoolId);
+
+    const body = req.body as Record<string, unknown>;
+    const hasSubjectId = Object.prototype.hasOwnProperty.call(body, 'subjectId');
+    const { subjectId, ...rest } = body;
+    const targetGradeId = rest.gradeId as string | undefined;
+
+    if (targetGradeId && user.role === 'teacher') {
+      await AcademicService.validateTeachingGroupGrade({
+        schoolId,
+        teacherId: user.id,
+        gradeId: targetGradeId,
+      });
     }
 
-    // Class schema has no subjectId field — strip from payload before update so
-    // Mongoose strict mode doesn't have to silently drop it. We persist the
-    // subject linkage via Timetable below.
-    const { subjectId, ...rest } = req.body as Record<string, unknown>;
+    if (hasSubjectId && subjectId && user.role === 'teacher') {
+      await AcademicService.validateTeachingGroupSubject({
+        schoolId,
+        teacherId: user.id,
+        classId: req.params.id as string,
+        subjectId: subjectId as string,
+        gradeId: targetGradeId,
+      });
+    }
+
+    if (!hasSubjectId && targetGradeId && user.role === 'teacher') {
+      await AcademicService.validateTeachingGroupCurrentSubjectForGrade({
+        schoolId,
+        teacherId: user.id,
+        classId: req.params.id as string,
+        gradeId: targetGradeId,
+      });
+    }
+
+    // Class has no subjectId column; for standalone teaching groups the
+    // single subject link is represented by the teacher's Timetable row.
     const cls = await AcademicService.updateClass(req.params.id as string, schoolId, rest);
 
-    if (subjectId && user.role === 'teacher') {
+    if (hasSubjectId && user.role === 'teacher') {
       try {
-        await AcademicService.syncTeachingGroupSubject({
-          schoolId,
-          teacherId: user.id,
-          classId: req.params.id as string,
-          subjectId: subjectId as string,
-        });
+        if (subjectId) {
+          await AcademicService.syncTeachingGroupSubject({
+            schoolId,
+            teacherId: user.id,
+            classId: req.params.id as string,
+            subjectId: subjectId as string,
+          });
+        } else {
+          await AcademicService.clearTeachingGroupSubject({
+            schoolId,
+            teacherId: user.id,
+            classId: req.params.id as string,
+          });
+        }
       } catch (err: unknown) {
-        // Non-fatal — class still updated; surface in logs
-        console.error('Failed to sync teaching-group subject', err);
+        // Surface subject-link failures so the UI does not show a saved state
+        // that the teacher cannot actually use.
+        throw err;
       }
     }
 
@@ -120,12 +176,8 @@ export class ClassController {
   static async deleteClass(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
     const schoolId = user.schoolId!;
-    if (user.role === 'teacher') {
-      const canAccess = await AcademicService.teacherCanAccessClass(user.id, req.params.id as string, schoolId);
-      if (!canAccess) throw new ForbiddenError('You can only modify your own classes');
-    }
+    await assertTeacherCanAccessClass(user, req.params.id as string, schoolId);
 
-    // Check if class has students — prevent deletion if so
     const studentCount = await AcademicService.countClassStudents(
       req.params.id as string, schoolId,
     );
@@ -140,15 +192,27 @@ export class ClassController {
   }
 
   static async getClassJoinCode(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
+    const user = getUser(req);
+    const schoolId = user.schoolId!;
+    await assertTeacherCanAccessClass(user, req.params.id as string, schoolId);
     const cls = await AcademicService.getClassById(req.params.id as string, schoolId);
     res.json(apiResponse(true, { classroomCode: cls.classroomCode, className: cls.name }, 'Join code retrieved successfully'));
   }
 
   static async regenerateClassJoinCode(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
+    const user = getUser(req);
+    const schoolId = user.schoolId!;
+    await assertTeacherCanAccessClass(user, req.params.id as string, schoolId);
     const cls = await AcademicService.regenerateClassroomCode(req.params.id as string, schoolId);
     res.json(apiResponse(true, { classroomCode: cls.classroomCode, className: cls.name }, 'Join code regenerated successfully'));
+  }
+
+  static async joinClassByCode(req: Request, res: Response): Promise<void> {
+    const user = getUser(req);
+    const schoolId = user.schoolId!;
+    const code = String((req.body as { code?: string }).code ?? '');
+    const result = await AcademicService.joinClassByCode(user.id, schoolId, code);
+    res.json(apiResponse(true, result, 'Joined class successfully'));
   }
 
   static async getTeacherTeachingLoad(req: Request, res: Response): Promise<void> {

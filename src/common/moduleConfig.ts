@@ -30,8 +30,10 @@ export const BOLT_ON_MODULES = [
   'aftercare',
   'migration',
   'learning',
+  'library',
   'lost_found',
   'ai_tools',
+  'communication',
   'teacher_workbench',
   'careers',
   'staff_leave',
@@ -109,9 +111,17 @@ export const MODULE_PACKAGES: Record<string, { label: string; modules: readonly 
     label: 'Learning Platform',
     modules: ['learning', 'homework'],
   },
+  library: {
+    label: 'Library',
+    modules: ['library'],
+  },
   lost_found: {
     label: 'Lost & Found',
     modules: ['lost_found'],
+  },
+  communication: {
+    label: 'Communication',
+    modules: ['communication'],
   },
   ai_tools: {
     label: 'AI Teacher Tools',

@@ -29,9 +29,16 @@ export class AcademicService {
   static updateClass = GradeService.updateClass;
   static deleteClass = GradeService.deleteClass;
   static syncTeachingGroupSubject = GradeService.syncTeachingGroupSubject;
+  static validateTeachingGroupGrade = GradeService.validateTeachingGroupGrade;
+  static validateTeachingGroupSubjectChoice = GradeService.validateTeachingGroupSubjectChoice;
+  static validateTeachingGroupSubject = GradeService.validateTeachingGroupSubject;
+  static validateTeachingGroupCurrentSubjectForGrade = GradeService.validateTeachingGroupCurrentSubjectForGrade;
+  static clearTeachingGroupSubject = GradeService.clearTeachingGroupSubject;
   static getClassByCode = GradeService.getClassByCode;
+  static joinClassByCode = GradeService.joinClassByCode;
   static regenerateClassroomCode = GradeService.regenerateClassroomCode;
   static getTeacherTeachingLoad = GradeService.getTeacherTeachingLoad;
+  static getTeacherAccessibleClassIds = GradeService.getTeacherAccessibleClassIds;
   static teacherCanAccessClass = GradeService.teacherCanAccessClass;
   static countTimetableEntries = GradeService.countTimetableEntries;
   static countClassStudents = GradeService.countClassStudents;

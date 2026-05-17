@@ -10,6 +10,7 @@ import {
   updateGradeSchema,
   classSchema,
   updateClassSchema,
+  joinClassByCodeSchema,
   subjectSchema,
   updateSubjectSchema,
   timetableSchema,
@@ -25,6 +26,7 @@ import {
   pastPaperCreateSchema,
   subjectWeightingCreateSchema,
   subjectWeightingUpdateSchema,
+  subjectWeightingBulkSetSchema,
   remedialCreateSchema,
   remedialUpdateSchema,
 } from './validation.js';
@@ -114,6 +116,14 @@ router.delete(
   authenticate,
   requireCapability('manage_academic_setup'),
   AcademicController.deleteClass,
+);
+
+router.post(
+  '/classes/join',
+  authenticate,
+  authorize('student'),
+  validate(joinClassByCodeSchema),
+  AcademicController.joinClassByCode,
 );
 
 router.get(
@@ -246,6 +256,32 @@ router.get(
   AcademicController.listAssessments,
 );
 
+// Term Summary — class × subject roll-up for a term. Static path sits above
+// /assessments/:id so the param doesn't swallow it.
+router.get(
+  '/term-summary',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'teacher'),
+  AcademicController.getTermSummary,
+);
+
+// Subject trend — term-by-term cohort averages for a single class+subject.
+router.get(
+  '/subject-trend',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'teacher'),
+  AcademicController.getSubjectTrend,
+);
+
+// Student term detail — every mark for one student in a given term, grouped
+// by subject. Drives the gradebook drilldown panel.
+router.get(
+  '/students/:studentId/term-detail',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'teacher'),
+  AcademicController.getStudentTermDetail,
+);
+
 router.get(
   '/assessments/:id',
   authenticate,
@@ -333,6 +369,27 @@ router.get('/past-papers', authenticate, authorize('super_admin', 'school_admin'
 router.delete('/past-papers/:id', authenticate, requireCapability('manage_academic_setup'), AcademicController.deletePastPaper);
 
 // ─── Subject Weightings ─────────────────────────────────────────────────────
+//
+// /subject-weightings/matrix is the gradebook bulk path: GET pulls the
+// 4-term × 5-type config for one (subject, grade); PUT atomically replaces
+// every bucket in a single term (sum-to-100 enforced server-side). The
+// per-row CRUD endpoints below are kept for legacy/admin scripts but
+// nothing in the app touches them — prefer the matrix path.
+
+router.get(
+  '/subject-weightings/matrix',
+  authenticate,
+  authorize('super_admin', 'school_admin', 'teacher'),
+  AcademicController.getSubjectWeightingMatrix,
+);
+
+router.put(
+  '/subject-weightings/matrix',
+  authenticate,
+  requireCapability('manage_academic_setup'),
+  validate(subjectWeightingBulkSetSchema),
+  AcademicController.setSubjectWeightingTermBuckets,
+);
 
 router.post('/subject-weightings', authenticate, requireCapability('manage_academic_setup'), validate(subjectWeightingCreateSchema), AcademicController.createSubjectWeighting);
 router.get('/subject-weightings', authenticate, authorize('super_admin', 'school_admin', 'teacher'), AcademicController.listSubjectWeightings);

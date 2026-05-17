@@ -1,8 +1,6 @@
 import mongoose from 'mongoose';
 import { MenuItem, IMenuItem, TuckShopOrder, ITuckShopOrder } from './model.js';
 import { Wallet, WalletTransaction, Wristband } from '../Wallet/model.js';
-import { Student } from '../Student/model.js';
-import { AuditLog } from '../Audit/model.js';
 import { BadRequestError, NotFoundError, UnauthorizedError } from '../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../common/constants.js';
 import { TransactionType } from '../../common/enums.js';
@@ -143,25 +141,6 @@ export class TuckShopService {
 
       const menuItemMap = new Map(menuItems.map((item) => [item._id.toString(), item]));
 
-      // Allergen safety check
-      if (!data.allergenOverride) {
-        const student = await Student.findOne({ _id: data.studentId, isDeleted: false }).session(session);
-        if (student?.medicalProfile?.allergies?.length) {
-          const studentAllergies = student.medicalProfile.allergies.map((a) => a.toLowerCase());
-          for (const orderItem of data.items) {
-            const menuItem = menuItemMap.get(orderItem.menuItemId);
-            if (menuItem?.allergens?.length) {
-              for (const allergen of menuItem.allergens) {
-                if (studentAllergies.includes(allergen.toLowerCase())) {
-                  throw new BadRequestError(
-                    `This item contains ${allergen} which the student is allergic to. Set allergenOverride to true if parent has pre-authorized.`,
-                  );
-                }
-              }
-            }
-          }
-        }
-      }
 
       // Build order items and check stock
       const orderItems = [];
@@ -293,33 +272,6 @@ export class TuckShopService {
         processedBy,
       });
       await order.save({ session });
-
-      // Audit log for allergen override
-      if (data.allergenOverride) {
-        const student = await Student.findOne({ _id: data.studentId, isDeleted: false }).session(session);
-        const studentAllergies = (student?.medicalProfile?.allergies ?? []).map((a) => a.toLowerCase());
-        const matchingAllergens: string[] = [];
-        for (const orderItem of data.items) {
-          const menuItem = menuItemMap.get(orderItem.menuItemId);
-          if (menuItem?.allergens?.length) {
-            for (const allergen of menuItem.allergens) {
-              if (studentAllergies.includes(allergen.toLowerCase())) {
-                matchingAllergens.push(allergen);
-              }
-            }
-          }
-        }
-        if (matchingAllergens.length > 0) {
-          await AuditLog.create([{
-            userId: processedBy,
-            schoolId: data.schoolId,
-            action: 'ALLERGEN_OVERRIDE',
-            entity: 'TuckShopOrder',
-            entityId: (order._id as mongoose.Types.ObjectId).toString(),
-            details: { studentId: data.studentId, allergens: matchingAllergens },
-          }], { session });
-        }
-      }
 
       await session.commitTransaction();
       return order;

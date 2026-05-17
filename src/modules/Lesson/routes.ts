@@ -13,7 +13,8 @@ router.post('/scaffold', LessonController.scaffold);
 router.post('/', LessonController.create);
 router.get('/:id', LessonController.getById);
 router.put('/:id', LessonController.update);
-router.patch('/:id/status', LessonController.patchStatus);
+router.post('/:id/publish', LessonController.publish);
+router.post('/:id/unpublish', LessonController.unpublish);
 router.delete('/:id', LessonController.delete);
 router.post('/:id/clone', LessonController.clone);
 

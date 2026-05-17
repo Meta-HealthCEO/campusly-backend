@@ -82,8 +82,6 @@ export class AdmissionsPublicService {
       parentIdNumber: data.parentIdNumber,
       parentRelationship: data.parentRelationship,
       address: data.address,
-      medicalConditions: data.medicalConditions,
-      allergies: data.allergies,
       specialNeeds: data.specialNeeds,
       additionalNotes: data.additionalNotes,
       documents,

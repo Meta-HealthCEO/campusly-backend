@@ -17,7 +17,6 @@ export interface StudentLessonMaterialBase {
     | 'worked_example' | 'quiz' | 'practice_questions'
     | 'homework' | 'paper';
   title: string;
-  teacherNotes?: string;
   phase: string;
 }
 

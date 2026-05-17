@@ -269,9 +269,6 @@ async function main() {
         enrollmentStatus: 'active',
         dateOfBirth: dob,
         gender: 'male' as const,
-        medicalProfile: {
-          allergies: [], conditions: [], emergencyContacts: [],
-        },
         additionalLanguages: [],
         transportRequired: false,
         afterCareRequired: false,

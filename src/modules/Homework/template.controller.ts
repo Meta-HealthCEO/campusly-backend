@@ -3,6 +3,14 @@ import { Response } from 'express';
 import { getUser } from '../../types/authenticated-request.js';
 import { HomeworkTemplateService } from './template.service.js';
 import { apiResponse } from '../../common/utils.js';
+import { BadRequestError } from '../../common/errors.js';
+import type { HomeworkActor } from './service-access.js';
+
+function getHomeworkActor(req: Request): HomeworkActor {
+  const user = getUser(req);
+  if (!user.schoolId) throw new BadRequestError('School ID is required');
+  return { ...user, schoolId: user.schoolId };
+}
 
 export class HomeworkTemplateController {
   static async createTemplate(req: Request, res: Response): Promise<void> {
@@ -52,15 +60,10 @@ export class HomeworkTemplateController {
   }
 
   static async cloneTemplate(req: Request, res: Response): Promise<void> {
-    const { id: teacherId, schoolId } = getUser(req);
-    if (!schoolId) {
-      res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
-      return;
-    }
+    const actor = getHomeworkActor(req);
 
     const homework = await HomeworkTemplateService.createFromTemplate(
-      teacherId,
-      schoolId,
+      actor,
       req.params.id as string,
       req.body,
     );
@@ -68,15 +71,10 @@ export class HomeworkTemplateController {
   }
 
   static async saveAsTemplate(req: Request, res: Response): Promise<void> {
-    const { id: teacherId, schoolId } = getUser(req);
-    if (!schoolId) {
-      res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
-      return;
-    }
+    const actor = getHomeworkActor(req);
 
     const template = await HomeworkTemplateService.saveAsTemplate(
-      teacherId,
-      schoolId,
+      actor,
       req.params.id as string,
     );
     res.status(201).json(apiResponse(true, template, 'Saved as template'));

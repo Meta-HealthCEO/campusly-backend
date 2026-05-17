@@ -2,6 +2,9 @@ import { Router } from 'express';
 import { authorize, validate } from '../../middleware/index.js';
 import { TextbookController } from './controller.js';
 import {
+  textbookIdParamsSchema,
+  textbookChapterParamsSchema,
+  textbookChapterResourceParamsSchema,
   createTextbookSchema,
   updateTextbookSchema,
   addChapterSchema,
@@ -30,6 +33,7 @@ router.get(
 router.get(
   '/:id',
   authorize(...STUDENT_ROLES),
+  validate({ params: textbookIdParamsSchema }),
   TextbookController.getTextbook,
 );
 
@@ -45,13 +49,14 @@ router.post(
 router.put(
   '/:id',
   authorize(...ADMIN_ROLES),
-  validate(updateTextbookSchema),
+  validate({ params: textbookIdParamsSchema, body: updateTextbookSchema }),
   TextbookController.updateTextbook,
 );
 
 router.delete(
   '/:id',
   authorize(...ADMIN_ROLES),
+  validate({ params: textbookIdParamsSchema }),
   TextbookController.deleteTextbook,
 );
 
@@ -60,7 +65,7 @@ router.delete(
 router.put(
   '/:id/chapters/reorder',
   authorize(...ADMIN_ROLES),
-  validate(reorderChaptersSchema),
+  validate({ params: textbookIdParamsSchema, body: reorderChaptersSchema }),
   TextbookController.reorderChapters,
 );
 
@@ -69,20 +74,21 @@ router.put(
 router.post(
   '/:id/chapters',
   authorize(...ADMIN_ROLES),
-  validate(addChapterSchema),
+  validate({ params: textbookIdParamsSchema, body: addChapterSchema }),
   TextbookController.addChapter,
 );
 
 router.put(
   '/:id/chapters/:chapterId',
   authorize(...ADMIN_ROLES),
-  validate(updateChapterSchema),
+  validate({ params: textbookChapterParamsSchema, body: updateChapterSchema }),
   TextbookController.updateChapter,
 );
 
 router.delete(
   '/:id/chapters/:chapterId',
   authorize(...ADMIN_ROLES),
+  validate({ params: textbookChapterParamsSchema }),
   TextbookController.removeChapter,
 );
 
@@ -91,13 +97,14 @@ router.delete(
 router.post(
   '/:id/chapters/:chapterId/resources',
   authorize(...ADMIN_ROLES),
-  validate(addResourceToChapterSchema),
+  validate({ params: textbookChapterParamsSchema, body: addResourceToChapterSchema }),
   TextbookController.addResourceToChapter,
 );
 
 router.delete(
   '/:id/chapters/:chapterId/resources/:resourceId',
   authorize(...ADMIN_ROLES),
+  validate({ params: textbookChapterResourceParamsSchema }),
   TextbookController.removeResourceFromChapter,
 );
 
@@ -106,6 +113,7 @@ router.delete(
 router.post(
   '/:id/publish',
   authorize(...ADMIN_ROLES),
+  validate({ params: textbookIdParamsSchema }),
   TextbookController.publishTextbook,
 );
 

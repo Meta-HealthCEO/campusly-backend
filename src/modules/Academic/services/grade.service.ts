@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import type { Types } from 'mongoose';
 import { Grade, IGrade, Class, IClass, Subject, Timetable } from '../model.js';
 import { Student } from '../../Student/model.js';
+import { User } from '../../Auth/model.js';
 import { CurriculumNode } from '../../CurriculumStructure/model.js';
 import { NotFoundError, ConflictError, BadRequestError } from '../../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../../common/constants.js';
@@ -232,6 +233,54 @@ export class GradeService {
     return Class.findOne({ classroomCode: classroomCode.toUpperCase(), isDeleted: false }).lean();
   }
 
+  /**
+   * Join a class via its classroom code.
+   *
+   * The Student model only stores a single `classId`, so joining a new class
+   * REPLACES the student's current homeroom assignment. The frontend should
+   * surface this consequence to the student before they submit.
+   */
+  static async joinClassByCode(
+    userId: string,
+    schoolId: string,
+    classroomCode: string,
+  ): Promise<{ class: IClass; previousClassId: string | null }> {
+    const normalised = classroomCode.trim().toUpperCase();
+    if (!normalised) throw new BadRequestError('Classroom code is required');
+
+    const cls = await Class.findOne({
+      classroomCode: normalised,
+      schoolId,
+      isDeleted: false,
+    }).lean();
+    if (!cls) throw new NotFoundError('No class matches that code in your school');
+
+    const student = await Student.findOne({ userId, schoolId, isDeleted: false });
+    if (!student) throw new NotFoundError('Student profile not found');
+
+    const previousClassId = student.classId ? String(student.classId) : null;
+    if (previousClassId === String(cls._id)) {
+      throw new ConflictError('You are already in this class');
+    }
+
+    if (cls.capacity) {
+      const enrolled = await Student.countDocuments({
+        classId: cls._id,
+        schoolId,
+        isDeleted: false,
+      });
+      if (enrolled >= cls.capacity) {
+        throw new ConflictError('This class is full');
+      }
+    }
+
+    student.classId = cls._id as Types.ObjectId;
+    student.gradeId = cls.gradeId as Types.ObjectId;
+    await student.save();
+
+    return { class: cls, previousClassId };
+  }
+
   static async regenerateClassroomCode(id: string, schoolId: string): Promise<IClass> {
     let code = generateClassroomCode();
     let attempts = 0;
@@ -348,8 +397,10 @@ export class GradeService {
     teacherId: string;
     classId: string;
     subjectId: string;
+    gradeId?: string;
   }): Promise<void> {
     const { schoolId, teacherId, classId, subjectId } = input;
+    await GradeService.validateTeachingGroupSubject(input);
 
     const existing = await Timetable.findOne({
       schoolId, teacherId, classId, isDeleted: false,
@@ -362,19 +413,149 @@ export class GradeService {
       return;
     }
 
-    const periodCount = await Timetable.countDocuments({
-      schoolId, teacherId, day: 'monday', isDeleted: false,
-    });
+    const day = 'monday';
+    let period = 1;
+    for (; period <= 20; period += 1) {
+      const occupied = await Timetable.exists({
+        schoolId,
+        classId,
+        day,
+        period,
+        isDeleted: false,
+      });
+      if (!occupied) break;
+    }
+    if (period > 20) {
+      throw new BadRequestError('No available timetable slot to link this teaching group subject');
+    }
+
     await Timetable.create({
       schoolId,
       teacherId,
       classId,
       subjectId,
-      day: 'monday',
-      period: periodCount + 1,
+      day,
+      period,
       startTime: '08:00',
       endTime: '08:30',
     });
+  }
+
+  static async validateTeachingGroupGrade(input: {
+    schoolId: string;
+    teacherId: string;
+    gradeId: string;
+  }): Promise<void> {
+    const { schoolId, teacherId, gradeId } = input;
+    const [gradeDoc, teacherDoc] = await Promise.all([
+      Grade.findOne({ _id: gradeId, schoolId, isDeleted: false }).select('_id').lean(),
+      User.findOne({
+        _id: teacherId,
+        schoolId,
+        role: 'teacher',
+        isDeleted: false,
+        isActive: true,
+      }).select('_id').lean(),
+    ]);
+
+    if (!gradeDoc) throw new BadRequestError('Teaching group grade not found in your school');
+    if (!teacherDoc) throw new BadRequestError('Teacher not found in your school');
+  }
+
+  static async validateTeachingGroupSubjectChoice(input: {
+    schoolId: string;
+    teacherId: string;
+    subjectId: string;
+    gradeId: string;
+  }): Promise<void> {
+    const { schoolId, teacherId, subjectId, gradeId } = input;
+
+    const [gradeDoc, subjectDoc, teacherDoc] = await Promise.all([
+      Grade.findOne({ _id: gradeId, schoolId, isDeleted: false }).select('_id').lean(),
+      Subject.findOne({ _id: subjectId, schoolId, isDeleted: false }).select('gradeIds').lean(),
+      User.findOne({
+        _id: teacherId,
+        schoolId,
+        role: 'teacher',
+        isDeleted: false,
+        isActive: true,
+      }).select('_id').lean(),
+    ]);
+
+    if (!gradeDoc) throw new BadRequestError('Teaching group grade not found in your school');
+    if (!subjectDoc) throw new BadRequestError('Subject not found in your school');
+    if (!teacherDoc) throw new BadRequestError('Teacher not found in your school');
+
+    const subjectGradeIds = (subjectDoc.gradeIds ?? []).map((id) => String(id));
+    if (subjectGradeIds.length > 0 && !subjectGradeIds.includes(gradeId)) {
+      throw new BadRequestError('Subject is not linked to the selected teaching group grade');
+    }
+  }
+
+  static async validateTeachingGroupSubject(input: {
+    schoolId: string;
+    teacherId: string;
+    classId: string;
+    subjectId: string;
+    gradeId?: string;
+  }): Promise<void> {
+    const { schoolId, teacherId, classId, subjectId } = input;
+
+    const classDoc = await Class.findOne({ _id: classId, schoolId, isDeleted: false })
+      .select('gradeId')
+      .lean();
+
+    if (!classDoc) throw new BadRequestError('Teaching group not found in your school');
+
+    const classGradeId = String(input.gradeId ?? classDoc.gradeId);
+    await GradeService.validateTeachingGroupSubjectChoice({
+      schoolId,
+      teacherId,
+      subjectId,
+      gradeId: classGradeId,
+    });
+  }
+
+  static async validateTeachingGroupCurrentSubjectForGrade(input: {
+    schoolId: string;
+    teacherId: string;
+    classId: string;
+    gradeId: string;
+  }): Promise<void> {
+    const current = await Timetable.findOne({
+      schoolId: input.schoolId,
+      teacherId: input.teacherId,
+      classId: input.classId,
+      isDeleted: false,
+    }).select('subjectId').lean();
+
+    if (current?.subjectId) {
+      await GradeService.validateTeachingGroupSubjectChoice({
+        schoolId: input.schoolId,
+        teacherId: input.teacherId,
+        subjectId: String(current.subjectId),
+        gradeId: input.gradeId,
+      });
+    }
+  }
+
+  static async clearTeachingGroupSubject(input: {
+    schoolId: string;
+    teacherId: string;
+    classId: string;
+  }): Promise<void> {
+    const { schoolId, teacherId, classId } = input;
+    const classDoc = await Class.findOne({
+      _id: classId,
+      schoolId,
+      isDeleted: false,
+    }).select('_id').lean();
+    if (!classDoc) throw new BadRequestError('Teaching group not found in your school');
+
+    await Timetable.updateMany(
+      { schoolId, teacherId, classId, isDeleted: false },
+      { $set: { isDeleted: true } },
+    );
   }
 
   // ─── Teacher Scoping Helpers ────────────────────────────────────────────
@@ -560,6 +741,26 @@ export class GradeService {
     schoolId: string,
   ): Promise<number> {
     return Student.countDocuments({ classId, schoolId, isDeleted: false });
+  }
+
+  static async getTeacherAccessibleClassIds(
+    teacherId: string,
+    schoolId: string,
+  ): Promise<Types.ObjectId[]> {
+    const [ownedClasses, timetableClassIds] = await Promise.all([
+      Class.find({ schoolId, teacherId, isDeleted: false }).select('_id').lean(),
+      Timetable.distinct('classId', { schoolId, teacherId, isDeleted: false }) as Promise<Types.ObjectId[]>,
+    ]);
+
+    const byId = new Map<string, Types.ObjectId>();
+    for (const cls of ownedClasses) {
+      byId.set(String(cls._id), cls._id as Types.ObjectId);
+    }
+    for (const classId of timetableClassIds) {
+      byId.set(String(classId), classId);
+    }
+
+    return Array.from(byId.values());
   }
 
   static async teacherCanAccessClass(

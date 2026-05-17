@@ -9,10 +9,11 @@ import { exportTeacherPack, exportStudentPack } from './service-export.js';
 import { generateSlideshow } from './service-slideshow.js';
 import { chatAboutLesson } from './service-chat.js';
 import { getUser } from '../../types/authenticated-request.js';
+import { ForbiddenError } from '../../common/errors.js';
+import type { LessonActor } from './service-access.js';
 import {
   createLessonSchema,
   updateLessonSchema,
-  patchStatusSchema,
   scaffoldLessonSchema,
   addMaterialSchema,
   updateMaterialSchema,
@@ -23,18 +24,18 @@ import {
   chatLessonSchema,
 } from './validation.js';
 
-function getAuth(req: Request): { id: string; schoolId: string } {
+function getAuth(req: Request): LessonActor {
   const u = getUser(req);
-  if (!u.schoolId) throw new Error('Authenticated user has no schoolId');
-  return { id: u.id, schoolId: u.schoolId };
+  if (!u.schoolId) throw new ForbiddenError('Authenticated user has no schoolId');
+  return { ...u, schoolId: u.schoolId };
 }
 
 export const LessonController = {
   list: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { schoolId } = getAuth(req);
+      const actor = getAuth(req);
       const filters = listLessonsSchema.parse(req.query);
-      const result = await LessonService.list(schoolId, filters);
+      const result = await LessonService.list(actor, filters);
       res.json({ data: result });
     } catch (err: unknown) {
       next(err);
@@ -57,8 +58,8 @@ export const LessonController = {
 
   getById: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { schoolId } = getAuth(req);
-      const lesson = await LessonService.getById(req.params.id as string, schoolId);
+      const actor = getAuth(req);
+      const lesson = await LessonService.getById(req.params.id as string, actor);
       res.json({ data: lesson });
     } catch (err: unknown) {
       next(err);
@@ -78,9 +79,9 @@ export const LessonController = {
 
   create: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { id, schoolId } = getAuth(req);
+      const actor = getAuth(req);
       const data = createLessonSchema.parse(req.body);
-      const lesson = await LessonService.create(data, id, schoolId);
+      const lesson = await LessonService.create(data, actor);
       res.status(201).json({ data: lesson });
     } catch (err: unknown) {
       next(err);
@@ -89,20 +90,29 @@ export const LessonController = {
 
   update: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { schoolId } = getAuth(req);
+      const actor = getAuth(req);
       const data = updateLessonSchema.parse(req.body);
-      const lesson = await LessonService.update(req.params.id as string, schoolId, data);
+      const lesson = await LessonService.update(req.params.id as string, actor, data);
       res.json({ data: lesson });
     } catch (err: unknown) {
       next(err);
     }
   },
 
-  patchStatus: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  publish: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { schoolId } = getAuth(req);
-      const { status } = patchStatusSchema.parse(req.body);
-      const lesson = await LessonService.patchStatus(req.params.id as string, schoolId, status);
+      const actor = getAuth(req);
+      const lesson = await LessonService.publish(req.params.id as string, actor);
+      res.json({ data: lesson });
+    } catch (err: unknown) {
+      next(err);
+    }
+  },
+
+  unpublish: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const actor = getAuth(req);
+      const lesson = await LessonService.unpublish(req.params.id as string, actor);
       res.json({ data: lesson });
     } catch (err: unknown) {
       next(err);
@@ -111,8 +121,8 @@ export const LessonController = {
 
   delete: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { schoolId } = getAuth(req);
-      await LessonService.delete(req.params.id as string, schoolId);
+      const actor = getAuth(req);
+      await LessonService.delete(req.params.id as string, actor);
       res.json({ data: { ok: true } });
     } catch (err: unknown) {
       next(err);
@@ -124,9 +134,9 @@ export const LessonController = {
   // notes + status are reset; external content refs are preserved.
   clone: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { schoolId } = getAuth(req);
+      const actor = getAuth(req);
       const body = (req.body ?? {}) as { title?: string };
-      const lesson = await cloneLesson(req.params.id as string, schoolId, {
+      const lesson = await cloneLesson(req.params.id as string, actor, {
         title: body.title,
       });
       res.status(201).json({ data: lesson });
@@ -137,9 +147,9 @@ export const LessonController = {
 
   addMaterial: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { id: teacherId, schoolId } = getAuth(req);
+      const actor = getAuth(req);
       const input = addMaterialSchema.parse(req.body);
-      const material = await Materials.addMaterial(req.params.id as string, schoolId, teacherId, input);
+      const material = await Materials.addMaterial(req.params.id as string, actor, input);
       res.status(201).json({ data: material });
     } catch (err: unknown) {
       next(err);
@@ -148,12 +158,12 @@ export const LessonController = {
 
   updateMaterial: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { schoolId } = getAuth(req);
+      const actor = getAuth(req);
       const patch = updateMaterialSchema.parse(req.body);
       const material = await Materials.updateMaterial(
         req.params.id as string,
         req.params.mid as string,
-        schoolId,
+        actor,
         patch,
       );
       res.json({ data: material });
@@ -164,12 +174,12 @@ export const LessonController = {
 
   moveMaterial: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { schoolId } = getAuth(req);
+      const actor = getAuth(req);
       const { toPhase, toIndex } = moveMaterialSchema.parse(req.body);
       const lesson = await Materials.moveMaterial(
         req.params.id as string,
         req.params.mid as string,
-        schoolId,
+        actor,
         toPhase,
         toIndex,
       );
@@ -181,7 +191,7 @@ export const LessonController = {
 
   regenerateMaterial: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { id: teacherId, schoolId } = getAuth(req);
+      const actor = getAuth(req);
       const payload =
         req.body && Object.keys(req.body as Record<string, unknown>).length
           ? addMaterialSchema.parse(req.body)
@@ -189,8 +199,7 @@ export const LessonController = {
       const material = await Materials.regenerateMaterial(
         req.params.id as string,
         req.params.mid as string,
-        schoolId,
-        teacherId,
+        actor,
         payload,
       );
       res.json({ data: material });
@@ -201,8 +210,8 @@ export const LessonController = {
 
   deleteMaterial: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { schoolId } = getAuth(req);
-      await Materials.deleteMaterial(req.params.id as string, req.params.mid as string, schoolId);
+      const actor = getAuth(req);
+      await Materials.deleteMaterial(req.params.id as string, req.params.mid as string, actor);
       res.json({ data: { ok: true } });
     } catch (err: unknown) {
       next(err);
@@ -215,11 +224,10 @@ export const LessonController = {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const { id: teacherId, schoolId } = getAuth(req);
+      const actor = getAuth(req);
       const result = await generateAllPlaceholders(
         req.params.id as string,
-        schoolId,
-        teacherId,
+        actor,
       );
       res.json({ data: result });
     } catch (err: unknown) {
@@ -229,9 +237,9 @@ export const LessonController = {
 
   exportTeacher: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { schoolId } = getAuth(req);
+      const actor = getAuth(req);
       const lessonId = req.params.id as string;
-      const buf = await exportTeacherPack(lessonId, schoolId);
+      const buf = await exportTeacherPack(lessonId, actor);
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `inline; filename="lesson-${lessonId}-teacher.pdf"`);
       res.send(buf);
@@ -242,9 +250,9 @@ export const LessonController = {
 
   exportStudent: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { schoolId } = getAuth(req);
+      const actor = getAuth(req);
       const lessonId = req.params.id as string;
-      const buf = await exportStudentPack(lessonId, schoolId);
+      const buf = await exportStudentPack(lessonId, actor);
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `inline; filename="lesson-${lessonId}-student.pdf"`);
       res.send(buf);
@@ -255,12 +263,12 @@ export const LessonController = {
 
   exportSlides: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { schoolId } = getAuth(req);
+      const actor = getAuth(req);
       const lessonId = req.params.id as string;
-      const buf = await generateSlideshow(lessonId, schoolId);
+      const buf = await generateSlideshow(lessonId, actor);
       // Pull lesson title for a nicer filename. Slug it conservatively to
       // avoid Content-Disposition header parsing issues with quotes/commas.
-      const lesson = await LessonService.getById(lessonId, schoolId);
+      const lesson = await LessonService.getById(lessonId, actor);
       const slug = lesson.title
         .replace(/[^A-Za-z0-9 _-]+/g, '')
         .trim()
@@ -282,11 +290,11 @@ export const LessonController = {
 
   assignClass: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { schoolId } = getAuth(req);
+      const actor = getAuth(req);
       const input = assignClassSchema.parse(req.body);
       const lesson = await LessonAssignmentService.assignClass(
         req.params.id as string,
-        schoolId,
+        actor,
         input,
       );
       res.status(201).json({ data: lesson });
@@ -297,11 +305,11 @@ export const LessonController = {
 
   updateAssignment: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { schoolId } = getAuth(req);
+      const actor = getAuth(req);
       const patch = updateAssignmentSchema.parse(req.body);
       const lesson = await LessonAssignmentService.updateAssignment(
         req.params.id as string,
-        schoolId,
+        actor,
         req.params.classId as string,
         patch,
       );
@@ -313,10 +321,10 @@ export const LessonController = {
 
   unassignClass: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { schoolId } = getAuth(req);
+      const actor = getAuth(req);
       const lesson = await LessonAssignmentService.unassignClass(
         req.params.id as string,
-        schoolId,
+        actor,
         req.params.classId as string,
       );
       res.json({ data: lesson });
@@ -327,9 +335,9 @@ export const LessonController = {
 
   chat: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { schoolId } = getAuth(req);
+      const actor = getAuth(req);
       const input = chatLessonSchema.parse(req.body);
-      const out = await chatAboutLesson(req.params.id as string, schoolId, input);
+      const out = await chatAboutLesson(req.params.id as string, actor, input);
       res.json({ data: out });
     } catch (err: unknown) {
       next(err);

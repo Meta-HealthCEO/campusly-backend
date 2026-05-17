@@ -1,5 +1,6 @@
 import { TutorConversation, ITutorConversation } from './model.js';
 import { Mark } from '../Academic/model.js';
+import { Student } from '../Student/model.js';
 import { AIUsageLog } from '../AITools/model.js';
 import { AIService } from '../../services/ai.service.js';
 import { NotFoundError } from '../../common/errors.js';
@@ -47,16 +48,20 @@ export class AITutorService {
       });
     }
 
+    const studentRecordId = await this.resolveStudentRecordId(userId, schoolId);
+
     // Fetch recent marks for context
-    const recentMarks = await Mark.find({
-      studentId: userId,
-      schoolId,
-      isDeleted: false,
-    })
-      .sort({ createdAt: -1 })
-      .limit(10)
-      .populate('assessmentId', 'name type totalMarks')
-      .lean();
+    const recentMarks = studentRecordId
+      ? await Mark.find({
+          studentId: studentRecordId,
+          schoolId,
+          isDeleted: false,
+        })
+          .sort({ createdAt: -1 })
+          .limit(10)
+          .populate('assessmentId', 'name type totalMarks')
+          .lean()
+      : [];
 
     const marksSummary = recentMarks.length > 0
       ? recentMarks.map((m) => {
@@ -181,12 +186,19 @@ export class AITutorService {
     userId: string,
     schoolId: string,
   ): Promise<WeakArea[]> {
+    const studentRecordId = await this.resolveStudentRecordId(userId, schoolId);
+    if (!studentRecordId) return [];
+
     const marks = await Mark.find({
-      studentId: userId,
+      studentId: studentRecordId,
       schoolId,
       isDeleted: false,
     })
-      .populate('assessmentId', 'name subjectId')
+      .populate({
+        path: 'assessmentId',
+        select: 'name subjectId',
+        populate: { path: 'subjectId', select: 'name code' },
+      })
       .lean();
 
     if (marks.length === 0) return [];
@@ -197,10 +209,12 @@ export class AITutorService {
     for (const m of marks) {
       const assessment = m.assessmentId as unknown as Record<string, unknown> | null;
       if (!assessment?.subjectId) continue;
-      const subjectId = String(assessment.subjectId);
+      const subject = assessment.subjectId as Record<string, unknown>;
+      const subjectId = String(subject._id ?? assessment.subjectId);
       const existing = bySubject.get(subjectId) ?? { total: 0, count: 0, subjectName: '' };
       existing.total += m.percentage;
       existing.count += 1;
+      existing.subjectName = String(subject.name ?? subject.code ?? existing.subjectName);
       bySubject.set(subjectId, existing);
     }
 
@@ -223,5 +237,18 @@ export class AITutorService {
     }
 
     return weakAreas.sort((a, b) => a.averageMark - b.averageMark);
+  }
+
+  private static async resolveStudentRecordId(
+    userId: string,
+    schoolId: string,
+  ): Promise<string | null> {
+    const student = await Student.findOne({
+      userId,
+      schoolId,
+      isDeleted: false,
+    }).select('_id').lean();
+
+    return student?._id.toString() ?? null;
   }
 }

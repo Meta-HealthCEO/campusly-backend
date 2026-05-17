@@ -6,7 +6,7 @@
 // so authored questions match what the teacher actually taught: their
 // objectives, vocabulary, and worked examples.
 //
-// Only `ready` and `taught` lessons feed in — drafts may be half-built and
+// Only published lessons feed in — unpublished drafts may be half-built and
 // shouldn't shape question generation.
 
 import mongoose from 'mongoose';
@@ -41,7 +41,7 @@ interface LessonLike {
     teacherNotes?: string;
     contentResourceId?: mongoose.Types.ObjectId | null;
   }>;
-  status: 'draft' | 'ready' | 'taught';
+  publishedAt: Date | null;
   updatedAt: Date;
 }
 
@@ -92,11 +92,11 @@ async function findFinalisedLessonsForNode(
   return Lesson.find({
     curriculumNodeId: nodeId,
     schoolId: schoolOid,
-    status: { $in: ['ready', 'taught'] },
+    publishedAt: { $ne: null },
     isDeleted: false,
   })
-    .select('_id title objectives materials status updatedAt')
-    .sort({ status: -1, updatedAt: -1 }) // taught first, then most recent
+    .select('_id title objectives materials publishedAt updatedAt')
+    .sort({ updatedAt: -1 })
     .limit(limit)
     .lean<LessonLike[]>();
 }

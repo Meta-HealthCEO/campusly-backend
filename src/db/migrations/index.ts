@@ -1,5 +1,6 @@
 import { runLessonPlanToLessonMigration } from '../../modules/Lesson/service-lesson-migration.js';
 import { runLessonAssignmentsMigration } from '../../modules/Lesson/service-lesson-assignments-migration.js';
+import { runLessonPublishedAtMigration } from '../../modules/Lesson/service-lesson-publishedat-migration.js';
 import { runStripGradeSuffixFromSubjects } from '../../modules/CurriculumStructure/service-normalize-titles.js';
 import { runDenormalizeCurriculumHierarchy } from '../../modules/CurriculumStructure/service-denormalize-hierarchy.js';
 import { runBackfillTopicTermFromCode } from '../../modules/CurriculumStructure/service-backfill-term-from-code.js';
@@ -29,6 +30,9 @@ export async function runMigrations(): Promise<void> {
     // is available to backfill) AND AFTER runLessonPlanToLessonMigration (so all
     // legacy LessonPlans have been promoted to Lessons before we reshape them).
     await runLessonAssignmentsMigration();
+    // Must run AFTER both lesson migrations so every document has the new
+    // shape before we collapse `status` into `publishedAt`.
+    await runLessonPublishedAtMigration();
     // Must run AFTER runDenormalizeCurriculumHierarchy so the standalone
     // teacher's scope (CurriculumNode IDs) resolves to nodes with valid
     // title fields. Materialises school-side Subject/Grade rows so other

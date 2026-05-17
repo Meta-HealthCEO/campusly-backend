@@ -9,10 +9,17 @@ import {
 } from './service.js';
 import { generateComprehensionQuestions } from './service-homework-comprehension.js';
 import { apiResponse } from '../../common/utils.js';
+import { BadRequestError } from '../../common/errors.js';
+import { toObjectId, type HomeworkActor } from './service-access.js';
 
 interface StudentAccessRecord {
   _id: mongoose.Types.ObjectId;
   classId: mongoose.Types.ObjectId | string;
+}
+
+interface ParentAccessRecord {
+  _id: mongoose.Types.ObjectId;
+  childrenIds: mongoose.Types.ObjectId[];
 }
 
 function readObjectId(value: unknown): string {
@@ -38,14 +45,37 @@ async function findStudentForUser(
     .exec();
 }
 
+function getHomeworkActor(req: Request): HomeworkActor {
+  const user = getUser(req);
+  if (!user.schoolId) throw new BadRequestError('User must be assigned to a school');
+  return { ...user, schoolId: user.schoolId };
+}
+
+async function findParentForUser(
+  userId: string,
+  schoolId: string,
+): Promise<ParentAccessRecord | null> {
+  const { Parent } = await import('../Parent/model.js');
+  return Parent.findOne({ userId, schoolId, isDeleted: false })
+    .select('_id childrenIds')
+    .lean<ParentAccessRecord>()
+    .exec();
+}
+
+function parentChildIds(parent: ParentAccessRecord | null): string[] {
+  return (parent?.childrenIds ?? []).map((id) => id.toString());
+}
+
 export class HomeworkController {
   static async create(req: Request, res: Response): Promise<void> {
-    const homework = await HomeworkService.create(req.body, getUser(req).id);
+    const actor = getHomeworkActor(req);
+    const homework = await HomeworkService.create({ ...req.body, schoolId: actor.schoolId }, actor);
     res.status(201).json(apiResponse(true, homework, 'Homework created successfully'));
   }
 
   static async list(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
+    const actor = getHomeworkActor(req);
+    const schoolId = actor.schoolId;
     const query = {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
@@ -63,23 +93,59 @@ export class HomeworkController {
         return;
       }
       query.classId = readObjectId(student.classId);
-    } else if (req.user?.role === 'teacher') {
-      query.teacherId = getUser(req).id;
     }
 
-    const result = await HomeworkService.list(schoolId, query);
+    const result = await HomeworkService.list(actor, query);
     res.json(apiResponse(true, result, 'Homework list retrieved successfully'));
   }
 
   static async getById(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
-    const homework = await HomeworkService.getById(req.params.id as string, schoolId);
+    const actor = getHomeworkActor(req);
+    const schoolId = actor.schoolId;
 
     if (req.user?.role === 'student') {
       const student = await findStudentForUser(req.user.id, schoolId);
-      const studentClassId = readObjectId(student?.classId);
+      if (!student) {
+        res.status(404).json(apiResponse(false, undefined, undefined, 'Student profile not found'));
+        return;
+      }
+      const homework = await HomeworkService.getStudentById(
+        req.params.id as string,
+        readObjectId(student._id),
+        schoolId,
+      );
+      res.json(apiResponse(true, homework, 'Homework retrieved successfully'));
+      return;
+    }
+
+    const homework = await HomeworkService.getById(req.params.id as string, actor);
+
+    if (req.user?.role === 'parent') {
+      const parent = await findParentForUser(req.user.id, schoolId);
+      const allowedChildIds = parentChildIds(parent);
+      if (allowedChildIds.length === 0) {
+        res.status(403).json(apiResponse(false, undefined, undefined, 'Parent profile not found'));
+        return;
+      }
+
+      const requestedStudentId = typeof req.query.studentId === 'string'
+        ? req.query.studentId
+        : undefined;
+      if (requestedStudentId && !allowedChildIds.includes(requestedStudentId)) {
+        res.status(403).json(apiResponse(false, undefined, undefined, "You can only access your own children's data"));
+        return;
+      }
+
+      const candidateIds = requestedStudentId ? [requestedStudentId] : allowedChildIds;
       const homeworkClassId = readObjectId((homework as { classId?: unknown }).classId);
-      if (!student || !studentClassId || homeworkClassId !== studentClassId) {
+      const { Student } = await import('../Student/model.js');
+      const matchingChild = await Student.exists({
+        _id: { $in: candidateIds.map((id) => toObjectId(id, 'studentId')) },
+        schoolId,
+        classId: toObjectId(homeworkClassId, 'classId'),
+        isDeleted: false,
+      });
+      if (!matchingChild) {
         res.status(404).json(apiResponse(false, undefined, undefined, 'Homework not found'));
         return;
       }
@@ -89,14 +155,14 @@ export class HomeworkController {
   }
 
   static async update(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
-    const homework = await HomeworkService.update(req.params.id as string, schoolId, req.body);
+    const actor = getHomeworkActor(req);
+    const homework = await HomeworkService.update(req.params.id as string, actor, req.body);
     res.json(apiResponse(true, homework, 'Homework updated successfully'));
   }
 
   static async delete(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
-    await HomeworkService.delete(req.params.id as string, schoolId);
+    const actor = getHomeworkActor(req);
+    await HomeworkService.delete(req.params.id as string, actor);
     res.json(apiResponse(true, undefined, 'Homework deleted successfully'));
   }
 
@@ -118,14 +184,14 @@ export class HomeworkController {
   }
 
   static async grade(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
+    const actor = getHomeworkActor(req);
     const submissionId = req.params.submissionId as string;
     const { mark, feedback } = req.body;
     const gradedBy = getUser(req).id;
 
     const submission = await HomeworkService.gradeSubmission(
       submissionId,
-      schoolId,
+      actor,
       mark,
       feedback,
       gradedBy,
@@ -134,19 +200,15 @@ export class HomeworkController {
   }
 
   static async getSubmissions(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user?.schoolId;
-    if (!schoolId) {
-      res.status(400).json({ success: false, error: 'User must be assigned to a school' });
-      return;
-    }
-    const submissions = await HomeworkService.getSubmissions(req.params.id as string, schoolId);
+    const actor = getHomeworkActor(req);
+    const submissions = await HomeworkService.getSubmissions(req.params.id as string, actor);
     res.json(apiResponse(true, submissions, 'Submissions retrieved successfully'));
   }
 
   static async getHomeworkForParent(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
+    const actor = getHomeworkActor(req);
     const studentId = req.params.studentId as string;
-    const result = await HomeworkService.getHomeworkForStudent(studentId, schoolId);
+    const result = await HomeworkService.getHomeworkForStudent(studentId, actor);
     res.json(apiResponse(true, result, 'Parent homework retrieved successfully'));
   }
 
@@ -171,8 +233,9 @@ export class HomeworkController {
   }
 
   static async getSubmissionById(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
-    const submission = await HomeworkService.getSubmissionById(req.params.id as string, schoolId);
+    const actor = getHomeworkActor(req);
+    const schoolId = actor.schoolId;
+    const submission = await HomeworkService.getSubmissionById(req.params.id as string, actor);
     if (req.user?.role === 'student') {
       const student = await findStudentForUser(req.user.id, schoolId);
       const submissionStudentId = readObjectId((submission as { studentId?: unknown }).studentId);
@@ -181,18 +244,27 @@ export class HomeworkController {
         return;
       }
     }
+    if (req.user?.role === 'parent') {
+      const parent = await findParentForUser(req.user.id, schoolId);
+      const submissionStudentId = readObjectId((submission as { studentId?: unknown }).studentId);
+      if (!parentChildIds(parent).includes(submissionStudentId)) {
+        res.status(403).json(apiResponse(false, undefined, undefined, "You can only view your own child's submission"));
+        return;
+      }
+    }
     res.json({ data: submission });
   }
 
   static async regradeSubmission(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
-    const result = await HomeworkService.regrade(req.params.id as string, schoolId);
+    const actor = getHomeworkActor(req);
+    const result = await HomeworkService.regrade(req.params.id as string, actor);
     res.json({ data: result });
   }
 
   static async generateComprehension(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
-    const teacherId = req.user!.id;
+    const actor = getHomeworkActor(req);
+    const schoolId = actor.schoolId;
+    const teacherId = actor.id;
     const { contentResourceId, count } = req.body as { contentResourceId: string; count: number };
     const { subjectId, gradeId, curriculumNodeId } = req.query as Record<string, string>;
     if (!subjectId || !gradeId) {

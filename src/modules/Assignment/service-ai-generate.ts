@@ -16,6 +16,7 @@ import { Subject, Grade } from '../Academic/model.js';
 import { CurriculumNode } from '../CurriculumStructure/model.js';
 import { BadRequestError } from '../../common/errors.js';
 import type { GenerateAssignmentInput } from './validation.js';
+import { assertAssignmentAcademicContext } from './service-access.js';
 
 export interface AIGeneratedRubricCriterion {
   name: string;
@@ -41,15 +42,22 @@ Treat the teacher's instructions as the source of truth — weave their wording 
 Output JSON only. Shape:
 {
   "title": "string — short, descriptive, no quotes",
-  "brief": "string — markdown-formatted task description for the student. Include: purpose, exact deliverable, submission format hints, any constraints the teacher mentioned. 200-600 words.",
+  "brief": "string — HTML task description for the student. 200-600 words. Use ONLY these tags: <h2>, <h3>, <p>, <strong>, <em>, <ul>, <ol>, <li>, <blockquote>. NO inline styles, NO classes, NO scripts, NO images, NO tables, NO H1. Render section headings as <h2>, sub-headings as <h3>. Use <ul>/<li> for bullet lists.",
   "rubric": [
     {
       "name": "string — criterion name, e.g. 'Argument structure'",
-      "description": "string — what the teacher is looking for, 1-2 sentences",
+      "description": "string — what the teacher is looking for, 1-2 sentences (plain text, no HTML)",
       "maxMarks": number
     }
   ]
 }
+
+Brief format rules:
+  • The brief field MUST be valid HTML, NOT markdown. Do not use #, *, -, or backticks for formatting.
+  • Wrap every paragraph in <p>…</p>.
+  • Use <h2> for the top-level section breaks (e.g. "Project Requirements", "Submission Format").
+  • Use <ul><li>…</li></ul> for bullet points.
+  • Use <strong>…</strong> for bold text the teacher asked to emphasise.
 
 Rubric rules:
   • Produce exactly the requested number of criteria.
@@ -71,6 +79,8 @@ export async function generateAssignmentDraft(
   input: GenerateAssignmentInput,
   schoolId: string,
 ): Promise<AIGeneratedAssignment> {
+  await assertAssignmentAcademicContext(schoolId, input);
+
   // Resolve names for the prompt — IDs alone aren't useful to the model.
   const [subject, grade] = await Promise.all([
     Subject.findOne({ _id: input.subjectId, schoolId, isDeleted: false })
@@ -81,15 +91,20 @@ export async function generateAssignmentDraft(
   if (!subject) throw new BadRequestError('Subject not found in this school.');
   if (!grade) throw new BadRequestError('Grade not found in this school.');
 
-  let topicLabel = 'general topic';
-  if (input.curriculumNodeId) {
-    const node = await CurriculumNode.findOne({
-      _id: input.curriculumNodeId,
-      schoolId,
-      isDeleted: false,
-    }).select('title').lean();
-    if (node?.title) topicLabel = node.title;
-  }
+  // Resolve all topic titles for the prompt. One assignment can span several
+  // topics (e.g. an essay drawing on two CAPS subtopics). The titles appear
+  // as a bulleted list so the AI knows to weave them all in.
+  const nodes = await CurriculumNode.find({
+    _id: { $in: input.topicIds },
+    isDeleted: false,
+    $or: [{ schoolId: null }, { schoolId }],
+  }).select('title').lean();
+  const topicTitles = nodes
+    .map((n) => (typeof n.title === 'string' ? n.title.trim() : ''))
+    .filter((t) => t.length > 0);
+  const topicBlock = topicTitles.length === 1
+    ? `Topic: ${topicTitles[0]}`
+    : `Topics (cover all of these):\n${topicTitles.map((t) => `  - ${t}`).join('\n')}`;
 
   const lengthLine = input.lengthHint
     ? `Length hint: ${input.lengthHint} (${describeLength(input.lengthHint)}).`
@@ -97,7 +112,7 @@ export async function generateAssignmentDraft(
 
   const userPrompt = `Subject: ${subject.name}${subject.code ? ` (${subject.code})` : ''}
 Grade: ${grade.name}
-Topic: ${topicLabel}
+${topicBlock}
 Total marks: ${input.totalMarks}
 ${lengthLine}
 Number of rubric criteria: ${input.criterionCount}

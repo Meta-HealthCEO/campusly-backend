@@ -291,6 +291,62 @@ export class StudentService {
     };
   }
 
+  /**
+   * Lightweight school-wide search for the teacher's "Assign Existing" flow.
+   * Returns the minimum identifying fields plus current class name so a
+   * teacher can pick a student who isn't yet in any of their classes without
+   * exposing medical/contact data.
+   */
+  static async searchSchoolRoster(
+    schoolId: string,
+    q: string,
+    limit = 20,
+  ): Promise<Array<{
+    id: string;
+    firstName: string;
+    lastName: string;
+    admissionNumber: string;
+    classId: string | null;
+    className: string | null;
+  }>> {
+    const trimmed = (q ?? '').trim();
+    const filter: Record<string, unknown> = { schoolId, isDeleted: false };
+    if (trimmed) {
+      filter.admissionNumber = new RegExp(escapeRegex(trimmed), 'i');
+    }
+    const rows = await Student.find(filter)
+      .select('admissionNumber userId classId')
+      .populate('userId', 'firstName lastName')
+      .populate('classId', 'name')
+      .limit(Math.min(Math.max(limit, 1), 50))
+      .lean();
+
+    type PopulatedRow = {
+      _id: Types.ObjectId;
+      admissionNumber?: string;
+      userId?: { firstName?: string; lastName?: string } | null;
+      classId?: { _id?: Types.ObjectId; name?: string } | null;
+    };
+
+    let results = (rows as unknown as PopulatedRow[]).map((r) => ({
+      id: String(r._id),
+      firstName: r.userId?.firstName ?? '',
+      lastName: r.userId?.lastName ?? '',
+      admissionNumber: r.admissionNumber ?? '',
+      classId: r.classId?._id ? String(r.classId._id) : null,
+      className: r.classId?.name ?? null,
+    }));
+
+    // Name search post-populate (Mongo can't regex across a populated field).
+    if (trimmed) {
+      const re = new RegExp(escapeRegex(trimmed), 'i');
+      results = results.filter((r) =>
+        re.test(r.firstName) || re.test(r.lastName) || re.test(r.admissionNumber),
+      );
+    }
+    return results;
+  }
+
   static async getById(id: string, schoolId: string): Promise<IStudent> {
     const student = await Student.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('userId', 'firstName lastName email phone profileImage')
@@ -363,24 +419,6 @@ export class StudentService {
         { _id: student.userId, schoolId, role: 'student', isDeleted: false },
         { $set: { isActive: false, refreshTokens: [] } },
       );
-    }
-
-    return student;
-  }
-
-  static async updateMedicalProfile(
-    id: string,
-    schoolId: string,
-    data: IStudent['medicalProfile'],
-  ): Promise<IStudent> {
-    const student = await Student.findOneAndUpdate(
-      { _id: id, schoolId, isDeleted: false },
-      { $set: { medicalProfile: data } },
-      { new: true, runValidators: true },
-    );
-
-    if (!student) {
-      throw new NotFoundError('Student not found');
     }
 
     return student;

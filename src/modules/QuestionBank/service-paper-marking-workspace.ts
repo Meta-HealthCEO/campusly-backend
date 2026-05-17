@@ -104,7 +104,7 @@ export async function getPaperMarkingRoster(
       paperId: toOid(paperId),
       schoolId: toOid(schoolId),
       isDeleted: false,
-    }).select('_id studentId status totalMarks maxMarks percentage paperMismatch createdAt').lean(),
+    }).select('_id studentId status totalMarks maxMarks percentage paperMismatch createdAt questions').lean(),
   ]);
 
   const classNameById = new Map<string, string>(
@@ -150,14 +150,32 @@ export async function getPaperMarkingRoster(
           status: sub.status,
           submittedAt: sub.submittedAt ? sub.submittedAt.toISOString() : null,
         } : null,
-        marking: mark ? {
-          markingId: String(mark._id),
-          status: mark.status,
-          totalMarks: mark.totalMarks,
-          maxMarks: mark.maxMarks,
-          percentage: mark.percentage,
-          paperMismatch: mark.paperMismatch,
-        } : null,
+        marking: mark ? (() => {
+          // Re-derive EVERY aggregate from the per-question marks, not from
+          // the stored top-level fields. The AI's arithmetic on totalMarks
+          // and percentage is unreliable (we've seen 54/55 stored as
+          // 48/55=87.3%). The questions array is the source of truth.
+          const qs = Array.isArray(mark.questions) ? mark.questions : [];
+          const derivedTotal = qs.reduce(
+            (s, q) => s + (typeof q.marksAwarded === 'number' ? q.marksAwarded : 0),
+            0,
+          );
+          const derivedMax = qs.reduce(
+            (s, q) => s + (typeof q.maxMarks === 'number' ? q.maxMarks : 0),
+            0,
+          );
+          const total = qs.length > 0 ? derivedTotal : mark.totalMarks;
+          const max = qs.length > 0 && derivedMax > 0 ? derivedMax : mark.maxMarks;
+          const pct = max > 0 ? Math.round((total / max) * 1000) / 10 : 0;
+          return {
+            markingId: String(mark._id),
+            status: mark.status,
+            totalMarks: total,
+            maxMarks: max,
+            percentage: pct,
+            paperMismatch: mark.paperMismatch,
+          };
+        })() : null,
       };
     });
     return {

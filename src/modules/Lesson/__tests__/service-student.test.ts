@@ -34,27 +34,27 @@ async function seed() {
 }
 
 describe('listLessonsForStudent', () => {
-  it('returns only ready/taught lessons assigned to the student class', async () => {
+  it('returns only published lessons assigned to the student class', async () => {
     const { schoolId, classId, subjectId, teacherId, studentId } = await seed();
     await Lesson.create({
       schoolId, teacherId, subjectId,
       curriculumNodeId: new mongoose.Types.ObjectId(),
       title: 'Visible lesson', durationMinutes: 30,
-      status: 'ready',
+      publishedAt: new Date(),
       assignedClasses: [{ classId, scheduledDate: new Date(), status: 'planned' }],
     });
     await Lesson.create({
       schoolId, teacherId, subjectId,
       curriculumNodeId: new mongoose.Types.ObjectId(),
-      title: 'Draft lesson', durationMinutes: 30,
-      status: 'draft',
+      title: 'Unpublished lesson', durationMinutes: 30,
+      publishedAt: null,
       assignedClasses: [{ classId, scheduledDate: new Date(), status: 'planned' }],
     });
     await Lesson.create({
       schoolId, teacherId, subjectId,
       curriculumNodeId: new mongoose.Types.ObjectId(),
       title: 'Wrong class', durationMinutes: 30,
-      status: 'ready',
+      publishedAt: new Date(),
       assignedClasses: [{ classId: new mongoose.Types.ObjectId(), scheduledDate: new Date(), status: 'planned' }],
     });
 
@@ -73,7 +73,7 @@ describe('listLessonsForStudent', () => {
       schoolId: otherSchoolId, teacherId,
       curriculumNodeId: new mongoose.Types.ObjectId(),
       title: 'Other school lesson', durationMinutes: 30,
-      status: 'ready',
+      publishedAt: new Date(),
       assignedClasses: [{ classId, scheduledDate: new Date(), status: 'planned' }],
     });
 
@@ -88,14 +88,14 @@ describe('listLessonsForStudent', () => {
     await Lesson.create({
       schoolId, teacherId, subjectId,
       curriculumNodeId: new mongoose.Types.ObjectId(),
-      title: 'Match', durationMinutes: 30, status: 'ready',
+      title: 'Match', durationMinutes: 30, publishedAt: new Date(),
       assignedClasses: [{ classId, scheduledDate: new Date(), status: 'planned' }],
     });
     await Lesson.create({
       schoolId, teacherId,
       subjectId: new mongoose.Types.ObjectId(),
       curriculumNodeId: new mongoose.Types.ObjectId(),
-      title: 'Different subject', durationMinutes: 30, status: 'ready',
+      title: 'Different subject', durationMinutes: 30, publishedAt: new Date(),
       assignedClasses: [{ classId, scheduledDate: new Date(), status: 'planned' }],
     });
 
@@ -116,8 +116,8 @@ describe('getLessonForStudent', () => {
       title: 'Detailed lesson',
       objectives: ['Learn X', 'Learn Y'],
       durationMinutes: 45,
-      status: 'ready',
-      materials: [{ kind: 'reading', title: 'Read this' }],
+      publishedAt: new Date(),
+      materials: [{ kind: 'reading', title: 'Read this', teacherNotes: 'Teacher-only note' }],
       assignedClasses: [{ classId, scheduledDate: new Date(), status: 'planned' }],
     });
 
@@ -129,6 +129,7 @@ describe('getLessonForStudent', () => {
     expect(result?.materials).toHaveLength(1);
     expect(result?.materials[0]?.kind).toBe('reading');
     expect(result?.materials[0]?.title).toBe('Read this');
+    expect(result?.materials[0]).not.toHaveProperty('teacherNotes');
   });
 
   it('returns generated content blocks and orders materials by lesson phase', async () => {
@@ -158,7 +159,7 @@ describe('getLessonForStudent', () => {
       schoolId, teacherId, subjectId, curriculumNodeId,
       title: 'Block lesson',
       durationMinutes: 45,
-      status: 'ready',
+      publishedAt: new Date(),
       materials: [
         { kind: 'worksheet', title: 'Worksheet', contentResourceId: resource._id },
         { kind: 'reading', title: 'Read first' },
@@ -190,7 +191,7 @@ describe('getLessonForStudent', () => {
     const lesson = await Lesson.create({
       schoolId: otherSchoolId, teacherId,
       curriculumNodeId: new mongoose.Types.ObjectId(),
-      title: 'Other school', durationMinutes: 30, status: 'ready',
+      title: 'Other school', durationMinutes: 30, publishedAt: new Date(),
       assignedClasses: [{ classId, scheduledDate: new Date(), status: 'planned' }],
     });
     const student = await Student.findById(studentId);
@@ -204,7 +205,7 @@ describe('getLessonForStudent', () => {
     const lesson = await Lesson.create({
       schoolId, teacherId,
       curriculumNodeId: new mongoose.Types.ObjectId(),
-      title: 'Wrong class', durationMinutes: 30, status: 'ready',
+      title: 'Wrong class', durationMinutes: 30, publishedAt: new Date(),
       assignedClasses: [{ classId: new mongoose.Types.ObjectId(), scheduledDate: new Date(), status: 'planned' }],
     });
     const student = await Student.findById(studentId);

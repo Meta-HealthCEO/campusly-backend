@@ -72,8 +72,6 @@ export interface IAdmissionApplication extends Document {
   parentRelationship: ParentRelationship;
   parentUserId?: Types.ObjectId;
   address: IAddress;
-  medicalConditions?: string;
-  allergies?: string;
   specialNeeds?: string;
   documents: IDocuments;
   applicationFeeStatus: ApplicationFeeStatus;
@@ -143,8 +141,6 @@ const applicationSchema = new Schema<IAdmissionApplication>(
     parentRelationship: { type: String, enum: ['mother', 'father', 'guardian', 'other'] },
     parentUserId: { type: Schema.Types.ObjectId, ref: 'User' },
     address: { type: addressSchema, required: true },
-    medicalConditions: { type: String },
-    allergies: { type: String },
     specialNeeds: { type: String },
     documents: {
       birthCertificate: documentEntrySchema,

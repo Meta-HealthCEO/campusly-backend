@@ -96,9 +96,6 @@ export async function markPaperFromText(
     }
     const validated = validation.data;
 
-    marking.totalMarks = validated.totalMarks;
-    marking.maxMarks = validated.maxMarks || paperInfo.totalMarks;
-    marking.percentage = validated.percentage;
     marking.questions = validated.questions.map((q) => ({
       questionNumber: String(q.questionNumber),
       studentAnswer: q.studentAnswer,
@@ -108,6 +105,15 @@ export async function markPaperFromText(
       feedback: q.feedback,
       rationale: q.rationale,
     }));
+
+    // Derive aggregates from per-question marks — don't trust the AI's
+    // arithmetic. See service-marking.ts for the same fix.
+    marking.totalMarks = marking.questions.reduce((s, q) => s + (q.marksAwarded ?? 0), 0);
+    const derivedMax = marking.questions.reduce((s, q) => s + (q.maxMarks ?? 0), 0);
+    marking.maxMarks = derivedMax > 0 ? derivedMax : (validated.maxMarks || paperInfo.totalMarks);
+    marking.percentage = marking.maxMarks > 0
+      ? Math.round((marking.totalMarks / marking.maxMarks) * 1000) / 10
+      : 0;
     // Digital flow has no header to extract and no risk of paper mismatch —
     // the teacher explicitly chose the paper.
     marking.extractedHeader = null;

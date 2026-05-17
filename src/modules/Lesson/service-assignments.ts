@@ -1,10 +1,16 @@
-import mongoose from 'mongoose';
 import { Lesson } from './model.js';
+import { NotFoundError } from '../../common/errors.js';
 import type { ILesson } from './types.js';
 import type {
   AssignClassInput,
   UpdateAssignmentInput,
 } from './validation.js';
+import {
+  assertCanUseClass,
+  lessonAccessFilter,
+  toObjectId,
+  type LessonScope,
+} from './service-access.js';
 
 /**
  * Per-class scheduling for a lesson pack. Each entry in lesson.assignedClasses
@@ -18,11 +24,13 @@ export const LessonAssignmentService = {
    */
   async assignClass(
     lessonId: string,
-    schoolId: string,
+    scope: LessonScope,
     input: AssignClassInput,
   ): Promise<ILesson> {
-    const lessonOid = new mongoose.Types.ObjectId(lessonId);
-    const classOid = new mongoose.Types.ObjectId(input.classId);
+    await assertCanUseClass(scope, input.classId);
+
+    const lessonOid = toObjectId(lessonId, 'lessonId');
+    const classOid = toObjectId(input.classId, 'classId');
     const scheduledDate = new Date(input.scheduledDate);
 
     // First try to update an existing assignment for this class. If matched,
@@ -30,8 +38,7 @@ export const LessonAssignmentService = {
     const updated = await Lesson.findOneAndUpdate(
       {
         _id: lessonOid,
-        schoolId: new mongoose.Types.ObjectId(schoolId),
-        isDeleted: false,
+        ...lessonAccessFilter(scope),
         'assignedClasses.classId': classOid,
       },
       { $set: { 'assignedClasses.$.scheduledDate': scheduledDate } },
@@ -42,8 +49,7 @@ export const LessonAssignmentService = {
     const pushed = await Lesson.findOneAndUpdate(
       {
         _id: lessonOid,
-        schoolId: new mongoose.Types.ObjectId(schoolId),
-        isDeleted: false,
+        ...lessonAccessFilter(scope),
       },
       {
         $push: {
@@ -56,30 +62,29 @@ export const LessonAssignmentService = {
       },
       { new: true },
     ).lean<ILesson>();
-    if (!pushed) throw new Error('Lesson not found');
+    if (!pushed) throw new NotFoundError('Lesson not found');
     return pushed;
   },
 
   /** Remove an assignment of a class from this lesson pack. */
   async unassignClass(
     lessonId: string,
-    schoolId: string,
+    scope: LessonScope,
     classId: string,
   ): Promise<ILesson> {
     const updated = await Lesson.findOneAndUpdate(
       {
-        _id: new mongoose.Types.ObjectId(lessonId),
-        schoolId: new mongoose.Types.ObjectId(schoolId),
-        isDeleted: false,
+        _id: toObjectId(lessonId, 'lessonId'),
+        ...lessonAccessFilter(scope),
       },
       {
         $pull: {
-          assignedClasses: { classId: new mongoose.Types.ObjectId(classId) },
+          assignedClasses: { classId: toObjectId(classId, 'classId') },
         },
       },
       { new: true },
     ).lean<ILesson>();
-    if (!updated) throw new Error('Lesson not found');
+    if (!updated) throw new NotFoundError('Lesson not found');
     return updated;
   },
 
@@ -89,7 +94,7 @@ export const LessonAssignmentService = {
    */
   async updateAssignment(
     lessonId: string,
-    schoolId: string,
+    scope: LessonScope,
     classId: string,
     patch: UpdateAssignmentInput,
   ): Promise<ILesson> {
@@ -103,12 +108,11 @@ export const LessonAssignmentService = {
         patch.status === 'taught' ? new Date() : null;
     }
 
-    const classOid = new mongoose.Types.ObjectId(classId);
+    const classOid = toObjectId(classId, 'classId');
     const updated = await Lesson.findOneAndUpdate(
       {
-        _id: new mongoose.Types.ObjectId(lessonId),
-        schoolId: new mongoose.Types.ObjectId(schoolId),
-        isDeleted: false,
+        _id: toObjectId(lessonId, 'lessonId'),
+        ...lessonAccessFilter(scope),
         'assignedClasses.classId': classOid,
       },
       { $set: setOps },
@@ -117,7 +121,7 @@ export const LessonAssignmentService = {
         arrayFilters: [{ 'a.classId': classOid }],
       },
     ).lean<ILesson>();
-    if (!updated) throw new Error('Assignment not found');
+    if (!updated) throw new NotFoundError('Assignment not found');
     return updated;
   },
 };

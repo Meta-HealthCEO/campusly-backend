@@ -3,6 +3,14 @@ import { Response } from 'express';
 import { getUser } from '../../../types/authenticated-request.js';
 import { AcademicService } from '../service.js';
 import { apiResponse } from '../../../common/utils.js';
+import { getTermSummary } from '../services/term-summary.service.js';
+import { getSubjectTrend } from '../services/subject-trend.service.js';
+import { getStudentTermDetail } from '../services/student-term-detail.service.js';
+import {
+  getMatrix as getWeightingMatrix,
+  setTermBuckets as setWeightingTermBuckets,
+} from '../services/subject-weighting.service.js';
+import { BadRequestError } from '../../../common/errors.js';
 
 export class MiscController {
   // ─── Assessment ────────────────────────────────────────────────────────
@@ -49,6 +57,81 @@ export class MiscController {
     const schoolId = req.user!.schoolId!;
     await AcademicService.deleteAssessment(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Assessment deleted successfully'));
+  }
+
+  // ─── Term Summary (cross-assessment roll-up for a class) ──────────────
+  // Powers the gradebook's Term Summary tab. Returns every student in the
+  // class × every subject they have a mark for in the given term/year, with
+  // the weighted average per cell and per-subject cohort averages. One
+  // request, no client-side maths.
+  static async getTermSummary(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const classId = req.query.classId as string | undefined;
+    // term is optional — when omitted (or set to 'year'), the service
+    // aggregates across all four terms in the academic year.
+    const termRaw = req.query.term as string | undefined;
+    const academicYear = req.query.academicYear
+      ? Number(req.query.academicYear)
+      : new Date().getFullYear();
+    if (!classId) throw new BadRequestError('classId is required');
+    let term: number | undefined;
+    if (termRaw && termRaw !== 'year' && termRaw !== 'all') {
+      term = Number(termRaw);
+      if (!Number.isInteger(term) || term < 1 || term > 4) {
+        throw new BadRequestError('term must be 1-4 or "year"');
+      }
+    }
+    const summary = await getTermSummary({
+      schoolId,
+      classId,
+      term,
+      academicYear,
+    });
+    res.json(apiResponse(true, summary, 'Term summary retrieved'));
+  }
+
+  // ─── Subject Trend (term-by-term cohort trend for one class+subject) ──
+  static async getSubjectTrend(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const classId = req.query.classId as string | undefined;
+    const subjectId = req.query.subjectId as string | undefined;
+    const academicYear = req.query.academicYear
+      ? Number(req.query.academicYear)
+      : new Date().getFullYear();
+    if (!classId) throw new BadRequestError('classId is required');
+    if (!subjectId) throw new BadRequestError('subjectId is required');
+    const trend = await getSubjectTrend({
+      schoolId,
+      classId,
+      subjectId,
+      academicYear,
+    });
+    res.json(apiResponse(true, trend, 'Subject trend retrieved'));
+  }
+
+  // ─── Student Term Detail (per-subject breakdown for one student) ──────
+  static async getStudentTermDetail(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const studentId = req.params.studentId as string;
+    const termRaw = req.query.term as string | undefined;
+    const academicYear = req.query.academicYear
+      ? Number(req.query.academicYear)
+      : new Date().getFullYear();
+    if (!studentId) throw new BadRequestError('studentId is required');
+    let term: number | undefined;
+    if (termRaw && termRaw !== 'year' && termRaw !== 'all') {
+      term = Number(termRaw);
+      if (!Number.isInteger(term) || term < 1 || term > 4) {
+        throw new BadRequestError('term must be 1-4 or "year"');
+      }
+    }
+    const detail = await getStudentTermDetail({
+      schoolId,
+      studentId,
+      term,
+      academicYear,
+    });
+    res.json(apiResponse(true, detail, 'Student term detail retrieved'));
   }
 
   // ─── Marks ─────────────────────────────────────────────────────────────
@@ -227,6 +310,33 @@ export class MiscController {
     const schoolId = req.user!.schoolId!;
     await AcademicService.deletePastPaper(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Past paper deleted successfully'));
+  }
+
+  // ─── Subject Weighting Matrix (gradebook bulk path) ──────────────────
+  // The 4-term × 5-type config for a single (subject, grade), atomic
+  // upsert per term. The legacy per-row CRUD below is left in place but
+  // the gradebook never touches it.
+
+  static async getSubjectWeightingMatrix(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const subjectId = req.query.subjectId as string | undefined;
+    const gradeId = req.query.gradeId as string | undefined;
+    if (!subjectId) throw new BadRequestError('subjectId is required');
+    if (!gradeId) throw new BadRequestError('gradeId is required');
+    const matrix = await getWeightingMatrix({ schoolId, subjectId, gradeId });
+    res.json(apiResponse(true, matrix, 'Subject weighting matrix retrieved'));
+  }
+
+  static async setSubjectWeightingTermBuckets(req: Request, res: Response): Promise<void> {
+    const schoolId = req.user!.schoolId!;
+    const result = await setWeightingTermBuckets({
+      schoolId,
+      subjectId: req.body.subjectId,
+      gradeId: req.body.gradeId,
+      term: req.body.term,
+      buckets: req.body.buckets,
+    });
+    res.json(apiResponse(true, result, 'Subject weighting saved'));
   }
 
   // ─── Subject Weightings ───────────────────────────────────────────────────

@@ -230,7 +230,51 @@ export async function findOrCreateAssessmentForAssignment(
   assignment: IAssignment,
   classId: mongoose.Types.ObjectId,
 ): Promise<mongoose.Types.ObjectId> {
-  if (assignment.assessmentId) return assignment.assessmentId as mongoose.Types.ObjectId;
+  const linked = assignment.assessmentLinks?.find(
+    (link) => String(link.classId) === String(classId),
+  );
+  if (linked?.assessmentId) return linked.assessmentId as mongoose.Types.ObjectId;
+
+  // Legacy single-cache migration: only reuse assessmentId when it belongs
+  // to this class. Older assignment docs have no assessmentLinks array.
+  if (assignment.assessmentId) {
+    const cached = await Assessment.findOne({
+      _id: assignment.assessmentId,
+      schoolId: assignment.schoolId,
+      classId,
+      isDeleted: false,
+    }).select('_id').lean<{ _id: mongoose.Types.ObjectId } | null>();
+    if (cached) {
+      await Assignment.updateOne(
+        { _id: assignment._id, schoolId: assignment.schoolId },
+        {
+          $addToSet: {
+            assessmentLinks: { classId, assessmentId: cached._id },
+          },
+        },
+      );
+      return cached._id;
+    }
+  }
+
+  const existing = await Assessment.findOne({
+    assignmentId: assignment._id,
+    schoolId: assignment.schoolId,
+    classId,
+    isDeleted: false,
+  }).select('_id').lean<{ _id: mongoose.Types.ObjectId } | null>();
+  if (existing) {
+    await Assignment.updateOne(
+      { _id: assignment._id, schoolId: assignment.schoolId },
+      {
+        $addToSet: {
+          assessmentLinks: { classId, assessmentId: existing._id },
+        },
+        ...(assignment.assessmentId ? {} : { $set: { assessmentId: existing._id } }),
+      },
+    );
+    return existing._id;
+  }
 
   // Pick the most relevant due date — the assignment for the supplied class.
   const classAssignment = assignment.assignedClasses.find(
@@ -253,13 +297,19 @@ export async function findOrCreateAssessmentForAssignment(
     weight: 1,
     date: due,
     paperId: null,
+    assignmentId: assignment._id,
     isDeleted: false,
   });
 
   try {
     await Assignment.updateOne(
       { _id: assignment._id, schoolId: assignment.schoolId },
-      { $set: { assessmentId: assessment._id } },
+      {
+        $addToSet: {
+          assessmentLinks: { classId, assessmentId: assessment._id },
+        },
+        ...(assignment.assessmentId ? {} : { $set: { assessmentId: assessment._id } }),
+      },
     );
   } catch (err: unknown) {
     try {

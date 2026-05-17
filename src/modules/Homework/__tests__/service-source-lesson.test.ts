@@ -59,7 +59,7 @@ describe('HomeworkService.getById — sourceLesson backlink', () => {
       curriculumNodeId: new mongoose.Types.ObjectId(),
       title: 'Source lesson title',
       durationMinutes: 30,
-      status: 'ready',
+      publishedAt: new Date(),
       materials: [
         { kind: 'homework', title: 'HW link', homeworkId: homework._id },
       ],
@@ -97,7 +97,7 @@ describe('HomeworkService.getById — sourceLesson backlink', () => {
       curriculumNodeId: new mongoose.Types.ObjectId(),
       title: 'Other school lesson',
       durationMinutes: 30,
-      status: 'ready',
+      publishedAt: new Date(),
       materials: [
         { kind: 'homework', title: 'HW link', homeworkId: homework._id },
       ],
@@ -120,7 +120,7 @@ describe('HomeworkService.getById — sourceLesson backlink', () => {
       curriculumNodeId: new mongoose.Types.ObjectId(),
       title: 'Deleted lesson',
       durationMinutes: 30,
-      status: 'ready',
+      publishedAt: new Date(),
       isDeleted: true,
       materials: [
         { kind: 'homework', title: 'HW link', homeworkId: homework._id },

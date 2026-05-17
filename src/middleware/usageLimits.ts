@@ -43,6 +43,7 @@ async function isPaidPlan(schoolId: string): Promise<boolean> {
 
   const { tier, expiresAt } = school.subscription;
   const validTiers: string[] = ['basic', 'standard', 'premium'];
+  if (!expiresAt) return false;
   return validTiers.includes(tier) && new Date(expiresAt) > new Date();
 }
 

@@ -57,7 +57,14 @@ export class StatsController {
     const sportCode = req.query.sportCode as string;
 
     if (!sportCode) {
-      res.status(400).json(apiResponse(false, undefined, 'sportCode query parameter is required'));
+      const cards = await StatsService.getPlayerCards(
+        schoolId,
+        undefined,
+        undefined,
+        undefined,
+        studentId as string,
+      );
+      res.json(apiResponse(true, cards, 'Player cards retrieved successfully'));
       return;
     }
 

@@ -1,6 +1,5 @@
 import type { Document, Types } from 'mongoose';
 
-export type LessonStatus = 'draft' | 'ready' | 'taught';
 export type LessonPhase =
   | 'introduction'
   | 'direct_instruction'
@@ -142,7 +141,12 @@ export interface ILesson extends Document {
   objectives: string[];
   phases: ILessonPhaseEntry[];
   materials: ILessonMaterial[];
-  status: LessonStatus;
+  /**
+   * Publish gate: null = unpublished (teacher-only), Date = published to
+   * students in every assigned class. Replaces the older draft/ready/taught
+   * lifecycle; "taught" now lives entirely on each per-class assignment.
+   */
+  publishedAt: Date | null;
   reflectionNotes?: string;
   aiGenerated: boolean;
   isDeleted: boolean;

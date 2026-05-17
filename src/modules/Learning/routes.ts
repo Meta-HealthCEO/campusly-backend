@@ -218,6 +218,7 @@ router.get('/submissions/:id', authenticate, LearningController.getSubmission);
 router.get(
   '/progress/:studentId',
   authenticate,
+  authorize('student', 'parent', 'teacher', 'school_admin', 'super_admin'),
   requireParentOwnership('studentId'),
   LearningController.getStudentProgress,
 );

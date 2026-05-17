@@ -8,7 +8,7 @@ const baseHomeworkFields = {
   title: z.string().min(1).max(200),
   subjectId: objectIdSchema,
   classId: objectIdSchema,
-  schoolId: objectIdSchema,
+  schoolId: objectIdSchema.optional(),
   dueDate: z.iso.datetime(),
   totalMarks: z.number().int().min(0).max(1000),
   attachments: z.array(z.url()).max(20).optional(),

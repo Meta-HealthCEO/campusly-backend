@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { authenticate } from '../../middleware/auth.js';
 import { authorize } from '../../middleware/rbac.js';
 import { requireCapability } from '../../middleware/capability.js';
+import { requireParentOwnership } from '../../middleware/parentOwnership.js';
 import { validate } from '../../middleware/validate.js';
 import { SportController } from './controller.js';
 import { StatsController } from './controller-stats.js';
@@ -265,18 +266,24 @@ router.get(
 router.get(
   '/players/:studentId/stats',
   authenticate,
+  authorize('student', 'parent', 'teacher', 'school_admin', 'super_admin', 'coach', 'sports_manager'),
+  requireParentOwnership('studentId'),
   StatsController.getPlayerCareerStats,
 );
 
 router.get(
   '/players/:studentId/card',
   authenticate,
+  authorize('student', 'parent', 'teacher', 'school_admin', 'super_admin', 'coach', 'sports_manager'),
+  requireParentOwnership('studentId'),
   StatsController.getPlayerCard,
 );
 
 router.get(
   '/players/:studentId/personal-bests',
   authenticate,
+  authorize('student', 'parent', 'teacher', 'school_admin', 'super_admin', 'coach', 'sports_manager'),
+  requireParentOwnership('studentId'),
   StatsController.getPersonalBests,
 );
 
@@ -300,6 +307,7 @@ router.post(
 router.get(
   '/cards',
   authenticate,
+  authorize('teacher', 'school_admin', 'super_admin', 'coach', 'sports_manager'),
   StatsController.listPlayerCards,
 );
 
@@ -330,6 +338,7 @@ router.post(
   '/ai/player/:studentId/parent-report',
   authenticate,
   authorize('super_admin', 'school_admin', 'teacher', 'parent', 'coach', 'sports_manager'),
+  requireParentOwnership('studentId'),
   AISportsController.generateParentReport,
 );
 
@@ -393,6 +402,7 @@ router.post(
 router.get(
   '/training/sessions',
   authenticate,
+  authorize('student', 'parent', 'teacher', 'school_admin', 'super_admin', 'coach', 'sports_manager'),
   TrainingController.listSessions,
 );
 
@@ -434,6 +444,8 @@ router.get(
 router.get(
   '/training/players/:studentId/attendance-summary',
   authenticate,
+  authorize('student', 'parent', 'teacher', 'school_admin', 'super_admin', 'coach', 'sports_manager'),
+  requireParentOwnership('studentId'),
   TrainingController.getPlayerAttendanceSummary,
 );
 
@@ -479,6 +491,7 @@ router.post(
 router.get(
   '/injuries',
   authenticate,
+  authorize('student', 'parent', 'teacher', 'school_admin', 'super_admin', 'coach', 'sports_manager'),
   InjuryController.listInjuries,
 );
 
@@ -520,6 +533,8 @@ router.get(
 router.get(
   '/players/:studentId/injuries',
   authenticate,
+  authorize('student', 'parent', 'teacher', 'school_admin', 'super_admin', 'coach', 'sports_manager'),
+  requireParentOwnership('studentId'),
   InjuryController.getPlayerInjuries,
 );
 
@@ -557,6 +572,8 @@ router.delete(
 router.get(
   '/fitness/players/:studentId/progression',
   authenticate,
+  authorize('student', 'parent', 'teacher', 'school_admin', 'super_admin', 'coach', 'sports_manager'),
+  requireParentOwnership('studentId'),
   FitnessController.playerProgression,
 );
 
@@ -602,6 +619,7 @@ router.post(
 router.get(
   '/announcements',
   authenticate,
+  authorize('student', 'parent', 'teacher', 'school_admin', 'super_admin', 'coach', 'sports_manager'),
   AnnouncementController.list,
 );
 

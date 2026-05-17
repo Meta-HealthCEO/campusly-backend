@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import { getUser } from '../../types/authenticated-request.js';
 import { apiResponse } from '../../common/utils.js';
 import { AnnouncementService } from './service-announcement.js';
+import { resolveScopedStudentId } from './student-access.js';
 
 export class AnnouncementController {
   static async create(req: Request, res: Response): Promise<void> {
@@ -17,10 +18,14 @@ export class AnnouncementController {
   static async list(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
     const { teamId, studentId, pinned } = req.query;
+    const scopedStudentId = await resolveScopedStudentId(
+      user,
+      typeof studentId === 'string' ? studentId : undefined,
+    );
     const announcements = await AnnouncementService.list({
       schoolId: user.schoolId!,
       teamId: typeof teamId === 'string' ? teamId : undefined,
-      studentId: typeof studentId === 'string' ? studentId : undefined,
+      studentId: scopedStudentId,
       pinned: pinned === 'true' ? true : pinned === 'false' ? false : undefined,
     });
     res.status(200).json(apiResponse(true, announcements, 'Announcements retrieved'));
