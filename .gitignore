@@ -10,3 +10,7 @@ coverage/
 config.bat
 temp_auto_push.bat
 temp_interactive_push.bat
+
+# runtime / binary content
+backups/
+uploads/
