@@ -41,7 +41,8 @@ router.get(
 router.get(
   '/export',
   authenticate,
-  authorize('school_admin', 'super_admin'),
+  authorize('teacher', 'school_admin', 'super_admin'),
+  requireTeacherClassOwnership('classId'),
   AttendanceExportController.exportAttendance,
 );
 
