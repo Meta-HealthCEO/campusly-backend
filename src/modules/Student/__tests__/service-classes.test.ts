@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import mongoose from 'mongoose';
 import { Student } from '../model.js';
-import { Class, Grade } from '../../Academic/model.js';
+import { Class, Grade, Subject, Timetable } from '../../Academic/model.js';
 import { User } from '../../Auth/model.js';
 import { getMyStudentClasses } from '../service-classes.js';
 
@@ -90,10 +90,22 @@ describe('getMyStudentClasses', () => {
     return cls._id as mongoose.Types.ObjectId;
   }
 
+  async function seedSubject(gradeId: mongoose.Types.ObjectId): Promise<mongoose.Types.ObjectId> {
+    const subject = await Subject.create({
+      name: 'Mathematics',
+      code: `MATH-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      schoolId: FILE_SCHOOL_ID,
+      gradeIds: [gradeId],
+    });
+    return subject._id as mongoose.Types.ObjectId;
+  }
+
   beforeEach(async () => {
     await User.deleteMany({ schoolId: FILE_SCHOOL_ID });
     await Grade.deleteMany({ schoolId: FILE_SCHOOL_ID });
     await Class.deleteMany({ schoolId: FILE_SCHOOL_ID });
+    await Subject.deleteMany({ schoolId: FILE_SCHOOL_ID });
+    await Timetable.deleteMany({ schoolId: FILE_SCHOOL_ID });
   });
 
   it('returns empty result when no Student profile exists for the user', async () => {
@@ -150,14 +162,24 @@ describe('getMyStudentClasses', () => {
     expect(result.subjectClasses).toEqual([]);
   });
 
-  it('returns subjectClasses: [] in v1 even when student.subjectClassIds is populated', async () => {
-    // v1 contract: always [] regardless of stored array contents.
-    // This guards against accidentally enabling the subject path before v2 is ready.
+  it('returns populated subject classes when student.subjectClassIds is populated', async () => {
     const userId = new mongoose.Types.ObjectId();
     const teacherId = await seedTeacher();
     const gradeId = await seedGrade();
     const homeroomId = await seedClass({ name: '7B', isHomeroom: true, teacherId, gradeId });
-    const subjectId = await seedClass({ name: 'Maths', isHomeroom: false, teacherId, gradeId });
+    const subjectClassId = await seedClass({ name: 'Maths', isHomeroom: false, teacherId, gradeId });
+    const subjectId = await seedSubject(gradeId);
+
+    await Timetable.create({
+      schoolId: FILE_SCHOOL_ID,
+      classId: subjectClassId,
+      subjectId,
+      teacherId,
+      day: 'monday',
+      period: 1,
+      startTime: '08:00',
+      endTime: '08:30',
+    });
 
     await Student.create({
       userId,
@@ -165,11 +187,13 @@ describe('getMyStudentClasses', () => {
       gradeId,
       classId: homeroomId,
       admissionNumber: `A-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-      subjectClassIds: [subjectId],
+      subjectClassIds: [subjectClassId],
     });
 
     const result = await getMyStudentClasses(String(userId), String(FILE_SCHOOL_ID));
-    expect(result.subjectClasses).toEqual([]);
+    expect(result.subjectClasses).toHaveLength(1);
+    expect(result.subjectClasses[0]?.name).toBe('Maths');
+    expect(result.subjectClasses[0]?.subject?.name).toBe('Mathematics');
   });
 
   it('scopes the Student lookup by schoolId (no cross-tenant leakage)', async () => {

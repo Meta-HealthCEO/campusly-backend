@@ -131,7 +131,7 @@ export class RecommendationsService {
         title: paper.title,
         subtitle: `${subjectName} · ${tense}`,
         actionHref: `/student/ai-tutor?subjectId=${String(subj?._id ?? paper.subjectId)}&mode=exam_prep&context=${encodeURIComponent(paper.title)}`,
-        actionLabel: 'Start exam prep with Buddy',
+        actionLabel: 'Start exam prep with Aura',
         priority: 60 - Math.min(daysUntilRelease, 14) * 2,
       });
     }
@@ -159,7 +159,7 @@ export class RecommendationsService {
           title: `Brush up on ${subject.subjectName}`,
           subtitle: `Overall average ${Math.round(subject.score)}% · ${subject.signalCount} data point${subject.signalCount === 1 ? '' : 's'}`,
           actionHref: `/student/ai-tutor?subjectId=${subject.subjectId}&mode=exam_prep`,
-          actionLabel: 'Get help from Buddy',
+          actionLabel: 'Get help from Aura',
           priority: 40 + (60 - subject.score),
         });
       }

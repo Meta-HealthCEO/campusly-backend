@@ -7,7 +7,8 @@ import { AIService } from '../../services/ai.service.js';
 import { NotFoundError } from '../../common/errors.js';
 import { paginationHelper } from '../../common/utils.js';
 import { buildSystemPrompt, TutorPromptContext } from './prompts.js';
-import type { SendMessageInput, BuddyContextInput } from './validation.js';
+import { resolveTutorContext } from './student-context.js';
+import type { SendMessageInput, AuraContextInput } from './validation.js';
 
 const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514';
 const MAX_CONTEXT_MESSAGES = 20;
@@ -40,7 +41,7 @@ const SURFACE_LABELS: Record<string, string> = {
 };
 
 /**
- * Authoritative server-side check: is the surface this Buddy chat is anchored
+ * Authoritative server-side check: is the surface this Aura chat is anchored
  * to still an "active" assessment that we must not leak answers for? For
  * homework we look up the actual submission state. For test/assignment review
  * surfaces, the student has already submitted and been marked — those are
@@ -49,7 +50,7 @@ const SURFACE_LABELS: Record<string, string> = {
 async function resolveAssessmentActive(
   _userId: string,
   schoolId: string,
-  ctx: BuddyContextInput | undefined,
+  ctx: AuraContextInput | undefined,
   studentRecordId: string | null,
 ): Promise<boolean> {
   if (!ctx) return false;
@@ -78,11 +79,11 @@ async function resolveAssessmentActive(
 }
 
 /**
- * Convert the structured BuddyContext into a few lines of natural language for
+ * Convert the structured AuraContext into a few lines of natural language for
  * the system prompt. We deliberately trim long fields — the surface context is
  * background, not the primary message.
  */
-function formatSurfaceContext(ctx: BuddyContextInput): string | undefined {
+function formatSurfaceContext(ctx: AuraContextInput): string | undefined {
   if (!ctx || ctx.surface === 'free') return undefined;
 
   const label = SURFACE_LABELS[ctx.surface] ?? '';
@@ -180,6 +181,7 @@ export class AITutorService {
     threadedMessages: Array<{ role: 'user' | 'assistant'; content: string }>;
   }> {
     let conversation: ITutorConversation | null = null;
+    let resolvedContext: Awaited<ReturnType<typeof resolveTutorContext>>;
 
     if (input.conversationId) {
       conversation = await TutorConversation.findOne({
@@ -189,13 +191,19 @@ export class AITutorService {
         isDeleted: false,
       });
       if (!conversation) throw new NotFoundError('Conversation not found');
+      resolvedContext = await resolveTutorContext(userId, schoolId, {
+        subjectId: String(conversation.subjectId),
+        subjectName: conversation.subjectName,
+        grade: conversation.grade,
+      });
     } else {
+      resolvedContext = await resolveTutorContext(userId, schoolId, input);
       conversation = await TutorConversation.create({
         schoolId,
         studentId: userId,
-        subjectId: input.subjectId,
-        subjectName: input.subjectName,
-        grade: input.grade,
+        subjectId: resolvedContext.subjectId,
+        subjectName: resolvedContext.subjectName,
+        grade: resolvedContext.grade,
         mode: input.mode,
         surface: input.context?.surface ?? 'free',
         surfaceId: input.context?.surfaceId,
@@ -203,7 +211,7 @@ export class AITutorService {
       });
     }
 
-    const studentRecordId = await this.resolveStudentRecordId(userId, schoolId);
+    const studentRecordId = resolvedContext.studentRecordId;
 
     const recentMarks = studentRecordId
       ? await Mark.find({
@@ -238,8 +246,8 @@ export class AITutorService {
     );
 
     const ctx: TutorPromptContext = {
-      grade: input.grade,
-      subjectName: input.subjectName,
+      grade: resolvedContext.grade,
+      subjectName: resolvedContext.subjectName,
       marksSummary,
       surfaceContext: input.context ? formatSurfaceContext(input.context) : undefined,
       isAssessmentActive: serverIsActive,

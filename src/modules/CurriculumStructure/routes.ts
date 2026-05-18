@@ -12,7 +12,7 @@ import {
 const router = Router();
 
 const ADMIN_ROLES = ['super_admin', 'school_admin', 'principal'] as const;
-const READ_ROLES = ['super_admin', 'school_admin', 'principal', 'hod', 'teacher'] as const;
+const READ_ROLES = ['super_admin', 'school_admin', 'principal', 'hod', 'teacher', 'student'] as const;
 
 // ─── Frameworks ──────────────────────────────────────────────────────────────
 

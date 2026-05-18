@@ -3,12 +3,12 @@ import { z } from 'zod/v4';
 const objectIdRegex = /^[0-9a-fA-F]{24}$/;
 const oid = z.string().regex(objectIdRegex, 'Invalid ObjectId format');
 
-// ─── Buddy Context ───────────────────────────────────────────────────────────
+// ─── Aura Context ───────────────────────────────────────────────────────────
 // Describes what the student is currently looking at so the tutor can give
 // surface-aware help (homework hints, test-review explanations, lesson
 // re-explanations, etc.) instead of behaving as a generic chatbot.
 
-const buddySurface = z.enum([
+const auraSurface = z.enum([
   'free',
   'homework',
   'lesson',
@@ -16,10 +16,10 @@ const buddySurface = z.enum([
   'test_review',
   'assignment_review',
 ]);
-export type BuddySurface = z.infer<typeof buddySurface>;
+export type AuraSurface = z.infer<typeof auraSurface>;
 
-const buddyContextSchema = z.object({
-  surface: buddySurface.default('free'),
+const auraContextSchema = z.object({
+  surface: auraSurface.default('free'),
   surfaceId: z.string().optional(),
   title: z.string().max(500).optional(),
   questionText: z.string().max(4000).optional(),
@@ -29,7 +29,7 @@ const buddyContextSchema = z.object({
   curriculumNodeId: z.string().optional(),
   isAssessmentActive: z.boolean().optional(),
 });
-export type BuddyContextInput = z.infer<typeof buddyContextSchema>;
+export type AuraContextInput = z.infer<typeof auraContextSchema>;
 
 // ─── Send Message ────────────────────────────────────────────────────────────
 
@@ -48,7 +48,7 @@ export const sendMessageSchema = z.object({
   grade: z.number().int().min(1).max(12),
   message: z.string().min(1, 'Message is required').max(4000),
   mode: z.enum(['chat', 'homework_help', 'practice', 'exam_prep']).default('chat'),
-  context: buddyContextSchema.optional(),
+  context: auraContextSchema.optional(),
   /** Optional image attached by the student (e.g., a photo of a worksheet). */
   image: imagePayloadSchema.optional(),
 }).strict();

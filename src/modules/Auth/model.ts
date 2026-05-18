@@ -156,7 +156,6 @@ const userSchema = new Schema<IUser>(
   { timestamps: true },
 );
 
-userSchema.index({ email: 1 });
 userSchema.index({ schoolId: 1, role: 1 });
 userSchema.index({ email: 1, isDeleted: 1 });
 userSchema.index({ schoolId: 1, isHOD: 1 });

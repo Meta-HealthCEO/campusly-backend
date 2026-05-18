@@ -178,7 +178,7 @@ export class ParentService {
   /**
    * Returns a privacy-preserving snapshot of how a child is doing academically:
    * subject-level mastery + the weakest topics. Deliberately excludes any
-   * chat content — the parent should never see what the child has asked Buddy.
+   * chat content — the parent should never see what the child has asked Aura.
    * Only parents linked to the child via Parent.childrenIds may call this.
    */
   static async getChildInsights(
