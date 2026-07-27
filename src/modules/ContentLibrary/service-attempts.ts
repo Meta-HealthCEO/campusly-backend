@@ -174,6 +174,22 @@ function gradeBlock(block: IContentBlock, response: string): GradeResult {
 
 // ─── Service ────────────────────────────────────────────────────────────────
 
+/**
+ * Pick the curriculum node an attempt should be attributed to:
+ * explicit payload value → block alignment → resource alignment.
+ * Empty strings count as absent. Returns null when nothing is aligned.
+ */
+export function resolveAttemptNodeId(
+  payloadNodeId: string | undefined,
+  blockNodeId: string | null | undefined,
+  resourceNodeId: string | null | undefined,
+): string | null {
+  if (payloadNodeId) return payloadNodeId;
+  if (blockNodeId) return blockNodeId;
+  if (resourceNodeId) return resourceNodeId;
+  return null;
+}
+
 export class AttemptsService {
   static async submitAttempt(
     studentId: string,
@@ -184,7 +200,6 @@ export class AttemptsService {
     const soid = new mongoose.Types.ObjectId(studentId);
     const schoolOid = new mongoose.Types.ObjectId(schoolId);
     const resourceOid = new mongoose.Types.ObjectId(resourceId);
-    const nodeOid = new mongoose.Types.ObjectId(data.curriculumNodeId);
 
     // 1. Fetch resource + find block
     const resource = await ContentResource.findOne({
@@ -198,6 +213,16 @@ export class AttemptsService {
 
     const block = resource.blocks.find((b) => b.blockId === data.blockId);
     if (!block) throw new BadRequestError('Block not found in resource');
+
+    const resolvedNodeId = resolveAttemptNodeId(
+      data.curriculumNodeId,
+      block.curriculumNodeId ? String(block.curriculumNodeId) : null,
+      resource.curriculumNodeId ? String(resource.curriculumNodeId) : null,
+    );
+    if (!resolvedNodeId) {
+      throw new BadRequestError('Block is not aligned to a curriculum node');
+    }
+    const nodeOid = new mongoose.Types.ObjectId(resolvedNodeId);
 
     // 2. Auto-grade
     const result = gradeBlock(block, data.response);

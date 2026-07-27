@@ -5,7 +5,9 @@ import { objectIdSchema } from '../../common/validation.js';
 
 export const submitAttemptSchema = z.object({
   blockId: z.string().min(1),
-  curriculumNodeId: objectIdSchema,
+  // Optional — the service falls back to the block's own alignment, then
+  // the resource's, so lesson-embedded blocks don't need to know their node.
+  curriculumNodeId: objectIdSchema.optional(),
   response: z.string().default(''),
   timeSpentSeconds: z.number().int().min(0).default(0),
   hintsUsed: z.number().int().min(0).default(0),
