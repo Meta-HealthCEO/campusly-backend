@@ -280,6 +280,28 @@ interface SubmissionResult {
   status: IPaperSubmission['status'];
   answers: ISubmissionAnswer[];
   markingId: string | null;
+  startedAt: string | null;
+}
+
+// Students get this much extra time past the paper duration before the
+// server refuses further answer saves — generous enough to absorb slow
+// networks and the client-side auto-submit round-trip, tight enough that
+// nobody can keep working long past time by blocking the auto-submit.
+const SAVE_GRACE_MINUTES = 10;
+
+/**
+ * True once `now` is past `startedAt + durationMinutes + graceMinutes`.
+ * Untimed papers (no startedAt, or duration <= 0) never expire.
+ */
+export function isPastHardTimeLimit(
+  startedAt: Date | undefined,
+  durationMinutes: number,
+  nowMs: number,
+  graceMinutes = SAVE_GRACE_MINUTES,
+): boolean {
+  if (!startedAt || durationMinutes <= 0) return false;
+  const limitMs = startedAt.getTime() + (durationMinutes + graceMinutes) * 60_000;
+  return nowMs > limitMs;
 }
 
 export async function startSubmission(
@@ -333,6 +355,16 @@ export async function saveSubmissionAnswers(
   input: SaveAnswersInput,
 ): Promise<SubmissionResult> {
   const sub = await loadOwnedInProgress(submissionId, ctx);
+
+  const paper = await AssessmentPaper.findOne({ _id: sub.paperId, isDeleted: false })
+    .select('duration')
+    .lean();
+  if (paper && isPastHardTimeLimit(sub.startedAt, paper.duration, Date.now())) {
+    throw new BadRequestError(
+      'Time is up for this test — your last saved answers will be submitted.',
+    );
+  }
+
   sub.answers = input.answers.map((a) => ({
     questionNumber: a.questionNumber,
     answer: a.answer ?? '',
@@ -412,5 +444,6 @@ function toSubmissionResult(sub: IPaperSubmission): SubmissionResult {
     status: sub.status,
     answers: sub.answers,
     markingId: sub.markingId ? String(sub.markingId) : null,
+    startedAt: sub.startedAt ? sub.startedAt.toISOString() : null,
   };
 }
