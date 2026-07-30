@@ -3,15 +3,31 @@ import { Response } from 'express';
 import { getUser } from '../../types/authenticated-request.js';
 import { NoticeBoardService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
+import { User } from '../Auth/model.js';
+
+/**
+ * Display name for a post author, resolved server-side.
+ *
+ * This used to read `req.body._authorName`, which could never work: the
+ * route's createPostSchema is .strict(), so validate() rejected the whole
+ * request with "Unrecognized key: _authorName" before the controller ran —
+ * notice creation failed 100% of the time. Trusting a client-supplied author
+ * name would also let a teacher post under someone else's name.
+ */
+async function resolveAuthorName(userId: string, fallbackEmail: string): Promise<string> {
+  const user = await User.findById(userId).select('firstName lastName').lean();
+  const full = `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim();
+  return full || fallbackEmail;
+}
 
 export class NoticeBoardController {
   static async createPost(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
     const schoolId = req.user!.schoolId!;
-    const userName = `${req.user!.email}`; // Email as fallback name
+    const authorName = await resolveAuthorName(user.id, req.user!.email);
     const post = await NoticeBoardService.createPost(
       user.id,
-      (req.body._authorName as string) ?? userName,
+      authorName,
       user.role,
       schoolId,
       req.body,
