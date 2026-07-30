@@ -10,6 +10,7 @@ import type {
   CreateAssetIncidentInput, UpdateAssetIncidentInput,
   CreateInsuranceInput, UpdateInsuranceInput,
 } from './validation.js';
+import { resolveSchoolScope } from '../../common/school-scope.js';
 
 export class AssetExtController {
   // ─── Maintenance ───────────────────────────────────────────────────────
@@ -38,7 +39,7 @@ export class AssetExtController {
 
   static async listUpcomingMaintenance(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    const sid = (req.query.schoolId as string) ?? (user.schoolId as string);
+    const sid = resolveSchoolScope(req)!;
     const days = req.query.days ? Number(req.query.days) : 30;
     const records = await AssetMaintenanceService.listUpcoming(sid, days);
     res.json(apiResponse(true, records, 'Upcoming maintenance retrieved'));
@@ -47,7 +48,7 @@ export class AssetExtController {
   static async listAllMaintenance(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
     const result = await AssetMaintenanceService.listAll({
-      schoolId: (req.query.schoolId as string) ?? (user.schoolId as string),
+      schoolId: resolveSchoolScope(req)!,
       status: req.query.status as string | undefined,
       assetId: req.query.assetId as string | undefined,
       page: req.query.page ? Number(req.query.page) : undefined,
@@ -70,7 +71,7 @@ export class AssetExtController {
   static async listIncidents(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
     const result = await AssetIncidentService.list({
-      schoolId: (req.query.schoolId as string) ?? (user.schoolId as string),
+      schoolId: resolveSchoolScope(req)!,
       type: req.query.type as string | undefined,
       assetId: req.query.assetId as string | undefined,
       status: req.query.status as string | undefined,
@@ -98,7 +99,7 @@ export class AssetExtController {
 
   static async listInsurance(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    const sid = (req.query.schoolId as string) ?? (user.schoolId as string);
+    const sid = resolveSchoolScope(req)!;
     const policies = await AssetInsuranceService.list(sid);
     res.json(apiResponse(true, policies, 'Insurance policies retrieved'));
   }
@@ -118,7 +119,7 @@ export class AssetExtController {
 
   static async listExpiringInsurance(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    const sid = (req.query.schoolId as string) ?? (user.schoolId as string);
+    const sid = resolveSchoolScope(req)!;
     const days = req.query.days ? Number(req.query.days) : 60;
     const policies = await AssetInsuranceService.listExpiring(sid, days);
     res.json(apiResponse(true, policies, 'Expiring policies retrieved'));
@@ -128,14 +129,14 @@ export class AssetExtController {
 
   static async reportsSummary(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    const sid = (req.query.schoolId as string) ?? (user.schoolId as string);
+    const sid = resolveSchoolScope(req)!;
     const data = await AssetReportService.getSummary(sid);
     res.json(apiResponse(true, data, 'Asset report summary retrieved'));
   }
 
   static async depreciation(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    const sid = (req.query.schoolId as string) ?? (user.schoolId as string);
+    const sid = resolveSchoolScope(req)!;
     const data = await AssetReportService.getDepreciation(
       sid, req.query.asOfDate as string | undefined,
     );
@@ -144,7 +145,7 @@ export class AssetExtController {
 
   static async replacementDue(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    const sid = (req.query.schoolId as string) ?? (user.schoolId as string);
+    const sid = resolveSchoolScope(req)!;
     const months = req.query.withinMonths ? Number(req.query.withinMonths) : 12;
     const data = await AssetReportService.getReplacementDue(sid, months);
     res.json(apiResponse(true, data, 'Replacement schedule retrieved'));
@@ -152,7 +153,7 @@ export class AssetExtController {
 
   static async maintenanceCosts(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    const sid = (req.query.schoolId as string) ?? (user.schoolId as string);
+    const sid = resolveSchoolScope(req)!;
     const data = await AssetReportService.getMaintenanceCosts(
       sid,
       req.query.year ? Number(req.query.year) : undefined,

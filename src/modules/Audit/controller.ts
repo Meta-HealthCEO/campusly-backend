@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { AuditService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
+import { resolveSchoolScope } from '../../common/school-scope.js';
 
 export class AuditController {
   // ─── List Logs ──────────────────────────────────────────────────────────────
@@ -14,7 +15,7 @@ export class AuditController {
       action: req.query.action as 'create' | 'update' | 'delete' | 'login' | 'export' | undefined,
       startDate: req.query.startDate as string | undefined,
       endDate: req.query.endDate as string | undefined,
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId: resolveSchoolScope(req),
     });
     res.json(apiResponse(true, result));
   }
@@ -28,7 +29,7 @@ export class AuditController {
       action: req.query.action as 'create' | 'update' | 'delete' | 'login' | 'export' | undefined,
       startDate: req.query.startDate as string | undefined,
       endDate: req.query.endDate as string | undefined,
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId: resolveSchoolScope(req),
     });
     res.json(apiResponse(true, logs, 'Audit logs exported successfully'));
   }

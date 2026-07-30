@@ -3,11 +3,12 @@ import { ReportService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
 import { getUser } from '../../types/authenticated-request.js';
 import { assertCanAccessStudentReport } from './helpers.js';
+import { resolveSchoolScope } from '../../common/school-scope.js';
 
 function getScopedSchoolId(req: Request): string | undefined {
   const user = getUser(req);
   if (user.role === 'super_admin') {
-    return (req.query.schoolId as string | undefined) ?? user.schoolId;
+    return resolveSchoolScope(req);
   }
   return user.schoolId;
 }

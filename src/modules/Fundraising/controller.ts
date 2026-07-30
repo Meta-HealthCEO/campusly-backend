@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { FundraisingService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
+import { resolveSchoolScope, requireSchoolScope } from '../../common/school-scope.js';
 
 export class FundraisingController {
   // ─── Campaign ─────────────────────────────────────────────────────────────
@@ -15,7 +16,7 @@ export class FundraisingController {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
       sort: req.query.sort as string | undefined,
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId: resolveSchoolScope(req),
     };
 
     const result = await FundraisingService.listCampaigns(query);
@@ -52,7 +53,7 @@ export class FundraisingController {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
       campaignId: req.query.campaignId as string | undefined,
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId: resolveSchoolScope(req),
     };
 
     const result = await FundraisingService.listDonations(query);
@@ -78,7 +79,7 @@ export class FundraisingController {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
       campaignId: req.query.campaignId as string | undefined,
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId: resolveSchoolScope(req),
     };
 
     const result = await FundraisingService.listRaffles(query);
@@ -131,7 +132,7 @@ export class FundraisingController {
   }
 
   static async listTaxCertificates(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const schoolId = requireSchoolScope(req);
     const donorName = req.query.donorName as string | undefined;
 
     const query = {
@@ -178,7 +179,7 @@ export class FundraisingController {
     const query = {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId: resolveSchoolScope(req),
       campaignId: req.query.campaignId as string | undefined,
       isActive: req.query.isActive !== undefined ? req.query.isActive === 'true' : undefined,
     };

@@ -27,6 +27,8 @@ const auraContextSchema = z.object({
   correctAnswer: z.string().max(4000).optional(),
   teacherFeedback: z.string().max(2000).optional(),
   curriculumNodeId: z.string().optional(),
+  /** Free-form syllabus topic the student wants to focus on. */
+  topic: z.string().max(200).optional(),
   isAssessmentActive: z.boolean().optional(),
 });
 export type AuraContextInput = z.infer<typeof auraContextSchema>;

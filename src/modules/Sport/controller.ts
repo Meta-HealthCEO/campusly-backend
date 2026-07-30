@@ -3,6 +3,7 @@ import { SportService } from './service.js';
 import { CoachAssignmentService } from './service-coach-assignment.js';
 import { getUser } from '../../types/authenticated-request.js';
 import { apiResponse } from '../../common/utils.js';
+import { resolveSchoolScope } from '../../common/school-scope.js';
 
 export class SportController {
   // ─── Teams ────────────────────────────────────────────────────────────────
@@ -20,7 +21,7 @@ export class SportController {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
       sort: req.query.sort as string | undefined,
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId: resolveSchoolScope(req),
       sport: req.query.sport as string | undefined,
       studentId: req.query.studentId as string | undefined,
       allowedTeamIds: allowedTeamIds ?? undefined,
@@ -63,7 +64,7 @@ export class SportController {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
       sort: req.query.sort as string | undefined,
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId: resolveSchoolScope(req),
       teamId: req.query.teamId as string | undefined,
       allowedTeamIds: allowedTeamIds ?? undefined,
     };
@@ -103,7 +104,7 @@ export class SportController {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
       sort: req.query.sort as string | undefined,
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId: resolveSchoolScope(req),
       sport: req.query.sport as string | undefined,
     };
 

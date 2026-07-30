@@ -3,6 +3,7 @@ import { Response } from 'express';
 import { getUser } from '../../types/authenticated-request.js';
 import { AfterCareService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
+import { resolveSchoolScope } from '../../common/school-scope.js';
 
 export class AfterCareController {
   // ─── Registration ─────────────────────────────────────────────────────────
@@ -17,7 +18,7 @@ export class AfterCareController {
     const query = {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId: resolveSchoolScope(req),
     };
 
     const result = await AfterCareService.listRegistrations(query);
@@ -64,7 +65,7 @@ export class AfterCareController {
     const query = {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId: resolveSchoolScope(req),
       studentId: req.query.studentId as string | undefined,
       date: req.query.date as string | undefined,
     };
@@ -98,7 +99,7 @@ export class AfterCareController {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
       studentId: req.query.studentId as string | undefined,
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId: resolveSchoolScope(req),
     };
 
     const result = await AfterCareService.listPickupAuths(query);
@@ -129,7 +130,7 @@ export class AfterCareController {
     const query = {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId: resolveSchoolScope(req),
       studentId: req.query.studentId as string | undefined,
       date: req.query.date as string | undefined,
     };
@@ -150,7 +151,7 @@ export class AfterCareController {
     const query = {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId: resolveSchoolScope(req),
       date: req.query.date as string | undefined,
     };
 
@@ -187,7 +188,7 @@ export class AfterCareController {
     const query = {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId: resolveSchoolScope(req),
       studentId: req.query.studentId as string | undefined,
       month: req.query.month ? Number(req.query.month) : undefined,
       year: req.query.year ? Number(req.query.year) : undefined,

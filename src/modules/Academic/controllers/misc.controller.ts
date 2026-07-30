@@ -11,6 +11,7 @@ import {
   setTermBuckets as setWeightingTermBuckets,
 } from '../services/subject-weighting.service.js';
 import { BadRequestError } from '../../../common/errors.js';
+import { resolveSchoolScope, requireSchoolScope } from '../../../common/school-scope.js';
 
 export class MiscController {
   // ─── Assessment ────────────────────────────────────────────────────────
@@ -137,13 +138,23 @@ export class MiscController {
   // ─── Marks ─────────────────────────────────────────────────────────────
 
   static async captureMark(req: Request, res: Response): Promise<void> {
-    const mark = await AcademicService.captureMark(req.body);
+    // Tenant comes from the JWT — never from the body, which the client controls.
+    const mark = await AcademicService.captureMark({
+      ...req.body,
+      schoolId: requireSchoolScope(req),
+    });
     res.status(201).json(apiResponse(true, mark, 'Mark captured successfully'));
   }
 
   static async bulkCaptureMarks(req: Request, res: Response): Promise<void> {
-    const { assessmentId, schoolId, marks } = req.body;
-    const result = await AcademicService.bulkCaptureMarks(assessmentId, schoolId, marks);
+    const { assessmentId, marks } = req.body;
+    // Ignore any body-supplied schoolId: it previously allowed a teacher to
+    // write marks into another school's gradebook.
+    const result = await AcademicService.bulkCaptureMarks(
+      assessmentId,
+      requireSchoolScope(req),
+      marks,
+    );
     res.status(201).json(apiResponse(true, result, 'Marks captured successfully'));
   }
 
@@ -166,7 +177,7 @@ export class MiscController {
   // ─── LURITS Export ────────────────────────────────────────────────────────
 
   static async exportLurits(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const schoolId = resolveSchoolScope(req);
 
     if (!schoolId) {
       res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
@@ -223,7 +234,7 @@ export class MiscController {
   }
 
   static async listExams(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const schoolId = resolveSchoolScope(req);
     if (!schoolId) { res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required')); return; }
     const query = {
       page: req.query.page ? Number(req.query.page) : undefined,
@@ -294,7 +305,7 @@ export class MiscController {
   }
 
   static async listPastPapers(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const schoolId = resolveSchoolScope(req);
     if (!schoolId) { res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required')); return; }
     const filters = {
       subjectId: req.query.subjectId as string | undefined,
@@ -347,7 +358,7 @@ export class MiscController {
   }
 
   static async listSubjectWeightings(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const schoolId = resolveSchoolScope(req);
     if (!schoolId) { res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required')); return; }
     const filters = {
       subjectId: req.query.subjectId as string | undefined,
@@ -378,7 +389,7 @@ export class MiscController {
   }
 
   static async listRemedials(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const schoolId = resolveSchoolScope(req);
     if (!schoolId) { res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required')); return; }
     const filters = {
       studentId: req.query.studentId as string | undefined,

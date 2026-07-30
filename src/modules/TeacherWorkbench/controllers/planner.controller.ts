@@ -2,11 +2,12 @@ import type { Request, Response } from 'express';
 import { getUser } from '../../../types/authenticated-request.js';
 import { apiResponse } from '../../../common/utils.js';
 import { PlannerService } from '../services/index.js';
+import { resolveSchoolScope } from '../../../common/school-scope.js';
 
 function getScopedSchoolId(req: Request): string {
   const user = getUser(req);
   if (user.role === 'super_admin') {
-    return String(req.query.schoolId ?? user.schoolId ?? '');
+    return String(resolveSchoolScope(req) ?? '');
   }
   return String(user.schoolId ?? '');
 }

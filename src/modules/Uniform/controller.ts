@@ -4,6 +4,7 @@ import { getUser } from '../../types/authenticated-request.js';
 import { UniformService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
 import { UserRole } from '../../common/enums.js';
+import { resolveSchoolScope } from '../../common/school-scope.js';
 
 export class UniformController {
   // ─── Uniform Items ────────────────────────────────────────────────────────
@@ -14,7 +15,7 @@ export class UniformController {
   }
 
   static async listItems(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const schoolId = resolveSchoolScope(req);
     if (!schoolId) {
       res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
       return;
@@ -57,7 +58,7 @@ export class UniformController {
   }
 
   static async listOrders(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const schoolId = resolveSchoolScope(req);
     if (!schoolId) {
       res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
       return;
@@ -101,7 +102,7 @@ export class UniformController {
   }
 
   static async listSecondHandListings(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const schoolId = resolveSchoolScope(req);
     if (!schoolId) {
       res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
       return;
@@ -206,7 +207,7 @@ export class UniformController {
   }
 
   static async listPreOrders(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const schoolId = resolveSchoolScope(req);
     if (!schoolId) {
       res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
       return;
@@ -269,7 +270,7 @@ export class UniformController {
   // ─── Low Stock ───────────────────────────────────────────────────────────
 
   static async getLowStockItems(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const schoolId = resolveSchoolScope(req);
     if (!schoolId) {
       res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
       return;

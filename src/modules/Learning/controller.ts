@@ -3,6 +3,7 @@ import { Response } from 'express';
 import { getUser } from '../../types/authenticated-request.js';
 import { LearningService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
+import { resolveSchoolScope } from '../../common/school-scope.js';
 
 export class LearningController {
   // ─── Quizzes ─────────────────────────────────────────────────────────
@@ -25,7 +26,7 @@ export class LearningController {
       limit: req.query.limit ? Number(req.query.limit) : undefined,
       sort: req.query.sort as string | undefined,
       search: req.query.search as string | undefined,
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId: resolveSchoolScope(req),
       classId: req.query.classId as string | undefined,
       subjectId: req.query.subjectId as string | undefined,
       status: req.query.status as string | undefined,
@@ -104,7 +105,7 @@ export class LearningController {
       limit: req.query.limit ? Number(req.query.limit) : undefined,
       sort: req.query.sort as string | undefined,
       search: req.query.search as string | undefined,
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId: resolveSchoolScope(req),
       subjectId: req.query.subjectId as string | undefined,
       gradeId: req.query.gradeId as string | undefined,
       term: req.query.term ? Number(req.query.term) : undefined,
@@ -162,7 +163,7 @@ export class LearningController {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
       sort: req.query.sort as string | undefined,
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId: resolveSchoolScope(req),
       subjectId: req.query.subjectId as string | undefined,
       teacherId: req.query.teacherId as string | undefined,
     };

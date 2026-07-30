@@ -2,11 +2,12 @@ import type { Request, Response } from 'express';
 import { getUser } from '../../../types/authenticated-request.js';
 import { apiResponse } from '../../../common/utils.js';
 import { QuestionService } from '../services/index.js';
+import { resolveSchoolScope } from '../../../common/school-scope.js';
 
 export class QuestionController {
   static async listQuestions(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    const schoolId = String(req.query.schoolId ?? user.schoolId ?? '');
+    const schoolId = String(resolveSchoolScope(req) ?? '');
     const subjectId = req.query.subjectId ? String(req.query.subjectId) : undefined;
     const gradeLevel = req.query.gradeLevel ? parseInt(String(req.query.gradeLevel), 10) : undefined;
     const topicId = req.query.topicId ? String(req.query.topicId) : undefined;
@@ -36,28 +37,28 @@ export class QuestionController {
 
   static async getQuestion(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    const schoolId = String(req.query.schoolId ?? user.schoolId ?? '');
+    const schoolId = String(resolveSchoolScope(req) ?? '');
     const question = await QuestionService.getQuestion(req.params.id as string, schoolId);
     res.json(apiResponse(true, question, 'Question retrieved'));
   }
 
   static async updateQuestion(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    const schoolId = String(req.query.schoolId ?? user.schoolId ?? '');
+    const schoolId = String(resolveSchoolScope(req) ?? '');
     const question = await QuestionService.updateQuestion(req.params.id as string, req.body, schoolId);
     res.json(apiResponse(true, question, 'Question updated'));
   }
 
   static async deleteQuestion(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    const schoolId = String(req.query.schoolId ?? user.schoolId ?? '');
+    const schoolId = String(resolveSchoolScope(req) ?? '');
     await QuestionService.deleteQuestion(req.params.id as string, schoolId);
     res.json(apiResponse(true, null, 'Question deleted'));
   }
 
   static async importFromPaper(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    const schoolId = String(req.query.schoolId ?? user.schoolId ?? '');
+    const schoolId = String(resolveSchoolScope(req) ?? '');
     const frameworkId = (req.body.frameworkId as string) ?? '';
     const questions = await QuestionService.importFromPaper(req.params.paperId as string, user.id, schoolId, frameworkId);
     res.status(201).json(apiResponse(true, questions, `${questions.length} questions imported`));

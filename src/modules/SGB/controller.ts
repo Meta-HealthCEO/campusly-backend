@@ -8,6 +8,7 @@ import { SgbFinanceService } from './service-finance.js';
 import { SgbEnrollmentService } from './service-enrollment.js';
 import { SgbSipService } from './service-sip.js';
 import type { VoteChoice } from './model.js';
+import { resolveSchoolScope } from '../../common/school-scope.js';
 
 export class SgbController {
   // ─── Members ──────────────────────────────────────────────────────────────
@@ -18,7 +19,7 @@ export class SgbController {
   }
 
   static async listMembers(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user!.schoolId!;
+    const schoolId = resolveSchoolScope(req)!;
     const result = await SgbMemberService.listMembers({
       schoolId,
       status: req.query.status as string | undefined,
@@ -48,7 +49,7 @@ export class SgbController {
   }
 
   static async listMeetings(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user!.schoolId!;
+    const schoolId = resolveSchoolScope(req)!;
     const result = await SgbMeetingService.listMeetings({
       schoolId,
       status: req.query.status as string | undefined,
@@ -93,7 +94,7 @@ export class SgbController {
   }
 
   static async listResolutions(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user!.schoolId!;
+    const schoolId = resolveSchoolScope(req)!;
     const result = await SgbResolutionService.listResolutions({
       schoolId,
       status: req.query.status as string | undefined,
@@ -137,7 +138,7 @@ export class SgbController {
   }
 
   static async listDocuments(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user!.schoolId!;
+    const schoolId = resolveSchoolScope(req)!;
     const result = await SgbDocumentService.listDocuments({
       schoolId,
       category: req.query.category as string | undefined,
@@ -169,14 +170,14 @@ export class SgbController {
   }
 
   static async getCompliance(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user!.schoolId!;
+    const schoolId = resolveSchoolScope(req)!;
     const result = await SgbDocumentService.getComplianceSummary(schoolId);
     res.json(apiResponse(true, result, 'Compliance summary retrieved successfully'));
   }
 
   // ─── Finance ──────────────────────────────────────────────────────────────
   static async getFinanceSummary(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user!.schoolId!;
+    const schoolId = resolveSchoolScope(req)!;
     const period = (req.query.period as string) ?? 'annual';
     const year = req.query.year ? Number(req.query.year) : new Date().getFullYear();
     const summary = await SgbFinanceService.getFinanceSummary(schoolId, period, year);
@@ -184,7 +185,7 @@ export class SgbController {
   }
 
   static async getFinanceTrends(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user!.schoolId!;
+    const schoolId = resolveSchoolScope(req)!;
     const year = req.query.year ? Number(req.query.year) : new Date().getFullYear();
     const trends = await SgbFinanceService.getFinanceTrends(schoolId, year);
     res.json(apiResponse(true, trends, 'Finance trends retrieved successfully'));
@@ -192,7 +193,7 @@ export class SgbController {
 
   // ─── Enrollment ───────────────────────────────────────────────────────────
   static async getEnrollmentSummary(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user!.schoolId!;
+    const schoolId = resolveSchoolScope(req)!;
     const year = req.query.year ? Number(req.query.year) : new Date().getFullYear();
     const summary = await SgbEnrollmentService.getEnrollmentSummary(schoolId, year);
     res.json(apiResponse(true, summary, 'Enrollment summary retrieved successfully'));
@@ -200,7 +201,7 @@ export class SgbController {
 
   // ─── SIP ──────────────────────────────────────────────────────────────────
   static async getSip(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user!.schoolId!;
+    const schoolId = resolveSchoolScope(req)!;
     const year = req.query.year ? Number(req.query.year) : new Date().getFullYear();
     const sip = await SgbSipService.getSip(schoolId, year);
     res.json(apiResponse(true, sip, 'School improvement plan retrieved successfully'));

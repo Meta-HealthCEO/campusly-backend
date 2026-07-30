@@ -3,6 +3,7 @@ import { Response } from 'express';
 import { getUser } from '../../types/authenticated-request.js';
 import { MigrationService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
+import { resolveSchoolScope } from '../../common/school-scope.js';
 
 export class MigrationController {
   static async upload(req: Request, res: Response): Promise<void> {
@@ -56,7 +57,7 @@ export class MigrationController {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
       sort: req.query.sort as string | undefined,
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId: resolveSchoolScope(req),
       status: req.query.status as string | undefined,
     };
     const result = await MigrationService.getJobHistory(query);

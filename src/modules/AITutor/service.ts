@@ -84,12 +84,18 @@ async function resolveAssessmentActive(
  * background, not the primary message.
  */
 function formatSurfaceContext(ctx: AuraContextInput): string | undefined {
-  if (!ctx || ctx.surface === 'free') return undefined;
+  if (!ctx) return undefined;
 
   const label = SURFACE_LABELS[ctx.surface] ?? '';
   const lines: string[] = [];
   if (label) lines.push(`The student is currently on a ${label} page.`);
   if (ctx.title) lines.push(`Title: "${ctx.title.slice(0, 200)}"`);
+  if (ctx.topic) {
+    lines.push(
+      `Syllabus topic in focus: "${ctx.topic.slice(0, 200)}". Keep answers and examples anchored to this topic.`,
+    );
+  }
+  if (ctx.curriculumNodeId) lines.push(`CAPS curriculum node id: ${ctx.curriculumNodeId}`);
   if (ctx.questionText) lines.push(`Current question: "${ctx.questionText.slice(0, 800)}"`);
   if (ctx.studentDraft) lines.push(`Student's current draft answer: "${ctx.studentDraft.slice(0, 800)}"`);
   if (ctx.correctAnswer) lines.push(`Correct/expected answer (already revealed to student): "${ctx.correctAnswer.slice(0, 800)}"`);

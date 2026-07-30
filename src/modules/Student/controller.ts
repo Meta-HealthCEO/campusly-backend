@@ -7,6 +7,7 @@ import { apiResponse } from '../../common/utils.js';
 import { BadRequestError, ForbiddenError, NotFoundError, UnauthorizedError } from '../../common/errors.js';
 import { Student } from './model.js';
 import { Class } from '../Academic/model.js';
+import { resolveSchoolScope } from '../../common/school-scope.js';
 
 async function assertTeacherCanAccessStudent(req: Request, studentId: string): Promise<void> {
   if (req.user?.role !== 'teacher') return;
@@ -85,7 +86,7 @@ export class StudentController {
   static async list(req: Request, res: Response): Promise<void> {
     const schoolId = req.user?.role === 'teacher'
       ? req.user.schoolId
-      : (req.query.schoolId as string) ?? req.user?.schoolId;
+      : resolveSchoolScope(req);
 
     if (!schoolId) {
       res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));

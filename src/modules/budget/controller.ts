@@ -6,6 +6,7 @@ import { BudgetCrudService } from './service-budgets.js';
 import { ExpenseService } from './service-expenses.js';
 import { ReportService } from './service-reports.js';
 import type { UserRole } from '../../common/enums.js';
+import { resolveSchoolScope } from '../../common/school-scope.js';
 
 export class BudgetController {
   // ─── Categories ─────────────────────────────────────────────────────────
@@ -16,7 +17,7 @@ export class BudgetController {
   }
 
   static async listCategories(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) || req.user!.schoolId!;
+    const schoolId = resolveSchoolScope(req)!;
     const categories = await CategoryService.list(schoolId);
     res.json(apiResponse(true, categories, 'Budget categories retrieved successfully'));
   }
@@ -49,7 +50,7 @@ export class BudgetController {
   }
 
   static async listBudgets(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) || req.user!.schoolId!;
+    const schoolId = resolveSchoolScope(req)!;
     const result = await BudgetCrudService.list(schoolId, {
       year: req.query.year ? Number(req.query.year) : undefined,
       status: req.query.status as string | undefined,
@@ -96,7 +97,7 @@ export class BudgetController {
 
   static async listExpenses(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    const schoolId = (req.query.schoolId as string) || user.schoolId!;
+    const schoolId = resolveSchoolScope(req)!;
     const result = await ExpenseService.list(
       {
         schoolId,
@@ -164,7 +165,7 @@ export class BudgetController {
   // ─── Reports ────────────────────────────────────────────────────────────
 
   static async getVariance(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) || req.user!.schoolId!;
+    const schoolId = resolveSchoolScope(req)!;
     const data = await ReportService.getVariance(
       schoolId,
       req.query.budgetId as string,
@@ -174,13 +175,13 @@ export class BudgetController {
   }
 
   static async getMonthly(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) || req.user!.schoolId!;
+    const schoolId = resolveSchoolScope(req)!;
     const data = await ReportService.getMonthly(schoolId, Number(req.query.year));
     res.json(apiResponse(true, data));
   }
 
   static async getCashflow(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) || req.user!.schoolId!;
+    const schoolId = resolveSchoolScope(req)!;
     const data = await ReportService.getCashflow(
       schoolId,
       req.query.budgetId as string,
@@ -190,20 +191,20 @@ export class BudgetController {
   }
 
   static async getComparison(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) || req.user!.schoolId!;
+    const schoolId = resolveSchoolScope(req)!;
     const years = (req.query.years as string).split(',').map(Number);
     const data = await ReportService.getComparison(schoolId, years);
     res.json(apiResponse(true, data));
   }
 
   static async getAlerts(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) || req.user!.schoolId!;
+    const schoolId = resolveSchoolScope(req)!;
     const data = await ReportService.getAlerts(schoolId, req.query.budgetId as string);
     res.json(apiResponse(true, data, 'Budget alerts retrieved successfully'));
   }
 
   static async exportReport(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) || req.user!.schoolId!;
+    const schoolId = resolveSchoolScope(req)!;
     const budgetId = req.query.budgetId as string;
 
     const { ExportService } = await import('./service-export.js');

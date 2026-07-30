@@ -17,6 +17,7 @@ import type {
   CreateAssetIncidentInput, UpdateAssetIncidentInput,
   CreateInsuranceInput, UpdateInsuranceInput,
 } from './validation.js';
+import { resolveSchoolScope } from '../../common/school-scope.js';
 
 export class AssetController {
   // ─── Categories ────────────────────────────────────────────────────────
@@ -29,7 +30,7 @@ export class AssetController {
 
   static async listCategories(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    const sid = (req.query.schoolId as string) ?? (user.schoolId as string);
+    const sid = resolveSchoolScope(req)!;
     const cats = await AssetCategoryService.list(sid);
     res.json(apiResponse(true, cats, 'Categories retrieved'));
   }
@@ -63,7 +64,7 @@ export class AssetController {
 
   static async listLocations(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
-    const sid = (req.query.schoolId as string) ?? (user.schoolId as string);
+    const sid = resolveSchoolScope(req)!;
     const locs = await AssetLocationService.list({
       schoolId: sid,
       type: req.query.type as string | undefined,
@@ -97,7 +98,7 @@ export class AssetController {
   static async listAssets(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
     const result = await AssetService.list({
-      schoolId: (req.query.schoolId as string) ?? (user.schoolId as string),
+      schoolId: resolveSchoolScope(req)!,
       categoryId: req.query.categoryId as string | undefined,
       locationId: req.query.locationId as string | undefined,
       status: req.query.status as string | undefined,
@@ -162,7 +163,7 @@ export class AssetController {
   static async listCheckOuts(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
     const result = await AssetService.listCheckOuts({
-      schoolId: (req.query.schoolId as string) ?? (user.schoolId as string),
+      schoolId: resolveSchoolScope(req)!,
       status: req.query.status as string | undefined,
       assetId: req.query.assetId as string | undefined,
       borrowerId: req.query.borrowerId as string | undefined,

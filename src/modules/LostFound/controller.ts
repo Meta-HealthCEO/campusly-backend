@@ -3,6 +3,7 @@ import { Response } from 'express';
 import { getUser } from '../../types/authenticated-request.js';
 import { LostFoundService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
+import { resolveSchoolScope } from '../../common/school-scope.js';
 
 export class LostFoundController {
   static async reportItem(req: Request, res: Response): Promise<void> {
@@ -19,7 +20,7 @@ export class LostFoundController {
   }
 
   static async getItems(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const schoolId = resolveSchoolScope(req);
 
     if (!schoolId) {
       res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
@@ -94,7 +95,7 @@ export class LostFoundController {
   }
 
   static async getStats(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const schoolId = resolveSchoolScope(req);
 
     if (!schoolId) {
       res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
@@ -106,7 +107,7 @@ export class LostFoundController {
   }
 
   static async getHotspotReport(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const schoolId = resolveSchoolScope(req);
     if (!schoolId) {
       res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
       return;

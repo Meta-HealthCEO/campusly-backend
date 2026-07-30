@@ -3,6 +3,7 @@ import { getUser } from '../../types/authenticated-request.js';
 import { CommunicationModuleService } from './service.js';
 import { DeliveryService } from './delivery-service.js';
 import { apiResponse } from '../../common/utils.js';
+import { resolveSchoolScope } from '../../common/school-scope.js';
 
 export class CommunicationController {
   // ─── Templates ────────────────────────────────────────────────────────────
@@ -17,7 +18,7 @@ export class CommunicationController {
   static async listTemplates(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
     const schoolId = user.role === 'super_admin'
-      ? (req.query.schoolId as string) ?? user.schoolId
+      ? resolveSchoolScope(req)
       : user.schoolId;
     if (!schoolId) { res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required')); return; }
     const result = await CommunicationModuleService.listTemplates(schoolId, {
@@ -75,7 +76,7 @@ export class CommunicationController {
   static async listMessages(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
     const schoolId = user.role === 'super_admin'
-      ? (req.query.schoolId as string) ?? user.schoolId
+      ? resolveSchoolScope(req)
       : user.schoolId;
     if (!schoolId) { res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required')); return; }
     const result = await CommunicationModuleService.listMessagesForViewer(schoolId, {
@@ -164,7 +165,7 @@ export class CommunicationController {
   // ─── Channel Config ───────────────────────────────────────────────────────
 
   static async getConfig(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? getUser(req).schoolId;
+    const schoolId = resolveSchoolScope(req);
     if (!schoolId) { res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required')); return; }
     const cfg = await DeliveryService.getConfig(schoolId);
     res.json(apiResponse(true, cfg, 'Configuration retrieved successfully'));
@@ -187,7 +188,7 @@ export class CommunicationController {
   // ─── Delivery Log / Stats (global) ────────────────────────────────────────
 
   static async getDeliveryLog(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? getUser(req).schoolId;
+    const schoolId = resolveSchoolScope(req);
     if (!schoolId) { res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required')); return; }
     const result = await DeliveryService.getDeliveryLogs(schoolId, {
       batchId: req.query.batchId as string | undefined,
@@ -203,7 +204,7 @@ export class CommunicationController {
   }
 
   static async getDeliveryStatsGlobal(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? getUser(req).schoolId;
+    const schoolId = resolveSchoolScope(req);
     if (!schoolId) { res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required')); return; }
     const stats = await DeliveryService.getDeliveryStats(schoolId, {
       startDate: req.query.startDate as string | undefined,

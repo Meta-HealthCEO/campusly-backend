@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { ConsentService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
+import { resolveSchoolScope } from '../../common/school-scope.js';
 
 export class ConsentController {
   // ─── Consent Form CRUD ────────────────────────────────────────────────────
@@ -15,7 +16,7 @@ export class ConsentController {
     const query = {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId: resolveSchoolScope(req),
       type: req.query.type as string | undefined,
     };
 

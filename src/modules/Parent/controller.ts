@@ -3,6 +3,7 @@ import { Response } from 'express';
 import { getUser } from '../../types/authenticated-request.js';
 import { ParentService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
+import { resolveSchoolScope } from '../../common/school-scope.js';
 
 export class ParentController {
   static async create(req: Request, res: Response): Promise<void> {
@@ -13,7 +14,7 @@ export class ParentController {
   static async list(req: Request, res: Response): Promise<void> {
     const user = getUser(req);
     const schoolId = user.role === 'super_admin'
-      ? (req.query.schoolId as string) ?? user.schoolId
+      ? resolveSchoolScope(req)
       : user.schoolId;
 
     if (!schoolId) {

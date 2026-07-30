@@ -3,6 +3,7 @@ import { Response } from 'express';
 import { getUser } from '../../../types/authenticated-request.js';
 import { AcademicService } from '../service.js';
 import { apiResponse } from '../../../common/utils.js';
+import { resolveSchoolScope } from '../../../common/school-scope.js';
 
 export class GradeController {
   static async createGrade(req: Request, res: Response): Promise<void> {
@@ -18,7 +19,7 @@ export class GradeController {
     // bridge in services/materialise-from-curriculum.service.ts, so this
     // endpoint returns the same school-side shape for every role.
 
-    const schoolId = (req.query.schoolId as string) ?? user.schoolId;
+    const schoolId = resolveSchoolScope(req);
     if (!schoolId) {
       res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));
       return;

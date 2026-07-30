@@ -19,6 +19,7 @@ import { AssessmentPaper } from '../QuestionBank/model-papers.js';
 import { markingDir } from './service-marking-images.js';
 import { buildMarkingPdf } from './service-marking-pdf.js';
 import { resolveStudentForUser } from './service-student-ownership.js';
+import { resolveSchoolScope } from '../../common/school-scope.js';
 
 // Paper generation, regeneration, and CRUD handlers have been removed.
 // All paper routes (/api/ai-tools/papers/*, /api/ai-tools/generate-paper)
@@ -350,7 +351,7 @@ export class AIToolsController {
   }
 
   static async getUsage(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const schoolId = resolveSchoolScope(req);
 
     if (!schoolId) {
       res.status(400).json(apiResponse(false, undefined, undefined, 'School ID is required'));

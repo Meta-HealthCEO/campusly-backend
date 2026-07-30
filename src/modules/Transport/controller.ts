@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { TransportService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
+import { resolveSchoolScope } from '../../common/school-scope.js';
 
 export class TransportController {
   // ─── Bus Route ────────────────────────────────────────────────────────────
@@ -15,7 +16,7 @@ export class TransportController {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
       sort: req.query.sort as string | undefined,
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId: resolveSchoolScope(req),
     };
 
     const result = await TransportService.listBusRoutes(query);
@@ -51,7 +52,7 @@ export class TransportController {
     const query = {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId: resolveSchoolScope(req),
       busRouteId: req.query.busRouteId as string | undefined,
     };
 
@@ -94,7 +95,7 @@ export class TransportController {
     const query = {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId: resolveSchoolScope(req),
       routeId: req.query.routeId as string | undefined,
       studentId: req.query.studentId as string | undefined,
       date: req.query.date as string | undefined,
@@ -115,7 +116,7 @@ export class TransportController {
     const query = {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
-      schoolId: (req.query.schoolId as string) ?? req.user?.schoolId,
+      schoolId: resolveSchoolScope(req),
       routeId: req.query.routeId as string | undefined,
       isResolved: req.query.isResolved !== undefined ? req.query.isResolved === 'true' : undefined,
     };

@@ -143,7 +143,13 @@ export class AssessmentService {
     schoolId: string,
     marks: Array<{ studentId: string; mark: number; total: number; comment?: string }>,
   ): Promise<IMark[]> {
-    const assessment = await Assessment.findById(assessmentId).lean();
+    // Scope the lookup to the caller's school. An unscoped findById let a
+    // teacher target another school's assessment by id and overwrite its marks.
+    const assessment = await Assessment.findOne({
+      _id: assessmentId,
+      schoolId,
+      isDeleted: false,
+    }).lean();
     if (!assessment) throw new NotFoundError('Assessment not found');
 
     if (assessment.classId) {

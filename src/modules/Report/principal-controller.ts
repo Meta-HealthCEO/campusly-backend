@@ -10,9 +10,10 @@ import { getFinancialHealth } from './services/principal-financial.service.js';
 import { getRiskAlerts } from './services/principal-alerts.service.js';
 import { SchoolBenchmark } from './models/SchoolBenchmark.js';
 import { logger } from '../../common/logger.js';
+import { resolveSchoolScope } from '../../common/school-scope.js';
 
 function resolveSchoolId(req: Request): string | undefined {
-  return (req.query.schoolId as string) ?? req.user?.schoolId;
+  return resolveSchoolScope(req);
 }
 
 export class PrincipalController {

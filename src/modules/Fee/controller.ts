@@ -3,6 +3,7 @@ import { Response } from 'express';
 import { getUser } from '../../types/authenticated-request.js';
 import { FeeService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
+import { resolveSchoolScope } from '../../common/school-scope.js';
 
 export class FeeController {
   // ─── Fee Type ──────────────────────────────────────────────────────────────
@@ -13,7 +14,7 @@ export class FeeController {
   }
 
   static async listFeeTypes(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const schoolId = resolveSchoolScope(req);
     const result = await FeeService.listFeeTypes(schoolId as string, {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
@@ -48,7 +49,7 @@ export class FeeController {
   }
 
   static async listFeeSchedules(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const schoolId = resolveSchoolScope(req);
     const result = await FeeService.listFeeSchedules(schoolId as string, {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
@@ -83,7 +84,7 @@ export class FeeController {
   }
 
   static async listInvoices(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const schoolId = resolveSchoolScope(req);
     const result = await FeeService.listInvoices(schoolId as string, {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
@@ -128,7 +129,7 @@ export class FeeController {
   // ─── Overdue Invoices ──────────────────────────────────────────────────────
 
   static async getOverdueInvoices(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const schoolId = resolveSchoolScope(req);
     const invoices = await FeeService.getOverdueInvoices(schoolId as string);
     res.json(apiResponse(true, invoices));
   }
@@ -141,7 +142,7 @@ export class FeeController {
   }
 
   static async listDebitOrders(req: Request, res: Response): Promise<void> {
-    const schoolId = (req.query.schoolId as string) ?? req.user?.schoolId;
+    const schoolId = resolveSchoolScope(req);
     const result = await FeeService.listDebitOrders(schoolId as string, {
       page: req.query.page ? Number(req.query.page) : undefined,
       limit: req.query.limit ? Number(req.query.limit) : undefined,
