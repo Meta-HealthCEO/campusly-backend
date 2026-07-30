@@ -13,6 +13,7 @@ import { requestId } from './middleware/requestId.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { requireModule } from './middleware/moduleGuard.js';
 import { authenticate } from './middleware/auth.js';
+import { isProtectedUploadPath } from './common/upload-paths.js';
 
 // Module routes
 import authRoutes from './modules/Auth/routes.js';
@@ -232,7 +233,11 @@ app.use('/api/certificates', coursePublicRoutes);
 // statically because they may contain student work that must be auth-gated.
 // Use the AITools controller routes for those instead.
 app.use('/uploads', (req, res, next) => {
-  if (req.path.startsWith('/markings/') || req.path.startsWith('/markings-batch/')) {
+  // isProtectedUploadPath decodes, normalises separators and resolves `..`
+  // first. A raw startsWith() check was bypassable with
+  // /uploads/foo/../markings/x.jpg, which express.static then normalised and
+  // served — exposing student answer scans with no authentication.
+  if (isProtectedUploadPath(req.path)) {
     res.status(404).json({ success: false, error: 'Use the API endpoint to access marking images' });
     return;
   }

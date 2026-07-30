@@ -8,6 +8,7 @@ import { SubstituteService } from './service-substitute.js';
 import { AttendanceStatsService } from './service-stats.js';
 import { ChronicAbsenceService } from './chronic-absence.service.js';
 import { apiResponse } from '../../common/utils.js';
+import { requireSchoolScope } from '../../common/school-scope.js';
 import { BadRequestError, ForbiddenError, NotFoundError } from '../../common/errors.js';
 import type { AuthenticatedUser } from '../../types/authenticated-request.js';
 import { Student } from '../Student/model.js';
@@ -281,7 +282,12 @@ export class AttendanceController {
   // ─── Merit / Demerit ────────────────────────────────────────────────────────
 
   static async createMerit(req: Request, res: Response): Promise<void> {
-    const merit = await MeritService.createMerit(req.body, getUser(req).id);
+    // Tenant from the JWT — a body-supplied schoolId previously let a teacher
+    // write merit/demerit records into another school.
+    const merit = await MeritService.createMerit(
+      { ...req.body, schoolId: requireSchoolScope(req) },
+      getUser(req).id,
+    );
     res.status(201).json(apiResponse(true, merit, 'Merit/demerit recorded successfully'));
   }
 

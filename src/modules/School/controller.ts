@@ -41,17 +41,35 @@ export class SchoolController {
     res.status(200).json(apiResponse(true, { school }, 'School retrieved successfully'));
   }
 
+  /**
+   * Only super_admin may act on a school other than their own. Without this
+   * check any holder of `manage_school_settings` — which includes every
+   * self-registered standalone teacher — could rename, strip the modules
+   * from, or deactivate ANY school on the platform by id.
+   */
+  private static assertOwnSchool(req: Request): void {
+    if (req.user?.role === 'super_admin') return;
+    const requestedId = req.params.id as string;
+    const callerSchoolId = req.user?.schoolId;
+    if (!callerSchoolId || callerSchoolId.toString() !== requestedId) {
+      throw new ForbiddenError('Cannot modify a school other than your own');
+    }
+  }
+
   static async update(req: Request, res: Response): Promise<void> {
+    SchoolController.assertOwnSchool(req);
     const school = await SchoolService.update(req.params.id as string, req.body);
     res.status(200).json(apiResponse(true, { school }, 'School updated successfully'));
   }
 
   static async delete(req: Request, res: Response): Promise<void> {
+    SchoolController.assertOwnSchool(req);
     await SchoolService.delete(req.params.id as string);
     res.status(200).json(apiResponse(true, undefined, 'School deleted successfully'));
   }
 
   static async updateSettings(req: Request, res: Response): Promise<void> {
+    SchoolController.assertOwnSchool(req);
     const school = await SchoolService.updateSettings(req.params.id as string, req.body);
     res.status(200).json(apiResponse(true, { school }, 'School settings updated successfully'));
   }

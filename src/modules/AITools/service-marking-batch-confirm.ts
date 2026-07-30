@@ -4,6 +4,7 @@ import { MarkingBatch } from './model-marking-batch.js';
 import { logger } from '../../common/logger.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
 import { batchDir } from './service-marking-images.js';
+import { safeUploadFilename } from '../../common/upload-paths.js';
 import { markPaperFromImages } from './service-marking.js';
 
 function normaliseMime(filename: string): string {
@@ -51,9 +52,20 @@ export async function confirmBatch(
       // markPaperFromImages calls finaliseImages which renames source files via fs.renameSync —
       // since multiple markings share files in the batch dir, we must copy first.
       const stagedPaths: string[] = [];
-      const stagedFiles = a.imageFilenames.map((fname): Express.Multer.File => {
+      const stagedFiles = a.imageFilenames.map((rawName): Express.Multer.File => {
+        // imageFilenames arrives as an unvalidated z.array(z.string()). Without
+        // this check `../../../.env` would be copied into the batch and served
+        // back to the teacher as a "marking image".
+        const fname = safeUploadFilename(rawName);
+        if (!fname) {
+          throw new BadRequestError(`Invalid image filename: ${rawName}`);
+        }
         const srcPath = path.join(dir, fname);
-        const stagedPath = path.join(dir, `staged-${a.studentId}-${path.basename(fname)}`);
+        // Belt-and-braces: the resolved path must still sit inside the batch dir.
+        if (!path.resolve(srcPath).startsWith(path.resolve(dir) + path.sep)) {
+          throw new BadRequestError(`Invalid image filename: ${rawName}`);
+        }
+        const stagedPath = path.join(dir, `staged-${a.studentId}-${fname}`);
         fs.copyFileSync(srcPath, stagedPath);
         stagedPaths.push(stagedPath);
         const stat = fs.statSync(stagedPath);
