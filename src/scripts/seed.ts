@@ -1,8 +1,9 @@
 import { logger } from '../common/logger.js';
+import crypto from 'node:crypto';
 import mongoose from 'mongoose';
 import { config } from '../config/env.js';
 import { User } from '../modules/Auth/model.js';
-import { School } from '../modules/School/model.js';
+import { School, generateJoinCode } from '../modules/School/model.js';
 import { Student } from '../modules/Student/model.js';
 import { Parent } from '../modules/Parent/model.js';
 import { Wallet } from '../modules/Wallet/model.js';
@@ -29,6 +30,7 @@ async function seed() {
     logger.info('Creating school...');
     const school = await School.create({
       name: 'Greenfield Primary School',
+      joinCode: generateJoinCode(),
       address: {
         street: '45 Jacaranda Avenue',
         city: 'Johannesburg',
@@ -189,6 +191,7 @@ async function seed() {
           gradeId: grades[c.gradeIndex]._id,
           schoolId: school._id,
           teacherId: teachers[c.teacherIndex]._id,
+          classroomCode: crypto.randomBytes(3).toString('hex').toUpperCase(),
           capacity: c.capacity,
         }),
       ),
