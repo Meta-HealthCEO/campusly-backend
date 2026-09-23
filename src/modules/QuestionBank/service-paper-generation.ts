@@ -15,6 +15,7 @@ import {
 } from './service-paper-gen-helpers.js';
 import type { CognitiveWeighting } from './service-paper-gen-helpers.js';
 import type { GeneratePaperInput } from './validation.js';
+import { expandTermSelections } from './topic-selection.js';
 import {
   assertCanCreateForSubjectGrade,
   normaliseSubjectGradeIds,
@@ -69,7 +70,13 @@ export class PaperGenerationService {
     // Topic IDs — Task 2 introduced `topicIds` as the canonical field. The
     // legacy `topicNodeIds` is still in the validation schema (optional) for
     // backward compatibility — callers may pass either. Normalise here.
-    const topicIds = (data.topicIds ?? data.topicNodeIds ?? []) as string[];
+    // A selected term becomes its topics, so validation, bank matching and the
+    // AI prompt (which read data.topicIds) all see real topics.
+    const topicIds = await expandTermSelections(
+      (data.topicIds ?? data.topicNodeIds ?? []) as string[],
+      schoolId,
+    );
+    data.topicIds = topicIds;
     await verifyPaperRefs(schoolId, data.subjectId, data.gradeId, topicIds);
     await assertCanCreateForSubjectGrade(
       schoolId,
