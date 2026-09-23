@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { authorize, validate } from '../../middleware/index.js';
-import { requireEntitlement } from '../subscription/entitlements.js';
+import { requireEntitlement, requirePaperGenerationAccess } from '../subscription/entitlements.js';
 import { QuestionBankController } from './controller.js';
 import {
   postAddQuestionToPaper,
@@ -131,7 +131,7 @@ router.post(
 router.post(
   '/papers/generate',
   authorize(...READ_ROLES),
-  requireEntitlement('paperGeneration'),
+  requirePaperGenerationAccess(),
   validate(generatePaperSchema),
   QuestionBankController.generatePaper,
 );

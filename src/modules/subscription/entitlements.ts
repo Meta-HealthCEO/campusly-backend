@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
 import { Subscription, Plan } from './model.js';
+import { getFreeAllowance } from './free-allowance.js';
 
 const ENTITLED_STATUSES = new Set(['trialing', 'active', 'past_due']);
 
@@ -46,5 +47,36 @@ export function requireEntitlement(feature: string) {
       return;
     }
     res.status(402).json({ error: 'Payment required', feature });
+  };
+}
+
+/**
+ * Like requireEntitlement('paperGeneration'), but a free-plan standalone
+ * teacher may generate up to FREE_PAPER_GENERATIONS AI papers first, so they
+ * see the product work before being asked for a card.
+ */
+export function requirePaperGenerationAccess() {
+  return async function (req: Request, res: Response, next: NextFunction): Promise<void> {
+    const schoolId = req.user?.schoolId;
+    if (!schoolId) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+    if (req.user?.isStandaloneTeacher !== true) {
+      next();
+      return;
+    }
+
+    const ents = await resolveEntitlements(schoolId);
+    if (ents.paperGeneration === true) {
+      next();
+      return;
+    }
+    const allowance = await getFreeAllowance(schoolId);
+    if (allowance.paperGenerations.remaining > 0) {
+      next();
+      return;
+    }
+    res.status(402).json({ error: 'Payment required', feature: 'paperGeneration', freeRemaining: 0 });
   };
 }
