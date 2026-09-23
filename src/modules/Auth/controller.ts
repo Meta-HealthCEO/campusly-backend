@@ -10,6 +10,7 @@ import { Subscription, Plan } from '../subscription/model.js';
 import { SubscriptionService } from '../subscription/service.js';
 import { changePasswordSchema } from './validation.js';
 import { UnauthorizedError } from '../../common/errors.js';
+import { resolveRegistrationScope } from './registration-policy.js';
 
 const REFRESH_COOKIE_OPTIONS = {
   httpOnly: true,
@@ -21,7 +22,8 @@ const REFRESH_COOKIE_OPTIONS = {
 
 export class AuthController {
   static async register(req: Request, res: Response): Promise<void> {
-    const { user, tokens } = await AuthService.register(req.body);
+    const scope = resolveRegistrationScope(req.user ?? null, req.body);
+    const { user, tokens } = await AuthService.register({ ...req.body, ...scope });
 
     res.cookie('refresh_token', tokens.refreshToken, REFRESH_COOKIE_OPTIONS);
 

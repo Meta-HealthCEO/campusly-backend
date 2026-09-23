@@ -20,6 +20,20 @@ interface JwtPayload {
   isStandaloneCoach?: boolean;
 }
 
+/**
+ * For endpoints that serve both anonymous and signed-in callers. No token →
+ * continue as anonymous. A token that is present but invalid is still a 401,
+ * so a bad token can never be used to fall back to anonymous rights.
+ */
+export function optionalAuthenticate(req: Request, res: Response, next: NextFunction): void {
+  const hasToken = Boolean(req.headers.authorization || req.cookies?.access_token);
+  if (!hasToken) {
+    next();
+    return;
+  }
+  authenticate(req, res, next);
+}
+
 export function authenticate(req: Request, _res: Response, next: NextFunction): void {
   const authHeader = req.headers.authorization;
   let token: string | undefined;
