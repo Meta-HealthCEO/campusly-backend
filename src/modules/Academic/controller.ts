@@ -55,6 +55,7 @@ export class AcademicController {
 
   // ─── Assessment ────────────────────────────────────────────────────────
   static createAssessment = MiscController.createAssessment;
+  static createMyAssessment = MiscController.createMyAssessment;
   static listAssessments = MiscController.listAssessments;
   static getAssessment = MiscController.getAssessment;
   static updateAssessment = MiscController.updateAssessment;

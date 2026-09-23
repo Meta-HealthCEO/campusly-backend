@@ -4,8 +4,10 @@ import { authorize } from '../../middleware/rbac.js';
 import { requireCapability } from '../../middleware/capability.js';
 import { validate } from '../../middleware/validate.js';
 import { requireParentOwnership } from '../../middleware/parentOwnership.js';
+import { requireTeacherClassOwnership } from '../../middleware/teacherClassOwnership.js';
 import { AcademicController } from './controller.js';
 import {
+  teacherAssessmentSchema,
   gradeSchema,
   updateGradeSchema,
   classSchema,
@@ -240,6 +242,17 @@ router.delete(
 );
 
 // ─── Assessments ─────────────────────────────────────────────────────────────
+
+// A teacher adding their own assessment (oral, practical, a paper set outside
+// Campusly…) for a class they teach. School from the JWT; above /:id routes.
+router.post(
+  '/assessments/mine',
+  authenticate,
+  authorize('teacher'),
+  validate(teacherAssessmentSchema),
+  requireTeacherClassOwnership('classId'),
+  AcademicController.createMyAssessment,
+);
 
 router.post(
   '/assessments',

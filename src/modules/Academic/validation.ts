@@ -103,6 +103,24 @@ export const assessmentSchema = z.object({
 
 export const updateAssessmentSchema = assessmentSchema.partial().strict();
 
+/**
+ * A teacher recording an assessment of their own (oral, practical, a test set
+ * on paper…) for a class they teach. The school comes from the JWT, never
+ * the body; weight 0 counts as equal weight in averages.
+ */
+export const teacherAssessmentSchema = z.object({
+  name: z.string().min(1, 'Name is required').trim(),
+  subjectId: objectIdSchema,
+  classId: objectIdSchema,
+  type: z.enum(['test', 'exam', 'assignment', 'practical', 'project']),
+  totalMarks: z.number().min(1, 'Total marks must be at least 1'),
+  term: z.number().int().min(1).max(4),
+  date: z.iso.datetime().optional(),
+  weight: z.number().min(0).max(100).optional(),
+}).strict();
+
+export type TeacherAssessmentInput = z.infer<typeof teacherAssessmentSchema>;
+
 // ─── Mark ────────────────────────────────────────────────────────────────────
 
 export const markSchema = z.object({

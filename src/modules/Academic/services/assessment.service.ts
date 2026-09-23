@@ -6,6 +6,7 @@ import { PAGINATION_DEFAULTS } from '../../../common/constants.js';
 import { escapeRegex } from '../../../common/utils.js';
 import type { PopulatedUser, PopulatedGrade, PopulatedAssessment } from '../../../types/populated.js';
 import { getPopulated } from '../../../types/populated.js';
+import type { TeacherAssessmentInput } from '../validation.js';
 
 interface ListQuery {
   page?: number;
@@ -42,6 +43,31 @@ export class AssessmentService {
   static async createAssessment(data: Partial<IAssessment>): Promise<IAssessment> {
     const assessment = new Assessment(data);
     return assessment.save();
+  }
+
+  /** Teacher-created assessment; class ownership is checked by the route. */
+  static async createTeacherAssessment(
+    schoolId: string,
+    input: TeacherAssessmentInput,
+  ): Promise<IAssessment> {
+    const subject = await Subject.findOne({ _id: input.subjectId, schoolId, isDeleted: false })
+      .select('_id')
+      .lean();
+    if (!subject) throw new BadRequestError('Subject does not belong to this school');
+
+    const date = input.date ? new Date(input.date) : new Date();
+    return Assessment.create({
+      name: input.name,
+      subjectId: input.subjectId,
+      classId: input.classId,
+      schoolId,
+      type: input.type,
+      totalMarks: input.totalMarks,
+      term: input.term,
+      weight: input.weight ?? 0,
+      academicYear: date.getUTCFullYear(),
+      date,
+    });
   }
 
   static async listAssessments(

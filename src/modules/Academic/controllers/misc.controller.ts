@@ -4,6 +4,7 @@ import { getUser } from '../../../types/authenticated-request.js';
 import { AcademicService } from '../service.js';
 import { apiResponse } from '../../../common/utils.js';
 import { getTermSummary } from '../services/term-summary.service.js';
+import { AssessmentService } from '../services/assessment.service.js';
 import { getSubjectTrend } from '../services/subject-trend.service.js';
 import { getStudentTermDetail } from '../services/student-term-detail.service.js';
 import {
@@ -18,6 +19,12 @@ export class MiscController {
 
   static async createAssessment(req: Request, res: Response): Promise<void> {
     const assessment = await AcademicService.createAssessment(req.body);
+    res.status(201).json(apiResponse(true, assessment, 'Assessment created successfully'));
+  }
+
+  static async createMyAssessment(req: Request, res: Response): Promise<void> {
+    const schoolId = requireSchoolScope(req);
+    const assessment = await AssessmentService.createTeacherAssessment(schoolId, req.body);
     res.status(201).json(apiResponse(true, assessment, 'Assessment created successfully'));
   }
 
