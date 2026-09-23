@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { CurriculumNode } from '../CurriculumStructure/model.js';
+import { BadRequestError } from '../../common/errors.js';
 
 /**
  * The curriculum tree lets a teacher "Select" a whole term, but papers are
@@ -22,7 +23,7 @@ export async function expandTermSelections(
     type: 'term',
     isDeleted: false,
     ...visibleToSchool,
-  }).select('_id').lean();
+  }).select('_id title').lean();
   if (terms.length === 0) return topicIds;
 
   const children = await CurriculumNode.find({
@@ -36,6 +37,13 @@ export async function expandTermSelections(
   for (const child of children) {
     const key = String(child.parentId);
     topicsByTerm.set(key, [...(topicsByTerm.get(key) ?? []), String(child._id)]);
+  }
+
+  const emptyTerm = terms.find((t) => !topicsByTerm.has(String(t._id)));
+  if (emptyTerm) {
+    throw new BadRequestError(
+      `${emptyTerm.title} has no topics to build a paper from. Pick specific topics instead.`,
+    );
   }
 
   const expanded = topicIds.flatMap((id) => topicsByTerm.get(id) ?? [id]);

@@ -82,6 +82,24 @@ describe('RegisterStatusService.getForTeacher', () => {
     expect(result).toEqual([]);
   });
 
+  it('rejects an impossible calendar date instead of rolling it over', async () => {
+    await expect(
+      RegisterStatusService.getForTeacher(String(schoolId), String(teacherId), '2026-02-30'),
+    ).rejects.toThrow(/date/i);
+  });
+
+  it('leaves out periods whose class has been deleted', async () => {
+    const archived = await Class.create({
+      schoolId, gradeId, teacherId, capacity: 30, name: '10Z',
+      classroomCode: `Z${Date.now() % 1e5}`, isDeleted: true,
+    });
+    await period({ classId: archived._id, period: 6 });
+
+    const result = await RegisterStatusService.getForTeacher(String(schoolId), String(teacherId), WEDNESDAY);
+
+    expect(result.map((p) => p.period)).toEqual([1, 3]);
+  });
+
   it('rejects a date that is not YYYY-MM-DD', async () => {
     await expect(
       RegisterStatusService.getForTeacher(String(schoolId), String(teacherId), '23/09/2026'),

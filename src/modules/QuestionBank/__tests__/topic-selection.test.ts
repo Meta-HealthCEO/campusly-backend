@@ -73,6 +73,14 @@ describe('expandTermSelections', () => {
     expect(result).toEqual([algebra, exponents, trig].map(String));
   });
 
+  it('explains when a selected term has no topics to build a paper from', async () => {
+    await CurriculumNode.updateMany({ parentId: term1 }, { $set: { isDeleted: true } });
+
+    await expect(expandTermSelections([term1.toString()], schoolId.toString())).rejects.toThrow(
+      /Term 1 has no topics/,
+    );
+  });
+
   it('skips deleted topics and topics private to another school', async () => {
     await CurriculumNode.updateOne({ _id: exponents }, { $set: { isDeleted: true } });
     await CurriculumNode.updateOne({ _id: trig }, { $set: { schoolId: otherSchoolId } });

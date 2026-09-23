@@ -51,22 +51,27 @@ export class RegisterStatusService {
       throw new BadRequestError('date must be YYYY-MM-DD');
     }
     const day = new Date(`${date}T00:00:00.000Z`);
-    if (Number.isNaN(day.getTime())) throw new BadRequestError('Invalid date');
+    // Date rolls impossible days over (2026-02-30 → 2026-03-02); reject them.
+    if (Number.isNaN(day.getTime()) || day.toISOString().slice(0, 10) !== date) {
+      throw new BadRequestError('Invalid date');
+    }
 
     const weekday = WEEKDAYS[day.getUTCDay()];
     if (!weekday) return [];
 
     const soid = new mongoose.Types.ObjectId(schoolId);
-    const entries = await Timetable.find({
+    const rows = await Timetable.find({
       schoolId: soid,
       teacherId: new mongoose.Types.ObjectId(teacherId),
       day: weekday,
       isDeleted: false,
     })
-      .populate('classId', 'name')
-      .populate('subjectId', 'name')
+      .populate({ path: 'classId', select: 'name', match: { isDeleted: false } })
+      .populate({ path: 'subjectId', select: 'name', match: { isDeleted: false } })
       .sort({ period: 1 })
       .lean();
+    // A deleted class populates to null — that period is no longer taught.
+    const entries = rows.filter((row) => row.classId !== null);
     if (entries.length === 0) return [];
 
     const classIds = [...new Set(entries.map((e) => refId(e.classId)))];
