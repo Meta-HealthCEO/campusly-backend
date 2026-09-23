@@ -87,6 +87,20 @@ describe('POST /api/academic/assessments/mine', () => {
     expect(res.status).toBe(400);
   });
 
+  it("refuses a subject that isn't offered in the class's grade", async () => {
+    const gradeTwelveOnly = await Subject.create({
+      schoolId, name: 'Mathematics', code: 'MAT12', gradeIds: [new mongoose.Types.ObjectId()],
+    });
+
+    const res = await request(app)
+      .post('/api/academic/assessments/mine')
+      .set('Authorization', `Bearer ${teacherToken()}`)
+      .send(body({ subjectId: String(gradeTwelveOnly._id) }));
+
+    expect(res.status).toBe(400);
+    await Subject.deleteOne({ _id: gradeTwelveOnly._id });
+  });
+
   it('never takes the school from the request body', async () => {
     const res = await request(app)
       .post('/api/academic/assessments/mine')

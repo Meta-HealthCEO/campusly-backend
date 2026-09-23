@@ -1,5 +1,5 @@
 import mongoose, { type AnyBulkWriteOperation } from 'mongoose';
-import { Assessment, IAssessment, Mark, IMark, Subject } from '../model.js';
+import { Assessment, IAssessment, Mark, IMark, Subject, Class } from '../model.js';
 import { Student } from '../../Student/model.js';
 import { NotFoundError, BadRequestError } from '../../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../../common/constants.js';
@@ -50,10 +50,17 @@ export class AssessmentService {
     schoolId: string,
     input: TeacherAssessmentInput,
   ): Promise<IAssessment> {
-    const subject = await Subject.findOne({ _id: input.subjectId, schoolId, isDeleted: false })
-      .select('_id')
-      .lean();
+    const [subject, cls] = await Promise.all([
+      Subject.findOne({ _id: input.subjectId, schoolId, isDeleted: false }).select('gradeIds').lean(),
+      Class.findOne({ _id: input.classId, schoolId, isDeleted: false }).select('gradeId').lean(),
+    ]);
     if (!subject) throw new BadRequestError('Subject does not belong to this school');
+    if (!cls) throw new BadRequestError('Class does not belong to this school');
+    // Subjects scoped to grades must include the class's grade (unscoped = all grades).
+    const subjectGrades = (subject.gradeIds ?? []).map(String);
+    if (subjectGrades.length > 0 && !subjectGrades.includes(String(cls.gradeId))) {
+      throw new BadRequestError("That subject isn't offered in this class's grade");
+    }
 
     const date = input.date ? new Date(input.date) : new Date();
     return Assessment.create({

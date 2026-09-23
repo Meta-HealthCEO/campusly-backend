@@ -40,6 +40,18 @@ const DEFAULT_WEIGHTING: CognitiveWeighting = {
   problemSolving: 15,
 };
 
+/**
+ * Undo a paper whose generation failed part-way. It is soft-deleted and no
+ * longer marked AI-generated: the teacher never received it, so it must not
+ * use up one of their free AI papers.
+ */
+export async function rollbackGeneratedPaper(paperId: mongoose.Types.ObjectId): Promise<void> {
+  await AssessmentPaper.updateOne(
+    { _id: paperId },
+    { $set: { isDeleted: true, aiGenerated: false } },
+  );
+}
+
 export class PaperGenerationService {
   static async generatePaper(
     schoolId: string,
@@ -196,10 +208,7 @@ export class PaperGenerationService {
       memoId = memoDoc._id as mongoose.Types.ObjectId;
     } catch (memoErr: unknown) {
       try {
-        await AssessmentPaper.updateOne(
-          { _id: paper._id },
-          { $set: { isDeleted: true } },
-        );
+        await rollbackGeneratedPaper(paper._id as mongoose.Types.ObjectId);
       } catch (rollbackErr: unknown) {
         logger.error(
           { rollbackErr, originalErr: memoErr, paperId: String(paper._id) },
