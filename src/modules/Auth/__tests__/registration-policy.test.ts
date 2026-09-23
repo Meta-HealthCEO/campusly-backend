@@ -62,6 +62,14 @@ describe('resolveRegistrationScope', () => {
         ForbiddenError,
       );
     });
+
+    it('gets only anonymous rights while their school is not yet linked', () => {
+      const unlinkedAdmin = { role: UserRole.SCHOOL_ADMIN, schoolId: undefined };
+
+      expect(() =>
+        resolveRegistrationScope(unlinkedAdmin, { role: 'student', schoolId: SCHOOL_B }),
+      ).toThrow(ForbiddenError);
+    });
   });
 
   describe('super_admin caller', () => {
