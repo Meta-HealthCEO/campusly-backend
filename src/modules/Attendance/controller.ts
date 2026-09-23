@@ -7,6 +7,7 @@ import { MeritService } from './service-merit.js';
 import { SubstituteService } from './service-substitute.js';
 import { AttendanceStatsService } from './service-stats.js';
 import { ChronicAbsenceService } from './chronic-absence.service.js';
+import { RegisterStatusService } from './service-register-status.js';
 import { apiResponse } from '../../common/utils.js';
 import { requireSchoolScope } from '../../common/school-scope.js';
 import { BadRequestError, ForbiddenError, NotFoundError } from '../../common/errors.js';
@@ -395,6 +396,16 @@ export class AttendanceController {
     const teacherId = user.role === 'teacher' ? user.id : (req.params.teacherId as string);
     const history = await SubstituteService.listTeacherHistory(teacherId, schoolId);
     res.json(apiResponse(true, history, 'History retrieved'));
+  }
+
+  // ─── Register Status (teacher "Today") ──────────────────────────────────────
+
+  static async getRegisterStatus(req: Request, res: Response): Promise<void> {
+    const user = getUser(req);
+    const schoolId = requireSchoolScope(req);
+    const date = typeof req.query.date === 'string' ? req.query.date : '';
+    const items = await RegisterStatusService.getForTeacher(schoolId, user.id, date);
+    res.json(apiResponse(true, items, 'Register status retrieved'));
   }
 
   // ─── Attendance Stats ────────────────────────────────────────────────────────

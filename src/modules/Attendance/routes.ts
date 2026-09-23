@@ -36,6 +36,17 @@ router.get(
   AttendanceController.getStatsChronicAbsentees,
 );
 
+// ─── Register Status ────────────────────────────────────────────────────────
+// Today's timetable periods for the calling teacher, with which registers are
+// still to be taken. Teacher-only: the JWT user is the teacher.
+
+router.get(
+  '/register-status',
+  authenticate,
+  authorize('teacher'),
+  AttendanceController.getRegisterStatus,
+);
+
 // ─── CSV Export ─────────────────────────────────────────────────────────────
 
 router.get(
