@@ -301,7 +301,8 @@ export class CourseStudentService {
       _id: new mongoose.Types.ObjectId(enrolmentId),
       schoolId: soid,
       isDeleted: false,
-      status: 'active',
+      // A learner who finished the unit can still go back over it.
+      status: { $in: ['active', 'completed'] },
     }).lean();
     if (!enrolment) throw new NotFoundError('Enrolment not found');
 

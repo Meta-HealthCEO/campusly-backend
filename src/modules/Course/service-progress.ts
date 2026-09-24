@@ -332,7 +332,8 @@ async function loadStudentLessonContext(
     _id: new mongoose.Types.ObjectId(enrolmentId),
     schoolId: soid,
     isDeleted: false,
-    status: 'active',
+    // Revisiting a finished unit is allowed; its writes are idempotent.
+    status: { $in: ['active', 'completed'] },
   });
   if (!enrolment) throw new NotFoundError('Enrolment not found');
 

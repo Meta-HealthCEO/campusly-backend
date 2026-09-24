@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import mongoose from 'mongoose';
 import { CourseProgressService } from '../service-progress.js';
+import { CourseStudentService } from '../service-student.js';
 import { Course, CourseLesson, CourseModule, Enrolment, LessonProgress } from '../model.js';
 import { ContentResource } from '../../ContentLibrary/model.js';
 import { Student } from '../../Student/model.js';
@@ -52,5 +53,16 @@ describe('worked example progress', () => {
     });
     const res = await CourseProgressService.writeLessonProgress(f.enrolmentId, f.lessonId, f.userId, f.schoolId, { interactionsDone: 0, scrolledToEnd: true });
     expect(res.lessonStatus).toBe('completed');
+  });
+
+  it('lets a learner who finished the unit go back over its items', async () => {
+    const f = await workedExample();
+    await CourseProgressService.writeLessonProgress(f.enrolmentId, f.lessonId, f.userId, f.schoolId, { scrolledToEnd: true });
+    expect((await Enrolment.findById(f.enrolmentId).lean())?.status).toBe('completed');
+
+    const again = await CourseStudentService.getLessonForStudent(f.enrolmentId, f.lessonId, f.userId, f.schoolId);
+    expect(again.source.kind).toBe('content');
+    const write = await CourseProgressService.writeLessonProgress(f.enrolmentId, f.lessonId, f.userId, f.schoolId, { scrolledToEnd: true });
+    expect(write.lessonStatus).toBe('completed');
   });
 });
