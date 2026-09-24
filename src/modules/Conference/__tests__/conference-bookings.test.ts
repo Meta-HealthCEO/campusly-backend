@@ -8,6 +8,8 @@ beforeAll(async () => {
   if (mongoose.connection.readyState === 0) {
     await mongoose.connect(process.env.MONGODB_TEST_URI ?? 'mongodb://localhost:27017/campusly-test');
   }
+  // The test database may still hold the old slot index (unique whatever the status).
+  await ConferenceBooking.syncIndexes();
 });
 afterAll(async () => {
   if (mongoose.connection.readyState !== 0) await mongoose.disconnect();
@@ -56,5 +58,15 @@ describe('booking a parent-evening slot', () => {
     const list = await ConferenceBookingService.listBookings(String(f.schoolId), { eventId: String(event._id) } as never, String(f.thandi), 'teacher');
     const first = (list as unknown as { bookings: Array<{ studentId: { userId: { firstName: string } } }> }).bookings[0];
     expect(first.studentId.userId.firstName).toBe('Lebo');
+  });
+
+  it('lets a cancelled slot be booked again', async () => {
+    const { f, event, book } = await parentEvening();
+    const first = await book(f.pUser, f.lebo.id, 's1') as unknown as { _id: unknown };
+    await ConferenceBookingService.cancelBooking(String(first._id), String(f.schoolId), String(f.pUser), 'parent', {} as never);
+    await expect(book(f.qUser, f.sipho.id, 's1')).resolves.toBeTruthy();
+    const availability = await ConferenceTeacherAvailability.findOne({ eventId: event._id }).lean();
+    expect(availability?.generatedSlots[0].status).toBe('booked');
+    expect(await ConferenceBooking.countDocuments({ eventId: event._id, status: 'confirmed' })).toBe(1);
   });
 });

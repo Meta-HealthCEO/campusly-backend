@@ -189,7 +189,11 @@ const conferenceBookingSchema = new Schema<IConferenceBooking>(
   { timestamps: true },
 );
 
-conferenceBookingSchema.index({ eventId: 1, teacherId: 1, slotId: 1 }, { unique: true });
+// One live booking per slot; a cancelled booking stays for the record and doesn't block the slot.
+conferenceBookingSchema.index(
+  { eventId: 1, teacherId: 1, slotId: 1 },
+  { unique: true, partialFilterExpression: { status: 'confirmed', isDeleted: false } },
+);
 conferenceBookingSchema.index({ eventId: 1, parentId: 1 });
 conferenceBookingSchema.index({ schoolId: 1, eventId: 1 });
 

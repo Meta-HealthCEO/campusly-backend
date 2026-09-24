@@ -51,4 +51,14 @@ describe('class notices reach the class', () => {
     expect(await feed(f.qUser, 'parent')).toContain('Library day');
     expect(await feed(f.jan.userId, 'student')).not.toContain('Library day');
   });
+
+  it('takes each person to their own notice board when they open the notification', async () => {
+    const f = await classSchool();
+    await NoticeBoardService.createPost(String(f.thandi), 'Thandi M', 'teacher', String(f.schoolId), {
+      scope: 'class', scopeId: String(f.classA), title: 'Trip', content: 'Forms due.',
+    } as never);
+    const link = async (id: mongoose.Types.ObjectId) => ((await Notification.findOne({ recipientId: id }).lean())?.data as { link?: string })?.link;
+    expect(await link(f.lebo.userId)).toBe('/student/notice-board');
+    expect(await link(f.pUser)).toBe('/parent/notice-board');
+  });
 });

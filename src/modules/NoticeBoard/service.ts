@@ -116,12 +116,15 @@ export class NoticeBoardService {
     // A class or grade notice tells its learners and their parents; school-wide news goes through Announcements.
     if (input.scope === 'class' || input.scope === 'grade') {
       const scope = input.scope === 'class' ? { classIds: [input.scopeId] } : { gradeIds: [input.scopeId] };
-      const userIds = await audienceUserIds(schoolId, scope, { learners: true, parents: true });
-      await notifyUsers(schoolId, userIds.filter((id) => id !== userId), {
+      const note = (link: string) => ({
         title: `${userName}: ${input.title}`,
         message: input.content.slice(0, 140),
-        data: { entityType: 'notice_board_post', entityId: String(saved._id), scope: input.scope, scopeId: input.scopeId },
+        data: { entityType: 'notice_board_post', entityId: String(saved._id), scope: input.scope, scopeId: input.scopeId, link },
       });
+      const learners = await audienceUserIds(schoolId, scope, { learners: true, parents: false });
+      const parents = await audienceUserIds(schoolId, scope, { learners: false, parents: true });
+      await notifyUsers(schoolId, learners.filter((id) => id !== userId), note('/student/notice-board'));
+      await notifyUsers(schoolId, parents.filter((id) => id !== userId && !learners.includes(id)), note('/parent/notice-board'));
     }
     return saved;
   }

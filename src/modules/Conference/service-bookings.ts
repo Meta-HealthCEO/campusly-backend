@@ -68,30 +68,26 @@ export class ConferenceBookingService {
     }
 
     // Find the availability and slot
-    const availability = await ConferenceTeacherAvailability.findOne({
-      eventId: data.eventId,
-      teacherId: data.teacherId,
-      schoolId,
-      isDeleted: false,
-    });
+    const scope = { eventId: data.eventId, teacherId: data.teacherId, schoolId, isDeleted: false };
+    const availability = await ConferenceTeacherAvailability.findOne(scope).lean();
     if (!availability) throw new NotFoundError('Teacher has no availability for this event');
+    const slot = availability.generatedSlots.find((s) => s.slotId === data.slotId);
+    if (!slot) throw new NotFoundError('Slot not found');
 
-    const slotIndex = availability.generatedSlots.findIndex(
-      (s) => s.slotId === data.slotId,
+    // Claim the slot only if it is still free: two parents racing for it can't both get it.
+    const claimed = await ConferenceTeacherAvailability.findOneAndUpdate(
+      { ...scope, generatedSlots: { $elemMatch: { slotId: data.slotId, status: 'available' } } },
+      { $set: { 'generatedSlots.$.status': 'booked' } },
     );
-    if (slotIndex === -1) throw new NotFoundError('Slot not found');
+    if (!claimed) throw new BadRequestError('Slot is not available');
+    const release = () => ConferenceTeacherAvailability.updateOne(
+      { ...scope, 'generatedSlots.slotId': data.slotId },
+      { $set: { 'generatedSlots.$.status': 'available' } },
+    );
 
-    const slot = availability.generatedSlots[slotIndex];
-    if (!slot || slot.status !== 'available') {
-      throw new BadRequestError('Slot is not available');
-    }
-
-    // Mark slot as booked
-    // Set the field on the subdocument; spreading it copies Mongoose internals and the save fails validation.
-    slot.status = 'booked';
-    await availability.save();
-
-    const booking = await ConferenceBooking.create({
+    let booking;
+    try {
+      booking = await ConferenceBooking.create({
       eventId: data.eventId,
       teacherId: data.teacherId,
       parentId,
@@ -102,7 +98,12 @@ export class ConferenceBookingService {
       slotEndTime: slot.endTime,
       location: slot.location ?? null,
       notes: data.notes ?? null,
-    });
+      });
+    } catch (err: unknown) {
+      // The booking wasn't saved: give the slot back rather than leave it booked for no one.
+      await release();
+      throw err;
+    }
 
     logger.info(
       { bookingId: booking._id, eventId: data.eventId, teacherId: data.teacherId },

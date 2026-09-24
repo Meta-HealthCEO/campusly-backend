@@ -169,7 +169,13 @@ export class ParentService {
       throw new NotFoundError('Parent not found');
     }
 
-    return parent;
+    // Children who name this parent as a guardian count too (linked from the learner's side).
+    const listed = new Set((parent.childrenIds as unknown as Array<{ _id: unknown }>).map((c) => String(c._id)));
+    const guardianOf = await Student.find({ guardianIds: parent._id, schoolId: parent.schoolId, isDeleted: false })
+      .populate('userId', 'firstName lastName email phone')
+      .lean();
+    const extra = guardianOf.filter((s) => !listed.has(String(s._id)));
+    return { ...parent, childrenIds: [...parent.childrenIds, ...extra] } as unknown as IParent;
   }
 
   static async getById(id: string, schoolId: string): Promise<IParent> {
