@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { Student } from '../../Student/model.js';
 import { Mark, Assessment } from '../../Academic/model.js';
-import { Attendance, Discipline, Merit } from '../../Attendance/model.js';
+import { Attendance } from '../../Attendance/model.js';
 import { Achievement } from '../../Achiever/model.js';
 import { Homework, HomeworkSubmission } from '../../Homework/model.js';
 import { Invoice } from '../../Fee/model.js';
@@ -9,6 +9,8 @@ import { Wallet } from '../../Wallet/model.js';
 import { BookLoan } from '../../Library/model.js';
 import { PlayerCard } from '../../Sport/model-stats.js';
 import { Parent } from '../../Parent/model.js';
+import { BehaviourEntry } from '../../Behaviour/model.js';
+import { timeline, type TimelineItem } from '../../Behaviour/behaviour-rules.js';
 
 export class Student360Service {
   /**
@@ -73,7 +75,11 @@ export class Student360Service {
       wallet: val(5, { balance: 0 }),
       library: val(6, { borrowed: 0, overdue: 0 }),
       sports: val(7, { cards: [] }),
-      behaviour: val(8, { recentIncidents: [] }),
+      behaviour: val(8, {
+        summary: { merits: 0, demerits: 0, incidents: 0, net: 0 },
+        recent: [] as TimelineItem[],
+        recentIncidents: [] as Array<{ type: string; description: string; date: string; severity: string }>,
+      }),
       parents: val(9, [] as Array<{ userId: string; name: string; relationship: string }>),
     };
   }
@@ -220,9 +226,10 @@ export class Student360Service {
         .sort({ awardedAt: -1 })
         .limit(5)
         .lean(),
-      Merit.aggregate([
-        { $match: { studentId: studentObjId, schoolId: schoolObjId, isDeleted: false } },
-        { $group: { _id: '$type', totalPoints: { $sum: '$points' } } },
+      // Merit and demerit points come from the one behaviour log (points are signed there).
+      BehaviourEntry.aggregate([
+        { $match: { studentId: studentObjId, schoolId: schoolObjId, isDeleted: false, kind: { $in: ['merit', 'demerit'] } } },
+        { $group: { _id: '$kind', totalPoints: { $sum: { $abs: '$points' } } } },
       ]),
     ]);
 
@@ -320,21 +327,34 @@ export class Student360Service {
     schoolObjId: mongoose.Types.ObjectId,
     studentObjId: mongoose.Types.ObjectId,
   ) {
-    const incidents = await Discipline.find({
-      studentId: studentObjId,
-      schoolId: schoolObjId,
-      isDeleted: false,
-    })
-      .sort({ createdAt: -1 })
-      .limit(3)
-      .lean();
+    const where = { studentId: studentObjId, schoolId: schoolObjId, isDeleted: false };
+    const [counts, latest, wrong] = await Promise.all([
+      BehaviourEntry.aggregate([
+        { $match: where },
+        { $group: { _id: '$kind', count: { $sum: 1 }, points: { $sum: '$points' } } },
+      ]),
+      BehaviourEntry.find(where).sort({ occurredAt: -1 }).limit(5).lean(),
+      BehaviourEntry.find({ ...where, kind: { $in: ['demerit', 'incident'] } }).sort({ occurredAt: -1 }).limit(3).lean(),
+    ]);
+    const countOf = (kind: string) => (counts.find((c: { _id: string }) => c._id === kind)?.count ?? 0) as number;
 
     return {
-      recentIncidents: incidents.map((i) => ({
-        type: i.type,
-        description: i.description,
-        date: i.createdAt.toISOString(),
-        severity: i.severity,
+      summary: {
+        merits: countOf('merit'),
+        demerits: countOf('demerit'),
+        incidents: countOf('incident'),
+        net: counts.reduce((sum: number, c: { points: number }) => sum + c.points, 0),
+      },
+      // The teacher's profile: the latest entries in plain words.
+      recent: timeline(latest.map((e) => ({
+        id: String(e._id), kind: e.kind, category: e.category, points: e.points, note: e.note, occurredAt: e.occurredAt, loggedByName: null,
+      })), []),
+      // The shape the parent's view of their child reads: what went wrong lately.
+      recentIncidents: wrong.map((e) => ({
+        type: e.category,
+        description: e.note,
+        date: e.occurredAt.toISOString(),
+        severity: e.severity ?? 'low',
       })),
     };
   }

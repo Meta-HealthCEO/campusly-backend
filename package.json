@@ -13,6 +13,7 @@
     "audit:paper-marks": "tsx src/scripts/audit-paper-marks.ts",
     "migrate:courses-module": "tsx src/scripts/enable-courses-module.ts",
     "migrate:learning-quizzes": "tsx src/scripts/migrate-learning-quizzes.ts",
+    "migrate:behaviour": "tsx src/scripts/migrate-behaviour.ts",
     "pdf:install-browser": "playwright install chromium",
     "test": "vitest run",
     "test:watch": "vitest"
