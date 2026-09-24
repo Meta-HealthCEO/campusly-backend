@@ -1,5 +1,6 @@
 import { ConferenceEvent, ConferenceTeacherAvailability, ConferenceBooking } from './model.js';
-import { BadRequestError, NotFoundError } from '../../common/errors.js';
+import { BadRequestError, ForbiddenError, NotFoundError } from '../../common/errors.js';
+import { childrenOfParent } from '../../common/audience.js';
 import { paginationHelper } from '../../common/utils.js';
 import { logger } from '../../common/logger.js';
 import { ConferenceWaitlistService } from './service-waitlist.js';
@@ -10,6 +11,9 @@ import type {
   CancelBookingInput,
 } from './validation.js';
 
+// Learners' names live on their user.
+const LEARNER_NAME = { path: 'studentId', select: 'userId', populate: { path: 'userId', select: 'firstName lastName' } };
+
 // ─── Booking Service ──────────────────────────────────────────────────────────
 
 export class ConferenceBookingService {
@@ -17,7 +21,16 @@ export class ConferenceBookingService {
     schoolId: string,
     parentId: string,
     data: CreateBookingInput,
+    role = 'parent',
   ) {
+    // A parent books only for their own child (linked either way).
+    if (role === 'parent') {
+      const children = await childrenOfParent(schoolId, parentId);
+      if (!children.some((c) => String(c._id) === String(data.studentId))) {
+        throw new ForbiddenError('You can only book for your own children.');
+      }
+    }
+
     const event = await ConferenceEvent.findOne({
       _id: data.eventId,
       schoolId,
@@ -74,7 +87,8 @@ export class ConferenceBookingService {
     }
 
     // Mark slot as booked
-    availability.generatedSlots[slotIndex] = { ...slot, status: 'booked' };
+    // Set the field on the subdocument; spreading it copies Mongoose internals and the save fails validation.
+    slot.status = 'booked';
     await availability.save();
 
     const booking = await ConferenceBooking.create({
@@ -97,7 +111,7 @@ export class ConferenceBookingService {
 
     const populated = await ConferenceBooking.findById(booking._id)
       .populate('teacherId', 'firstName lastName')
-      .populate('studentId', 'firstName lastName')
+      .populate(LEARNER_NAME)
       .lean();
 
     return populated;
@@ -132,7 +146,7 @@ export class ConferenceBookingService {
       ConferenceBooking.find(filter)
         .populate('teacherId', 'firstName lastName')
         .populate('parentId', 'firstName lastName')
-        .populate('studentId', 'firstName lastName')
+        .populate(LEARNER_NAME)
         .sort({ slotStartTime: 1 })
         .skip(skip)
         .limit(limit)
@@ -166,7 +180,7 @@ export class ConferenceBookingService {
     const bookings = await ConferenceBooking.find(filter)
       .populate('teacherId', 'firstName lastName')
       .populate('parentId', 'firstName lastName')
-      .populate('studentId', 'firstName lastName')
+      .populate(LEARNER_NAME)
       .sort({ slotStartTime: 1 })
       .lean();
 
