@@ -194,6 +194,7 @@ export class ConferenceController {
       user.schoolId as string,
       user.id,
       data,
+      user.role,
     );
     res.status(201).json(
       apiResponse(true, entry, `Added to waitlist (position ${entry.position})`),

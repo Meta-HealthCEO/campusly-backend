@@ -12,7 +12,7 @@ import type {
 } from './validation.js';
 
 // Learners' names live on their user.
-const LEARNER_NAME = { path: 'studentId', select: 'userId', populate: { path: 'userId', select: 'firstName lastName' } };
+export const LEARNER_NAME = { path: 'studentId', select: 'userId', populate: { path: 'userId', select: 'firstName lastName' } };
 
 // ─── Booking Service ──────────────────────────────────────────────────────────
 
