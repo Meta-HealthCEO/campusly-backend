@@ -41,7 +41,9 @@ export async function verifyParentOwnsStudent(
   const student = await Student.findOne({ _id: studentId, schoolId, isDeleted: false });
   if (!student) throw new NotFoundError('Student not found');
 
-  const owns = parent.childrenIds.some((cid) => cid.toString() === studentId);
+  // Linked from either side: the parent lists the learner, or the learner lists the parent as a guardian.
+  const owns = parent.childrenIds.some((cid) => cid.toString() === studentId)
+    || (student.guardianIds ?? []).some((gid) => gid.toString() === parent._id.toString());
   if (!owns) throw new ForbiddenError('You can only message about your own children');
 }
 

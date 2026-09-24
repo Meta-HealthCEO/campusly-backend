@@ -7,6 +7,7 @@ const full = {
   fees: { outstanding: 1200 },
   wallet: { balance: 35 },
   library: { borrowed: 1, overdue: 0 },
+  parents: [{ userId: 'u1', name: 'Bongiwe Mthembu', relationship: 'mother' }],
 };
 
 describe('redactStudent360ForRole', () => {
@@ -17,9 +18,15 @@ describe('redactStudent360ForRole', () => {
     expect(view).toMatchObject({ student: { id: 's1' }, academic: { termAverage: 71 } });
   });
 
-  it('keeps everything for parents and school admins', () => {
-    expect(redactStudent360ForRole(full, 'parent')).toEqual(full);
+  it('keeps everything for school admins, and the parents list for teachers', () => {
     expect(redactStudent360ForRole(full, 'school_admin')).toEqual(full);
+    expect(redactStudent360ForRole(full, 'teacher')).toHaveProperty('parents');
+  });
+
+  it("never shows a parent the other adults linked to their child", () => {
+    const view = redactStudent360ForRole(full, 'parent');
+    expect(view).not.toHaveProperty('parents');
+    expect(view).toMatchObject({ fees: { outstanding: 1200 }, wallet: { balance: 35 } });
   });
 
   it('does not change the original object', () => {

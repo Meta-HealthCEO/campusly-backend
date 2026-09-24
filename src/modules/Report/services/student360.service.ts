@@ -89,19 +89,21 @@ export class Student360Service {
       isDeleted: false,
       $or: [{ _id: { $in: guardianIds } }, { childrenIds: studentId }],
     })
-      .populate('userId', 'firstName lastName')
+      .populate({ path: 'userId', select: 'firstName lastName', match: { isDeleted: false } })
       .lean();
     const rank = (id: unknown) => {
       const at = guardianIds.findIndex((g) => String(g) === String(id));
       return at === -1 ? guardianIds.length : at;
     };
+    // A parent whose account was removed (or never made) can't be messaged, so isn't offered.
     return [...parents]
+      .filter((p) => p.userId && typeof p.userId === 'object')
       .sort((a, b) => rank(a._id) - rank(b._id))
       .map((p) => {
-        const user = p.userId as unknown as { _id?: unknown; firstName?: string; lastName?: string } | null;
+        const user = p.userId as unknown as { _id: unknown; firstName?: string; lastName?: string };
         return {
-          userId: String(user?._id ?? p.userId),
-          name: `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim() || 'Parent',
+          userId: String(user._id),
+          name: `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim() || 'Parent',
           relationship: p.relationship ?? 'guardian',
         };
       });
