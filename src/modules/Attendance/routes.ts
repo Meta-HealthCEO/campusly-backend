@@ -186,9 +186,11 @@ router.post(
   AttendanceController.createMerit,
 );
 
+// Staff only: the list is every learner's merits and demerits, with reasons.
 router.get(
   '/merits',
   authenticate,
+  authorize('teacher', 'school_admin', 'super_admin'),
   AttendanceController.listMerits,
 );
 
