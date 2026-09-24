@@ -30,14 +30,14 @@ describe('canCopyFrom', () => {
 describe('libraryEntry', () => {
   it('describes a released unit for the school library', () => {
     const entry = libraryEntry(
-      { _id: 'c1', title: 'Numbers to 99', createdBy: 'u1', publishedAt: new Date('2026-09-20T08:00:00Z'), scope: { termNumber: 3 } },
+      { _id: 'c1', title: 'Numbers to 99', createdBy: 'u1', publishedAt: new Date('2026-09-20T08:00:00Z'), scope: { termNumber: 3, gradeId: 'g1' } },
       { gradeName: 'Grade 1', subjectName: 'Mathematics', authorName: 'Thandi Molefe', items: 6, minutes: 37, viewerId: 'u1' },
     );
     expect(entry).toEqual({
-      id: 'c1', title: 'Numbers to 99', gradeName: 'Grade 1', subjectName: 'Mathematics', termNumber: 3,
+      id: 'c1', title: 'Numbers to 99', gradeId: 'g1', gradeName: 'Grade 1', subjectName: 'Mathematics', termNumber: 3,
       authorName: 'Thandi Molefe', items: 6, minutes: 37, releasedAt: '2026-09-20T08:00:00.000Z', mine: true,
     });
     expect(libraryEntry({ _id: 'c1', title: 'x', createdBy: 'u2', publishedAt: null, scope: null }, { gradeName: '', subjectName: '', authorName: '', items: 0, minutes: 0, viewerId: 'u1' }))
-      .toMatchObject({ mine: false, releasedAt: null, termNumber: null });
+      .toMatchObject({ mine: false, releasedAt: null, termNumber: null, gradeId: null });
   });
 });

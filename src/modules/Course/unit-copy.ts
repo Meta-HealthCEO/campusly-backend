@@ -28,6 +28,7 @@ export function canCopyFrom(course: { kind?: string | null; status: string; outl
 export interface LibraryEntry {
   id: string;
   title: string;
+  gradeId: string | null;
   gradeName: string;
   subjectName: string;
   termNumber: number | null;
@@ -41,12 +42,13 @@ export interface LibraryEntry {
 
 /** A released unit as the school library lists it. */
 export function libraryEntry(
-  course: { _id: unknown; title: string; createdBy: unknown; publishedAt?: Date | null; scope?: { termNumber: number } | null },
+  course: { _id: unknown; title: string; createdBy: unknown; publishedAt?: Date | null; scope?: { termNumber: number; gradeId?: unknown } | null },
   ctx: { gradeName: string; subjectName: string; authorName: string; items: number; minutes: number; viewerId: string },
 ): LibraryEntry {
   return {
     id: String(course._id),
     title: course.title,
+    gradeId: course.scope?.gradeId ? String(course.scope.gradeId) : null,
     gradeName: ctx.gradeName,
     subjectName: ctx.subjectName,
     termNumber: course.scope?.termNumber ?? null,

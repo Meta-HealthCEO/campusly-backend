@@ -66,7 +66,7 @@ async function school(opts: { status?: 'draft' | 'published'; writing?: boolean 
     { schoolId, courseId: unit._id, moduleId: mod._id, orderIndex: 2, title: 'Counting on', type: 'content', itemKind: 'worked_example', genStatus: opts.writing ? 'generating' : 'failed', genError: 'The AI timed out', minutes: 6 },
   ]);
   await Enrolment.create({ schoolId, courseId: unit._id, studentId: oid(), enrolledBy: lindiwe });
-  return { schoolId: String(schoolId), soid: schoolId, unitId: String(unit._id), lindiwe, thandi, classA, classB, class2, notesId: notes.insertedId, questionId: q.insertedId };
+  return { schoolId: String(schoolId), soid: schoolId, g1, unitId: String(unit._id), lindiwe, thandi, classA, classB, class2, notesId: notes.insertedId, questionId: q.insertedId };
 }
 
 describe('UnitCopyService.copy', () => {
@@ -132,7 +132,7 @@ describe('UnitCopyService.library', () => {
     await Course.create({ schoolId: f.soid, title: 'A catalogue course', slug: `c-${oid()}`, createdBy: f.thandi, status: 'published', kind: 'catalogue' });
     const entries = await UnitCopyService.library(f.schoolId, teacher(f.thandi), {});
     expect(entries).toEqual([{
-      id: f.unitId, title: 'Numbers to 99 · Grade 1 Mathematics · Term 3', gradeName: 'Grade 1', subjectName: 'Mathematics', termNumber: 3,
+      id: f.unitId, title: 'Numbers to 99 · Grade 1 Mathematics · Term 3', gradeId: String(f.g1), gradeName: 'Grade 1', subjectName: 'Mathematics', termNumber: 3,
       authorName: 'Lindiwe Dube', items: 3, minutes: 17, releasedAt: '2026-09-20T08:00:00.000Z', mine: false,
     }]);
     expect(await UnitCopyService.library(String(oid()), teacher(f.thandi), {})).toEqual([]);
