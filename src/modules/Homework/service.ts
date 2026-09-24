@@ -13,6 +13,7 @@ import { Subject } from '../Academic/model.js';
 import { CurriculumNode } from '../CurriculumStructure/model.js';
 import { resolveAcademicFilterIds } from '../Academic/services/global-academic-lookup.js';
 import { logger } from '../../common/logger.js';
+import { publishHomeworkGrade } from '../Academic/service-gradebook-publish.js';
 import { submitHomework as _submitHomework } from './service-homework-submit.js';
 import type { CreateHomeworkInput, SubmitHomeworkInput } from './validation.js';
 import {
@@ -631,6 +632,18 @@ export class HomeworkService {
       .populate({ path: 'studentId', populate: { path: 'userId', select: 'firstName lastName email' } })
       .populate('homeworkId');
     if (!submission) throw new NotFoundError('Submission not found');
+
+    // A mark entered by hand reaches the gradebook the same way an auto-mark does.
+    if (parentHomework.gradebookAutoPublish) {
+      try {
+        await publishHomeworkGrade(
+          { _id: existing._id, studentId: existing.studentId, schoolId: existing.schoolId, mark, maxMarks: existing.maxMarks },
+          parentHomework as unknown as IHomework,
+        );
+      } catch (err: unknown) {
+        logger.error({ err, submissionId }, 'Manual publishHomeworkGrade failed');
+      }
+    }
     return submission;
   }
 
