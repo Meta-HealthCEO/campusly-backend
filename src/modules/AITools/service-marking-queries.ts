@@ -2,6 +2,8 @@
 import mongoose from 'mongoose';
 import { PaperMarking, type IPaperMarking } from './model-marking.js';
 import { AssessmentPaper } from '../QuestionBank/model.js';
+import { PaperSubmission } from '../QuestionBank/model-submissions.js';
+import { Assessment } from '../Academic/model.js';
 import { NotFoundError, BadRequestError } from '../../common/errors.js';
 import {
   publishMarkToGradebook,
@@ -88,6 +90,25 @@ export async function updateMarking(
   return marking.toObject() as IPaperMarking;
 }
 
+/** Where an issued mark landed, so the teacher can open that gradebook view. */
+export interface GradebookLink {
+  assessmentId: string;
+  classId: string;
+  subjectId: string;
+  term: number;
+  academicYear: number;
+}
+
+async function linkForAssessment(assessmentId: string, schoolId: string): Promise<GradebookLink | null> {
+  const a = await Assessment.findOne({
+    _id: new mongoose.Types.ObjectId(assessmentId),
+    schoolId: new mongoose.Types.ObjectId(schoolId),
+    isDeleted: false,
+  }).select('classId subjectId term academicYear').lean();
+  if (!a) return null;
+  return { assessmentId, classId: String(a.classId), subjectId: String(a.subjectId), term: a.term, academicYear: a.academicYear };
+}
+
 export async function issueMarking(
   markingId: string,
   schoolId: string,
@@ -95,7 +116,7 @@ export async function issueMarking(
   assessmentId: string | undefined,
   studentId?: string,
   comment?: string,
-): Promise<IPaperMarking> {
+): Promise<IPaperMarking & { gradebook: GradebookLink | null }> {
   const marking = await PaperMarking.findOne({
     _id: new mongoose.Types.ObjectId(markingId),
     schoolId: new mongoose.Types.ObjectId(schoolId),
@@ -122,6 +143,7 @@ export async function issueMarking(
   // (paperType === 'assessment'); generated papers must pass an explicit
   // assessmentId because they aren't backed by an AssessmentPaper record.
   let resolvedAssessmentId = assessmentId;
+  let gradebook: GradebookLink | null = null;
   if (!resolvedAssessmentId) {
     if (marking.paperType !== 'assessment') {
       throw new BadRequestError(
@@ -146,11 +168,20 @@ export async function issueMarking(
       subjectId: String(paper.subjectId),
     });
     resolvedAssessmentId = String(linked._id);
+    gradebook = {
+      assessmentId: resolvedAssessmentId,
+      classId: linked.classId,
+      subjectId: linked.subjectId,
+      term: linked.term,
+      academicYear: linked.academicYear,
+    };
+  } else {
+    gradebook = await linkForAssessment(resolvedAssessmentId, schoolId);
   }
 
   const totalAwarded = marking.questions.reduce((s, q) => s + (q.marksAwarded ?? 0), 0);
 
-  await publishMarkToGradebook({
+  const mark = await publishMarkToGradebook({
     schoolId,
     assessmentId: resolvedAssessmentId,
     studentId: resolvedStudentId,
@@ -163,7 +194,19 @@ export async function issueMarking(
   marking.issuedToStudent = true;
   marking.issuedBy = new mongoose.Types.ObjectId(teacherUserId);
   if (!wasIssuedBefore) marking.issuedAt = new Date();
+  if (mark?._id) marking.gradebookEntryId = mark._id as mongoose.Types.ObjectId;
   await marking.save();
+
+  // A digital script is done once its mark is issued.
+  await PaperSubmission.updateOne(
+    {
+      paperId: marking.paperId,
+      studentId: new mongoose.Types.ObjectId(resolvedStudentId),
+      schoolId: new mongoose.Types.ObjectId(schoolId),
+      isDeleted: false,
+    },
+    { $set: { status: 'published' } },
+  );
 
   if (!wasIssuedBefore) {
     // Fire-and-forget notification dispatch — failure should not roll back the
@@ -174,7 +217,7 @@ export async function issueMarking(
     });
   }
 
-  return marking.toObject() as IPaperMarking;
+  return Object.assign(marking.toObject() as IPaperMarking, { gradebook });
 }
 
 async function dispatchIssueNotification(

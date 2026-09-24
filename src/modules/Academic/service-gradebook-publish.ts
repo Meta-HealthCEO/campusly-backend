@@ -62,12 +62,34 @@ export async function publishMarkToGradebook(input: PublishMarkInput): Promise<I
   return updated.toObject() as IMark;
 }
 
+/** Where a paper's marks live in the gradebook for one class. */
+export interface PaperAssessmentLink {
+  _id: MTypes.ObjectId;
+  totalMarks: number;
+  classId: string;
+  subjectId: string;
+  term: number;
+  academicYear: number;
+}
+
+function toLink(a: { _id: unknown; totalMarks: number; classId: unknown; subjectId: unknown; term: number; academicYear: number }): PaperAssessmentLink {
+  return {
+    _id: a._id as MTypes.ObjectId,
+    totalMarks: a.totalMarks,
+    classId: String(a.classId),
+    subjectId: String(a.subjectId),
+    term: a.term,
+    academicYear: a.academicYear,
+  };
+}
+
 /**
- * Find or lazily create an Assessment record linked to a paper.
- * Idempotent — caches the link on AssessmentPaper.assessmentId.
+ * Find or lazily create the Assessment that holds a paper's marks for one
+ * class. Each class that writes a paper gets its own Assessment; the paper
+ * caches the first one on AssessmentPaper.assessmentId.
  *
  * Resolution order:
- *   (a) cached AssessmentPaper.assessmentId
+ *   (a) cached AssessmentPaper.assessmentId, only when it belongs to this class
  *   (b) match by metadata (school + class + subject + name + term + year)
  *   (c) create new Assessment from paper metadata
  */
@@ -76,7 +98,7 @@ export async function findOrCreateAssessmentForPaper(input: {
   schoolId: string;
   classId: string;
   subjectId: string;
-}): Promise<{ _id: MTypes.ObjectId; totalMarks: number }> {
+}): Promise<PaperAssessmentLink> {
   const paper = await AssessmentPaper.findOne({
     _id: new mongoose.Types.ObjectId(input.paperId),
     schoolId: new mongoose.Types.ObjectId(input.schoolId),
@@ -91,10 +113,8 @@ export async function findOrCreateAssessmentForPaper(input: {
       schoolId: new mongoose.Types.ObjectId(input.schoolId),
       isDeleted: false,
     });
-    if (existing) {
-      return { _id: existing._id as MTypes.ObjectId, totalMarks: existing.totalMarks };
-    }
-    // cached link is stale (target deleted); fall through to recreate
+    if (existing && String(existing.classId) === input.classId) return toLink(existing);
+    // stale (target deleted) or another class's assessment: fall through
   }
 
   // (b) match by metadata
@@ -108,9 +128,11 @@ export async function findOrCreateAssessmentForPaper(input: {
     isDeleted: false,
   });
   if (byMatch) {
-    paper.assessmentId = byMatch._id as MTypes.ObjectId;
-    await paper.save();
-    return { _id: byMatch._id as MTypes.ObjectId, totalMarks: byMatch.totalMarks };
+    if (!paper.assessmentId) {
+      paper.assessmentId = byMatch._id as MTypes.ObjectId;
+      await paper.save();
+    }
+    return toLink(byMatch);
   }
 
   // (c) create. Assessment.type enum is restrictive
@@ -129,9 +151,11 @@ export async function findOrCreateAssessmentForPaper(input: {
     date: new Date(),
     paperId: paper._id,
   });
-  paper.assessmentId = created._id as MTypes.ObjectId;
-  await paper.save();
-  return { _id: created._id as MTypes.ObjectId, totalMarks: created.totalMarks };
+  if (!paper.assessmentId) {
+    paper.assessmentId = created._id as MTypes.ObjectId;
+    await paper.save();
+  }
+  return toLink(created);
 }
 
 /**

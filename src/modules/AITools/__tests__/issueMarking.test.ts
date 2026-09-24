@@ -3,6 +3,9 @@ import mongoose from 'mongoose';
 import { PaperMarking } from '../model-marking.js';
 import { issueMarking } from '../service-marking-queries.js';
 import { NotificationService } from '../../Notification/service.js';
+import { findOrCreateAssessmentForPaper } from '../../Academic/service-gradebook-publish.js';
+import { Assessment } from '../../Academic/model.js';
+import { AssessmentPaper } from '../../QuestionBank/model.js';
 
 vi.mock('../../Notification/service.js', () => ({
   NotificationService: { create: vi.fn().mockResolvedValue(undefined) },
@@ -115,5 +118,49 @@ describe('issueMarking', () => {
     const after2 = await PaperMarking.findById(m._id).lean();
     expect(after2?.issuedAt?.getTime()).toBe(firstIssuedAt.getTime());
     expect(notifySpy).not.toHaveBeenCalled();
+  });
+});
+
+describe('issueMarking gradebook link', () => {
+  const makeMarking = async (over: Record<string, unknown>) => PaperMarking.create({
+    schoolId: new mongoose.Types.ObjectId(), teacherId: new mongoose.Types.ObjectId(), paperId: new mongoose.Types.ObjectId(),
+    paperType: 'assessment', studentName: 'Lebo', studentId: new mongoose.Types.ObjectId(), classId: new mongoose.Types.ObjectId(),
+    imageCount: 0, totalMarks: 7, maxMarks: 10, percentage: 70, status: 'completed',
+    questions: [{ questionNumber: '1', studentAnswer: 'x', correctAnswer: 'x', marksAwarded: 7, maxMarks: 10, feedback: '' }],
+    ...over,
+  });
+
+  it('says which class, subject, term and assessment the mark landed in', async () => {
+    const schoolId = new mongoose.Types.ObjectId();
+    const subjectId = new mongoose.Types.ObjectId();
+    const classId = new mongoose.Types.ObjectId();
+    const paper = await AssessmentPaper.create({
+      schoolId, title: 'Term 3 test', subjectId, gradeId: new mongoose.Types.ObjectId(), topicIds: [new mongoose.Types.ObjectId()],
+      term: 3, year: 2026, paperType: 'class_test', duration: 30, totalMarks: 10, createdBy: new mongoose.Types.ObjectId(),
+    });
+    const assessmentId = new mongoose.Types.ObjectId();
+    vi.mocked(findOrCreateAssessmentForPaper).mockResolvedValueOnce({
+      _id: assessmentId, totalMarks: 10, classId: String(classId), subjectId: String(subjectId), term: 3, academicYear: 2026,
+    });
+    const m = await makeMarking({ schoolId, paperId: paper._id, classId });
+
+    const result = await issueMarking(String(m._id), String(schoolId), String(new mongoose.Types.ObjectId()), undefined);
+
+    expect(result.gradebook).toEqual({
+      assessmentId: String(assessmentId), classId: String(classId), subjectId: String(subjectId), term: 3, academicYear: 2026,
+    });
+  });
+
+  it('links to an assessment the teacher chose', async () => {
+    const schoolId = new mongoose.Types.ObjectId();
+    const assessment = await Assessment.create({
+      name: 'Chosen test', subjectId: new mongoose.Types.ObjectId(), classId: new mongoose.Types.ObjectId(), schoolId,
+      type: 'test', totalMarks: 10, weight: 1, term: 2, academicYear: 2026, date: new Date(),
+    });
+    const m = await makeMarking({ schoolId, paperType: 'generated' });
+
+    const result = await issueMarking(String(m._id), String(schoolId), String(new mongoose.Types.ObjectId()), String(assessment._id));
+
+    expect(result.gradebook).toMatchObject({ assessmentId: String(assessment._id), classId: String(assessment.classId), term: 2 });
   });
 });
