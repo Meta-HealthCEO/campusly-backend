@@ -15,3 +15,4 @@ export const logBehaviourSchema = z.object({
 }).strict();
 
 export const classBehaviourQuerySchema = z.object({ classId: objectIdSchema });
+export const schoolBehaviourQuerySchema = z.object({ kind: z.enum(['merit', 'demerit', 'incident']).optional() });

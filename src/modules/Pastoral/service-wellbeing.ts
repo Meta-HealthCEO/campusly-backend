@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
-import { Attendance, Discipline, Merit } from '../Attendance/model.js';
+import { Attendance } from '../Attendance/model.js';
+import { behaviourTotals, recentEntries } from '../Behaviour/reads.js';
 import { Incident } from '../Incident/model.js';
 import { Student } from '../Student/model.js';
 import { PastoralReferral, CounselorSession } from './model.js';
@@ -89,30 +90,8 @@ export class WellbeingService {
         date: { $gte: thirtyDaysAgo },
         isDeleted: false,
       }),
-      Discipline.find({
-        studentId: studentOid,
-        schoolId: schoolOid,
-        isDeleted: false,
-      })
-        .select('type severity description createdAt')
-        .sort({ createdAt: -1 })
-        .limit(10)
-        .lean(),
-      Merit.aggregate<{ _id: string; points: number }>([
-        {
-          $match: {
-            studentId: studentOid,
-            schoolId: schoolOid,
-            isDeleted: false,
-          },
-        },
-        {
-          $group: {
-            _id: '$type',
-            points: { $sum: '$points' },
-          },
-        },
-      ]),
+      recentEntries(studentOid, schoolOid, { kinds: ['demerit', 'incident'], limit: 10 }),
+      behaviourTotals(studentOid, schoolOid),
       Incident.find({
         schoolId: schoolOid,
         'involvedParties.studentId': studentOid,
@@ -140,13 +119,12 @@ export class WellbeingService {
       return acc;
     }, {});
 
-    const meritPoints = meritBalance.find((item) => item._id === 'merit')?.points ?? 0;
-    const demeritPoints = meritBalance.find((item) => item._id === 'demerit')?.points ?? 0;
+    const { meritPoints, demeritPoints } = meritBalance;
 
     const disciplineIncidents = disciplineRecords.map((record) => ({
-      type: String(record.type),
-      description: String(record.description ?? ''),
-      date: record.createdAt,
+      type: String(record.category),
+      description: String(record.note ?? ''),
+      date: new Date(record.occurredAt),
     }));
     const wellbeingIncidents = incidents.map((incident) => ({
       type: String(incident.type),
@@ -208,7 +186,7 @@ export class WellbeingService {
       },
       behaviour: {
         merits: meritPoints,
-        demerits: demeritPoints + disciplineRecords.length,
+        demerits: demeritPoints + meritBalance.incidentCount,
         recentIncidents: recentBehaviour,
       },
       riskLevel,

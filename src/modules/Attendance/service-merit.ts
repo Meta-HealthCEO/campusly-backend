@@ -3,6 +3,7 @@ import { Merit, IMerit } from './model.js';
 import { Student } from '../Student/model.js';
 import { BadRequestError } from '../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../common/constants.js';
+import { syncMerit } from '../Behaviour/legacy-sync.js';
 
 export class MeritService {
   static async createMerit(data: Partial<IMerit>, awardedBy: string): Promise<IMerit> {
@@ -11,7 +12,9 @@ export class MeritService {
       if (!student) throw new BadRequestError('Student does not belong to this school');
     }
     const merit = new Merit({ ...data, awardedBy });
-    return merit.save();
+    const saved = await merit.save();
+    await syncMerit(saved);
+    return saved;
   }
 
   static async listMerits(

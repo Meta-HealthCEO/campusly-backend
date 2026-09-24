@@ -4,6 +4,7 @@ import { Student } from '../Student/model.js';
 import { NotFoundError, BadRequestError, ForbiddenError } from '../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../common/constants.js';
 import { GradeService } from '../Academic/services/grade.service.js';
+import { syncDiscipline } from '../Behaviour/legacy-sync.js';
 import type { AuthenticatedUser } from '../../types/authenticated-request.js';
 
 interface WelfareUser extends AuthenticatedUser {
@@ -87,7 +88,9 @@ export class DisciplineService {
       schoolId: new mongoose.Types.ObjectId(schoolId),
       reportedBy: new mongoose.Types.ObjectId(user.id),
     });
-    return discipline.save();
+    const saved = await discipline.save();
+    await syncDiscipline(saved);
+    return saved;
   }
 
   static async listDiscipline(
@@ -167,6 +170,7 @@ export class DisciplineService {
       .populate(DISCIPLINE_STUDENT_POPULATE)
       .populate('reportedBy', 'firstName lastName email');
     if (!record) throw new NotFoundError('Discipline record not found');
+    await syncDiscipline(record);
     return record;
   }
 
@@ -178,6 +182,7 @@ export class DisciplineService {
       { new: true },
     );
     if (!record) throw new NotFoundError('Discipline record not found');
+    await syncDiscipline(record);
     return record;
   }
 }

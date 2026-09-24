@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { Mark } from '../Academic/model.js';
 import { Student } from '../Student/model.js';
 import { Attendance } from '../Attendance/model.js';
-import { Merit } from '../Attendance/model.js';
+import { behaviourTotals } from '../Behaviour/reads.js';
 import { AIUsageLog } from '../AITools/model.js';
 import { AIService } from '../../services/ai.service.js';
 import { NotFoundError } from '../../common/errors.js';
@@ -95,11 +95,7 @@ export class ReportService {
       });
 
       // Merit count
-      const meritCount = await Merit.countDocuments({
-        studentId,
-        schoolId: new mongoose.Types.ObjectId(schoolId),
-        isDeleted: false,
-      });
+      const { meritCount } = await behaviourTotals(studentId, schoolId);
 
       const systemPrompt = [
         `You are a professional report card comment writer for a South African CAPS school.`,

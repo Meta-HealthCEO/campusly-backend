@@ -7,7 +7,8 @@ import { Assessment } from '../Academic/model.js';
 import { Mark } from '../Academic/model.js';
 import { Homework } from '../Homework/model.js';
 import { HomeworkSubmission } from '../Homework/model.js';
-import { Attendance, Discipline, Merit } from '../Attendance/model.js';
+import { Attendance } from '../Attendance/model.js';
+import { recentEntries } from '../Behaviour/reads.js';
 import { Wallet, WalletTransaction } from '../Wallet/model.js';
 import { Event } from '../Event/model.js';
 import { BadRequestError } from '../../common/errors.js';
@@ -179,20 +180,8 @@ export class DigestService {
       isDeleted: false,
     }).populate('subjectId', 'name').lean();
 
-    // 3. Discipline/merit incidents today
-    const disciplineToday = await Discipline.find({
-      studentId: studentObjId,
-      schoolId,
-      createdAt: { $gte: todayStart, $lt: todayEnd },
-      isDeleted: false,
-    }).lean();
-
-    const meritsToday = await Merit.find({
-      studentId: studentObjId,
-      schoolId,
-      createdAt: { $gte: todayStart, $lt: todayEnd },
-      isDeleted: false,
-    }).lean();
+    // 3. Behaviour logged today (merits, demerits and incidents)
+    const behaviourToday = await recentEntries(studentObjId, schoolId, { limit: 50, from: todayStart, to: todayEnd });
 
     // 4. Tuck shop spending today
     const wallet = await Wallet.findOne({
@@ -226,20 +215,9 @@ export class DigestService {
         dueDate: h.dueDate,
         totalMarks: h.totalMarks,
       })),
-      incidents: [
-        ...disciplineToday.map((d) => ({
-          type: 'discipline' as const,
-          category: d.type,
-          severity: d.severity,
-          description: d.description,
-        })),
-        ...meritsToday.map((m) => ({
-          type: m.type as 'merit' | 'demerit',
-          category: m.category,
-          points: m.points,
-          reason: m.reason,
-        })),
-      ],
+      incidents: behaviourToday.map((e) => (e.kind === 'incident'
+        ? { type: 'discipline' as const, category: e.category, severity: e.severity ?? 'low', description: e.note }
+        : { type: e.kind as 'merit' | 'demerit', category: e.category, points: Math.abs(e.points), reason: e.note })),
       tuckshopSpending,
     };
   }

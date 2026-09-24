@@ -55,6 +55,7 @@ behaviourEntrySchema.index(
   { schoolId: 1, loggedBy: 1, requestKey: 1 },
   { unique: true, partialFilterExpression: { requestKey: { $type: 'string' } } },
 );
-behaviourEntrySchema.index({ legacyId: 1 }, { sparse: true });
+// One log entry per old record: the migration and the old routes' copies can't duplicate.
+behaviourEntrySchema.index({ legacyId: 1 }, { unique: true, partialFilterExpression: { legacyId: { $type: 'objectId' } } });
 
 export const BehaviourEntry = mongoose.model<IBehaviourEntry>('BehaviourEntry', behaviourEntrySchema);

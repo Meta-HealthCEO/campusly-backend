@@ -1,7 +1,8 @@
 import mongoose from 'mongoose';
 import { Student } from '../../Student/model.js';
 import { Invoice } from '../../Fee/model.js';
-import { Attendance, Merit } from '../../Attendance/model.js';
+import { Attendance } from '../../Attendance/model.js';
+import { behaviourTotals } from '../../Behaviour/reads.js';
 import { Mark, Assessment } from '../../Academic/model.js';
 import { Homework, HomeworkSubmission } from '../../Homework/model.js';
 import { Wallet } from '../../Wallet/model.js';
@@ -332,10 +333,7 @@ export class AcademicReportService {
         { $group: { _id: '$status', count: { $sum: 1 } } },
       ]),
 
-      Merit.aggregate([
-        { $match: { studentId: studentObjId, isDeleted: false } },
-        { $group: { _id: '$type', totalPoints: { $sum: '$points' }, count: { $sum: 1 } } },
-      ]),
+      behaviourTotals(studentObjId, schoolId),
 
       Wallet.findOne({ studentId: studentObjId, isDeleted: false }).select('balance').lean(),
 
@@ -350,8 +348,6 @@ export class AcademicReportService {
     const totalAttendance = attendanceStats.reduce((sum, a) => sum + a.count, 0);
     const presentCount = (attendanceMap['present'] ?? 0) + (attendanceMap['late'] ?? 0);
 
-    const meritData = behaviourStats.find((b) => b._id === 'merit');
-    const demeritData = behaviourStats.find((b) => b._id === 'demerit');
     const hwStats = homeworkStats.length > 0 ? homeworkStats[0] : { total: 0, graded: 0 };
 
     return {
@@ -366,11 +362,11 @@ export class AcademicReportService {
         attendanceRate: totalAttendance > 0 ? Math.round((presentCount / totalAttendance) * 10000) / 100 : 0,
       },
       behaviour: {
-        meritPoints: meritData?.totalPoints ?? 0,
-        meritCount: meritData?.count ?? 0,
-        demeritPoints: demeritData?.totalPoints ?? 0,
-        demeritCount: demeritData?.count ?? 0,
-        netPoints: (meritData?.totalPoints ?? 0) - (demeritData?.totalPoints ?? 0),
+        meritPoints: behaviourStats.meritPoints,
+        meritCount: behaviourStats.meritCount,
+        demeritPoints: behaviourStats.demeritPoints,
+        demeritCount: behaviourStats.demeritCount,
+        netPoints: behaviourStats.meritPoints - behaviourStats.demeritPoints,
       },
       wallet: { balance: walletInfo?.balance ?? 0 },
       homework: {

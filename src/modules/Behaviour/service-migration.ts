@@ -75,6 +75,15 @@ export async function migrateBehaviour(opts: { apply: boolean; schoolId?: string
       occurredAt: r.at ?? new Date(), source: 'log', requestKey: null, legacyId: r._id, isDeleted: false,
     });
   }
-  if (opts.apply && toInsert.length > 0) await BehaviourEntry.insertMany(toInsert, { ordered: false });
+  if (opts.apply && toInsert.length > 0) {
+    try {
+      await BehaviourEntry.insertMany(toInsert, { ordered: false });
+    } catch (err: unknown) {
+      // Another run (or an old route's copy) moved some first: the unique legacyId index kept one each.
+      const writeErrors = (err as { writeErrors?: Array<{ code?: number; err?: { code?: number } }> }).writeErrors ?? [];
+      const onlyDuplicates = writeErrors.length > 0 && writeErrors.every((w) => (w.code ?? w.err?.code) === 11000);
+      if (!onlyDuplicates) throw err;
+    }
+  }
   return report;
 }

@@ -5,13 +5,18 @@ import { BehaviourService, type BehaviourActor } from './service.js';
 
 function actor(req: Request): BehaviourActor {
   const user = getUser(req);
-  return { id: user.id, role: user.role, schoolId: user.schoolId!, isHOD: user.isHOD ?? false, isSchoolPrincipal: user.isSchoolPrincipal ?? false };
+  return { id: user.id, role: user.role, schoolId: user.schoolId!, isHOD: user.isHOD ?? false, isSchoolPrincipal: user.isSchoolPrincipal ?? false, isCounselor: req.user?.isCounselor ?? false };
 }
 
 export class BehaviourController {
   static async log(req: Request, res: Response): Promise<void> {
     const entry = await BehaviourService.log(actor(req), req.body);
     res.status(201).json(apiResponse(true, entry, 'Logged'));
+  }
+
+  static async forSchool(req: Request, res: Response): Promise<void> {
+    const data = await BehaviourService.forSchool(actor(req), { kind: req.query.kind as string | undefined });
+    res.json(apiResponse(true, data, 'School behaviour'));
   }
 
   static async forClass(req: Request, res: Response): Promise<void> {

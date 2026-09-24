@@ -3,7 +3,8 @@ import { WorkbenchQuestion } from '../model.assessment.js';
 import { PaperModeration } from '../model.assessment.js';
 import { CurriculumCoverage } from '../model.js';
 import { Homework, HomeworkSubmission } from '../../Homework/model.js';
-import { Attendance, Discipline, Merit } from '../../Attendance/model.js';
+import { Attendance } from '../../Attendance/model.js';
+import { recentEntries } from '../../Behaviour/reads.js';
 import { Mark } from '../../Academic/model.js';
 import type { MarkingQueueItem } from './marking-queue.js';
 import { homeworkQueueItems, paperQueueItemsFor, sortQueue } from './marking-queue.db.js';
@@ -125,8 +126,8 @@ export class AggregationService {
       await Promise.all([
         Mark.find({ studentId, schoolId }).sort({ createdAt: -1 }).limit(50).lean().exec(),
         Attendance.find({ studentId, schoolId }).sort({ date: -1 }).limit(60).lean().exec(),
-        Discipline.find({ studentId, schoolId }).sort({ createdAt: -1 }).limit(20).lean().exec(),
-        Merit.find({ studentId, schoolId }).sort({ createdAt: -1 }).limit(20).lean().exec(),
+        recentEntries(studentId, schoolId, { kinds: ['incident'], limit: 20 }),
+        recentEntries(studentId, schoolId, { kinds: ['merit', 'demerit'], limit: 20 }),
         HomeworkSubmission.find({ studentId, schoolId, isDeleted: false })
           .sort({ submittedAt: -1 })
           .limit(50)
@@ -168,9 +169,7 @@ export class AggregationService {
     const rate = total > 0 ? Math.round((present / total) * 100) : 0;
 
     // Behaviour aggregates
-    const netMeritScore = merits.reduce((sum, m) => {
-      return sum + (m.type === 'merit' ? m.points : -m.points);
-    }, 0);
+    const netMeritScore = merits.reduce((sum, m) => sum + m.points, 0);
 
     // Homework aggregates
     const submittedCount = homeworkSubmissions.length;
@@ -208,17 +207,17 @@ export class AggregationService {
       behaviour: {
         netMeritScore,
         recentIncidents: discipline.map((d) => ({
-          date: (d.createdAt as Date).toISOString(),
-          type: d.type ?? '',
-          severity: d.status ?? '',
-          description: d.description ?? '',
+          date: new Date(d.occurredAt).toISOString(),
+          type: d.category,
+          severity: d.severity ?? '',
+          description: d.note ?? '',
         })),
         recentMerits: merits.map((m) => ({
-          date: (m.createdAt as Date).toISOString(),
-          type: m.type,
-          category: m.category ?? '',
-          points: m.points,
-          reason: m.reason ?? '',
+          date: new Date(m.occurredAt).toISOString(),
+          type: m.kind,
+          category: m.category,
+          points: Math.abs(m.points),
+          reason: m.note ?? '',
         })),
       },
       homework: {
