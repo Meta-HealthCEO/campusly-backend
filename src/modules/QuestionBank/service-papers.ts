@@ -22,6 +22,7 @@ import type {
   UpdatePaperInput,
   PaperQueryInput,
 } from './validation.js';
+import { PaperModeration } from '../TeacherWorkbench/model.assessment.js';
 
 const POPULATE_LIST = [
   { path: 'subjectId', select: 'name' },
@@ -291,7 +292,24 @@ export class PapersService {
       AssessmentPaper.countDocuments(query),
     ]);
 
-    return { papers, total, page: filters.page ?? 1, limit };
+    // Each paper's moderation state, in one query (paperId is unique on PaperModeration).
+    const moderations = papers.length === 0 ? [] : await PaperModeration.find({
+      paperId: { $in: papers.map((p) => p._id) },
+      schoolId: soid,
+      isDeleted: false,
+    }).select('paperId status comments updatedAt').lean();
+    const moderationByPaper = new Map(moderations.map((m) => [String(m.paperId), m]));
+    const withModeration = papers.map((paper) => {
+      const m = moderationByPaper.get(String(paper._id));
+      return {
+        ...paper,
+        moderation: m
+          ? { status: m.status, comments: m.comments || null, updatedAt: m.updatedAt ? new Date(m.updatedAt).toISOString() : null }
+          : null,
+      };
+    });
+
+    return { papers: withModeration, total, page: filters.page ?? 1, limit };
   }
 
   static async getPaper(id: string, schoolId: string, userId: string, userRole: string) {
