@@ -3,7 +3,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { config } from '../config/env.js';
 import { AppError } from '../common/errors.js';
 
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY || '';
+const ANTHROPIC_API_KEY = config.anthropic.apiKey;
 const ANTHROPIC_MODEL = config.anthropic.model;
 const MAX_CONCURRENT = 5;
 const TIMEOUT_MS = 180_000; // 3 minutes for content generation
