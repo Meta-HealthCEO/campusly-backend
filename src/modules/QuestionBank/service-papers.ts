@@ -281,6 +281,17 @@ export class PapersService {
     if (filters.search) {
       query.title = new RegExp(escapeRegex(filters.search), 'i');
     }
+    if (filters.moderation) {
+      // Moderation state lives on a separate collection (one row per
+      // reviewed paper) — narrow to matching paperIds before paginating so
+      // the count and page both reflect the filter, not the unfiltered set.
+      const matchingIds = await PaperModeration.find({
+        schoolId: soid,
+        status: filters.moderation,
+        isDeleted: false,
+      }).distinct('paperId');
+      query._id = { $in: matchingIds };
+    }
 
     const { skip, limit } = paginationHelper(filters.page, filters.limit);
 

@@ -191,6 +191,10 @@ export async function updatePaperQuestion(
       question,
       patch.marks !== undefined ? paper.totalMarks : undefined,
       'updatePaperQuestion',
+      // Only resync the memo's expectedAnswer when this edit actually
+      // touched modelAnswer — a marks/guideline-only edit must keep
+      // whatever answer the teacher has in the memo.
+      patch.modelAnswer !== undefined,
     );
   }
 

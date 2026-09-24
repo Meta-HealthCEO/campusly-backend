@@ -12,7 +12,6 @@ export { SubmissionService } from './services/submission.service.js';
  */
 export const LearningService = {
   // Quiz
-  createQuiz: QuizService.createQuiz,
   getQuiz: QuizService.getQuiz,
   listQuizzes: QuizService.listQuizzes,
   updateQuiz: QuizService.updateQuiz,
