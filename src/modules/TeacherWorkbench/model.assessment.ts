@@ -144,7 +144,11 @@ const markAllocationSchema = new Schema<IMarkAllocation>(
 const memoAnswerSchema = new Schema<IMemoAnswer>(
   {
     questionNumber: { type: String, required: true },
-    expectedAnswer: { type: String, required: true },
+    // Not required: Mongoose's String `required` validator rejects ''.
+    // A question without a model answer stores '' here (the UI shows a
+    // placeholder for it) rather than a placeholder string that would
+    // print as real content on the memo PDF.
+    expectedAnswer: { type: String, default: '' },
     markAllocation: { type: [markAllocationSchema], default: [] },
     commonMistakes: { type: [String], default: [] },
     acceptableAlternatives: { type: [String], default: [] },

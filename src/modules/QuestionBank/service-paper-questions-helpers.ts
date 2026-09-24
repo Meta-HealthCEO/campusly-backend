@@ -134,6 +134,13 @@ export function buildMemoAnswer(
  * arrayFiltered by questionNumber). Pass `totalMarks` when paper-level
  * marks shifted so the memo's `totalMarks` stays in sync. Mirror failures
  * are logged and swallowed — never crash the question mutation on memo skew.
+ *
+ * `syncAnswer` (default true) controls whether `expectedAnswer` is
+ * overwritten. A teacher may type a fuller answer directly into the memo
+ * (`PaperDetailMemoTab`) than what lives on the question's own
+ * `modelAnswer` field; a marks- or guideline-only question edit must not
+ * clobber that with `q.modelAnswer ?? ''`. Only pass `true` when the
+ * question's own answer actually changed (regeneration always does).
  */
 export async function mirrorAnswerToMemo(
   paperId: mongoose.Types.ObjectId,
@@ -142,14 +149,17 @@ export async function mirrorAnswerToMemo(
   q: Pick<IPaperQuestion, 'marks' | 'modelAnswer' | 'markingGuideline'>,
   totalMarks?: number,
   context: string = 'mirrorAnswerToMemo',
+  syncAnswer: boolean = true,
 ): Promise<void> {
   const qn = questionNumberFor(sectionIdx, position);
   const memoSet: Record<string, unknown> = {
-    [`sections.${sectionIdx}.answers.$[ans].expectedAnswer`]: q.modelAnswer ?? '',
     [`sections.${sectionIdx}.answers.$[ans].markAllocation`]: [
       { criterion: q.markingGuideline ?? 'Full marks', marks: q.marks },
     ],
   };
+  if (syncAnswer) {
+    memoSet[`sections.${sectionIdx}.answers.$[ans].expectedAnswer`] = q.modelAnswer ?? '';
+  }
   if (totalMarks !== undefined) memoSet.totalMarks = totalMarks;
   try {
     await PaperMemo.updateOne(

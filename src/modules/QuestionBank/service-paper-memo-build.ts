@@ -10,8 +10,6 @@ import { PaperMemo, type IMemoSection, type IPaperMemo } from '../TeacherWorkben
 import { NotFoundError } from '../../common/errors.js';
 import { assertCanEditPaper } from './service-papers-auth.js';
 
-const MISSING_ANSWER = 'Add the expected answer.';
-
 interface PaperSectionLike {
   title: string;
   order: number;
@@ -24,7 +22,9 @@ export function memoSectionsFromPaper(sections: readonly PaperSectionLike[]): IM
     sectionTitle: section.title,
     answers: section.questions.map((question) => ({
       questionNumber: `${section.order + 1}.${question.position + 1}`,
-      expectedAnswer: question.modelAnswer?.trim() || MISSING_ANSWER,
+      // Empty, not a placeholder string — an unanswered question must not
+      // print fake memo text on the PDF. The UI shows a placeholder instead.
+      expectedAnswer: question.modelAnswer?.trim() ?? '',
       markAllocation: [{ criterion: question.markingGuideline ?? 'Full marks', marks: question.marks }],
       commonMistakes: [],
       acceptableAlternatives: [],

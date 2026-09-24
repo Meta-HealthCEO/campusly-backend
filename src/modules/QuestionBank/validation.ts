@@ -199,6 +199,7 @@ export const paperQuerySchema = z.object({
   year: z.coerce.number().int().min(2000).max(2100).optional(),
   status: z.enum(['draft', 'finalised', 'archived']).optional(),
   paperType: paperTypeEnum.optional(),
+  moderation: z.enum(['pending', 'approved', 'changes_requested']).optional(),
   search: z.string().trim().max(100).optional(),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),

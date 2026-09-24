@@ -2,6 +2,8 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import mongoose from 'mongoose';
 import { buildPaperMemo, memoSectionsFromPaper } from '../service-paper-memo-build.js';
 import { AssessmentPaper } from '../model.js';
+import { PaperMemo } from '../../TeacherWorkbench/model.assessment.js';
+import { updatePaperQuestion } from '../service-paper-questions.js';
 
 const oid = () => new mongoose.Types.ObjectId();
 
@@ -28,7 +30,10 @@ describe('memoSectionsFromPaper', () => {
     expect(memo[0].sectionTitle).toBe('Section A');
     expect(memo[0].answers.map((a) => a.questionNumber)).toEqual(['1.1', '1.2']);
     expect(memo[0].answers[0]).toMatchObject({ expectedAnswer: 'The tortoise.', markAllocation: [{ criterion: 'Full marks', marks: 2 }] });
-    expect(memo[0].answers[1].expectedAnswer).toBe('Add the expected answer.');
+    // An unanswered question stores an empty answer, not a placeholder
+    // string — that string would otherwise print as real content on the
+    // memo PDF. The UI is responsible for showing a placeholder.
+    expect(memo[0].answers[1].expectedAnswer).toBe('');
   });
 });
 
@@ -63,5 +68,43 @@ describe('buildPaperMemo', () => {
   it("refuses someone else's paper", async () => {
     const f = await paper('draft');
     await expect(buildPaperMemo(f.paperId, f.schoolId, String(oid()), 'teacher')).rejects.toThrow(/own papers/);
+  });
+
+  it('keeps a memo answer the teacher typed by hand when a later edit only touches marks', async () => {
+    const f = await paper('draft');
+    const memo = await buildPaperMemo(f.paperId, f.schoolId, f.teacherId, 'teacher');
+    // The question that starts with no model answer — simulate the teacher
+    // typing a fuller answer straight into the memo tab (PaperDetailMemoTab),
+    // which never writes back to the question's own modelAnswer field.
+    await PaperMemo.updateOne(
+      { _id: memo._id },
+      { $set: { 'sections.0.answers.1.expectedAnswer': 'Because it kept a steady pace.' } },
+    );
+
+    // Edit the question itself, but only its marks — the frontend patch for
+    // this action does not include modelAnswer.
+    await updatePaperQuestion(f.paperId, f.schoolId, 0, 1, { marks: 4 }, f.teacherId, 'teacher');
+
+    const reloaded = await PaperMemo.findById(memo._id).lean();
+    expect(reloaded?.sections[0].answers[1].expectedAnswer).toBe('Because it kept a steady pace.');
+    expect(reloaded?.sections[0].answers[1].markAllocation[0].marks).toBe(4);
+  });
+
+  it('does resync the memo answer when the edit changes modelAnswer itself', async () => {
+    const f = await paper('draft');
+    const memo = await buildPaperMemo(f.paperId, f.schoolId, f.teacherId, 'teacher');
+    await PaperMemo.updateOne(
+      { _id: memo._id },
+      { $set: { 'sections.0.answers.1.expectedAnswer': 'Stale answer.' } },
+    );
+
+    await updatePaperQuestion(
+      f.paperId, f.schoolId, 0, 1,
+      { modelAnswer: 'Steady, unhurried effort.' },
+      f.teacherId, 'teacher',
+    );
+
+    const reloaded = await PaperMemo.findById(memo._id).lean();
+    expect(reloaded?.sections[0].answers[1].expectedAnswer).toBe('Steady, unhurried effort.');
   });
 });

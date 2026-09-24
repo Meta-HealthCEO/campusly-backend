@@ -59,4 +59,44 @@ describe('PapersService.listPapers', () => {
 
     expect(opened.moderation).toMatchObject({ status: 'changes_requested', comments: 'Add a memo for question 2.' });
   });
+
+  it('filters by moderation status server-side, with a total that matches the filtered set', async () => {
+    const schoolId = oid();
+    const teacherId = oid();
+    const make = (title: string) => AssessmentPaper.create({
+      schoolId, title, subjectId: oid(), gradeId: oid(), topicIds: [oid()], term: 3, year: 2026,
+      paperType: 'class_test', duration: 30, totalMarks: 10, createdBy: teacherId,
+    });
+    const [pendingA, pendingB, approved, none] = await Promise.all([
+      make('Pending A'), make('Pending B'), make('Approved'), make('None'),
+    ]);
+    await PaperModeration.create({ paperId: pendingA._id, schoolId, submittedBy: teacherId, submittedAt: new Date(), status: 'pending' });
+    await PaperModeration.create({ paperId: pendingB._id, schoolId, submittedBy: teacherId, submittedAt: new Date(), status: 'pending' });
+    await PaperModeration.create({ paperId: approved._id, schoolId, submittedBy: teacherId, submittedAt: new Date(), status: 'approved' });
+
+    const result = await PapersService.listPapers(
+      String(schoolId), String(teacherId), 'teacher', { page: 1, limit: 20, moderation: 'pending' },
+    );
+
+    expect(result.total).toBe(2);
+    expect(result.papers).toHaveLength(2);
+    expect(result.papers.map((p) => p.title).sort()).toEqual(['Pending A', 'Pending B']);
+    expect(String(none._id)).toBeTruthy();
+  });
+
+  it('returns nothing (not a crash) when no paper has the requested moderation status', async () => {
+    const schoolId = oid();
+    const teacherId = oid();
+    await AssessmentPaper.create({
+      schoolId, title: 'Untouched', subjectId: oid(), gradeId: oid(), topicIds: [oid()], term: 3, year: 2026,
+      paperType: 'class_test', duration: 30, totalMarks: 10, createdBy: teacherId,
+    });
+
+    const result = await PapersService.listPapers(
+      String(schoolId), String(teacherId), 'teacher', { page: 1, limit: 20, moderation: 'approved' },
+    );
+
+    expect(result.total).toBe(0);
+    expect(result.papers).toHaveLength(0);
+  });
 });
