@@ -418,3 +418,45 @@ describe('HomeworkService submission validation', () => {
     expect(submission.gradingStatus).toBe('graded');
   });
 });
+
+describe('what a submission keeps', () => {
+  it("stores the submission's type and every answer, so the learner and teacher can see them", async () => {
+    const schoolId = new mongoose.Types.ObjectId();
+    const gradeId = new mongoose.Types.ObjectId();
+    const classId = new mongoose.Types.ObjectId();
+    const subjectId = new mongoose.Types.ObjectId();
+    const question = await makeQuestion({ schoolId, subjectId, gradeId, marks: 2 });
+    const student = await makeStudent({ schoolId, classId, gradeId });
+    const homework = await makeExerciseHomework({ schoolId, teacherId: new mongoose.Types.ObjectId(), classId, subjectId, questionIds: [question._id] });
+
+    const submission = await HomeworkService.submitHomework(homework._id.toString(), student._id.toString(), schoolId.toString(),
+      { type: 'exercise', answers: [{ questionId: question._id.toString(), studentAnswer: 'true' }] });
+
+    const stored = await HomeworkSubmission.collection.findOne({ _id: submission._id });
+    expect(stored?.type).toBe('exercise');
+    expect(stored?.answers).toHaveLength(1);
+    expect(stored?.answers[0]).toMatchObject({ studentAnswer: 'true', awarded: 2 });
+  });
+
+  it("marks an old quiz homework's multiple-choice answers against the right option", async () => {
+    const schoolId = new mongoose.Types.ObjectId();
+    const gradeId = new mongoose.Types.ObjectId();
+    const classId = new mongoose.Types.ObjectId();
+    const subjectId = new mongoose.Types.ObjectId();
+    const teacherId = new mongoose.Types.ObjectId();
+    const student = await makeStudent({ schoolId, classId, gradeId });
+    const quiz = await Quiz.collection.insertOne({
+      schoolId, teacherId, subjectId, classId, title: 'Colours', type: 'mcq', totalPoints: 2, status: 'published', isDeleted: false,
+      questions: [{ questionText: 'What colour is the sky?', questionType: 'mcq', options: [{ text: 'Green', isCorrect: false }, { text: 'Blue', isCorrect: true }], correctAnswer: 'Blue', points: 2 }],
+    });
+    const hw = await Homework.collection.insertOne({
+      schoolId, teacherId, classId, subjectId, title: 'Colours quiz', type: 'quiz', quizId: quiz.insertedId, exerciseQuestionIds: [],
+      dueDate: new Date(Date.now() + 86_400_000), totalMarks: 2, status: 'assigned', attachments: [], latePolicy: 'block', gradebookAutoPublish: false, version: 1, isDeleted: false,
+    });
+
+    const submission = await HomeworkService.submitHomework(String(hw.insertedId), student._id.toString(), schoolId.toString(),
+      { type: 'quiz', answers: [{ questionIndex: 0, studentAnswer: 'Blue' }] });
+
+    expect(submission.mark).toBe(2);
+  });
+});

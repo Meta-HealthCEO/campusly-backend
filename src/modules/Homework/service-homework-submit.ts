@@ -89,7 +89,7 @@ export async function submitHomework(
   }
 
   let questions: IQuestion[] = [];
-  let quizQuestionsSnap: Array<{ questionText: string; correctAnswer: string; points: number; questionType: string }> = [];
+  let quizQuestionsSnap: Array<{ questionText: string; correctAnswer: string; points: number; questionType: string; options?: Array<{ text: string; isCorrect: boolean }> }> = [];
 
   if (payload.type === 'exercise') {
     const assignedIds = homework.exerciseQuestionIds.map((id) => id.toString());
@@ -166,7 +166,9 @@ export async function submitHomework(
       const studentAnswer = answerMap.get(questionIndex) ?? '';
       totalMaxMarks += qq.points;
       const base = { questionIndex, studentAnswer, questionSnapshot: qq.questionText, maxMarks: qq.points };
-      const fakeQ = { _id: new mongoose.Types.ObjectId(), type: qq.questionType, stem: qq.questionText, answer: qq.correctAnswer, markingRubric: '', marks: qq.points, options: [] } as unknown as IQuestion;
+      // The quiz's own options, so a multiple-choice answer can be marked against the right one.
+      const options = (qq.options ?? []).map((o, i) => ({ label: String.fromCharCode(65 + i), text: o.text, isCorrect: o.isCorrect }));
+      const fakeQ = { _id: new mongoose.Types.ObjectId(), type: qq.questionType, stem: qq.questionText, answer: qq.correctAnswer, markingRubric: '', marks: qq.points, options } as unknown as IQuestion;
       if (DETERMINISTIC_TYPES.has(qq.questionType as IQuestion['type'])) {
         const r = await gradeAnswer(fakeQ, studentAnswer);
         return { ...base, awarded: r.awarded, rationale: r.rationale, gradingMethod: r.gradingMethod };
@@ -210,7 +212,8 @@ export async function submitHomework(
       },
       $inc: { gradingGeneration: 1 },
     },
-    { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true },
+    // overwriteDiscriminatorKey: without it Mongoose drops `type`, and with it the variant's answers.
+    { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true, overwriteDiscriminatorKey: true },
   );
   if (!updated) throw new NotFoundError('Submission upsert failed');
 
