@@ -10,6 +10,7 @@ import { GeneratedPaper } from '../AITools/model.js';
 import { AuthService } from './service.js';
 import { SubscriptionService } from '../subscription/service.js';
 import { ConflictError, NotFoundError } from '../../common/errors.js';
+import { STANDALONE_DEFAULT_MODULES } from '../../common/moduleConfig.js';
 
 interface StandaloneSignupInput {
   firstName: string;
@@ -46,17 +47,7 @@ export class StandaloneService {
         country: data.country ?? 'South Africa',
       },
       contactInfo: { email: data.email.toLowerCase(), phone: '0000000000' },
-      modulesEnabled: [
-        'auth',
-        'academic',
-        'ai_tools',
-        'teacher_workbench',
-        'learning',
-        'homework',
-        'attendance',
-        'incident_wellbeing',
-        'communication',
-      ],
+      modulesEnabled: [...STANDALONE_DEFAULT_MODULES],
       settings: {
         academicYear: new Date().getFullYear(),
         terms: 4,

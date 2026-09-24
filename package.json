@@ -11,6 +11,7 @@
     "seed": "tsx src/scripts/seed.ts",
     "seed:teacher-demo": "tsx src/scripts/seed-teacher-demo.ts",
     "audit:paper-marks": "tsx src/scripts/audit-paper-marks.ts",
+    "migrate:courses-module": "tsx src/scripts/enable-courses-module.ts",
     "pdf:install-browser": "playwright install chromium",
     "test": "vitest run",
     "test:watch": "vitest"

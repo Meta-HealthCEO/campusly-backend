@@ -49,6 +49,21 @@ export const BOLT_ON_MODULES = [
 
 export const ALL_MODULES = [...CORE_MODULES, ...BOLT_ON_MODULES] as const;
 
+// Modules an independent teacher's own "school" starts with. Courses are core
+// for every teacher (programme decision, 2026-09-24).
+export const STANDALONE_DEFAULT_MODULES = [
+  'auth',
+  'academic',
+  'ai_tools',
+  'teacher_workbench',
+  'learning',
+  'homework',
+  'attendance',
+  'incident_wellbeing',
+  'communication',
+  'courses',
+] as const;
+
 export type CoreModule = (typeof CORE_MODULES)[number];
 export type BoltOnModule = (typeof BOLT_ON_MODULES)[number];
 export type ModuleName = (typeof ALL_MODULES)[number];

@@ -16,6 +16,7 @@ import { School, generateJoinCode } from '../School/model.js';
 import { Class } from '../Academic/model.js';
 import { Student } from '../Student/model.js';
 import { SubscriptionService } from '../subscription/service.js';
+import { STANDALONE_DEFAULT_MODULES } from '../../common/moduleConfig.js';
 
 export interface TokenPair {
   accessToken: string;
@@ -89,17 +90,7 @@ export class AuthService {
       type: 'combined',
       address: { street: 'TBD', city: 'TBD', province: 'TBD', postalCode: '0000', country: 'South Africa' },
       contactInfo: { email: data.email.toLowerCase(), phone: '0000000000' },
-      modulesEnabled: [
-        'auth',
-        'academic',
-        'ai_tools',
-        'teacher_workbench',
-        'learning',
-        'homework',
-        'attendance',
-        'incident_wellbeing',
-        'communication',
-      ],
+      modulesEnabled: [...STANDALONE_DEFAULT_MODULES],
       settings: { academicYear: new Date().getFullYear(), terms: 4, gradingSystem: 'percentage' },
       principal: `${data.firstName} ${data.lastName}`,
       joinCode: generateJoinCode(),

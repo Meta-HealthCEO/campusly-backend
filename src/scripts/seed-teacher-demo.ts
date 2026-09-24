@@ -26,6 +26,7 @@ import { TimetableConfig } from '../modules/TimetableBuilder/model.js';
 import { Department } from '../modules/Department/model.js';
 import { demoDates, demoPaperAssignment, demoPeriodConfig, planWeek, type PlannedSlot, type TeachingPair } from './teacher-demo/plan.js';
 import { PaperMarking } from '../modules/AITools/model-marking.js';
+import { seedCourseUnit } from './teacher-demo/seed-course-unit.js';
 import { CAPS_SUBJECT, DEMO_MODULES, DEMO_SUBJECTS, DEMO_WEIGHTINGS, HOMEWORK, LESSONS, PAPERS, THREADS } from './teacher-demo/content.js';
 
 const TEACHER_EMAIL = 'thandi.molefe@greenfieldprimary.co.za';
@@ -358,7 +359,15 @@ async function main(): Promise<void> {
     const scriptReady = await seedPaperMarking(ctx);
     await seedWeightings(ctx);
     const hodName = await seedDepartment(ctx);
-    logger.info(`Teacher demo ready for ${TEACHER_EMAIL}: ${ctx.week.length} timetable slots, ${lessons} lessons, ${submissions} submissions to mark, ${unread} unread messages, ${papers} papers${scriptReady ? ', 1 AI-marked script ready to issue' : ''}${hodName ? `, HOD ${hodName} (${HOD_EMAIL})` : ''}.`);
+    const homeroom = ctx.classes.get('Grade 1 - A');
+    const maths = ctx.subjects.get('Mathematics');
+    const unit = homeroom && maths
+      ? await seedCourseUnit({
+        schoolId: ctx.schoolId, teacherId: ctx.teacherId, classId: homeroom.id, gradeId: homeroom.gradeId,
+        subjectId: maths, topicIds: ctx.topics.get('Mathematics') ?? [],
+      })
+      : null;
+    logger.info(`Teacher demo ready for ${TEACHER_EMAIL}: ${ctx.week.length} timetable slots, ${lessons} lessons, ${submissions} submissions to mark, ${unread} unread messages, ${papers} papers${scriptReady ? ', 1 AI-marked script ready to issue' : ''}${hodName ? `, HOD ${hodName} (${HOD_EMAIL})` : ''}${unit ? `, released unit "${unit}"` : ''}.`);
   } finally {
     await mongoose.disconnect();
   }
