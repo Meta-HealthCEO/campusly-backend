@@ -178,4 +178,17 @@ describe('development sign-in when the gate is open', () => {
     expect(stored?.refreshTokens).toHaveLength(1);
     expect(stored?.lastLoginAt).toBeInstanceOf(Date);
   });
+
+  it('refuses a request made under another host name or from another site (DNS rebinding, CSRF)', async () => {
+    const rebound = await request(app).get('/api/auth/dev-sign-in/accounts').set('Host', 'attacker.example:4500');
+    const crossSite = await request(app).post('/api/auth/dev-sign-in')
+      .set('Origin', 'https://attacker.example').send({ userId: String(ids.own) });
+    const form = await request(app).post('/api/auth/dev-sign-in')
+      .type('form').send(`userId=${String(ids.own)}`);
+    expect(rebound.status).toBe(403);
+    expect(crossSite.status).toBe(403);
+    expect(form.status).toBe(403);
+    expect(form.body.data).toBeUndefined();
+  });
 });
+

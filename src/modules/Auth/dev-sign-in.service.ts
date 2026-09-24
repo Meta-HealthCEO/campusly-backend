@@ -4,6 +4,7 @@
 // qualify, so a production account copied into a local database cannot be
 // opened by id.
 import mongoose from 'mongoose';
+import { logger } from '../../common/logger.js';
 import { ForbiddenError, NotFoundError } from '../../common/errors.js';
 import { DEV_SIGN_IN_ROLE_EMAILS, devSignInEmails, isDevSignInEnabled } from '../../config/dev-sign-in.js';
 import { User, type IUser } from './model.js';
@@ -112,6 +113,7 @@ async function findOfferedRows(): Promise<AccountRow[]> {
 }
 
 async function listAccounts(): Promise<DevSignInAccount[]> {
+  if (!isDevSignInEnabled()) throw new NotFoundError('Route not found');
   const own = new Set(devSignInEmails());
   const rows = await findOfferedRows();
   return Promise.all(rows.map(async (row) => ({
@@ -142,6 +144,8 @@ async function signIn(userId: string): Promise<{ user: IUser; tokens: TokenPair 
     { _id: user._id },
     { $set: { lastLoginAt: user.lastLoginAt }, $push: { refreshTokens: tokens.refreshToken } },
   );
+  // Every password-free sign-in leaves a trace in the log.
+  logger.warn({ userId: String(user._id), email: user.email, role: user.role }, '[dev-sign-in] signed in without a password');
   return { user, tokens };
 }
 
