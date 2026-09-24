@@ -11,6 +11,7 @@ import {
 } from '../Academic/service-gradebook-publish.js';
 import { Student } from '../Student/model.js';
 import { NotificationService } from '../Notification/service.js';
+import { Notification } from '../Notification/model.js';
 
 export async function listMarkings(
   schoolId: string,
@@ -189,11 +190,18 @@ export async function issueMarking(
     comment: comment ?? `AI-marked paper for ${marking.studentName}`,
   });
 
-  const wasIssuedBefore = marking.issuedToStudent === true;
+  // Claim the first issue atomically, so two issues at once (a double tap,
+  // "issue all" beside a single issue) tell the learner only once.
+  const issuedAt = new Date();
+  const claim = await PaperMarking.updateOne(
+    { _id: marking._id, issuedToStudent: { $ne: true } },
+    { $set: { issuedToStudent: true, issuedAt } },
+  );
+  const isFirstIssue = claim.modifiedCount === 1;
   marking.status = 'published';
   marking.issuedToStudent = true;
   marking.issuedBy = new mongoose.Types.ObjectId(teacherUserId);
-  if (!wasIssuedBefore) marking.issuedAt = new Date();
+  if (isFirstIssue) marking.issuedAt = issuedAt;
   if (mark?._id) marking.gradebookEntryId = mark._id as mongoose.Types.ObjectId;
   await marking.save();
 
@@ -208,7 +216,7 @@ export async function issueMarking(
     { $set: { status: 'published' } },
   );
 
-  if (!wasIssuedBefore) {
+  if (isFirstIssue) {
     // Fire-and-forget notification dispatch — failure should not roll back the
     // gradebook publish. The student can still see the marking via their tests
     // page; the notification is a nice-to-have nudge.
@@ -240,12 +248,26 @@ async function dispatchIssueNotification(
     .select('title')
     .lean();
   const title = paper?.title ?? marking.studentName;
+  // Once per learner per result: a result taken back and issued again (the
+  // demo reseed does this) doesn't send the same notice twice.
+  const alreadyTold = await Notification.exists({
+    recipientId: student.userId,
+    schoolId: marking.schoolId,
+    'data.entityType': 'marking_result_issued',
+    'data.entityId': String(marking._id),
+    isDeleted: false,
+  });
+  if (alreadyTold) return;
   await NotificationService.create({
     recipientId: String(student.userId),
     schoolId: String(marking.schoolId),
     type: 'in_app',
     title: `${title} result available`,
     message: 'Your marked paper is ready to review.',
-    data: { url: `/student/tests/${String(marking.paperId)}`, entityType: 'marking_result_issued' },
+    data: {
+      url: `/student/tests/${String(marking.paperId)}`,
+      entityType: 'marking_result_issued',
+      entityId: String(marking._id),
+    },
   });
 }
