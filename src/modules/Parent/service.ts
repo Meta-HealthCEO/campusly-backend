@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import { Parent, IParent } from './model.js';
 import { Student } from '../Student/model.js';
+import { Class, Grade } from '../Academic/model.js';
 import { NotFoundError } from '../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../common/constants.js';
 
@@ -16,6 +17,20 @@ function resolveObjectId(value: unknown): string | null {
     return String((value as { _id: unknown })._id);
   }
   return value ? String(value) : null;
+}
+
+type ChildRow = { _id: unknown; classId?: unknown; gradeId?: unknown } & Record<string, unknown>;
+
+/** Adds className and gradeName to each child (ids stay as they are, for callers that use them). */
+async function withClassAndGradeNames(children: ChildRow[], schoolId: string): Promise<ChildRow[]> {
+  const ids = (key: 'classId' | 'gradeId') => children.map((c) => String(c[key] ?? '')).filter((v) => mongoose.Types.ObjectId.isValid(v)).map((v) => new mongoose.Types.ObjectId(v));
+  const [classes, grades] = await Promise.all([
+    Class.find({ _id: { $in: ids('classId') }, schoolId, isDeleted: false }).select('name').lean(),
+    Grade.find({ _id: { $in: ids('gradeId') }, schoolId, isDeleted: false }).select('name').lean(),
+  ]);
+  const className = new Map(classes.map((c) => [String(c._id), c.name]));
+  const gradeName = new Map(grades.map((g) => [String(g._id), g.name]));
+  return children.map((c) => ({ ...c, className: className.get(String(c.classId)) ?? '', gradeName: gradeName.get(String(c.gradeId)) ?? '' }));
 }
 
 export class ParentService {
@@ -175,7 +190,8 @@ export class ParentService {
       .populate('userId', 'firstName lastName email phone')
       .lean();
     const extra = guardianOf.filter((s) => !listed.has(String(s._id)));
-    return { ...parent, childrenIds: [...parent.childrenIds, ...extra] } as unknown as IParent;
+    const children = [...(parent.childrenIds as unknown as ChildRow[]), ...(extra as unknown as ChildRow[])];
+    return { ...parent, childrenIds: await withClassAndGradeNames(children, String(parent.schoolId)) } as unknown as IParent;
   }
 
   static async getById(id: string, schoolId: string): Promise<IParent> {

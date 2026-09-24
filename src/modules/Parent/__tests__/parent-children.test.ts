@@ -29,4 +29,14 @@ describe("a parent's own record (GET /parents/me)", () => {
     const me = await ParentService.getByUserId(String(f.pUser));
     expect((me.childrenIds as unknown[]).length).toBe(1);
   });
+
+  it("names each child's class (and grade, when it has one) without changing the ids", async () => {
+    const f = await classSchool();
+    const me = await ParentService.getByUserId(String(f.pUser));
+    const child = (me.childrenIds as unknown as Array<{ classId: unknown; className?: string; gradeName?: string }>)[0];
+    expect(child.className).toBe('1A');
+    expect(typeof child.gradeName).toBe('string');
+    expect(String(child.classId)).toBe(String(f.classA));
+  });
 });
+
