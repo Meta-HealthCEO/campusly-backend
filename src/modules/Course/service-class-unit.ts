@@ -15,7 +15,7 @@ import { CurriculumNode } from '../CurriculumStructure/model.js';
 import { ContentResource } from '../ContentLibrary/model.js';
 import { Question } from '../QuestionBank/model.js';
 import { Student } from '../Student/model.js';
-import { resetItemForRetry } from './service-course-generation.js';
+import { isRetryable, resetItemForRetry } from './service-course-generation.js';
 import { AIService } from '../../services/ai.service.js';
 import { checkUsageLimit } from '../../middleware/usageLimits.js';
 import { assertCourseGenerationAccess } from '../subscription/entitlements.js';
@@ -164,7 +164,8 @@ export class ClassUnitService {
     if (course.outlineStatus === 'approved') {
       throw new BadRequestError('This outline is approved. Its items are being written.');
     }
-    await assertCourseGenerationAccess(schoolId, isStandaloneTeacher);
+    // A redraft doesn't spend another free unit: this one is already counted.
+    if (!course.aiGenerated) await assertCourseGenerationAccess(schoolId, isStandaloneTeacher);
     const limit = await checkUsageLimit(schoolId, 'maxAiGenerationsPerDay');
     if (!limit.allowed) {
       throw new BadRequestError(`Daily AI generation limit reached (${limit.current}/${limit.limit}). Try again tomorrow.`);
@@ -213,11 +214,11 @@ export class ClassUnitService {
     const course = await unitOrThrow(courseId, schoolId);
     assertCanEditCourse(course, actor);
     const items = await CourseLesson.find({ courseId: course._id, schoolId: course.schoolId, isDeleted: false, itemKind: { $ne: null } })
-      .select('_id genStatus genError').lean();
+      .select('_id genStatus genError updatedAt').lean();
     return {
       outlineStatus: course.outlineStatus,
       generation: course.generation,
-      items: items.map((i) => ({ id: String(i._id), genStatus: i.genStatus, genError: i.genError })),
+      items: items.map((i) => ({ id: String(i._id), genStatus: i.genStatus, genError: i.genError, updatedAt: i.updatedAt })),
     };
   }
 
@@ -228,7 +229,7 @@ export class ClassUnitService {
     if (!mongoose.Types.ObjectId.isValid(lessonId)) throw new NotFoundError('Item not found');
     const item = await CourseLesson.findOne({ _id: oid(lessonId), courseId: course._id, schoolId: course.schoolId, isDeleted: false }).lean();
     if (!item) throw new NotFoundError('Item not found');
-    if (item.genStatus !== 'failed') throw new BadRequestError("Only an item that couldn't be written can be tried again");
+    if (!isRetryable(item)) throw new BadRequestError("Only an item that couldn't be written can be tried again");
     await resetItemForRetry(courseId, schoolId, lessonId);
     await enqueueCourseGeneration({ courseId, schoolId, lessonId });
   }
@@ -301,7 +302,7 @@ export class ClassUnitService {
 
     const results = [];
     for (const klass of classes) {
-      const enrolled = await CourseService.assignCourseToClass(courseId, schoolId, actor, { classId: String(klass._id) });
+      const enrolled = await CourseService.assignCourseToClass(courseId, schoolId, actor, { classId: String(klass._id) }, { fromRelease: true });
       results.push({ classId: String(klass._id), name: klass.name, newEnrolments: enrolled.newEnrolments });
     }
     return { classes: results };

@@ -8,6 +8,7 @@ import { GenerationService } from '../../ContentLibrary/service-generation.js';
 import { resetItemForRetry, runCourseGeneration } from '../service-course-generation.js';
 import { Course, CourseLesson, CourseModule } from '../model.js';
 import { Grade } from '../../Academic/model.js';
+import { Question } from '../../QuestionBank/model.js';
 
 const oid = () => new mongoose.Types.ObjectId();
 
@@ -24,7 +25,15 @@ afterAll(async () => {
 beforeEach(() => {
   vi.restoreAllMocks();
   vi.mocked(generateAIQuestions).mockReset();
-  vi.mocked(generateAIQuestions).mockImplementation(async () => [oid(), oid(), oid(), oid()]);
+  // Real multiple-choice questions: quick checks are only kept when every question is answerable.
+  vi.mocked(generateAIQuestions).mockImplementation(async (input) => {
+    const docs = [1, 2, 3, 4].map((n) => ({
+      _id: oid(), schoolId: new mongoose.Types.ObjectId(input.schoolId), type: 'mcq', stem: `Q${n}`, isDeleted: false,
+      options: [{ label: 'A', text: 'right', isCorrect: true }, { label: 'B', text: 'wrong', isCorrect: false }],
+    }));
+    await Question.collection.insertMany(docs);
+    return docs.map((d) => d._id);
+  });
 });
 
 /** An approved unit: 2 modules, 5 items waiting to be written. */
@@ -66,7 +75,7 @@ describe('runCourseGeneration', () => {
     expect(items.filter((i) => i.itemKind !== 'quick_check').every((i) => i.contentResourceId)).toBe(true);
     expect(items.filter((i) => i.itemKind === 'quick_check').every((i) => i.quizQuestionIds.length === 4)).toBe(true);
     expect(content).toHaveBeenCalledTimes(3);
-    expect(content.mock.calls[0][3]).toEqual({ skipUsageLimit: true });
+    expect(content.mock.calls[0][3]).toEqual({ skipUsageLimit: true, tags: ['class_unit'] });
     expect(content.mock.calls.map((c) => c[2].type).sort()).toEqual(['study_notes', 'study_notes', 'worked_example']);
     expect(vi.mocked(generateAIQuestions).mock.calls[0][0]).toMatchObject({ count: 4, questionTypes: ['mcq'] });
   });

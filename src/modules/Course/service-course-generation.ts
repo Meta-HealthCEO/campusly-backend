@@ -11,10 +11,37 @@ import { Course, CourseLesson, CourseModule, type ICourse, type ICourseLesson, t
 import { Grade } from '../Academic/model.js';
 import { GenerationService } from '../ContentLibrary/service-generation.js';
 import { generateAIQuestions } from '../QuestionBank/service-questions-generation.js';
+import { Question } from '../QuestionBank/model.js';
 import { logger } from '../../common/logger.js';
 
 const CONCURRENCY = 3;
 const QUICK_CHECK_QUESTIONS = 4;
+/** An item "writing" for longer than this was left behind by a restart: it can be picked up again. */
+export const STALE_WRITING_MS = 10 * 60 * 1000;
+/** Library resources written for units: kept out of the school's daily AI count (the unit was counted once). */
+export const UNIT_RESOURCE_TAG = 'class_unit';
+
+const staleCutoff = () => new Date(Date.now() - STALE_WRITING_MS);
+/** Items a run may take: waiting ones, and ones a restart left half-written. */
+const claimable = () => ({ $or: [{ genStatus: 'pending' }, { genStatus: 'generating', updatedAt: { $lt: staleCutoff() } }] });
+
+/** Whether the teacher can try an item again: it failed, or a restart left it half-written. */
+export function isRetryable(item: { genStatus?: string | null; updatedAt?: Date }): boolean {
+  if (item.genStatus === 'failed') return true;
+  return item.genStatus === 'generating' && !!item.updatedAt && item.updatedAt.getTime() < Date.now() - STALE_WRITING_MS;
+}
+
+/** Quick checks are marked by the chosen option, so every question needs choices and one right answer. */
+async function assertAnswerable(ids: mongoose.Types.ObjectId[], schoolId: mongoose.Types.ObjectId): Promise<void> {
+  if (ids.length === 0) throw new Error('The quick check came back empty. Try again.');
+  const questions = await Question.find({ _id: { $in: ids }, schoolId, isDeleted: false }).select('type options').lean();
+  const answerable = questions.length === ids.length && questions.every((q) =>
+    q.type === 'mcq' && q.options.length >= 2 && q.options.filter((o) => o.isCorrect).length === 1);
+  if (!answerable) {
+    await Question.updateMany({ _id: { $in: ids }, schoolId }, { $set: { isDeleted: true } });
+    throw new Error('The quick check came back without answer choices. Try again.');
+  }
+}
 
 type Unit = Pick<ICourse, '_id' | 'schoolId' | 'createdBy' | 'scope'>;
 type Item = Pick<ICourseLesson, '_id' | 'title' | 'brief' | 'minutes' | 'objectives' | 'itemKind'>;
@@ -57,6 +84,7 @@ async function writeItem(unit: Unit, module: Module, item: Item, gradeName: stri
       curriculumNodeId,
       topicHint: `${item.title}. ${item.brief}`.trim(),
     });
+    await assertAnswerable(ids, unit.schoolId);
     return { quizQuestionIds: ids };
   }
   const resource = await GenerationService.generateContent(
@@ -65,14 +93,14 @@ async function writeItem(unit: Unit, module: Module, item: Item, gradeName: stri
     item.itemKind === 'worked_example'
       ? { ...base, type: 'worked_example', blockTypes: ['text', 'step_reveal'] }
       : { ...base, type: 'study_notes', blockTypes: ['text'] },
-    { skipUsageLimit: true },
+    { skipUsageLimit: true, tags: [UNIT_RESOURCE_TAG] },
   );
   return { contentResourceId: resource._id as mongoose.Types.ObjectId };
 }
 
 async function runOne(unit: Unit, lessonId: mongoose.Types.ObjectId, gradeName: string): Promise<void> {
   const item = await CourseLesson.findOneAndUpdate(
-    { _id: lessonId, schoolId: unit.schoolId, isDeleted: false, genStatus: 'pending' },
+    { _id: lessonId, schoolId: unit.schoolId, isDeleted: false, ...claimable() },
     { $set: { genStatus: 'generating', genError: '' } },
     { returnDocument: 'after' },
   ).lean();
@@ -144,14 +172,18 @@ export async function runCourseGeneration(courseId: string, schoolId: string, le
     courseId: unit._id,
     schoolId: soid,
     isDeleted: false,
-    genStatus: 'pending',
+    ...claimable(),
     ...(lessonId ? { _id: new mongoose.Types.ObjectId(lessonId) } : {}),
   }).sort({ orderIndex: 1 }).select('_id').lean();
   const grade = await Grade.findById(unit.scope.gradeId).select('name').lean();
   const gradeName = grade?.name ?? 'these';
 
-  await inPool(pending.map((p) => p._id as mongoose.Types.ObjectId), CONCURRENCY, (id) => runOne(unit, id, gradeName));
-  await settle(unit._id as mongoose.Types.ObjectId, soid);
+  try {
+    await inPool(pending.map((p) => p._id as mongoose.Types.ObjectId), CONCURRENCY, (id) => runOne(unit, id, gradeName));
+  } finally {
+    // Always recount, so an unexpected error can't leave the unit "running".
+    await settle(unit._id as mongoose.Types.ObjectId, soid);
+  }
 }
 
 /** Puts one item back in the queue: used by "Try again" on a failed item. */
@@ -159,7 +191,8 @@ export async function resetItemForRetry(courseId: string, schoolId: string, less
   const soid = new mongoose.Types.ObjectId(schoolId);
   const coid = new mongoose.Types.ObjectId(courseId);
   const res = await CourseLesson.updateOne(
-    { _id: new mongoose.Types.ObjectId(lessonId), courseId: coid, schoolId: soid, isDeleted: false, genStatus: 'failed' },
+    { _id: new mongoose.Types.ObjectId(lessonId), courseId: coid, schoolId: soid, isDeleted: false,
+      $or: [{ genStatus: 'failed' }, { genStatus: 'generating', updatedAt: { $lt: staleCutoff() } }] },
     { $set: { genStatus: 'pending', genError: '' } },
   );
   if (res.matchedCount === 0) return;

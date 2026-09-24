@@ -84,6 +84,8 @@ async function countAiGenerationsToday(schoolId: string): Promise<number> {
   return ContentResource.countDocuments({
     schoolId: new mongoose.Types.ObjectId(schoolId),
     source: 'ai_generated',
+    // A class unit's items are counted once, when its outline is drafted.
+    tags: { $ne: 'class_unit' },
     createdAt: { $gte: startOfDay },
     isDeleted: false,
   });

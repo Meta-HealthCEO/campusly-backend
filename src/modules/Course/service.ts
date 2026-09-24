@@ -147,6 +147,22 @@ async function getLessonOrThrow(
   return lesson;
 }
 
+/**
+ * Class units are released from their unit page, which checks that every
+ * item is written and that the teacher teaches each class. The catalogue
+ * review, publish and assign routes would skip those checks.
+ */
+async function refuseClassUnit(courseId: string, schoolId: string): Promise<void> {
+  if (!mongoose.Types.ObjectId.isValid(courseId)) return;
+  const unit = await Course.exists({
+    _id: new mongoose.Types.ObjectId(courseId),
+    schoolId: new mongoose.Types.ObjectId(schoolId),
+    isDeleted: false,
+    kind: 'class_unit',
+  });
+  if (unit) throw new BadRequestError('Release this unit from its unit page');
+}
+
 // ─── Service ───────────────────────────────────────────────────────────────
 
 export class CourseService {
@@ -306,6 +322,7 @@ export class CourseService {
   // ─── Review workflow ─────────────────────────────────────────────────────
 
   static async submitForReview(id: string, schoolId: string, actor: CourseActor) {
+    await refuseClassUnit(id, schoolId);
     const course = await getCourseOrThrow(id, schoolId);
     assertCanEditCourse(course, actor);
 
@@ -329,6 +346,7 @@ export class CourseService {
   }
 
   static async publishCourse(id: string, schoolId: string, actor: CourseActor) {
+    await refuseClassUnit(id, schoolId);
     if (!canPublish(actor)) {
       throw new ForbiddenError('Only school admins, HODs, or principals can publish courses');
     }
@@ -689,7 +707,9 @@ export class CourseService {
     schoolId: string,
     actor: CourseActor,
     data: AssignCourseInput,
+    opts: { fromRelease?: boolean } = {},
   ) {
+    if (!opts.fromRelease) await refuseClassUnit(courseId, schoolId);
     if (!canAuthor(actor)) {
       throw new ForbiddenError('Not allowed to assign courses');
     }

@@ -26,7 +26,7 @@ export class GenerationService {
     userId: string,
     data: GenerateContentInput,
     // A class unit is checked once when its outline is drafted, not per item.
-    opts: { skipUsageLimit?: boolean } = {},
+    opts: { skipUsageLimit?: boolean; tags?: string[] } = {},
   ) {
     const limitCheck = opts.skipUsageLimit
       ? { allowed: true, current: 0, limit: -1, plan: 'paid' as const }
@@ -81,7 +81,7 @@ export class GenerationService {
       gradeId: new mongoose.Types.ObjectId(data.gradeId),
       subjectId: new mongoose.Types.ObjectId(data.subjectId),
       term: data.term,
-      tags: [],
+      tags: opts.tags ?? [],
       status: 'draft',
       createdBy: new mongoose.Types.ObjectId(userId),
       aiModel: config.anthropic.model,

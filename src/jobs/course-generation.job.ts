@@ -12,6 +12,10 @@ export interface CourseGenerationJobData {
 /** How long to wait for Redis before writing the unit in this process instead. */
 const QUEUE_TIMEOUT_MS = 3000;
 
+// Workers only start when Redis answers at boot. Without one, a queued job
+// would never be read, so units are written in this process instead.
+let workerRunning = false;
+
 async function run(data: CourseGenerationJobData): Promise<void> {
   const { runCourseGeneration } = await import('../modules/Course/service-course-generation.js');
   await runCourseGeneration(data.courseId, data.schoolId, data.lessonId);
@@ -31,6 +35,7 @@ export function createCourseGenerationWorker(): Worker {
   worker.on('failed', (job, err) => {
     logger.error(`[CourseGeneration] job ${job?.id} failed: ${err.message}`);
   });
+  workerRunning = true;
   return worker;
 }
 
@@ -41,6 +46,10 @@ export function createCourseGenerationWorker(): Worker {
  * late queue add after the fallback can't write an item twice.
  */
 export async function enqueueCourseGeneration(data: CourseGenerationJobData): Promise<void> {
+  if (!workerRunning) {
+    runInProcess(data);
+    return;
+  }
   try {
     await Promise.race([
       courseGenerationQueue.add('write-items', data, { attempts: 1, removeOnComplete: { age: 86400 }, removeOnFail: { age: 86400 } }),
@@ -48,8 +57,12 @@ export async function enqueueCourseGeneration(data: CourseGenerationJobData): Pr
     ]);
   } catch (err: unknown) {
     logger.warn({ err }, '[CourseGeneration] queue unavailable; writing the unit in-process');
-    void run(data).catch((runErr: unknown) => {
-      logger.error({ err: runErr }, '[CourseGeneration] in-process run failed');
-    });
+    runInProcess(data);
   }
+}
+
+function runInProcess(data: CourseGenerationJobData): void {
+  void run(data).catch((err: unknown) => {
+    logger.error({ err }, '[CourseGeneration] in-process run failed');
+  });
 }
