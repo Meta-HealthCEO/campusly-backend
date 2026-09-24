@@ -203,6 +203,17 @@ export const rewriteItemSchema = z.object({
 
 export const unitSettingsSchema = z.object({ sequential: z.boolean() }).strict();
 
+export const copyUnitSchema = z.object({
+  classId: objectIdSchema,
+  termNumber: z.number().int().min(1).max(4),
+  title: z.string().trim().max(200).optional(),
+}).strict();
+
+export const libraryQuerySchema = z.object({
+  gradeId: objectIdSchema.optional(),
+  subjectId: objectIdSchema.optional(),
+});
+
 export const revisionItemSchema = z.object({
   afterLessonId: objectIdSchema,
   questionIds: z.array(objectIdSchema).min(1, 'Pick the questions to revise').max(5),

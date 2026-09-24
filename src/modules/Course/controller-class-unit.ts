@@ -4,6 +4,7 @@ import { apiResponse } from '../../common/utils.js';
 import { ClassUnitService } from './service-class-unit.js';
 import { UnitInsightService } from './service-insight.js';
 import { UnitItemsService } from './service-unit-items.js';
+import { UnitCopyService } from './service-unit-copy.js';
 import type { CourseActor } from './service.js';
 
 function context(req: Request) {
@@ -18,6 +19,21 @@ function context(req: Request) {
 }
 
 export class ClassUnitController {
+  static async copy(req: Request, res: Response): Promise<void> {
+    const { schoolId, actor } = context(req);
+    const unit = await UnitCopyService.copy(req.params.id as string, schoolId, actor, req.body);
+    res.status(201).json(apiResponse(true, unit, 'Unit copied'));
+  }
+
+  static async library(req: Request, res: Response): Promise<void> {
+    const { schoolId, actor } = context(req);
+    const entries = await UnitCopyService.library(schoolId, actor, {
+      gradeId: req.query.gradeId as string | undefined,
+      subjectId: req.query.subjectId as string | undefined,
+    });
+    res.json(apiResponse(true, entries, 'School library'));
+  }
+
   static async create(req: Request, res: Response): Promise<void> {
     const { schoolId, actor } = context(req);
     const unit = await ClassUnitService.create(schoolId, actor, req.body);

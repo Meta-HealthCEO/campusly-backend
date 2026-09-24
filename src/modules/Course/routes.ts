@@ -24,6 +24,8 @@ import {
   rewriteItemSchema,
   unitSettingsSchema,
   revisionItemSchema,
+  copyUnitSchema,
+  libraryQuerySchema,
 } from './validation.js';
 
 const router = Router();
@@ -53,6 +55,15 @@ router.post(
   authorize(...COURSE_ROLES),
   validate(createCourseSchema),
   CourseController.createCourse,
+);
+
+// ─── School library of released units (before /:id) ─────────────────────
+
+router.get(
+  '/library',
+  authorize(...COURSE_ROLES),
+  validate({ query: libraryQuerySchema }),
+  ClassUnitController.library,
 );
 
 // ─── Catalog (any authenticated role with course module access) ──────────
@@ -206,6 +217,7 @@ router.put('/:id/lessons/:lessonId/questions', authorize(...COURSE_ROLES), valid
 router.post('/:id/lessons/:lessonId/rewrite', authorize(...COURSE_ROLES), validate(rewriteItemSchema), ClassUnitController.rewrite);
 router.patch('/:id/settings', authorize(...COURSE_ROLES), validate(unitSettingsSchema), ClassUnitController.updateSettings);
 router.post('/:id/revision', authorize(...COURSE_ROLES), validate(revisionItemSchema), ClassUnitController.addRevision);
+router.post('/:id/copy', authorize(...COURSE_ROLES), validate(copyUnitSchema), ClassUnitController.copy);
 
 // ─── Analytics ─────────────────────────────────────────────────────────────
 

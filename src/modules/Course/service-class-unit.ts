@@ -57,7 +57,7 @@ export async function assertTeachesClasses(schoolId: string, actor: CourseActor,
   }
 }
 
-function slugFor(title: string): string {
+export function slugFor(title: string): string {
   const base = title.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60);
   return `${base || 'unit'}-${crypto.randomBytes(3).toString('hex')}`;
 }

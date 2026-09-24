@@ -87,6 +87,8 @@ export interface ICourse extends Document {
   aiGenerated: boolean;
   /** Learners must finish each item before the next opens (the teacher can turn this off). */
   sequential: boolean;
+  /** The unit this one was copied from, if any. */
+  copiedFrom: Types.ObjectId | null;
 
   createdAt: Date;
   updatedAt: Date;
@@ -146,6 +148,7 @@ const courseSchema = new Schema<ICourse>(
     generation: { type: generationSchema, default: () => ({}) },
     aiGenerated: { type: Boolean, default: false },
     sequential: { type: Boolean, default: true },
+    copiedFrom: { type: Schema.Types.ObjectId, ref: 'Course', default: null },
   },
   { timestamps: true },
 );
