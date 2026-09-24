@@ -14,7 +14,7 @@ import { User } from '../modules/Auth/model.js';
 import { School } from '../modules/School/model.js';
 import { Student } from '../modules/Student/model.js';
 import { Parent } from '../modules/Parent/model.js';
-import { Class, Subject, Timetable } from '../modules/Academic/model.js';
+import { Class, Mark, Subject, Timetable } from '../modules/Academic/model.js';
 import { Attendance } from '../modules/Attendance/model.js';
 import { Lesson } from '../modules/Lesson/model.js';
 import { ContentResource } from '../modules/ContentLibrary/model.js';
@@ -281,20 +281,22 @@ async function seedPaperMarking(ctx: Ctx): Promise<boolean> {
   const total = questions.reduce((sum, q) => sum + q.marksAwarded, 0);
   const max = questions.reduce((sum, q) => sum + q.maxMarks, 0);
   const studentName = `${learner.userId?.firstName ?? ''} ${learner.userId?.lastName ?? ''}`.trim() || learner.admissionNumber;
+  // Reseeding resets the walkthrough: an issued demo marking goes back to
+  // ready-to-issue and the gradebook mark it created is removed.
   const existing = await PaperMarking.findOne({ paperId: paper._id, studentId: learner._id, schoolId: ctx.schoolId });
-  // Leave a marking the teacher has already issued alone; otherwise (re)set it ready to issue.
-  if (existing?.status === 'published') return true;
+  if (existing?.gradebookEntryId) await Mark.deleteOne({ _id: existing.gradebookEntryId, schoolId: ctx.schoolId });
   await PaperMarking.updateOne(
     { paperId: paper._id, studentId: learner._id, schoolId: ctx.schoolId },
     {
       $set: {
         teacherId: ctx.teacherId, paperType: 'assessment', classId: cls.id, studentName, imageCount: 0,
         totalMarks: total, maxMarks: max, percentage: Math.round((total / max) * 1000) / 10,
-        questions, status: 'completed', isDeleted: false,
+        questions, status: 'completed', isDeleted: false, issuedToStudent: false,
       },
     },
     { upsert: true },
   );
+  await PaperMarking.updateOne({ paperId: paper._id, studentId: learner._id, schoolId: ctx.schoolId }, { $unset: { gradebookEntryId: '', issuedAt: '', issuedBy: '' } });
   return true;
 }
 
