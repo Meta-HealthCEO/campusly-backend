@@ -23,6 +23,8 @@ import { BadRequestError, ForbiddenError, NotFoundError } from '../../common/err
 type Id = mongoose.Types.ObjectId;
 const oid = (id: string | Id) => new mongoose.Types.ObjectId(String(id));
 const LIBRARY_LIMIT = 100;
+/** A copied unit's questions: the copier's own, but kept out of the school's shared bank (the original is already there). */
+export const UNIT_COPY_TAG = 'unit_copy';
 
 export interface CopyUnitInput {
   classId: string;
@@ -113,7 +115,7 @@ export class UnitCopyService {
       made.resources = [...resources.values()];
       const questions = await cloneDocs(
         Question.collection, own.filter((l) => l.itemKind === 'quick_check').flatMap((l) => l.quizQuestionIds ?? []), soid,
-        (doc) => ({ ...doc, createdBy, usageCount: 0 }),
+        (doc) => ({ ...doc, createdBy, usageCount: 0, tags: [...new Set([...((doc.tags as string[]) ?? []), UNIT_COPY_TAG])] }),
       );
       made.questions = [...questions.values()];
 

@@ -53,6 +53,8 @@ export class QuestionsService {
       }
 
       query.$or = orConditions;
+      // A copied class unit's questions duplicate the original's: only the copier sees them (under "mine").
+      query.tags = { $ne: 'unit_copy' };
     }
 
     // ── Filters ──

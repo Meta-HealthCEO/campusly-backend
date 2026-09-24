@@ -7,6 +7,7 @@ import { Class, Grade, Subject } from '../../Academic/model.js';
 import { ContentResource } from '../../ContentLibrary/model.js';
 import { Question } from '../../QuestionBank/model.js';
 import { User } from '../../Auth/model.js';
+import { QuestionsService } from '../../QuestionBank/service-questions.js';
 import type { CourseActor } from '../service.js';
 
 const oid = () => new mongoose.Types.ObjectId();
@@ -57,7 +58,7 @@ async function school(opts: { status?: 'draft' | 'published'; writing?: boolean 
     blocks: [{ blockId: 'b1', type: 'text', order: 0, content: 'Ten, twenty.' }, { blockId: 'q', type: 'quiz', order: 1, content: 'After 20?' }],
   });
   const q = await Question.collection.insertOne({
-    schoolId, type: 'mcq', stem: 'What comes after 29?', isDeleted: false, tags: ['class_unit'], curriculumNodeId: nodeId,
+    schoolId, type: 'mcq', stem: 'What comes after 29?', status: 'approved', isDeleted: false, tags: ['class_unit'], curriculumNodeId: nodeId,
     options: [{ label: 'A', text: '30', isCorrect: true }, { label: 'B', text: '28', isCorrect: false }], answer: '30',
   });
   await CourseLesson.insertMany([
@@ -136,5 +137,20 @@ describe('UnitCopyService.library', () => {
       authorName: 'Lindiwe Dube', items: 3, minutes: 17, releasedAt: '2026-09-20T08:00:00.000Z', mine: false,
     }]);
     expect(await UnitCopyService.library(String(oid()), teacher(f.thandi), {})).toEqual([]);
+  });
+});
+
+describe('3E review fixes', () => {
+  it("a copy's questions stay out of the school's shared question bank, so copying doesn't fill it with duplicates", async () => {
+    const f = await school();
+    const copy = await UnitCopyService.copy(f.unitId, f.schoolId, teacher(f.thandi), { classId: String(f.classB), termNumber: 3 });
+    const check = await CourseLesson.findOne({ courseId: copy._id, itemKind: 'quick_check' }).lean();
+    const clone = await Question.findById(check!.quizQuestionIds[0]).lean();
+    expect(clone?.tags).toContain('unit_copy');
+
+    const shared = await QuestionsService.listQuestions(f.schoolId, String(f.lindiwe), 'teacher', { page: 1, limit: 50 } as never);
+    expect(shared.questions.map((q) => q.stem)).toEqual(['What comes after 29?']);
+    const mine = await QuestionsService.listQuestions(f.schoolId, String(f.thandi), 'teacher', { mine: true, page: 1, limit: 50 } as never);
+    expect(mine.questions.map((q) => String(q._id))).toContain(String(clone!._id));
   });
 });
