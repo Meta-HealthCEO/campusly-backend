@@ -5,6 +5,8 @@ import { CurriculumCoverage } from '../model.js';
 import { Homework, HomeworkSubmission } from '../../Homework/model.js';
 import { Attendance, Discipline, Merit } from '../../Attendance/model.js';
 import { Mark } from '../../Academic/model.js';
+import type { MarkingQueueItem } from './marking-queue.js';
+import { homeworkQueueItems, paperQueueItemsFor, sortQueue } from './marking-queue.db.js';
 import { BulkMessage } from '../../Communication/model.js';
 
 interface DashboardData {
@@ -13,19 +15,6 @@ interface DashboardData {
   coveragePercentage: number;
   markingItemsDue: number;
   recentActivity: unknown[];
-}
-
-interface MarkingItem {
-  id: string;
-  type: 'homework';
-  title: string;
-  subjectName: string;
-  className: string;
-  dueDate: string;
-  totalMarks: number;
-  pendingCount: number;
-  totalCount: number;
-  priority: 'high' | 'medium' | 'low';
 }
 
 interface Student360Data {
@@ -61,15 +50,6 @@ interface Student360Data {
     lastContactDate: string | null;
     messageCountThisTerm: number;
   };
-}
-
-function calcPriority(dueDate: Date | undefined): 'high' | 'medium' | 'low' {
-  if (!dueDate) return 'low';
-  const diff = dueDate.getTime() - Date.now();
-  const days = diff / (1000 * 60 * 60 * 24);
-  if (days < 1) return 'high';
-  if (days < 3) return 'medium';
-  return 'low';
 }
 
 export class AggregationService {
@@ -125,57 +105,13 @@ export class AggregationService {
     };
   }
 
-  static async getPendingMarking(
-    teacherId: string,
-    schoolId: string,
-  ): Promise<MarkingItem[]> {
-    const homeworks = await Homework.find({
-      schoolId,
-      teacherId,
-      isDeleted: false,
-    })
-      .populate('subjectId', 'name')
-      .populate('classId', 'name')
-      .lean()
-      .exec();
-
-    const homeworkIds = homeworks.map((h) => h._id);
-
-    const ungradedSubmissions = await HomeworkSubmission.aggregate([
-      {
-        $match: {
-          homeworkId: { $in: homeworkIds },
-          schoolId: new mongoose.Types.ObjectId(schoolId),
-          isDeleted: false,
-          mark: { $exists: false },
-        },
-      },
-      {
-        $group: {
-          _id: '$homeworkId',
-          count: { $sum: 1 },
-        },
-      },
+  static async getPendingMarking(teacherId: string, schoolId: string): Promise<MarkingQueueItem[]> {
+    const now = new Date();
+    const [homework, papers] = await Promise.all([
+      homeworkQueueItems(teacherId, schoolId, now),
+      paperQueueItemsFor(teacherId, schoolId, now),
     ]);
-
-    const homeworkMap = new Map(homeworks.map((h) => [String(h._id), h]));
-
-    return ungradedSubmissions.map((item) => {
-      const hw = homeworkMap.get(String(item._id));
-      const dueDate = hw?.dueDate;
-      return {
-        id: String(item._id),
-        type: 'homework' as const,
-        title: hw?.title ?? 'Untitled',
-        subjectName: typeof hw?.subjectId === 'object' ? String((hw.subjectId as unknown as Record<string, unknown>).name ?? '') : '',
-        className: typeof hw?.classId === 'object' ? String((hw.classId as unknown as Record<string, unknown>).name ?? '') : '',
-        dueDate: dueDate ? dueDate.toISOString() : '',
-        totalMarks: hw?.totalMarks ?? 0,
-        pendingCount: item.count as number,
-        totalCount: item.count as number,
-        priority: calcPriority(dueDate),
-      };
-    });
+    return sortQueue([...homework, ...papers]);
   }
 
   static async getStudent360(
