@@ -48,4 +48,21 @@ describe('HomeworkService.gradeSubmission', () => {
 
     expect(await Mark.countDocuments({ studentId: f.studentId, schoolId: f.schoolId })).toBe(0);
   });
+
+  it('keeps a hand-entered mark when a slower auto-grade finishes afterwards', async () => {
+    const f = await ungradedSubmission(false);
+    const before = await HomeworkSubmission.findById(f.submissionId).lean();
+    const capturedGeneration = before?.gradingGeneration;
+
+    await HomeworkService.gradeSubmission(f.submissionId, String(f.schoolId), 7, undefined, String(oid()));
+    // The grader writes only if the generation it captured is unchanged
+    // (service-homework-grading-runner.ts).
+    const late = await HomeworkSubmission.updateOne(
+      { _id: f.submissionId, gradingGeneration: capturedGeneration },
+      { $set: { mark: 3 } },
+    );
+
+    expect(late.matchedCount).toBe(0);
+    expect((await HomeworkSubmission.findById(f.submissionId).lean())?.mark).toBe(7);
+  });
 });

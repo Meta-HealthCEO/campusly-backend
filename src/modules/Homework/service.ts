@@ -626,7 +626,8 @@ export class HomeworkService {
 
     const submission = await HomeworkSubmission.findOneAndUpdate(
       { _id: toObjectId(submissionId, 'submissionId'), schoolId: schoolOid, isDeleted: false },
-      { $set: { mark, feedback, gradedAt: new Date(), gradedBy, gradingStatus: 'graded' } },
+      // Bumping the generation makes any auto-grade still running discard its result.
+      { $set: { mark, feedback, gradedAt: new Date(), gradedBy, gradingStatus: 'graded' }, $inc: { gradingGeneration: 1 } },
       { new: true, runValidators: true },
     )
       .populate({ path: 'studentId', populate: { path: 'userId', select: 'firstName lastName email' } })
