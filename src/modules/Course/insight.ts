@@ -45,6 +45,8 @@ export function stuckReason(input: StuckInput, now: Date = new Date()): StuckRea
 export interface MissedQuestion {
   questionId: string;
   stem: string;
+  /** The quick check the question is on. */
+  itemId: string;
   itemTitle: string;
   answered: number;
   wrong: number;
@@ -56,15 +58,15 @@ export interface MissedQuestion {
  * they were answered. Questions no longer in the bank (no stem) are left out.
  */
 export function mostMissed(
-  attempts: Array<{ lessonTitle: string; answers: Array<{ questionId: string; isCorrect: boolean }> }>,
+  attempts: Array<{ lessonId: string; lessonTitle: string; answers: Array<{ questionId: string; isCorrect: boolean }> }>,
   stems: ReadonlyMap<string, string>,
   limit: number,
 ): MissedQuestion[] {
-  const tally = new Map<string, { itemTitle: string; answered: number; wrong: number }>();
+  const tally = new Map<string, { itemId: string; itemTitle: string; answered: number; wrong: number }>();
   for (const attempt of attempts) {
     for (const answer of attempt.answers) {
       if (!stems.has(answer.questionId)) continue;
-      const t = tally.get(answer.questionId) ?? { itemTitle: attempt.lessonTitle, answered: 0, wrong: 0 };
+      const t = tally.get(answer.questionId) ?? { itemId: attempt.lessonId, itemTitle: attempt.lessonTitle, answered: 0, wrong: 0 };
       t.answered += 1;
       if (!answer.isCorrect) t.wrong += 1;
       tally.set(answer.questionId, t);
@@ -75,6 +77,7 @@ export function mostMissed(
     .map(([questionId, t]) => ({
       questionId,
       stem: stems.get(questionId) ?? '',
+      itemId: t.itemId,
       itemTitle: t.itemTitle,
       answered: t.answered,
       wrong: t.wrong,

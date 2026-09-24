@@ -61,7 +61,7 @@ async function releasedUnit() {
   await Enrolment.updateOne({ _id: lebo.enrolment._id }, { $set: { progressPercent: 67 } });
   await Enrolment.updateOne({ _id: jan.enrolment._id }, { $set: { progressPercent: 33 } });
   const actor: CourseActor = { userId: String(teacherId), role: 'teacher' as CourseActor['role'], isHOD: false, isSchoolPrincipal: false };
-  return { schoolId: String(schoolId), courseId: String(course._id), actor, more };
+  return { schoolId: String(schoolId), courseId: String(course._id), checkId: String(check._id), actor, more };
 }
 
 describe('UnitInsightService.get', () => {
@@ -74,7 +74,7 @@ describe('UnitInsightService.get', () => {
     expect(insight.learners[2]).toMatchObject({ currentItem: { title: 'Counting on' }, stuck: null });
     // Never opened the unit: no activity to report, and not stuck on release day.
     expect(insight.learners[1]).toMatchObject({ name: 'Nomsa Zulu', lastActivityAt: null, stuck: null, progressPercent: 0 });
-    expect(insight.mostMissed[0]).toMatchObject({ stem: 'What comes next? 10, 20, 30', wrong: 2, answered: 3, wrongPercent: 67 });
+    expect(insight.mostMissed[0]).toMatchObject({ itemId: f.checkId, stem: 'What comes next? 10, 20, 30', wrong: 2, answered: 3, wrongPercent: 67 });
     expect(insight.items.map((i) => [i.title, i.completed])).toEqual([['Counting in tens', 2], ['Check: counting', 1], ['Counting on', 0]]);
     expect(insight.totals).toEqual({ enrolled: 3, completed: 0, stuck: 1 });
   });

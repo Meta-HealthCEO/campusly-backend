@@ -118,6 +118,7 @@ export class UnitInsightService {
       learners: orderLearners(learners),
       mostMissed: mostMissed(
         liveAttempts.map((a) => ({
+          lessonId: String(a.lessonId),
           lessonTitle: titleOf.get(String(a.lessonId)) ?? 'Quick check',
           answers: a.answers.map((ans) => ({ questionId: String(ans.questionId), isCorrect: ans.isCorrect })),
         })),

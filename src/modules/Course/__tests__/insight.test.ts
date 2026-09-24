@@ -29,19 +29,19 @@ describe('stuckReason', () => {
 describe('mostMissed', () => {
   it('ranks questions by how often they were answered wrong, leaving out deleted ones', () => {
     const attempts = [
-      { lessonTitle: 'Check: counting', answers: [{ questionId: 'a', isCorrect: false }, { questionId: 'b', isCorrect: true }, { questionId: 'gone', isCorrect: false }] },
-      { lessonTitle: 'Check: counting', answers: [{ questionId: 'a', isCorrect: false }, { questionId: 'b', isCorrect: false }] },
-      { lessonTitle: 'Check: counting', answers: [{ questionId: 'a', isCorrect: true }, { questionId: 'b', isCorrect: true }] },
+      { lessonId: 'c1', lessonTitle: 'Check: counting', answers: [{ questionId: 'a', isCorrect: false }, { questionId: 'b', isCorrect: true }, { questionId: 'gone', isCorrect: false }] },
+      { lessonId: 'c1', lessonTitle: 'Check: counting', answers: [{ questionId: 'a', isCorrect: false }, { questionId: 'b', isCorrect: false }] },
+      { lessonId: 'c1', lessonTitle: 'Check: counting', answers: [{ questionId: 'a', isCorrect: true }, { questionId: 'b', isCorrect: true }] },
     ];
     const stems = new Map([['a', 'What comes next? 10, 20, 30'], ['b', 'One more than 79?']]);
     expect(mostMissed(attempts, stems, 5)).toEqual([
-      { questionId: 'a', stem: 'What comes next? 10, 20, 30', itemTitle: 'Check: counting', answered: 3, wrong: 2, wrongPercent: 67 },
-      { questionId: 'b', stem: 'One more than 79?', itemTitle: 'Check: counting', answered: 3, wrong: 1, wrongPercent: 33 },
+      { questionId: 'a', stem: 'What comes next? 10, 20, 30', itemId: 'c1', itemTitle: 'Check: counting', answered: 3, wrong: 2, wrongPercent: 67 },
+      { questionId: 'b', stem: 'One more than 79?', itemId: 'c1', itemTitle: 'Check: counting', answered: 3, wrong: 1, wrongPercent: 33 },
     ]);
   });
 
   it('leaves out questions nobody got wrong', () => {
-    expect(mostMissed([{ lessonTitle: 'C', answers: [{ questionId: 'a', isCorrect: true }] }], new Map([['a', 'Q']]), 5)).toEqual([]);
+    expect(mostMissed([{ lessonId: 'c1', lessonTitle: 'C', answers: [{ questionId: 'a', isCorrect: true }] }], new Map([['a', 'Q']]), 5)).toEqual([]);
   });
 });
 
