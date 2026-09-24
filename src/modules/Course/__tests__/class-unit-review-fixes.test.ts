@@ -80,8 +80,8 @@ describe('I3: writing a unit does not use up the school daily AI allowance', () 
     expect(content.mock.calls[0][3]).toEqual({ skipUsageLimit: true, tags: ['class_unit', 'class_unit_initial'] });
 
     await ContentResource.collection.insertMany([
-      // A later AI action on a unit item (a rewrite, a revision item) carries
-      // the general unit tag but not the initial-write tag, so it counts.
+      // A later AI resource on a unit (a revision item) carries the general
+      // unit tag but not the initial-write tag, so it counts.
       { schoolId: f.soid, source: 'ai_generated', tags: ['class_unit'], isDeleted: false, createdAt: new Date() },
       { schoolId: f.soid, source: 'ai_generated', tags: ['class_unit', 'class_unit_initial'], isDeleted: false, createdAt: new Date() },
       { schoolId: f.soid, source: 'ai_generated', tags: [], isDeleted: false, createdAt: new Date() },
@@ -125,6 +125,43 @@ describe('Quick checks are always answerable', () => {
     const check = await CourseLesson.findOne({ courseId: f.courseId, itemKind: 'quick_check' }).lean();
     expect(check).toMatchObject({ genStatus: 'failed', genError: "The quick check came back without answer choices. Try again." });
     expect((await Question.findById(bad.insertedId).lean())?.isDeleted).toBe(true);
+  });
+});
+
+describe('Draft and approve racing each other', () => {
+  it('a draft that finishes after the outline was approved deletes nothing and adds nothing', async () => {
+    const f = await teacherWithClass();
+    const unit = await ClassUnitService.create(f.schoolId, f.actor, f.input);
+    const courseId = String(unit._id);
+    vi.spyOn(AIService, 'generateJSON').mockResolvedValueOnce(OUTLINE);
+    await ClassUnitService.draftOutline(courseId, f.schoolId, f.actor, false);
+    const itemsBefore = await CourseLesson.find({ courseId: unit._id, isDeleted: false }).select('_id').lean();
+
+    // The teacher approves in another tab while this redraft waits on the AI.
+    vi.spyOn(AIService, 'generateJSON').mockImplementationOnce(async () => {
+      await ClassUnitService.approveOutline(courseId, f.schoolId, f.actor);
+      return OUTLINE;
+    });
+    await expect(ClassUnitService.draftOutline(courseId, f.schoolId, f.actor, false)).rejects.toThrow('This outline is approved');
+
+    const itemsAfter = await CourseLesson.find({ courseId: unit._id, isDeleted: false }).select('_id').lean();
+    expect(itemsAfter.map((i) => String(i._id)).sort()).toEqual(itemsBefore.map((i) => String(i._id)).sort());
+    expect(await CourseModule.countDocuments({ courseId: unit._id, isDeleted: false })).toBe(1);
+  });
+
+  it('an approve that loses the race leaves the items as they are', async () => {
+    const f = await approvedUnit();
+    await CourseLesson.updateMany({ courseId: f.courseId }, { $set: { genStatus: 'ready' } });
+    // This request read the outline as 'drafted'; another approve lands before it writes.
+    await Course.collection.updateOne({ _id: new mongoose.Types.ObjectId(f.courseId) }, { $set: { outlineStatus: 'drafted' } });
+    const count = CourseLesson.countDocuments.bind(CourseLesson);
+    vi.spyOn(CourseLesson, 'countDocuments').mockImplementationOnce(((filter: never) => {
+      return Course.collection.updateOne({ _id: new mongoose.Types.ObjectId(f.courseId) }, { $set: { outlineStatus: 'approved' } })
+        .then(() => count(filter));
+    }) as never);
+    await expect(ClassUnitService.approveOutline(f.courseId, f.schoolId, f.actor)).rejects.toThrow('Draft the outline first');
+    const statuses = (await CourseLesson.find({ courseId: f.courseId, isDeleted: false }).lean()).map((l) => l.genStatus);
+    expect(statuses).toEqual(['ready', 'ready']);
   });
 });
 

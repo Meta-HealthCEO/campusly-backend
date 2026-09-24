@@ -192,10 +192,23 @@ export class ClassUnitService {
     // Nothing is written until the AI's outline has been checked.
     const modules = normaliseOutline(await AIService.generateJSON<unknown>(prompt.system, prompt.user), topics);
 
-    await replaceOutline(course, modules);
-    // Conditional on the outline not having been approved meanwhile (e.g. a
-    // second, concurrent draft/approve request) — a draft must never land on
-    // top of an outline that's already been approved and is being written.
+    // The outline may have been approved (in another tab) while the AI was
+    // working. Claim it atomically before touching any item: moving it back to
+    // 'none' only matches an unapproved outline, and approve refuses anything
+    // but 'drafted', so it can't be approved while the items are replaced.
+    const claim = await Course.updateOne(
+      { _id: course._id, schoolId: course.schoolId, outlineStatus: { $ne: 'approved' } },
+      { $set: { outlineStatus: 'none' } },
+    );
+    if (claim.matchedCount === 0) throw new BadRequestError('This outline is approved. Its items are being written.');
+
+    try {
+      await replaceOutline(course, modules);
+    } catch (err: unknown) {
+      // Hand the outline back as it was, so it can be approved or redrafted.
+      await Course.updateOne({ _id: course._id, schoolId: course.schoolId, outlineStatus: 'none' }, { $set: { outlineStatus: course.outlineStatus } });
+      throw err;
+    }
     const res = await Course.updateOne(
       { _id: course._id, schoolId: course.schoolId, outlineStatus: { $ne: 'approved' } },
       {
@@ -219,7 +232,6 @@ export class ClassUnitService {
     const items = { courseId: course._id, schoolId: course.schoolId, isDeleted: false, itemKind: { $ne: null } };
     const total = await CourseLesson.countDocuments(items);
     if (total === 0) throw new BadRequestError('The outline has no items to write');
-    await CourseLesson.updateMany(items, { $set: { genStatus: 'pending', genError: '' } });
     // Conditional on the outline still being exactly 'drafted': two tabs (or
     // a retried request) approving at once must not both queue generation.
     const res = await Course.updateOne(
@@ -227,6 +239,9 @@ export class ClassUnitService {
       { $set: { outlineStatus: 'approved', generation: { status: 'queued', total, done: 0, failed: 0, message: '', startedAt: null, finishedAt: null } } },
     );
     if (res.matchedCount === 0) throw new BadRequestError('Draft the outline first');
+    // Only the request that won the approval queues the items; a loser must
+    // not reset items the winner may already be writing.
+    await CourseLesson.updateMany(items, { $set: { genStatus: 'pending', genError: '' } });
     await enqueueCourseGeneration({ courseId, schoolId });
     return CourseService.getCourse(courseId, schoolId);
   }
@@ -314,7 +329,12 @@ export class ClassUnitService {
       if (learners === 0) throw new BadRequestError(`${klass.name} has no learners yet`);
     }
 
-    if (course.status !== 'published') {
+    // Enrolling needs a published course, so publish first — but if no class
+    // ends up enrolled, put the unit back as it was rather than leave it
+    // published and released to nobody.
+    const wasPublished = course.status === 'published';
+    const before = { status: course.status, publishedBy: course.publishedBy ?? null, publishedAt: course.publishedAt ?? null };
+    if (!wasPublished) {
       course.status = 'published';
       course.publishedBy = oid(actor.userId);
       course.publishedAt = new Date();
@@ -327,10 +347,17 @@ export class ClassUnitService {
     // recorded and the failed/remaining ones are not, instead of the whole
     // batch being marked released regardless of what actually happened.
     const results = [];
-    for (const klass of classes) {
-      const enrolled = await CourseService.assignCourseToClass(courseId, schoolId, actor, { classId: String(klass._id) }, { fromRelease: true });
-      await Course.updateOne({ _id: course._id, schoolId: course.schoolId }, { $addToSet: { 'scope.classIds': klass._id } });
-      results.push({ classId: String(klass._id), name: klass.name, newEnrolments: enrolled.newEnrolments });
+    try {
+      for (const klass of classes) {
+        const enrolled = await CourseService.assignCourseToClass(courseId, schoolId, actor, { classId: String(klass._id) }, { fromRelease: true });
+        await Course.updateOne({ _id: course._id, schoolId: course.schoolId }, { $addToSet: { 'scope.classIds': klass._id } });
+        results.push({ classId: String(klass._id), name: klass.name, newEnrolments: enrolled.newEnrolments });
+      }
+    } catch (err: unknown) {
+      if (!wasPublished && results.length === 0) {
+        await Course.updateOne({ _id: course._id, schoolId: course.schoolId }, { $set: before });
+      }
+      throw err;
     }
     return { classes: results };
   }

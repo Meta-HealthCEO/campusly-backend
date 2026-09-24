@@ -121,6 +121,17 @@ describe('ClassUnitService.release', () => {
     expect(await Enrolment.countDocuments({ courseId: f.courseId, isDeleted: false })).toBe(3);
     spy.mockRestore();
   });
+
+  it('leaves the unit unreleased when no class could be enrolled', async () => {
+    const f = await writtenUnit();
+    const spy = vi.spyOn(CourseService, 'assignCourseToClass').mockRejectedValue(new Error('enrolment failed'));
+    await expect(ClassUnitService.release(f.courseId, f.schoolId, f.actor, [f.classId])).rejects.toThrow('enrolment failed');
+    const unit = await Course.findById(f.courseId).lean();
+    expect(unit).toMatchObject({ status: 'draft', publishedAt: null });
+    // As it was: no class added.
+    expect(unit?.scope?.classIds.map(String)).toEqual([f.classId]);
+    spy.mockRestore();
+  });
 });
 
 describe('ClassUnitService.previewItem and retryItem', () => {
