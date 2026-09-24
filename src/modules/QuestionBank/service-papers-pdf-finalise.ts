@@ -33,7 +33,7 @@ function localTodayDate(): Date {
   return new Date(`${y}-${m}-${d}`);
 }
 
-async function ensureLinkedAssessment(paper: IAssessmentPaper): Promise<void> {
+export async function ensureLinkedAssessment(paper: IAssessmentPaper): Promise<void> {
   const existing = await Assessment.findOne({
     paperId: paper._id,
     isDeleted: false,
@@ -95,6 +95,8 @@ export async function finalisePaper(
   actorId: string,
   actorRole: string,
   actorIsPrincipal: boolean,
+  /** Independent teachers have no HOD or admin to moderate, so they finalise directly. */
+  actorIsStandalone = false,
 ): Promise<IAssessmentPaper> {
   const paper = await AssessmentPaper.findOne({
     _id: paperId,
@@ -108,7 +110,7 @@ export async function finalisePaper(
   assertPaperReadyToFinalise(paper);
 
   // Solo-principal bypass: auto-finalise without moderation.
-  if (actorIsPrincipal || PAPER_ADMIN_ROLES.has(actorRole)) {
+  if (actorIsPrincipal || actorIsStandalone || PAPER_ADMIN_ROLES.has(actorRole)) {
     paper.status = 'finalised';
     await paper.save();
 
@@ -139,7 +141,7 @@ export async function finalisePaper(
   }
 
   throw new ForbiddenError(
-    'Paper finalisation requires moderation. Moderation flow is not yet enabled — contact your school admin.',
+    'Submit this paper for moderation. Your HOD or a school admin finalises it.',
   );
 }
 

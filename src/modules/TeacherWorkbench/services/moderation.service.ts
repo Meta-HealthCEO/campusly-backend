@@ -1,6 +1,8 @@
 import { PaperMemo, PaperModeration, IPaperModeration } from '../model.assessment.js';
 import { AssessmentPaper } from '../../QuestionBank/model.js';
 import { BadRequestError, ForbiddenError, NotFoundError } from '../../../common/errors.js';
+import { ensureLinkedAssessment } from '../../QuestionBank/service-papers-pdf-finalise.js';
+import { logger } from '../../../common/logger.js';
 
 export class ModerationService {
   static async submitForModeration(
@@ -121,6 +123,12 @@ export class ModerationService {
         { paperId, schoolId, isDeleted: false },
         { $set: { status: 'final' } },
       );
+      // Same as an admin finalise: link the gradebook assessment; never fail the approval over it.
+      try {
+        await ensureLinkedAssessment(paper);
+      } catch (err: unknown) {
+        logger.error({ err, paperId }, 'Failed to link Assessment on moderation approval');
+      }
     }
     return moderation as IPaperModeration;
   }

@@ -192,6 +192,7 @@ export async function postFinalisePaper(req: Request, res: Response): Promise<vo
     user.id,
     user.role,
     Boolean(user.isSchoolPrincipal),
+    Boolean(user.isStandaloneTeacher),
   );
   res.json(apiResponse(true, paper, 'Paper finalised successfully'));
 }
