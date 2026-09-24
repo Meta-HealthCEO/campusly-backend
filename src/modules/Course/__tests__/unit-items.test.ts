@@ -192,7 +192,8 @@ describe('UnitItemsService.addRevisionItem', () => {
     const gen = vi.spyOn(GenerationService, 'generateContent').mockResolvedValue({ _id: oid() } as never);
     const item = await UnitItemsService.addRevisionItem(f.courseId, f.schoolId, f.actor, { afterLessonId: String(f.check._id), questionIds: f.questionIds.map(String) });
     expect(gen.mock.calls[0][2].instructions).toContain('Q1');
-    expect(item).toMatchObject({ title: 'Revision: counting', itemKind: 'notes', genStatus: 'ready', orderIndex: 3 });
+    // Fresh AI content, not a teacher hand-edit — doesn't wrongly show "Edited by you".
+    expect(item).toMatchObject({ title: 'Revision: counting', itemKind: 'notes', genStatus: 'ready', orderIndex: 3, teacherEdited: false });
     const order = await CourseLesson.find({ courseId: f.courseId, isDeleted: false }).sort({ orderIndex: 1 }).lean();
     expect(order.map((l) => l.title)).toEqual(['Counting in tens', 'Counting on', 'Check: counting', 'Revision: counting', 'More counting']);
   });
