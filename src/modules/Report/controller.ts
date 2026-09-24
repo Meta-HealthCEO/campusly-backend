@@ -3,6 +3,7 @@ import { ReportService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
 import { getUser } from '../../types/authenticated-request.js';
 import { assertCanAccessStudentReport } from './helpers.js';
+import { redactStudent360ForRole } from './student360-redaction.js';
 import { resolveSchoolScope } from '../../common/school-scope.js';
 
 function getScopedSchoolId(req: Request): string | undefined {
@@ -105,7 +106,7 @@ export class ReportController {
       res.status(404).json(apiResponse(false, undefined, undefined, 'Student not found'));
       return;
     }
-    res.json(apiResponse(true, data, 'Student 360 view retrieved successfully'));
+    res.json(apiResponse(true, redactStudent360ForRole(data, user.role), 'Student 360 view retrieved successfully'));
   }
 
   // ─── Debtors Report ─────────────────────────────────────────────────────────
