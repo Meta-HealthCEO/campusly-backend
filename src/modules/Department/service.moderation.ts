@@ -1,11 +1,32 @@
 import mongoose from 'mongoose';
 import { Department } from './model.js';
 import { PaperModeration } from '../TeacherWorkbench/model.assessment.js';
-import { NotFoundError } from '../../common/errors.js';
+import { ForbiddenError, NotFoundError } from '../../common/errors.js';
+import { ModerationService } from '../TeacherWorkbench/services/moderation.service.js';
 import { paginationHelper } from '../../common/utils.js';
 import { DepartmentService } from './service.js';
 
 export class ModerationQueueService {
+  /** An HOD reviews a paper, but only one submitted by a teacher in their own department. */
+  static async reviewDepartmentPaper(
+    departmentId: string,
+    schoolId: string,
+    paperId: string,
+    reviewerId: string,
+    status: 'approved' | 'changes_requested',
+    comments: string,
+  ) {
+    const dept = await Department.findOne({ _id: departmentId, schoolId, isDeleted: false }).lean().exec();
+    if (!dept) throw new NotFoundError('Department not found');
+    const moderation = await PaperModeration.findOne({ paperId, schoolId, isDeleted: false }).lean().exec();
+    if (!moderation) throw new NotFoundError('Moderation record not found');
+    const teacherIds = await DepartmentService.getDepartmentTeacherIds(departmentId, schoolId);
+    if (!teacherIds.includes(String(moderation.submittedBy))) {
+      throw new ForbiddenError("This paper isn't from a teacher in your department");
+    }
+    return ModerationService.reviewPaper(paperId, reviewerId, status, comments, schoolId);
+  }
+
   static async getModerationQueue(
     departmentId: string,
     schoolId: string,

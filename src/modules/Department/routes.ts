@@ -12,6 +12,7 @@ import {
   updateObservationSchema,
   performanceQuerySchema,
   moderationQuerySchema,
+  departmentReviewSchema,
   observationQuerySchema,
   commonAssessmentQuerySchema,
 } from './validation.js';
@@ -101,6 +102,14 @@ router.get(
   requireHOD,
   validate({ query: moderationQuerySchema }),
   DepartmentController.moderation,
+);
+
+router.post(
+  '/:id/moderation/:paperId/review',
+  authorize('teacher', 'school_admin'),
+  requireHOD,
+  validate(departmentReviewSchema),
+  DepartmentController.reviewModeration,
 );
 
 router.get(

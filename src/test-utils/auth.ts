@@ -9,6 +9,8 @@ export interface SignTestTokenInput {
   email?: string;
   isSchoolPrincipal?: boolean;
   isStandaloneTeacher?: boolean;
+  isHOD?: boolean;
+  departmentId?: mongoose.Types.ObjectId | string;
 }
 
 export function signTestToken(input: SignTestTokenInput = {}): string {
@@ -19,6 +21,8 @@ export function signTestToken(input: SignTestTokenInput = {}): string {
     schoolId: input.schoolId?.toString(),
     isSchoolPrincipal: input.isSchoolPrincipal ?? true,
     isStandaloneTeacher: input.isStandaloneTeacher ?? true,
+    isHOD: input.isHOD ?? false,
+    departmentId: input.departmentId?.toString() ?? null,
   };
   return jwt.sign(payload, config.jwt.accessSecret, { algorithm: 'HS256', expiresIn: '15m' });
 }

@@ -70,6 +70,15 @@ export const moderationQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).optional(),
 }).strict();
 
+/** An HOD's decision on a paper; a change request must say what to change. */
+export const departmentReviewSchema = z.object({
+  status: z.enum(['approved', 'changes_requested']),
+  comments: z.string().max(2000).default(''),
+}).strict().refine(
+  (d) => d.status !== 'changes_requested' || d.comments.trim().length >= 5,
+  { message: 'Say what needs to change', path: ['comments'] },
+);
+
 export const observationQuerySchema = z.object({
   teacherId: objectIdSchema.optional(),
   status: z.enum(['scheduled', 'completed', 'cancelled']).optional(),

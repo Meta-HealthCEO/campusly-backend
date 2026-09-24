@@ -65,6 +65,15 @@ export class DepartmentController {
     res.json(apiResponse(true, data));
   }
 
+  static async reviewModeration(req: Request, res: Response): Promise<void> {
+    const user = getUser(req);
+    const { status, comments } = req.body as { status: 'approved' | 'changes_requested'; comments: string };
+    const data = await ModerationQueueService.reviewDepartmentPaper(
+      req.params.id as string, user.schoolId!, req.params.paperId as string, user.id, status, comments,
+    );
+    res.json(apiResponse(true, data, 'Review submitted'));
+  }
+
   static async moderation(req: Request, res: Response): Promise<void> {
     const schoolId = getUser(req).schoolId!;
     const { status, page, limit } = req.query as {
