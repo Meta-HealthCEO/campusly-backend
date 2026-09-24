@@ -62,7 +62,8 @@ async function seedProgress(scope: UnitSeedScope, courseId: Id, items: SeededIte
   const learners = await Student.find({ classId: scope.classId, schoolId: scope.schoolId, isDeleted: false }).sort({ admissionNumber: 1 }).limit(3).lean();
   const plans: Array<{ done: number; scores: number[]; failedTries?: number[] }> = [
     { done: 3, scores: [3] },
-    { done: 2, scores: [], failedTries: [1, 2] },
+    // Two tries at 1 of 4 (25%): below the 50% pass mark.
+    { done: 2, scores: [], failedTries: [1, 1] },
     { done: 1, scores: [] },
   ];
   for (const [i, learner] of learners.entries()) {

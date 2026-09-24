@@ -35,7 +35,7 @@ async function releasedUnit() {
     { schoolId, courseId: course._id, moduleId: mod._id, orderIndex: 2, title: 'Counting on', type: 'content', itemKind: 'notes' },
   ]);
   const learners = [];
-  for (const [first, last] of [['Jan', 'Botha'], ['Lebo', 'Mthembu'], ['Gone', 'Learner']]) {
+  for (const [first, last] of [['Jan', 'Botha'], ['Lebo', 'Mthembu'], ['Gone', 'Learner'], ['Nomsa', 'Zulu']]) {
     const userId = oid();
     const studentId = oid();
     await User.collection.insertOne({ _id: userId, schoolId, firstName: first, lastName: last, email: `${first}${oid()}@t.local`, role: 'student', isDeleted: false });
@@ -69,17 +69,27 @@ describe('UnitInsightService.get', () => {
     const f = await releasedUnit();
     const insight = await UnitInsightService.get(f.courseId, f.schoolId, f.actor);
 
-    expect(insight.learners.map((l) => l.name)).toEqual(['Jan Botha', 'Lebo Mthembu']);
+    expect(insight.learners.map((l) => l.name)).toEqual(['Jan Botha', 'Nomsa Zulu', 'Lebo Mthembu']);
     expect(insight.learners[0]).toMatchObject({ progressPercent: 33, currentItem: { title: 'Check: counting' }, stuck: { kind: 'failed_check', itemTitle: 'Check: counting', count: 2 } });
-    expect(insight.learners[1]).toMatchObject({ currentItem: { title: 'Counting on' }, stuck: null });
+    expect(insight.learners[2]).toMatchObject({ currentItem: { title: 'Counting on' }, stuck: null });
+    // Never opened the unit: no activity to report, and not stuck on release day.
+    expect(insight.learners[1]).toMatchObject({ name: 'Nomsa Zulu', lastActivityAt: null, stuck: null, progressPercent: 0 });
     expect(insight.mostMissed[0]).toMatchObject({ stem: 'What comes next? 10, 20, 30', wrong: 2, answered: 3, wrongPercent: 67 });
     expect(insight.items.map((i) => [i.title, i.completed])).toEqual([['Counting in tens', 2], ['Check: counting', 1], ['Counting on', 0]]);
-    expect(insight.totals).toEqual({ enrolled: 2, completed: 0, stuck: 1 });
+    expect(insight.totals).toEqual({ enrolled: 3, completed: 0, stuck: 1 });
   });
 
   it("won't show one teacher's class to another", async () => {
     const f = await releasedUnit();
     const stranger: CourseActor = { ...f.actor, userId: String(oid()) };
     await expect(UnitInsightService.get(f.courseId, f.schoolId, stranger)).rejects.toThrow('You can only edit your own courses');
+  });
+});
+
+describe('insight indexes', () => {
+  it('finds the progress and attempts of one unit without scanning the school', () => {
+    const byCourse = (indexes: Array<[Record<string, unknown>, unknown]>) => indexes.some(([keys]) => Object.keys(keys)[0] === 'courseId');
+    expect(byCourse(LessonProgress.schema.indexes() as Array<[Record<string, unknown>, unknown]>)).toBe(true);
+    expect(byCourse(QuizAttempt.schema.indexes() as Array<[Record<string, unknown>, unknown]>)).toBe(true);
   });
 });

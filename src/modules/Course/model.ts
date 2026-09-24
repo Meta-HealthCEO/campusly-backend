@@ -374,6 +374,8 @@ lessonProgressSchema.index(
   { enrolmentId: 1, lessonId: 1 },
   { unique: true, partialFilterExpression: { isDeleted: false } },
 );
+// A unit's progress, for the teacher's insight and analytics.
+lessonProgressSchema.index({ courseId: 1, enrolmentId: 1 });
 
 export const LessonProgress = mongoose.model<ILessonProgress>(
   'LessonProgress',
@@ -437,6 +439,7 @@ quizAttemptSchema.index(
   { enrolmentId: 1, lessonId: 1, attemptNumber: 1 },
   { unique: true, partialFilterExpression: { isDeleted: false } },
 );
+quizAttemptSchema.index({ courseId: 1, enrolmentId: 1 });
 
 // NOTE: Mongoose model name is 'CourseQuizAttempt' (not 'QuizAttempt') to
 // avoid collision with the Learning module's QuizAttempt model. The exported

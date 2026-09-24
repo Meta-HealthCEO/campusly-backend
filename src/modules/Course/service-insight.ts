@@ -75,7 +75,8 @@ export class UnitInsightService {
       const myAttempts = attempts.filter((a) => String(a.enrolmentId) === String(e._id));
       const done = new Set(mine.filter((p) => p.status === 'completed').map((p) => String(p.lessonId)));
       const next = items.find((l) => !done.has(String(l._id)));
-      const lastActivityAt = latest(e.enrolledAt, ...mine.map((p) => p.updatedAt), ...myAttempts.map((a) => a.submittedAt));
+      // Only what the learner did counts as activity: null means they haven't started.
+      const lastActivityAt = latest(...mine.map((p) => p.updatedAt), ...myAttempts.map((a) => a.submittedAt));
       return {
         enrolmentId: String(e._id),
         name: studentName.get(String(e.studentId)) ?? 'Learner',
@@ -85,7 +86,8 @@ export class UnitInsightService {
         lastActivityAt,
         stuck: stuckReason({
           status: e.status,
-          lastActivityAt,
+          // A learner who never started is idle from the day the unit was released to them.
+          lastActivityAt: lastActivityAt ?? e.enrolledAt,
           attempts: myAttempts.map((a) => ({ lessonId: String(a.lessonId), lessonTitle: titleOf.get(String(a.lessonId)) ?? 'a quick check', passed: a.passed })),
         }),
       };
