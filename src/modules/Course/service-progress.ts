@@ -25,6 +25,9 @@ import { CourseCertificateService } from './service-certificates.js';
 // Block types that require student interaction to "complete". Names must
 // match BLOCK_TYPES in src/modules/ContentLibrary/model.ts. Excludes text,
 // image, video (passive media) and code (no submission/run mechanism yet).
+// Blocks a learner answers. Step-reveal (worked examples) is reading, not an
+// answer: it never reports an attempt, so counting it left worked examples
+// impossible to finish. They count as done when read to the end.
 const INTERACTIVE_BLOCK_TYPES = new Set([
   'quiz',
   'fill_blank',
@@ -32,7 +35,6 @@ const INTERACTIVE_BLOCK_TYPES = new Set([
   'ordering',
   'drag_drop',
   'hotspot',
-  'step_reveal',
 ]);
 
 export class CourseProgressService {
@@ -77,6 +79,12 @@ export class CourseProgressService {
         interactionsTotal,
         scrolledToEnd: false,
       });
+    }
+
+    // Recount while unfinished, so a row saved under an older rule (or before
+    // the teacher changed the content) can still be completed.
+    if (progress.status !== 'completed') {
+      progress.interactionsTotal = await computeInteractionsTotal(lesson, soid);
     }
 
     // $max-style: never let the count regress.
