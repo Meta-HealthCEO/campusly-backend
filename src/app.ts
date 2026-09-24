@@ -80,6 +80,7 @@ import governanceRoutes from './modules/Governance/routes.js';
 import curriculumRoutes from './modules/Curriculum/routes.js';
 import curriculumStructureRoutes from './modules/CurriculumStructure/routes.js';
 import pastoralRoutes from './modules/Pastoral/routes.js';
+import behaviourRoutes from './modules/Behaviour/routes.js';
 import classroomRoutes from './modules/Classroom/routes.js';
 import { RecordingController } from './modules/Classroom/controller-recording.js';
 import contentLibraryRoutes from './modules/ContentLibrary/routes.js';
@@ -165,6 +166,8 @@ app.use('/api/homework', authenticate, requireModule('homework'), homeworkRoutes
 // add a dedicated 'assignment' module key here.
 app.use('/api/assignments', authenticate, requireModule('homework'), assignmentRoutes);
 app.use('/api/attendance', authenticate, requireModule('attendance'), attendanceRoutes);
+// One behaviour log (merits, demerits, incidents) replaces Discipline and Merits, under the same module.
+app.use('/api/behaviour', authenticate, requireModule('attendance'), behaviourRoutes);
 // New canonical mount for lessons.
 app.use('/api/lessons', authenticate, requireModule('academic'), lessonRoutes);
 // Legacy /api/lesson-plans → /api/lessons (308 preserves method + body for POST/PUT/PATCH/DELETE).
