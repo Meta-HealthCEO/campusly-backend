@@ -47,34 +47,60 @@ export class UnitInsightService {
     assertCanEditCourse(course, actor);
 
     const scope = { courseId: course._id, schoolId: soid, isDeleted: false };
-    const [modules, lessons, allEnrolments, progress, attempts] = await Promise.all([
+    const [modules, lessons, allEnrolments, allProgress, allAttempts] = await Promise.all([
       CourseModule.find(scope).sort({ orderIndex: 1 }).select('_id').lean(),
-      CourseLesson.find(scope).select('_id moduleId orderIndex title itemKind').lean(),
-      Enrolment.find({ ...scope, status: { $in: ['active', 'completed'] } }).lean(),
+      CourseLesson.find(scope).select('_id moduleId orderIndex title itemKind quizQuestionIds optional').lean(),
+      Enrolment.find({ ...scope, status: { $in: ['active', 'completed'] } }).select('_id studentId status progressPercent enrolledAt').lean(),
       LessonProgress.find(scope).select('enrolmentId lessonId status updatedAt').lean(),
-      QuizAttempt.find(scope).sort({ submittedAt: 1 }).lean(),
+      QuizAttempt.find(scope).sort({ submittedAt: 1 }).select('enrolmentId lessonId submittedAt passed answers').lean(),
     ]);
 
-    // Items in unit order: module by module, then by position.
+    // Items in unit order: module by module, then by position. Lessons whose
+    // module no longer exists (removed by an outline redraft) drop out here.
     const moduleOrder = new Map(modules.map((m, i) => [String(m._id), i]));
     const items = lessons
       .filter((l) => moduleOrder.has(String(l.moduleId)))
       .sort((a, b) => (moduleOrder.get(String(a.moduleId))! - moduleOrder.get(String(b.moduleId))!) || a.orderIndex - b.orderIndex);
     const titleOf = new Map(items.map((l) => [String(l._id), l.title]));
+    const itemIds = new Set(items.map((l) => String(l._id)));
+    // What each quick check currently asks — an attempt's answer to a
+    // question the check no longer asks (since replaced) doesn't count.
+    const currentQuestionsByLesson = new Map(items.map((l) => [String(l._id), new Set((l.quizQuestionIds ?? []).map(String))]));
+
+    // A removed item (its lesson soft-deleted or its module gone) keeps no
+    // record here: it's not something a learner can be "reached" on or stuck on.
+    const progress = allProgress.filter((p) => itemIds.has(String(p.lessonId)));
+    const attempts = allAttempts.filter((a) => itemIds.has(String(a.lessonId)));
 
     // Learners who are still at the school, with their names.
     const students = await Student.find({ _id: { $in: allEnrolments.map((e) => e.studentId) }, schoolId: soid, isDeleted: false })
       .select('_id userId admissionNumber').lean();
     const userIds = students.map((s) => s.userId).filter((id): id is mongoose.Types.ObjectId => !!id);
-    const users = await User.find({ _id: { $in: userIds }, schoolId: soid })
+    const users = await User.find({ _id: { $in: userIds }, schoolId: soid, isDeleted: false })
       .select('firstName lastName').lean();
     const userName = new Map(users.map((u) => [String(u._id), `${u.firstName ?? ''} ${u.lastName ?? ''}`.trim()]));
     const studentName = new Map(students.map((s) => [String(s._id), (s.userId && userName.get(String(s.userId))) || `Learner ${s.admissionNumber}`]));
     const enrolments = allEnrolments.filter((e) => studentName.has(String(e.studentId)));
+    const live = new Set(enrolments.map((e) => String(e._id)));
+
+    // Group progress/attempts by enrolment once, instead of re-filtering the
+    // whole array for every learner (that was learners × rows).
+    const progressByEnrolment = new Map<string, typeof progress>();
+    for (const p of progress) {
+      const key = String(p.enrolmentId);
+      const bucket = progressByEnrolment.get(key);
+      if (bucket) bucket.push(p); else progressByEnrolment.set(key, [p]);
+    }
+    const attemptsByEnrolment = new Map<string, typeof attempts>();
+    for (const a of attempts) {
+      const key = String(a.enrolmentId);
+      const bucket = attemptsByEnrolment.get(key);
+      if (bucket) bucket.push(a); else attemptsByEnrolment.set(key, [a]);
+    }
 
     const learners: InsightLearner[] = enrolments.map((e) => {
-      const mine = progress.filter((p) => String(p.enrolmentId) === String(e._id));
-      const myAttempts = attempts.filter((a) => String(a.enrolmentId) === String(e._id));
+      const mine = progressByEnrolment.get(String(e._id)) ?? [];
+      const myAttempts = attemptsByEnrolment.get(String(e._id)) ?? [];
       const done = new Set(mine.filter((p) => p.status === 'completed').map((p) => String(p.lessonId)));
       const next = items.find((l) => !done.has(String(l._id)) && !l.optional);
       // Only what the learner did counts as activity: null means they haven't started.
@@ -96,9 +122,13 @@ export class UnitInsightService {
       };
     });
 
-    const live = new Set(enrolments.map((e) => String(e._id)));
     const liveAttempts = attempts.filter((a) => live.has(String(a.enrolmentId)));
-    const questionIds = [...new Set(liveAttempts.flatMap((a) => a.answers.map((ans) => String(ans.questionId))))];
+    // Only the questions a live attempt's answer actually names (and still
+    // within that lesson's own current questions) need their stems looked up.
+    const questionIds = [...new Set(liveAttempts.flatMap((a) => {
+      const current = currentQuestionsByLesson.get(String(a.lessonId));
+      return a.answers.map((ans) => String(ans.questionId)).filter((id) => !current || current.has(id));
+    }))];
     // Retired questions included: a teacher's edit replaces them, but the class really answered them.
     const questions = await Question.find({
       _id: { $in: questionIds.map((id) => new mongoose.Types.ObjectId(id)) },
@@ -107,24 +137,47 @@ export class UnitInsightService {
     const stems = new Map(questions.map((q) => [String(q._id), q.stem]));
 
     const liveProgress = progress.filter((p) => live.has(String(p.enrolmentId)));
+    const progressByLesson = new Map<string, typeof liveProgress>();
+    for (const p of liveProgress) {
+      const key = String(p.lessonId);
+      const bucket = progressByLesson.get(key);
+      if (bucket) bucket.push(p); else progressByLesson.set(key, [p]);
+    }
+    const attemptsByLesson = new Map<string, typeof liveAttempts>();
+    for (const a of liveAttempts) {
+      const key = String(a.lessonId);
+      const bucket = attemptsByLesson.get(key);
+      if (bucket) bucket.push(a); else attemptsByLesson.set(key, [a]);
+    }
+
     return {
       items: items.map((l) => {
-        const rows = liveProgress.filter((p) => String(p.lessonId) === String(l._id));
+        const key = String(l._id);
+        const rows = progressByLesson.get(key) ?? [];
+        // A quick check a learner failed gets no progress row (only a pass
+        // completes one) — count an attempt as reaching the item too.
+        const reachedBy = new Set(rows.map((p) => String(p.enrolmentId)));
+        for (const a of attemptsByLesson.get(key) ?? []) reachedBy.add(String(a.enrolmentId));
         return {
-          id: String(l._id),
+          id: key,
           title: l.title,
           itemKind: l.itemKind ?? null,
-          reached: new Set(rows.map((p) => String(p.enrolmentId))).size,
+          reached: reachedBy.size,
           completed: rows.filter((p) => p.status === 'completed').length,
         };
       }),
       learners: orderLearners(learners),
       mostMissed: mostMissed(
-        liveAttempts.map((a) => ({
-          lessonId: String(a.lessonId),
-          lessonTitle: titleOf.get(String(a.lessonId)) ?? 'Quick check',
-          answers: a.answers.map((ans) => ({ questionId: String(ans.questionId), isCorrect: ans.isCorrect })),
-        })),
+        liveAttempts.map((a) => {
+          const current = currentQuestionsByLesson.get(String(a.lessonId));
+          return {
+            lessonId: String(a.lessonId),
+            lessonTitle: titleOf.get(String(a.lessonId)) ?? 'Quick check',
+            answers: a.answers
+              .filter((ans) => !current || current.has(String(ans.questionId)))
+              .map((ans) => ({ questionId: String(ans.questionId), isCorrect: ans.isCorrect })),
+          };
+        }),
         stems,
         MOST_MISSED_LIMIT,
       ),

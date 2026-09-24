@@ -86,6 +86,38 @@ describe('UnitInsightService.get', () => {
     const stranger: CourseActor = { ...f.actor, userId: String(oid()) };
     await expect(UnitInsightService.get(f.courseId, f.schoolId, stranger)).rejects.toThrow('You can only edit your own courses');
   });
+
+  it('lets a HOD, a principal and a school admin see any course in the school', async () => {
+    const f = await releasedUnit();
+    const hod: CourseActor = { userId: String(oid()), role: 'teacher' as CourseActor['role'], isHOD: true, isSchoolPrincipal: false };
+    const principal: CourseActor = { userId: String(oid()), role: 'teacher' as CourseActor['role'], isHOD: false, isSchoolPrincipal: true };
+    const admin: CourseActor = { userId: String(oid()), role: 'school_admin' as CourseActor['role'], isHOD: false, isSchoolPrincipal: false };
+    for (const actor of [hod, principal, admin]) {
+      const insight = await UnitInsightService.get(f.courseId, f.schoolId, actor);
+      expect(insight.totals.enrolled).toBe(3);
+    }
+  });
+});
+
+describe('UnitInsight ignores a removed item', () => {
+  it("doesn't count attempts or progress on a lesson that's since been removed", async () => {
+    const f = await releasedUnit();
+    const removed = await CourseLesson.create({
+      schoolId: new mongoose.Types.ObjectId(f.schoolId), courseId: f.courseId, moduleId: (await CourseLesson.findById(f.checkId).lean())!.moduleId,
+      orderIndex: 9, title: 'Old check', type: 'quiz', itemKind: 'quick_check', quizQuestionIds: [f.q1],
+    });
+    const enrolment = await Enrolment.findOne({ courseId: f.courseId }).lean();
+    await QuizAttempt.create({
+      schoolId: new mongoose.Types.ObjectId(f.schoolId), enrolmentId: enrolment!._id, studentId: enrolment!.studentId,
+      courseId: f.courseId, lessonId: removed._id, attemptNumber: 1,
+      answers: [{ questionId: f.q1, answer: 'x', isCorrect: false, marks: 0 }], totalMarks: 1, earnedMarks: 0, percent: 0, passed: false,
+    });
+    await removed.updateOne({ isDeleted: true });
+
+    const insight = await UnitInsightService.get(f.courseId, f.schoolId, f.actor);
+    expect(insight.items.some((i) => i.id === String(removed._id))).toBe(false);
+    expect(insight.mostMissed.every((m) => m.itemId !== String(removed._id))).toBe(true);
+  });
 });
 
 describe('insight indexes', () => {
