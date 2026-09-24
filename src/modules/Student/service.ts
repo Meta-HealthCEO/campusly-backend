@@ -1,4 +1,5 @@
 import { Student, IStudent } from './model.js';
+import { Parent } from '../Parent/model.js';
 import { User, type IUser } from '../Auth/model.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../common/constants.js';
@@ -131,6 +132,27 @@ function isDuplicateKeyError(err: unknown): boolean {
   return typeof err === 'object' && err !== null && 'code' in err && err.code === 11000;
 }
 
+/** Keeps Parent.childrenIds in step with a learner's guardianIds after it changes. */
+async function syncGuardianLinks(
+  studentId: ObjectIdInput,
+  previousGuardianIds: ObjectIdInput[],
+  nextGuardianIds: ObjectIdInput[],
+): Promise<void> {
+  const previous = new Set(previousGuardianIds.map(String));
+  const next = new Set(nextGuardianIds.map(String));
+  const added = [...next].filter((id) => !previous.has(id));
+  const removed = [...previous].filter((id) => !next.has(id));
+
+  await Promise.all([
+    added.length > 0
+      ? Parent.updateMany({ _id: { $in: added } }, { $addToSet: { childrenIds: studentId } })
+      : null,
+    removed.length > 0
+      ? Parent.updateMany({ _id: { $in: removed } }, { $pull: { childrenIds: studentId } })
+      : null,
+  ]);
+}
+
 export class StudentService {
   static regenerateCredentials = regenerateCredentials;
 
@@ -220,8 +242,14 @@ export class StudentService {
     }
 
     const student = new Student(studentData);
+    const saved = await student.save();
+
+    if (studentData.guardianIds && studentData.guardianIds.length > 0) {
+      await syncGuardianLinks(saved._id as IStudent['_id'], [], studentData.guardianIds);
+    }
+
     return {
-      student: await student.save(),
+      student: saved,
       credentials,
     };
   }
@@ -368,6 +396,11 @@ export class StudentService {
   static async update(id: string, schoolId: string, data: UpdateStudentData): Promise<IStudent> {
     const { firstName, lastName, email, phone, ...studentData } = data;
 
+    // Guardians are being changed: remember who they were before, to diff against after.
+    const previous = studentData.guardianIds
+      ? await Student.findOne({ _id: id, schoolId, isDeleted: false }).select('guardianIds').lean()
+      : null;
+
     // Update the student document (excluding User-record fields)
     const student = await Student.findOneAndUpdate(
       { _id: id, schoolId, isDeleted: false },
@@ -377,6 +410,10 @@ export class StudentService {
 
     if (!student) {
       throw new NotFoundError('Student not found');
+    }
+
+    if (studentData.guardianIds) {
+      await syncGuardianLinks(student._id as IStudent['_id'], previous?.guardianIds ?? [], studentData.guardianIds);
     }
 
     // Write name/email/phone through to the linked User record
