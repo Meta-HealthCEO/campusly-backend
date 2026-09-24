@@ -39,4 +39,16 @@ describe('class notices reach the class', () => {
     await expect(NoticeBoardService.listPosts(String(f.qUser), 'parent', String(f.schoolId), { scope: 'class', scopeId: String(f.classA) } as never))
       .resolves.toBeDefined();
   });
+
+  it("puts a class notice in its learners' and parents' feeds, whichever way the parent is linked", async () => {
+    const f = await classSchool();
+    await NoticeBoardService.createPost(String(f.thandi), 'Thandi M', 'teacher', String(f.schoolId), {
+      scope: 'class', scopeId: String(f.classA), title: 'Library day', content: 'Bring your books back.',
+    } as never);
+    const feed = async (userId: unknown, role: string) =>
+      (await NoticeBoardService.getPostsByUser(String(userId), role, String(f.schoolId), {} as never)).data.map((p) => p.title);
+    expect(await feed(f.lebo.userId, 'student')).toContain('Library day');
+    expect(await feed(f.qUser, 'parent')).toContain('Library day');
+    expect(await feed(f.jan.userId, 'student')).not.toContain('Library day');
+  });
 });

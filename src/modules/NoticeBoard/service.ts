@@ -225,25 +225,19 @@ export class NoticeBoardService {
       return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
     }
 
-    if (userRole === 'parent') {
-      // Parents see school-wide + their children's class + grade boards
-      const parent = await Parent.findOne({ userId, schoolId, isDeleted: false }).lean();
-      if (parent && parent.childrenIds.length > 0) {
-        const children = await Student.find({
-          _id: { $in: parent.childrenIds },
-          schoolId,
-          isDeleted: false,
-        }).select('classId gradeId').lean();
-
-        const classIds = [...new Set(children.map((c) => c.classId.toString()))];
-        const gradeIds = [...new Set(children.map((c) => c.gradeId.toString()))];
-
+    if (userRole === 'parent' || userRole === 'student') {
+      // Parents see their children's (linked either way) class and grade boards, learners their own; both see school-wide.
+      const learners = userRole === 'parent'
+        ? await childrenOfParent(schoolId, userId)
+        : await Student.find({ userId, schoolId, isDeleted: false }).select('classId gradeId').lean();
+      if (learners.length > 0) {
+        const classIds = [...new Set(learners.map((c) => String(c.classId)))];
+        const gradeIds = [...new Set(learners.map((c) => String(c.gradeId)))];
         const orClauses = [
           { scope: 'school' as const, scopeId: schoolId },
           ...classIds.map((id) => ({ scope: 'class' as const, scopeId: id })),
           ...gradeIds.map((id) => ({ scope: 'grade' as const, scopeId: id })),
         ];
-
         const filter = { schoolId, isDeleted: false, $or: orClauses };
         const [data, total] = await Promise.all([
           NoticeBoardPost.find(filter).sort({ pinned: -1, createdAt: -1 }).skip(skip).limit(limit).lean(),
