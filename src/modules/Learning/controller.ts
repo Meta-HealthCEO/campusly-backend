@@ -4,6 +4,7 @@ import { getUser } from '../../types/authenticated-request.js';
 import { LearningService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
 import { resolveSchoolScope } from '../../common/school-scope.js';
+import { quizForViewer } from './quiz-redaction.js';
 
 export class LearningController {
   // ─── Quizzes ─────────────────────────────────────────────────────────
@@ -17,7 +18,7 @@ export class LearningController {
   static async getQuiz(req: Request, res: Response): Promise<void> {
     const schoolId = req.user!.schoolId!;
     const quiz = await LearningService.getQuiz(req.params.id as string, schoolId);
-    res.json(apiResponse(true, quiz, 'Quiz retrieved successfully'));
+    res.json(apiResponse(true, quizForViewer(quiz, req.user?.role), 'Quiz retrieved successfully'));
   }
 
   static async listQuizzes(req: Request, res: Response): Promise<void> {
@@ -32,7 +33,8 @@ export class LearningController {
       status: req.query.status as string | undefined,
     };
     const result = await LearningService.listQuizzes(query);
-    res.json(apiResponse(true, result, 'Quizzes retrieved successfully'));
+    const data = result.data.map((quiz) => quizForViewer(quiz, req.user?.role));
+    res.json(apiResponse(true, { ...result, data }, 'Quizzes retrieved successfully'));
   }
 
   static async updateQuiz(req: Request, res: Response): Promise<void> {
