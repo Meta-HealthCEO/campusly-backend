@@ -102,9 +102,10 @@ export const updateBookingStatusSchema = z.object({
 
 // ─── Cancel Booking ───────────────────────────────────────────────────────────
 
+// A reason is optional, and so is the body itself (the web app sends none).
 export const cancelBookingSchema = z.object({
   cancelReason: z.string().max(500).nullable().optional(),
-}).strict();
+}).strict().optional();
 
 // ─── Join Waitlist ────────────────────────────────────────────────────────────
 

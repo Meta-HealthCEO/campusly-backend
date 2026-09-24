@@ -213,7 +213,7 @@ export class ConferenceBookingService {
 
     booking.status = 'cancelled';
     booking.cancelledAt = new Date();
-    booking.cancelReason = data.cancelReason ?? null;
+    booking.cancelReason = data?.cancelReason ?? null;
     await booking.save();
 
     // Revert slot to available
