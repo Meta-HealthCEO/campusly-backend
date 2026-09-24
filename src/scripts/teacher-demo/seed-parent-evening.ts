@@ -52,12 +52,22 @@ export async function seedParentEvening(scope: { schoolId: Id; teacherId: Id; cl
 
   const all = slots();
   const booked = pair ? all[1] : null;
+
+  // Re-running the seed must not reset slots that already have a live booking
+  // (the demo one, or a real one made through the app since the last run).
+  const liveSlotIds = new Set(
+    (await ConferenceBooking.find({
+      eventId: event._id, teacherId: scope.teacherId, schoolId: scope.schoolId, status: 'confirmed', isDeleted: false,
+    }).select('slotId').lean()).map((b) => b.slotId),
+  );
+  if (booked) liveSlotIds.add(booked.slotId);
+
   await ConferenceTeacherAvailability.findOneAndUpdate(
     { eventId: event._id, teacherId: scope.teacherId },
     {
       $set: {
         schoolId: scope.schoolId, windows: [{ startTime: '14:00', endTime: '16:00' }], isDeleted: false,
-        generatedSlots: all.map((s) => (s.slotId === booked?.slotId ? { ...s, status: 'booked' } : s)),
+        generatedSlots: all.map((s) => (liveSlotIds.has(s.slotId) ? { ...s, status: 'booked' } : s)),
       },
     },
     { upsert: true },
