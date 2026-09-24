@@ -11,8 +11,9 @@ import { paginationHelper } from '../../common/utils.js';
 import { buildParentSystemPrompt } from './prompts.js';
 import { MasteryService } from './mastery.service.js';
 import type { ParentChatInput } from './validation.js';
+import { config } from '../../config/env.js';
 
-const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514';
+const ANTHROPIC_MODEL = config.anthropic.model;
 const MAX_CONTEXT_MESSAGES = 20;
 
 function toAnthropicMessages(

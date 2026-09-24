@@ -6,8 +6,9 @@ import { AIUsageLog } from '../modules/AITools/model.js';
 import type { IAIResult } from '../modules/AITools/model.js';
 import { AIService } from '../services/ai.service.js';
 import { GradingResponseSchema } from '../modules/AITools/validation-grading.js';
+import { config } from '../config/env.js';
 
-const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514';
+const ANTHROPIC_MODEL = config.anthropic.model;
 
 interface AIGradingJobData {
   jobId: string;

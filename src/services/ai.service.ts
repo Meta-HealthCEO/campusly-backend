@@ -1,8 +1,9 @@
 import { logger } from '../common/logger.js';
 import Anthropic from '@anthropic-ai/sdk';
+import { config } from '../config/env.js';
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY || '';
-const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514';
+const ANTHROPIC_MODEL = config.anthropic.model;
 const MAX_CONCURRENT = 5;
 const TIMEOUT_MS = 180_000; // 3 minutes for content generation
 

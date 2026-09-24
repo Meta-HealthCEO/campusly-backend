@@ -61,7 +61,7 @@ export const config = {
 
   anthropic: {
     apiKey: getEnv('ANTHROPIC_API_KEY', ''),
-    model: getEnv('ANTHROPIC_MODEL', 'claude-sonnet-4-20250514'),
+    model: getEnv('ANTHROPIC_MODEL', 'claude-sonnet-5'),
   },
 
   resend: {

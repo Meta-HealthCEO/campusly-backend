@@ -14,6 +14,7 @@ import {
 } from '../Textbook/service-textbook-context.js';
 import type { TextbookContext } from '../Textbook/service-textbook-context.js';
 import { logger } from '../../common/logger.js';
+import { config } from '../../config/env.js';
 
 const INTERACTIVE_TYPES: ReadonlySet<string> = new Set([
   'quiz', 'fill_blank', 'drag_drop', 'match_columns', 'ordering', 'hotspot',
@@ -79,7 +80,7 @@ export class GenerationService {
       tags: [],
       status: 'draft',
       createdBy: new mongoose.Types.ObjectId(userId),
-      aiModel: process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514',
+      aiModel: config.anthropic.model,
       aiPrompt: userPrompt,
       difficulty: data.difficulty,
       estimatedMinutes: 0,

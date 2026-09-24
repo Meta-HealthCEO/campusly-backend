@@ -9,8 +9,9 @@ import { paginationHelper } from '../../common/utils.js';
 import { buildSystemPrompt, TutorPromptContext } from './prompts.js';
 import { resolveTutorContext } from './student-context.js';
 import type { SendMessageInput, AuraContextInput } from './validation.js';
+import { config } from '../../config/env.js';
 
-const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514';
+const ANTHROPIC_MODEL = config.anthropic.model;
 const MAX_CONTEXT_MESSAGES = 20;
 
 interface WeakArea {

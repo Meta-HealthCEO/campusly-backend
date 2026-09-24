@@ -8,8 +8,9 @@ import { SPORT_CONFIGS } from './sport-configs.js';
 import { AIService } from '../../services/ai.service.js';
 import { AIUsageLog } from '../AITools/model.js';
 import { NotFoundError, BadRequestError } from '../../common/errors.js';
+import { config } from '../../config/env.js';
 
-const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514';
+const ANTHROPIC_MODEL = config.anthropic.model;
 const CACHE_DAYS = 7;
 
 interface AIReportJSON {

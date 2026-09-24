@@ -9,8 +9,9 @@ import {
   assertTopicMatchesClassGrade,
   assertTeacherCanPlanForClassSubject,
 } from './service.js';
+import { config } from '../../config/env.js';
 
-const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514';
+const ANTHROPIC_MODEL = config.anthropic.model;
 
 /** Max AI lesson-plan generations per teacher per hour. */
 const RATE_LIMIT_PER_HOUR = 30;

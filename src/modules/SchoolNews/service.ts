@@ -8,6 +8,7 @@ import { AIUsageLog } from '../AITools/model.js';
 import { SportFixture, SportTeam } from '../Sport/model.js';
 import { Achievement } from '../Achiever/model.js';
 import { Event } from '../Event/model.js';
+import { config } from '../../config/env.js';
 
 interface ArticleFilters {
   category?: string;
@@ -198,7 +199,7 @@ export class SchoolNewsService {
       teacherId: userId,
       type: 'news_generation',
       tokensUsed: { input: usage.input_tokens, output: usage.output_tokens },
-      aiModel: process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514',
+      aiModel: config.anthropic.model,
     });
 
     const article = new NewsArticle({
