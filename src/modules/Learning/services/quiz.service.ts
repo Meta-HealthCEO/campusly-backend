@@ -45,11 +45,6 @@ function getPagination(query: ListQuery) {
 }
 
 export class QuizService {
-  static async createQuiz(data: Partial<IQuiz>, teacherId: string): Promise<IQuiz> {
-    const quiz = new Quiz({ ...data, teacherId });
-    return quiz.save();
-  }
-
   static async getQuiz(id: string, schoolId: string): Promise<IQuiz> {
     const quiz = await Quiz.findOne({ _id: id, schoolId, isDeleted: false })
       .populate('subjectId', 'name code')

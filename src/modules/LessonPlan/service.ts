@@ -6,6 +6,7 @@ import { Homework, IHomework } from '../Homework/model.js';
 import { School } from '../School/model.js';
 import { User } from '../Auth/model.js';
 import type { CreateHomeworkInput } from '../Homework/validation.js';
+import { QUIZ_HOMEWORK_RETIRED } from '../Learning/quiz-migration.js';
 import { GenerationService } from '../ContentLibrary/service-generation.js';
 import type { GenerateLessonMaterialInput } from './validation.js';
 import { generateLessonPlanPdf } from './pdf-generator.js';
@@ -467,6 +468,12 @@ export class LessonPlanService {
     const plan = await LessonPlan.findOne({ _id: planId, schoolId, isDeleted: false });
     if (!plan) throw new NotFoundError('Lesson plan not found');
     assertLessonPlanAccess(plan, actorId, actorRole, 'attach');
+
+    // One quiz system: this writes Homework directly (not through
+    // HomeworkService.create), so it must carry the same refusal —
+    // otherwise a module that mounts this later, or any other direct
+    // caller, could still create retired quiz-type homework.
+    if (input.type === 'quiz') throw new BadRequestError(QUIZ_HOMEWORK_RETIRED);
 
     if (String(input.schoolId) !== String(plan.schoolId)) {
       throw new BadRequestError('Homework must belong to the same school as the lesson plan');

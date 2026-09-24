@@ -2,8 +2,8 @@ import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import mongoose from 'mongoose';
 import type { Request, Response } from 'express';
 import { Homework } from '../../Homework/model.js';
+import { Quiz } from '../model.js';
 import { LearningController } from '../controller.js';
-import { LearningService } from '../service.js';
 import { HomeworkService } from '../../Homework/service.js';
 import { HomeworkTemplateService } from '../../Homework/template.service.js';
 import { addMaterial } from '../../Lesson/service-materials.js';
@@ -23,12 +23,12 @@ afterAll(async () => {
 
 describe('the old Learning quiz is retired: nothing new is made with it', () => {
   it('POST /learning/quizzes says where quizzes are made now (410), and creates nothing', async () => {
-    const create = vi.spyOn(LearningService, 'createQuiz');
+    const before = await Quiz.countDocuments({});
     const req = { user: { id: 'u1', role: 'teacher', schoolId: 's1' }, body: { title: 'x' } } as unknown as Request;
     const err = await LearningController.createQuiz(req, { status: vi.fn(), json: vi.fn() } as unknown as Response).catch((e: unknown) => e);
     expect(err).toBeInstanceOf(AppError);
     expect(err).toMatchObject({ statusCode: 410, message: QUIZZES_RETIRED });
-    expect(create).not.toHaveBeenCalled();
+    expect(await Quiz.countDocuments({})).toBe(before);
   });
 
   it('quiz-type homework is refused: it is an exercise now', async () => {
