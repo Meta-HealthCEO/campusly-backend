@@ -8,6 +8,7 @@ import { Invoice } from '../../Fee/model.js';
 import { Wallet } from '../../Wallet/model.js';
 import { BookLoan } from '../../Library/model.js';
 import { PlayerCard } from '../../Sport/model-stats.js';
+import { Parent } from '../../Parent/model.js';
 
 export class Student360Service {
   /**
@@ -43,6 +44,7 @@ export class Student360Service {
       Student360Service.getLibrary(schoolObjId, studentObjId),
       Student360Service.getSports(schoolObjId, studentObjId),
       Student360Service.getBehaviour(schoolObjId, studentObjId),
+      Student360Service.getParents(schoolObjId, studentObjId, (student.guardianIds ?? []) as mongoose.Types.ObjectId[]),
     ]);
 
     const val = <T>(idx: number, fallback: T): T => {
@@ -72,7 +74,37 @@ export class Student360Service {
       library: val(6, { borrowed: 0, overdue: 0 }),
       sports: val(7, { cards: [] }),
       behaviour: val(8, { recentIncidents: [] }),
+      parents: val(9, [] as Array<{ userId: string; name: string; relationship: string }>),
     };
+  }
+
+  /**
+   * The learner's parents, by name and relationship, for messaging them through
+   * Campusly. Linked from either side (the learner's guardians, or a parent who
+   * lists the learner as a child); contact details stay with the office.
+   */
+  private static async getParents(schoolId: mongoose.Types.ObjectId, studentId: mongoose.Types.ObjectId, guardianIds: mongoose.Types.ObjectId[]) {
+    const parents = await Parent.find({
+      schoolId,
+      isDeleted: false,
+      $or: [{ _id: { $in: guardianIds } }, { childrenIds: studentId }],
+    })
+      .populate('userId', 'firstName lastName')
+      .lean();
+    const rank = (id: unknown) => {
+      const at = guardianIds.findIndex((g) => String(g) === String(id));
+      return at === -1 ? guardianIds.length : at;
+    };
+    return [...parents]
+      .sort((a, b) => rank(a._id) - rank(b._id))
+      .map((p) => {
+        const user = p.userId as unknown as { _id?: unknown; firstName?: string; lastName?: string } | null;
+        return {
+          userId: String(user?._id ?? p.userId),
+          name: `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim() || 'Parent',
+          relationship: p.relationship ?? 'guardian',
+        };
+      });
   }
 
   // ─── Sub-queries ───────────────────────────────────────────────────────────

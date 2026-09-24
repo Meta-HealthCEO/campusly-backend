@@ -18,6 +18,8 @@ const MOST_MISSED_LIMIT = 5;
 
 export interface InsightLearner {
   enrolmentId: string;
+  /** Opens the learner's profile. */
+  studentId: string;
   name: string;
   progressPercent: number;
   status: 'active' | 'completed' | 'dropped';
@@ -79,6 +81,7 @@ export class UnitInsightService {
       const lastActivityAt = latest(...mine.map((p) => p.updatedAt), ...myAttempts.map((a) => a.submittedAt));
       return {
         enrolmentId: String(e._id),
+        studentId: String(e.studentId),
         name: studentName.get(String(e.studentId)) ?? 'Learner',
         progressPercent: e.progressPercent,
         status: e.status,

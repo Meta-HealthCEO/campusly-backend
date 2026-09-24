@@ -74,6 +74,8 @@ describe('UnitInsightService.get', () => {
     expect(insight.learners[2]).toMatchObject({ currentItem: { title: 'Counting on' }, stuck: null });
     // Never opened the unit: no activity to report, and not stuck on release day.
     expect(insight.learners[1]).toMatchObject({ name: 'Nomsa Zulu', lastActivityAt: null, stuck: null, progressPercent: 0 });
+    // Each learner row can open that learner's profile.
+    expect(insight.learners.every((l) => /^[a-f0-9]{24}$/.test(l.studentId))).toBe(true);
     expect(insight.mostMissed[0]).toMatchObject({ itemId: f.checkId, stem: 'What comes next? 10, 20, 30', wrong: 2, answered: 3, wrongPercent: 67 });
     expect(insight.items.map((i) => [i.title, i.completed])).toEqual([['Counting in tens', 2], ['Check: counting', 1], ['Counting on', 0]]);
     expect(insight.totals).toEqual({ enrolled: 3, completed: 0, stuck: 1 });
