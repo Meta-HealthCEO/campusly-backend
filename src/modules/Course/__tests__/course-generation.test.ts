@@ -5,7 +5,7 @@ vi.mock('../../QuestionBank/service-questions-generation.js', () => ({ generateA
 
 import { generateAIQuestions } from '../../QuestionBank/service-questions-generation.js';
 import { GenerationService } from '../../ContentLibrary/service-generation.js';
-import { resetItemForRetry, runCourseGeneration } from '../service-course-generation.js';
+import { friendlyGenerationError, resetItemForRetry, runCourseGeneration } from '../service-course-generation.js';
 import { Course, CourseLesson, CourseModule } from '../model.js';
 import { Grade } from '../../Academic/model.js';
 import { Question } from '../../QuestionBank/model.js';
@@ -75,7 +75,7 @@ describe('runCourseGeneration', () => {
     expect(items.filter((i) => i.itemKind !== 'quick_check').every((i) => i.contentResourceId)).toBe(true);
     expect(items.filter((i) => i.itemKind === 'quick_check').every((i) => i.quizQuestionIds.length === 4)).toBe(true);
     expect(content).toHaveBeenCalledTimes(3);
-    expect(content.mock.calls[0][3]).toEqual({ skipUsageLimit: true, tags: ['class_unit'] });
+    expect(content.mock.calls[0][3]).toEqual({ skipUsageLimit: true, tags: ['class_unit', 'class_unit_initial'] });
     expect(content.mock.calls.map((c) => c[2].type).sort()).toEqual(['study_notes', 'study_notes', 'worked_example']);
     expect(vi.mocked(generateAIQuestions).mock.calls[0][0]).toMatchObject({ count: 4, questionTypes: ['mcq'] });
   });
@@ -118,5 +118,64 @@ describe('runCourseGeneration', () => {
     expect(content).toHaveBeenCalledTimes(1);
     const unit = await Course.findById(f.courseId).lean();
     expect(unit?.generation).toMatchObject({ status: 'done', done: 5, failed: 0, message: 'All 5 items are ready.' });
+  });
+
+  it("stores a plain sentence instead of a raw zod dump, but keeps a friendly message as it was", async () => {
+    const f = await approvedUnit();
+    vi.spyOn(GenerationService, 'generateContent').mockImplementation(async (_s, _u, data) => {
+      if (data.type === 'worked_example') {
+        const zodLike = new Error(JSON.stringify([{ code: 'invalid_type', path: ['title'], message: 'Required' }], null, 2));
+        zodLike.name = 'ZodError';
+        throw zodLike;
+      }
+      return resource();
+    });
+    await runCourseGeneration(f.courseId, f.schoolId);
+    const failed = await CourseLesson.findOne({ courseId: f.courseId, genStatus: 'failed' }).lean();
+    expect(failed?.genError).toBe("This item couldn't be written right now. Try again.");
+  });
+
+  it("never overwrites an item the teacher saved while the background write was still in flight", async () => {
+    const f = await approvedUnit();
+    const [notes] = await CourseLesson.find({ courseId: f.courseId, itemKind: 'notes' }).sort({ orderIndex: 1 }).lean();
+    const teachersOwnResourceId = oid();
+    vi.spyOn(GenerationService, 'generateContent').mockImplementation(async (_s, _u, data) => {
+      if (data.instructions.includes(notes.title)) {
+        // The teacher's own save lands while this background write is still running.
+        await CourseLesson.updateOne({ _id: notes._id }, { $set: { teacherEdited: true, contentResourceId: teachersOwnResourceId, genStatus: 'ready' } });
+      }
+      return resource();
+    });
+    await runCourseGeneration(f.courseId, f.schoolId);
+    const saved = await CourseLesson.findById(notes._id).lean();
+    expect(saved).toMatchObject({ teacherEdited: true, contentResourceId: teachersOwnResourceId, genStatus: 'ready' });
+  });
+
+  it('stops spending AI on items claimed after the unit was deleted mid-run', async () => {
+    const f = await approvedUnit();
+    // The unit is deleted partway through the run (simulated by the first
+    // write itself soft-deleting it) — items claimed afterwards (once a lane
+    // frees up, since only 3 run at a time for these 5 items) must not spend
+    // AI writing for a unit that's gone.
+    let first = true;
+    const content = vi.spyOn(GenerationService, 'generateContent').mockImplementation(async () => {
+      if (first) { first = false; await Course.updateOne({ _id: f.courseId }, { $set: { isDeleted: true } }); }
+      return resource();
+    });
+    await runCourseGeneration(f.courseId, f.schoolId);
+    const totalCalls = content.mock.calls.length + vi.mocked(generateAIQuestions).mock.calls.length;
+    expect(totalCalls).toBeLessThan(5);
+  });
+});
+
+describe('friendlyGenerationError', () => {
+  it('keeps a plain, human-written message unchanged', () => {
+    expect(friendlyGenerationError(new Error('This item has no CAPS topic to write from'))).toBe('This item has no CAPS topic to write from');
+  });
+  it('replaces a raw JSON dump (e.g. a ZodError) with a plain sentence', () => {
+    expect(friendlyGenerationError(new Error('[{"code":"invalid_type","path":["title"]}]'))).toBe("This item couldn't be written right now. Try again.");
+  });
+  it('replaces a non-Error rejection with a plain sentence', () => {
+    expect(friendlyGenerationError('boom')).toBe("This item couldn't be written right now. Try again.");
   });
 });

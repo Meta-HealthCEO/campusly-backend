@@ -5,6 +5,7 @@ vi.mock('../../../jobs/course-generation.job.js', () => ({ enqueueCourseGenerati
 
 import { enqueueCourseGeneration } from '../../../jobs/course-generation.job.js';
 import { ClassUnitService } from '../service-class-unit.js';
+import { CourseService } from '../service.js';
 import { Course, CourseLesson, CourseModule, Enrolment } from '../model.js';
 import { Class } from '../../Academic/model.js';
 import { Student } from '../../Student/model.js';
@@ -80,6 +81,45 @@ describe('ClassUnitService.release', () => {
     const f = await writtenUnit();
     const stranger: CourseActor = { ...f.actor, userId: String(oid()) };
     await expect(ClassUnitService.release(f.courseId, f.schoolId, stranger, [f.classId])).rejects.toThrow('You can only edit your own courses');
+  });
+
+  it('refuses to release a unit whose items were all removed', async () => {
+    const f = await writtenUnit();
+    await CourseLesson.updateMany({ courseId: f.courseId }, { $set: { isDeleted: true } });
+    await expect(ClassUnitService.release(f.courseId, f.schoolId, f.actor, [f.classId])).rejects.toThrow('This unit has no items left. Add some before releasing.');
+    expect((await Course.findById(f.courseId).lean())?.status).toBe('draft');
+  });
+
+  it('records only the classes that actually enrolled, not the whole batch, when one fails mid-release', async () => {
+    const f = await writtenUnit();
+    const schoolId = new mongoose.Types.ObjectId(f.schoolId);
+    const classB = oid();
+    await Class.collection.insertOne({ _id: classB, schoolId, gradeId: oid(), teacherId: new mongoose.Types.ObjectId(f.actor.userId), name: 'Grade 1 - B', classroomCode: `C${classB}`, isDeleted: false });
+    await Student.collection.insertOne({ schoolId, classId: classB, admissionNumber: `B0-${classB}`, firstName: 'L0', lastName: 'Test', isDeleted: false });
+
+    let calls = 0;
+    const spy = vi.spyOn(CourseService, 'assignCourseToClass').mockImplementation(async (crsId, sid, actor, data) => {
+      calls += 1;
+      if (calls === 2) throw new Error('enrolment failed');
+      const soid = new mongoose.Types.ObjectId(sid);
+      const classOid = new mongoose.Types.ObjectId(data.classId);
+      const students = await Student.find({ classId: classOid, schoolId: soid, isDeleted: false }).select('_id').lean();
+      await Enrolment.insertMany(students.map((s) => ({
+        schoolId: soid, courseId: new mongoose.Types.ObjectId(crsId), studentId: s._id,
+        enrolledBy: new mongoose.Types.ObjectId(actor.userId), classId: classOid, status: 'active',
+      })));
+      return { attempted: students.length, newEnrolments: students.length, alreadyEnroled: 0 };
+    });
+
+    await expect(ClassUnitService.release(f.courseId, f.schoolId, f.actor, [f.classId, String(classB)])).rejects.toThrow('enrolment failed');
+    const unit = await Course.findById(f.courseId).lean();
+    // The unit really was released to the class that succeeded — status reflects that truthfully,
+    // and only the class that actually got enrolled is recorded as released (order of the two isn't guaranteed).
+    expect(unit?.status).toBe('published');
+    expect(unit?.scope?.classIds).toHaveLength(1);
+    expect([f.classId, String(classB)]).toContain(String(unit?.scope?.classIds[0]));
+    expect(await Enrolment.countDocuments({ courseId: f.courseId, isDeleted: false })).toBe(3);
+    spy.mockRestore();
   });
 });
 

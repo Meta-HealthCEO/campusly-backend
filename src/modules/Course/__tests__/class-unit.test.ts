@@ -68,7 +68,9 @@ describe('ClassUnitService.create', () => {
     const f = await fixture();
     const unit = await ClassUnitService.create(f.schoolId, f.actor, f.input);
     expect(unit).toMatchObject({ kind: 'class_unit', title: 'Mathematics · Grade 1 · Term 3', status: 'draft', outlineStatus: 'none' });
-    expect(unit.scope?.classIds.map(String)).toEqual([String(f.classId)]);
+    // Not released to any class yet — only /release does that.
+    expect(unit.scope?.classIds).toEqual([]);
+    expect(String(unit.scope?.builtForClassId)).toBe(String(f.classId));
     expect(unit.scope?.termNumber).toBe(3);
   });
 
@@ -78,6 +80,17 @@ describe('ClassUnitService.create', () => {
     await Class.collection.insertOne({ _id: other, schoolId: new mongoose.Types.ObjectId(f.schoolId), gradeId: oid(), teacherId: oid(), name: 'Grade 2 - B', classroomCode: `C${other}`, isDeleted: false });
     await expect(ClassUnitService.create(f.schoolId, f.actor, { ...f.input, classId: String(other) }))
       .rejects.toThrow('You can only build units for classes you teach');
+  });
+
+  it('checks a free standalone teacher\'s allowance before creating any unit shell', async () => {
+    const f = await fixture();
+    const soid = new mongoose.Types.ObjectId(f.schoolId);
+    await Course.collection.insertMany([1, 2].map((n) => ({ schoolId: soid, slug: `old-${n}-${oid()}`, title: 'Old', aiGenerated: true, isDeleted: false })));
+    const before = await Course.countDocuments({ schoolId: soid });
+    await expect(ClassUnitService.create(f.schoolId, f.actor, f.input, true))
+      .rejects.toThrow("You've used your free AI units. Upgrade to Pro to keep building units.");
+    // No empty, unusable shell left behind by a create call that always succeeded regardless.
+    expect(await Course.countDocuments({ schoolId: soid })).toBe(before);
   });
 });
 

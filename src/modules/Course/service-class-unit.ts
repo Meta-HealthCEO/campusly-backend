@@ -49,11 +49,11 @@ export async function teacherClassIds(schoolId: string, teacherId: string): Prom
   return new Set([...registerClasses.map((c) => String(c._id)), ...timetableClasses.map(String)]);
 }
 
-export async function assertTeachesClasses(schoolId: string, actor: CourseActor, classIds: string[]): Promise<void> {
+export async function assertTeachesClasses(schoolId: string, actor: CourseActor, classIds: string[], action: 'build' | 'release' = 'build'): Promise<void> {
   if (actsForWholeSchool(actor)) return;
   const mine = await teacherClassIds(schoolId, actor.userId);
   if (classIds.some((id: string) => !mine.has(id))) {
-    throw new ForbiddenError('You can only build units for classes you teach');
+    throw new ForbiddenError(action === 'release' ? 'You can only release units to classes you teach' : 'You can only build units for classes you teach');
   }
 }
 
@@ -124,14 +124,19 @@ async function replaceOutline(course: ICourse, modules: OutlineModule[]): Promis
 }
 
 export class ClassUnitService {
-  static async create(schoolId: string, actor: CourseActor, input: CreateClassUnitInput) {
+  static async create(schoolId: string, actor: CourseActor, input: CreateClassUnitInput, isStandaloneTeacher = false) {
     const soid = oid(schoolId);
     const klass = await Class.findOne({ _id: oid(input.classId), schoolId: soid, isDeleted: false }).lean();
     if (!klass) throw new NotFoundError('Class not found');
     await assertTeachesClasses(schoolId, actor, [input.classId]);
+    // Check the free-unit allowance before anything is written to the
+    // database — a teacher who is already at their limit shouldn't be left
+    // with an empty, unusable unit shell from a create call that always
+    // succeeded regardless.
+    await assertCourseGenerationAccess(schoolId, isStandaloneTeacher);
     const [subject, grade] = await Promise.all([
       Subject.findOne({ _id: oid(input.subjectId), schoolId: soid, isDeleted: false }).lean(),
-      Grade.findOne({ _id: klass.gradeId, isDeleted: false }).lean(),
+      Grade.findOne({ _id: klass.gradeId, schoolId: soid, isDeleted: false }).lean(),
     ]);
     if (!subject) throw new NotFoundError('Subject not found');
 
@@ -150,7 +155,10 @@ export class ClassUnitService {
         subjectId: subject._id,
         termNumber: input.termNumber,
         topicNodeIds: input.topicNodeIds.map((id: string) => oid(id)),
-        classIds: [klass._id],
+        // Not "released to" yet — that only happens through /release. This is
+        // just the class the unit was built for, used to pre-tick that dialog.
+        classIds: [],
+        builtForClassId: klass._id,
       },
       certificateEnabled: false,
     });
@@ -168,14 +176,14 @@ export class ClassUnitService {
     if (!course.aiGenerated) await assertCourseGenerationAccess(schoolId, isStandaloneTeacher);
     const limit = await checkUsageLimit(schoolId, 'maxAiGenerationsPerDay');
     if (!limit.allowed) {
-      throw new BadRequestError(`Daily AI generation limit reached (${limit.current}/${limit.limit}). Try again tomorrow.`);
+      throw new BadRequestError("Your school has used today's AI drafts. Try again tomorrow.");
     }
 
     const topics = await scopeTopics(course);
     if (topics.length === 0) throw new BadRequestError('Pick at least one CAPS topic for this unit.');
     const [subject, grade] = await Promise.all([
-      Subject.findById(course.scope!.subjectId).select('name').lean(),
-      Grade.findById(course.scope!.gradeId).select('name').lean(),
+      Subject.findOne({ _id: course.scope!.subjectId, schoolId: course.schoolId, isDeleted: false }).select('name').lean(),
+      Grade.findOne({ _id: course.scope!.gradeId, schoolId: course.schoolId, isDeleted: false }).select('name').lean(),
     ]);
     const prompt = buildOutlinePrompt(
       { subjectName: subject?.name ?? 'the subject', gradeName: grade?.name ?? 'the grade', termNumber: course.scope!.termNumber },
@@ -185,10 +193,20 @@ export class ClassUnitService {
     const modules = normaliseOutline(await AIService.generateJSON<unknown>(prompt.system, prompt.user), topics);
 
     await replaceOutline(course, modules);
-    course.outlineStatus = 'drafted';
-    course.aiGenerated = true;
-    course.estimatedDurationHours = Math.round(modules.flatMap((m) => m.items).reduce((sum, i) => sum + i.minutes, 0) / 6) / 10;
-    await course.save();
+    // Conditional on the outline not having been approved meanwhile (e.g. a
+    // second, concurrent draft/approve request) — a draft must never land on
+    // top of an outline that's already been approved and is being written.
+    const res = await Course.updateOne(
+      { _id: course._id, schoolId: course.schoolId, outlineStatus: { $ne: 'approved' } },
+      {
+        $set: {
+          outlineStatus: 'drafted',
+          aiGenerated: true,
+          estimatedDurationHours: Math.round(modules.flatMap((m) => m.items).reduce((sum, i) => sum + i.minutes, 0) / 6) / 10,
+        },
+      },
+    );
+    if (res.matchedCount === 0) throw new BadRequestError('This outline is approved. Its items are being written.');
     return CourseService.getCourse(courseId, schoolId);
   }
 
@@ -202,11 +220,15 @@ export class ClassUnitService {
     const total = await CourseLesson.countDocuments(items);
     if (total === 0) throw new BadRequestError('The outline has no items to write');
     await CourseLesson.updateMany(items, { $set: { genStatus: 'pending', genError: '' } });
-    course.outlineStatus = 'approved';
-    course.generation = { status: 'queued', total, done: 0, failed: 0, message: '', startedAt: null, finishedAt: null };
-    await course.save();
+    // Conditional on the outline still being exactly 'drafted': two tabs (or
+    // a retried request) approving at once must not both queue generation.
+    const res = await Course.updateOne(
+      { _id: course._id, schoolId: course.schoolId, outlineStatus: 'drafted' },
+      { $set: { outlineStatus: 'approved', generation: { status: 'queued', total, done: 0, failed: 0, message: '', startedAt: null, finishedAt: null } } },
+    );
+    if (res.matchedCount === 0) throw new BadRequestError('Draft the outline first');
     await enqueueCourseGeneration({ courseId, schoolId });
-    return course.toObject();
+    return CourseService.getCourse(courseId, schoolId);
   }
 
   /** What the unit page polls while items are written. */
@@ -272,9 +294,10 @@ export class ClassUnitService {
     const course = await unitOrThrow(courseId, schoolId);
     assertCanEditCourse(course, actor);
     if (course.outlineStatus !== 'approved') throw new BadRequestError('Approve the outline first');
-    const notReady = await CourseLesson.countDocuments({
-      courseId: course._id, schoolId: course.schoolId, isDeleted: false, itemKind: { $ne: null }, genStatus: { $ne: 'ready' },
-    });
+    const itemFilter = { courseId: course._id, schoolId: course.schoolId, isDeleted: false, itemKind: { $ne: null } };
+    const totalItems = await CourseLesson.countDocuments(itemFilter);
+    if (totalItems === 0) throw new BadRequestError('This unit has no items left. Add some before releasing.');
+    const notReady = await CourseLesson.countDocuments({ ...itemFilter, genStatus: { $ne: 'ready' } });
     if (notReady > 0) {
       throw new BadRequestError(`${notReady} item${notReady === 1 ? '' : 's'} still need${notReady === 1 ? 's' : ''} attention`);
     }
@@ -282,7 +305,7 @@ export class ClassUnitService {
     const ids = [...new Set(classIds)];
     if (ids.length === 0) throw new BadRequestError('Pick at least one class');
     if (ids.some((id: string) => !mongoose.Types.ObjectId.isValid(id))) throw new NotFoundError('Class not found');
-    await assertTeachesClasses(schoolId, actor, ids);
+    await assertTeachesClasses(schoolId, actor, ids, 'release');
     const classes = await Class.find({ _id: { $in: ids.map((id: string) => oid(id)) }, schoolId: course.schoolId, isDeleted: false })
       .select('_id name').lean();
     if (classes.length !== ids.length) throw new NotFoundError('Class not found');
@@ -295,14 +318,18 @@ export class ClassUnitService {
       course.status = 'published';
       course.publishedBy = oid(actor.userId);
       course.publishedAt = new Date();
+      await course.save();
     }
-    const released = new Set([...(course.scope!.classIds ?? []).map(String), ...ids]);
-    course.scope!.classIds = [...released].map((id: string) => oid(id));
-    await course.save();
 
+    // Each class is recorded as "released to" only once its learners are
+    // actually enrolled — never all of them up front. If enrolling one class
+    // fails partway through, the classes already enrolled stay correctly
+    // recorded and the failed/remaining ones are not, instead of the whole
+    // batch being marked released regardless of what actually happened.
     const results = [];
     for (const klass of classes) {
       const enrolled = await CourseService.assignCourseToClass(courseId, schoolId, actor, { classId: String(klass._id) }, { fromRelease: true });
+      await Course.updateOne({ _id: course._id, schoolId: course.schoolId }, { $addToSet: { 'scope.classIds': klass._id } });
       results.push({ classId: String(klass._id), name: klass.name, newEnrolments: enrolled.newEnrolments });
     }
     return { classes: results };

@@ -20,6 +20,30 @@ const QUICK_CHECK_QUESTIONS = 4;
 export const STALE_WRITING_MS = 10 * 60 * 1000;
 /** Library resources written for units: kept out of the school's daily AI count (the unit was counted once). */
 export const UNIT_RESOURCE_TAG = 'class_unit';
+/**
+ * Only the unit's *initial* item write is kept out of the school's daily AI
+ * count (the outline draft already spent one check for the whole unit).
+ * Rewrites and revision items are separate, later AI actions and must count
+ * like any other generation — so they carry UNIT_RESOURCE_TAG (for ownership
+ * checks) but not this tag (for the daily-count exclusion).
+ */
+export const UNIT_INITIAL_TAG = 'class_unit_initial';
+/** A generic, teacher-safe message for an item write that failed for an unexpected (non-friendly) reason. */
+const GENERIC_WRITE_ERROR = "This item couldn't be written right now. Try again.";
+
+/**
+ * The message to store on a failed item. Deliberately-thrown, human-readable
+ * errors (e.g. "This item has no CAPS topic to write from") pass through
+ * unchanged; raw technical dumps (a ZodError's JSON array of issues, or any
+ * other non-Error rejection) are replaced with a plain sentence so a teacher
+ * never sees them.
+ */
+export function friendlyGenerationError(err: unknown): string {
+  if (!(err instanceof Error)) return GENERIC_WRITE_ERROR;
+  const message = err.message.trim();
+  const looksTechnical = err.name === 'ZodError' || message.startsWith('[') || message.startsWith('{');
+  return looksTechnical ? GENERIC_WRITE_ERROR : err.message;
+}
 
 const staleCutoff = () => new Date(Date.now() - STALE_WRITING_MS);
 /** Items a run may take: waiting ones, and ones a restart left half-written. */
@@ -93,7 +117,7 @@ async function writeItem(unit: Unit, module: Module, item: Item, gradeName: stri
     item.itemKind === 'worked_example'
       ? { ...base, type: 'worked_example', blockTypes: ['text', 'step_reveal'] }
       : { ...base, type: 'study_notes', blockTypes: ['text'] },
-    { skipUsageLimit: true, tags: [UNIT_RESOURCE_TAG] },
+    { skipUsageLimit: true, tags: [UNIT_RESOURCE_TAG, UNIT_INITIAL_TAG] },
   );
   return { contentResourceId: resource._id as mongoose.Types.ObjectId };
 }
@@ -111,16 +135,31 @@ async function runOne(unit: Unit, lessonId: mongoose.Types.ObjectId, gradeName: 
     await Course.updateOne(counters, { $inc: { 'generation.done': 1 } });
     return;
   }
+  // The unit may have been deleted after this run started (or between items
+  // in the pool): don't spend AI writing for a unit that's gone.
+  const stillExists = await Course.exists({ _id: unit._id, schoolId: unit.schoolId, isDeleted: false });
+  if (!stillExists) return;
   try {
     const module = await CourseModule.findOne({ _id: item.moduleId, schoolId: unit.schoolId, isDeleted: false }).lean();
     if (!module?.curriculumNodeId) throw new Error('This item has no CAPS topic to write from');
     const update = await writeItem(unit, module, item, gradeName);
-    await CourseLesson.updateOne({ _id: item._id, schoolId: unit.schoolId }, { $set: { ...update, genStatus: 'ready', genError: '' } });
+    // Conditional on teacherEdited still being false: the teacher may have
+    // saved their own version of this item while the write was in flight.
+    // Their save must never be clobbered by a background write landing late.
+    const res = await CourseLesson.updateOne(
+      { _id: item._id, schoolId: unit.schoolId, teacherEdited: { $ne: true } },
+      { $set: { ...update, genStatus: 'ready', genError: '' } },
+    );
+    if (res.matchedCount === 0) return; // the teacher's edit already made it ready
     await Course.updateOne(counters, { $inc: { 'generation.done': 1 } });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'The item could not be written';
+    const message = friendlyGenerationError(err);
     logger.warn({ err, courseId: String(unit._id), lessonId: String(item._id) }, '[course-gen] item failed');
-    await CourseLesson.updateOne({ _id: item._id, schoolId: unit.schoolId }, { $set: { genStatus: 'failed', genError: message } });
+    const res = await CourseLesson.updateOne(
+      { _id: item._id, schoolId: unit.schoolId, teacherEdited: { $ne: true } },
+      { $set: { genStatus: 'failed', genError: message } },
+    );
+    if (res.matchedCount === 0) return;
     await Course.updateOne(counters, { $inc: { 'generation.failed': 1 } });
   }
 }
@@ -175,7 +214,7 @@ export async function runCourseGeneration(courseId: string, schoolId: string, le
     ...claimable(),
     ...(lessonId ? { _id: new mongoose.Types.ObjectId(lessonId) } : {}),
   }).sort({ orderIndex: 1 }).select('_id').lean();
-  const grade = await Grade.findById(unit.scope.gradeId).select('name').lean();
+  const grade = await Grade.findOne({ _id: unit.scope.gradeId, schoolId: soid, isDeleted: false }).select('name').lean();
   const gradeName = grade?.name ?? 'these';
 
   try {

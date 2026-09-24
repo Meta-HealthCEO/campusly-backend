@@ -41,7 +41,10 @@ export interface IUnitScope {
   subjectId: Types.ObjectId;
   termNumber: number;
   topicNodeIds: Types.ObjectId[];
+  /** Classes the unit has actually been released to (via /release), not just built for. */
   classIds: Types.ObjectId[];
+  /** The class this unit (or copy) was created for, before any release — used only to pre-tick the release dialog. */
+  builtForClassId: Types.ObjectId | null;
 }
 
 export interface IGenerationState {
@@ -101,6 +104,7 @@ const unitScopeSchema = new Schema<IUnitScope>(
     termNumber: { type: Number, required: true, min: 1, max: 4 },
     topicNodeIds: { type: [Schema.Types.ObjectId], ref: 'CurriculumNode', default: [] },
     classIds: { type: [Schema.Types.ObjectId], ref: 'Class', default: [] },
+    builtForClassId: { type: Schema.Types.ObjectId, ref: 'Class', default: null },
   },
   { _id: false },
 );

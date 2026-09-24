@@ -77,13 +77,16 @@ describe('I3: writing a unit does not use up the school daily AI allowance', () 
     const content = vi.spyOn(GenerationService, 'generateContent').mockImplementation(async () => ({ _id: oid() }) as never);
     vi.mocked(generateAIQuestions).mockImplementation(async () => []);
     await runCourseGeneration(f.courseId, f.schoolId);
-    expect(content.mock.calls[0][3]).toEqual({ skipUsageLimit: true, tags: ['class_unit'] });
+    expect(content.mock.calls[0][3]).toEqual({ skipUsageLimit: true, tags: ['class_unit', 'class_unit_initial'] });
 
     await ContentResource.collection.insertMany([
+      // A later AI action on a unit item (a rewrite, a revision item) carries
+      // the general unit tag but not the initial-write tag, so it counts.
       { schoolId: f.soid, source: 'ai_generated', tags: ['class_unit'], isDeleted: false, createdAt: new Date() },
+      { schoolId: f.soid, source: 'ai_generated', tags: ['class_unit', 'class_unit_initial'], isDeleted: false, createdAt: new Date() },
       { schoolId: f.soid, source: 'ai_generated', tags: [], isDeleted: false, createdAt: new Date() },
     ]);
-    expect((await checkUsageLimit(f.schoolId, 'maxAiGenerationsPerDay')).current).toBe(1);
+    expect((await checkUsageLimit(f.schoolId, 'maxAiGenerationsPerDay')).current).toBe(2);
   });
 });
 

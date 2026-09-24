@@ -27,16 +27,18 @@ export class ClassUnitController {
 
   static async library(req: Request, res: Response): Promise<void> {
     const { schoolId, actor } = context(req);
+    const page = Number.parseInt(req.query.page as string, 10);
     const entries = await UnitCopyService.library(schoolId, actor, {
       gradeId: req.query.gradeId as string | undefined,
       subjectId: req.query.subjectId as string | undefined,
+      page: Number.isFinite(page) && page > 0 ? page : undefined,
     });
     res.json(apiResponse(true, entries, 'School library'));
   }
 
   static async create(req: Request, res: Response): Promise<void> {
-    const { schoolId, actor } = context(req);
-    const unit = await ClassUnitService.create(schoolId, actor, req.body);
+    const { schoolId, actor, isStandaloneTeacher } = context(req);
+    const unit = await ClassUnitService.create(schoolId, actor, req.body, isStandaloneTeacher);
     res.status(201).json(apiResponse(true, unit, 'Unit created'));
   }
 
