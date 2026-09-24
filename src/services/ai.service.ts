@@ -1,6 +1,7 @@
 import { logger } from '../common/logger.js';
 import Anthropic from '@anthropic-ai/sdk';
 import { config } from '../config/env.js';
+import { AppError } from '../common/errors.js';
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY || '';
 const ANTHROPIC_MODEL = config.anthropic.model;
@@ -30,6 +31,10 @@ function releaseSemaphore(): void {
 }
 
 function getClient(): Anthropic {
+  // Without a key the SDK fails with an authentication riddle; say what's actually wrong.
+  if (!ANTHROPIC_API_KEY) {
+    throw new AppError("AI isn't set up on this server yet. Ask your administrator to add the Anthropic API key.", 503);
+  }
   return new Anthropic({ apiKey: ANTHROPIC_API_KEY });
 }
 
