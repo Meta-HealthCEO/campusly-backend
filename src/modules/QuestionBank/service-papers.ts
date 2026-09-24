@@ -356,7 +356,14 @@ export class PapersService {
         if (!inDepartment) throw new ForbiddenError('You can only open papers from your department');
       }
     }
-    return paper;
+    const m = await PaperModeration.findOne({ paperId: oid, schoolId: soid, isDeleted: false })
+      .select('status comments updatedAt').lean();
+    return {
+      ...paper,
+      moderation: m
+        ? { status: m.status, comments: m.comments || null, updatedAt: m.updatedAt ? new Date(m.updatedAt).toISOString() : null }
+        : null,
+    };
   }
 
   static async createPaper(

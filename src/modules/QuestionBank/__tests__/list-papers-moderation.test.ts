@@ -42,4 +42,21 @@ describe('PapersService.listPapers', () => {
     expect(byTitle.get('None')?.moderation).toBeNull();
     expect(String(none._id)).toBeTruthy();
   });
+
+  it("shows one paper's moderation status and comments when it is opened", async () => {
+    const schoolId = oid();
+    const teacherId = oid();
+    const paper = await AssessmentPaper.create({
+      schoolId, title: 'Opened', subjectId: oid(), gradeId: oid(), topicIds: [oid()], term: 3, year: 2026,
+      paperType: 'class_test', duration: 30, totalMarks: 10, createdBy: teacherId,
+    });
+    await PaperModeration.create({
+      paperId: paper._id, schoolId, submittedBy: teacherId, submittedAt: new Date(),
+      status: 'changes_requested', comments: 'Add a memo for question 2.',
+    });
+
+    const opened = await PapersService.getPaper(String(paper._id), String(schoolId), String(teacherId), 'teacher');
+
+    expect(opened.moderation).toMatchObject({ status: 'changes_requested', comments: 'Add a memo for question 2.' });
+  });
 });
