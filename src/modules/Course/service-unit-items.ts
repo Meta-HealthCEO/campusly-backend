@@ -66,7 +66,7 @@ function aiFailure(err: unknown): AppError {
 
 async function gradeNameOf(course: ICourse): Promise<string> {
   if (!course.scope) return 'these';
-  const grade = await Grade.findById(course.scope.gradeId).select('name').lean();
+  const grade = await Grade.findOne({ _id: course.scope.gradeId, schoolId: course.schoolId, isDeleted: false }).select('name').lean();
   return grade?.name ?? 'these';
 }
 
@@ -92,12 +92,25 @@ async function createQuestions(course: ICourse, item: ICourseLesson, questions: 
   return docs.map((d) => d._id as mongoose.Types.ObjectId);
 }
 
+/** Only retires questions no other (non-deleted) lesson still quizzes with — a colleague may have borrowed one from the bank. */
+async function retireUnused(ids: mongoose.Types.ObjectId[], exceptLessonId: mongoose.Types.ObjectId, schoolId: mongoose.Types.ObjectId): Promise<void> {
+  if (ids.length === 0) return;
+  const stillUsed = await CourseLesson.distinct('quizQuestionIds', {
+    _id: { $ne: exceptLessonId }, schoolId, isDeleted: false, quizQuestionIds: { $in: ids },
+  }) as mongoose.Types.ObjectId[];
+  const usedElsewhere = new Set(stillUsed.map(String));
+  const toRetire = ids.filter((id) => !usedElsewhere.has(String(id)));
+  if (toRetire.length === 0) return;
+  await Question.updateMany({ _id: { $in: toRetire }, schoolId }, { $set: { isDeleted: true } });
+}
+
 async function swapQuestions(item: ICourseLesson, next: mongoose.Types.ObjectId[]): Promise<void> {
   const keep = new Set(next.map(String));
   const retired = item.quizQuestionIds.filter((id) => !keep.has(String(id)));
   await markEdited(item, { quizQuestionIds: next });
-  // The replaced questions were written for this item; retire them so they don't linger in the bank.
-  await Question.updateMany({ _id: { $in: retired }, schoolId: item.schoolId }, { $set: { isDeleted: true } });
+  // The replaced questions were written for this item; retire them, unless a
+  // colleague's course quiz borrowed the same question from the bank.
+  await retireUnused(retired, item._id as mongoose.Types.ObjectId, item.schoolId);
 }
 
 function sameQuestion(old: { stem: string; options?: Array<{ text: string; isCorrect?: boolean }> }, edit: QuestionEdit): boolean {
@@ -229,12 +242,25 @@ export class UnitItemsService {
     if (!course.scope) throw new BadRequestError('This unit has no scope');
     const mod = await CourseModule.findOne({ _id: check.moduleId, schoolId: course.schoolId, isDeleted: false }).lean();
     if (!mod?.curriculumNodeId) throw new BadRequestError('This part of the unit has no CAPS topic to write from.');
-    const ids = body.questionIds.filter((id) => mongoose.Types.ObjectId.isValid(id)).slice(0, MAX_REVISION_QUESTIONS).map((id) => oid(id));
-    const questions = await Question.find({ _id: { $in: ids }, $or: [{ schoolId: course.schoolId }, { schoolId: null }] }).select('stem').lean();
+    // Only questions this check actually asks — a stray or tampered id can't pull in someone else's question.
+    const onThisCheck = new Set(check.quizQuestionIds.map(String));
+    const ids = body.questionIds.filter((id) => mongoose.Types.ObjectId.isValid(id) && onThisCheck.has(id)).slice(0, MAX_REVISION_QUESTIONS).map((id) => oid(id));
+    const questions = await Question.find({ _id: { $in: ids }, isDeleted: false, $or: [{ schoolId: course.schoolId }, { schoolId: null }] }).select('stem').lean();
     if (questions.length === 0) throw new BadRequestError('Pick the questions to revise');
 
-    const gradeName = await gradeNameOf(course);
     const topic = check.title.replace(/^Check:\s*/i, '').trim() || check.title;
+    const title = `Revision: ${topic}`;
+    // Idempotent per source check: a double click (or a retried request)
+    // must not write a second revision item for the same check.
+    const existing = await CourseLesson.findOne({
+      moduleId: check.moduleId, schoolId: course.schoolId, isDeleted: false, optional: true, title,
+    }).lean();
+    if (existing) return existing;
+
+    const limit = await checkUsageLimit(schoolId, 'maxAiGenerationsPerDay');
+    if (!limit.allowed) throw new BadRequestError("Your school has used today's AI allowance. Try again tomorrow.");
+
+    const gradeName = await gradeNameOf(course);
     const resource = await GenerationService.generateContent(schoolId, actor.userId, {
       curriculumNodeId: String(mod.curriculumNodeId),
       type: 'study_notes',
@@ -256,9 +282,12 @@ export class UnitItemsService {
     );
     const revision = await CourseLesson.create({
       schoolId: course.schoolId, courseId: course._id, moduleId: check.moduleId, orderIndex: check.orderIndex + 1,
-      title: `Revision: ${topic}`, type: 'content', contentResourceId: resource._id, itemKind: 'notes',
+      title, type: 'content', contentResourceId: resource._id, itemKind: 'notes',
       minutes: REVISION_MINUTES, objectives: [], capsRef: check.capsRef, brief: 'Revision of the questions the class got wrong',
-      genStatus: 'ready', teacherEdited: true, optional: true,
+      // Fresh AI content, not a teacher hand-edit: teacherEdited stays false so
+      // it doesn't wrongly show "Edited by you" and stays eligible for the
+      // ordinary edit/rewrite flows like any other written item.
+      genStatus: 'ready', teacherEdited: false, optional: true,
     });
     return revision.toObject();
   }

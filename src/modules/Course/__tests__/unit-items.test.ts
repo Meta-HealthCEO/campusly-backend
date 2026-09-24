@@ -203,6 +203,47 @@ describe('UnitItemsService.addRevisionItem', () => {
     await expect(UnitItemsService.saveContent(f.courseId, String(f.n1._id), f.schoolId, stranger, { blocks: [{ blockId: 'b1', type: 'text', content: 'x' }] }))
       .rejects.toThrow('You can only edit your own courses');
   });
+
+  it('is idempotent per source check: adding it twice writes only one item', async () => {
+    const f = await unit('published');
+    const gen = vi.spyOn(GenerationService, 'generateContent').mockResolvedValue({ _id: oid() } as never);
+    const body = { afterLessonId: String(f.check._id), questionIds: f.questionIds.map(String) };
+    const first = await UnitItemsService.addRevisionItem(f.courseId, f.schoolId, f.actor, body);
+    const second = await UnitItemsService.addRevisionItem(f.courseId, f.schoolId, f.actor, body);
+    expect(String(second._id)).toBe(String(first._id));
+    expect(gen).toHaveBeenCalledTimes(1);
+    expect(await CourseLesson.countDocuments({ courseId: f.courseId, title: 'Revision: counting', isDeleted: false })).toBe(1);
+  });
+
+  it('only revises questions that actually belong to this check', async () => {
+    const f = await unit('published');
+    vi.spyOn(GenerationService, 'generateContent').mockResolvedValue({ _id: oid() } as never);
+    const foreign = await Question.collection.insertOne({ schoolId: f.soid, type: 'mcq', stem: 'Not on this check', isDeleted: false, options: [] });
+    await expect(UnitItemsService.addRevisionItem(f.courseId, f.schoolId, f.actor, { afterLessonId: String(f.check._id), questionIds: [String(foreign.insertedId)] }))
+      .rejects.toThrow('Pick the questions to revise');
+  });
+
+  it("refuses a revision item once the school's daily AI allowance is used up", async () => {
+    const f = await unit('published');
+    await ContentResource.collection.insertMany(Array.from({ length: 10 }, () => ({
+      schoolId: f.soid, source: 'ai_generated', tags: [], isDeleted: false, createdAt: new Date(),
+    })));
+    await expect(UnitItemsService.addRevisionItem(f.courseId, f.schoolId, f.actor, { afterLessonId: String(f.check._id), questionIds: f.questionIds.map(String) }))
+      .rejects.toThrow("Your school has used today's AI allowance. Try again tomorrow.");
+  });
+});
+
+describe('UnitItemsService question retirement (A10)', () => {
+  it("won't remove a question from the bank that a colleague's course quiz still uses", async () => {
+    const f = await unit();
+    const [, q2] = f.questionIds.map(String);
+    // Someone else's ordinary course quiz lesson borrowed the same bank question.
+    await CourseLesson.create({ schoolId: f.soid, courseId: oid(), moduleId: oid(), orderIndex: 0, title: 'Their quiz', type: 'quiz', quizQuestionIds: [f.questionIds[1]] });
+    await UnitItemsService.saveQuestions(f.courseId, String(f.check._id), f.schoolId, f.actor, {
+      questions: [q('Q1', 'right', 'wrong'), q('Q2 fixed', 'right', 'wrong')],
+    });
+    expect((await Question.findById(q2).lean())?.isDeleted).toBe(false);
+  });
 });
 
 describe('3B review fixes', () => {
