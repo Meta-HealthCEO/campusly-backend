@@ -2,7 +2,8 @@ import type { Request, NextFunction } from 'express';
 import { Response } from 'express';
 import mongoose from 'mongoose';
 import { getUser } from '../../types/authenticated-request.js';
-import { AuthService } from './service.js';
+import { AuthService, type TokenPair } from './service.js';
+import type { IUser } from './model.js';
 import { StandaloneService } from './standalone.service.js';
 import { StandaloneCoachService } from './standalone-coach.service.js';
 import { apiResponse } from '../../common/utils.js';
@@ -20,6 +21,21 @@ const REFRESH_COOKIE_OPTIONS = {
   path: '/api/auth/refresh',
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 };
+
+/** The password login's answer; the development sign-in sends the same. */
+export function sendLoginResponse(res: Response, { user, tokens }: { user: IUser; tokens: TokenPair }): void {
+  res.cookie('refresh_token', tokens.refreshToken, REFRESH_COOKIE_OPTIONS);
+
+  const userData = user.toObject();
+  const { password: _, refreshTokens: __, ...safeUser } = userData;
+
+  res.status(200).json(
+    apiResponse(true, {
+      user: safeUser,
+      accessToken: tokens.accessToken,
+    }, 'Login successful'),
+  );
+}
 
 export class AuthController {
   static async register(req: Request, res: Response): Promise<void> {
@@ -113,19 +129,8 @@ export class AuthController {
 
   static async login(req: Request, res: Response): Promise<void> {
     const { email, password } = req.body;
-    const { user, tokens } = await AuthService.login(email, password);
-
-    res.cookie('refresh_token', tokens.refreshToken, REFRESH_COOKIE_OPTIONS);
-
-    const userData = user.toObject();
-    const { password: _, refreshTokens: __, ...safeUser } = userData;
-
-    res.status(200).json(
-      apiResponse(true, {
-        user: safeUser,
-        accessToken: tokens.accessToken,
-      }, 'Login successful'),
-    );
+    const session = await AuthService.login(email, password);
+    sendLoginResponse(res, session);
   }
 
   static async refresh(req: Request, res: Response): Promise<void> {

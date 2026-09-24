@@ -17,6 +17,9 @@ import { isProtectedUploadPath } from './common/upload-paths.js';
 
 // Module routes
 import authRoutes from './modules/Auth/routes.js';
+import devSignInRoutes from './modules/Auth/dev-sign-in.routes.js';
+import { isDevSignInEnabled } from './config/dev-sign-in.js';
+import { logger } from './common/logger.js';
 import schoolRoutes from './modules/School/routes.js';
 import studentRoutes from './modules/Student/routes.js';
 import parentRoutes from './modules/Parent/routes.js';
@@ -130,6 +133,13 @@ app.get('/health', async (_req, res) => {
 
 // API routes — Super Admin (platform management)
 app.use('/api/superadmin', superAdminRoutes);
+
+// Development-only one-click sign-in: mounted only with NODE_ENV=development and
+// DEV_SIGN_IN=true, and even then it answers loopback callers only.
+if (isDevSignInEnabled()) {
+  logger.warn('[Campusly] Development sign-in is ON: anyone on this computer can sign in as the demo accounts without a password');
+  app.use('/api/auth/dev-sign-in', devSignInRoutes);
+}
 
 // API routes — Core modules (no guard)
 app.use('/api/auth', authRoutes);

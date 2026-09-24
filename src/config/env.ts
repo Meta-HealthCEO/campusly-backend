@@ -83,6 +83,13 @@ export const config = {
   email: {
     from: getEnv('EMAIL_FROM', 'Campusly <noreply@campusly.co.za>'),
   },
+
+  // One-click sign-in for local testing; see config/dev-sign-in.ts. NODE_ENV is
+  // read raw so an unset NODE_ENV (which defaults nodeEnv to development) never opens it.
+  devSignIn: {
+    enabled: process.env.NODE_ENV === 'development' && process.env.DEV_SIGN_IN === 'true',
+    emails: getEnvList('DEV_SIGN_IN_EMAILS', '').map((email) => email.toLowerCase()),
+  },
 } as const;
 
 export type Config = typeof config;
