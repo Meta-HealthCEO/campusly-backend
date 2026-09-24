@@ -42,6 +42,8 @@ export interface IQuiz extends Document {
   shuffleOptions: boolean;
   dueDate?: Date;
   status: QuizStatus;
+  /** Set when the quiz moved to the question bank (one quiz system); the questions it became. */
+  migratedQuestionIds?: Types.ObjectId[];
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -94,6 +96,7 @@ const quizSchema = new Schema<IQuiz>(
     shuffleOptions: { type: Boolean, default: false },
     dueDate: { type: Date },
     status: { type: String, enum: ['draft', 'published', 'closed'], default: 'draft' },
+    migratedQuestionIds: { type: [Schema.Types.ObjectId], ref: 'Question', default: undefined },
     isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true },
