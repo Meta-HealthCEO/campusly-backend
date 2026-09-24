@@ -4,6 +4,7 @@ import type { IStudent } from './model.js';
 import { Lesson } from '../Lesson/model.js';
 import { Homework, HomeworkSubmission } from '../Homework/model.js';
 import { AssessmentPaper } from '../QuestionBank/model-papers.js';
+import { findDonePaperIds, learnerTestState } from '../QuestionBank/service-learner-tests.js';
 // Side-effect imports: ensure referenced models are registered with Mongoose
 // so .populate() works without a MissingSchemaError when this service is
 // imported standalone (e.g. from a test or one-off script).
@@ -37,8 +38,11 @@ export interface DashboardTestRef {
 export interface StudentDashboardCounts {
   lessonsThisWeek: number;
   homeworkDueThisWeek: number;
+  /** Tests still to come that the learner hasn't written. */
   testsScheduled: number;
   homeworkOverdue: number;
+  /** Tests past their due date that the learner hasn't written. */
+  testsOverdue: number;
 }
 
 export interface StudentDashboardDto {
@@ -86,6 +90,18 @@ function readSubjectName(
   return record.name ?? record.title ?? '';
 }
 
+interface RecentLessonRow {
+  _id: mongoose.Types.ObjectId;
+  title: string;
+  subjectId: PopulatedSubjectShape | mongoose.Types.ObjectId | null;
+  heldAt: Date;
+}
+
+/** A class assignment that has been held: ticked taught, or its date has passed. */
+function heldFilter(now: Date, prefix = ''): Record<string, unknown> {
+  return { $or: [{ [`${prefix}status`]: 'taught' }, { [`${prefix}scheduledDate`]: { $lte: now } }] };
+}
+
 // ─── Aggregator ────────────────────────────────────────────────────────────
 
 export async function buildStudentDashboard(
@@ -112,26 +128,33 @@ export async function buildStudentDashboard(
 
   // 2. Fan out the remaining queries in parallel.
   const [
-    recentLessonDoc,
+    recentLessonRows,
     nextHomeworkDoc,
     nextPaperDoc,
     lessonsThisWeek,
     homeworkDueThisWeek,
     homeworkOverdue,
-    testsScheduled,
+    donePaperIds,
   ] = await Promise.all([
-    // recentLesson: most recent taught lesson assigned to this class.
-    Lesson.findOne({
-      schoolId,
-      isDeleted: false,
-      'assignedClasses': {
-        $elemMatch: { classId, status: 'taught' },
+    // recentLesson: the class's latest published lesson that has been taught
+    // or whose date has passed — teachers don't always tick "taught". One row
+    // per assignment, so a lesson shared with other classes sorts by ours.
+    Lesson.aggregate<RecentLessonRow>([
+      {
+        $match: {
+          schoolId,
+          isDeleted: false,
+          publishedAt: { $ne: null },
+          assignedClasses: { $elemMatch: { classId, ...heldFilter(now) } },
+        },
       },
-    })
-      .sort({ 'assignedClasses.taughtAt': -1, updatedAt: -1 })
-      .populate('subjectId', 'name title')
-      .lean()
-      .exec(),
+      { $unwind: '$assignedClasses' },
+      { $match: { 'assignedClasses.classId': classId, ...heldFilter(now, 'assignedClasses.') } },
+      { $addFields: { heldAt: { $ifNull: ['$assignedClasses.taughtAt', '$assignedClasses.scheduledDate'] } } },
+      { $sort: { heldAt: -1, updatedAt: -1 } },
+      { $limit: 1 },
+      { $project: { title: 1, subjectId: 1, heldAt: 1 } },
+    ]),
 
     // nextHomework: soonest-due, in the future, not yet submitted.
     Homework.findOne({
@@ -148,9 +171,10 @@ export async function buildStudentDashboard(
       .exec(),
 
     // nextTest: assessment paper assigned to this class with the earliest
-    // upcoming release/due. We pull candidate papers then pick the assignment
-    // with the soonest forthcoming date in JS — assignment dates live inside
-    // an array and a top-level sort cannot project the per-class entry.
+    // upcoming release/due, not yet written and not past its due date. We
+    // pull candidate papers then pick the assignment with the soonest
+    // forthcoming date in JS — assignment dates live inside an array and a
+    // top-level sort cannot project the per-class entry.
     AssessmentPaper.find({
       schoolId,
       isDeleted: false,
@@ -160,11 +184,12 @@ export async function buildStudentDashboard(
       .lean()
       .exec(),
 
-    // lessonsThisWeek: lessons assigned to this class with a scheduledDate
-    // inside the current week.
+    // lessonsThisWeek: published lessons assigned to this class with a
+    // scheduledDate inside the current week.
     Lesson.countDocuments({
       schoolId,
       isDeleted: false,
+      publishedAt: { $ne: null },
       assignedClasses: {
         $elemMatch: {
           classId,
@@ -193,48 +218,21 @@ export async function buildStudentDashboard(
       _id: { $nin: submittedHwIds },
     }),
 
-    // testsScheduled: count of paper assignments for this class.
-    AssessmentPaper.countDocuments({
-      schoolId,
-      isDeleted: false,
-      'assignments.classId': classId,
-    }),
+    // Papers the learner has already written — never "next" or "overdue".
+    findDonePaperIds(schoolId, student._id),
   ]);
 
   // ─── Shape recentLesson ──────────────────────────────────────────────────
   let recentLesson: DashboardLessonRef | null = null;
-  if (recentLessonDoc) {
-    const lessonRecord = recentLessonDoc as unknown as Record<string, unknown>;
-    const assignments = (lessonRecord.assignedClasses as Array<{
-      classId: mongoose.Types.ObjectId;
-      scheduledDate: Date;
-      status: 'planned' | 'taught';
-      taughtAt?: Date;
-    }>) ?? [];
-    const taughtForClass = assignments
-      .filter(
-        (a) =>
-          a.classId.toString() === classId.toString() && a.status === 'taught',
-      )
-      .sort((a, b) => {
-        const ta = (a.taughtAt ?? a.scheduledDate).getTime();
-        const tb = (b.taughtAt ?? b.scheduledDate).getTime();
-        return tb - ta;
-      })[0];
-    if (taughtForClass) {
-      recentLesson = {
-        id: (lessonRecord._id as mongoose.Types.ObjectId).toString(),
-        title: lessonRecord.title as string,
-        subject: readSubjectName(
-          lessonRecord.subjectId as
-            | PopulatedSubjectShape
-            | mongoose.Types.ObjectId
-            | null
-            | undefined,
-        ),
-        scheduledDate: (taughtForClass.taughtAt ?? taughtForClass.scheduledDate).toISOString(),
-      };
-    }
+  const recentRow = recentLessonRows[0];
+  if (recentRow) {
+    await Lesson.populate(recentRow, { path: 'subjectId', select: 'name title' });
+    recentLesson = {
+      id: recentRow._id.toString(),
+      title: recentRow.title,
+      subject: readSubjectName(recentRow.subjectId),
+      scheduledDate: recentRow.heldAt.toISOString(),
+    };
   }
 
   // ─── Shape nextHomework ──────────────────────────────────────────────────
@@ -257,6 +255,8 @@ export async function buildStudentDashboard(
 
   // ─── Shape nextTest ──────────────────────────────────────────────────────
   let nextTest: DashboardTestRef | null = null;
+  let testsScheduled = 0;
+  let testsOverdue = 0;
   if (nextPaperDoc.length > 0) {
     // For each paper, find its class-specific assignment and pick the earliest
     // upcoming release/due date. Then sort papers by that date ascending.
@@ -291,8 +291,15 @@ export async function buildStudentDashboard(
           const tb = b.when ? b.when.getTime() : Number.POSITIVE_INFINITY;
           return ta - tb;
         })[0];
+      const paperId = (paper._id as mongoose.Types.ObjectId).toString();
+      const state = learnerTestState(paperId, candidate.dueAt, donePaperIds, now);
+      if (state === 'done') continue;
+      if (state === 'overdue') {
+        testsOverdue += 1;
+        continue;
+      }
       picks.push({
-        paperId: (paper._id as mongoose.Types.ObjectId).toString(),
+        paperId,
         title: paper.title as string,
         subject: readSubjectName(
           paper.subjectId as
@@ -306,6 +313,7 @@ export async function buildStudentDashboard(
         sortKey: candidate.when ? candidate.when.getTime() : Number.POSITIVE_INFINITY,
       });
     }
+    testsScheduled = picks.length;
     picks.sort((a, b) => a.sortKey - b.sortKey);
     const first = picks[0];
     if (first) {
@@ -328,6 +336,7 @@ export async function buildStudentDashboard(
       homeworkDueThisWeek,
       testsScheduled,
       homeworkOverdue,
+      testsOverdue,
     },
   };
 }

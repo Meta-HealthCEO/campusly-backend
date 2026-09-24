@@ -3,6 +3,7 @@ import { Homework } from '../Homework/model.js';
 import { HomeworkSubmission } from '../Homework/model.js';
 import { Student } from '../Student/model.js';
 import { AssessmentPaper } from '../QuestionBank/model-papers.js';
+import { findDonePaperIds, learnerTestState } from '../QuestionBank/service-learner-tests.js';
 import { MasteryService } from './mastery.service.js';
 
 export type RecommendationKind =
@@ -51,7 +52,7 @@ export class RecommendationsService {
     const sevenDays = new Date(now.getTime() + 7 * MS_PER_DAY);
     const fourteenDays = new Date(now.getTime() + 14 * MS_PER_DAY);
 
-    const [upcomingHomework, mySubmissions, upcomingPapers, mastery] = await Promise.all([
+    const [upcomingHomework, mySubmissions, upcomingPapers, mastery, donePaperIds] = await Promise.all([
       classId
         ? Homework.find({
             schoolId,
@@ -85,6 +86,8 @@ export class RecommendationsService {
         : [],
 
       MasteryService.getMastery(userId, schoolId),
+
+      findDonePaperIds(new mongoose.Types.ObjectId(schoolId), new mongoose.Types.ObjectId(studentRecordId)),
     ]);
 
     const submittedHomeworkIds = new Set(mySubmissions.map((s) => String(s.homeworkId)));
@@ -124,8 +127,13 @@ export class RecommendationsService {
       );
       const release = myAssignment?.releaseAt ? new Date(myAssignment.releaseAt) : null;
       if (!release) continue;
+      // A written test needs no prep; one past its due date is overdue, not "available".
+      const state = learnerTestState(String(paper._id), myAssignment?.dueAt, donePaperIds, now);
+      if (state === 'done') continue;
       const daysUntilRelease = Math.round((release.getTime() - now.getTime()) / MS_PER_DAY);
-      const tense = daysUntilRelease <= 0 ? 'now available' : `in ${daysUntilRelease} day${daysUntilRelease === 1 ? '' : 's'}`;
+      const tense = state === 'overdue'
+        ? 'overdue'
+        : daysUntilRelease <= 0 ? 'now available' : `in ${daysUntilRelease} day${daysUntilRelease === 1 ? '' : 's'}`;
       recs.push({
         kind: 'test_coming_up',
         title: paper.title,

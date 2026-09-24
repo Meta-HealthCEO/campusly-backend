@@ -4,6 +4,8 @@ import type { HydratedDocument } from 'mongoose';
 import { Lesson } from '../../Lesson/model.js';
 import { Homework, QuizSubmissionModel } from '../../Homework/model.js';
 import { AssessmentPaper } from '../../QuestionBank/model-papers.js';
+import { PaperSubmission } from '../../QuestionBank/model-submissions.js';
+import { PaperMarking } from '../../AITools/model-marking.js';
 import { Student, type IStudent } from '../model.js';
 import { buildStudentDashboard } from '../service-dashboard.js';
 
@@ -28,6 +30,8 @@ beforeEach(async () => {
   await Homework.deleteMany({ schoolId: FILE_SCHOOL_ID });
   await AssessmentPaper.deleteMany({ schoolId: FILE_SCHOOL_ID });
   await QuizSubmissionModel.deleteMany({ schoolId: FILE_SCHOOL_ID });
+  await PaperSubmission.deleteMany({ schoolId: FILE_SCHOOL_ID });
+  await PaperMarking.deleteMany({ schoolId: FILE_SCHOOL_ID });
   await Student.deleteMany({ schoolId: FILE_SCHOOL_ID });
 });
 
@@ -153,8 +157,8 @@ describe('buildStudentDashboard.recentLesson', () => {
     });
     await makeLesson({
       schoolId, teacherId, subjectId, classId,
-      title: 'Planned lesson (should be ignored)',
-      scheduledDate: new Date(), assignmentStatus: 'planned',
+      title: 'Planned for tomorrow (should be ignored)',
+      scheduledDate: new Date(Date.now() + 24 * 60 * 60 * 1000), assignmentStatus: 'planned',
     });
 
     const dashboard = await buildStudentDashboard(student);
@@ -162,16 +166,50 @@ describe('buildStudentDashboard.recentLesson', () => {
     expect(dashboard.recentLesson?.title).toBe('Most recent taught lesson');
   });
 
-  it('returns null recentLesson when no taught lessons exist for the class', async () => {
+  it('returns null recentLesson when the class has no lesson taught or past its date', async () => {
     const { schoolId, classId, subjectId, teacherId, student } = await seed();
     await makeLesson({
       schoolId, teacherId, subjectId, classId,
-      title: 'Planned only',
-      scheduledDate: new Date(), assignmentStatus: 'planned',
+      title: 'Planned for tomorrow',
+      scheduledDate: new Date(Date.now() + 24 * 60 * 60 * 1000), assignmentStatus: 'planned',
     });
 
     const dashboard = await buildStudentDashboard(student);
     expect(dashboard.recentLesson).toBeNull();
+  });
+  // The teacher doesn't always tick "taught": a lesson whose date has passed
+  // is still the learner's most recent lesson, so the card agrees with
+  // "Lessons this week".
+  it('counts a planned lesson whose date has passed as the most recent lesson', async () => {
+    const { schoolId, classId, subjectId, teacherId, student } = await seed();
+    const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
+    await makeLesson({
+      schoolId, teacherId, subjectId, classId,
+      title: 'Taught two days ago',
+      scheduledDate: twoDaysAgo, assignmentStatus: 'taught', taughtAt: twoDaysAgo,
+    });
+    await makeLesson({
+      schoolId, teacherId, subjectId, classId,
+      title: 'Yesterday, not ticked taught',
+      scheduledDate: yesterday, assignmentStatus: 'planned',
+    });
+
+    const dashboard = await buildStudentDashboard(student);
+    expect(dashboard.recentLesson?.title).toBe('Yesterday, not ticked taught');
+  });
+
+  it('leaves unpublished drafts out of the recent lesson and the week count', async () => {
+    const { schoolId, classId, subjectId, teacherId, student } = await seed();
+    const aMinuteAgo = new Date(Date.now() - 60 * 1000);
+    await makeLesson({
+      schoolId, teacherId, subjectId, classId, publishedAt: null,
+      title: 'Draft', scheduledDate: aMinuteAgo, assignmentStatus: 'taught', taughtAt: aMinuteAgo,
+    });
+
+    const dashboard = await buildStudentDashboard(student);
+    expect(dashboard.recentLesson).toBeNull();
+    expect(dashboard.counts.lessonsThisWeek).toBe(0);
   });
 });
 
@@ -302,6 +340,86 @@ describe('buildStudentDashboard.nextTest', () => {
     expect(dashboard.nextTest).not.toBeNull();
     expect(dashboard.nextTest?.title).toBe('Term Test');
     expect(dashboard.counts.testsScheduled).toBe(1);
+  });
+});
+
+async function makePaper(o: {
+  schoolId: mongoose.Types.ObjectId;
+  classId: mongoose.Types.ObjectId;
+  subjectId: mongoose.Types.ObjectId;
+  gradeId: mongoose.Types.ObjectId;
+  teacherId: mongoose.Types.ObjectId;
+  title: string;
+  releaseAt: Date;
+  dueAt: Date;
+}): Promise<mongoose.Types.ObjectId> {
+  const paper = await AssessmentPaper.create({
+    schoolId: o.schoolId, title: o.title, subjectId: o.subjectId, gradeId: o.gradeId,
+    topicIds: [new mongoose.Types.ObjectId()],
+    term: 3, year: 2026, paperType: 'class_test',
+    totalMarks: 10, duration: 30, sections: [], status: 'finalised',
+    createdBy: o.teacherId,
+    assignments: [{
+      _id: new mongoose.Types.ObjectId(),
+      classId: o.classId, mode: 'paper',
+      releaseAt: o.releaseAt, dueAt: o.dueAt,
+      assignedBy: o.teacherId, assignedAt: o.releaseAt,
+    }],
+  });
+  return paper._id as mongoose.Types.ObjectId;
+}
+
+describe('buildStudentDashboard tests: upcoming, overdue and done', () => {
+  const day = 24 * 60 * 60 * 1000;
+
+  it('shows only a test still to come as the next test, and counts a missed one as overdue', async () => {
+    const { schoolId, classId, subjectId, gradeId, teacherId, student } = await seed();
+    await makePaper({
+      schoolId, classId, subjectId, gradeId, teacherId,
+      title: 'Missed test', releaseAt: new Date(Date.now() - 4 * day), dueAt: new Date(Date.now() - 2 * day),
+    });
+    await makePaper({
+      schoolId, classId, subjectId, gradeId, teacherId,
+      title: 'Coming test', releaseAt: new Date(Date.now() + day), dueAt: new Date(Date.now() + 3 * day),
+    });
+
+    const dashboard = await buildStudentDashboard(student);
+    expect(dashboard.nextTest?.title).toBe('Coming test');
+    expect(dashboard.counts.testsScheduled).toBe(1);
+    expect(dashboard.counts.testsOverdue).toBe(1);
+  });
+
+  it('leaves out a test the learner has written and the teacher has marked', async () => {
+    const { schoolId, classId, subjectId, gradeId, teacherId, studentId, student } = await seed();
+    const paperId = await makePaper({
+      schoolId, classId, subjectId, gradeId, teacherId,
+      title: 'Marked test', releaseAt: new Date(Date.now() - 4 * day), dueAt: new Date(Date.now() - 2 * day),
+    });
+    await PaperMarking.collection.insertOne({
+      schoolId, teacherId, paperId, studentId, classId, paperType: 'assessment',
+      studentName: 'Learner', status: 'completed', issuedToStudent: true, isDeleted: false,
+    });
+
+    const dashboard = await buildStudentDashboard(student);
+    expect(dashboard.nextTest).toBeNull();
+    expect(dashboard.counts.testsScheduled).toBe(0);
+    expect(dashboard.counts.testsOverdue).toBe(0);
+  });
+
+  it('leaves out a digital test the learner has handed in before its due date', async () => {
+    const { schoolId, classId, subjectId, gradeId, teacherId, studentId, student } = await seed();
+    const paperId = await makePaper({
+      schoolId, classId, subjectId, gradeId, teacherId,
+      title: 'Handed in', releaseAt: new Date(Date.now() - day), dueAt: new Date(Date.now() + day),
+    });
+    await PaperSubmission.collection.insertOne({
+      schoolId, classId, paperId, studentId, assignmentId: new mongoose.Types.ObjectId(),
+      studentName: 'Learner', status: 'submitted', isDeleted: false,
+    });
+
+    const dashboard = await buildStudentDashboard(student);
+    expect(dashboard.nextTest).toBeNull();
+    expect(dashboard.counts.testsScheduled).toBe(0);
   });
 });
 
