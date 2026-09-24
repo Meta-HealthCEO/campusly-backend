@@ -52,12 +52,17 @@ async function questionsFor(scope: UnitSeedScope, topicId: Id, item: DemoUnitIte
   return docs.map((d) => d._id as Id);
 }
 
-/** Learner progress: one finished, one halfway, one stuck early on. */
+/**
+ * Learner progress for the walkthrough, by admission number: the first has
+ * passed the first quick check and is at item 4 (Lebo, who can sign in and
+ * continue), the second is stuck on that check after two failed tries, a
+ * third (if the class has one) has just started.
+ */
 async function seedProgress(scope: UnitSeedScope, courseId: Id, items: SeededItem[]): Promise<void> {
-  const learners = await Student.find({ classId: scope.classId, schoolId: scope.schoolId, isDeleted: false }).sort({ lastName: 1 }).limit(3).lean();
-  const plans = [
-    { done: items.length, scores: [4, 3] },
-    { done: 3, scores: [2] },
+  const learners = await Student.find({ classId: scope.classId, schoolId: scope.schoolId, isDeleted: false }).sort({ admissionNumber: 1 }).limit(3).lean();
+  const plans: Array<{ done: number; scores: number[]; failedTries?: number[] }> = [
+    { done: 3, scores: [3] },
+    { done: 2, scores: [], failedTries: [1, 2] },
     { done: 1, scores: [] },
   ];
   for (const [i, learner] of learners.entries()) {
@@ -80,6 +85,17 @@ async function seedProgress(scope: UnitSeedScope, courseId: Id, items: SeededIte
           schoolId: scope.schoolId, enrolmentId: enrolment._id, studentId: learner._id, courseId, lessonId: item.id, attemptNumber: 1,
           answers: item.questionIds.map((questionId, q) => ({ questionId, answer: q < correct ? 'right' : 'wrong', isCorrect: q < correct, marks: q < correct ? 1 : 0 })),
           totalMarks: item.questionIds.length, earnedMarks: correct, percent: Math.round((correct / item.questionIds.length) * 100), passed: correct * 2 >= item.questionIds.length,
+        });
+      }
+    }
+    // A learner stuck on the next quick check: failed tries, no pass.
+    const nextItem = items[plan.done];
+    if (plan.failedTries && nextItem?.kind === 'quick_check') {
+      for (const [t, correct] of plan.failedTries.entries()) {
+        await QuizAttempt.create({
+          schoolId: scope.schoolId, enrolmentId: enrolment._id, studentId: learner._id, courseId, lessonId: nextItem.id, attemptNumber: t + 1,
+          answers: nextItem.questionIds.map((questionId, q) => ({ questionId, answer: q < correct ? 'right' : 'wrong', isCorrect: q < correct, marks: q < correct ? 1 : 0 })),
+          totalMarks: nextItem.questionIds.length, earnedMarks: correct, percent: Math.round((correct / nextItem.questionIds.length) * 100), passed: false,
         });
       }
     }
@@ -135,7 +151,8 @@ export async function seedCourseUnit(scope: UnitSeedScope): Promise<string | nul
   await Course.updateOne({ _id: course._id }, { $set: { 'generation.total': items.length, 'generation.done': items.length, 'generation.message': `All ${items.length} items are ready.` } });
 
   const actor = { userId: String(scope.teacherId), role: UserRole.TEACHER, isHOD: false, isSchoolPrincipal: false };
-  await CourseService.assignCourseToClass(String(course._id), String(scope.schoolId), actor, { classId: String(scope.classId) });
+  // Enrol the class the way a release does (the catalogue assign route refuses class units).
+  await CourseService.assignCourseToClass(String(course._id), String(scope.schoolId), actor, { classId: String(scope.classId) }, { fromRelease: true });
   await seedProgress(scope, course._id as Id, items);
   return DEMO_UNIT.title;
 }

@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import { getUser } from '../../types/authenticated-request.js';
 import { apiResponse } from '../../common/utils.js';
 import { ClassUnitService } from './service-class-unit.js';
+import { UnitInsightService } from './service-insight.js';
 import type { CourseActor } from './service.js';
 
 function context(req: Request) {
@@ -50,6 +51,11 @@ export class ClassUnitController {
     const { schoolId, actor } = context(req);
     const preview = await ClassUnitService.previewItem(req.params.id as string, req.params.lessonId as string, schoolId, actor);
     res.json(apiResponse(true, preview));
+  }
+
+  static async insight(req: Request, res: Response): Promise<void> {
+    const { schoolId, actor } = context(req);
+    res.json(apiResponse(true, await UnitInsightService.get(req.params.id as string, schoolId, actor)));
   }
 
   static async release(req: Request, res: Response): Promise<void> {

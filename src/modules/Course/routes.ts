@@ -195,6 +195,7 @@ router.get('/:id/generation', authorize(...COURSE_ROLES), ClassUnitController.ge
 router.post('/:id/lessons/:lessonId/generate', authorize(...COURSE_ROLES), ClassUnitController.retryItem);
 router.get('/:id/lessons/:lessonId/preview', authorize(...COURSE_ROLES), ClassUnitController.previewItem);
 router.post('/:id/release', authorize(...COURSE_ROLES), validate(releaseUnitSchema), ClassUnitController.release);
+router.get('/:id/insight', authorize(...COURSE_ROLES), ClassUnitController.insight);
 
 // ─── Analytics ─────────────────────────────────────────────────────────────
 
