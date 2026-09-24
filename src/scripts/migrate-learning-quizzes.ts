@@ -16,7 +16,11 @@ import { migrateLearningQuizzes } from '../modules/Learning/service-quiz-migrati
 
 function argValue(name: string): string | undefined {
   const at = process.argv.indexOf(name);
-  return at === -1 ? undefined : process.argv[at + 1];
+  if (at === -1) return undefined;
+  const value = process.argv[at + 1];
+  // A --school with no id must never widen the run to every school.
+  if (!value || !mongoose.Types.ObjectId.isValid(value)) throw new Error(`${name} needs a school id`);
+  return value;
 }
 
 async function main(): Promise<void> {
@@ -24,9 +28,9 @@ async function main(): Promise<void> {
   const schoolId = argValue('--school');
   await mongoose.connect(config.mongodb.uri);
   try {
-    const report = await migrateLearningQuizzes({ apply, schoolId });
-    for (const line of report.lines) logger.info(`${apply ? 'Moved' : 'Would move'}: ${line}`);
-    for (const s of report.skipped) logger.warn(`Left as it is: ${s.quiz}. ${s.reason}`);
+    const report = await migrateLearningQuizzes({ apply, schoolId, onProgress: (line) => logger.info(`Moved: ${line}`) });
+    if (!apply) for (const line of report.lines) logger.info(`Would move: ${line}`);
+    for (const s of report.skipped) logger.warn({ quizId: s.quizId, schoolId: s.schoolId }, `Left as it is: ${s.quiz}. ${s.reason}`);
     logger.info(
       { moved: report.moved, planned: report.lines.length, skipped: report.skipped.length, apply },
       apply

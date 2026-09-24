@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import mongoose from 'mongoose';
-import { migrationLine, questionsFromQuiz } from '../quiz-migration.js';
+import { migrationLine, pickTopic, questionsFromQuiz } from '../quiz-migration.js';
 
 const id = () => new mongoose.Types.ObjectId();
 const ctx = { schoolId: id(), subjectId: id(), gradeId: id(), curriculumNodeId: id(), createdBy: id() };
@@ -20,7 +20,7 @@ describe('questionsFromQuiz', () => {
       schoolId: ctx.schoolId, subjectId: ctx.subjectId, gradeId: ctx.gradeId, curriculumNodeId: ctx.curriculumNodeId, createdBy: ctx.createdBy,
       cognitiveLevel: { caps: 'knowledge', blooms: 'remember' }, isDeleted: false,
     });
-    expect(docs[1]).toMatchObject({ type: 'true_false', answer: 'True' });
+    expect(docs[1]).toMatchObject({ type: 'true_false', answer: 'true' });
   });
 
   it('keeps short answers, and reports what cannot move', () => {
@@ -41,9 +41,46 @@ describe('questionsFromQuiz', () => {
 
 describe('migrationLine', () => {
   it('says what will move, in one line for the report', () => {
-    expect(migrationLine({ title: 'Fractions' }, { questions: 8, skipped: 1, homeworks: 2, templates: 0, lessons: 1 }))
-      .toBe('Fractions: 8 questions (1 left out), 2 homeworks, 1 lesson');
-    expect(migrationLine({ title: 'Shapes' }, { questions: 1, skipped: 0, homeworks: 0, templates: 1, lessons: 0 }))
-      .toBe('Shapes: 1 question, 1 homework template');
+    expect(migrationLine({ title: 'Fractions' }, { questions: 8, skipped: 1, homeworks: 2, templates: 0, lessons: 1 }, 'Common fractions'))
+      .toBe('Fractions → CAPS topic "Common fractions": 8 questions (1 left out), 2 homeworks; 1 lesson still uses the old quiz');
+    expect(migrationLine({ title: 'Shapes' }, { questions: 1, skipped: 0, homeworks: 0, templates: 1, lessons: 0 }, 'Shapes'))
+      .toBe('Shapes → CAPS topic "Shapes": 1 question, 1 homework template');
+  });
+});
+
+describe('pickTopic', () => {
+  const topics = [
+    { id: 'w', title: 'Whole numbers', termNumber: 1, order: 0 },
+    { id: 'f', title: 'Common fractions', termNumber: 2, order: 1 },
+    { id: 'd', title: 'Decimal fractions', termNumber: 3, order: 2 },
+  ];
+
+  it("files the questions under the topic the quiz is about", () => {
+    expect(pickTopic('Fractions test', topics)).toBe('f');
+    expect(pickTopic('Decimal fractions quiz', topics)).toBe('d');
+  });
+
+  it('falls back to the earliest topic, and to nothing when there are none', () => {
+    expect(pickTopic('Term 1 revision', topics)).toBe('w');
+    expect(pickTopic('Fractions', [])).toBeNull();
+  });
+});
+
+describe('true/false questions', () => {
+  const tf = (right: string, wrong: string) => ({
+    questionText: 'The sky is blue.', questionType: 'true_false', points: 1,
+    options: [{ text: right, isCorrect: true }, { text: wrong, isCorrect: false }], correctAnswer: right,
+  });
+
+  it('keep an answer the exercise marker understands (true or false), in English or Afrikaans', () => {
+    expect(questionsFromQuiz({ questions: [tf('True', 'False')] }, ctx).docs[0]).toMatchObject({ type: 'true_false', answer: 'true' });
+    expect(questionsFromQuiz({ questions: [tf('Onwaar', 'Waar')] }, ctx).docs[0]).toMatchObject({ type: 'true_false', answer: 'false' });
+    expect(questionsFromQuiz({ questions: [tf('Yes', 'No')] }, ctx).docs[0]).toMatchObject({ type: 'true_false', answer: 'true' });
+  });
+
+  it('become multiple choice when their options are not true and false', () => {
+    const doc = questionsFromQuiz({ questions: [tf('Correct', 'Incorrect')] }, ctx).docs[0];
+    expect(doc).toMatchObject({ type: 'mcq', answer: 'Correct' });
+    expect(doc.options.map((o) => o.text)).toEqual(['Correct', 'Incorrect']);
   });
 });
