@@ -8,6 +8,9 @@ import { Wallet } from '../../Wallet/model.js';
 import { NotFoundError } from '../../../common/errors.js';
 import type { PopulatedSubject } from '../../../types/populated.js';
 import { getPopulated } from '../../../types/populated.js';
+import { getTermSummary } from '../../Academic/services/term-summary.service.js';
+import { applyTermWeightings } from './report-card-averages.js';
+import { logger } from '../../../common/logger.js';
 
 type PopulatedReportSubject = {
   _id?: mongoose.Types.ObjectId | string;
@@ -265,9 +268,25 @@ export class AcademicReportService {
     const grade = student.gradeId as unknown as PopulatedReportLookup | undefined;
     const classInfo = student.classId as unknown as PopulatedReportLookup | undefined;
     const studentName = [user?.firstName, user?.lastName].filter(Boolean).join(' ').trim();
-    const overallAverage = subjectSummaryList.length > 0
+    let reportSubjects: Array<(typeof subjectSummaryList)[number] & { weightingSource: 'school' | 'assessment' }> =
+      subjectSummaryList.map((summary) => ({ ...summary, weightingSource: 'assessment' as const }));
+    let overallAverage = subjectSummaryList.length > 0
       ? subjectSummaryList.reduce((sum, summary) => sum + summary.weightedPercentage, 0) / subjectSummaryList.length
       : 0;
+    // Show the same subject averages as the gradebook where the school has
+    // set weightings; never fail a report card over it.
+    const reportClassId = (student.classId as unknown as { _id?: mongoose.Types.ObjectId } | undefined)?._id;
+    if (reportClassId && subjectSummaryList.length > 0) {
+      try {
+        const termSummary = await getTermSummary({ schoolId: String(schoolObjId), classId: String(reportClassId), term, academicYear });
+        const row = termSummary.students.find((s) => s.studentId === studentId);
+        const applied = applyTermWeightings(subjectSummaryList, termSummary.subjects, row?.subjectAverages ?? {});
+        reportSubjects = applied.subjects;
+        overallAverage = applied.overallAverage;
+      } catch (err: unknown) {
+        logger.warn({ err, studentId }, 'Report card kept per-assessment averages: term summary failed');
+      }
+    }
 
     return {
       studentId,
@@ -282,7 +301,7 @@ export class AcademicReportService {
       academicYear,
       marks: filteredMarks,
       summary: {
-        subjectSummaries: subjectSummaryList,
+        subjectSummaries: reportSubjects,
         overallAverage: roundPercentage(overallAverage),
         totalAssessments: filteredMarks.length,
       },
