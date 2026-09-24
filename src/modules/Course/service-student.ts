@@ -151,8 +151,8 @@ export class CourseStudentService {
       .populate({
         path: 'courseId',
         select: 'title slug description coverImageUrl gradeLevel subjectId kind estimatedDurationHours status',
-        // A deleted unit leaves the learner's list rather than opening to a 404.
-        match: { isDeleted: false },
+        // A deleted or archived unit leaves the learner's list rather than staying workable.
+        match: { isDeleted: false, status: { $ne: 'archived' } },
         populate: { path: 'subjectId', select: 'name' },
       })
       .sort({ enrolledAt: -1 })
@@ -212,6 +212,11 @@ export class CourseStudentService {
 
     if (!callerIsStudent && !callerIsAuthor) {
       throw new ForbiddenError('You do not have access to this enrolment');
+    }
+    // Archived units leave the learner's list and stop being workable; the
+    // author can still open it (e.g. from analytics or history).
+    if (course.status === 'archived' && callerIsStudent) {
+      throw new NotFoundError('Course not found');
     }
 
     const modules = await CourseModule.find({
@@ -327,6 +332,10 @@ export class CourseStudentService {
       isDeleted: false,
     }).lean();
     if (!lesson) throw new NotFoundError('Lesson not found');
+
+    const course = await Course.findOne({ _id: enrolment.courseId, schoolId: soid, isDeleted: false }).select('status').lean();
+    if (!course) throw new NotFoundError('Course not found');
+    if (course.status === 'archived') throw new ForbiddenError('This unit has been archived.');
 
     const allModules = await CourseModule.find({
       courseId: enrolment.courseId,

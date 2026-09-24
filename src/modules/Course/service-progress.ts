@@ -19,7 +19,7 @@ import {
   ForbiddenError,
   BadRequestError,
 } from '../../common/errors.js';
-import { sortLessonsForUnlock, computeUnlockStatuses, isSequential } from './service-student.js';
+import { sortLessonsForUnlock, computeUnlockStatuses } from './service-student.js';
 import { CourseCertificateService } from './service-certificates.js';
 
 // Block types that require student interaction to "complete". Names must
@@ -140,6 +140,15 @@ export class CourseProgressService {
     }
     if (!lesson.quizQuestionIds || lesson.quizQuestionIds.length === 0) {
       throw new BadRequestError('Quiz lesson has no questions');
+    }
+    // A teacher may edit or rewrite this check's questions while a learner is
+    // mid-attempt. If any submitted answer is for a question the check no
+    // longer asks, the learner was served a version that's since changed —
+    // grading it against the current questions would be wrong either way, so
+    // refuse and have them start the (now different) check again.
+    const currentIds = new Set(lesson.quizQuestionIds.map((id) => String(id)));
+    if (body.answers.some((a) => !currentIds.has(a.questionId))) {
+      throw new BadRequestError('This check changed. Start it again.');
     }
 
     const previousAttempts = await QuizAttempt.countDocuments({
@@ -365,6 +374,7 @@ async function loadStudentLessonContext(
     isDeleted: false,
   });
   if (!course) throw new NotFoundError('Course not found');
+  if (course.status === 'archived') throw new ForbiddenError('This unit has been archived.');
 
   // Enforce linear unlock: a write to a locked lesson must fail. The
   // teacher-facing GET /lessons/:id has the same check, but a non-browser
@@ -398,8 +408,9 @@ async function loadStudentLessonContext(
     allLessons as unknown as ICourseLesson[],
     allModules,
   );
+  // `course` is already loaded above — no need for isSequential() to re-read it.
   const lessonStatusById = computeUnlockStatuses(sortedLessons, progressByLesson, {
-    sequential: await isSequential(enrolment.courseId, soid),
+    sequential: course.sequential !== false,
   });
   const status = lessonStatusById.get(lesson._id.toString()) ?? 'locked';
   if (status === 'locked') {
