@@ -49,13 +49,15 @@ export async function audienceUserIds(
   return [...ids];
 }
 
-/** Distinct user ids of everyone in the school with one of these roles. */
+/** Distinct user ids of everyone active in the school with one of these roles. */
 export async function roleUserIds(schoolId: IdLike, roles: string[]): Promise<string[]> {
-  const users = await User.find({ schoolId: oid(schoolId), role: { $in: roles }, isDeleted: false }).select('_id').lean();
+  const users = await User.find({ schoolId: oid(schoolId), role: { $in: roles }, isDeleted: false, isActive: true }).select('_id').lean();
   return users.map((u) => String(u._id));
 }
 
-/** One in-app notification per user. Never fails the post that triggered it. */
+const NOTIFY_BATCH_SIZE = 1000;
+
+/** One in-app notification per user, inserted in batches. Never fails the post that triggered it. */
 export async function notifyUsers(
   schoolId: IdLike,
   userIds: string[],
@@ -63,9 +65,12 @@ export async function notifyUsers(
 ): Promise<void> {
   if (userIds.length === 0) return;
   try {
-    await Notification.insertMany(userIds.map((id) => ({
-      recipientId: oid(id), schoolId: oid(schoolId), type: 'in_app', title: note.title, message: note.message, data: note.data,
-    })), { ordered: false });
+    for (let i = 0; i < userIds.length; i += NOTIFY_BATCH_SIZE) {
+      const batch = userIds.slice(i, i + NOTIFY_BATCH_SIZE);
+      await Notification.insertMany(batch.map((id) => ({
+        recipientId: oid(id), schoolId: oid(schoolId), type: 'in_app', title: note.title, message: note.message, data: note.data,
+      })), { ordered: false });
+    }
   } catch (err: unknown) {
     logger.warn({ err, entity: note.data }, '[audience] notifications failed');
   }

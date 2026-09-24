@@ -5,6 +5,7 @@ import { paginationHelper } from '../../common/utils.js';
 import type { CreateAnnouncementInput, UpdateAnnouncementInput } from './validation.js';
 import { audienceUserIds, childrenOfParent, notifyUsers, roleUserIds } from '../../common/audience.js';
 import { Student } from '../Student/model.js';
+import { logger } from '../../common/logger.js';
 
 const ROLE_AUDIENCE: Record<string, string[]> = {
   all: ['teacher', 'parent', 'student'], teachers: ['teacher'], parents: ['parent'], students: ['student'],
@@ -131,7 +132,7 @@ export class AnnouncementService {
     return announcement;
   }
 
-  static async publish(id: string, schoolId: string): Promise<IAnnouncement> {
+  static async publish(id: string, schoolId: string, opts: { awaitNotify?: boolean } = {}): Promise<IAnnouncement> {
     // Only a draft becomes published (and notifies); publishing again changes nothing.
     const justPublished = await Announcement.findOneAndUpdate(
       { _id: id, schoolId, isDeleted: false, isPublished: { $ne: true } },
@@ -144,7 +145,13 @@ export class AnnouncementService {
     if (!announcement) {
       throw new NotFoundError('Announcement not found');
     }
-    if (justPublished) await notifyAudience(justPublished);
+    if (justPublished) {
+      // The school-wide fan-out can be large; don't make the publish request wait on it.
+      const notified = notifyAudience(justPublished).catch((err: unknown) => {
+        logger.warn({ err, announcementId: String(justPublished._id) }, '[announcement] fan-out failed');
+      });
+      if (opts.awaitNotify) await notified;
+    }
 
     return announcement;
   }
