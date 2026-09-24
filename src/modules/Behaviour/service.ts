@@ -73,6 +73,25 @@ async function learnerIn(actor: BehaviourActor, studentId: string) {
   return student;
 }
 
+/**
+ * The learner's merit/demerit/incident summary over ALL their entries (not
+ * just the ones shown in the timeline). A capped find().limit() would under-
+ * count a learner with more than TIMELINE_LIMIT entries, so this aggregates.
+ */
+async function summaryFor(schoolId: Id, studentId: Id): Promise<ReturnType<typeof behaviourSummary>> {
+  const rows = await BehaviourEntry.aggregate<{ _id: string; count: number; points: number }>([
+    { $match: { schoolId, studentId, isDeleted: false } },
+    { $group: { _id: '$kind', count: { $sum: 1 }, points: { $sum: '$points' } } },
+  ]);
+  const of = (kind: string) => rows.find((r) => r._id === kind);
+  return {
+    merits: of('merit')?.count ?? 0,
+    demerits: of('demerit')?.count ?? 0,
+    incidents: of('incident')?.count ?? 0,
+    net: rows.reduce((sum, r) => sum + r.points, 0),
+  };
+}
+
 async function namesOf(userIds: unknown[], schoolId: Id): Promise<Map<string, string>> {
   const ids = userIds.filter((id) => id && mongoose.Types.ObjectId.isValid(String(id))).map((id) => oid(String(id)));
   const users = await User.find({ _id: { $in: ids }, schoolId }).select('firstName lastName').lean();
@@ -120,8 +139,10 @@ export class BehaviourService {
       });
     } catch (err: unknown) {
       // Two taps racing: the unique requestKey index lets only one through.
+      // Skip a soft-deleted entry here too, so a race during a retry-after-undo
+      // can't hand back the entry that was just undone.
       if (requestKey && (err as { code?: number }).code === 11000) {
-        const winner = await BehaviourEntry.findOne({ schoolId, loggedBy: oid(actor.id), requestKey });
+        const winner = await BehaviourEntry.findOne({ schoolId, loggedBy: oid(actor.id), requestKey, isDeleted: false });
         if (winner) return sameLog(winner, student._id, checked.kind, checked.category);
       }
       throw err;
@@ -135,13 +156,16 @@ export class BehaviourService {
       throw new ForbiddenError('You can only see behaviour for learners you teach.');
     }
     const schoolId = oid(actor.schoolId);
-    const entries = await BehaviourEntry.find({ schoolId, studentId: student._id, isDeleted: false })
-      .sort({ occurredAt: -1 }).limit(TIMELINE_LIMIT).lean();
+    const [entries, summary] = await Promise.all([
+      BehaviourEntry.find({ schoolId, studentId: student._id, isDeleted: false })
+        .sort({ occurredAt: -1 }).limit(TIMELINE_LIMIT).lean(),
+      summaryFor(schoolId, student._id as Id),
+    ]);
     const referralFilter: Record<string, unknown> = { schoolId, studentId: student._id, isDeleted: false, ...referralScope(actor) };
     const referrals = await PastoralReferral.find(referralFilter).select('reason status createdAt').sort({ createdAt: -1 }).limit(20).lean();
     const names = await namesOf(entries.map((e) => e.loggedBy), schoolId);
     return {
-      summary: behaviourSummary(entries),
+      summary,
       items: timeline(
         entries.map((e) => ({
           id: String(e._id), kind: e.kind, category: e.category, points: e.points, note: e.note,
