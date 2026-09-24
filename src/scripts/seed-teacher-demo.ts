@@ -23,11 +23,15 @@ import { Homework, HomeworkSubmission } from '../modules/Homework/model.js';
 import { MessageThread, Message } from '../modules/Messaging/model.js';
 import { AssessmentPaper } from '../modules/QuestionBank/model-papers.js';
 import { TimetableConfig } from '../modules/TimetableBuilder/model.js';
+import { Department } from '../modules/Department/model.js';
 import { demoDates, demoPaperAssignment, demoPeriodConfig, planWeek, type PlannedSlot, type TeachingPair } from './teacher-demo/plan.js';
 import { PaperMarking } from '../modules/AITools/model-marking.js';
 import { CAPS_SUBJECT, DEMO_MODULES, DEMO_SUBJECTS, DEMO_WEIGHTINGS, HOMEWORK, LESSONS, PAPERS, THREADS } from './teacher-demo/content.js';
 
 const TEACHER_EMAIL = 'thandi.molefe@greenfieldprimary.co.za';
+// A colleague who heads the teacher's department and moderates her papers.
+const HOD_EMAIL = 'ayanda.zulu@greenfieldprimary.co.za';
+const DEMO_DEPARTMENT = 'Foundation Phase';
 type Id = Types.ObjectId;
 
 interface Ctx {
@@ -321,6 +325,25 @@ async function seedWeightings(ctx: Ctx): Promise<number> {
   return written;
 }
 
+/**
+ * Puts the teacher and an HOD colleague in one department so paper moderation
+ * can be walked through. Leaves a teacher the school already placed alone.
+ */
+async function seedDepartment(ctx: Ctx): Promise<string | null> {
+  const teacher = await User.findById(ctx.teacherId, { departmentId: 1 }).lean();
+  if (teacher?.departmentId) return null;
+  const hod = await User.findOne({ email: HOD_EMAIL, schoolId: ctx.schoolId, isDeleted: false }).lean();
+  if (!hod) return null;
+  const department = await Department.findOneAndUpdate(
+    { schoolId: ctx.schoolId, name: DEMO_DEPARTMENT },
+    { $setOnInsert: { hodUserId: hod._id, isActive: true, isDeleted: false } },
+    { upsert: true, returnDocument: 'after' },
+  );
+  await User.updateMany({ _id: { $in: [ctx.teacherId, hod._id] } }, { $set: { departmentId: department._id } });
+  await User.updateOne({ _id: hod._id }, { $set: { isHOD: true } });
+  return `${hod.firstName} ${hod.lastName}`;
+}
+
 async function main(): Promise<void> {
   await mongoose.connect(config.mongodb.uri);
   try {
@@ -334,7 +357,8 @@ async function main(): Promise<void> {
     const papers = await seedPapers(ctx);
     const scriptReady = await seedPaperMarking(ctx);
     await seedWeightings(ctx);
-    logger.info(`Teacher demo ready for ${TEACHER_EMAIL}: ${ctx.week.length} timetable slots, ${lessons} lessons, ${submissions} submissions to mark, ${unread} unread messages, ${papers} papers${scriptReady ? ', 1 AI-marked script ready to issue' : ''}.`);
+    const hodName = await seedDepartment(ctx);
+    logger.info(`Teacher demo ready for ${TEACHER_EMAIL}: ${ctx.week.length} timetable slots, ${lessons} lessons, ${submissions} submissions to mark, ${unread} unread messages, ${papers} papers${scriptReady ? ', 1 AI-marked script ready to issue' : ''}${hodName ? `, HOD ${hodName} (${HOD_EMAIL})` : ''}.`);
   } finally {
     await mongoose.disconnect();
   }
