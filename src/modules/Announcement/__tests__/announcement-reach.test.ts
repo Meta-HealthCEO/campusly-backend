@@ -22,12 +22,14 @@ describe('announcements reach their audience', () => {
     const a = await AnnouncementService.create({
       schoolId: String(f.schoolId), title: 'Grade 1 outing', content: 'Zoo trip.', targetAudience: 'grade', targetId: String(f.gradeId), priority: 'medium',
     } as never, String(oidOf()));
-    await AnnouncementService.publish(String(a._id), String(f.schoolId));
+    await AnnouncementService.publish(String(a._id), String(f.schoolId), { awaitNotify: true });
     expect(await titles(f.schoolId, 'parent', f.qUser)).toContain('Grade 1 outing');
     expect(await titles(f.schoolId, 'student', f.lebo.userId)).toContain('Grade 1 outing');
     expect(await titles(f.schoolId, 'parent', f.janParent)).not.toContain('Grade 1 outing');
     const n = await Notification.countDocuments({ 'data.entityId': String(a._id) });
-    expect(n).toBe(4);
+    // Lebo, Sipho, Noah, Zola (learners) + P, Q, R (their parents) — Zola's
+    // parent R is linked both ways but only counted once.
+    expect(n).toBe(7);
   });
 
   it('publishing to parents notifies every parent once, and publishing again notifies no one twice', async () => {
@@ -35,11 +37,27 @@ describe('announcements reach their audience', () => {
     const a = await AnnouncementService.create({
       schoolId: String(f.schoolId), title: 'Fees due', content: 'Friday.', targetAudience: 'parents', priority: 'high',
     } as never, String(oidOf()));
-    await AnnouncementService.publish(String(a._id), String(f.schoolId));
-    await AnnouncementService.publish(String(a._id), String(f.schoolId));
+    await AnnouncementService.publish(String(a._id), String(f.schoolId), { awaitNotify: true });
+    await AnnouncementService.publish(String(a._id), String(f.schoolId), { awaitNotify: true });
     const recipients = await Notification.find({ 'data.entityId': String(a._id) }).distinct('recipientId');
-    expect(recipients.map(String).sort()).toEqual([f.pUser, f.qUser, f.janParent].map(String).sort());
-    expect(await Notification.countDocuments({ 'data.entityId': String(a._id) })).toBe(3);
+    expect(recipients.map(String).sort()).toEqual([f.pUser, f.qUser, f.rUser, f.janParent].map(String).sort());
+    expect(await Notification.countDocuments({ 'data.entityId': String(a._id) })).toBe(4);
+  });
+
+  it('a class announcement notifies a both-ways-linked parent once, a parentless learner, and no one in another school', async () => {
+    const f = await classSchool();
+    const a = await AnnouncementService.create({
+      schoolId: String(f.schoolId), title: 'Class 1A trip', content: 'Museum.', targetAudience: 'class', targetId: String(f.classA), priority: 'medium',
+    } as never, String(oidOf()));
+    await AnnouncementService.publish(String(a._id), String(f.schoolId), { awaitNotify: true });
+
+    const recipients = (await Notification.find({ 'data.entityId': String(a._id) }).distinct('recipientId')).map(String);
+    // Zola's parent R appears exactly once despite being linked both ways.
+    expect(recipients.filter((id) => id === String(f.rUser))).toHaveLength(1);
+    // Noah has no parent but is still notified as the learner.
+    expect(recipients).toContain(String(f.noah.userId));
+    // Nobody from the unrelated second school is notified.
+    expect(recipients).not.toContain(String(f.otherParentUser));
   });
 });
 

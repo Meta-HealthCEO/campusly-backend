@@ -3,6 +3,11 @@ import { z } from 'zod/v4';
 const objectIdRegex = /^[0-9a-fA-F]{24}$/;
 const objectIdSchema = z.string().regex(objectIdRegex, 'Invalid ObjectId format');
 
+// A grade or class announcement with no targetId reaches no one.
+const targetIdRequiredForGradeOrClass = (data: { targetAudience?: string; targetId?: string }) =>
+  !data.targetAudience || !['grade', 'class'].includes(data.targetAudience) || Boolean(data.targetId);
+const TARGET_ID_REQUIRED_ISSUE = { message: 'targetId is required for a grade or class announcement', path: ['targetId'] };
+
 export const createAnnouncementSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   content: z.string().min(1, 'Content is required'),
@@ -14,7 +19,7 @@ export const createAnnouncementSchema = z.object({
   expiresAt: z.string().datetime().optional(),
   pinned: z.boolean().optional(),
   scheduledPublishDate: z.string().datetime().optional(),
-}).strict();
+}).strict().refine(targetIdRequiredForGradeOrClass, TARGET_ID_REQUIRED_ISSUE);
 
 export const updateAnnouncementSchema = z.object({
   title: z.string().min(1, 'Title is required').optional(),
@@ -24,7 +29,7 @@ export const updateAnnouncementSchema = z.object({
   attachments: z.array(z.string()).optional(),
   priority: z.enum(['low', 'medium', 'high', 'urgent']).optional(),
   expiresAt: z.string().datetime().optional(),
-}).strict();
+}).strict().refine(targetIdRequiredForGradeOrClass, TARGET_ID_REQUIRED_ISSUE);
 
 export const schedulePublishSchema = z.object({
   publishAt: z.string().datetime('publishAt must be a valid date-time'),

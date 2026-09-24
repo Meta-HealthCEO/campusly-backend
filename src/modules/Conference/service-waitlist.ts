@@ -1,12 +1,22 @@
 import { ConferenceEvent, ConferenceWaitlist } from './model.js';
-import { BadRequestError, NotFoundError } from '../../common/errors.js';
+import { BadRequestError, ForbiddenError, NotFoundError } from '../../common/errors.js';
 import { logger } from '../../common/logger.js';
+import { childrenOfParent } from '../../common/audience.js';
+import { LEARNER_NAME } from './service-bookings.js';
 import type { JoinWaitlistInput, ListWaitlistInput } from './validation.js';
 
 // ─── Waitlist Service ─────────────────────────────────────────────────────────
 
 export class ConferenceWaitlistService {
-  static async joinWaitlist(schoolId: string, parentId: string, data: JoinWaitlistInput) {
+  static async joinWaitlist(schoolId: string, parentId: string, data: JoinWaitlistInput, role = 'parent') {
+    // A parent joins the waitlist only for their own child (linked either way).
+    if (role === 'parent') {
+      const children = await childrenOfParent(schoolId, parentId);
+      if (!children.some((c) => String(c._id) === String(data.studentId))) {
+        throw new ForbiddenError('You can only join the waitlist for your own children.');
+      }
+    }
+
     const event = await ConferenceEvent.findOne({
       _id: data.eventId,
       schoolId,
@@ -79,7 +89,7 @@ export class ConferenceWaitlistService {
     const entries = await ConferenceWaitlist.find(filter)
       .populate('teacherId', 'firstName lastName')
       .populate('parentId', 'firstName lastName')
-      .populate('studentId', 'firstName lastName')
+      .populate(LEARNER_NAME)
       .sort({ position: 1 })
       .lean();
 
