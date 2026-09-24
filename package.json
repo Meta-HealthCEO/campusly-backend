@@ -10,6 +10,7 @@
     "start": "PORT=4500 node dist/index.js",
     "seed": "tsx src/scripts/seed.ts",
     "seed:teacher-demo": "tsx src/scripts/seed-teacher-demo.ts",
+    "audit:paper-marks": "tsx src/scripts/audit-paper-marks.ts",
     "pdf:install-browser": "playwright install chromium",
     "test": "vitest run",
     "test:watch": "vitest"
