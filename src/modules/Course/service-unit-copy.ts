@@ -22,7 +22,8 @@ import { BadRequestError, ForbiddenError, NotFoundError } from '../../common/err
 
 type Id = mongoose.Types.ObjectId;
 const oid = (id: string | Id) => new mongoose.Types.ObjectId(String(id));
-const LIBRARY_LIMIT = 100;
+/** The library shows one page at a time, with a "Show more" to fetch the next. */
+export const LIBRARY_PAGE_SIZE = 20;
 /** A copied unit's questions: the copier's own, but kept out of the school's shared bank (the original is already there). */
 export const UNIT_COPY_TAG = 'unit_copy';
 
@@ -45,12 +46,18 @@ const isWriting = (course: ICourse, lessons: ICourseLesson[]): boolean =>
   course.generation?.status === 'queued' || course.generation?.status === 'running'
   || lessons.some((l) => l.genStatus === 'pending' || l.genStatus === 'generating');
 
-/** New copies of the documents the unit's items own; the map is old id → new id. */
+/**
+ * New copies of the documents the unit's items own; the map is old id → new
+ * id. `trackInto` is appended with every attempted copy's new id *before*
+ * `insertMany` runs, so a mid-batch failure still leaves the caller able to
+ * find (and clean up) whatever `insertMany` managed to write before it threw.
+ */
 async function cloneDocs(
   collection: mongoose.Collection,
   ids: Id[],
   schoolId: Id,
   change: (doc: Record<string, unknown>) => Record<string, unknown>,
+  trackInto: Id[],
 ): Promise<Map<string, Id>> {
   const map = new Map<string, Id>();
   if (ids.length === 0) return map;
@@ -60,14 +67,15 @@ async function cloneDocs(
   const copies = docs.map((doc) => {
     const _id = new mongoose.Types.ObjectId();
     map.set(String(doc._id), _id);
+    trackInto.push(_id);
     return { ...change(doc), _id, createdAt: now, updatedAt: now };
   });
   await collection.insertMany(copies);
   return map;
 }
 
-async function gradeName(gradeId: Id): Promise<string> {
-  const grade = await Grade.findOne({ _id: gradeId, isDeleted: false }).select('name').lean();
+async function gradeName(gradeId: Id, schoolId: Id): Promise<string> {
+  const grade = await Grade.findOne({ _id: gradeId, schoolId, isDeleted: false }).select('name').lean();
   return grade?.name ?? 'this grade';
 }
 
@@ -90,7 +98,7 @@ async function checkCopy(courseId: string, schoolId: string, actor: CourseActor,
   if (!klass) throw new NotFoundError('Class not found');
   await assertTeachesClasses(schoolId, actor, [input.classId]);
   if (String(klass.gradeId) !== String(source.scope.gradeId)) {
-    const name = await gradeName(source.scope.gradeId);
+    const name = await gradeName(source.scope.gradeId, soid);
     throw new BadRequestError(`This unit is for ${name}. Pick a ${name} class.`);
   }
   return { source, lessons, klass, soid };
@@ -107,25 +115,36 @@ export class UnitCopyService {
     try {
       // The unit's own items get their own content and questions; items the
       // teacher attached from the library keep pointing at the library.
+      // Fresh copies start with no downloads, ratings or review state of
+      // their own, and are dated to the copy's own term, not the source's.
       const own = lessons.filter((l) => l.itemKind);
       const resources = await cloneDocs(
         ContentResource.collection, own.map((l) => l.contentResourceId).filter((id): id is Id => !!id), soid,
-        (doc) => ({ ...doc, createdBy, tags: [...new Set([...((doc.tags as string[]) ?? []), UNIT_RESOURCE_TAG])] }),
+        (doc) => ({
+          ...doc, createdBy, term: input.termNumber, downloads: 0, rating: 0, ratingCount: 0,
+          reviewedBy: null, reviewedAt: null, reviewNotes: '',
+          tags: [...new Set([...((doc.tags as string[]) ?? []), UNIT_RESOURCE_TAG])],
+        }),
+        made.resources,
       );
-      made.resources = [...resources.values()];
       const questions = await cloneDocs(
         Question.collection, own.filter((l) => l.itemKind === 'quick_check').flatMap((l) => l.quizQuestionIds ?? []), soid,
         (doc) => ({ ...doc, createdBy, usageCount: 0, tags: [...new Set([...((doc.tags as string[]) ?? []), UNIT_COPY_TAG])] }),
+        made.questions,
       );
-      made.questions = [...questions.values()];
 
       const title = input.title?.trim() || copyTitle(source.title, input.termNumber, scope.termNumber);
       const course = await Course.create({
         schoolId: soid, title, slug: slugFor(title), description: source.description ?? '', subjectId: source.subjectId,
         createdBy, status: 'draft', kind: 'class_unit', outlineStatus: 'approved', generation: source.generation,
         aiGenerated: false, sequential: source.sequential !== false, certificateEnabled: false,
-        passMarkPercent: source.passMarkPercent, copiedFrom: source._id,
-        scope: { gradeId: scope.gradeId, subjectId: scope.subjectId, termNumber: input.termNumber, topicNodeIds: scope.topicNodeIds, classIds: [klass._id] },
+        passMarkPercent: source.passMarkPercent, copiedFrom: source._id, estimatedDurationHours: source.estimatedDurationHours,
+        scope: {
+          gradeId: scope.gradeId, subjectId: scope.subjectId, termNumber: input.termNumber, topicNodeIds: scope.topicNodeIds,
+          // Not "released to" yet — only /release adds a class here. The copy
+          // target is just what it was made for, kept to pre-tick the release dialog.
+          classIds: [], builtForClassId: klass._id,
+        },
       });
       made.course = course._id as Id;
 
@@ -148,34 +167,44 @@ export class UnitCopyService {
           moduleId: moduleMap.get(String(l.moduleId)),
           contentResourceId: contentId,
           quizQuestionIds: (l.quizQuestionIds ?? []).map((id) => questions.get(String(id)) ?? id),
+          // The copy is fresh content the copier hasn't touched yet — the
+          // source author's "Edited by you" state is theirs, not the copier's.
+          teacherEdited: false,
         };
       }));
       return course.toObject();
     } catch (err: unknown) {
       logger.error({ err, courseId }, '[unit-copy] copy failed; removing what was made');
-      await Promise.all([
+      // allSettled: one cleanup step failing must never hide the original
+      // error behind a cleanup error, and every other step should still run.
+      const results = await Promise.allSettled([
         ContentResource.updateMany({ _id: { $in: made.resources }, schoolId: soid }, { $set: { isDeleted: true } }),
         Question.updateMany({ _id: { $in: made.questions }, schoolId: soid }, { $set: { isDeleted: true } }),
-        made.course ? Course.updateOne({ _id: made.course, schoolId: soid }, { $set: { isDeleted: true } }) : null,
-        made.course ? CourseModule.updateMany({ courseId: made.course, schoolId: soid }, { $set: { isDeleted: true } }) : null,
-        made.course ? CourseLesson.updateMany({ courseId: made.course, schoolId: soid }, { $set: { isDeleted: true } }) : null,
+        made.course ? Course.updateOne({ _id: made.course, schoolId: soid }, { $set: { isDeleted: true } }) : Promise.resolve(),
+        made.course ? CourseModule.updateMany({ courseId: made.course, schoolId: soid }, { $set: { isDeleted: true } }) : Promise.resolve(),
+        made.course ? CourseLesson.updateMany({ courseId: made.course, schoolId: soid }, { $set: { isDeleted: true } }) : Promise.resolve(),
       ]);
+      for (const r of results) {
+        if (r.status === 'rejected') logger.error({ err: r.reason, courseId }, '[unit-copy] cleanup step failed');
+      }
       throw err;
     }
   }
 
-  /** Every released unit in the school, newest first, to copy from. */
-  static async library(schoolId: string, actor: CourseActor, filters: { gradeId?: string; subjectId?: string }): Promise<LibraryEntry[]> {
+  /** One page of the school's released units, newest first, optionally narrowed by grade/subject, to copy from. */
+  static async library(schoolId: string, actor: CourseActor, filters: { gradeId?: string; subjectId?: string; page?: number }): Promise<LibraryEntry[]> {
     const soid = oid(schoolId);
     const query: Record<string, unknown> = { schoolId: soid, isDeleted: false, kind: 'class_unit', status: 'published' };
     if (filters.gradeId && mongoose.Types.ObjectId.isValid(filters.gradeId)) query['scope.gradeId'] = oid(filters.gradeId);
     if (filters.subjectId && mongoose.Types.ObjectId.isValid(filters.subjectId)) query['scope.subjectId'] = oid(filters.subjectId);
-    const units = await Course.find(query).sort({ publishedAt: -1, createdAt: -1 }).limit(LIBRARY_LIMIT).lean() as ICourse[];
+    const page = Math.max(1, Math.floor(filters.page ?? 1) || 1);
+    const units = await Course.find(query).sort({ publishedAt: -1, createdAt: -1 })
+      .skip((page - 1) * LIBRARY_PAGE_SIZE).limit(LIBRARY_PAGE_SIZE).lean() as ICourse[];
     if (units.length === 0) return [];
 
     const ids = units.map((u) => u._id as Id);
     const [grades, subjects, authors, lessons] = await Promise.all([
-      Grade.find({ _id: { $in: units.map((u) => u.scope?.gradeId).filter((id): id is Id => !!id) }, isDeleted: false }).select('name').lean(),
+      Grade.find({ _id: { $in: units.map((u) => u.scope?.gradeId).filter((id): id is Id => !!id) }, schoolId: soid, isDeleted: false }).select('name').lean(),
       Subject.find({ _id: { $in: units.map((u) => u.scope?.subjectId).filter((id): id is Id => !!id) }, schoolId: soid, isDeleted: false }).select('name').lean(),
       User.find({ _id: { $in: units.map((u) => u.createdBy) }, schoolId: soid }).select('firstName lastName').lean(),
       CourseLesson.find({ courseId: { $in: ids }, schoolId: soid, isDeleted: false }).select('courseId minutes').lean(),

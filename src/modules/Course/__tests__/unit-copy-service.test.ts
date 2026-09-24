@@ -79,13 +79,17 @@ describe('UnitCopyService.copy', () => {
     expect(String(copy.createdBy)).toBe(String(f.thandi));
     expect(String(copy.copiedFrom)).toBe(f.unitId);
     expect(copy.scope).toMatchObject({ termNumber: 4 });
-    expect(copy.scope!.classIds.map(String)).toEqual([String(f.classB)]);
+    // Not released yet — only /release adds a class to `classIds`. The copy
+    // target is tracked separately, just to pre-tick the release dialog.
+    expect(copy.scope!.classIds).toEqual([]);
+    expect(String(copy.scope!.builtForClassId)).toBe(String(f.classB));
 
     const lessons = await CourseLesson.find({ courseId: copy._id, isDeleted: false }).sort({ orderIndex: 1 }).lean();
     expect(lessons.map((l) => [l.title, l.itemKind, l.genStatus, l.minutes])).toEqual([
       ['Counting in tens', 'notes', 'ready', 6], ['Check: counting', 'quick_check', 'ready', 5], ['Counting on', 'worked_example', 'failed', 6],
     ]);
-    expect(lessons[0].teacherEdited).toBe(true);
+    // The source author's "Edited by you" doesn't carry over to the copier.
+    expect(lessons[0].teacherEdited).toBe(false);
     const modules = await CourseModule.find({ courseId: copy._id, isDeleted: false }).lean();
     expect(modules.map((m) => [m.title, m.objectives])).toEqual([['Counting to 99', ['I can count in tens']]]);
     // Nothing learner-side comes along.
@@ -137,6 +141,20 @@ describe('UnitCopyService.library', () => {
       authorName: 'Lindiwe Dube', items: 3, minutes: 17, releasedAt: '2026-09-20T08:00:00.000Z', mine: false,
     }]);
     expect(await UnitCopyService.library(String(oid()), teacher(f.thandi), {})).toEqual([]);
+  });
+
+  it('pages the library instead of always returning everything', async () => {
+    const f = await school();
+    // f.unitId is already one published unit; add 20 more so there are 21 total.
+    await Course.insertMany(Array.from({ length: 20 }, (_, i) => ({
+      schoolId: f.soid, title: `Extra ${i}`, slug: `extra-${i}-${oid()}`, createdBy: f.thandi, status: 'published', kind: 'class_unit',
+      publishedAt: new Date(Date.now() - i * 1000), isDeleted: false,
+    })));
+    const page1 = await UnitCopyService.library(f.schoolId, teacher(f.thandi), { page: 1 });
+    const page2 = await UnitCopyService.library(f.schoolId, teacher(f.thandi), { page: 2 });
+    expect(page1).toHaveLength(20);
+    expect(page2).toHaveLength(1);
+    expect(new Set([...page1, ...page2].map((e) => e.id)).size).toBe(21);
   });
 });
 
