@@ -25,8 +25,12 @@ export class GenerationService {
     schoolId: string,
     userId: string,
     data: GenerateContentInput,
+    // A class unit is checked once when its outline is drafted, not per item.
+    opts: { skipUsageLimit?: boolean } = {},
   ) {
-    const limitCheck = await checkUsageLimit(schoolId, 'maxAiGenerationsPerDay');
+    const limitCheck = opts.skipUsageLimit
+      ? { allowed: true, current: 0, limit: -1, plan: 'paid' as const }
+      : await checkUsageLimit(schoolId, 'maxAiGenerationsPerDay');
 
     if (!limitCheck.allowed) {
       throw new BadRequestError(

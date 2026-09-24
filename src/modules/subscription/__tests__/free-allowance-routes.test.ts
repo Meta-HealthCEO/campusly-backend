@@ -8,7 +8,7 @@ import { School } from '../../School/model.js';
 import { Plan, Subscription } from '../model.js';
 import { seedPlans } from '../seed.js';
 import { AssessmentPaper } from '../../QuestionBank/model-papers.js';
-import { FREE_PAPER_GENERATIONS } from '../free-allowance.js';
+import { FREE_COURSE_UNITS, FREE_PAPER_GENERATIONS } from '../free-allowance.js';
 
 const createdSchools: mongoose.Types.ObjectId[] = [];
 
@@ -47,6 +47,7 @@ describe('free AI paper allowance — routes', () => {
     expect(res.status).toBe(200);
     expect(res.body.data.freeAllowance).toEqual({
       paperGenerations: { limit: FREE_PAPER_GENERATIONS, used: 0, remaining: FREE_PAPER_GENERATIONS },
+      courseUnits: { limit: FREE_COURSE_UNITS, used: 0, remaining: FREE_COURSE_UNITS },
     });
   });
 

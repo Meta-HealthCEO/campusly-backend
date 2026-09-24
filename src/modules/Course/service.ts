@@ -78,7 +78,7 @@ function canAuthor(actor: CourseActor): boolean {
 
 // super_admin, school_admin, HOD, and principal can edit any course in the
 // school. Regular teachers can only edit their own courses.
-function assertCanEditCourse(course: ICourse, actor: CourseActor): void {
+export function assertCanEditCourse(course: ICourse, actor: CourseActor): void {
   // Non-authors (parents, students, SGB members) cannot edit courses at all.
   if (!canAuthor(actor)) {
     throw new ForbiddenError('You are not allowed to edit courses');

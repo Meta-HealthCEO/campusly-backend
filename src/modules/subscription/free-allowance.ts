@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { AssessmentPaper } from '../QuestionBank/model-papers.js';
+import { Course } from '../Course/model.js';
 
 /**
  * Free-plan teachers can try AI paper generation this many times before the
@@ -9,20 +10,26 @@ import { AssessmentPaper } from '../QuestionBank/model-papers.js';
  */
 export const FREE_PAPER_GENERATIONS = 3;
 
+/** Free-plan teachers can outline this many class units with AI (counted the same way). */
+export const FREE_COURSE_UNITS = 2;
+
+interface AllowanceCount { limit: number; used: number; remaining: number }
+
 export interface FreeAllowance {
-  paperGenerations: { limit: number; used: number; remaining: number };
+  paperGenerations: AllowanceCount;
+  courseUnits: AllowanceCount;
 }
 
+const count = (limit: number, used: number): AllowanceCount => ({ limit, used, remaining: Math.max(0, limit - used) });
+
 export async function getFreeAllowance(schoolId: string): Promise<FreeAllowance> {
-  const used = await AssessmentPaper.countDocuments({
-    schoolId: new mongoose.Types.ObjectId(schoolId),
-    aiGenerated: true,
-  });
+  const soid = new mongoose.Types.ObjectId(schoolId);
+  const [papers, units] = await Promise.all([
+    AssessmentPaper.countDocuments({ schoolId: soid, aiGenerated: true }),
+    Course.countDocuments({ schoolId: soid, aiGenerated: true }),
+  ]);
   return {
-    paperGenerations: {
-      limit: FREE_PAPER_GENERATIONS,
-      used,
-      remaining: Math.max(0, FREE_PAPER_GENERATIONS - used),
-    },
+    paperGenerations: count(FREE_PAPER_GENERATIONS, papers),
+    courseUnits: count(FREE_COURSE_UNITS, units),
   };
 }

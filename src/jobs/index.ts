@@ -81,6 +81,9 @@ export async function setupWorkers(): Promise<Worker[]> {
     const { createPaperImportWorker } = await import('./paper-import.job.js');
     workers.push(createPaperImportWorker());
 
+    const { createCourseGenerationWorker } = await import('./course-generation.job.js');
+    workers.push(createCourseGenerationWorker());
+
     if (process.env.SUBSCRIPTION_CRON_ENABLED === 'true') {
       const { createSubscriptionBillingWorker, scheduleSubscriptionBilling } = await import(
         '../modules/subscription/cron.js'

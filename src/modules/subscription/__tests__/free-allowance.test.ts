@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 import { Plan, Subscription } from '../model.js';
 import { seedPlans } from '../seed.js';
 import { requirePaperGenerationAccess } from '../entitlements.js';
-import { FREE_PAPER_GENERATIONS, getFreeAllowance } from '../free-allowance.js';
+import { FREE_COURSE_UNITS, FREE_PAPER_GENERATIONS, getFreeAllowance } from '../free-allowance.js';
 import { AssessmentPaper } from '../../QuestionBank/model-papers.js';
 
 function makeApp(schoolId: mongoose.Types.ObjectId, isStandaloneTeacher = true) {
@@ -61,6 +61,7 @@ describe('free AI paper allowance', () => {
     expect(res.status).toBe(200);
     expect(await getFreeAllowance(schoolId.toString())).toEqual({
       paperGenerations: { limit: FREE_PAPER_GENERATIONS, used: 0, remaining: FREE_PAPER_GENERATIONS },
+      courseUnits: { limit: FREE_COURSE_UNITS, used: 0, remaining: FREE_COURSE_UNITS },
     });
   });
 

@@ -96,6 +96,11 @@ export const communicationQueue = new Queue('communication-send', {
   defaultJobOptions,
 });
 
+// Writes a class unit's items after its outline is approved (phase 3).
+export const courseGenerationQueue = new Queue('course-generation', {
+  connection: redisConnection,
+});
+
 export const paperImportQueue = new Queue('paper-import', {
   connection: redisConnection,
 });

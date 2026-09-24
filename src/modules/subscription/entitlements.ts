@@ -74,6 +74,20 @@ export async function assertPaperGenerationAccess(schoolId: string, isStandalone
 }
 
 /**
+ * Whether this caller may outline another class unit with AI: school teachers
+ * always; standalone teachers on Pro/trial (the paperGeneration entitlement is
+ * the Pro AI-generation switch), or while free AI units remain.
+ */
+export async function assertCourseGenerationAccess(schoolId: string, isStandaloneTeacher: boolean): Promise<void> {
+  if (!isStandaloneTeacher) return;
+  const ents = await resolveEntitlements(schoolId);
+  if (ents.paperGeneration === true) return;
+  const allowance = await getFreeAllowance(schoolId);
+  if (allowance.courseUnits.remaining > 0) return;
+  throw new AppError("You've used your free AI units. Upgrade to Pro to keep building units.", 402);
+}
+
+/**
  * Like requireEntitlement('paperGeneration'), but a free-plan standalone
  * teacher may generate up to FREE_PAPER_GENERATIONS AI papers first, so they
  * see the product work before being asked for a card.
