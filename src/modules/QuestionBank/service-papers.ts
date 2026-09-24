@@ -23,6 +23,7 @@ import type {
   PaperQueryInput,
 } from './validation.js';
 import { PaperModeration } from '../TeacherWorkbench/model.assessment.js';
+import { User } from '../Auth/model.js';
 
 const POPULATE_LIST = [
   { path: 'subjectId', select: 'name' },
@@ -312,16 +313,24 @@ export class PapersService {
     return { papers: withModeration, total, page: filters.page ?? 1, limit };
   }
 
-  static async getPaper(id: string, schoolId: string, userId: string, userRole: string) {
+  static async getPaper(
+    id: string,
+    schoolId: string,
+    userId: string,
+    userRole: string,
+    /** An HOD may open papers written by teachers in their department. */
+    opts: { hodDepartmentId?: string | null } = {},
+  ) {
     const oid = new mongoose.Types.ObjectId(id);
     const soid = new mongoose.Types.ObjectId(schoolId);
+    const reviewer = REVIEW_ROLES.includes(userRole);
 
     const query: Record<string, unknown> = {
       _id: oid,
       schoolId: soid,
       isDeleted: false,
     };
-    if (!REVIEW_ROLES.includes(userRole)) {
+    if (!reviewer && !opts.hodDepartmentId) {
       query.createdBy = new mongoose.Types.ObjectId(userId);
     }
 
@@ -330,6 +339,22 @@ export class PapersService {
       .lean();
 
     if (!paper) throw new NotFoundError('Assessment paper not found');
+
+    if (!reviewer && opts.hodDepartmentId) {
+      const createdBy = paper.createdBy as unknown;
+      const creatorId = createdBy && typeof createdBy === 'object' && '_id' in createdBy
+        ? String((createdBy as { _id: unknown })._id)
+        : String(createdBy);
+      if (creatorId !== userId) {
+        const inDepartment = await User.exists({
+          _id: new mongoose.Types.ObjectId(creatorId),
+          schoolId: soid,
+          departmentId: new mongoose.Types.ObjectId(opts.hodDepartmentId),
+          isDeleted: false,
+        });
+        if (!inDepartment) throw new ForbiddenError('You can only open papers from your department');
+      }
+    }
     return paper;
   }
 

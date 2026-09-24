@@ -200,6 +200,7 @@ export class QuestionBankController {
       schoolId,
       user.id,
       user.role,
+      { hodDepartmentId: user.isHOD ? user.departmentId ?? null : null },
     );
     res.json(apiResponse(true, paper));
   }

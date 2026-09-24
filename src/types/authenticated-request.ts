@@ -11,6 +11,8 @@ export interface AuthenticatedUser {
   email: string;
   isSchoolPrincipal?: boolean;
   isHOD?: boolean;
+  /** Set by the auth middleware from the token; the HOD's department. */
+  departmentId?: string | null;
   isStandaloneTeacher?: boolean;
   isStandaloneCoach?: boolean;
 }
