@@ -15,9 +15,11 @@ router.post(
   AnnouncementController.create,
 );
 
+// Every announcement, drafts included: admins only. Everyone else reads /active.
 router.get(
   '/',
   authenticate,
+  authorize('super_admin', 'school_admin'),
   AnnouncementController.list,
 );
 

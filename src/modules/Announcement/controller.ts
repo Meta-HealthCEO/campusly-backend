@@ -3,11 +3,14 @@ import { Response } from 'express';
 import { getUser } from '../../types/authenticated-request.js';
 import { AnnouncementService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
-import { resolveSchoolScope } from '../../common/school-scope.js';
+import { resolveSchoolScope, resolveSchoolScopeFor } from '../../common/school-scope.js';
 
 export class AnnouncementController {
   static async create(req: Request, res: Response): Promise<void> {
-    const announcement = await AnnouncementService.create(req.body, getUser(req).id);
+    const user = getUser(req);
+    // Filed in the admin's own school; only a super admin may name another.
+    const schoolId = resolveSchoolScopeFor(user.role, user.schoolId, req.body.schoolId);
+    const announcement = await AnnouncementService.create({ ...req.body, schoolId }, user.id);
     res.status(201).json(apiResponse(true, announcement, 'Announcement created successfully'));
   }
 
@@ -48,8 +51,10 @@ export class AnnouncementController {
   }
 
   static async getById(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
-    const announcement = await AnnouncementService.getById(req.params.id as string, schoolId);
+    const user = getUser(req);
+    const isAdmin = user.role === 'super_admin' || user.role === 'school_admin';
+    // Drafts and unpublished announcements are for admins only.
+    const announcement = await AnnouncementService.getById(req.params.id as string, user.schoolId!, { publishedOnly: !isAdmin });
     res.json(apiResponse(true, announcement, 'Announcement retrieved successfully'));
   }
 
@@ -88,10 +93,8 @@ export class AnnouncementController {
   }
 
   static async markAnnouncementRead(req: Request, res: Response): Promise<void> {
-    const announcement = await AnnouncementService.markAnnouncementRead(
-      getUser(req).id,
-      req.params.id as string,
-    );
+    const user = getUser(req);
+    const announcement = await AnnouncementService.markAnnouncementRead(user.id, req.params.id as string, user.schoolId!);
     res.json(apiResponse(true, announcement, 'Announcement marked as read'));
   }
 

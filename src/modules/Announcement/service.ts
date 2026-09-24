@@ -58,8 +58,8 @@ export class AnnouncementService {
     };
   }
 
-  static async getById(id: string, schoolId: string): Promise<IAnnouncement> {
-    const announcement = await Announcement.findOne({ _id: id, schoolId, isDeleted: false })
+  static async getById(id: string, schoolId: string, opts: { publishedOnly?: boolean } = {}): Promise<IAnnouncement> {
+    const announcement = await Announcement.findOne({ _id: id, schoolId, isDeleted: false, ...(opts.publishedOnly ? { isPublished: true } : {}) })
       .populate('authorId', 'firstName lastName email');
 
     if (!announcement) {
@@ -214,19 +214,21 @@ export class AnnouncementService {
   static async markAnnouncementRead(
     userId: string,
     announcementId: string,
+    schoolId: string,
   ): Promise<IAnnouncement> {
     const userObjId = new mongoose.Types.ObjectId(userId);
 
     // Check if already read
     const existing = await Announcement.findOne({
       _id: announcementId,
+      schoolId,
       isDeleted: false,
       'readBy.userId': userObjId,
     });
     if (existing) return existing;
 
     const announcement = await Announcement.findOneAndUpdate(
-      { _id: announcementId, isDeleted: false },
+      { _id: announcementId, schoolId, isPublished: true, isDeleted: false },
       { $push: { readBy: { userId: userObjId, readAt: new Date() } } },
       { new: true },
     );
