@@ -9,6 +9,7 @@ import {
   deleteRemovePaperQuestion,
   putUpdateMemo,
   getPaperMemoHandler,
+  postBuildMemo,
   postFinalisePaper,
   getPaperPdf,
   getMemoPdf,
@@ -178,6 +179,12 @@ router.get(
   '/papers/:id/memo',
   authorize(...READ_ROLES),
   getPaperMemoHandler,
+);
+
+router.post(
+  '/papers/:id/memo',
+  authorize(...READ_ROLES),
+  postBuildMemo,
 );
 
 router.put(

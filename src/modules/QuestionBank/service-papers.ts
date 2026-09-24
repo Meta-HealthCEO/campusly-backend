@@ -24,6 +24,7 @@ import type {
 } from './validation.js';
 import { PaperModeration } from '../TeacherWorkbench/model.assessment.js';
 import { User } from '../Auth/model.js';
+import { memoSectionsFromPaper } from './service-paper-memo-build.js';
 
 const POPULATE_LIST = [
   { path: 'subjectId', select: 'name' },
@@ -405,18 +406,7 @@ export class PapersService {
       paperId: paper._id,
       schoolId: toObjectId(schoolId),
       teacherId: toObjectId(userId),
-      sections: sections.map((section) => ({
-        sectionTitle: section.title,
-        answers: section.questions.map((question) => ({
-          questionNumber: `${section.order + 1}.${question.position + 1}`,
-          expectedAnswer: question.modelAnswer ?? '',
-          markAllocation: [
-            { criterion: question.markingGuideline ?? 'Full marks', marks: question.marks },
-          ],
-          commonMistakes: [],
-          acceptableAlternatives: [],
-        })),
-      })),
+      sections: memoSectionsFromPaper(sections),
       totalMarks: actualMarks || data.totalMarks,
       status: 'draft',
     });

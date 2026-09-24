@@ -37,6 +37,7 @@ import {
 } from './service-paper-assignments.js';
 import { getPaperMarkingRoster } from './service-paper-marking-workspace.js';
 import { savePaperQuestionToBank } from './service-paper-question-bank.js';
+import { buildPaperMemo } from './service-paper-memo-build.js';
 
 function requireSchoolId(req: Request, res: Response): string | null {
   const user = getUser(req);
@@ -165,6 +166,15 @@ export async function putUpdateMemo(req: Request, res: Response): Promise<void> 
     user.role,
   );
   res.status(204).end();
+}
+
+/** POST /papers/:id/memo — build the memo from the paper's model answers when it has none. */
+export async function postBuildMemo(req: Request, res: Response): Promise<void> {
+  const schoolId = requireSchoolId(req, res);
+  if (!schoolId) return;
+  const user = getUser(req);
+  const memo = await buildPaperMemo(req.params.id as string, schoolId, user.id, user.role);
+  res.status(201).json(apiResponse(true, memo, 'Memo ready'));
 }
 
 export async function getPaperMemoHandler(req: Request, res: Response): Promise<void> {
