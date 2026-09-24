@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { Homework, IHomework, HomeworkSubmission, IHomeworkSubmission, IHomeworkSubmissionBase } from './model.js';
 import { Lesson } from '../Lesson/model.js';
 import { NotFoundError, BadRequestError } from '../../common/errors.js';
+import { QUIZ_HOMEWORK_RETIRED } from '../Learning/quiz-migration.js';
 import { PAGINATION_DEFAULTS } from '../../common/constants.js';
 import { escapeRegex } from '../../common/utils.js';
 import { generateComprehensionQuestions } from './service-homework-comprehension.js';
@@ -384,6 +385,8 @@ export class HomeworkService {
     data: CreateHomeworkInput,
     actorOrTeacherId: HomeworkActor | string,
   ): Promise<IHomework> {
+    // One quiz system: new homework asks question-bank questions as an exercise.
+    if (data.type === 'quiz') throw new BadRequestError(QUIZ_HOMEWORK_RETIRED);
     const teacherId = typeof actorOrTeacherId === 'string' ? actorOrTeacherId : actorOrTeacherId.id;
     const schoolId = typeof actorOrTeacherId === 'string'
       ? data.schoolId

@@ -5,14 +5,15 @@ import { LearningService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
 import { resolveSchoolScope } from '../../common/school-scope.js';
 import { quizForViewer } from './quiz-redaction.js';
+import { QUIZZES_RETIRED } from './quiz-migration.js';
+import { AppError } from '../../common/errors.js';
 
 export class LearningController {
   // ─── Quizzes ─────────────────────────────────────────────────────────
 
-  static async createQuiz(req: Request, res: Response): Promise<void> {
-    const schoolId = req.user!.schoolId!;
-    const quiz = await LearningService.createQuiz({ ...req.body, schoolId }, getUser(req).id);
-    res.status(201).json(apiResponse(true, quiz, 'Quiz created successfully'));
+  /** Retired: quizzes are made from the question bank now (one quiz system). Existing quizzes still work. */
+  static async createQuiz(_req: Request, _res: Response): Promise<void> {
+    throw new AppError(QUIZZES_RETIRED, 410);
   }
 
   static async getQuiz(req: Request, res: Response): Promise<void> {

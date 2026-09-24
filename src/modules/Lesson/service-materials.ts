@@ -3,6 +3,7 @@ import { Lesson } from './model.js';
 import type { ILessonMaterial, ILesson, LessonPhase, LessonMaterialKind } from './types.js';
 import type { AddMaterialInput, UpdateMaterialInput } from './validation.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
+import { QUIZ_MATERIAL_RETIRED } from '../Learning/quiz-migration.js';
 import { GenerationService } from '../ContentLibrary/service-generation.js';
 import { generateComprehensionFromTextbook } from '../Homework/service-homework-comprehension.js';
 import { Homework } from '../Homework/model.js';
@@ -42,6 +43,8 @@ export async function addMaterial(
   actor: LessonActor,
   input: AddMaterialInput,
 ): Promise<ILessonMaterial> {
+  // One quiz system: lessons use practice questions from the question bank.
+  if (input.kind === 'quiz') throw new BadRequestError(QUIZ_MATERIAL_RETIRED);
   const schoolId = schoolIdFromScope(actor);
   const teacherId = actor.id;
   const lesson = await Lesson.findOne({
@@ -95,9 +98,6 @@ export async function addMaterial(
       const resource = await GenerationService.generateContent(schoolId, teacherId, generationInput);
       baseMaterial.contentResourceId = resource._id;
       cleanupIds.push(resource._id as mongoose.Types.ObjectId);
-    } else if (input.kind === 'quiz') {
-      await assertLinkedRefAvailable('quiz', input.quizId, actor);
-      baseMaterial.quizId = toObjectId(input.quizId, 'quizId');
     } else if (input.kind === 'practice_questions') {
       const payload = input.questionPayload as Record<string, unknown>;
       const rawTypes = Array.isArray(payload.questionTypes)

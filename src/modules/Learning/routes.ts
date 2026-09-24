@@ -5,7 +5,6 @@ import { validate } from '../../middleware/validate.js';
 import { requireParentOwnership } from '../../middleware/parentOwnership.js';
 import { LearningController } from './controller.js';
 import {
-  createQuizSchema,
   updateQuizSchema,
   publishQuizSchema,
   submitQuizAttemptSchema,
@@ -24,11 +23,11 @@ const router = Router();
 
 // ─── Quizzes ─────────────────────────────────────────────────────────────────
 
+// Retired (one quiz system): answers 410 with where quizzes are made now.
 router.post(
   '/quizzes',
   authenticate,
   authorize('teacher', 'school_admin', 'super_admin'),
-  validate(createQuizSchema),
   LearningController.createQuiz,
 );
 

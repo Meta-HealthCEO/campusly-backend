@@ -11,6 +11,11 @@ type Id = mongoose.Types.ObjectId;
 const LABELS = 'ABCDEFGH';
 export const MIGRATED_TAG = 'from_learning_quiz';
 
+/** What teachers are told now that nothing new is made with the old Learning quiz. */
+export const QUIZZES_RETIRED = 'Quizzes are now made from the question bank. Set homework as an exercise, or add a quick check to a course.';
+export const QUIZ_HOMEWORK_RETIRED = 'Quiz homework is now an exercise: pick questions from the question bank.';
+export const QUIZ_MATERIAL_RETIRED = 'Add practice questions from the question bank instead of a quiz.';
+
 interface LearningQuizQuestion {
   questionText: string;
   questionType: string;

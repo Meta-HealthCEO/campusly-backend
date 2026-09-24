@@ -1,6 +1,7 @@
 import { HomeworkTemplate, IHomeworkTemplate } from './model-template.js';
 import { Homework } from './model.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
+import { QUIZ_HOMEWORK_RETIRED } from '../Learning/quiz-migration.js';
 import { HomeworkService } from './service.js';
 import {
   canManageAllHomework,
@@ -164,6 +165,8 @@ export class HomeworkTemplateService {
     }).lean();
 
     if (!homework) throw new NotFoundError('Homework not found');
+    // One quiz system: an old quiz homework isn't carried into new templates.
+    if (homework.type === 'quiz') throw new BadRequestError(QUIZ_HOMEWORK_RETIRED);
 
     const template = new HomeworkTemplate({
       schoolId: toObjectId(actor.schoolId, 'schoolId'),
