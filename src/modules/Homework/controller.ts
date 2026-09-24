@@ -1,4 +1,5 @@
 import type { Request } from 'express';
+import { childrenOfParent } from '../../common/audience.js';
 import { Response } from 'express';
 import mongoose from 'mongoose';
 import { getUser } from '../../types/authenticated-request.js';
@@ -15,11 +16,6 @@ import { toObjectId, type HomeworkActor } from './service-access.js';
 interface StudentAccessRecord {
   _id: mongoose.Types.ObjectId;
   classId: mongoose.Types.ObjectId | string;
-}
-
-interface ParentAccessRecord {
-  _id: mongoose.Types.ObjectId;
-  childrenIds: mongoose.Types.ObjectId[];
 }
 
 function readObjectId(value: unknown): string {
@@ -51,19 +47,9 @@ function getHomeworkActor(req: Request): HomeworkActor {
   return { ...user, schoolId: user.schoolId };
 }
 
-async function findParentForUser(
-  userId: string,
-  schoolId: string,
-): Promise<ParentAccessRecord | null> {
-  const { Parent } = await import('../Parent/model.js');
-  return Parent.findOne({ userId, schoolId, isDeleted: false })
-    .select('_id childrenIds')
-    .lean<ParentAccessRecord>()
-    .exec();
-}
-
-function parentChildIds(parent: ParentAccessRecord | null): string[] {
-  return (parent?.childrenIds ?? []).map((id) => id.toString());
+/** A parent's children in this school, linked either way (the parent lists the child, or the child lists the parent). */
+async function parentChildIds(userId: string, schoolId: string): Promise<string[]> {
+  return (await childrenOfParent(schoolId, userId)).map((c) => String(c._id));
 }
 
 export class HomeworkController {
@@ -121,8 +107,7 @@ export class HomeworkController {
     const homework = await HomeworkService.getById(req.params.id as string, actor);
 
     if (req.user?.role === 'parent') {
-      const parent = await findParentForUser(req.user.id, schoolId);
-      const allowedChildIds = parentChildIds(parent);
+      const allowedChildIds = await parentChildIds(req.user.id, schoolId);
       if (allowedChildIds.length === 0) {
         res.status(403).json(apiResponse(false, undefined, undefined, 'Parent profile not found'));
         return;
@@ -245,9 +230,8 @@ export class HomeworkController {
       }
     }
     if (req.user?.role === 'parent') {
-      const parent = await findParentForUser(req.user.id, schoolId);
       const submissionStudentId = readObjectId((submission as { studentId?: unknown }).studentId);
-      if (!parentChildIds(parent).includes(submissionStudentId)) {
+      if (!(await parentChildIds(req.user.id, schoolId)).includes(submissionStudentId)) {
         res.status(403).json(apiResponse(false, undefined, undefined, "You can only view your own child's submission"));
         return;
       }

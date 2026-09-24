@@ -8,6 +8,7 @@ import { signTestToken } from '../../../test-utils/auth.js';
 import { classSchool } from '../../../test-utils/class-school.js';
 
 let fx: Awaited<ReturnType<typeof classSchool>>;
+let homeworkId: mongoose.Types.ObjectId;
 
 const asParent = (id: mongoose.Types.ObjectId) =>
   `Bearer ${signTestToken({ role: 'parent', schoolId: fx.schoolId, id, isSchoolPrincipal: false, isStandaloneTeacher: false })}`;
@@ -21,10 +22,10 @@ describe('GET /api/homework/parent/dashboard', () => {
     await School.collection.insertOne({
       _id: fx.schoolId, name: `hw_parent_${fx.schoolId}`, isActive: true, isDeleted: false, modulesEnabled: ['homework'],
     });
-    await Homework.collection.insertOne({
+    homeworkId = (await Homework.collection.insertOne({
       schoolId: fx.schoolId, classId: fx.classA, title: 'Overdue sums', status: 'assigned',
       dueDate: new Date(Date.now() - 24 * 60 * 60 * 1000), isDeleted: false,
-    });
+    })).insertedId;
   });
 
   afterAll(async () => {
@@ -49,5 +50,10 @@ describe('GET /api/homework/parent/dashboard', () => {
   it('lists a child linked both ways once', async () => {
     const res = await request(app).get('/api/homework/parent/dashboard').set('Authorization', asParent(fx.rUser));
     expect(res.body.data.map((c: { studentId: string }) => c.studentId)).toEqual([String(fx.zola.id)]);
+  });
+
+  it("lets a parent linked only as the child's guardian open that child's homework", async () => {
+    const res = await request(app).get(`/api/homework/${homeworkId}`).set('Authorization', asParent(fx.qUser));
+    expect(res.status).toBe(200);
   });
 });
