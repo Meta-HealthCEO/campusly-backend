@@ -177,8 +177,10 @@ async function seedHomework(ctx: Ctx): Promise<number> {
       await HomeworkSubmission.updateOne(
         { homeworkId: hw._id, studentId: learner._id },
         {
-          $setOnInsert: { schoolId: ctx.schoolId, homeworkVersion: 1, submittedAt: new Date(), maxMarks: 10, gradingStatus: 'pending', isDeleted: false },
-          $unset: { mark: '' },
+          $setOnInsert: { schoolId: ctx.schoolId, homeworkVersion: 1, submittedAt: new Date(), maxMarks: 10, isDeleted: false },
+          // Reseeding puts every demo submission back to 'waiting to be marked'.
+          $set: { gradingStatus: 'pending' },
+          $unset: { mark: '', feedback: '', gradedAt: '', gradedBy: '' },
         },
         { upsert: true },
       );
