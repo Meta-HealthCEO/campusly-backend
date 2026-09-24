@@ -55,7 +55,8 @@ export class ModerationQueueService {
       PaperModeration.find(query)
         .populate({
           path: 'paperId',
-          select: 'subject totalMarks grade topic',
+          select: 'title subjectId gradeId totalMarks',
+          populate: [{ path: 'subjectId', select: 'name' }, { path: 'gradeId', select: 'name' }],
         })
         .populate('submittedBy', 'firstName lastName email')
         .sort({ submittedAt: 1 })
@@ -73,10 +74,9 @@ export class ModerationQueueService {
         return {
           _id: item._id,
           paperId: paper?._id ?? item.paperId,
-          paperTitle: paper
-            ? `${paper.subject} Grade ${paper.grade} — ${paper.topic}`
-            : 'Unknown',
-          subjectName: (paper?.subject as string) ?? 'Unknown',
+          paperTitle: (paper?.title as string | undefined) ?? 'Unknown paper',
+          subjectName: ((paper?.subjectId as Record<string, unknown> | null)?.name as string | undefined) ?? 'Unknown',
+          gradeName: ((paper?.gradeId as Record<string, unknown> | null)?.name as string | undefined) ?? '',
           teacherName: teacher
             ? `${teacher.firstName} ${teacher.lastName}`
             : 'Unknown',

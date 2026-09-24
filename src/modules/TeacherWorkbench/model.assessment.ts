@@ -162,7 +162,7 @@ const memoSectionSchema = new Schema<IMemoSection>(
 
 const paperMemoSchema = new Schema<IPaperMemo>(
   {
-    paperId: { type: Schema.Types.ObjectId, ref: 'GeneratedPaper', required: true },
+    paperId: { type: Schema.Types.ObjectId, ref: 'AssessmentPaper', required: true },
     schoolId: { type: Schema.Types.ObjectId, ref: 'School', required: true },
     teacherId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     sections: { type: [memoSectionSchema], default: [] },
@@ -214,7 +214,7 @@ const moderationHistoryEntrySchema = new Schema<IModerationHistoryEntry>(
 
 const paperModerationSchema = new Schema<IPaperModeration>(
   {
-    paperId: { type: Schema.Types.ObjectId, ref: 'GeneratedPaper', required: true },
+    paperId: { type: Schema.Types.ObjectId, ref: 'AssessmentPaper', required: true },
     schoolId: { type: Schema.Types.ObjectId, ref: 'School', required: true },
     submittedBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     submittedAt: { type: Date, required: true },

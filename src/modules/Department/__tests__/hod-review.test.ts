@@ -8,6 +8,7 @@ import { Department } from '../model.js';
 import { AssessmentPaper } from '../../QuestionBank/model-papers.js';
 import { PaperModeration } from '../../TeacherWorkbench/model.assessment.js';
 import { signTestToken } from '../../../test-utils/auth.js';
+import { ModerationQueueService } from '../service.moderation.js';
 
 let schoolId: mongoose.Types.ObjectId;
 let deptId: mongoose.Types.ObjectId;
@@ -71,6 +72,13 @@ describe('POST /api/departments/:id/moderation/:paperId/review', () => {
     const res = await review(paperId, { status: 'changes_requested', comments: 'Question 4 is above grade level.' });
     expect(res.status).toBe(200);
     expect((await PaperModeration.findOne({ paperId }).lean())?.comments).toBe('Question 4 is above grade level.');
+  });
+
+  it("shows the paper's real title in the HOD's queue", async () => {
+    const paperId = await pendingPaper(deptTeacherId);
+    const queue = await ModerationQueueService.getModerationQueue(String(deptId), String(schoolId), {});
+    const item = queue.items.find((i) => String(i.paperId) === String(paperId));
+    expect(item?.paperTitle).toBe('Term 3 test');
   });
 
   it('refuses a change request without a real note', async () => {
