@@ -46,7 +46,7 @@ export class AnnouncementController {
       limit: req.query.limit ? Number(req.query.limit) : undefined,
     };
 
-    const result = await AnnouncementService.getActive(schoolId, getUser(req).role, query);
+    const result = await AnnouncementService.getActive(schoolId, getUser(req).role, query, getUser(req).id);
     res.json(apiResponse(true, result, 'Active announcements retrieved successfully'));
   }
 

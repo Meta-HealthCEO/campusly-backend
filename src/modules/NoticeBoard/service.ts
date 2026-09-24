@@ -1,3 +1,4 @@
+import { audienceUserIds, childrenOfParent, notifyUsers } from '../../common/audience.js';
 import { NoticeBoardPost } from './model.js';
 import type { CreatePostInput, UpdatePostInput } from './validation.js';
 import { NotFoundError, ForbiddenError } from '../../common/errors.js';
@@ -49,11 +50,8 @@ async function assertCanUseScope(
     const parent = await Parent.findOne({ userId, schoolId, isDeleted: false }).lean();
     if (!parent) throw new ForbiddenError('Notice board is not available for this parent');
 
-    const children = await Student.find({
-      _id: { $in: parent.childrenIds },
-      schoolId,
-      isDeleted: false,
-    }).select('classId gradeId').lean();
+    // Children linked either way (the parent lists the child, or the child lists the parent).
+    const children = await childrenOfParent(schoolId, userId);
 
     const classIds = new Set(children.map((student) => student.classId.toString()));
     const gradeIds = new Set(children.map((student) => student.gradeId.toString()));
@@ -114,7 +112,18 @@ export class NoticeBoardService {
       pinned: input.pinned ?? false,
       attachments: input.attachments ?? [],
     });
-    return post.save();
+    const saved = await post.save();
+    // A class or grade notice tells its learners and their parents; school-wide news goes through Announcements.
+    if (input.scope === 'class' || input.scope === 'grade') {
+      const scope = input.scope === 'class' ? { classIds: [input.scopeId] } : { gradeIds: [input.scopeId] };
+      const userIds = await audienceUserIds(schoolId, scope, { learners: true, parents: true });
+      await notifyUsers(schoolId, userIds.filter((id) => id !== userId), {
+        title: `${userName}: ${input.title}`,
+        message: input.content.slice(0, 140),
+        data: { entityType: 'notice_board_post', entityId: String(saved._id), scope: input.scope, scopeId: input.scopeId },
+      });
+    }
+    return saved;
   }
 
   static async listPosts(

@@ -3,6 +3,40 @@ import { Announcement, IAnnouncement } from './model.js';
 import { NotFoundError, BadRequestError } from '../../common/errors.js';
 import { paginationHelper } from '../../common/utils.js';
 import type { CreateAnnouncementInput, UpdateAnnouncementInput } from './validation.js';
+import { audienceUserIds, childrenOfParent, notifyUsers, roleUserIds } from '../../common/audience.js';
+import { Student } from '../Student/model.js';
+
+const ROLE_AUDIENCE: Record<string, string[]> = {
+  all: ['teacher', 'parent', 'student'], teachers: ['teacher'], parents: ['parent'], students: ['student'],
+};
+
+/** Tells an announcement's audience it is out: by role, or a grade's or class's learners and their parents. */
+async function notifyAudience(a: IAnnouncement): Promise<void> {
+  const schoolId = String(a.schoolId);
+  const target = a.targetId ? [String(a.targetId)] : [];
+  const userIds = ROLE_AUDIENCE[a.targetAudience]
+    ? await roleUserIds(schoolId, ROLE_AUDIENCE[a.targetAudience])
+    : await audienceUserIds(schoolId, a.targetAudience === 'grade' ? { gradeIds: target } : { classIds: target }, { learners: true, parents: true });
+  await notifyUsers(schoolId, userIds, {
+    title: a.title,
+    message: (a.content ?? '').slice(0, 140),
+    data: { entityType: 'announcement', entityId: String(a._id) },
+  });
+}
+
+/** The grades and classes whose announcements this parent or learner should see. */
+async function gradesAndClassesOf(schoolId: string, role: string, userId?: string): Promise<{ gradeIds: string[]; classIds: string[] }> {
+  if (!userId) return { gradeIds: [], classIds: [] };
+  const learners = role === 'parent'
+    ? await childrenOfParent(schoolId, userId)
+    : role === 'student'
+      ? await Student.find({ userId, schoolId, isDeleted: false }).select('classId gradeId').lean()
+      : [];
+  return {
+    gradeIds: learners.map((l) => String(l.gradeId)).filter(Boolean),
+    classIds: learners.map((l) => String(l.classId)).filter(Boolean),
+  };
+}
 
 interface ListQuery {
   page?: number;
@@ -98,15 +132,19 @@ export class AnnouncementService {
   }
 
   static async publish(id: string, schoolId: string): Promise<IAnnouncement> {
-    const announcement = await Announcement.findOneAndUpdate(
-      { _id: id, schoolId, isDeleted: false },
+    // Only a draft becomes published (and notifies); publishing again changes nothing.
+    const justPublished = await Announcement.findOneAndUpdate(
+      { _id: id, schoolId, isDeleted: false, isPublished: { $ne: true } },
       { $set: { isPublished: true, publishedAt: new Date() } },
       { new: true },
-    ).populate('authorId', 'firstName lastName email');
+    );
+    const announcement = await Announcement.findOne({ _id: id, schoolId, isDeleted: false })
+      .populate('authorId', 'firstName lastName email');
 
     if (!announcement) {
       throw new NotFoundError('Announcement not found');
     }
+    if (justPublished) await notifyAudience(justPublished);
 
     return announcement;
   }
@@ -129,6 +167,7 @@ export class AnnouncementService {
     schoolId: string,
     userRole: string,
     query: { page?: number; limit?: number },
+    userId?: string,
   ): Promise<{
     announcements: IAnnouncement[];
     total: number;
@@ -154,15 +193,19 @@ export class AnnouncementService {
       audienceFilter.push('teachers', 'parents', 'students', 'grade', 'class');
     }
 
+    // Parents and learners also see announcements for their (children's) grades and classes.
+    const mine = await gradesAndClassesOf(schoolId, userRole, userId);
+    const reach: Record<string, unknown>[] = [{ targetAudience: { $in: audienceFilter } }];
+    if (mine.gradeIds.length) reach.push({ targetAudience: 'grade', targetId: { $in: mine.gradeIds } });
+    if (mine.classIds.length) reach.push({ targetAudience: 'class', targetId: { $in: mine.classIds } });
+
     const filter: Record<string, unknown> = {
       schoolId,
       isPublished: true,
       isDeleted: false,
-      targetAudience: { $in: audienceFilter },
-      $or: [
-        { expiresAt: { $exists: false } },
-        { expiresAt: null },
-        { expiresAt: { $gt: now } },
+      $and: [
+        { $or: reach },
+        { $or: [{ expiresAt: { $exists: false } }, { expiresAt: null }, { expiresAt: { $gt: now } }] },
       ],
     };
 
