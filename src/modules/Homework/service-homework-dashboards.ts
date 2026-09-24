@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 import { Homework, HomeworkSubmission } from './model.js';
 import { NotFoundError } from '../../common/errors.js';
+import { childrenOfParent } from '../../common/audience.js';
+import { User } from '../Auth/model.js';
 
 export async function getStudentDashboardCounts(
   studentId: string,
@@ -41,8 +43,9 @@ export async function getStudentDashboardCounts(
   return { dueThisWeek, overdue, awaitingGrading };
 }
 
+/** Homework counts for each of a parent's children in this school, linked either way. */
 export async function getParentDashboardCounts(
-  parentId: string,
+  parentUserId: string,
   schoolId: string,
 ): Promise<Array<{
   studentId: string;
@@ -52,35 +55,20 @@ export async function getParentDashboardCounts(
   overdue: number;
   awaitingGrading: number;
 }>> {
-  const { Parent } = await import('../Parent/model.js');
-  const parent = await Parent.findOne({ _id: parentId, schoolId, isDeleted: false })
-    .populate({
-      path: 'childrenIds',
-      populate: { path: 'userId', select: 'firstName lastName' },
-    })
+  const children = await childrenOfParent(schoolId, parentUserId);
+  const users = await User.find({ _id: { $in: children.flatMap((c) => (c.userId ? [c.userId] : [])) } })
+    .select('firstName lastName')
     .lean();
-  if (!parent) throw new NotFoundError('Parent not found');
+  const nameOf = new Map(users.map((u) => [String(u._id), u]));
 
-  const result: Array<{
-    studentId: string;
-    firstName: string;
-    lastName: string;
-    pending: number;
-    overdue: number;
-    awaitingGrading: number;
-  }> = [];
-
-  const children = parent.childrenIds as unknown as Array<{
-    _id: mongoose.Types.ObjectId;
-    userId?: { firstName: string; lastName: string };
-  }>;
-
+  const result = [];
   for (const child of children) {
     const counts = await getStudentDashboardCounts(child._id.toString(), schoolId);
+    const name = nameOf.get(String(child.userId));
     result.push({
       studentId: child._id.toString(),
-      firstName: child.userId?.firstName ?? '',
-      lastName: child.userId?.lastName ?? '',
+      firstName: name?.firstName ?? '',
+      lastName: name?.lastName ?? '',
       pending: counts.dueThisWeek,
       overdue: counts.overdue,
       awaitingGrading: counts.awaitingGrading,

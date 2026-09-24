@@ -66,6 +66,14 @@ router.get(
   HomeworkController.list,
 );
 
+// Before '/parent/:studentId', which would otherwise take "dashboard" as a learner id.
+router.get(
+  '/parent/dashboard',
+  authenticate,
+  authorize('parent'),
+  HomeworkController.parentDashboard,
+);
+
 router.get(
   '/parent/:studentId',
   authenticate,
@@ -87,13 +95,6 @@ router.get(
   authenticate,
   authorize('student'),
   HomeworkController.studentDashboard,
-);
-
-router.get(
-  '/parent/dashboard',
-  authenticate,
-  authorize('parent'),
-  HomeworkController.parentDashboard,
 );
 
 router.get(

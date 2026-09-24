@@ -316,7 +316,7 @@ export class HomeworkController {
       res.status(404).json({ error: 'Parent profile not found' });
       return;
     }
-    const data = await getParentDashboardCounts(parent._id.toString(), schoolId);
+    const data = await getParentDashboardCounts(req.user!.id, schoolId);
     res.json({ data });
   }
 }
