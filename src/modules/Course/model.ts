@@ -19,6 +19,41 @@ export const LESSON_PROGRESS_STATUSES = [
 ] as const;
 export type LessonProgressStatus = (typeof LESSON_PROGRESS_STATUSES)[number];
 
+// Class units (phase 3): a teacher's unit of work for their own classes,
+// outlined by AI from CAPS topics and written item by item in the background.
+export const COURSE_KINDS = ['catalogue', 'class_unit'] as const;
+export type CourseKind = (typeof COURSE_KINDS)[number];
+
+export const OUTLINE_STATUSES = ['none', 'drafted', 'approved'] as const;
+export type OutlineStatus = (typeof OUTLINE_STATUSES)[number];
+
+export const GENERATION_STATUSES = ['idle', 'queued', 'running', 'done', 'failed'] as const;
+export type GenerationStatus = (typeof GENERATION_STATUSES)[number];
+
+export const ITEM_KINDS = ['notes', 'worked_example', 'quick_check'] as const;
+export type ItemKind = (typeof ITEM_KINDS)[number];
+
+export const ITEM_GEN_STATUSES = ['pending', 'generating', 'ready', 'failed'] as const;
+export type ItemGenStatus = (typeof ITEM_GEN_STATUSES)[number];
+
+export interface IUnitScope {
+  gradeId: Types.ObjectId;
+  subjectId: Types.ObjectId;
+  termNumber: number;
+  topicNodeIds: Types.ObjectId[];
+  classIds: Types.ObjectId[];
+}
+
+export interface IGenerationState {
+  status: GenerationStatus;
+  total: number;
+  done: number;
+  failed: number;
+  message: string;
+  startedAt: Date | null;
+  finishedAt: Date | null;
+}
+
 // ─── Course ────────────────────────────────────────────────────────────────
 
 export interface ICourse extends Document {
@@ -44,9 +79,40 @@ export interface ICourse extends Document {
   passMarkPercent: number;
   certificateEnabled: boolean;
 
+  kind: CourseKind;
+  scope: IUnitScope | null;
+  outlineStatus: OutlineStatus;
+  generation: IGenerationState;
+  /** Outlined by AI: counts against a free teacher's allowance, even once deleted. */
+  aiGenerated: boolean;
+
   createdAt: Date;
   updatedAt: Date;
 }
+
+const unitScopeSchema = new Schema<IUnitScope>(
+  {
+    gradeId: { type: Schema.Types.ObjectId, ref: 'Grade', required: true },
+    subjectId: { type: Schema.Types.ObjectId, ref: 'Subject', required: true },
+    termNumber: { type: Number, required: true, min: 1, max: 4 },
+    topicNodeIds: { type: [Schema.Types.ObjectId], ref: 'CurriculumNode', default: [] },
+    classIds: { type: [Schema.Types.ObjectId], ref: 'Class', default: [] },
+  },
+  { _id: false },
+);
+
+const generationSchema = new Schema<IGenerationState>(
+  {
+    status: { type: String, enum: GENERATION_STATUSES, default: 'idle' },
+    total: { type: Number, default: 0, min: 0 },
+    done: { type: Number, default: 0, min: 0 },
+    failed: { type: Number, default: 0, min: 0 },
+    message: { type: String, default: '' },
+    startedAt: { type: Date, default: null },
+    finishedAt: { type: Date, default: null },
+  },
+  { _id: false },
+);
 
 const courseSchema = new Schema<ICourse>(
   {
@@ -71,6 +137,12 @@ const courseSchema = new Schema<ICourse>(
 
     passMarkPercent: { type: Number, default: 60, min: 0, max: 100 },
     certificateEnabled: { type: Boolean, default: true },
+
+    kind: { type: String, enum: COURSE_KINDS, default: 'catalogue' },
+    scope: { type: unitScopeSchema, default: null },
+    outlineStatus: { type: String, enum: OUTLINE_STATUSES, default: 'none' },
+    generation: { type: generationSchema, default: () => ({}) },
+    aiGenerated: { type: Boolean, default: false },
   },
   { timestamps: true },
 );
@@ -94,6 +166,9 @@ export interface ICourseModule extends Document {
   courseId: Types.ObjectId;
   title: string;
   orderIndex: number;
+  objectives: string[];
+  curriculumNodeId: Types.ObjectId | null;
+  weekNumbers: number[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -105,6 +180,9 @@ const courseModuleSchema = new Schema<ICourseModule>(
     courseId: { type: Schema.Types.ObjectId, ref: 'Course', required: true, index: true },
     title: { type: String, required: true, trim: true },
     orderIndex: { type: Number, required: true, default: 0 },
+    objectives: { type: [String], default: [] },
+    curriculumNodeId: { type: Schema.Types.ObjectId, ref: 'CurriculumNode', default: null },
+    weekNumbers: { type: [Number], default: [] },
   },
   { timestamps: true },
 );
@@ -138,6 +216,17 @@ export interface ICourseLesson extends Document {
   passMarkPercent: number;
   isRequiredToAdvance: boolean;
   maxAttempts: number | null;
+
+  // Class unit items
+  itemKind: ItemKind | null;
+  minutes: number | null;
+  objectives: string[];
+  capsRef: string;
+  brief: string;
+  genStatus: ItemGenStatus | null;
+  genError: string;
+  /** The teacher changed it: generation never overwrites it. */
+  teacherEdited: boolean;
 
   createdAt: Date;
   updatedAt: Date;
@@ -176,6 +265,15 @@ const courseLessonSchema = new Schema<ICourseLesson>(
     passMarkPercent: { type: Number, default: 70, min: 0, max: 100 },
     isRequiredToAdvance: { type: Boolean, default: false },
     maxAttempts: { type: Number, default: null, min: 1 },
+
+    itemKind: { type: String, enum: [...ITEM_KINDS, null], default: null },
+    minutes: { type: Number, default: null, min: 1 },
+    objectives: { type: [String], default: [] },
+    capsRef: { type: String, default: '' },
+    brief: { type: String, default: '' },
+    genStatus: { type: String, enum: [...ITEM_GEN_STATUSES, null], default: null },
+    genError: { type: String, default: '' },
+    teacherEdited: { type: Boolean, default: false },
   },
   { timestamps: true },
 );
