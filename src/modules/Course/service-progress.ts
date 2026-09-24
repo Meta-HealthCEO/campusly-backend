@@ -66,6 +66,7 @@ export class CourseProgressService {
       isDeleted: false,
     });
 
+    let justCreated = false;
     if (!progress) {
       const interactionsTotal = await computeInteractionsTotal(lesson, soid);
       progress = await LessonProgress.create({
@@ -79,11 +80,14 @@ export class CourseProgressService {
         interactionsTotal,
         scrolledToEnd: false,
       });
+      justCreated = true;
     }
 
     // Recount while unfinished, so a row saved under an older rule (or before
-    // the teacher changed the content) can still be completed.
-    if (progress.status !== 'completed') {
+    // the teacher changed the content) can still be completed. Skip it right
+    // after creating the row above — it was just computed from the same
+    // content, so recomputing here only doubled the work on every first write.
+    if (!justCreated && progress.status !== 'completed') {
       progress.interactionsTotal = await computeInteractionsTotal(lesson, soid);
     }
 

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import mongoose from 'mongoose';
 import { CourseProgressService } from '../service-progress.js';
 import { CourseStudentService } from '../service-student.js';
@@ -64,6 +64,37 @@ describe('worked example progress', () => {
     expect(again.source.kind).toBe('content');
     const write = await CourseProgressService.writeLessonProgress(f.enrolmentId, f.lessonId, f.userId, f.schoolId, { scrolledToEnd: true });
     expect(write.lessonStatus).toBe('completed');
+  });
+});
+
+describe('interactionsTotal on the first write', () => {
+  /** A learner enrolled in a unit whose first item has one quiz block — an interactive block, so interactionsTotal > 0. */
+  async function contentWithQuizBlock() {
+    const schoolId = oid();
+    const userId = oid();
+    const studentId = oid();
+    await Student.collection.insertOne({ _id: studentId, schoolId, userId, admissionNumber: `A-${studentId}`, isDeleted: false });
+    const resource = await ContentResource.collection.insertOne({
+      schoolId, title: 'Quick practice', type: 'notes', format: 'static', status: 'approved', isDeleted: false,
+      blocks: [{ blockId: 'b1', type: 'quiz', order: 0, content: JSON.stringify({ type: 'mcq', question: '2+2?', options: [{ label: 'A', text: '4', isCorrect: true }] }) }],
+    });
+    const course = await Course.create({ schoolId, title: 'Addition', slug: `u-${oid()}`, createdBy: oid(), status: 'published', kind: 'class_unit' });
+    const mod = await CourseModule.create({ schoolId, courseId: course._id, title: 'Addition', orderIndex: 0 });
+    const lesson = await CourseLesson.create({ schoolId, courseId: course._id, moduleId: mod._id, orderIndex: 0, title: 'Practice', type: 'content', contentResourceId: resource.insertedId, itemKind: 'notes' });
+    const enrolment = await Enrolment.create({ schoolId, courseId: course._id, studentId, enrolledBy: oid() });
+    return { schoolId: String(schoolId), userId: String(userId), enrolmentId: String(enrolment._id), lessonId: String(lesson._id) };
+  }
+
+  it('counts the interactive blocks once, not twice, when creating the progress row', async () => {
+    const f = await contentWithQuizBlock();
+    const spy = vi.spyOn(ContentResource, 'findOne');
+    try {
+      const res = await CourseProgressService.writeLessonProgress(f.enrolmentId, f.lessonId, f.userId, f.schoolId, { interactionsDone: 0 });
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(res.progress.interactionsTotal).toBe(1);
+    } finally {
+      spy.mockRestore();
+    }
   });
 });
 
