@@ -246,7 +246,7 @@ export class CourseStudentService {
       lessons as unknown as ICourseLesson[],
       modules,
     );
-    const lessonStatusById = computeUnlockStatuses(sortedLessons, progressByLesson);
+    const lessonStatusById = computeUnlockStatuses(sortedLessons, progressByLesson, { sequential: course.sequential !== false });
 
     const lessonsByModule: Record<string, typeof lessons> = {};
     for (const l of lessons) {
@@ -359,7 +359,9 @@ export class CourseStudentService {
       allLessons as unknown as ICourseLesson[],
       allModules,
     );
-    const lessonStatusById = computeUnlockStatuses(sortedLessons, progressByLesson);
+    const lessonStatusById = computeUnlockStatuses(sortedLessons, progressByLesson, {
+      sequential: await isSequential(enrolment.courseId, soid),
+    });
     const status = lessonStatusById.get(lesson._id.toString()) ?? 'locked';
 
     if (status === 'locked') {
@@ -406,11 +408,20 @@ export function sortLessonsForUnlock(
  * If a lesson has its own progress row with a status of 'completed' or
  * 'in_progress', we trust that status.
  */
+/** Whether the unit's learners must go in order (the default). */
+export async function isSequential(courseId: mongoose.Types.ObjectId, schoolId: mongoose.Types.ObjectId): Promise<boolean> {
+  const course = await Course.findOne({ _id: courseId, schoolId, isDeleted: false }).select('sequential').lean();
+  return course?.sequential !== false;
+}
+
 export function computeUnlockStatuses(
   sortedLessons: ICourseLesson[],
   progressByLesson: Map<string, ILessonProgress>,
+  opts: { sequential?: boolean } = {},
 ): Map<string, 'locked' | 'available' | 'in_progress' | 'completed'> {
   const out = new Map<string, 'locked' | 'available' | 'in_progress' | 'completed'>();
+  // When the teacher lets learners go in any order, nothing is locked.
+  const sequential = opts.sequential !== false;
   let prevCompleted = true;
   for (const l of sortedLessons) {
     const progress = progressByLesson.get(l._id.toString());
@@ -424,7 +435,7 @@ export function computeUnlockStatuses(
       prevCompleted = false;
       continue;
     }
-    if (prevCompleted) {
+    if (prevCompleted || !sequential) {
       out.set(l._id.toString(), 'available');
     } else {
       out.set(l._id.toString(), 'locked');

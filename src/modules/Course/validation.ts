@@ -181,6 +181,32 @@ export const releaseUnitSchema = z.object({
   classIds: z.array(objectIdSchema).min(1, 'Pick at least one class').max(20),
 }).strict();
 
+// ─── Unit items (edit, rewrite, order, revision) ──────────────────────────
+
+export const saveItemContentSchema = z.object({
+  blocks: z.array(z.object({ blockId: z.string().max(40).optional(), type: z.string().max(30), content: z.string().max(20000) })).max(50).optional(),
+  steps: z.array(z.object({ title: z.string().max(200), content: z.string().max(4000) })).max(20).optional(),
+}).strict();
+
+export const saveItemQuestionsSchema = z.object({
+  questions: z.array(z.object({
+    stem: z.string().max(2000),
+    options: z.array(z.object({ text: z.string().max(500), isCorrect: z.boolean() })).max(8),
+  })).max(20),
+}).strict();
+
+export const rewriteItemSchema = z.object({
+  action: z.enum(['regenerate', 'easier', 'harder', 'shorter', 'simpler_words', 'translate']),
+  language: z.string().max(5).optional(),
+}).strict();
+
+export const unitSettingsSchema = z.object({ sequential: z.boolean() }).strict();
+
+export const revisionItemSchema = z.object({
+  afterLessonId: objectIdSchema,
+  questionIds: z.array(objectIdSchema).min(1, 'Pick the questions to revise').max(5),
+}).strict();
+
 // ─── Student progress ──────────────────────────────────────────────────────
 
 export const writeProgressSchema = z.object({

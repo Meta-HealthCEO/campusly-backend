@@ -19,6 +19,11 @@ import {
   catalogQuerySchema,
   createClassUnitSchema,
   releaseUnitSchema,
+  saveItemContentSchema,
+  saveItemQuestionsSchema,
+  rewriteItemSchema,
+  unitSettingsSchema,
+  revisionItemSchema,
 } from './validation.js';
 
 const router = Router();
@@ -196,6 +201,11 @@ router.post('/:id/lessons/:lessonId/generate', authorize(...COURSE_ROLES), Class
 router.get('/:id/lessons/:lessonId/preview', authorize(...COURSE_ROLES), ClassUnitController.previewItem);
 router.post('/:id/release', authorize(...COURSE_ROLES), validate(releaseUnitSchema), ClassUnitController.release);
 router.get('/:id/insight', authorize(...COURSE_ROLES), ClassUnitController.insight);
+router.put('/:id/lessons/:lessonId/content', authorize(...COURSE_ROLES), validate(saveItemContentSchema), ClassUnitController.saveContent);
+router.put('/:id/lessons/:lessonId/questions', authorize(...COURSE_ROLES), validate(saveItemQuestionsSchema), ClassUnitController.saveQuestions);
+router.post('/:id/lessons/:lessonId/rewrite', authorize(...COURSE_ROLES), validate(rewriteItemSchema), ClassUnitController.rewrite);
+router.patch('/:id/settings', authorize(...COURSE_ROLES), validate(unitSettingsSchema), ClassUnitController.updateSettings);
+router.post('/:id/revision', authorize(...COURSE_ROLES), validate(revisionItemSchema), ClassUnitController.addRevision);
 
 // ─── Analytics ─────────────────────────────────────────────────────────────
 

@@ -85,6 +85,8 @@ export interface ICourse extends Document {
   generation: IGenerationState;
   /** Outlined by AI: counts against a free teacher's allowance, even once deleted. */
   aiGenerated: boolean;
+  /** Learners must finish each item before the next opens (the teacher can turn this off). */
+  sequential: boolean;
 
   createdAt: Date;
   updatedAt: Date;
@@ -143,6 +145,7 @@ const courseSchema = new Schema<ICourse>(
     outlineStatus: { type: String, enum: OUTLINE_STATUSES, default: 'none' },
     generation: { type: generationSchema, default: () => ({}) },
     aiGenerated: { type: Boolean, default: false },
+    sequential: { type: Boolean, default: true },
   },
   { timestamps: true },
 );

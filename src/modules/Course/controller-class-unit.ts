@@ -3,6 +3,7 @@ import { getUser } from '../../types/authenticated-request.js';
 import { apiResponse } from '../../common/utils.js';
 import { ClassUnitService } from './service-class-unit.js';
 import { UnitInsightService } from './service-insight.js';
+import { UnitItemsService } from './service-unit-items.js';
 import type { CourseActor } from './service.js';
 
 function context(req: Request) {
@@ -56,6 +57,35 @@ export class ClassUnitController {
   static async insight(req: Request, res: Response): Promise<void> {
     const { schoolId, actor } = context(req);
     res.json(apiResponse(true, await UnitInsightService.get(req.params.id as string, schoolId, actor)));
+  }
+
+  static async saveContent(req: Request, res: Response): Promise<void> {
+    const { schoolId, actor } = context(req);
+    await UnitItemsService.saveContent(req.params.id as string, req.params.lessonId as string, schoolId, actor, req.body);
+    res.json(apiResponse(true, null, 'Saved'));
+  }
+
+  static async saveQuestions(req: Request, res: Response): Promise<void> {
+    const { schoolId, actor } = context(req);
+    await UnitItemsService.saveQuestions(req.params.id as string, req.params.lessonId as string, schoolId, actor, req.body);
+    res.json(apiResponse(true, null, 'Saved'));
+  }
+
+  static async rewrite(req: Request, res: Response): Promise<void> {
+    const { schoolId, actor } = context(req);
+    await UnitItemsService.rewrite(req.params.id as string, req.params.lessonId as string, schoolId, actor, req.body);
+    res.json(apiResponse(true, null, 'Rewritten'));
+  }
+
+  static async updateSettings(req: Request, res: Response): Promise<void> {
+    const { schoolId, actor } = context(req);
+    res.json(apiResponse(true, await UnitItemsService.updateSettings(req.params.id as string, schoolId, actor, req.body), 'Saved'));
+  }
+
+  static async addRevision(req: Request, res: Response): Promise<void> {
+    const { schoolId, actor } = context(req);
+    const item = await UnitItemsService.addRevisionItem(req.params.id as string, schoolId, actor, req.body);
+    res.status(201).json(apiResponse(true, item, 'Revision item added'));
   }
 
   static async release(req: Request, res: Response): Promise<void> {

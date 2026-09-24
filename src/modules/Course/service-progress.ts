@@ -19,7 +19,7 @@ import {
   ForbiddenError,
   BadRequestError,
 } from '../../common/errors.js';
-import { sortLessonsForUnlock, computeUnlockStatuses } from './service-student.js';
+import { sortLessonsForUnlock, computeUnlockStatuses, isSequential } from './service-student.js';
 import { CourseCertificateService } from './service-certificates.js';
 
 // Block types that require student interaction to "complete". Names must
@@ -398,7 +398,9 @@ async function loadStudentLessonContext(
     allLessons as unknown as ICourseLesson[],
     allModules,
   );
-  const lessonStatusById = computeUnlockStatuses(sortedLessons, progressByLesson);
+  const lessonStatusById = computeUnlockStatuses(sortedLessons, progressByLesson, {
+    sequential: await isSequential(enrolment.courseId, soid),
+  });
   const status = lessonStatusById.get(lesson._id.toString()) ?? 'locked';
   if (status === 'locked') {
     throw new ForbiddenError('Complete the previous lesson first');

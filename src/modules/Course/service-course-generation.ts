@@ -32,7 +32,7 @@ export function isRetryable(item: { genStatus?: string | null; updatedAt?: Date 
 }
 
 /** Quick checks are marked by the chosen option, so every question needs choices and one right answer. */
-async function assertAnswerable(ids: mongoose.Types.ObjectId[], schoolId: mongoose.Types.ObjectId): Promise<void> {
+export async function assertAnswerable(ids: mongoose.Types.ObjectId[], schoolId: mongoose.Types.ObjectId): Promise<void> {
   if (ids.length === 0) throw new Error('The quick check came back empty. Try again.');
   const questions = await Question.find({ _id: { $in: ids }, schoolId, isDeleted: false }).select('type options').lean();
   const answerable = questions.length === ids.length && questions.every((q) =>
