@@ -30,11 +30,15 @@ function releaseSemaphore(): void {
   if (next) next();
 }
 
-function getClient(): Anthropic {
+function assertKey(): void {
   // Without a key the SDK fails with an authentication riddle; say what's actually wrong.
   if (!ANTHROPIC_API_KEY) {
     throw new AppError("AI isn't set up on this server yet. Ask your administrator to add the Anthropic API key.", 503);
   }
+}
+
+function getClient(): Anthropic {
+  assertKey();
   return new Anthropic({ apiKey: ANTHROPIC_API_KEY });
 }
 
@@ -60,6 +64,11 @@ async function callWithRetry<T>(
 }
 
 export class AIService {
+  /** Throws the plain "AI isn't set up" error when there is no key, before any work starts. */
+  static assertConfigured(): void {
+    assertKey();
+  }
+
   static async generateCompletion(
     systemPrompt: string,
     userPrompt: string,

@@ -37,7 +37,7 @@ async function contentFor(scope: UnitSeedScope, topicId: Id, item: DemoUnitItem)
   const resource = await ContentResource.create({
     curriculumNodeId: topicId, schoolId: scope.schoolId, type: item.kind === 'worked_example' ? 'worked_example' : 'study_notes',
     format: 'static', title: item.title, blocks, source: 'system', gradeId: scope.gradeId, subjectId: scope.subjectId, term: 3,
-    status: 'approved', createdBy: scope.teacherId, estimatedMinutes: item.minutes, tags: ['demo-unit'],
+    status: 'approved', createdBy: scope.teacherId, estimatedMinutes: item.minutes, tags: ['demo-unit', 'class_unit'],
   });
   return resource._id as Id;
 }

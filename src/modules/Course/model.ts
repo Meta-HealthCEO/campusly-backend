@@ -230,6 +230,8 @@ export interface ICourseLesson extends Document {
   genError: string;
   /** The teacher changed it: generation never overwrites it. */
   teacherEdited: boolean;
+  /** Extra practice (a revision item): never locks what follows, and doesn't count toward finishing. */
+  optional: boolean;
 
   createdAt: Date;
   updatedAt: Date;
@@ -277,6 +279,7 @@ const courseLessonSchema = new Schema<ICourseLesson>(
     genStatus: { type: String, enum: [...ITEM_GEN_STATUSES, null], default: null },
     genError: { type: String, default: '' },
     teacherEdited: { type: Boolean, default: false },
+    optional: { type: Boolean, default: false },
   },
   { timestamps: true },
 );

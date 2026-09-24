@@ -482,11 +482,14 @@ async function recomputeEnrolmentProgress(
   });
   if (!enrolment) return;
 
-  const totalLessons = await CourseLesson.countDocuments({
+  // Optional items (revision) are extra practice: they don't count toward finishing.
+  const required = await CourseLesson.find({
     courseId: enrolment.courseId,
     schoolId,
     isDeleted: false,
-  });
+    optional: { $ne: true },
+  }).select('_id').lean();
+  const totalLessons = required.length;
   if (totalLessons === 0) {
     enrolment.progressPercent = 0;
     await enrolment.save();
@@ -498,6 +501,7 @@ async function recomputeEnrolmentProgress(
     schoolId,
     isDeleted: false,
     status: 'completed',
+    lessonId: { $in: required.map((l) => l._id) },
   });
 
   enrolment.progressPercent = Math.round((completedLessons / totalLessons) * 100);

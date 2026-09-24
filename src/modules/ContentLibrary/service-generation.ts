@@ -114,24 +114,7 @@ export class GenerationService {
       throw new BadRequestError('Only the creator can refine this resource');
     }
 
-    const currentBlocksJson = JSON.stringify(resource.blocks, null, 2);
-
-    const systemPrompt =
-      'You are refining an existing educational resource for South African CAPS curriculum. ' +
-      'The teacher has requested a change. You must return the COMPLETE updated blocks array ' +
-      '(not just the changes). Maintain the same JSON format. Keep all existing content that ' +
-      "wasn't mentioned in the instruction. Apply the teacher's instruction precisely.\n\n" +
-      'You MUST respond with valid JSON only. No markdown, no code fences, no explanation — just the JSON array.';
-
-    const userPrompt =
-      `CURRENT BLOCKS:\n${currentBlocksJson}\n\n` +
-      `TEACHER INSTRUCTION: ${data.instruction}`;
-
-    const aiResponse = await AIService.generateCompletion(systemPrompt, userPrompt, {
-      maxTokens: 8192,
-      temperature: 0.3,
-    });
-
+    const aiResponse = await askToRefine(resource.blocks, data.instruction);
     const blockTypes = resource.blocks.map(
       (b: { type: string }) => b.type,
     );
@@ -148,6 +131,28 @@ export class GenerationService {
 
     return updated;
   }
+}
+
+const REFINE_SYSTEM_PROMPT =
+  'You are refining an existing educational resource for South African CAPS curriculum. ' +
+  'The teacher has requested a change. You must return the COMPLETE updated blocks array ' +
+  '(not just the changes). Maintain the same JSON format. Keep all existing content that ' +
+  "wasn't mentioned in the instruction. Apply the teacher's instruction precisely.\n\n" +
+  'You MUST respond with valid JSON only. No markdown, no code fences, no explanation — just the JSON array.';
+
+function askToRefine(blocks: IContentBlock[], instruction: string): Promise<string> {
+  const userPrompt = `CURRENT BLOCKS:\n${JSON.stringify(blocks, null, 2)}\n\nTEACHER INSTRUCTION: ${instruction}`;
+  return AIService.generateCompletion(REFINE_SYSTEM_PROMPT, userPrompt, { maxTokens: 8192, temperature: 0.3 });
+}
+
+/**
+ * The blocks with the instruction applied, without saving them. Returns null
+ * when the AI's reply isn't a usable blocks array (garbled or cut off), so the
+ * caller can leave the content as it was.
+ */
+export async function refineBlocks(blocks: IContentBlock[], instruction: string): Promise<IContentBlock[] | null> {
+  const reply = await askToRefine(blocks, instruction);
+  return parseAIResponseToBlocks(reply, blocks.map((b) => b.type), { strict: true });
 }
 
 function buildSystemPrompt(): string {
@@ -336,10 +341,13 @@ function buildUserPrompt(
   return lines.join('\n');
 }
 
+function parseAIResponseToBlocks(response: string, requestedTypes: string[]): IContentBlock[];
+function parseAIResponseToBlocks(response: string, requestedTypes: string[], opts: { strict: true }): IContentBlock[] | null;
 function parseAIResponseToBlocks(
   response: string,
   requestedTypes: string[],
-): IContentBlock[] {
+  opts: { strict?: boolean } = {},
+): IContentBlock[] | null {
   const validTypes = new Set([
     'text', 'image', 'video', 'quiz', 'drag_drop', 'fill_blank',
     'match_columns', 'ordering', 'hotspot', 'step_reveal', 'code',
@@ -433,6 +441,8 @@ function parseAIResponseToBlocks(
       };
     });
   } catch {
+    // Strict callers would rather keep what they have than save raw text.
+    if (opts.strict) return null;
     return [
       {
         blockId: crypto.randomUUID(),

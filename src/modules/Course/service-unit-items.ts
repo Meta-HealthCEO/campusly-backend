@@ -11,20 +11,27 @@ import crypto from 'crypto';
 import mongoose from 'mongoose';
 import { Course, CourseLesson, CourseModule, type ICourse, type ICourseLesson } from './model.js';
 import { assertCanEditCourse, type CourseActor } from './service.js';
-import { checkNotesEdit, checkQuestionsEdit, checkStepsEdit, rewriteInstruction, type QuestionEdit, type RewriteAction } from './item-edits.js';
-import { assertAnswerable } from './service-course-generation.js';
-import { ContentResource } from '../ContentLibrary/model.js';
-import { GenerationService } from '../ContentLibrary/service-generation.js';
+import {
+  checkNotesEdit, checkQuestionsEdit, checkRewrittenBlocks, checkStepsEdit, mergeNotesBlocks, mergeStepsBlocks,
+  questionsToRewrite, rewriteInstruction, type QuestionEdit, type RewriteAction, type StoredBlock,
+} from './item-edits.js';
+import { assertAnswerable, UNIT_RESOURCE_TAG } from './service-course-generation.js';
+import { ContentResource, type IContentBlock } from '../ContentLibrary/model.js';
+import { GenerationService, refineBlocks } from '../ContentLibrary/service-generation.js';
+import { AIService } from '../../services/ai.service.js';
+import { logger } from '../../common/logger.js';
 import { Question } from '../QuestionBank/model.js';
 import { generateAIQuestions } from '../QuestionBank/service-questions-generation.js';
 import { Grade } from '../Academic/model.js';
 import { checkUsageLimit } from '../../middleware/usageLimits.js';
-import { BadRequestError, NotFoundError } from '../../common/errors.js';
+import { AppError, BadRequestError, NotFoundError } from '../../common/errors.js';
 
 const oid = (id: string | mongoose.Types.ObjectId) => new mongoose.Types.ObjectId(String(id));
 const blockId = () => crypto.randomBytes(6).toString('hex');
 const REVISION_MINUTES = 6;
 const MAX_REVISION_QUESTIONS = 5;
+const UNIT_ITEM_KINDS = new Set(['notes', 'worked_example', 'quick_check']);
+const AI_FAILED = "The AI couldn't rewrite this just now, so nothing changed. Try again in a moment.";
 
 async function editableItem(courseId: string, lessonId: string, schoolId: string, actor: CourseActor) {
   if (!mongoose.Types.ObjectId.isValid(courseId) || !mongoose.Types.ObjectId.isValid(lessonId)) throw new NotFoundError('Item not found');
@@ -33,7 +40,28 @@ async function editableItem(courseId: string, lessonId: string, schoolId: string
   assertCanEditCourse(course, actor);
   const item = await CourseLesson.findOne({ _id: oid(lessonId), courseId: course._id, schoolId: course.schoolId, isDeleted: false });
   if (!item) throw new NotFoundError('Item not found');
+  // Items added through the course builder may point at a colleague's library resource.
+  if (course.kind !== 'class_unit' || !item.itemKind || !UNIT_ITEM_KINDS.has(item.itemKind)) {
+    throw new BadRequestError('Only items the course builder wrote can be edited here.');
+  }
   return { course, item };
+}
+
+/** The unit's own content for an item: written for this unit, never a shared library resource. */
+async function unitResource(item: ICourseLesson) {
+  if (!item.contentResourceId) throw new BadRequestError("This item hasn't been written yet");
+  const resource = await ContentResource.findOne({
+    _id: item.contentResourceId, schoolId: item.schoolId, isDeleted: false, tags: UNIT_RESOURCE_TAG,
+  }).lean();
+  if (!resource) throw new NotFoundError("This item's content was not found");
+  return resource;
+}
+
+/** A plain failure for the teacher; the cause goes to the log. */
+function aiFailure(err: unknown): AppError {
+  if (err instanceof AppError) return err;
+  logger.warn({ err }, '[unit-items] AI rewrite failed');
+  return new AppError(AI_FAILED, 503);
 }
 
 async function gradeNameOf(course: ICourse): Promise<string> {
@@ -65,10 +93,49 @@ async function createQuestions(course: ICourse, item: ICourseLesson, questions: 
 }
 
 async function swapQuestions(item: ICourseLesson, next: mongoose.Types.ObjectId[]): Promise<void> {
-  const previous = item.quizQuestionIds;
+  const keep = new Set(next.map(String));
+  const retired = item.quizQuestionIds.filter((id) => !keep.has(String(id)));
   await markEdited(item, { quizQuestionIds: next });
-  // The old questions were written for this item; retire them so they don't linger in the bank.
-  await Question.updateMany({ _id: { $in: previous }, schoolId: item.schoolId }, { $set: { isDeleted: true } });
+  // The replaced questions were written for this item; retire them so they don't linger in the bank.
+  await Question.updateMany({ _id: { $in: retired }, schoolId: item.schoolId }, { $set: { isDeleted: true } });
+}
+
+function sameQuestion(old: { stem: string; options?: Array<{ text: string; isCorrect?: boolean }> }, edit: QuestionEdit): boolean {
+  const options = old.options ?? [];
+  return old.stem === edit.stem
+    && options.length === edit.options.length
+    && options.every((o, i) => o.text === edit.options[i].text && Boolean(o.isCorrect) === edit.options[i].isCorrect);
+}
+
+/** New questions for a quick check, written from its current ones; on any failure the check stays as it was. */
+async function rewriteQuestions(course: ICourse, item: ICourseLesson, action: RewriteAction, instruction: string, schoolId: string, userId: string): Promise<void> {
+  if (!course.scope) throw new BadRequestError('This unit has no scope');
+  const mod = await CourseModule.findOne({ _id: item.moduleId, schoolId: course.schoolId, isDeleted: false }).select('curriculumNodeId').lean();
+  if (!mod?.curriculumNodeId) throw new BadRequestError('This quick check has no CAPS topic to write from.');
+  AIService.assertConfigured();
+  const current = await Question.find({ _id: { $in: item.quizQuestionIds }, schoolId: course.schoolId }).select('stem options').lean();
+  const byId = new Map(current.map((c) => [String(c._id), c]));
+  const ordered = item.quizQuestionIds.map((id) => byId.get(String(id))).filter((c): c is NonNullable<typeof c> => !!c);
+  const source = ordered.length > 0
+    ? `\nRewrite these questions, testing the same ideas:\n${questionsToRewrite(ordered.map((c) => ({ stem: c.stem, options: (c.options ?? []).map((o) => ({ text: o.text, isCorrect: Boolean(o.isCorrect) })) })))}`
+    : '';
+  let ids: mongoose.Types.ObjectId[];
+  try {
+    ids = await generateAIQuestions({
+      count: Math.max(1, item.quizQuestionIds.length || 4),
+      questionTypes: ['mcq'],
+      difficulty: action === 'easier' ? 'easy' : action === 'harder' ? 'hard' : 'medium',
+      cognitiveLevel: 'recall',
+      schoolId, teacherId: userId,
+      subjectId: String(course.scope.subjectId), gradeId: String(course.scope.gradeId),
+      curriculumNodeId: String(mod.curriculumNodeId),
+      topicHint: `${item.title}. ${instruction}${source}`,
+    });
+    await assertAnswerable(ids, course.schoolId);
+  } catch (err: unknown) {
+    throw aiFailure(err);
+  }
+  await swapQuestions(item, ids);
 }
 
 export class UnitItemsService {
@@ -79,11 +146,12 @@ export class UnitItemsService {
   ) {
     const { item } = await editableItem(courseId, lessonId, schoolId, actor);
     if (item.itemKind !== 'notes' && item.itemKind !== 'worked_example') throw new BadRequestError('This item has no text to edit');
-    if (!item.contentResourceId) throw new BadRequestError("This item hasn't been written yet");
+    const resource = await unitResource(item);
+    // The editor shows text and steps only; every other block (diagrams, practice) is kept.
+    const current = resource.blocks as unknown as StoredBlock[];
     const blocks = item.itemKind === 'worked_example'
-      ? [{ blockId: blockId(), type: 'step_reveal', order: 0, content: JSON.stringify({ steps: checkStepsEdit(body.steps ?? []) }) }]
-      : checkNotesEdit((body.blocks ?? []).map((b) => ({ blockId: b.blockId || blockId(), type: b.type, content: b.content })))
-        .map((b, i) => ({ ...b, order: i }));
+      ? mergeStepsBlocks(current, checkStepsEdit(body.steps ?? []), blockId())
+      : mergeNotesBlocks(current, checkNotesEdit((body.blocks ?? []).map((b) => ({ blockId: b.blockId || blockId(), type: b.type, content: b.content }))));
     const res = await ContentResource.updateOne(
       { _id: item.contentResourceId, schoolId: item.schoolId, isDeleted: false },
       { $set: { blocks } },
@@ -95,12 +163,25 @@ export class UnitItemsService {
   /** Replaces a quick check's questions with the teacher's own. */
   static async saveQuestions(
     courseId: string, lessonId: string, schoolId: string, actor: CourseActor,
-    body: { questions: Array<{ stem: string; options: Array<{ text: string; isCorrect: boolean }> }> },
+    body: { questions: Array<{ id?: string; stem: string; options: Array<{ text: string; isCorrect: boolean }> }> },
   ) {
     const { course, item } = await editableItem(courseId, lessonId, schoolId, actor);
     if (item.itemKind !== 'quick_check') throw new BadRequestError('This item is not a quick check');
-    const questions = checkQuestionsEdit(body.questions);
-    await swapQuestions(item, await createQuestions(course, item, questions, actor.userId));
+    const edits = checkQuestionsEdit(body.questions);
+    // Unchanged questions keep their ids, so what the class got wrong on them stays on record.
+    const current = await Question.find({ _id: { $in: item.quizQuestionIds }, schoolId: course.schoolId }).select('stem options').lean();
+    const byId = new Map(current.map((c) => [String(c._id), c]));
+    const kept = new Set<string>();
+    const reuse = edits.map((e) => {
+      const old = e.id ? byId.get(e.id) : undefined;
+      if (!old || kept.has(e.id!) || !sameQuestion(old, e)) return null;
+      kept.add(e.id!);
+      return old._id as mongoose.Types.ObjectId;
+    });
+    const created = await createQuestions(course, item, edits.filter((_, i) => reuse[i] === null), actor.userId);
+    let k = 0;
+    const next = reuse.map((id) => id ?? created[k++]);
+    await swapQuestions(item, next);
   }
 
   /** Asks the AI to rewrite an item; on failure the item stays as it was. */
@@ -114,28 +195,17 @@ export class UnitItemsService {
     if (!limit.allowed) throw new BadRequestError('Your school has used today\'s AI allowance. Try again tomorrow.');
 
     if (item.itemKind === 'quick_check') {
-      if (!course.scope) throw new BadRequestError('This unit has no scope');
-      const mod = await CourseModule.findOne({ _id: item.moduleId, schoolId: course.schoolId, isDeleted: false }).select('curriculumNodeId').lean();
-      if (!mod?.curriculumNodeId) throw new BadRequestError('This quick check has no CAPS topic to write from.');
-      const ids = await generateAIQuestions({
-        count: Math.max(1, item.quizQuestionIds.length || 4),
-        questionTypes: ['mcq'],
-        difficulty: body.action === 'easier' ? 'easy' : body.action === 'harder' ? 'hard' : 'medium',
-        cognitiveLevel: 'recall',
-        schoolId, teacherId: actor.userId,
-        subjectId: String(course.scope.subjectId), gradeId: String(course.scope.gradeId),
-        curriculumNodeId: String(mod.curriculumNodeId),
-        topicHint: `${item.title}. ${instruction}`,
-      });
-      await assertAnswerable(ids, course.schoolId);
-      await swapQuestions(item, ids);
+      await rewriteQuestions(course, item, body.action, instruction, schoolId, actor.userId);
       return;
     }
-    if (!item.contentResourceId) throw new BadRequestError("This item hasn't been written yet");
-    const resource = await ContentResource.findOne({ _id: item.contentResourceId, schoolId: item.schoolId, isDeleted: false }).select('createdBy').lean();
-    if (!resource) throw new NotFoundError("This item's content was not found");
-    // The unit's resources belong to its author; the edit right was checked above.
-    await GenerationService.refineContent(String(item.contentResourceId), schoolId, String(resource.createdBy), { instruction });
+    const resource = await unitResource(item);
+    const blocks = await refineBlocks(resource.blocks, instruction).catch((err: unknown) => { throw aiFailure(err); });
+    // A garbled or cut-off reply is refused rather than shown to learners.
+    checkRewrittenBlocks(item.itemKind, (blocks ?? []) as unknown as StoredBlock[]);
+    await ContentResource.updateOne(
+      { _id: resource._id, schoolId: item.schoolId, isDeleted: false },
+      { $set: { blocks: blocks as IContentBlock[] } },
+    );
     await markEdited(item);
   }
 
@@ -178,7 +248,7 @@ export class UnitItemsService {
         ...questions.map((q, i) => `${i + 1}. ${q.stem}`),
         'Re-teach the idea behind each one with a fresh example, simply, then give one practice example to try.',
       ].join('\n'),
-    });
+    }, { tags: [UNIT_RESOURCE_TAG] });
 
     await CourseLesson.updateMany(
       { moduleId: check.moduleId, schoolId: course.schoolId, isDeleted: false, orderIndex: { $gt: check.orderIndex } },
@@ -188,7 +258,7 @@ export class UnitItemsService {
       schoolId: course.schoolId, courseId: course._id, moduleId: check.moduleId, orderIndex: check.orderIndex + 1,
       title: `Revision: ${topic}`, type: 'content', contentResourceId: resource._id, itemKind: 'notes',
       minutes: REVISION_MINUTES, objectives: [], capsRef: check.capsRef, brief: 'Revision of the questions the class got wrong',
-      genStatus: 'ready', teacherEdited: true,
+      genStatus: 'ready', teacherEdited: true, optional: true,
     });
     return revision.toObject();
   }

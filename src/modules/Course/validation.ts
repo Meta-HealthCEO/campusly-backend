@@ -190,6 +190,7 @@ export const saveItemContentSchema = z.object({
 
 export const saveItemQuestionsSchema = z.object({
   questions: z.array(z.object({
+    id: objectIdSchema.optional(),
     stem: z.string().max(2000),
     options: z.array(z.object({ text: z.string().max(500), isCorrect: z.boolean() })).max(8),
   })).max(20),

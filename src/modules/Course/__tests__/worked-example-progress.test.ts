@@ -66,3 +66,16 @@ describe('worked example progress', () => {
     expect(write.lessonStatus).toBe('completed');
   });
 });
+
+describe('optional items', () => {
+  it('a learner finishes the unit without the optional revision item', async () => {
+    const f = await workedExample();
+    await CourseLesson.create({
+      schoolId: f.lesson.schoolId, courseId: f.lesson.courseId, moduleId: f.lesson.moduleId, orderIndex: 1,
+      title: 'Revision: counting', type: 'content', itemKind: 'notes', optional: true,
+    });
+    await CourseProgressService.writeLessonProgress(f.enrolmentId, f.lessonId, f.userId, f.schoolId, { scrolledToEnd: true });
+    const enrolment = await Enrolment.findById(f.enrolmentId).lean();
+    expect(enrolment).toMatchObject({ progressPercent: 100, status: 'completed' });
+  });
+});

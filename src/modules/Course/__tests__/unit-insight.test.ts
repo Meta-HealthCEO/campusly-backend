@@ -61,7 +61,7 @@ async function releasedUnit() {
   await Enrolment.updateOne({ _id: lebo.enrolment._id }, { $set: { progressPercent: 67 } });
   await Enrolment.updateOne({ _id: jan.enrolment._id }, { $set: { progressPercent: 33 } });
   const actor: CourseActor = { userId: String(teacherId), role: 'teacher' as CourseActor['role'], isHOD: false, isSchoolPrincipal: false };
-  return { schoolId: String(schoolId), courseId: String(course._id), checkId: String(check._id), actor, more };
+  return { schoolId: String(schoolId), courseId: String(course._id), checkId: String(check._id), actor, more, q1 };
 }
 
 describe('UnitInsightService.get', () => {
@@ -91,5 +91,14 @@ describe('insight indexes', () => {
     const byCourse = (indexes: Array<[Record<string, unknown>, unknown]>) => indexes.some(([keys]) => Object.keys(keys)[0] === 'courseId');
     expect(byCourse(LessonProgress.schema.indexes() as Array<[Record<string, unknown>, unknown]>)).toBe(true);
     expect(byCourse(QuizAttempt.schema.indexes() as Array<[Record<string, unknown>, unknown]>)).toBe(true);
+  });
+});
+
+describe('UnitInsight after a check is edited', () => {
+  it('still lists a question the teacher has since replaced: the class really got it wrong', async () => {
+    const f = await releasedUnit();
+    await Question.updateOne({ _id: f.q1 }, { $set: { isDeleted: true } });
+    const insight = await UnitInsightService.get(f.courseId, f.schoolId, f.actor);
+    expect(insight.mostMissed.map((m) => m.stem)).toContain('What comes next? 10, 20, 30');
   });
 });

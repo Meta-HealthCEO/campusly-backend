@@ -74,7 +74,7 @@ export class UnitInsightService {
       const mine = progress.filter((p) => String(p.enrolmentId) === String(e._id));
       const myAttempts = attempts.filter((a) => String(a.enrolmentId) === String(e._id));
       const done = new Set(mine.filter((p) => p.status === 'completed').map((p) => String(p.lessonId)));
-      const next = items.find((l) => !done.has(String(l._id)));
+      const next = items.find((l) => !done.has(String(l._id)) && !l.optional);
       // Only what the learner did counts as activity: null means they haven't started.
       const lastActivityAt = latest(...mine.map((p) => p.updatedAt), ...myAttempts.map((a) => a.submittedAt));
       return {
@@ -96,9 +96,9 @@ export class UnitInsightService {
     const live = new Set(enrolments.map((e) => String(e._id)));
     const liveAttempts = attempts.filter((a) => live.has(String(a.enrolmentId)));
     const questionIds = [...new Set(liveAttempts.flatMap((a) => a.answers.map((ans) => String(ans.questionId))))];
+    // Retired questions included: a teacher's edit replaces them, but the class really answered them.
     const questions = await Question.find({
       _id: { $in: questionIds.map((id) => new mongoose.Types.ObjectId(id)) },
-      isDeleted: false,
       $or: [{ schoolId: soid }, { schoolId: null }],
     }).select('stem').lean();
     const stems = new Map(questions.map((q) => [String(q._id), q.stem]));

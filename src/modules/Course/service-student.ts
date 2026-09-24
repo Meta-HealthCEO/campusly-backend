@@ -432,7 +432,7 @@ export function computeUnlockStatuses(
     }
     if (progress && progress.status === 'in_progress') {
       out.set(l._id.toString(), 'in_progress');
-      prevCompleted = false;
+      if (!l.optional) prevCompleted = false;
       continue;
     }
     if (prevCompleted || !sequential) {
@@ -440,7 +440,8 @@ export function computeUnlockStatuses(
     } else {
       out.set(l._id.toString(), 'locked');
     }
-    prevCompleted = false;
+    // Extra practice never holds a learner back.
+    if (!l.optional) prevCompleted = false;
   }
   return out;
 }

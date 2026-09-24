@@ -72,12 +72,14 @@ export function checkStepsEdit(steps: Array<{ title: unknown; content: unknown }
 }
 
 export interface QuestionEdit {
+  /** The question this was, when the teacher edited an existing one. */
+  id?: string;
   stem: string;
   options: Array<{ label: string; text: string; isCorrect: boolean }>;
 }
 
 /** Quick checks are marked by the chosen option: every question needs choices and exactly one right answer. */
-export function checkQuestionsEdit(questions: Array<{ stem: unknown; options: Array<{ text: unknown; isCorrect: unknown }> }>): QuestionEdit[] {
+export function checkQuestionsEdit(questions: Array<{ id?: unknown; stem: unknown; options: Array<{ text: unknown; isCorrect: unknown }> }>): QuestionEdit[] {
   if (questions.length === 0) throw new BadRequestError('Add at least one question.');
   if (questions.length > MAX_QUESTIONS) throw new BadRequestError(`A quick check has at most ${MAX_QUESTIONS} questions.`);
   return questions.map((q, i) => {
@@ -89,6 +91,75 @@ export function checkQuestionsEdit(questions: Array<{ stem: unknown; options: Ar
     if (options.length > MAX_OPTIONS) throw new BadRequestError(`Question ${n} has more than ${MAX_OPTIONS} answer choices.`);
     if (options.some((o) => !o.text)) throw new BadRequestError(`Question ${n} has an empty answer choice.`);
     if (options.filter((o) => o.isCorrect).length !== 1) throw new BadRequestError(`Question ${n} needs exactly one right answer.`);
-    return { stem, options: options.map((o, j) => ({ label: LABELS[j], text: o.text, isCorrect: o.isCorrect })) };
+    const id = typeof q.id === 'string' && q.id ? q.id : undefined;
+    return { ...(id ? { id } : {}), stem, options: options.map((o, j) => ({ label: LABELS[j], text: o.text, isCorrect: o.isCorrect })) };
   });
+}
+
+/** A content block as stored: the editor changes only text and steps, and every other field rides along. */
+export interface StoredBlock {
+  blockId: string;
+  type: string;
+  order: number;
+  content: string;
+  [key: string]: unknown;
+}
+
+const renumber = (blocks: StoredBlock[]): StoredBlock[] => blocks.map((b, i) => ({ ...b, order: i }));
+
+/**
+ * The notes with the teacher's text edits applied. Text blocks they kept are
+ * updated in place, text blocks they removed go, and a new text block goes
+ * right after the one before it. Diagrams and practice blocks, which the
+ * editor doesn't show, stay where they were.
+ */
+export function mergeNotesBlocks(existing: StoredBlock[], edited: NotesBlockEdit[]): StoredBlock[] {
+  const textIds = new Set(existing.filter((b) => b.type === 'text').map((b) => b.blockId));
+  const byId = new Map(edited.filter((e) => textIds.has(e.blockId)).map((e) => [e.blockId, e]));
+  const merged: StoredBlock[] = [];
+  for (const block of existing) {
+    if (block.type !== 'text') merged.push(block);
+    else if (byId.has(block.blockId)) merged.push({ ...block, content: byId.get(block.blockId)!.content });
+  }
+  let anchor: string | null = null;
+  for (const e of edited) {
+    if (!byId.has(e.blockId)) {
+      const at = anchor === null ? 0 : merged.findIndex((b) => b.blockId === anchor) + 1;
+      merged.splice(at, 0, { blockId: e.blockId, type: 'text', order: 0, content: e.content });
+    }
+    anchor = e.blockId;
+  }
+  return renumber(merged);
+}
+
+/** A worked example with new steps: only its steps change; the problem and any practice stay. */
+export function mergeStepsBlocks(existing: StoredBlock[], steps: Array<{ title: string; content: string }>, newBlockId = 'steps'): StoredBlock[] {
+  const content = JSON.stringify({ steps });
+  const at = existing.findIndex((b) => b.type === 'step_reveal');
+  if (at === -1) return renumber([...existing, { blockId: newBlockId, type: 'step_reveal', order: 0, content }]);
+  return renumber(existing.map((b, i) => (i === at ? { ...b, content } : b)));
+}
+
+const INCOMPLETE = "The AI's version came back incomplete, so the item wasn't changed. Try again.";
+
+function hasSteps(block: StoredBlock): boolean {
+  try {
+    const parsed = JSON.parse(block.content) as { steps?: unknown };
+    return Array.isArray(parsed.steps) && parsed.steps.length > 0;
+  } catch {
+    return false;
+  }
+}
+
+/** An AI rewrite is saved only when it is a usable item of the same kind. */
+export function checkRewrittenBlocks(itemKind: string | null | undefined, blocks: StoredBlock[]): void {
+  if (blocks.length === 0 || blocks.every((b) => !text(b.content))) throw new BadRequestError(INCOMPLETE);
+  if (itemKind === 'worked_example' && !blocks.some((b) => b.type === 'step_reveal' && hasSteps(b))) throw new BadRequestError(INCOMPLETE);
+}
+
+/** The current questions, written out for the AI to transform rather than replace. */
+export function questionsToRewrite(questions: Array<{ stem: string; options: Array<{ text: string; isCorrect: boolean }> }>): string {
+  return questions
+    .map((q, i) => `${i + 1}. ${q.stem} Choices: ${q.options.map((o) => (o.isCorrect ? `${o.text} (right)` : o.text)).join(', ')}`)
+    .join('\n');
 }

@@ -5,6 +5,8 @@ vi.mock('../../QuestionBank/service-questions-generation.js', () => ({ generateA
 
 import { generateAIQuestions } from '../../QuestionBank/service-questions-generation.js';
 import { GenerationService } from '../../ContentLibrary/service-generation.js';
+import { AIService } from '../../../services/ai.service.js';
+import { AppError } from '../../../common/errors.js';
 import { UnitItemsService } from '../service-unit-items.js';
 import { computeUnlockStatuses } from '../service-student.js';
 import { Course, CourseLesson, CourseModule } from '../model.js';
@@ -49,8 +51,18 @@ async function unit(status: 'draft' | 'published' = 'draft') {
     scope: { gradeId, subjectId: oid(), termNumber: 3, topicNodeIds: [nodeId], classIds: [oid()] },
   });
   const mod = await CourseModule.create({ schoolId, courseId: course._id, title: 'Counting', orderIndex: 0, curriculumNodeId: nodeId });
-  const notes = await ContentResource.collection.insertOne({ schoolId, createdBy: teacherId, title: 'Tens', type: 'study_notes', isDeleted: false, blocks: [{ blockId: 'b1', type: 'text', order: 0, content: 'Ten, twenty.' }] });
-  const worked = await ContentResource.collection.insertOne({ schoolId, createdBy: teacherId, title: 'On', type: 'worked_example', isDeleted: false, blocks: [{ blockId: 'w1', type: 'step_reveal', order: 0, content: JSON.stringify({ steps: [{ title: 'Start', content: '47' }] }) }] });
+  const notes = await ContentResource.collection.insertOne({
+    schoolId, createdBy: teacherId, title: 'Tens', type: 'study_notes', isDeleted: false, tags: ['class_unit'],
+    blocks: [{ blockId: 'b1', type: 'text', order: 0, content: 'Ten, twenty.' }, { blockId: 'qz', type: 'quiz', order: 1, content: 'What comes after 20?', points: 1 }],
+  });
+  const worked = await ContentResource.collection.insertOne({
+    schoolId, createdBy: teacherId, title: 'On', type: 'worked_example', isDeleted: false, tags: ['class_unit'],
+    blocks: [
+      { blockId: 'p', type: 'text', order: 0, content: 'A taxi has 47 passengers.' },
+      { blockId: 'w1', type: 'step_reveal', order: 1, content: JSON.stringify({ steps: [{ title: 'Start', content: '47' }] }) },
+      { blockId: 'fb', type: 'fill_blank', order: 2, content: '47 + 3 = ___' },
+    ],
+  });
   const questionIds = await mcqs(schoolId, 2);
   const [n1, w1, check, n2] = await CourseLesson.insertMany([
     { schoolId, courseId: course._id, moduleId: mod._id, orderIndex: 0, title: 'Counting in tens', type: 'content', itemKind: 'notes', genStatus: 'ready', contentResourceId: notes.insertedId },
@@ -68,7 +80,10 @@ describe('UnitItemsService.saveContent', () => {
   it('saves edited notes and marks the item as the teacher\'s own', async () => {
     const f = await unit();
     await UnitItemsService.saveContent(f.courseId, String(f.n1._id), f.schoolId, f.actor, { blocks: [{ blockId: 'b1', type: 'text', content: 'Count in tens: 10, 20, 30.' }] });
-    expect((await ContentResource.findById(f.notesId).lean())?.blocks[0].content).toBe('Count in tens: 10, 20, 30.');
+    const saved = await ContentResource.findById(f.notesId).lean();
+    expect(saved?.blocks[0].content).toBe('Count in tens: 10, 20, 30.');
+    // The practice question the editor doesn't show is still there.
+    expect(saved?.blocks.map((b) => b.type)).toEqual(['text', 'quiz']);
     expect((await CourseLesson.findById(f.n1._id).lean())?.teacherEdited).toBe(true);
   });
 
@@ -76,7 +91,8 @@ describe('UnitItemsService.saveContent', () => {
     const f = await unit('published');
     await UnitItemsService.saveContent(f.courseId, String(f.w1._id), f.schoolId, f.actor, { steps: [{ title: 'Start at 47', content: 'Say 47.' }, { title: 'Count on', content: '48, 49, 50.' }] });
     const saved = await ContentResource.findById(f.workedId).lean();
-    expect(JSON.parse(saved!.blocks[0].content).steps).toHaveLength(2);
+    expect(saved!.blocks.map((b) => b.type)).toEqual(['text', 'step_reveal', 'fill_blank']);
+    expect(JSON.parse(saved!.blocks[1].content).steps).toHaveLength(2);
   });
 });
 
@@ -104,25 +120,55 @@ describe('UnitItemsService.saveQuestions', () => {
 describe('UnitItemsService.rewrite', () => {
   it('asks the AI for an easier version and keeps the teacher\'s choice', async () => {
     const f = await unit();
-    const refine = vi.spyOn(GenerationService, 'refineContent').mockResolvedValue({} as never);
+    const ai = vi.spyOn(AIService, 'generateCompletion').mockResolvedValue(JSON.stringify([{ blockId: 'b1', type: 'text', order: 0, content: 'Ten. Twenty.' }]));
     await UnitItemsService.rewrite(f.courseId, String(f.n1._id), f.schoolId, f.actor, { action: 'easier' });
-    expect(refine.mock.calls[0][3].instruction).toContain('easier for Grade 1');
+    expect(ai.mock.calls[0][1]).toContain('easier for Grade 1');
+    expect((await ContentResource.findById(f.notesId).lean())?.blocks.map((b) => b.content)).toEqual(['Ten. Twenty.']);
     expect((await CourseLesson.findById(f.n1._id).lean())?.teacherEdited).toBe(true);
   });
 
   it('leaves the item as it was when the AI fails', async () => {
     const f = await unit();
-    vi.spyOn(GenerationService, 'refineContent').mockRejectedValue(new Error("AI isn't set up on this server yet."));
+    vi.spyOn(AIService, 'generateCompletion').mockRejectedValue(new AppError("AI isn't set up on this server yet.", 503));
     await expect(UnitItemsService.rewrite(f.courseId, String(f.n1._id), f.schoolId, f.actor, { action: 'shorter' })).rejects.toThrow("AI isn't set up");
     expect((await CourseLesson.findById(f.n1._id).lean())?.teacherEdited).toBe(false);
+  });
+
+  it('refuses a garbled AI reply and leaves the notes as they were', async () => {
+    const f = await unit('published');
+    vi.spyOn(AIService, 'generateCompletion').mockResolvedValue('[{"blockId":"b1","type":"text","content":"Ten, tw');
+    await expect(UnitItemsService.rewrite(f.courseId, String(f.n1._id), f.schoolId, f.actor, { action: 'translate', language: 'zu' }))
+      .rejects.toThrow("The AI's version came back incomplete");
+    expect((await ContentResource.findById(f.notesId).lean())?.blocks.map((b) => b.content)).toEqual(['Ten, twenty.', 'What comes after 20?']);
+    expect((await CourseLesson.findById(f.n1._id).lean())?.teacherEdited).toBe(false);
+  });
+
+  it('says plainly when the AI cannot rewrite a quick check, and changes nothing', async () => {
+    const f = await unit();
+    vi.spyOn(AIService, 'assertConfigured').mockImplementation(() => undefined);
+    vi.mocked(generateAIQuestions).mockRejectedValue(new Error('AI question generation failed after 2 attempts: boom'));
+    const err = await UnitItemsService.rewrite(f.courseId, String(f.check._id), f.schoolId, f.actor, { action: 'easier' }).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(AppError);
+    expect(err).toMatchObject({ statusCode: 503, message: "The AI couldn't rewrite this just now, so nothing changed. Try again in a moment." });
+    expect((await CourseLesson.findById(f.check._id).lean())?.quizQuestionIds.map(String)).toEqual(f.questionIds.map(String));
+  });
+
+  it('says AI is not set up before trying to rewrite a quick check', async () => {
+    const f = await unit();
+    vi.spyOn(AIService, 'assertConfigured').mockImplementation(() => { throw new AppError("AI isn't set up on this server yet.", 503); });
+    await expect(UnitItemsService.rewrite(f.courseId, String(f.check._id), f.schoolId, f.actor, { action: 'easier' })).rejects.toThrow("AI isn't set up");
+    expect(generateAIQuestions).not.toHaveBeenCalled();
   });
 
   it('rewrites a quick check with new answerable questions', async () => {
     const f = await unit();
     const fresh = await mcqs(f.soid, 2);
+    vi.spyOn(AIService, 'assertConfigured').mockImplementation(() => undefined);
     vi.mocked(generateAIQuestions).mockResolvedValue(fresh);
     await UnitItemsService.rewrite(f.courseId, String(f.check._id), f.schoolId, f.actor, { action: 'harder' });
     expect(vi.mocked(generateAIQuestions).mock.calls[0][0]).toMatchObject({ difficulty: 'hard', questionTypes: ['mcq'], count: 2 });
+    // The AI works from the teacher's current questions, not from a blank page.
+    expect(vi.mocked(generateAIQuestions).mock.calls[0][0].topicHint).toContain('1. Q1 Choices: right (right), wrong');
     expect((await CourseLesson.findById(f.check._id).lean())?.quizQuestionIds.map(String)).toEqual(fresh.map(String));
   });
 });
@@ -156,5 +202,45 @@ describe('UnitItemsService.addRevisionItem', () => {
     const stranger: CourseActor = { ...f.actor, userId: String(oid()) };
     await expect(UnitItemsService.saveContent(f.courseId, String(f.n1._id), f.schoolId, stranger, { blocks: [{ blockId: 'b1', type: 'text', content: 'x' }] }))
       .rejects.toThrow('You can only edit your own courses');
+  });
+});
+
+describe('3B review fixes', () => {
+  it("won't rewrite or overwrite content that isn't the unit's own", async () => {
+    const f = await unit();
+    // A colleague's library resource, attached through the course builder (no item kind).
+    const theirs = await ContentResource.collection.insertOne({ schoolId: f.soid, createdBy: oid(), title: 'Theirs', type: 'study_notes', isDeleted: false, blocks: [{ blockId: 'x', type: 'text', order: 0, content: 'Mine.' }] });
+    const borrowed = await CourseLesson.create({ schoolId: f.soid, courseId: f.courseId, moduleId: f.n1.moduleId, orderIndex: 9, title: 'Borrowed', type: 'content', contentResourceId: theirs.insertedId });
+    const ai = vi.spyOn(AIService, 'generateCompletion').mockResolvedValue('[]');
+    await expect(UnitItemsService.rewrite(f.courseId, String(borrowed._id), f.schoolId, f.actor, { action: 'translate', language: 'zu' })).rejects.toThrow('Only items the course builder wrote can be edited here');
+    await expect(UnitItemsService.saveContent(f.courseId, String(borrowed._id), f.schoolId, f.actor, { blocks: [{ blockId: 'x', type: 'text', content: 'Gone.' }] })).rejects.toThrow('Only items the course builder wrote can be edited here');
+    // Even labelled as a unit item, a resource that isn't the unit's own is left alone.
+    await CourseLesson.updateOne({ _id: borrowed._id }, { $set: { itemKind: 'notes', genStatus: 'ready' } });
+    await expect(UnitItemsService.saveContent(f.courseId, String(borrowed._id), f.schoolId, f.actor, { blocks: [{ blockId: 'x', type: 'text', content: 'Gone.' }] })).rejects.toThrow("This item's content was not found");
+    expect(ai).not.toHaveBeenCalled();
+    expect((await ContentResource.findById(theirs.insertedId).lean())?.blocks[0].content).toBe('Mine.');
+  });
+
+  it('keeps unchanged questions when a check is saved, so what the class got wrong stays on record', async () => {
+    const f = await unit();
+    const [q1, q2] = f.questionIds.map(String);
+    await UnitItemsService.saveQuestions(f.courseId, String(f.check._id), f.schoolId, f.actor, {
+      questions: [{ id: q1, ...q('Q1', 'right', 'wrong') }, { id: q2, ...q('Q2 fixed', 'right', 'wrong') }],
+    });
+    const ids = (await CourseLesson.findById(f.check._id).lean())!.quizQuestionIds.map(String);
+    expect(ids[0]).toBe(q1);
+    expect(ids[1]).not.toBe(q2);
+    expect((await Question.findById(q1).lean())?.isDeleted).toBe(false);
+    expect((await Question.findById(q2).lean())?.isDeleted).toBe(true);
+  });
+
+  it('makes a revision item optional, so it never locks what comes after it', async () => {
+    const f = await unit('published');
+    vi.spyOn(GenerationService, 'generateContent').mockResolvedValue({ _id: oid() } as never);
+    const rev = await UnitItemsService.addRevisionItem(f.courseId, f.schoolId, f.actor, { afterLessonId: String(f.check._id), questionIds: f.questionIds.map(String) });
+    expect(rev.optional).toBe(true);
+    const lessons = await CourseLesson.find({ courseId: f.courseId, isDeleted: false }).sort({ orderIndex: 1 }).lean();
+    const done = new Map([f.n1, f.w1, f.check].map((l) => [String(l._id), { status: 'completed' }])) as never;
+    expect([...computeUnlockStatuses(lessons, done, { sequential: true }).values()]).toEqual(['completed', 'completed', 'completed', 'available', 'available']);
   });
 });
