@@ -201,8 +201,8 @@ export class LeaveService {
 
   // ─── Get Single Request ───────────────────────────────────────────────────
 
-  static async getRequest(id: string, schoolId: string) {
-    const request = await LeaveRequest.findOne({ _id: id, schoolId, isDeleted: false })
+  static async getRequest(id: string, schoolId: string, staffId?: string) {
+    const request = await LeaveRequest.findOne({ _id: id, schoolId, isDeleted: false, ...(staffId ? { staffId } : {}) })
       .populate('staffId', 'firstName lastName email')
       .populate('substituteTeacherId', 'firstName lastName')
       .populate('reviewedBy', 'firstName lastName')

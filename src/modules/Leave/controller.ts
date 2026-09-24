@@ -67,9 +67,11 @@ export class LeaveController {
   }
 
   static async getRequest(req: Request, res: Response): Promise<void> {
-    const { schoolId } = getUser(req);
+    const user = getUser(req);
     const { id } = req.params;
-    const request = await LeaveService.getRequest(id as string, schoolId as string);
+    // Teachers may only open their own requests, as in the list.
+    const ownerId = user.role === 'teacher' ? user.id : undefined;
+    const request = await LeaveService.getRequest(id as string, user.schoolId as string, ownerId);
     res.json(apiResponse(true, request, 'Leave request retrieved'));
   }
 
