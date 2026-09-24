@@ -77,7 +77,7 @@ async function describeParent(row: AccountRow): Promise<string> {
   const children = await Student.find({ _id: { $in: parent.childrenIds }, schoolId: row.schoolId, isDeleted: false })
     .select('userId').lean();
   const userIds = children.flatMap((c) => (c.userId ? [c.userId] : []));
-  const users = await User.find({ _id: { $in: userIds }, isDeleted: false })
+  const users = await User.find({ _id: { $in: userIds }, schoolId: row.schoolId, isDeleted: false })
     .select('firstName lastName').lean();
   return users.length ? `Parent of ${listNames(users.map(fullName))}` : 'Parent';
 }
