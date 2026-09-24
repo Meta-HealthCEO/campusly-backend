@@ -4,7 +4,7 @@ import { AggregationService } from '../services/aggregation.service.js';
 import { AssessmentPaper } from '../../QuestionBank/model.js';
 import { PaperMarking } from '../../AITools/model-marking.js';
 import { Homework, HomeworkSubmission } from '../../Homework/model.js';
-import { Class, Subject } from '../../Academic/model.js';
+import { Assessment, Class, Mark, Subject } from '../../Academic/model.js';
 import { Student } from '../../Student/model.js';
 // Side-effect imports to register models referenced by populate().
 import '../../Auth/model.js';
@@ -61,7 +61,7 @@ async function fixture() {
   const submission = { homeworkId: homework._id, schoolId, homeworkVersion: 1, submittedAt: new Date(), maxMarks: 10 };
   await HomeworkSubmission.create({ ...submission, studentId: a._id, mark: 5, gradingStatus: 'graded' });
   await HomeworkSubmission.create({ ...submission, studentId: b._id });
-  return { schoolId, teacherId, classId: String(cls._id), paperId: String(paper._id), homeworkId: String(homework._id) };
+  return { schoolId, teacherId, subjectId: subject._id, classId: String(cls._id), paperId: String(paper._id), homeworkId: String(homework._id), studentB: b._id };
 }
 
 describe('AggregationService.getPendingMarking', () => {
@@ -81,5 +81,18 @@ describe('AggregationService.getPendingMarking', () => {
     });
 
     expect(items.filter((i) => i.type === 'paper')).toHaveLength(1);
+  });
+
+  it("drops a paper once every learner's mark is in the gradebook, even typed in by hand", async () => {
+    const f = await fixture();
+    const assessment = await Assessment.create({
+      name: 'Term 3 maths test', subjectId: f.subjectId, classId: f.classId, schoolId: f.schoolId, type: 'test',
+      totalMarks: 30, weight: 1, term: 3, academicYear: 2026, date: new Date(), paperId: f.paperId,
+    });
+    await Mark.create({ assessmentId: assessment._id, studentId: f.studentB, schoolId: f.schoolId, mark: 18, total: 30, percentage: 60 });
+
+    const items = await AggregationService.getPendingMarking(String(f.teacherId), String(f.schoolId));
+
+    expect(items.find((i) => i.type === 'paper')).toBeUndefined();
   });
 });

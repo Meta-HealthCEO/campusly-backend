@@ -15,8 +15,16 @@ export interface PaperClassInput {
   className: string;
   mode: 'digital' | 'paper';
   dueAt: Date | null;
-  students: Array<{ studentId: string; submissionStatus: QueueSubmissionStatus | null; markingStatus: QueueMarkingStatus | null }>;
+  students: Array<{
+    studentId: string;
+    submissionStatus: QueueSubmissionStatus | null;
+    markingStatus: QueueMarkingStatus | null;
+    /** A mark for this paper is already in the class's gradebook (typed in, or issued earlier). */
+    hasGradebookMark: boolean;
+  }>;
 }
+
+type QueueStudent = PaperClassInput['students'][number];
 
 export interface MarkingQueueItem {
   id: string;
@@ -44,15 +52,30 @@ export function calcPriority(dueDate: Date | null | undefined, now: Date): 'high
   return 'low';
 }
 
-const SUBMITTED: ReadonlySet<QueueSubmissionStatus> = new Set(['submitted', 'graded']);
+const SUBMITTED: ReadonlySet<QueueSubmissionStatus> = new Set(['submitted', 'graded', 'published']);
+
+/**
+ * A learner is done when their latest marking is issued, or when there's no
+ * marking and a mark is already in the gradebook (typed in by hand). A marking
+ * still waiting to be issued (e.g. a re-mark) keeps them in the queue.
+ */
+function isDone(s: QueueStudent): boolean {
+  if (s.markingStatus === 'published') return true;
+  return s.markingStatus === null && s.hasGradebookMark;
+}
+
+/** A handwritten paper is written once its due date passes; with no date, once marking has started. */
+function isWritten(input: PaperClassInput, now: Date): boolean {
+  if (input.dueAt !== null) return input.dueAt.getTime() <= now.getTime();
+  return input.students.some((s) => s.markingStatus !== null || s.hasGradebookMark);
+}
 
 function waiting(input: PaperClassInput, now: Date): number {
   if (input.mode === 'digital') {
-    return input.students.filter((s) => s.submissionStatus !== null && SUBMITTED.has(s.submissionStatus) && s.markingStatus !== 'published').length;
+    return input.students.filter((s) => s.submissionStatus !== null && SUBMITTED.has(s.submissionStatus) && !isDone(s)).length;
   }
-  const written = input.dueAt === null || input.dueAt.getTime() <= now.getTime();
-  if (!written) return 0;
-  return input.students.filter((s) => s.markingStatus !== 'published').length;
+  if (!isWritten(input, now)) return 0;
+  return input.students.filter((s) => !isDone(s)).length;
 }
 
 export function paperQueueItems(inputs: PaperClassInput[], now: Date): MarkingQueueItem[] {

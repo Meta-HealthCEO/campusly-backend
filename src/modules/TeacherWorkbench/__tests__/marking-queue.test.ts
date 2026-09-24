@@ -7,9 +7,9 @@ const base = (over: Partial<PaperClassInput>): PaperClassInput => ({
   paperId: 'p1', title: 'Term 3 maths test', subjectName: 'Mathematics', totalMarks: 30,
   classId: 'c1', className: 'Grade 1 - A', mode: 'paper', dueAt: new Date(now.getTime() - day),
   students: [
-    { studentId: 's1', submissionStatus: null, markingStatus: null },
-    { studentId: 's2', submissionStatus: null, markingStatus: 'published' },
-    { studentId: 's3', submissionStatus: null, markingStatus: 'completed' },
+    { studentId: 's1', submissionStatus: null, markingStatus: null, hasGradebookMark: false },
+    { studentId: 's2', submissionStatus: null, markingStatus: 'published', hasGradebookMark: true },
+    { studentId: 's3', submissionStatus: null, markingStatus: 'completed', hasGradebookMark: false },
   ],
   ...over,
 });
@@ -27,26 +27,41 @@ describe('paperQueueItems', () => {
     expect(paperQueueItems([base({ dueAt: new Date(now.getTime() + 2 * day) })], now)).toEqual([]);
   });
 
-  it('treats a handwritten paper with no due date as written', () => {
+  it('waits for marking to start before listing a handwritten paper with no due date', () => {
+    const untouched = base({ dueAt: null, students: [
+      { studentId: 's1', submissionStatus: null, markingStatus: null, hasGradebookMark: false },
+      { studentId: 's2', submissionStatus: null, markingStatus: null, hasGradebookMark: false },
+    ] });
+    expect(paperQueueItems([untouched], now)).toEqual([]);
     expect(paperQueueItems([base({ dueAt: null })], now)[0].pendingCount).toBe(2);
+  });
+
+  it('counts a mark typed straight into the gradebook as marked', () => {
+    const [item] = paperQueueItems([base({ students: [
+      { studentId: 's1', submissionStatus: null, markingStatus: null, hasGradebookMark: true },
+      { studentId: 's2', submissionStatus: null, markingStatus: null, hasGradebookMark: false },
+    ] })], now);
+    expect(item.pendingCount).toBe(1);
   });
 
   it('counts only learners who submitted a digital paper and have no issued mark', () => {
     const [item] = paperQueueItems([base({
       mode: 'digital',
       students: [
-        { studentId: 's1', submissionStatus: 'in_progress', markingStatus: null },
-        { studentId: 's2', submissionStatus: 'submitted', markingStatus: null },
-        { studentId: 's3', submissionStatus: 'graded', markingStatus: 'completed' },
-        { studentId: 's4', submissionStatus: 'graded', markingStatus: 'published' },
+        { studentId: 's1', submissionStatus: 'in_progress', markingStatus: null, hasGradebookMark: false },
+        { studentId: 's2', submissionStatus: 'submitted', markingStatus: null, hasGradebookMark: false },
+        { studentId: 's3', submissionStatus: 'graded', markingStatus: 'completed', hasGradebookMark: false },
+        { studentId: 's4', submissionStatus: 'graded', markingStatus: 'published', hasGradebookMark: true },
+        { studentId: 's5', submissionStatus: 'published', markingStatus: 'completed', hasGradebookMark: true },
       ],
     })], now);
-    expect(item.pendingCount).toBe(2);
-    expect(item.totalCount).toBe(4);
+    // s5 was issued, then re-marked: the new marking waits for the teacher again.
+    expect(item.pendingCount).toBe(3);
+    expect(item.totalCount).toBe(5);
   });
 
   it('drops a class with nothing left to mark', () => {
-    const done = base({ students: [{ studentId: 's1', submissionStatus: null, markingStatus: 'published' }] });
+    const done = base({ students: [{ studentId: 's1', submissionStatus: null, markingStatus: 'published', hasGradebookMark: true }] });
     expect(paperQueueItems([done], now)).toEqual([]);
   });
 

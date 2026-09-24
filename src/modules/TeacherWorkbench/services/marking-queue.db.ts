@@ -8,7 +8,7 @@ import { Homework, HomeworkSubmission } from '../../Homework/model.js';
 import { AssessmentPaper } from '../../QuestionBank/model.js';
 import { PaperSubmission } from '../../QuestionBank/model-submissions.js';
 import { PaperMarking } from '../../AITools/model-marking.js';
-import { Class } from '../../Academic/model.js';
+import { Assessment, Class, Mark } from '../../Academic/model.js';
 import { Student } from '../../Student/model.js';
 import {
   calcPriority,
@@ -72,14 +72,15 @@ export async function homeworkQueueItems(teacherId: string, schoolId: string, no
   });
 }
 
-/** One input per (paper the teacher owns or assigned, class it went to). */
-async function loadPaperInputs(teacherId: string, schoolId: string): Promise<PaperClassInput[]> {
+/** One input per (paper the teacher owns or assigned this year, class it went to). */
+async function loadPaperInputs(teacherId: string, schoolId: string, now: Date): Promise<PaperClassInput[]> {
   const school = toOid(schoolId);
   const teacher = toOid(teacherId);
   const papers = await AssessmentPaper.find({
     schoolId: school,
     isDeleted: false,
     'assignments.0': { $exists: true },
+    year: now.getFullYear(),
     $or: [{ createdBy: teacher }, { 'assignments.assignedBy': teacher }],
   })
     .select('title subjectId totalMarks assignments')
@@ -89,12 +90,21 @@ async function loadPaperInputs(teacherId: string, schoolId: string): Promise<Pap
 
   const paperIds = papers.map((p) => p._id);
   const classIds = [...new Set(papers.flatMap((p) => (p.assignments ?? []).map((a) => String(a.classId))))].map(toOid);
-  const [classes, students, submissions, markings] = await Promise.all([
+  const [classes, students, submissions, markings, assessments] = await Promise.all([
     Class.find({ _id: { $in: classIds }, schoolId: school, isDeleted: false }).select('_id name').lean(),
     Student.find({ classId: { $in: classIds }, schoolId: school, isDeleted: false }).select('_id classId').lean(),
     PaperSubmission.find({ paperId: { $in: paperIds }, schoolId: school, isDeleted: false }).select('paperId studentId status').lean(),
     PaperMarking.find({ paperId: { $in: paperIds }, schoolId: school, isDeleted: false }).select('paperId studentId status createdAt').lean(),
+    Assessment.find({ paperId: { $in: paperIds }, schoolId: school, isDeleted: false }).select('_id paperId classId').lean(),
   ]);
+  // Marks already in each class's gradebook column for the paper (issued, or typed in by hand).
+  const assessmentKey = new Map(assessments.map((a) => [String(a._id), `${a.paperId}:${a.classId}`]));
+  const marks = assessments.length === 0 ? [] : await Mark.find({
+    assessmentId: { $in: assessments.map((a) => a._id) },
+    schoolId: school,
+    isDeleted: false,
+  }).select('assessmentId studentId').lean();
+  const markedLearners = new Set(marks.map((m) => `${assessmentKey.get(String(m.assessmentId))}:${m.studentId}`));
 
   const classNames = new Map(classes.map((c) => [String(c._id), c.name]));
   const studentsByClass = new Map<string, string[]>();
@@ -129,13 +139,14 @@ async function loadPaperInputs(teacherId: string, schoolId: string): Promise<Pap
         studentId,
         submissionStatus: submissionStatus.get(`${paperId}:${studentId}`) ?? null,
         markingStatus: latestMarking.get(`${paperId}:${studentId}`)?.status ?? null,
+        hasGradebookMark: markedLearners.has(`${paperId}:${classId}:${studentId}`),
       })),
     };
   }));
 }
 
 export async function paperQueueItemsFor(teacherId: string, schoolId: string, now: Date): Promise<MarkingQueueItem[]> {
-  return paperQueueItems(await loadPaperInputs(teacherId, schoolId), now);
+  return paperQueueItems(await loadPaperInputs(teacherId, schoolId, now), now);
 }
 
 /** Soonest due first; undated items last. */
