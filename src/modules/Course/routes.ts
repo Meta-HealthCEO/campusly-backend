@@ -3,6 +3,7 @@ import { authorize, validate } from '../../middleware/index.js';
 import { requireEntitlement } from '../subscription/entitlements.js';
 import { CourseController } from './controller.js';
 import { CourseStudentController } from './controller-student.js';
+import { ClassUnitController } from './controller-class-unit.js';
 import {
   createCourseSchema,
   updateCourseSchema,
@@ -16,6 +17,8 @@ import {
   rejectCourseSchema,
   assignCourseSchema,
   catalogQuerySchema,
+  createClassUnitSchema,
+  releaseUnitSchema,
 } from './validation.js';
 
 const router = Router();
@@ -182,6 +185,16 @@ router.get(
   authorize(...COURSE_ROLES),
   CourseController.listEnrolments,
 );
+
+// ─── Class units (AI course builder) ──────────────────────────────────────
+
+router.post('/class-units', authorize(...COURSE_ROLES), validate(createClassUnitSchema), ClassUnitController.create);
+router.post('/:id/outline', authorize(...COURSE_ROLES), ClassUnitController.draftOutline);
+router.post('/:id/outline/approve', authorize(...COURSE_ROLES), ClassUnitController.approveOutline);
+router.get('/:id/generation', authorize(...COURSE_ROLES), ClassUnitController.generationState);
+router.post('/:id/lessons/:lessonId/generate', authorize(...COURSE_ROLES), ClassUnitController.retryItem);
+router.get('/:id/lessons/:lessonId/preview', authorize(...COURSE_ROLES), ClassUnitController.previewItem);
+router.post('/:id/release', authorize(...COURSE_ROLES), validate(releaseUnitSchema), ClassUnitController.release);
 
 // ─── Analytics ─────────────────────────────────────────────────────────────
 

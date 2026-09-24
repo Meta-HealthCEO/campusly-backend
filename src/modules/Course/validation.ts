@@ -167,6 +167,20 @@ export const assignCourseSchema = z.object({
 
 export type AssignCourseInput = z.infer<typeof assignCourseSchema>;
 
+// ─── Class units ───────────────────────────────────────────────────────────
+
+export const createClassUnitSchema = z.object({
+  classId: objectIdSchema,
+  subjectId: objectIdSchema,
+  termNumber: z.number().int().min(1).max(4),
+  topicNodeIds: z.array(objectIdSchema).min(1, 'Pick at least one CAPS topic').max(8, 'Pick at most 8 topics'),
+  title: z.string().trim().max(120).optional(),
+}).strict();
+
+export const releaseUnitSchema = z.object({
+  classIds: z.array(objectIdSchema).min(1, 'Pick at least one class').max(20),
+}).strict();
+
 // ─── Student progress ──────────────────────────────────────────────────────
 
 export const writeProgressSchema = z.object({

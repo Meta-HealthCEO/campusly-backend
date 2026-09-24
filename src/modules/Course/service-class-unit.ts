@@ -12,6 +12,10 @@ import { assertCanEditCourse, CourseService, type CourseActor } from './service.
 import { buildOutlinePrompt, normaliseOutline, type OutlineModule, type OutlineTopic } from './outline.js';
 import { Class, Grade, Subject, Timetable } from '../Academic/model.js';
 import { CurriculumNode } from '../CurriculumStructure/model.js';
+import { ContentResource } from '../ContentLibrary/model.js';
+import { Question } from '../QuestionBank/model.js';
+import { Student } from '../Student/model.js';
+import { resetItemForRetry } from './service-course-generation.js';
 import { AIService } from '../../services/ai.service.js';
 import { checkUsageLimit } from '../../middleware/usageLimits.js';
 import { assertCourseGenerationAccess } from '../subscription/entitlements.js';
@@ -202,5 +206,104 @@ export class ClassUnitService {
     await course.save();
     await enqueueCourseGeneration({ courseId, schoolId });
     return course.toObject();
+  }
+
+  /** What the unit page polls while items are written. */
+  static async generationState(courseId: string, schoolId: string, actor: CourseActor) {
+    const course = await unitOrThrow(courseId, schoolId);
+    assertCanEditCourse(course, actor);
+    const items = await CourseLesson.find({ courseId: course._id, schoolId: course.schoolId, isDeleted: false, itemKind: { $ne: null } })
+      .select('_id genStatus genError').lean();
+    return {
+      outlineStatus: course.outlineStatus,
+      generation: course.generation,
+      items: items.map((i) => ({ id: String(i._id), genStatus: i.genStatus, genError: i.genError })),
+    };
+  }
+
+  /** "Try again" on an item that couldn't be written. */
+  static async retryItem(courseId: string, lessonId: string, schoolId: string, actor: CourseActor) {
+    const course = await unitOrThrow(courseId, schoolId);
+    assertCanEditCourse(course, actor);
+    if (!mongoose.Types.ObjectId.isValid(lessonId)) throw new NotFoundError('Item not found');
+    const item = await CourseLesson.findOne({ _id: oid(lessonId), courseId: course._id, schoolId: course.schoolId, isDeleted: false }).lean();
+    if (!item) throw new NotFoundError('Item not found');
+    if (item.genStatus !== 'failed') throw new BadRequestError("Only an item that couldn't be written can be tried again");
+    await resetItemForRetry(courseId, schoolId, lessonId);
+    await enqueueCourseGeneration({ courseId, schoolId, lessonId });
+  }
+
+  /** An item as the teacher checks it: the written content, or the quick check with its answers. */
+  static async previewItem(courseId: string, lessonId: string, schoolId: string, actor: CourseActor) {
+    const course = await unitOrThrow(courseId, schoolId);
+    assertCanEditCourse(course, actor);
+    if (!mongoose.Types.ObjectId.isValid(lessonId)) throw new NotFoundError('Item not found');
+    const item = await CourseLesson.findOne({ _id: oid(lessonId), courseId: course._id, schoolId: course.schoolId, isDeleted: false }).lean();
+    if (!item) throw new NotFoundError('Item not found');
+    if (item.genStatus !== 'ready') {
+      return { kind: 'not_ready' as const, title: item.title, genStatus: item.genStatus, genError: item.genError };
+    }
+    if (item.type === 'quiz') {
+      const questions = await Question.find({
+        _id: { $in: item.quizQuestionIds },
+        isDeleted: false,
+        $or: [{ schoolId: course.schoolId }, { schoolId: null }],
+      }).select('stem type options answer marks diagram').lean();
+      return { kind: 'quiz' as const, title: item.title, questions };
+    }
+    const resource = item.contentResourceId
+      ? await ContentResource.findOne({
+        _id: item.contentResourceId,
+        isDeleted: false,
+        $or: [{ schoolId: course.schoolId }, { schoolId: null }],
+      }).select('title blocks').lean()
+      : null;
+    if (!resource) throw new NotFoundError('This item has no content yet');
+    return { kind: 'content' as const, title: item.title, blocks: resource.blocks };
+  }
+
+  /**
+   * Releases the unit to classes: the owner publishes a class unit (no review
+   * queue), then each class is enrolled. Every check runs before anything
+   * changes, so a refused release leaves the unit as it was.
+   */
+  static async release(courseId: string, schoolId: string, actor: CourseActor, classIds: string[]) {
+    const course = await unitOrThrow(courseId, schoolId);
+    assertCanEditCourse(course, actor);
+    if (course.outlineStatus !== 'approved') throw new BadRequestError('Approve the outline first');
+    const notReady = await CourseLesson.countDocuments({
+      courseId: course._id, schoolId: course.schoolId, isDeleted: false, itemKind: { $ne: null }, genStatus: { $ne: 'ready' },
+    });
+    if (notReady > 0) {
+      throw new BadRequestError(`${notReady} item${notReady === 1 ? '' : 's'} still need${notReady === 1 ? 's' : ''} attention`);
+    }
+
+    const ids = [...new Set(classIds)];
+    if (ids.length === 0) throw new BadRequestError('Pick at least one class');
+    if (ids.some((id: string) => !mongoose.Types.ObjectId.isValid(id))) throw new NotFoundError('Class not found');
+    await assertTeachesClasses(schoolId, actor, ids);
+    const classes = await Class.find({ _id: { $in: ids.map((id: string) => oid(id)) }, schoolId: course.schoolId, isDeleted: false })
+      .select('_id name').lean();
+    if (classes.length !== ids.length) throw new NotFoundError('Class not found');
+    for (const klass of classes) {
+      const learners = await Student.countDocuments({ classId: klass._id, schoolId: course.schoolId, isDeleted: false });
+      if (learners === 0) throw new BadRequestError(`${klass.name} has no learners yet`);
+    }
+
+    if (course.status !== 'published') {
+      course.status = 'published';
+      course.publishedBy = oid(actor.userId);
+      course.publishedAt = new Date();
+    }
+    const released = new Set([...(course.scope!.classIds ?? []).map(String), ...ids]);
+    course.scope!.classIds = [...released].map((id: string) => oid(id));
+    await course.save();
+
+    const results = [];
+    for (const klass of classes) {
+      const enrolled = await CourseService.assignCourseToClass(courseId, schoolId, actor, { classId: String(klass._id) });
+      results.push({ classId: String(klass._id), name: klass.name, newEnrolments: enrolled.newEnrolments });
+    }
+    return { classes: results };
   }
 }
