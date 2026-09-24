@@ -23,9 +23,10 @@ export const UNIT_RESOURCE_TAG = 'class_unit';
 /**
  * Only the unit's *initial* item write is kept out of the school's daily AI
  * count (the outline draft already spent one check for the whole unit).
- * Rewrites and revision items are separate, later AI actions and must count
- * like any other generation — so they carry UNIT_RESOURCE_TAG (for ownership
- * checks) but not this tag (for the daily-count exclusion).
+ * A revision item is a separate, later AI action and counts like any other
+ * generation — so it carries UNIT_RESOURCE_TAG (for ownership checks) but not
+ * this tag. (A rewrite edits the item's resource in place, so it makes no new
+ * resource to count.)
  */
 export const UNIT_INITIAL_TAG = 'class_unit_initial';
 /** A generic, teacher-safe message for an item write that failed for an unexpected (non-friendly) reason. */

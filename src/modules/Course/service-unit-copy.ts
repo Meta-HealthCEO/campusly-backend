@@ -24,7 +24,11 @@ type Id = mongoose.Types.ObjectId;
 const oid = (id: string | Id) => new mongoose.Types.ObjectId(String(id));
 /** The library shows one page at a time, with a "Show more" to fetch the next. */
 export const LIBRARY_PAGE_SIZE = 20;
-/** A copied unit's questions: the copier's own, but kept out of the school's shared bank (the original is already there). */
+/**
+ * On a copied unit's questions and resources. Questions: the copier's own, but
+ * kept out of the school's shared bank (the original is already there).
+ * Resources: kept out of the school's daily AI count (copying spends no AI).
+ */
 export const UNIT_COPY_TAG = 'unit_copy';
 
 export interface CopyUnitInput {
@@ -123,7 +127,7 @@ export class UnitCopyService {
         (doc) => ({
           ...doc, createdBy, term: input.termNumber, downloads: 0, rating: 0, ratingCount: 0,
           reviewedBy: null, reviewedAt: null, reviewNotes: '',
-          tags: [...new Set([...((doc.tags as string[]) ?? []), UNIT_RESOURCE_TAG])],
+          tags: [...new Set([...((doc.tags as string[]) ?? []), UNIT_RESOURCE_TAG, UNIT_COPY_TAG])],
         }),
         made.resources,
       );

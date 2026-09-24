@@ -9,6 +9,7 @@ import { Question } from '../../QuestionBank/model.js';
 import { User } from '../../Auth/model.js';
 import { QuestionsService } from '../../QuestionBank/service-questions.js';
 import type { CourseActor } from '../service.js';
+import { checkUsageLimit } from '../../../middleware/usageLimits.js';
 
 const oid = () => new mongoose.Types.ObjectId();
 
@@ -170,5 +171,16 @@ describe('3E review fixes', () => {
     expect(shared.questions.map((q) => q.stem)).toEqual(['What comes after 29?']);
     const mine = await QuestionsService.listQuestions(f.schoolId, String(f.thandi), 'teacher', { mine: true, page: 1, limit: 50 } as never);
     expect(mine.questions.map((q) => String(q._id))).toContain(String(clone!._id));
+  });
+});
+
+describe('Copying does not spend AI', () => {
+  it("copying a unit leaves the school's AI count for today unchanged, even for resources tagged before copies were marked", async () => {
+    const f = await school();
+    // An AI-written resource from before copies were tagged: only the general unit tag.
+    await ContentResource.collection.updateOne({ _id: f.notesId }, { $set: { source: 'ai_generated', createdAt: new Date('2026-01-10T08:00:00Z') } });
+    const before = (await checkUsageLimit(f.schoolId, 'maxAiGenerationsPerDay')).current;
+    await UnitCopyService.copy(f.unitId, f.schoolId, teacher(f.thandi), { classId: String(f.classB), termNumber: 4 });
+    expect((await checkUsageLimit(f.schoolId, 'maxAiGenerationsPerDay')).current).toBe(before);
   });
 });

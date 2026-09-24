@@ -85,10 +85,12 @@ async function countAiGenerationsToday(schoolId: string): Promise<number> {
     schoolId: new mongoose.Types.ObjectId(schoolId),
     source: 'ai_generated',
     // A unit's initial item write is counted once, when its outline is
-    // drafted. Later AI actions on a unit item (a rewrite, a revision item)
-    // are separate spends and must count like any other generation, so only
-    // the initial-write tag is excluded here — not the general unit tag.
-    tags: { $ne: 'class_unit_initial' },
+    // drafted, so its resources (tagged class_unit_initial) aren't counted
+    // again here. A copied unit's resources (tagged unit_copy) spent no AI at
+    // all. A rewrite edits an item's resource in place and makes no new one,
+    // so it isn't counted either; a revision item makes a new resource with
+    // only the general unit tag, and that does count.
+    tags: { $nin: ['class_unit_initial', 'unit_copy'] },
     createdAt: { $gte: startOfDay },
     isDeleted: false,
   });
