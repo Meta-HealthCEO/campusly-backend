@@ -28,6 +28,7 @@ import { demoDates, demoPaperAssignment, demoPeriodConfig, planWeek, type Planne
 import { PaperMarking } from '../modules/AITools/model-marking.js';
 import { seedCourseUnit } from './teacher-demo/seed-course-unit.js';
 import { seedBehaviour } from './teacher-demo/seed-behaviour.js';
+import { seedParentEvening } from './teacher-demo/seed-parent-evening.js';
 import { CAPS_SUBJECT, DEMO_MODULES, DEMO_SUBJECTS, DEMO_WEIGHTINGS, HOMEWORK, LESSONS, PAPERS, THREADS } from './teacher-demo/content.js';
 
 const TEACHER_EMAIL = 'thandi.molefe@greenfieldprimary.co.za';
@@ -369,7 +370,8 @@ async function main(): Promise<void> {
       })
       : null;
     const behaviour = await seedBehaviour({ schoolId: ctx.schoolId, teacherId: ctx.teacherId, classIds: [...ctx.classes.values()].map((c) => c.id) });
-    logger.info(`Teacher demo ready for ${TEACHER_EMAIL}: ${ctx.week.length} timetable slots, ${lessons} lessons, ${submissions} submissions to mark, ${unread} unread messages, ${papers} papers${scriptReady ? ', 1 AI-marked script ready to issue' : ''}${hodName ? `, HOD ${hodName} (${HOD_EMAIL})` : ''}${unit ? `, released unit "${unit}"` : ''}, ${behaviour} behaviour entries.`);
+    const evening = await seedParentEvening({ schoolId: ctx.schoolId, teacherId: ctx.teacherId, classIds: [...ctx.classes.values()].map((c) => c.id) });
+    logger.info(`Teacher demo ready for ${TEACHER_EMAIL}: ${ctx.week.length} timetable slots, ${lessons} lessons, ${submissions} submissions to mark, ${unread} unread messages, ${papers} papers${scriptReady ? ', 1 AI-marked script ready to issue' : ''}${hodName ? `, HOD ${hodName} (${HOD_EMAIL})` : ''}${unit ? `, released unit "${unit}"` : ''}, ${behaviour} behaviour entries${evening ? `, parent evening next week (booking at ${evening})` : ''}.`);
   } finally {
     await mongoose.disconnect();
   }
