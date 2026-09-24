@@ -5,6 +5,20 @@
  */
 
 export const WEEKDAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'] as const;
+
+/** The school's period times for the demo, so the timetable page can draw the week. */
+export function demoPeriodConfig(): {
+  periodsPerDay: Record<'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday', number>;
+  periodTimes: Array<{ period: number; startTime: string; endTime: string }>;
+  breakSlots: Array<{ afterPeriod: number; duration: number; label: string }>;
+} {
+  const n = DEMO_PERIODS.length;
+  return {
+    periodsPerDay: { monday: n, tuesday: n, wednesday: n, thursday: n, friday: n },
+    periodTimes: DEMO_PERIODS.map((p) => ({ ...p })),
+    breakSlots: [{ afterPeriod: 3, duration: 30, label: 'Break' }],
+  };
+}
 export type Weekday = (typeof WEEKDAYS)[number];
 
 /** A South African primary school morning: register period first, break after period 3. */

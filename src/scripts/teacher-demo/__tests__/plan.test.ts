@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DEMO_PERIODS, demoDates, planWeek } from '../plan.js';
+import { DEMO_PERIODS, demoDates, demoPeriodConfig, planWeek } from '../plan.js';
 
 const pairs = [
   { classId: 'g1a', subjectId: 'english', homeroom: true },
@@ -52,5 +52,17 @@ describe('demoDates', () => {
     const d = demoDates(new Date(2026, 8, 24, 7, 30));
     const at = d.atPeriod(d.today, 2);
     expect([at.getHours(), at.getMinutes()]).toEqual([8, 30]);
+  });
+});
+
+describe('demoPeriodConfig', () => {
+  it('gives the school the same five periods the demo timetable uses', () => {
+    const cfg = demoPeriodConfig();
+    expect(cfg.periodTimes).toEqual(DEMO_PERIODS.map((p) => ({ ...p })));
+    expect(Object.values(cfg.periodsPerDay)).toEqual([5, 5, 5, 5, 5]);
+  });
+
+  it('puts break in the 10:00 to 10:30 gap', () => {
+    expect(demoPeriodConfig().breakSlots).toEqual([{ afterPeriod: 3, duration: 30, label: 'Break' }]);
   });
 });

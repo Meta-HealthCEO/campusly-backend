@@ -22,7 +22,8 @@ import { CurriculumNode } from '../modules/CurriculumStructure/model.js';
 import { Homework, HomeworkSubmission } from '../modules/Homework/model.js';
 import { MessageThread, Message } from '../modules/Messaging/model.js';
 import { AssessmentPaper } from '../modules/QuestionBank/model-papers.js';
-import { demoDates, planWeek, type PlannedSlot, type TeachingPair } from './teacher-demo/plan.js';
+import { TimetableConfig } from '../modules/TimetableBuilder/model.js';
+import { demoDates, demoPeriodConfig, planWeek, type PlannedSlot, type TeachingPair } from './teacher-demo/plan.js';
 import { CAPS_SUBJECT, DEMO_MODULES, DEMO_SUBJECTS, HOMEWORK, LESSONS, PAPERS, THREADS } from './teacher-demo/content.js';
 
 const TEACHER_EMAIL = 'thandi.molefe@greenfieldprimary.co.za';
@@ -86,6 +87,13 @@ async function seedModulesAndTimetable(ctx: Ctx): Promise<void> {
   // Anything else on Thandi's timetable (e.g. hand-made rows) would double-book her.
   const planned = ctx.week.map((s) => ({ classId: s.classId, day: s.day, period: s.period }));
   await Timetable.updateMany({ teacherId: ctx.teacherId, isDeleted: false, $nor: planned }, { $set: { isDeleted: true } });
+}
+
+/** Gives the school period times when it has none, so the timetable page can draw the week. A real config is never touched. */
+async function seedPeriodTimes(ctx: Ctx): Promise<void> {
+  const existing = await TimetableConfig.findOne({ schoolId: ctx.schoolId }).lean();
+  if (existing && !existing.isDeleted && existing.periodTimes.length > 0) return;
+  await TimetableConfig.updateOne({ schoolId: ctx.schoolId }, { $set: { ...demoPeriodConfig(), isDeleted: false } }, { upsert: true });
 }
 
 async function seedRegister(ctx: Ctx): Promise<void> {
@@ -242,6 +250,7 @@ async function main(): Promise<void> {
   try {
     const ctx = await loadContext();
     await seedModulesAndTimetable(ctx);
+    await seedPeriodTimes(ctx);
     await seedRegister(ctx);
     const lessons = await seedLessons(ctx);
     const submissions = await seedHomework(ctx);
