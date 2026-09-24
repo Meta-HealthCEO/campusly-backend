@@ -90,8 +90,9 @@ function toLink(a: { _id: unknown; totalMarks: number; classId: unknown; subject
  *
  * Resolution order:
  *   (a) cached AssessmentPaper.assessmentId, only when it belongs to this class
- *   (b) match by metadata (school + class + subject + name + term + year)
- *   (c) create new Assessment from paper metadata
+ *   (b) the Assessment for this paper and class (by paperId, so a rename can't split it)
+ *   (c) match by metadata (school + class + subject + name + term + year)
+ *   (d) create new Assessment from paper metadata
  */
 export async function findOrCreateAssessmentForPaper(input: {
   paperId: string;
@@ -117,7 +118,16 @@ export async function findOrCreateAssessmentForPaper(input: {
     // stale (target deleted) or another class's assessment: fall through
   }
 
-  // (b) match by metadata
+  // (b) this paper's assessment for this class (survives the teacher renaming it)
+  const byPaper = await Assessment.findOne({
+    schoolId: new mongoose.Types.ObjectId(input.schoolId),
+    classId: new mongoose.Types.ObjectId(input.classId),
+    paperId: paper._id,
+    isDeleted: false,
+  });
+  if (byPaper) return toLink(byPaper);
+
+  // (c) match by metadata
   const byMatch = await Assessment.findOne({
     schoolId: new mongoose.Types.ObjectId(input.schoolId),
     classId: new mongoose.Types.ObjectId(input.classId),
@@ -135,7 +145,7 @@ export async function findOrCreateAssessmentForPaper(input: {
     return toLink(byMatch);
   }
 
-  // (c) create. Assessment.type enum is restrictive
+  // (d) create. Assessment.type enum is restrictive
   // ('test' | 'exam' | 'assignment' | 'practical' | 'project') and does not
   // align 1:1 with PAPER_TYPES, so we hard-code 'test' as the safe default.
   const created = await Assessment.create({
