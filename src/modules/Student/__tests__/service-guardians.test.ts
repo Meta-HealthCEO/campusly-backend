@@ -85,3 +85,32 @@ describe('StudentService backfills Parent.childrenIds from guardianIds', () => {
     expect((await Parent.findById(f.parentOne).lean())?.childrenIds.map(String)).toEqual([]);
   });
 });
+
+describe('StudentService only links guardians from the same school', () => {
+  it("refuses another school's parent on create and on update, and leaves that parent alone", async () => {
+    const f = await schoolFixture();
+    const other = await schoolFixture();
+    await expect(StudentService.create({
+      schoolId: f.schoolId, gradeId: f.gradeId, classId: f.classId, admissionNumber: `A-${oid()}`,
+      guardianIds: [f.parentOne, other.parentOne],
+    })).rejects.toMatchObject({ statusCode: 400 });
+    expect((await Parent.findById(f.parentOne).lean())?.childrenIds).toEqual([]);
+
+    const { student } = await StudentService.create({
+      schoolId: f.schoolId, gradeId: f.gradeId, classId: f.classId, admissionNumber: `A-${oid()}`, guardianIds: [f.parentOne],
+    });
+    await expect(StudentService.update(String(student._id), String(f.schoolId), { guardianIds: [other.parentTwo] } as never))
+      .rejects.toMatchObject({ statusCode: 400 });
+    expect((await Parent.findById(other.parentTwo).lean())?.childrenIds).toEqual([]);
+    expect((await Student.findById(student._id).lean())?.guardianIds.map(String)).toEqual([String(f.parentOne)]);
+  });
+
+  it('refuses a deleted parent', async () => {
+    const f = await schoolFixture();
+    await Parent.collection.updateOne({ _id: f.parentTwo }, { $set: { isDeleted: true } });
+    await expect(StudentService.create({
+      schoolId: f.schoolId, gradeId: f.gradeId, classId: f.classId, admissionNumber: `A-${oid()}`, guardianIds: [f.parentTwo],
+    })).rejects.toMatchObject({ statusCode: 400 });
+    expect((await Parent.findById(f.parentTwo).lean())?.childrenIds).toEqual([]);
+  });
+});

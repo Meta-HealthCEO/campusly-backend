@@ -7,7 +7,7 @@ import { escapeRegex } from '../../common/utils.js';
 import { EmailService } from '../../services/email.service.js';
 import { regenerateCredentials } from './service-regenerate.js';
 import crypto from 'crypto';
-import type { Types } from 'mongoose';
+import mongoose, { type Types } from 'mongoose';
 
 export type StudentDeliveryMethod = 'email' | 'slip';
 
@@ -132,8 +132,19 @@ function isDuplicateKeyError(err: unknown): boolean {
   return typeof err === 'object' && err !== null && 'code' in err && err.code === 11000;
 }
 
+/** Refuses guardian ids that aren't (undeleted) parents in this school, before anything is written. */
+async function assertGuardiansInSchool(schoolId: ObjectIdInput | undefined, guardianIds: ObjectIdInput[] | undefined): Promise<void> {
+  if (!guardianIds || guardianIds.length === 0) return;
+  const ids = [...new Set(guardianIds.map(String))];
+  const found = schoolId && ids.every((id) => mongoose.Types.ObjectId.isValid(id))
+    ? await Parent.countDocuments({ _id: { $in: ids }, schoolId, isDeleted: false })
+    : 0;
+  if (found !== ids.length) throw new BadRequestError('Pick guardians who are parents at this school');
+}
+
 /** Keeps Parent.childrenIds in step with a learner's guardianIds after it changes. */
 async function syncGuardianLinks(
+  schoolId: ObjectIdInput,
   studentId: ObjectIdInput,
   previousGuardianIds: ObjectIdInput[],
   nextGuardianIds: ObjectIdInput[],
@@ -145,10 +156,10 @@ async function syncGuardianLinks(
 
   await Promise.all([
     added.length > 0
-      ? Parent.updateMany({ _id: { $in: added } }, { $addToSet: { childrenIds: studentId } })
+      ? Parent.updateMany({ _id: { $in: added }, schoolId, isDeleted: false }, { $addToSet: { childrenIds: studentId } })
       : null,
     removed.length > 0
-      ? Parent.updateMany({ _id: { $in: removed } }, { $pull: { childrenIds: studentId } })
+      ? Parent.updateMany({ _id: { $in: removed }, schoolId, isDeleted: false }, { $pull: { childrenIds: studentId } })
       : null,
   ]);
 }
@@ -159,6 +170,7 @@ export class StudentService {
   static async create(data: CreateStudentData): Promise<CreateStudentResult> {
     const { firstName, lastName, email, phone, deliveryMethod, ...studentData } = data;
     let credentials: StudentPortalCredentials | undefined;
+    await assertGuardiansInSchool(studentData.schoolId, studentData.guardianIds);
 
     // Auto-generate an admission number if the caller didn't supply one.
     // Standalone tutoring teachers don't run admission numbering systems and
@@ -245,7 +257,7 @@ export class StudentService {
     const saved = await student.save();
 
     if (studentData.guardianIds && studentData.guardianIds.length > 0) {
-      await syncGuardianLinks(saved._id as IStudent['_id'], [], studentData.guardianIds);
+      await syncGuardianLinks(saved.schoolId, saved._id as IStudent['_id'], [], studentData.guardianIds);
     }
 
     return {
@@ -400,6 +412,10 @@ export class StudentService {
     const previous = studentData.guardianIds
       ? await Student.findOne({ _id: id, schoolId, isDeleted: false }).select('guardianIds').lean()
       : null;
+    // Only newly named guardians are checked, so a guardian who has since left
+    // doesn't block every other edit to the learner.
+    const kept = new Set((previous?.guardianIds ?? []).map(String));
+    await assertGuardiansInSchool(schoolId, studentData.guardianIds?.filter((g) => !kept.has(String(g))));
 
     // Update the student document (excluding User-record fields)
     const student = await Student.findOneAndUpdate(
@@ -413,7 +429,7 @@ export class StudentService {
     }
 
     if (studentData.guardianIds) {
-      await syncGuardianLinks(student._id as IStudent['_id'], previous?.guardianIds ?? [], studentData.guardianIds);
+      await syncGuardianLinks(schoolId, student._id as IStudent['_id'], previous?.guardianIds ?? [], studentData.guardianIds);
     }
 
     // Write name/email/phone through to the linked User record
