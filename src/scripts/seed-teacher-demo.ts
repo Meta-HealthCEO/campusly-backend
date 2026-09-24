@@ -14,7 +14,7 @@ import { User } from '../modules/Auth/model.js';
 import { School } from '../modules/School/model.js';
 import { Student } from '../modules/Student/model.js';
 import { Parent } from '../modules/Parent/model.js';
-import { Class, Mark, Subject, Timetable } from '../modules/Academic/model.js';
+import { Class, Mark, Subject, SubjectWeighting, Timetable } from '../modules/Academic/model.js';
 import { Attendance } from '../modules/Attendance/model.js';
 import { Lesson } from '../modules/Lesson/model.js';
 import { ContentResource } from '../modules/ContentLibrary/model.js';
@@ -25,7 +25,7 @@ import { AssessmentPaper } from '../modules/QuestionBank/model-papers.js';
 import { TimetableConfig } from '../modules/TimetableBuilder/model.js';
 import { demoDates, demoPaperAssignment, demoPeriodConfig, planWeek, type PlannedSlot, type TeachingPair } from './teacher-demo/plan.js';
 import { PaperMarking } from '../modules/AITools/model-marking.js';
-import { CAPS_SUBJECT, DEMO_MODULES, DEMO_SUBJECTS, HOMEWORK, LESSONS, PAPERS, THREADS } from './teacher-demo/content.js';
+import { CAPS_SUBJECT, DEMO_MODULES, DEMO_SUBJECTS, DEMO_WEIGHTINGS, HOMEWORK, LESSONS, PAPERS, THREADS } from './teacher-demo/content.js';
 
 const TEACHER_EMAIL = 'thandi.molefe@greenfieldprimary.co.za';
 type Id = Types.ObjectId;
@@ -302,6 +302,25 @@ async function seedPaperMarking(ctx: Ctx): Promise<boolean> {
   return true;
 }
 
+/** Weightings for the demo subjects in the teacher's grades, only where the school hasn't set its own. */
+async function seedWeightings(ctx: Ctx): Promise<number> {
+  const gradeIds = [...new Set([...ctx.classes.values()].map((c) => String(c.gradeId)))].map((id) => new Types.ObjectId(id));
+  let written = 0;
+  for (const [subjectName, buckets] of Object.entries(DEMO_WEIGHTINGS)) {
+    const subjectId = ctx.subjects.get(subjectName);
+    if (!subjectId) continue;
+    for (const gradeId of gradeIds) {
+      for (const term of [1, 2, 3, 4]) {
+        const scope = { schoolId: ctx.schoolId, subjectId, gradeId, term, isDeleted: false };
+        if (await SubjectWeighting.exists(scope)) continue;
+        await SubjectWeighting.insertMany(buckets.map((b) => ({ ...scope, assessmentType: b.type, weightPercentage: b.weight })));
+        written += 1;
+      }
+    }
+  }
+  return written;
+}
+
 async function main(): Promise<void> {
   await mongoose.connect(config.mongodb.uri);
   try {
@@ -314,6 +333,7 @@ async function main(): Promise<void> {
     const unread = await seedMessages(ctx);
     const papers = await seedPapers(ctx);
     const scriptReady = await seedPaperMarking(ctx);
+    await seedWeightings(ctx);
     logger.info(`Teacher demo ready for ${TEACHER_EMAIL}: ${ctx.week.length} timetable slots, ${lessons} lessons, ${submissions} submissions to mark, ${unread} unread messages, ${papers} papers${scriptReady ? ', 1 AI-marked script ready to issue' : ''}.`);
   } finally {
     await mongoose.disconnect();

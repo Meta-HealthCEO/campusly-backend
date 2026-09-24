@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { DEMO_WEIGHTINGS } from '../content.js';
 import { DEMO_PERIODS, demoDates, demoPaperAssignment, demoPeriodConfig, planWeek } from '../plan.js';
 
 const pairs = [
@@ -74,5 +75,14 @@ describe('demoPaperAssignment', () => {
     expect(a.dueAt).toEqual(new Date(2026, 8, 23, 12));
     expect(a.assignedAt.getTime()).toBeLessThan(a.dueAt.getTime());
     expect(a.releaseAt.getTime()).toBeLessThanOrEqual(a.dueAt.getTime());
+  });
+});
+
+describe('DEMO_WEIGHTINGS', () => {
+  it('weights English and Maths to 100 and leaves Life Skills for the teacher to see as not set', () => {
+    for (const buckets of Object.values(DEMO_WEIGHTINGS)) {
+      expect(buckets.reduce((sum, b) => sum + b.weight, 0)).toBe(100);
+    }
+    expect(Object.keys(DEMO_WEIGHTINGS).sort()).toEqual(['English', 'Mathematics']);
   });
 });

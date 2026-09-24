@@ -123,3 +123,12 @@ export const THREADS: DemoThread[] = [
   { learnerFirstName: 'Lebo', messages: ['Good morning Mrs Molefe, Lebo was sick yesterday. Can she catch up on the phonics work?', 'Also, is the reading check still on Friday?'] },
   { learnerFirstName: 'Jan', messages: ['Hi, Jan says he left his reading book at school. Could you check his cubby please?'] },
 ];
+
+/**
+ * School weightings for the demo (every term). Life Skills is left out on
+ * purpose, so the gradebook shows a subject still waiting for weightings.
+ */
+export const DEMO_WEIGHTINGS: Record<string, Array<{ type: 'test' | 'exam' | 'assignment' | 'practical' | 'project'; weight: number }>> = {
+  English: [{ type: 'test', weight: 50 }, { type: 'assignment', weight: 30 }, { type: 'project', weight: 20 }],
+  Mathematics: [{ type: 'test', weight: 50 }, { type: 'assignment', weight: 30 }, { type: 'project', weight: 20 }],
+};
