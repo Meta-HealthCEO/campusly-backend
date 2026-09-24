@@ -94,3 +94,10 @@ export function demoDates(now: Date): DemoDates {
     },
   };
 }
+
+/** A handwritten paper written yesterday at noon (assigned three days ago), so it waits in the marking queue. */
+export function demoPaperAssignment(now: Date): { mode: 'paper'; dueAt: Date; releaseAt: Date; assignedAt: Date } {
+  const day = (offset: number, hour: number) => new Date(now.getFullYear(), now.getMonth(), now.getDate() + offset, hour);
+  const assignedAt = day(-3, 8);
+  return { mode: 'paper', dueAt: day(-1, 12), releaseAt: assignedAt, assignedAt };
+}

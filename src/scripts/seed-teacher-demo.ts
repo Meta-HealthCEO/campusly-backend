@@ -23,7 +23,8 @@ import { Homework, HomeworkSubmission } from '../modules/Homework/model.js';
 import { MessageThread, Message } from '../modules/Messaging/model.js';
 import { AssessmentPaper } from '../modules/QuestionBank/model-papers.js';
 import { TimetableConfig } from '../modules/TimetableBuilder/model.js';
-import { demoDates, demoPeriodConfig, planWeek, type PlannedSlot, type TeachingPair } from './teacher-demo/plan.js';
+import { demoDates, demoPaperAssignment, demoPeriodConfig, planWeek, type PlannedSlot, type TeachingPair } from './teacher-demo/plan.js';
+import { PaperMarking } from '../modules/AITools/model-marking.js';
 import { CAPS_SUBJECT, DEMO_MODULES, DEMO_SUBJECTS, HOMEWORK, LESSONS, PAPERS, THREADS } from './teacher-demo/content.js';
 
 const TEACHER_EMAIL = 'thandi.molefe@greenfieldprimary.co.za';
@@ -245,6 +246,58 @@ async function seedPapers(ctx: Ctx): Promise<number> {
   return count;
 }
 
+/** Awarded marks for the demo learner's script, question by question (7 of 10). */
+const DEMO_SCRIPT_MARKS = [2, 1, 2, 1, 1, 0];
+
+/**
+ * The finalised reading check is written by the homeroom class yesterday, and
+ * one learner's script already has an AI marking waiting to be issued, so the
+ * marking loop can be walked through without an AI key.
+ */
+async function seedPaperMarking(ctx: Ctx): Promise<boolean> {
+  const demo = PAPERS.find((p) => p.status === 'finalised');
+  const cls = demo ? ctx.classes.get(demo.className) : undefined;
+  if (!demo || !cls) return false;
+  const paper = await AssessmentPaper.findOne({ createdBy: ctx.teacherId, title: demo.title, schoolId: ctx.schoolId, isDeleted: false });
+  if (!paper) return false;
+
+  const assignment = { classId: cls.id, assignedBy: ctx.teacherId, ...demoPaperAssignment(new Date()) };
+  await AssessmentPaper.updateOne({ _id: paper._id }, { $pull: { assignments: { classId: cls.id } } });
+  await AssessmentPaper.updateOne({ _id: paper._id }, { $push: { assignments: assignment } });
+
+  const learner = await Student.findOne({ classId: cls.id, schoolId: ctx.schoolId, isDeleted: false })
+    .sort({ admissionNumber: 1 })
+    .populate<{ userId: { firstName?: string; lastName?: string } | null }>('userId', 'firstName lastName')
+    .lean();
+  if (!learner) return false;
+  const questions = demo.sections.flatMap((s) => s.questions).map((q, i) => ({
+    questionNumber: String(i + 1),
+    studentAnswer: DEMO_SCRIPT_MARKS[i] === q.marks ? q.answer : 'Partly right',
+    correctAnswer: q.answer,
+    marksAwarded: Math.min(DEMO_SCRIPT_MARKS[i] ?? 0, q.marks),
+    maxMarks: q.marks,
+    feedback: DEMO_SCRIPT_MARKS[i] === q.marks ? 'Correct.' : 'Nearly: check the story again.',
+  }));
+  const total = questions.reduce((sum, q) => sum + q.marksAwarded, 0);
+  const max = questions.reduce((sum, q) => sum + q.maxMarks, 0);
+  const studentName = `${learner.userId?.firstName ?? ''} ${learner.userId?.lastName ?? ''}`.trim() || learner.admissionNumber;
+  const existing = await PaperMarking.findOne({ paperId: paper._id, studentId: learner._id, schoolId: ctx.schoolId });
+  // Leave a marking the teacher has already issued alone; otherwise (re)set it ready to issue.
+  if (existing?.status === 'published') return true;
+  await PaperMarking.updateOne(
+    { paperId: paper._id, studentId: learner._id, schoolId: ctx.schoolId },
+    {
+      $set: {
+        teacherId: ctx.teacherId, paperType: 'assessment', classId: cls.id, studentName, imageCount: 0,
+        totalMarks: total, maxMarks: max, percentage: Math.round((total / max) * 1000) / 10,
+        questions, status: 'completed', isDeleted: false,
+      },
+    },
+    { upsert: true },
+  );
+  return true;
+}
+
 async function main(): Promise<void> {
   await mongoose.connect(config.mongodb.uri);
   try {
@@ -256,7 +309,8 @@ async function main(): Promise<void> {
     const submissions = await seedHomework(ctx);
     const unread = await seedMessages(ctx);
     const papers = await seedPapers(ctx);
-    logger.info(`Teacher demo ready for ${TEACHER_EMAIL}: ${ctx.week.length} timetable slots, ${lessons} lessons, ${submissions} submissions to mark, ${unread} unread messages, ${papers} papers.`);
+    const scriptReady = await seedPaperMarking(ctx);
+    logger.info(`Teacher demo ready for ${TEACHER_EMAIL}: ${ctx.week.length} timetable slots, ${lessons} lessons, ${submissions} submissions to mark, ${unread} unread messages, ${papers} papers${scriptReady ? ', 1 AI-marked script ready to issue' : ''}.`);
   } finally {
     await mongoose.disconnect();
   }

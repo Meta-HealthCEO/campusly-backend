@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DEMO_PERIODS, demoDates, demoPeriodConfig, planWeek } from '../plan.js';
+import { DEMO_PERIODS, demoDates, demoPaperAssignment, demoPeriodConfig, planWeek } from '../plan.js';
 
 const pairs = [
   { classId: 'g1a', subjectId: 'english', homeroom: true },
@@ -64,5 +64,15 @@ describe('demoPeriodConfig', () => {
 
   it('puts break in the 10:00 to 10:30 gap', () => {
     expect(demoPeriodConfig().breakSlots).toEqual([{ afterPeriod: 3, duration: 30, label: 'Break' }]);
+  });
+});
+
+describe('demoPaperAssignment', () => {
+  it('makes a handwritten paper that was written yesterday, so it is waiting to be marked', () => {
+    const a = demoPaperAssignment(new Date(2026, 8, 24, 10));
+    expect(a.mode).toBe('paper');
+    expect(a.dueAt).toEqual(new Date(2026, 8, 23, 12));
+    expect(a.assignedAt.getTime()).toBeLessThan(a.dueAt.getTime());
+    expect(a.releaseAt.getTime()).toBeLessThanOrEqual(a.dueAt.getTime());
   });
 });
