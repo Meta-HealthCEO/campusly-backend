@@ -83,6 +83,20 @@ describe('BehaviourService.forLearner and forClass', () => {
     await expect(BehaviourService.forLearner(f.pieter, String(f.lebo))).rejects.toThrow('You can only see behaviour for learners you teach.');
   });
 
+  it("sums every entry in the summary, not just the newest 100", async () => {
+    const f = await school();
+    const total = 130;
+    const rows = Array.from({ length: total }, (_, i) => ({
+      schoolId: f.schoolId, studentId: f.lebo, classId: f.classA, kind: 'merit', category: 'effort',
+      points: 1, severity: null, note: '', occurredAt: new Date(Date.now() - i * 1000), loggedBy: new mongoose.Types.ObjectId(f.thandi.id),
+      source: 'log', requestKey: null, legacyId: null, isDeleted: false,
+    }));
+    await BehaviourEntry.collection.insertMany(rows);
+
+    const view = await BehaviourService.forLearner(f.thandi, String(f.lebo));
+    expect(view.summary).toEqual({ merits: total, demerits: 0, incidents: 0, net: total });
+  });
+
   it("lists my class's recent behaviour with each learner's name", async () => {
     const f = await school();
     await BehaviourService.log(f.thandi, { studentId: String(f.lebo), kind: 'merit', category: 'effort' });
@@ -106,5 +120,20 @@ describe('BehaviourService.undo', () => {
     await expect(BehaviourService.undo(f.thandi, String(old._id))).rejects.toThrow('You can undo only what you logged, within a day.');
     await BehaviourService.undo(f.admin, String(old._id));
     expect((await BehaviourEntry.findById(old._id).lean())?.isDeleted).toBe(true);
+  });
+
+  it('retrying the same requestKey after an undo creates a new live entry, not the deleted one', async () => {
+    await BehaviourEntry.syncIndexes();
+    const f = await school();
+    const input = { studentId: String(f.lebo), kind: 'merit' as const, category: 'effort', requestKey: 'retry-1' };
+    const first = await BehaviourService.log(f.thandi, input);
+    await BehaviourService.undo(f.thandi, String(first._id));
+
+    const retried = await BehaviourService.log(f.thandi, input);
+
+    expect(String(retried._id)).not.toBe(String(first._id));
+    const retriedRow = await BehaviourEntry.findById(retried._id).lean();
+    expect(retriedRow?.isDeleted).toBe(false);
+    expect(await BehaviourEntry.countDocuments({ studentId: f.lebo, requestKey: 'retry-1', isDeleted: false })).toBe(1);
   });
 });

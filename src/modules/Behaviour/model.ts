@@ -51,9 +51,12 @@ const behaviourEntrySchema = new Schema<IBehaviourEntry>(
 
 behaviourEntrySchema.index({ schoolId: 1, studentId: 1, isDeleted: 1, occurredAt: -1 });
 behaviourEntrySchema.index({ schoolId: 1, classId: 1, isDeleted: 1, occurredAt: -1 });
+// A soft-deleted entry (undo) must free its requestKey: excluding isDeleted
+// entries from the partial filter lets a retry with the same key make a new
+// live entry instead of colliding with the deleted one.
 behaviourEntrySchema.index(
   { schoolId: 1, loggedBy: 1, requestKey: 1 },
-  { unique: true, partialFilterExpression: { requestKey: { $type: 'string' } } },
+  { unique: true, partialFilterExpression: { requestKey: { $type: 'string' }, isDeleted: false } },
 );
 // One log entry per old record: the migration and the old routes' copies can't duplicate.
 behaviourEntrySchema.index({ legacyId: 1 }, { unique: true, partialFilterExpression: { legacyId: { $type: 'objectId' } } });
