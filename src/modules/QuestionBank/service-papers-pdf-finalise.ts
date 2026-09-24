@@ -13,6 +13,7 @@ import { School } from '../School/model.js';
 import { BadRequestError, ForbiddenError, NotFoundError } from '../../common/errors.js';
 import { logger } from '../../common/logger.js';
 import { assertCanEditPaper, PAPER_ADMIN_ROLES } from './service-papers-auth.js';
+import { assertCanReadPaper } from './service-papers-read.js';
 import { PdfService } from './service-pdf.js';
 import { generateMemoPdf } from './service-memo-pdf.js';
 
@@ -157,6 +158,8 @@ export async function getPaperPdfBuffer(
   schoolId: string,
   actorId: string,
   actorRole: string,
+  /** An HOD may read papers written by teachers in their department. */
+  hodDepartmentId?: string | null,
 ): Promise<Buffer> {
   const paper = await AssessmentPaper.findOne({
     _id: paperId,
@@ -164,7 +167,7 @@ export async function getPaperPdfBuffer(
     isDeleted: false,
   }).lean();
   if (!paper) throw new NotFoundError('Paper not found');
-  assertCanEditPaper(paper, actorId, actorRole, 'read');
+  await assertCanReadPaper(paper, actorId, actorRole, hodDepartmentId);
 
   return PdfService.generatePaperPdf(paperId, schoolId);
 }
@@ -181,6 +184,8 @@ export async function getPaperMemo(
   schoolId: string,
   actorId: string,
   actorRole: string,
+  /** An HOD may read papers written by teachers in their department. */
+  hodDepartmentId?: string | null,
 ): Promise<IPaperMemo | null> {
   const paper = await AssessmentPaper.findOne({
     _id: paperId,
@@ -188,7 +193,7 @@ export async function getPaperMemo(
     isDeleted: false,
   }).lean();
   if (!paper) throw new NotFoundError('Paper not found');
-  assertCanEditPaper(paper, actorId, actorRole, 'read');
+  await assertCanReadPaper(paper, actorId, actorRole, hodDepartmentId);
 
   return PaperMemo.findOne({ paperId, schoolId, isDeleted: false });
 }
@@ -205,6 +210,8 @@ export async function getMemoPdfBuffer(
   schoolId: string,
   actorId: string,
   actorRole: string,
+  /** An HOD may read papers written by teachers in their department. */
+  hodDepartmentId?: string | null,
 ): Promise<Buffer> {
   const paper = await AssessmentPaper.findOne({
     _id: paperId,
@@ -215,7 +222,7 @@ export async function getMemoPdfBuffer(
     .populate('gradeId', 'name')
     .lean();
   if (!paper) throw new NotFoundError('Paper not found');
-  assertCanEditPaper(paper, actorId, actorRole, 'read');
+  await assertCanReadPaper(paper, actorId, actorRole, hodDepartmentId);
 
   const memo = await PaperMemo.findOne({ paperId, schoolId, isDeleted: false }).lean();
   if (!memo) throw new NotFoundError('Memo not found');

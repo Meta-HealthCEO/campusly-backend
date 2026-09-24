@@ -45,7 +45,10 @@ export async function buildPaperMemo(
     isDeleted: false,
   }).lean();
   if (!paper) throw new NotFoundError('Paper not found');
-  assertCanEditPaper(paper, actorId, actorRole, 'edit-memo');
+  // Owner or admin only. A finalised paper that never had a memo gets a final
+  // one built from its model answers; the paper itself doesn't change.
+  assertCanEditPaper(paper, actorId, actorRole, 'finalise');
+  const memoStatus = paper.status === 'finalised' ? 'final' : 'draft';
 
   const existing = await PaperMemo.findOne({ paperId: paper._id, schoolId: paper.schoolId });
   if (existing && !existing.isDeleted) return existing;
@@ -57,7 +60,7 @@ export async function buildPaperMemo(
 
   if (existing) {
     // A deleted memo keeps the paperId (unique index): bring it back with fresh content.
-    existing.set({ sections, totalMarks, status: 'draft', isDeleted: false, teacherId: paper.createdBy });
+    existing.set({ sections, totalMarks, status: memoStatus, isDeleted: false, teacherId: paper.createdBy });
     return existing.save();
   }
   try {
@@ -67,7 +70,7 @@ export async function buildPaperMemo(
       teacherId: paper.createdBy,
       sections,
       totalMarks,
-      status: 'draft',
+      status: memoStatus,
     });
   } catch (err: unknown) {
     // Two clicks at once: the other request created it.

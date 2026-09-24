@@ -186,6 +186,7 @@ export async function getPaperMemoHandler(req: Request, res: Response): Promise<
     schoolId,
     user.id,
     user.role,
+    user.isHOD ? user.departmentId ?? null : null,
   );
   res.json(apiResponse(true, memo));
 }
@@ -216,6 +217,7 @@ export async function getPaperPdf(req: Request, res: Response): Promise<void> {
     schoolId,
     user.id,
     user.role,
+    user.isHOD ? user.departmentId ?? null : null,
   );
   res.setHeader('Content-Type', 'application/pdf');
   res.setHeader('Content-Disposition', `inline; filename="paper-${req.params.id}.pdf"`);
@@ -232,6 +234,7 @@ export async function getMemoPdf(req: Request, res: Response): Promise<void> {
     schoolId,
     user.id,
     user.role,
+    user.isHOD ? user.departmentId ?? null : null,
   );
   res.setHeader('Content-Type', 'application/pdf');
   res.setHeader('Content-Disposition', `inline; filename="memo-${req.params.id}.pdf"`);

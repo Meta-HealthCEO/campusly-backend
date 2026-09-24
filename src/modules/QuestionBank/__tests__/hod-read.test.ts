@@ -1,6 +1,8 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import mongoose from 'mongoose';
 import { PapersService } from '../service-papers.js';
+import { getPaperMemo } from '../service-papers-pdf-finalise.js';
+import { PaperMemo } from '../../TeacherWorkbench/model.assessment.js';
 import { AssessmentPaper } from '../model.js';
 import { Department } from '../../Department/model.js';
 import { User } from '../../Auth/model.js';
@@ -36,7 +38,7 @@ async function fixture() {
   });
   return {
     schoolId: String(schoolId), hodId: String(hodId), deptId: String(dept._id),
-    deptPaper: String((await paper(deptTeacherId))._id), otherPaper: String((await paper(otherTeacherId))._id),
+    deptPaper: String((await paper(deptTeacherId))._id), otherPaper: String((await paper(otherTeacherId))._id), deptTeacherId: String(deptTeacherId),
   };
 }
 
@@ -56,5 +58,13 @@ describe('PapersService.getPaper for HODs', () => {
   it('still hides other teachers\' papers from a plain teacher', async () => {
     const f = await fixture();
     await expect(PapersService.getPaper(f.deptPaper, f.schoolId, String(oid()), 'teacher')).rejects.toThrow('Assessment paper not found');
+  });
+
+  it("lets an HOD read the memo of a department paper, which moderation needs", async () => {
+    const f = await fixture();
+    await PaperMemo.create({ paperId: f.deptPaper, schoolId: f.schoolId, teacherId: f.deptTeacherId, sections: [], totalMarks: 10 });
+    const memo = await getPaperMemo(f.deptPaper, f.schoolId, f.hodId, 'teacher', f.deptId);
+    expect(memo).not.toBeNull();
+    await expect(getPaperMemo(f.otherPaper, f.schoolId, f.hodId, 'teacher', f.deptId)).rejects.toThrow('You can only open papers from your department');
   });
 });

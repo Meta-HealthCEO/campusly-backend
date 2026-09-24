@@ -23,8 +23,8 @@ import type {
   PaperQueryInput,
 } from './validation.js';
 import { PaperModeration } from '../TeacherWorkbench/model.assessment.js';
-import { User } from '../Auth/model.js';
 import { memoSectionsFromPaper } from './service-paper-memo-build.js';
+import { assertCanReadPaper } from './service-papers-read.js';
 
 const POPULATE_LIST = [
   { path: 'subjectId', select: 'name' },
@@ -342,19 +342,7 @@ export class PapersService {
     if (!paper) throw new NotFoundError('Assessment paper not found');
 
     if (!reviewer && opts.hodDepartmentId) {
-      const createdBy = paper.createdBy as unknown;
-      const creatorId = createdBy && typeof createdBy === 'object' && '_id' in createdBy
-        ? String((createdBy as { _id: unknown })._id)
-        : String(createdBy);
-      if (creatorId !== userId) {
-        const inDepartment = await User.exists({
-          _id: new mongoose.Types.ObjectId(creatorId),
-          schoolId: soid,
-          departmentId: new mongoose.Types.ObjectId(opts.hodDepartmentId),
-          isDeleted: false,
-        });
-        if (!inDepartment) throw new ForbiddenError('You can only open papers from your department');
-      }
+      await assertCanReadPaper(paper, userId, userRole, opts.hodDepartmentId);
     }
     const m = await PaperModeration.findOne({ paperId: oid, schoolId: soid, isDeleted: false })
       .select('status comments updatedAt').lean();

@@ -53,8 +53,15 @@ describe('buildPaperMemo', () => {
     expect(first.sections[0].answers).toHaveLength(2);
   });
 
-  it('refuses to add a memo to a finalised paper', async () => {
+  it('gives a finalised paper that has no memo a final memo, without changing the paper', async () => {
     const f = await paper('finalised');
-    await expect(buildPaperMemo(f.paperId, f.schoolId, f.teacherId, 'teacher')).rejects.toThrow(/finalised/);
+    const memo = await buildPaperMemo(f.paperId, f.schoolId, f.teacherId, 'teacher');
+    expect(memo.status).toBe('final');
+    expect((await AssessmentPaper.findById(f.paperId).lean())?.status).toBe('finalised');
+  });
+
+  it("refuses someone else's paper", async () => {
+    const f = await paper('draft');
+    await expect(buildPaperMemo(f.paperId, f.schoolId, String(oid()), 'teacher')).rejects.toThrow(/own papers/);
   });
 });
