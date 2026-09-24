@@ -38,6 +38,8 @@ export class CourseStudentService {
       schoolId: soid,
       isDeleted: false,
       status: 'published',
+      // Class units belong to the classes they're released to, not the catalogue.
+      kind: { $ne: 'class_unit' },
     };
     if (filters.subjectId) {
       query.subjectId = new mongoose.Types.ObjectId(filters.subjectId);
@@ -148,12 +150,15 @@ export class CourseStudentService {
     })
       .populate({
         path: 'courseId',
-        select: 'title slug description coverImageUrl gradeLevel subjectId',
+        select: 'title slug description coverImageUrl gradeLevel subjectId kind estimatedDurationHours status',
+        // A deleted unit leaves the learner's list rather than opening to a 404.
+        match: { isDeleted: false },
         populate: { path: 'subjectId', select: 'name' },
       })
       .sort({ enrolledAt: -1 })
       .lean();
-    return { enrolments, total: enrolments.length };
+    const live = enrolments.filter((e) => e.courseId !== null);
+    return { enrolments: live, total: live.length };
   }
 
   /**
