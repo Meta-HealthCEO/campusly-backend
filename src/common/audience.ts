@@ -49,9 +49,9 @@ export async function audienceUserIds(
   return [...ids];
 }
 
-/** Distinct user ids of everyone active in the school with one of these roles. */
+/** Distinct user ids of everyone active in the school with one of these roles (older users may lack isActive: only an explicit false excludes). */
 export async function roleUserIds(schoolId: IdLike, roles: string[]): Promise<string[]> {
-  const users = await User.find({ schoolId: oid(schoolId), role: { $in: roles }, isDeleted: false, isActive: true }).select('_id').lean();
+  const users = await User.find({ schoolId: oid(schoolId), role: { $in: roles }, isDeleted: false, isActive: { $ne: false } }).select('_id').lean();
   return users.map((u) => String(u._id));
 }
 
