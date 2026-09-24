@@ -59,4 +59,29 @@ describe('migrateBehaviour', () => {
     expect(again).toMatchObject({ merits: 0, discipline: 0, alreadyMoved: 2 });
     expect(await BehaviourEntry.countDocuments({ schoolId: f.schoolId })).toBe(2);
   });
+
+  it('pages through records in small batches without losing or duplicating any', async () => {
+    // Proves the migration doesn't load the whole collection into memory: a
+    // batchSize far smaller than the record count forces several round trips.
+    const schoolId = oid();
+    const classId = oid();
+    const teacher = oid();
+    const learners = await Promise.all(Array.from({ length: 7 }, async () => {
+      const id = oid();
+      await Student.collection.insertOne({ _id: id, schoolId, userId: oid(), classId, admissionNumber: `A-${id}`, isDeleted: false });
+      return id;
+    }));
+    const when = new Date('2026-08-01T08:00:00Z');
+    await Merit.collection.insertMany(learners.map((studentId) => (
+      { schoolId, studentId, awardedBy: teacher, type: 'merit', points: 1, category: 'behaviour', reason: 'Batch test.', isDeleted: false, createdAt: when }
+    )));
+
+    const report = await migrateBehaviour({ apply: true, schoolId: String(schoolId), batchSize: 2 });
+    expect(report).toMatchObject({ merits: 7, discipline: 0, skippedLeftLearners: 0, alreadyMoved: 0 });
+    expect(await BehaviourEntry.countDocuments({ schoolId })).toBe(7);
+
+    const again = await migrateBehaviour({ apply: true, schoolId: String(schoolId), batchSize: 2 });
+    expect(again).toMatchObject({ merits: 0, discipline: 0, alreadyMoved: 7 });
+    expect(await BehaviourEntry.countDocuments({ schoolId })).toBe(7);
+  });
 });
