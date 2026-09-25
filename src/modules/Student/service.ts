@@ -5,6 +5,7 @@ import { BadRequestError, NotFoundError } from '../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../common/constants.js';
 import { escapeRegex } from '../../common/utils.js';
 import { classRosterFilter } from '../../common/class-roster.js';
+import { enrolOnJoin } from '../Course/enrolment.js';
 import { EmailService } from '../../services/email.service.js';
 import { regenerateCredentials } from './service-regenerate.js';
 import crypto from 'crypto';
@@ -256,6 +257,7 @@ export class StudentService {
 
     const student = new Student(studentData);
     const saved = await student.save();
+    await enrolOnJoin(saved._id as Types.ObjectId, saved.classId, saved.schoolId);
 
     if (studentData.guardianIds && studentData.guardianIds.length > 0) {
       await syncGuardianLinks(saved.schoolId, saved._id as IStudent['_id'], [], studentData.guardianIds);
@@ -414,15 +416,23 @@ export class StudentService {
     const kept = new Set((previous?.guardianIds ?? []).map(String));
     await assertGuardiansInSchool(schoolId, studentData.guardianIds?.filter((g) => !kept.has(String(g))));
 
-    // Update the student document (excluding User-record fields)
+    // Update the student document (excluding User-record fields). When the group
+    // changes, load the old one; moving into a group the learner had joined as a
+    // second group removes it from subjectClassIds (never listed twice).
+    const before = studentData.classId
+      ? await Student.findOne({ _id: id, schoolId, isDeleted: false }).select('classId').lean()
+      : null;
+    const newClassId = studentData.classId ? new mongoose.Types.ObjectId(String(studentData.classId)) : null;
     const student = await Student.findOneAndUpdate(
       { _id: id, schoolId, isDeleted: false },
-      { $set: studentData },
+      newClassId ? { $set: studentData, $pull: { subjectClassIds: newClassId } } : { $set: studentData },
       { new: true, runValidators: true },
     );
-
     if (!student) {
       throw new NotFoundError('Student not found');
+    }
+    if (newClassId && String(before?.classId) !== String(newClassId)) {
+      await enrolOnJoin(student._id as Types.ObjectId, newClassId, schoolId);
     }
 
     if (studentData.guardianIds) {

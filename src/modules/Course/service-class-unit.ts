@@ -20,6 +20,7 @@ import { AIService } from '../../services/ai.service.js';
 import { checkUsageLimit } from '../../middleware/usageLimits.js';
 import { enqueueCourseGeneration } from '../../jobs/course-generation.job.js';
 import { BadRequestError, ForbiddenError, NotFoundError } from '../../common/errors.js';
+import { classRosterFilter } from '../../common/class-roster.js';
 
 export interface CreateClassUnitInput {
   classId: string;
@@ -329,7 +330,7 @@ export class ClassUnitService {
       .select('_id name').lean();
     if (classes.length !== ids.length) throw new NotFoundError('Class not found');
     for (const klass of classes) {
-      const learners = await Student.countDocuments({ classId: klass._id, schoolId: course.schoolId, isDeleted: false });
+      const learners = await Student.countDocuments(classRosterFilter(klass._id, { schoolId: course.schoolId, isDeleted: false }));
       if (learners === 0) throw new BadRequestError(`${klass.name} has no learners yet`);
     }
 

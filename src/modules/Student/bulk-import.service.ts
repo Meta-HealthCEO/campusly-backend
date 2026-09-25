@@ -3,6 +3,7 @@ import { User } from '../Auth/model.js';
 import { Grade } from '../Academic/model.js';
 import { Class } from '../Academic/model.js';
 import { UserRole } from '../../common/enums.js';
+import { enrolOnJoin } from '../Course/enrolment.js';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -274,7 +275,7 @@ export class BulkImportService {
           phone: row.phone?.trim() || undefined,
         });
 
-        await Student.create({
+        const created = await Student.create({
           userId: user._id,
           schoolId,
           gradeId: row.gradeId,
@@ -285,6 +286,7 @@ export class BulkImportService {
           homeLanguage: row.homeLanguage?.trim() || undefined,
           saIdNumber: row.saIdNumber?.trim() || undefined,
         });
+        await enrolOnJoin(created._id, row.classId, schoolId);
 
         imported++;
       } catch (err: unknown) {

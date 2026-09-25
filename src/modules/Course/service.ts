@@ -18,6 +18,8 @@ import {
   BadRequestError,
 } from '../../common/errors.js';
 import { escapeRegex } from '../../common/utils.js';
+import { classRosterFilter } from '../../common/class-roster.js';
+import { upsertEnrolments } from './enrolment.js';
 import { UserRole } from '../../common/enums.js';
 import type {
   CreateCourseInput,
@@ -730,12 +732,8 @@ export class CourseService {
     }).lean();
     if (!klass) throw new NotFoundError('Class not found');
 
-    // Fetch all students in the class.
-    const students = await Student.find({
-      classId: classOid,
-      schoolId: soid,
-      isDeleted: false,
-    })
+    // Every learner in the group: their own group, or a group they joined (spec §3).
+    const students = await Student.find(classRosterFilter(classOid, { schoolId: soid, isDeleted: false }))
       .select('_id')
       .lean();
 
@@ -743,41 +741,13 @@ export class CourseService {
       throw new BadRequestError('No students found in this class');
     }
 
-    // Bulk upsert enrolments. `ordered: false` means duplicates (students
-    // already enroled) don't abort the batch; `upsert` handles the "unique"
-    // index gracefully.
-    const ops = students.map((s) => ({
-      updateOne: {
-        filter: {
-          courseId: course._id,
-          studentId: s._id,
-          isDeleted: false,
-        },
-        update: {
-          $setOnInsert: {
-            isDeleted: false,
-            schoolId: course.schoolId,
-            courseId: course._id,
-            studentId: s._id,
-            enrolledBy: new mongoose.Types.ObjectId(actor.userId),
-            classId: classOid,
-            enrolledAt: new Date(),
-            status: 'active' as const,
-            progressPercent: 0,
-            completedAt: null,
-            certificateId: null,
-          },
-        },
-        upsert: true,
-      },
-    }));
-
-    const result = await Enrolment.bulkWrite(ops, { ordered: false });
-    return {
-      attempted: students.length,
-      newEnrolments: result.upsertedCount ?? 0,
-      alreadyEnroled: result.matchedCount ?? 0,
-    };
+    const result = await upsertEnrolments(
+      { _id: course._id as mongoose.Types.ObjectId, schoolId: course.schoolId as mongoose.Types.ObjectId },
+      classOid,
+      students.map((s) => s._id as mongoose.Types.ObjectId),
+      new mongoose.Types.ObjectId(actor.userId),
+    );
+    return { attempted: students.length, ...result };
   }
 
   static async listEnrolments(
