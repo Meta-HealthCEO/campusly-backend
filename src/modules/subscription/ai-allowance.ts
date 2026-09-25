@@ -60,7 +60,7 @@ const oid = (id: string) => new mongoose.Types.ObjectId(id);
 export async function aiAllowance(schoolId: string, now: Date = new Date()): Promise<AIAllowance> {
   const { start, end } = sastMonthWindow(now);
   const [sub, used] = await Promise.all([
-    Subscription.findOne({ schoolId: oid(schoolId) }).select('status currentPeriodEnd').lean(),
+    Subscription.findOne({ schoolId: oid(schoolId) }).select('status currentPeriodEnd trialEndsAt pastDueSince').lean(),
     AIUsage.countDocuments({ schoolId: oid(schoolId), createdAt: { $gte: start, $lt: end } }),
   ]);
   const plan = isSubscriptionEntitled(sub, now) ? 'pro' : 'free';

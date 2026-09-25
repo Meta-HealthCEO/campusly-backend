@@ -4,6 +4,7 @@ import { Subscription } from '../model.js';
 import { SubscriptionService } from '../service.js';
 import { isSubscriptionEntitled } from '../entitlements.js';
 import { seedPlans } from '../seed.js';
+import { aiAllowance } from '../ai-allowance.js';
 
 const DAY = 86400000;
 const made: mongoose.Types.ObjectId[] = [];
@@ -44,6 +45,15 @@ describe('cancelling during the free trial', () => {
     await SubscriptionService.chargeSubscription(sub._id as mongoose.Types.ObjectId);
     const ended = await Subscription.findById(sub._id).lean();
     expect(ended).toMatchObject({ status: 'free', planCode: 'free', cardTokenGuid: null, nextBillingAt: null, trialEndsAt: null });
+  });
+
+  it('the AI allowance stays at Pro (500) until the canceled trial ends', async () => {
+    const trialEndsAt = new Date(Date.now() + 5 * DAY);
+    const sub = await makeTrialSub(trialEndsAt);
+    await SubscriptionService.cancel(sub.schoolId);
+    const allowance = await aiAllowance(String(sub.schoolId));
+    expect(allowance).toMatchObject({ plan: 'pro', limit: 500 });
+    expect(await aiAllowance(String(sub.schoolId), new Date(trialEndsAt.getTime() + 1000))).toMatchObject({ plan: 'free', limit: 20 });
   });
 
   it('resuming before the trial ends puts the teacher back on the trial, billed when it ends', async () => {
