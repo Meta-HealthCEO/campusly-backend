@@ -77,7 +77,8 @@ export async function importDraft(raw: unknown): Promise<{
   return { report, blueprint, changed: true };
 }
 
-async function revalidate(doc: IExamBlueprint): Promise<ValidationReport> {
+/** The validation report for a stored blueprint, against the nodes as they are now. */
+export async function reportFor(doc: IExamBlueprint): Promise<ValidationReport> {
   const data = blueprintData(doc);
   const file = blueprintFileSchema.parse({ ...data, papers: data.papers.map((p) => ({ ...p, topics: p.topics.map((t) => ({ ...t, nodes: t.nodes.map((n) => n.code) })) })) });
   const { byCode, family } = await loadNodesFor(file);
@@ -87,7 +88,7 @@ async function revalidate(doc: IExamBlueprint): Promise<ValidationReport> {
 export async function publishBlueprint(id: string, byUserId: string, acknowledgeWarnings: boolean): Promise<IExamBlueprint> {
   const doc = await ExamBlueprint.findOne({ _id: id, status: 'draft', isDeleted: false });
   if (!doc) throw new NotFoundError('Draft blueprint not found');
-  const report = await revalidate(doc);
+  const report = await reportFor(doc);
   if (report.errors.length > 0) throw new BadRequestError(`This blueprint has errors: ${report.errors.join('; ')}`);
   if (report.warnings.length > 0 && !acknowledgeWarnings) throw new BadRequestError(`Acknowledge the warnings to publish: ${report.warnings.join('; ')}`);
   const other = await ExamBlueprint.findOne({

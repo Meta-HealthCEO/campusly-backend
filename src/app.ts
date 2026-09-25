@@ -96,6 +96,7 @@ import coursePublicRoutes from './modules/Course/routes-public.js';
 import assessmentStructureRoutes from './modules/AssessmentStructure/routes.js';
 import paperImportRouter from './modules/PaperImport/routes.js';
 import teacherSettingsRouter from './modules/TeacherSettings/routes.js';
+import readinessRoutes from './modules/Readiness/routes.js';
 
 const app = express();
 
@@ -227,6 +228,7 @@ app.use('/api/classroom', authenticate, classroomRoutes);
 app.use('/api/content-library', authenticate, contentLibraryRoutes);
 app.use('/api/content-library/student', authenticate, contentLibraryStudentRoutes);
 app.use('/api/question-bank', authenticate, questionBankRoutes);
+app.use('/api/readiness', authenticate, readinessRoutes);
 app.use('/api/textbooks', authenticate, textbookRoutes);
 app.use('/api/courses', authenticate, requireModule('courses'), courseRoutes);
 app.use('/api/assessment-structures', authenticate, requireModule('academic'), assessmentStructureRoutes);
