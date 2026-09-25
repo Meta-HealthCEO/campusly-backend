@@ -19,6 +19,7 @@ interface FakeRes {
   flushHeaders?: () => void;
   write: (chunk: string) => boolean;
   end: () => void;
+  on: (event: string, handler: () => void) => FakeRes;
 }
 
 function fakeRes(opts: { flushes: boolean }): FakeRes {
@@ -34,6 +35,9 @@ function fakeRes(opts: { flushes: boolean }): FakeRes {
     },
     end() {
       res.ended = true;
+    },
+    on() {
+      return res;
     },
   };
   if (opts.flushes) res.flushHeaders = () => { res.headersSent = true; };

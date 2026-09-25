@@ -13,6 +13,7 @@ import { AppError } from '../../common/errors.js';
 import { logger } from '../../common/logger.js';
 import {
   assertLearnerAIAllowance, learnerAIActorFor, learnerTutorUsage, recordLearnerAIUse, withLearnerAIAllowance,
+  type LearnerAIActor,
 } from '../subscription/learner-ai.js';
 
 const STREAM_FAILED = 'Something went wrong. Try again.';
@@ -22,6 +23,22 @@ function streamErrorPayload(err: unknown): { message: string; code?: string } {
   if (err instanceof AppError) return err.code ? { message: err.message, code: err.code } : { message: err.message };
   logger.error({ err }, '[AITutor] chat stream failed');
   return { message: STREAM_FAILED };
+}
+
+/**
+ * Counts one learner tutor message. The reply was already delivered (and, when
+ * complete, saved), so a failure to count it is logged, never sent to the
+ * learner as an error (release review M5).
+ */
+async function countTutorMessage(learner: LearnerAIActor): Promise<void> {
+  try {
+    await recordLearnerAIUse(learner, 'tutor_message');
+  } catch (err: unknown) {
+    logger.error(
+      { err: err instanceof Error ? err.message : String(err), userId: learner.userId, schoolId: learner.schoolId },
+      '[AITutor] recording a learner tutor message failed; the reply was delivered',
+    );
+  }
 }
 
 export class AITutorController {
@@ -63,24 +80,34 @@ export class AITutorController {
       res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
     };
 
+    // The client leaving is heard on the response: a request's 'close' fires
+    // as soon as its body has been read, not when the client goes away.
     const abortController = new AbortController();
-    req.on('close', () => abortController.abort());
+    res.on('close', () => abortController.abort());
+
+    // A learner message counts once any of the reply has reached them (release
+    // review M3); a stream that fails or is left before any output is free.
+    let delivered = false;
+    const onDelta = (chunk: string): void => {
+      delivered = true;
+      send('delta', { text: chunk });
+    };
 
     try {
       const conversation = await AITutorService.streamMessage(
         userId,
         schoolId,
         req.body,
-        (chunk) => send('delta', { text: chunk }),
+        onDelta,
         {
           signal: abortController.signal,
           onConversationReady: (conv) => send('meta', { conversationId: conv._id }),
         },
       );
-      // Counted only once the reply is complete; a failed or aborted stream is free.
-      await recordLearnerAIUse(learner, 'tutor_message');
+      await countTutorMessage(learner);
       send('done', conversation);
     } catch (err: unknown) {
+      if (delivered) await countTutorMessage(learner);
       // Nothing sent yet: let the error handler answer with the real status.
       if (!res.headersSent) throw err;
       // The client went away (it aborts the stream): nobody left to tell.
