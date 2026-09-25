@@ -41,18 +41,6 @@ export const verifyEmailSchema = z.object({
   token: z.string().regex(/^[0-9a-f]{64}$/, 'This link has expired or was already used. Send a new one.'),
 }).strict();
 
-export const registerTeacherSchema = z.object({
-  firstName: z.string().min(1, 'First name is required').trim(),
-  lastName: z.string().min(1, 'Last name is required').trim(),
-  email: z.email(),
-  password: z
-    .string()
-    .min(8, 'Password must be at least 8 characters')
-    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-    .regex(/[0-9]/, 'Password must contain at least one number'),
-  schoolName: z.string().optional(),
-}).strict();
-
 export const registerStudentSchema = z.object({
   firstName: z.string().min(1, 'First name is required').trim(),
   lastName: z.string().min(1, 'Last name is required').trim(),
@@ -100,7 +88,6 @@ export const joinSchoolSchema = z.object({
 }).strict();
 
 export type RegisterInput = z.infer<typeof registerSchema>;
-export type RegisterTeacherInput = z.infer<typeof registerTeacherSchema>;
 export type RegisterStudentInput = z.infer<typeof registerStudentSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type RefreshInput = z.infer<typeof refreshSchema>;

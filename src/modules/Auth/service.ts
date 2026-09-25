@@ -10,13 +10,11 @@ import {
   UnauthorizedError,
 } from '../../common/errors.js';
 import { EmailService } from '../../services/email.service.js';
-import type { RegisterInput, RegisterTeacherInput, JoinSchoolInput, RegisterStudentInput } from './validation.js';
+import type { RegisterInput, JoinSchoolInput, RegisterStudentInput } from './validation.js';
 import mongoose from 'mongoose';
-import { School, generateJoinCode } from '../School/model.js';
+import { School } from '../School/model.js';
 import { Class } from '../Academic/model.js';
 import { Student } from '../Student/model.js';
-import { SubscriptionService } from '../subscription/service.js';
-import { STANDALONE_DEFAULT_MODULES } from '../../common/moduleConfig.js';
 
 export interface TokenPair {
   accessToken: string;
@@ -70,52 +68,6 @@ export class AuthService {
     const user = await User.create(data);
     const tokens = AuthService.generateTokenPair(user);
 
-    user.refreshTokens.push(tokens.refreshToken);
-    await user.save();
-
-    return { user, tokens };
-  }
-
-  static async registerTeacher(data: RegisterTeacherInput): Promise<{ user: IUser; tokens: TokenPair }> {
-    const existingUser = await User.findOne({ email: data.email.toLowerCase() });
-    if (existingUser) {
-      throw new ConflictError('A user with this email already exists');
-    }
-
-    const schoolName = data.schoolName?.trim() || `${data.firstName}'s Classroom`;
-
-    // Create the school with sensible defaults for an independent teacher
-    const school = await School.create({
-      name: schoolName,
-      type: 'combined',
-      address: { street: 'TBD', city: 'TBD', province: 'TBD', postalCode: '0000', country: 'South Africa' },
-      contactInfo: { email: data.email.toLowerCase(), phone: '0000000000' },
-      modulesEnabled: [...STANDALONE_DEFAULT_MODULES],
-      settings: { academicYear: new Date().getFullYear(), terms: 4, gradingSystem: 'percentage' },
-      principal: `${data.firstName} ${data.lastName}`,
-      joinCode: generateJoinCode(),
-      isActive: true,
-      plan: 'standalone',
-    });
-
-    await SubscriptionService.createInitialFreeSubscription(school._id as mongoose.Types.ObjectId);
-
-    // Create user as teacher + school principal
-    const user = await User.create({
-      email: data.email.toLowerCase(),
-      password: data.password,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      role: 'teacher',
-      schoolId: school._id,
-      isSchoolPrincipal: true,
-      isStandaloneTeacher: true,
-    });
-
-    school.ownerUserId = user._id as typeof school.ownerUserId;
-    await school.save();
-
-    const tokens = AuthService.generateTokenPair(user);
     user.refreshTokens.push(tokens.refreshToken);
     await user.save();
 

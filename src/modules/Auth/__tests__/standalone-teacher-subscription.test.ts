@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import mongoose from 'mongoose';
-import { AuthService } from '../service.js';
 import { StandaloneService } from '../standalone.service.js';
 import { Subscription } from '../../subscription/model.js';
 import { School } from '../../School/model.js';
@@ -20,21 +19,6 @@ afterAll(async () => {
 });
 
 describe('teacher signup creates Free subscription', () => {
-  it('AuthService.registerTeacher creates Subscription with status=free', async () => {
-    const email = `t+${Date.now()}-a@test.local`;
-    const { user } = await AuthService.registerTeacher({
-      email,
-      password: 'Password1!',
-      firstName: 'T',
-      lastName: 'X',
-      schoolName: `t_signup_${Date.now()}_a`,
-    });
-    const sub = await Subscription.findOne({ schoolId: user.schoolId });
-    expect(sub).not.toBeNull();
-    expect(sub?.status).toBe('free');
-    expect(sub?.planCode).toBe('free');
-  });
-
   it('StandaloneService.signup creates Subscription with status=free', async () => {
     const email = `t+${Date.now()}-b@test.local`;
     const { user } = await StandaloneService.signup({

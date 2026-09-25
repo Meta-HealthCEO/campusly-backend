@@ -1,5 +1,19 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
+import type { NextFunction, Request, Response } from 'express';
 import mongoose from 'mongoose';
+import request from 'supertest';
+
+// Rate limiting is not under test here, and its Redis client blocks forever
+// when Redis is down (maxRetriesPerRequest: null), so swap in a pass-through.
+vi.mock('../../../middleware/rateLimiter.js', () => ({
+  createRateLimiter: () => (_req: Request, _res: Response, next: NextFunction) => next(),
+}));
+
+import app from '../../../app.js';
+import { TeacherSettingsService } from '../../TeacherSettings/service.js';
+import { CurriculumNode } from '../../CurriculumStructure/model.js';
+import { Class, Grade, Subject } from '../../Academic/model.js';
+import { Course } from '../../Course/model.js';
 import { StandaloneService } from '../standalone.service.js';
 import { School } from '../../School/model.js';
 import { User } from '../model.js';
@@ -18,6 +32,11 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  await CurriculumNode.deleteMany({ schoolId: { $in: createdSchoolIds } });
+  await Class.deleteMany({ schoolId: { $in: createdSchoolIds } });
+  await Grade.deleteMany({ schoolId: { $in: createdSchoolIds } });
+  await Subject.deleteMany({ schoolId: { $in: createdSchoolIds } });
+  await Course.deleteMany({ schoolId: { $in: createdSchoolIds } });
   await Lesson.deleteMany({ schoolId: { $in: createdSchoolIds } });
   await Homework.deleteMany({ schoolId: { $in: createdSchoolIds } });
   await GeneratedPaper.deleteMany({ schoolId: { $in: createdSchoolIds } });
@@ -119,5 +138,53 @@ describe('getOnboardingStatus.hasFirstContent', () => {
       String(school._id),
     );
     expect(status.hasFirstContent).toBe(true);
+  });
+});
+
+describe('getOnboardingStatus — the three onboarding steps', () => {
+  async function capsGradeAndSubject(schoolId: mongoose.Types.ObjectId) {
+    const frameworkId = new mongoose.Types.ObjectId();
+    const grade = await CurriculumNode.create({ frameworkId, type: 'grade', title: 'Grade 4', code: 'G4', order: 4, schoolId });
+    const subject = await CurriculumNode.create({
+      frameworkId, type: 'subject', title: 'Mathematics', code: 'G4-MATH', order: 1, schoolId, parentId: grade._id, gradeId: grade._id,
+    });
+    return { gradeId: String(grade._id), subjectId: String(subject._id) };
+  }
+
+  it('a new standalone teacher has not picked what they teach, made a class, or made a lesson', async () => {
+    const { user, school } = await makeTeacher();
+    const status = await StandaloneService.getOnboardingStatus(String(user._id), String(school._id));
+    expect(status).toMatchObject({ hasScope: false, hasClass: false, hasUnit: false });
+  });
+
+  it('knows each step once it is done', async () => {
+    const { user, school } = await makeTeacher();
+    const schoolId = school._id as mongoose.Types.ObjectId;
+    const { gradeId, subjectId } = await capsGradeAndSubject(schoolId);
+    await TeacherSettingsService.updateTeachingScope(String(user._id), { grades: [gradeId], subjectsByGrade: [{ gradeId, subjectIds: [subjectId] }] });
+    await Class.create({
+      name: 'Grade 4 Mathematics', gradeId: new mongoose.Types.ObjectId(), schoolId, teacherId: user._id, capacity: 40,
+      classroomCode: `C${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
+    });
+    await Course.create({ schoolId, title: 'Fractions', slug: `fractions-${Date.now()}`, createdBy: user._id, kind: 'class_unit' });
+
+    const status = await StandaloneService.getOnboardingStatus(String(user._id), String(schoolId));
+    expect(status).toMatchObject({ hasScope: true, hasClass: true, hasUnit: true });
+  });
+
+  it('a catalogue course is not a first lesson', async () => {
+    const { user, school } = await makeTeacher();
+    await Course.create({ schoolId: school._id, title: 'Catalogue', slug: `cat-${Date.now()}`, createdBy: user._id, kind: 'catalogue' });
+    const status = await StandaloneService.getOnboardingStatus(String(user._id), String(school._id));
+    expect(status.hasUnit).toBe(false);
+  });
+});
+
+describe('one teacher sign-up', () => {
+  it('POST /api/auth/register-teacher is gone', async () => {
+    const res = await request(app).post('/api/auth/register-teacher').send({
+      firstName: 'Old', lastName: 'Form', email: `obs+gone${Date.now()}@test.local`, password: 'Password1',
+    });
+    expect(res.status).toBe(404);
   });
 });

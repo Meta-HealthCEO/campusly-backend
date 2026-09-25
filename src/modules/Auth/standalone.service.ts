@@ -7,6 +7,7 @@ import { CurriculumFramework } from '../TeacherWorkbench/model.js';
 import { Lesson } from '../Lesson/model.js';
 import { Homework } from '../Homework/model.js';
 import { GeneratedPaper } from '../AITools/model.js';
+import { Course } from '../Course/model.js';
 import { AuthService } from './service.js';
 import { SubscriptionService } from '../subscription/service.js';
 import { ConflictError, NotFoundError } from '../../common/errors.js';
@@ -24,10 +25,14 @@ interface StandaloneSignupInput {
 }
 
 interface OnboardingStatus {
+  /** Step 1: the teacher picked at least one CAPS grade (with subjects). */
+  hasScope: boolean;
   hasClass: boolean;
   hasStudent: boolean;
   hasFramework: boolean;
   hasFirstContent: boolean;
+  /** Step 3: the teacher has built a class unit (shown as a "lesson"). */
+  hasUnit: boolean;
   dismissed: boolean;
 }
 
@@ -103,18 +108,21 @@ export class StandaloneService {
       $or: [{ schoolId: null }, { schoolId }],
       isDeleted: false,
     });
-    const [hasLesson, hasHomework, hasPaper] = await Promise.all([
+    const [hasLesson, hasHomework, hasPaper, hasUnit] = await Promise.all([
       Lesson.exists({ schoolId, isDeleted: false }),
       Homework.exists({ schoolId, isDeleted: false }),
       GeneratedPaper.exists({ schoolId, isDeleted: false }),
+      Course.exists({ schoolId, kind: 'class_unit', isDeleted: false }),
     ]);
     const hasFirstContent = Boolean(hasLesson || hasHomework || hasPaper);
 
     return {
+      hasScope: (user.teachingScope?.grades?.length ?? 0) > 0,
       hasClass: classCount > 0,
       hasStudent: studentCount > 0,
       hasFramework: frameworkCount > 0,
       hasFirstContent,
+      hasUnit: Boolean(hasUnit),
       dismissed: user.onboardingDismissed,
     };
   }

@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import request from 'supertest';
 import mongoose from 'mongoose';
 import app from '../../../app.js';
-import { AuthService } from '../../Auth/service.js';
+import { StandaloneService } from '../../Auth/standalone.service.js';
 import { User } from '../../Auth/model.js';
 import { School } from '../../School/model.js';
 import { Plan, Subscription } from '../model.js';
@@ -14,7 +14,7 @@ const createdSchools: mongoose.Types.ObjectId[] = [];
 
 async function freeTeacher() {
   const email = `allowance+${Date.now()}_${Math.floor(Math.random() * 1e6)}@test.local`;
-  const { user, tokens } = await AuthService.registerTeacher({
+  const { user, tokens } = await StandaloneService.signup({
     firstName: 'Free', lastName: 'Teacher', email, password: 'Password1',
   });
   const schoolId = user.schoolId as mongoose.Types.ObjectId;

@@ -56,22 +56,6 @@ export class AuthController {
     );
   }
 
-  static async registerTeacher(req: Request, res: Response): Promise<void> {
-    const { user, tokens } = await AuthService.registerTeacher(req.body);
-
-    res.cookie('refresh_token', tokens.refreshToken, REFRESH_COOKIE_OPTIONS);
-
-    const userData = user.toObject();
-    const { password: _, refreshTokens: __, ...safeUser } = userData;
-
-    res.status(201).json(
-      apiResponse(true, {
-        user: safeUser,
-        accessToken: tokens.accessToken,
-      }, 'Teacher registered successfully'),
-    );
-  }
-
   static async signupStandaloneTeacher(req: Request, res: Response): Promise<void> {
     const { user, tokens } = await StandaloneService.signup(req.body);
 

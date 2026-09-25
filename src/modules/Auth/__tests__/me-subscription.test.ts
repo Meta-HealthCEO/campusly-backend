@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import request from 'supertest';
 import mongoose from 'mongoose';
 import app from '../../../app.js';
-import { AuthService } from '../service.js';
+import { StandaloneService } from '../standalone.service.js';
 import { User } from '../model.js';
 import { School } from '../../School/model.js';
 import { Subscription, Plan } from '../../subscription/model.js';
@@ -27,12 +27,11 @@ afterAll(async () => {
 describe('GET /api/auth/me returns user + subscription + plan', () => {
   it('returns the free subscription block for a fresh standalone teacher', async () => {
     const email = `me+${Date.now()}@test.local`;
-    const { user } = await AuthService.registerTeacher({
+    const { user } = await StandaloneService.signup({
       email,
       password: 'Password1!',
-      firstName: 'M',
+      firstName: 'me_M',
       lastName: 'E',
-      schoolName: `me_${Date.now()}`,
     });
     const token = signTestToken({
       id: (user._id as mongoose.Types.ObjectId).toString(),
