@@ -32,7 +32,7 @@ describe('quizQuestionAsBankShape', () => {
 });
 
 describe('a regraded quiz homework', () => {
-  it('gives a correct multiple-choice answer its marks', async () => {
+  it.each([['A', 2, 3], ['B', 0, 1]])('marks a multiple-choice answer %s against the quiz options (%i marks)', async (choice, awarded, mark) => {
     const quizId = oid();
     const homeworkId = oid();
     const submissionId = oid();
@@ -55,7 +55,7 @@ describe('a regraded quiz homework', () => {
       _id: submissionId, homeworkId, studentId: oid(), schoolId, type: 'quiz', homeworkVersion: 1, submittedAt: now, isLate: false,
       gradingStatus: 'pending', gradingGeneration: 2, maxMarks: 5, isDeleted: false, createdAt: now, updatedAt: now,
       answers: [
-        { questionIndex: 0, studentAnswer: 'A', questionSnapshot: '2 + 2?', maxMarks: 2, gradingMethod: 'pending' },
+        { questionIndex: 0, studentAnswer: choice, questionSnapshot: '2 + 2?', maxMarks: 2, gradingMethod: 'pending' },
         { questionIndex: 1, studentAnswer: 'It halves', questionSnapshot: 'Explain why 0 is even.', maxMarks: 3, gradingMethod: 'pending' },
       ],
     });
@@ -63,9 +63,9 @@ describe('a regraded quiz homework', () => {
     await gradeSubmissionAsync(String(submissionId));
 
     const sub = await HomeworkSubmission.collection.findOne({ _id: submissionId });
-    expect(sub?.answers[0].awarded).toBe(2);
+    expect(sub?.answers[0].awarded).toBe(awarded);
     expect(sub?.answers[0].gradingMethod).toBe('deterministic');
     expect(sub?.gradingStatus).toBe('graded');
-    expect(sub?.mark).toBe(3);
+    expect(sub?.mark).toBe(mark);
   });
 });

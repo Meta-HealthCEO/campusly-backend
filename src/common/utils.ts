@@ -84,6 +84,8 @@ export async function cascadeSoftDeleteSchool(schoolId: string): Promise<number>
     'Assessment',
     'Mark',
     'AnswerEvidence',
+    'DiagnosisCache',
+    'DiagnosisRequest',
     'Exam',
     'ExamTimetable',
     'PastPaper',

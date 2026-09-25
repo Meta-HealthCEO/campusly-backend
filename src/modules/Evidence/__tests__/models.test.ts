@@ -2,7 +2,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import mongoose from 'mongoose';
 import { AnswerEvidence } from '../model.js';
-import { MisconceptionType } from '../model-taxonomy.js';
+import { DiagnosisCache, DiagnosisRequest, MisconceptionType } from '../model-taxonomy.js';
 import { GENERIC_TYPES, ensureGenericTypes, genericTypeId, resetGenericTypeCache } from '../taxonomy-generic.js';
 import { cascadeSoftDeleteSchool } from '../../../common/utils.js';
 
@@ -15,7 +15,7 @@ beforeAll(async () => {
 });
 beforeEach(() => resetGenericTypeCache());
 afterAll(async () => {
-  await AnswerEvidence.deleteMany({ schoolId });
+  await Promise.all([AnswerEvidence.deleteMany({ schoolId }), DiagnosisCache.deleteMany({ schoolId }), DiagnosisRequest.deleteMany({ schoolId })]);
   await mongoose.disconnect();
 });
 
@@ -49,8 +49,13 @@ describe('the evidence models', () => {
     await MisconceptionType.updateOne({ code: 'GEN.careless-arithmetic' }, { $set: { label: 'Arithmetic slip' } }); // later files read the label
   });
 
-  it("goes with the school's cascade soft delete", async () => {
+  it("goes with the school's cascade soft delete, with the school's cache and AI ledger", async () => {
+    const typeId = (await ensureGenericTypes()).get('unanswered')!;
+    await DiagnosisCache.create({ schoolId, cacheKey: `k-${String(schoolId)}`, typeId, explanation: 'x', confidence: 1 });
+    await DiagnosisRequest.create({ kind: 'diagnosis', schoolId, mode: 'fixture', state: 'done', model: 'm' });
     await cascadeSoftDeleteSchool(String(schoolId));
     expect(await AnswerEvidence.countDocuments({ schoolId, isDeleted: false })).toBe(0);
+    expect(await DiagnosisCache.countDocuments({ schoolId, isDeleted: true })).toBe(1);
+    expect(await DiagnosisRequest.countDocuments({ schoolId, isDeleted: true })).toBe(1);
   });
 });

@@ -74,6 +74,8 @@ export interface IDiagnosisCache extends Document {
   explanation: string;
   confidence: number;
   requestId: Types.ObjectId | null;
+  /** Goes with the school's cascade (orchestrator ruling 9); every read filters it. */
+  isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -86,6 +88,7 @@ const diagnosisCacheSchema = new Schema<IDiagnosisCache>(
     explanation: { type: String, default: '', maxlength: 240 },
     confidence: { type: Number, required: true, min: 0, max: 1 },
     requestId: ref('DiagnosisRequest'),
+    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true },
 );
@@ -114,6 +117,8 @@ export interface IDiagnosisRequest {
   usage: { input: number; output: number };
   error: string | null;
   completedAt: Date | null;
+  /** Goes with the school's cascade (orchestrator ruling 9); every read filters it. */
+  isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -137,6 +142,7 @@ const diagnosisRequestSchema = new Schema<IDiagnosisRequest>(
     usage: { input: { type: Number, default: 0 }, output: { type: Number, default: 0 } },
     error: { type: String, default: null },
     completedAt: { type: Date, default: null },
+    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true },
 );
