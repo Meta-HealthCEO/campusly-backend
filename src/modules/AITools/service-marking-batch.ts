@@ -7,6 +7,7 @@ import {
   type MarkingBatchPageExtract,
 } from './model-marking-batch.js';
 import { Student } from '../Student/model.js';
+import { classRosterFilter } from '../../common/class-roster.js';
 import { logger } from '../../common/logger.js';
 import { BadRequestError } from '../../common/errors.js';
 import { batchDir, finaliseImages } from './service-marking-images.js';
@@ -224,11 +225,11 @@ interface PopulatedRosterRecord {
   userId?: { firstName?: string | null; lastName?: string | null } | null;
 }
 
-async function loadRoster(
+export async function loadRoster(
   classId: mongoose.Types.ObjectId,
   schoolId: mongoose.Types.ObjectId,
 ): Promise<RosterStudent[]> {
-  const docs = await Student.find({ classId, schoolId, isDeleted: false })
+  const docs = await Student.find(classRosterFilter(classId, { schoolId, isDeleted: false }))
     .select('admissionNumber userId')
     .populate('userId', 'firstName lastName')
     .lean<PopulatedRosterRecord[]>();

@@ -18,6 +18,7 @@ import {
 } from '../model.js';
 import { Student } from '../../Student/model.js';
 import { NotFoundError } from '../../../common/errors.js';
+import { classRosterFilter } from '../../../common/class-roster.js';
 import { getWeightingMap, getBucketsFor } from './subject-weighting.service.js';
 
 const { Types } = mongoose;
@@ -130,11 +131,7 @@ export async function getTermSummary(input: {
     .sort({ date: 1 })
     .lean();
 
-  const roster = await Student.find({
-    schoolId: schoolOid,
-    classId: classOid,
-    isDeleted: false,
-  })
+  const roster = await Student.find(classRosterFilter(classOid, { schoolId: schoolOid, isDeleted: false }))
     .populate<{ userId: PopulatedUserName | null }>('userId', 'firstName lastName')
     .lean<PopulatedStudent[]>();
 

@@ -10,6 +10,7 @@ import { PaperSubmission } from '../../QuestionBank/model-submissions.js';
 import { PaperMarking } from '../../AITools/model-marking.js';
 import { Assessment, Class, Mark } from '../../Academic/model.js';
 import { Student } from '../../Student/model.js';
+import { classRosterFilter, groupRosterByClass } from '../../../common/class-roster.js';
 import {
   calcPriority,
   paperQueueItems,
@@ -73,7 +74,7 @@ export async function homeworkQueueItems(teacherId: string, schoolId: string, no
 }
 
 /** One input per (paper the teacher owns or assigned this year, class it went to). */
-async function loadPaperInputs(teacherId: string, schoolId: string, now: Date): Promise<PaperClassInput[]> {
+export async function loadPaperInputs(teacherId: string, schoolId: string, now: Date): Promise<PaperClassInput[]> {
   const school = toOid(schoolId);
   const teacher = toOid(teacherId);
   const papers = await AssessmentPaper.find({
@@ -92,7 +93,7 @@ async function loadPaperInputs(teacherId: string, schoolId: string, now: Date): 
   const classIds = [...new Set(papers.flatMap((p) => (p.assignments ?? []).map((a) => String(a.classId))))].map(toOid);
   const [classes, students, submissions, markings, assessments] = await Promise.all([
     Class.find({ _id: { $in: classIds }, schoolId: school, isDeleted: false }).select('_id name').lean(),
-    Student.find({ classId: { $in: classIds }, schoolId: school, isDeleted: false }).select('_id classId').lean(),
+    Student.find(classRosterFilter(classIds, { schoolId: school, isDeleted: false })).select('_id classId subjectClassIds').lean(),
     PaperSubmission.find({ paperId: { $in: paperIds }, schoolId: school, isDeleted: false }).select('paperId studentId status').lean(),
     PaperMarking.find({ paperId: { $in: paperIds }, schoolId: school, isDeleted: false }).select('paperId studentId status createdAt').lean(),
     Assessment.find({ paperId: { $in: paperIds }, schoolId: school, isDeleted: false }).select('_id paperId classId').lean(),
@@ -107,11 +108,10 @@ async function loadPaperInputs(teacherId: string, schoolId: string, now: Date): 
   const markedLearners = new Set(marks.map((m) => `${assessmentKey.get(String(m.assessmentId))}:${m.studentId}`));
 
   const classNames = new Map(classes.map((c) => [String(c._id), c.name]));
-  const studentsByClass = new Map<string, string[]>();
-  for (const s of students) {
-    const key = String(s.classId);
-    studentsByClass.set(key, [...(studentsByClass.get(key) ?? []), String(s._id)]);
-  }
+  // A learner who joined a second group is marked there too (spec §3).
+  const studentsByClass = new Map<string, string[]>(
+    [...groupRosterByClass(students, classIds)].map(([key, list]) => [key, list.map((s) => String(s._id))]),
+  );
   const submissionStatus = new Map(submissions.map((s) => [`${s.paperId}:${s.studentId}`, s.status as QueueSubmissionStatus]));
   // Latest marking per learner and paper: a re-mark supersedes the old one.
   const latestMarking = new Map<string, { status: QueueMarkingStatus; at: number }>();

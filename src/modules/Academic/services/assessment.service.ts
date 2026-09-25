@@ -4,6 +4,7 @@ import { Student } from '../../Student/model.js';
 import { NotFoundError, BadRequestError } from '../../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../../common/constants.js';
 import { escapeRegex } from '../../../common/utils.js';
+import { classRosterFilter } from '../../../common/class-roster.js';
 import type { PopulatedUser, PopulatedGrade, PopulatedAssessment } from '../../../types/populated.js';
 import { getPopulated } from '../../../types/populated.js';
 import type { TeacherAssessmentInput } from '../validation.js';
@@ -186,7 +187,7 @@ export class AssessmentService {
     if (!assessment) throw new NotFoundError('Assessment not found');
 
     if (assessment.classId) {
-      const classStudents = await Student.find({ classId: assessment.classId, schoolId, isDeleted: false }).select('_id').lean();
+      const classStudents = await Student.find(classRosterFilter(assessment.classId, { schoolId, isDeleted: false })).select('_id').lean();
       const validStudentIds = new Set(classStudents.map((s) => s._id.toString()));
 
       for (const mark of marks) {

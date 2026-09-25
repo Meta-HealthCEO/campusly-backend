@@ -13,6 +13,7 @@ import { Class } from '../Academic/model.js';
 import { PaperSubmission, type IPaperSubmission } from './model-submissions.js';
 import { PaperMarking, type IPaperMarking } from '../AITools/model-marking.js';
 import { NotFoundError } from '../../common/errors.js';
+import { classRosterFilter, groupRosterByClass } from '../../common/class-roster.js';
 
 function toOid(id: string | mongoose.Types.ObjectId): mongoose.Types.ObjectId {
   return id instanceof mongoose.Types.ObjectId ? id : new mongoose.Types.ObjectId(id);
@@ -87,12 +88,8 @@ export async function getPaperMarkingRoster(
   const [classes, students, submissions, markings] = await Promise.all([
     Class.find({ _id: { $in: classIds }, schoolId: toOid(schoolId), isDeleted: false })
       .select('_id name').lean(),
-    Student.find({
-      classId: { $in: classIds },
-      schoolId: toOid(schoolId),
-      isDeleted: false,
-    })
-      .select('admissionNumber userId classId')
+    Student.find(classRosterFilter(classIds, { schoolId: toOid(schoolId), isDeleted: false }))
+      .select('admissionNumber userId classId subjectClassIds')
       .populate<{ userId: PopulatedUser | null }>('userId', 'firstName lastName')
       .lean<PopulatedStudent[]>(),
     PaperSubmission.find({
@@ -110,13 +107,11 @@ export async function getPaperMarkingRoster(
   const classNameById = new Map<string, string>(
     classes.map((c) => [String(c._id), c.name]),
   );
-  const studentsByClass = new Map<string, PopulatedStudent[]>();
-  for (const s of students) {
-    const key = String((s as PopulatedStudent & { classId?: mongoose.Types.ObjectId }).classId ?? '');
-    const arr = studentsByClass.get(key) ?? [];
-    arr.push(s);
-    studentsByClass.set(key, arr);
-  }
+  // A learner who joined a second group is on that group's roster too (spec §3).
+  const studentsByClass = groupRosterByClass(
+    students as Array<PopulatedStudent & { classId?: mongoose.Types.ObjectId; subjectClassIds?: mongoose.Types.ObjectId[] }>,
+    classIds,
+  );
   const submissionByStudent = new Map<string, IPaperSubmission>(
     submissions.map((s) => [String(s.studentId), s as IPaperSubmission]),
   );
