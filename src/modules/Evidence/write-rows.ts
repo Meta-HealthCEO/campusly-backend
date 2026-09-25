@@ -8,6 +8,7 @@ import { logger } from '../../common/logger.js';
 import { AnswerEvidence, type IAnswerEvidence, type IEvidenceDiagnosis } from './model.js';
 import { MAX_ANSWER_CHARS, MAX_NOTE_CHARS, answerHash, capText, diagnosisCacheKey } from './normalise.js';
 import { initialDiagnosis } from './rules.js';
+import { announceReadinessRecompute } from './events.js';
 import { genericTypeId } from './taxonomy-generic.js';
 import { createTopicResolver, resolveTopics, topicOf, type ResolvedTopic } from './topic-resolver.js';
 import {
@@ -113,13 +114,29 @@ export async function writeEvidenceRows(
   result.removed = gone.length;
   if (options.dryRun) return result;
   if (ops.length > 0) await AnswerEvidence.bulkWrite(ops, { ordered: false });
-  if (gone.length > 0) await softDeleteRows({ schoolId: record.schoolId, _id: { $in: gone.map((r: Lean) => r._id) } }, 'item_removed');
+  if (gone.length > 0) {
+    await softDeleteRows({ schoolId: record.schoolId, _id: { $in: gone.map((r: Lean) => r._id) } }, 'item_removed', { announce: false });
+  }
+  if (record.status === 'final' && ops.length + gone.length > 0) {
+    await announceReadinessRecompute({ schoolId: String(record.schoolId), studentId: String(record.studentId), subjectId: idOrNull(record.subjectId) });
+  }
   return result;
 }
 
-/** Soft-deletes matching live rows with a reason; returns how many. */
-export async function softDeleteRows(filter: Record<string, unknown>, reason: DeletedReason): Promise<number> {
-  const res = await AnswerEvidence.updateMany({ ...filter, isDeleted: false }, { $set: { isDeleted: true, deletedReason: reason } });
+const idOrNull = (id: Oid | null | undefined): string | null => (id ? String(id) : null);
+
+/** Soft-deletes matching live rows with a reason; returns how many. Removing final rows announces a readiness recompute. */
+export async function softDeleteRows(
+  filter: Record<string, unknown>, reason: DeletedReason, options: { announce?: boolean } = {},
+): Promise<number> {
+  const live = { ...filter, isDeleted: false };
+  const finals = options.announce === false ? [] : (await AnswerEvidence.find({ ...live, status: 'final' })
+    .select('schoolId studentId subjectId').lean()) as unknown as Array<{ schoolId: Oid; studentId: Oid; subjectId: Oid | null }>;
+  const res = await AnswerEvidence.updateMany(live, { $set: { isDeleted: true, deletedReason: reason } });
+  const learners = new Map(finals.map((r) => [`${String(r.studentId)}|${idOrNull(r.subjectId)}`, r]));
+  for (const r of res.modifiedCount > 0 ? learners.values() : []) {
+    await announceReadinessRecompute({ schoolId: String(r.schoolId), studentId: String(r.studentId), subjectId: idOrNull(r.subjectId) });
+  }
   return res.modifiedCount;
 }
 
