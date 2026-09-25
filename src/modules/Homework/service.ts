@@ -16,6 +16,7 @@ import { resolveAcademicFilterIds } from '../Academic/services/global-academic-l
 import { logger } from '../../common/logger.js';
 import { publishHomeworkGrade } from '../Academic/service-gradebook-publish.js';
 import { submitHomework as _submitHomework } from './service-homework-submit.js';
+import { learnerClassIds } from '../../common/class-roster.js';
 import type { CreateHomeworkInput, SubmitHomeworkInput } from './validation.js';
 import type { AIActor } from '../subscription/ai-allowance.js';
 import {
@@ -165,6 +166,8 @@ interface ListQuery {
   sort?: string;
   search?: string;
   classId?: string;
+  /** A learner's groups (their own and the others they joined). Wins over classId. */
+  classIds?: string[];
   subjectId?: string;
   teacherId?: string;
 }
@@ -431,7 +434,8 @@ export class HomeworkService {
   static async list(scope: HomeworkScope, query: ListQuery): Promise<PaginatedResult<IHomework>> {
     const { page, limit, skip, sortField } = getPagination(query);
     const filter: Record<string, unknown> = homeworkAccessFilter(scope);
-    if (query.classId) filter.classId = toObjectId(query.classId, 'classId');
+    if (query.classIds) filter.classId = { $in: query.classIds.map((id: string) => toObjectId(id, 'classId')) };
+    else if (query.classId) filter.classId = toObjectId(query.classId, 'classId');
     if (query.subjectId) filter.subjectId = toObjectId(query.subjectId, 'subjectId');
     if (
       query.teacherId
@@ -500,9 +504,10 @@ export class HomeworkService {
       _id: studentOid,
       schoolId: schoolOid,
       isDeleted: false,
-    }).select('_id classId enrollmentStatus').lean<{
+    }).select('_id classId subjectClassIds enrollmentStatus').lean<{
       _id: mongoose.Types.ObjectId;
       classId: mongoose.Types.ObjectId;
+      subjectClassIds?: mongoose.Types.ObjectId[];
       enrollmentStatus?: string;
     } | null>();
     if (!student) throw new NotFoundError('Student not found');
@@ -513,7 +518,7 @@ export class HomeworkService {
     const homework = await Homework.findOne({
       _id: toObjectId(id, 'homeworkId'),
       schoolId: schoolOid,
-      classId: student.classId,
+      classId: { $in: learnerClassIds(student) },
       isDeleted: false,
     })
       .populate('classId', 'name')

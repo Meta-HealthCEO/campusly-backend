@@ -5,6 +5,8 @@ import { Lesson } from '../Lesson/model.js';
 import { Homework, HomeworkSubmission } from '../Homework/model.js';
 import { AssessmentPaper } from '../QuestionBank/model-papers.js';
 import { findDonePaperIds, learnerTestState } from '../QuestionBank/service-learner-tests.js';
+import { learnerClassIds } from '../../common/class-roster.js';
+import { isStandaloneTeacherSchool } from '../Auth/standalone-learner.js';
 // Side-effect imports: ensure referenced models are registered with Mongoose
 // so .populate() works without a MissingSchemaError when this service is
 // imported standalone (e.g. from a test or one-off script).
@@ -107,7 +109,11 @@ function heldFilter(now: Date, prefix = ''): Record<string, unknown> {
 export async function buildStudentDashboard(
   student: HydratedDocument<IStudent>,
 ): Promise<StudentDashboardDto> {
-  const { schoolId, classId } = student;
+  const { schoolId } = student;
+  // A learner's own group and every other group they joined (spec §3).
+  const classIds = learnerClassIds(student);
+  const inClasses = { $in: classIds };
+  const classKeys = new Set(classIds.map(String));
   const now = new Date();
   const weekStart = startOfWeek(now);
   const weekEnd = endOfWeek(now);
@@ -135,6 +141,7 @@ export async function buildStudentDashboard(
     homeworkDueThisWeek,
     homeworkOverdue,
     donePaperIds,
+    onlyOnlineTests,
   ] = await Promise.all([
     // recentLesson: the class's latest published lesson that has been taught
     // or whose date has passed — teachers don't always tick "taught". One row
@@ -145,11 +152,11 @@ export async function buildStudentDashboard(
           schoolId,
           isDeleted: false,
           publishedAt: { $ne: null },
-          assignedClasses: { $elemMatch: { classId, ...heldFilter(now) } },
+          assignedClasses: { $elemMatch: { classId: inClasses, ...heldFilter(now) } },
         },
       },
       { $unwind: '$assignedClasses' },
-      { $match: { 'assignedClasses.classId': classId, ...heldFilter(now, 'assignedClasses.') } },
+      { $match: { 'assignedClasses.classId': inClasses, ...heldFilter(now, 'assignedClasses.') } },
       { $addFields: { heldAt: { $ifNull: ['$assignedClasses.taughtAt', '$assignedClasses.scheduledDate'] } } },
       { $sort: { heldAt: -1, updatedAt: -1 } },
       { $limit: 1 },
@@ -159,7 +166,7 @@ export async function buildStudentDashboard(
     // nextHomework: soonest-due, in the future, not yet submitted.
     Homework.findOne({
       schoolId,
-      classId,
+      classId: inClasses,
       isDeleted: false,
       status: 'assigned',
       dueDate: { $gte: now },
@@ -178,7 +185,7 @@ export async function buildStudentDashboard(
     AssessmentPaper.find({
       schoolId,
       isDeleted: false,
-      'assignments.classId': classId,
+      'assignments.classId': inClasses,
     })
       .populate('subjectId', 'name title')
       .lean()
@@ -192,7 +199,7 @@ export async function buildStudentDashboard(
       publishedAt: { $ne: null },
       assignedClasses: {
         $elemMatch: {
-          classId,
+          classId: inClasses,
           scheduledDate: { $gte: weekStart, $lt: weekEnd },
         },
       },
@@ -201,7 +208,7 @@ export async function buildStudentDashboard(
     // homeworkDueThisWeek: due in current week, not submitted.
     Homework.countDocuments({
       schoolId,
-      classId,
+      classId: inClasses,
       isDeleted: false,
       status: 'assigned',
       dueDate: { $gte: weekStart, $lt: weekEnd },
@@ -211,7 +218,7 @@ export async function buildStudentDashboard(
     // homeworkOverdue: due before now, not submitted.
     Homework.countDocuments({
       schoolId,
-      classId,
+      classId: inClasses,
       isDeleted: false,
       status: 'assigned',
       dueDate: { $lt: now },
@@ -220,6 +227,10 @@ export async function buildStudentDashboard(
 
     // Papers the learner has already written — never "next" or "overdue".
     findDonePaperIds(schoolId, student._id),
+
+    // A standalone teacher's learner can only open tests taken online; school
+    // learners keep seeing paper-mode tests (written in class) as before.
+    isStandaloneTeacherSchool(schoolId),
   ]);
 
   // ─── Shape recentLesson ──────────────────────────────────────────────────
@@ -273,11 +284,14 @@ export async function buildStudentDashboard(
       const paper = raw as unknown as Record<string, unknown>;
       const assignments = (paper.assignments as Array<{
         classId: mongoose.Types.ObjectId;
+        mode?: 'digital' | 'paper';
         releaseAt: Date | null;
         dueAt: Date | null;
       }>) ?? [];
+      // Tests set for one of the learner's groups; for a standalone teacher's
+      // learner, only those taken online (a paper-mode test can't be opened).
       const mine = assignments.filter(
-        (a) => a.classId.toString() === classId.toString(),
+        (a) => classKeys.has(a.classId.toString()) && !(onlyOnlineTests && a.mode === 'paper'),
       );
       if (mine.length === 0) continue;
       // Choose the assignment with the earliest forthcoming date.

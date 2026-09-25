@@ -9,6 +9,7 @@ import { publishHomeworkGrade } from '../Academic/service-gradebook-publish.js';
 import { logger } from '../../common/logger.js';
 import type { SubmitHomeworkInput } from './validation.js';
 import { toObjectId } from './service-access.js';
+import { isInClass } from '../../common/class-roster.js';
 
 function assertUniqueKeys(keys: string[], label: string): void {
   const seen = new Set<string>();
@@ -69,16 +70,17 @@ export async function submitHomework(
     _id: studentOid,
     schoolId: schoolOid,
     isDeleted: false,
-  }).select('_id classId enrollmentStatus').lean<{
+  }).select('_id classId subjectClassIds enrollmentStatus').lean<{
     _id: mongoose.Types.ObjectId;
     classId: mongoose.Types.ObjectId;
+    subjectClassIds?: mongoose.Types.ObjectId[];
     enrollmentStatus?: string;
   } | null>();
   if (!student) throw new NotFoundError('Student not found');
   if (student.enrollmentStatus && student.enrollmentStatus !== 'active') {
     throw new BadRequestError('Only active students can submit homework');
   }
-  if (student.classId.toString() !== homework.classId.toString()) {
+  if (!isInClass(student, homework.classId)) {
     throw new NotFoundError('Homework not found');
   }
 

@@ -13,10 +13,12 @@ import { aiActorFor, assertAIAllowance, withAIAllowance } from '../subscription/
 import { apiResponse } from '../../common/utils.js';
 import { BadRequestError } from '../../common/errors.js';
 import { toObjectId, type HomeworkActor } from './service-access.js';
+import { learnerClassIds } from '../../common/class-roster.js';
 
 interface StudentAccessRecord {
   _id: mongoose.Types.ObjectId;
   classId: mongoose.Types.ObjectId | string;
+  subjectClassIds?: mongoose.Types.ObjectId[];
 }
 
 function readObjectId(value: unknown): string {
@@ -37,7 +39,7 @@ async function findStudentForUser(
 ): Promise<StudentAccessRecord | null> {
   const { Student } = await import('../Student/model.js');
   return Student.findOne({ userId, schoolId, isDeleted: false })
-    .select('_id classId')
+    .select('_id classId subjectClassIds')
     .lean<StudentAccessRecord>()
     .exec();
 }
@@ -69,6 +71,7 @@ export class HomeworkController {
       sort: req.query.sort as string | undefined,
       search: req.query.search as string | undefined,
       classId: req.query.classId as string | undefined,
+      classIds: undefined as string[] | undefined,
       subjectId: req.query.subjectId as string | undefined,
       teacherId: req.query.teacherId as string | undefined,
     };
@@ -79,7 +82,8 @@ export class HomeworkController {
         res.status(404).json(apiResponse(false, undefined, undefined, 'Student profile not found'));
         return;
       }
-      query.classId = readObjectId(student.classId);
+      query.classId = undefined;
+      query.classIds = learnerClassIds(student).map(String);
     }
 
     const result = await HomeworkService.list(actor, query);

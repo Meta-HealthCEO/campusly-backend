@@ -3,6 +3,7 @@ import { Homework, HomeworkSubmission } from './model.js';
 import { NotFoundError } from '../../common/errors.js';
 import { childrenOfParent } from '../../common/audience.js';
 import { User } from '../Auth/model.js';
+import { learnerClassIds } from '../../common/class-roster.js';
 
 export async function getStudentDashboardCounts(
   studentId: string,
@@ -17,7 +18,7 @@ export async function getStudentDashboardCounts(
 
   const homeworks = await Homework.find({
     schoolId: new mongoose.Types.ObjectId(schoolId),
-    classId: student.classId,
+    classId: { $in: learnerClassIds(student) },
     isDeleted: false,
     status: 'assigned',
   }).select('_id dueDate').lean();
