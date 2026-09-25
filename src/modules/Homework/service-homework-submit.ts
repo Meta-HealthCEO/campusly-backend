@@ -11,6 +11,8 @@ import type { SubmitHomeworkInput } from './validation.js';
 import { toObjectId } from './service-access.js';
 import { isInClass } from '../../common/class-roster.js';
 import { isStandaloneTeacherSchool } from '../Auth/standalone-learner.js';
+import { safeEvidence } from '../Evidence/write-rows.js';
+import { syncHomeworkEvidence } from '../Evidence/writers/homework.js';
 
 /** Standalone classrooms: AI marks one learner's homework at most this many times (spec §5). */
 export const HOMEWORK_AI_REMARKS = 3;
@@ -235,6 +237,8 @@ export async function submitHomework(
     { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true, overwriteDiscriminatorKey: true },
   );
   if (!updated) throw new NotFoundError('Submission upsert failed');
+  // Evidence for the instantly marked answers; AI-marked ones follow when graded (Phase E §4.1).
+  await safeEvidence('homework.submit', () => syncHomeworkEvidence(updated._id as mongoose.Types.ObjectId, schoolOid));
 
   if (!hasPending) {
     const result = applyLatePenalty(rawMark, isLate, homework);

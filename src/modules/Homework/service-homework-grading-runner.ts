@@ -5,6 +5,8 @@ import { Question, IQuestion } from '../QuestionBank/model.js';
 import { gradeAnswer, applyLatePenalty, quizQuestionAsBankShape, type QuizQuestionLike } from './service-homework-grading.js';
 import { publishHomeworkGrade } from '../Academic/service-gradebook-publish.js';
 import { recordAIUse, type AIActor } from '../subscription/ai-allowance.js';
+import { safeEvidence } from '../Evidence/write-rows.js';
+import { syncHomeworkEvidence } from '../Evidence/writers/homework.js';
 
 // ─── Per-school semaphore (single-instance only) ────────────────────────────
 
@@ -273,6 +275,7 @@ async function finalizeSubmission(submissionId: string, capturedGeneration: numb
     // Generation advanced (resubmit happened) — abort silently
     return;
   }
+  await safeEvidence('homework.graded', () => syncHomeworkEvidence(submissionId, sub.schoolId));
 
   if (homework.gradebookAutoPublish) {
     try {
