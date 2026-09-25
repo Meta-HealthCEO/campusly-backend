@@ -61,7 +61,8 @@ export async function aiAllowance(schoolId: string, now: Date = new Date()): Pro
   const { start, end } = sastMonthWindow(now);
   const [sub, used] = await Promise.all([
     Subscription.findOne({ schoolId: oid(schoolId) }).select('status currentPeriodEnd trialEndsAt pastDueSince').lean(),
-    AIUsage.countDocuments({ schoolId: oid(schoolId), createdAt: { $gte: start, $lt: end } }),
+    // Only the teacher's own actions: learners' tutor messages draw on the class pool (learner-ai.ts).
+    AIUsage.countDocuments({ schoolId: oid(schoolId), scope: { $ne: 'learner' }, createdAt: { $gte: start, $lt: end } }),
   ]);
   const plan = isSubscriptionEntitled(sub, now) ? 'pro' : 'free';
   return { used, limit: plan === 'pro' ? PRO_AI_ACTIONS_PER_MONTH : FREE_AI_ACTIONS_PER_MONTH, resetsAt: end, plan };
