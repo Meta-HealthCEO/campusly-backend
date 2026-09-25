@@ -11,6 +11,7 @@
 import type { Request, Response } from 'express';
 import { getUser } from '../../types/authenticated-request.js';
 import { apiResponse } from '../../common/utils.js';
+import { aiActorFor, withAIAllowance } from '../subscription/ai-allowance.js';
 import {
   addQuestionToPaper,
   updatePaperQuestion,
@@ -113,14 +114,14 @@ export async function postRegeneratePaperQuestion(
     res.status(400).json({ success: false, error: 'Invalid sectionIdx or position' });
     return;
   }
-  const paper = await regeneratePaperQuestion(
+  const paper = await withAIAllowance(await aiActorFor(req), 'paper_regenerate', () => regeneratePaperQuestion(
     req.params.id as string,
     schoolId,
     sectionIdx,
     position,
     user.id,
     user.role,
-  );
+  ));
   res.json(apiResponse(true, paper, 'Question regenerated'));
 }
 

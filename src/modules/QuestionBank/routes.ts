@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { authorize, validate } from '../../middleware/index.js';
-import { requireEntitlement, requirePaperGenerationAccess } from '../subscription/entitlements.js';
+import { requireEntitlement } from '../subscription/entitlements.js';
 import { QuestionBankController } from './controller.js';
 import {
   postAddQuestionToPaper,
@@ -52,10 +52,10 @@ const READ_ROLES = ['super_admin', 'school_admin', 'principal', 'hod', 'teacher'
 
 // ─── AI Generation (BEFORE :id to avoid route shadowing) ──────────────────
 
+// Standalone teachers draw every AI action from one monthly allowance (checked in the controller).
 router.post(
   '/questions/generate',
   authorize(...READ_ROLES),
-  requireEntitlement('aiGeneration'),
   validate(generateQuestionsSchema),
   QuestionBankController.generateQuestions,
 );
@@ -132,7 +132,6 @@ router.post(
 router.post(
   '/papers/generate',
   authorize(...READ_ROLES),
-  requirePaperGenerationAccess(),
   validate(generatePaperSchema),
   QuestionBankController.generatePaper,
 );

@@ -18,7 +18,6 @@ import { Student } from '../Student/model.js';
 import { isRetryable, resetItemForRetry } from './service-course-generation.js';
 import { AIService } from '../../services/ai.service.js';
 import { checkUsageLimit } from '../../middleware/usageLimits.js';
-import { assertCourseGenerationAccess } from '../subscription/entitlements.js';
 import { enqueueCourseGeneration } from '../../jobs/course-generation.job.js';
 import { BadRequestError, ForbiddenError, NotFoundError } from '../../common/errors.js';
 
@@ -124,16 +123,11 @@ async function replaceOutline(course: ICourse, modules: OutlineModule[]): Promis
 }
 
 export class ClassUnitService {
-  static async create(schoolId: string, actor: CourseActor, input: CreateClassUnitInput, isStandaloneTeacher = false) {
+  static async create(schoolId: string, actor: CourseActor, input: CreateClassUnitInput) {
     const soid = oid(schoolId);
     const klass = await Class.findOne({ _id: oid(input.classId), schoolId: soid, isDeleted: false }).lean();
     if (!klass) throw new NotFoundError('Class not found');
     await assertTeachesClasses(schoolId, actor, [input.classId]);
-    // Check the free-unit allowance before anything is written to the
-    // database — a teacher who is already at their limit shouldn't be left
-    // with an empty, unusable unit shell from a create call that always
-    // succeeded regardless.
-    await assertCourseGenerationAccess(schoolId, isStandaloneTeacher);
     const [subject, grade] = await Promise.all([
       Subject.findOne({ _id: oid(input.subjectId), schoolId: soid, isDeleted: false }).lean(),
       Grade.findOne({ _id: klass.gradeId, schoolId: soid, isDeleted: false }).lean(),
@@ -166,14 +160,12 @@ export class ClassUnitService {
   }
 
   /** Asks the AI for an outline and replaces the unit's modules and items with it. */
-  static async draftOutline(courseId: string, schoolId: string, actor: CourseActor, isStandaloneTeacher: boolean) {
+  static async draftOutline(courseId: string, schoolId: string, actor: CourseActor) {
     const course = await unitOrThrow(courseId, schoolId);
     assertCanEditCourse(course, actor);
     if (course.outlineStatus === 'approved') {
       throw new BadRequestError('This outline is approved. Its items are being written.');
     }
-    // A redraft doesn't spend another free unit: this one is already counted.
-    if (!course.aiGenerated) await assertCourseGenerationAccess(schoolId, isStandaloneTeacher);
     const limit = await checkUsageLimit(schoolId, 'maxAiGenerationsPerDay');
     if (!limit.allowed) {
       throw new BadRequestError("Your school has used today's AI drafts. Try again tomorrow.");
@@ -221,6 +213,18 @@ export class ClassUnitService {
     );
     if (res.matchedCount === 0) throw new BadRequestError('This outline is approved. Its items are being written.');
     return CourseService.getCourse(courseId, schoolId);
+  }
+
+  /**
+   * Whether drafting this unit's outline is a new AI action: true unless the
+   * unit already has an AI outline (a redraft of the same unit isn't counted
+   * again; the per-day cap still bounds it). An unknown id counts as new —
+   * draftOutline refuses it anyway.
+   */
+  static async isFirstOutline(courseId: string, schoolId: string): Promise<boolean> {
+    if (!mongoose.Types.ObjectId.isValid(courseId)) return true;
+    const course = await Course.findOne({ _id: oid(courseId), schoolId: oid(schoolId), isDeleted: false }).select('aiGenerated').lean();
+    return !course?.aiGenerated;
   }
 
   /** The teacher approves the outline: every item is queued to be written. */

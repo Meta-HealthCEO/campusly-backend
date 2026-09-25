@@ -5,6 +5,7 @@ import { QuestionsService } from './service-questions.js';
 import { GenerationService } from './service-generation.js';
 import { PapersService } from './service-papers.js';
 import { PaperGenerationService } from './service-paper-generation.js';
+import { aiActorFor, withAIAllowance } from '../subscription/ai-allowance.js';
 import type { QuestionQueryInput, PaperQueryInput } from './validation.js';
 
 export class QuestionBankController {
@@ -146,11 +147,12 @@ export class QuestionBankController {
       res.status(400).json({ success: false, error: 'User must be assigned to a school' });
       return;
     }
-    const questions = await GenerationService.generateQuestions(
+    // Homework "Draft with AI" lands here: one AI action per draft.
+    const questions = await withAIAllowance(await aiActorFor(req), 'homework_draft', () => GenerationService.generateQuestions(
       schoolId,
       user.id,
       req.body,
-    );
+    ));
     res.status(201).json(apiResponse(true, questions, 'Questions generated successfully'));
   }
 
@@ -301,13 +303,13 @@ export class QuestionBankController {
       res.status(400).json({ success: false, error: 'User must be assigned to a school' });
       return;
     }
-    const paper = await PaperGenerationService.generatePaper(
+    const paper = await withAIAllowance(await aiActorFor(req), 'paper', () => PaperGenerationService.generatePaper(
       schoolId,
       user.id,
       user.role,
       req.body,
       user.isStandaloneTeacher === true,
-    );
+    ));
     res.status(201).json(apiResponse(true, paper, 'Paper generated successfully'));
   }
 

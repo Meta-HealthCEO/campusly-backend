@@ -61,18 +61,4 @@ describe('free AI paper allowance — routes', () => {
 
     expect(res.status).toBe(400);
   });
-
-  it('asks for payment once the free papers are used up', async () => {
-    const { schoolId, token } = await freeTeacher();
-    await AssessmentPaper.collection.insertMany(
-      Array.from({ length: FREE_PAPER_GENERATIONS }, () => ({ schoolId, aiGenerated: true, isDeleted: false })),
-    );
-
-    const res = await request(app)
-      .post('/api/question-bank/papers/generate')
-      .set('Authorization', `Bearer ${token}`)
-      .send({});
-
-    expect(res.status).toBe(402);
-  });
 });

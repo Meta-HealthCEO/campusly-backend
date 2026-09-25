@@ -82,16 +82,6 @@ describe('ClassUnitService.create', () => {
       .rejects.toThrow('You can only build units for classes you teach');
   });
 
-  it('checks a free standalone teacher\'s allowance before creating any unit shell', async () => {
-    const f = await fixture();
-    const soid = new mongoose.Types.ObjectId(f.schoolId);
-    await Course.collection.insertMany([1, 2].map((n) => ({ schoolId: soid, slug: `old-${n}-${oid()}`, title: 'Old', aiGenerated: true, isDeleted: false })));
-    const before = await Course.countDocuments({ schoolId: soid });
-    await expect(ClassUnitService.create(f.schoolId, f.actor, f.input, true))
-      .rejects.toThrow("You've used your free AI units. Upgrade to Pro to keep building units.");
-    // No empty, unusable shell left behind by a create call that always succeeded regardless.
-    expect(await Course.countDocuments({ schoolId: soid })).toBe(before);
-  });
 });
 
 describe('ClassUnitService.draftOutline', () => {
@@ -99,8 +89,8 @@ describe('ClassUnitService.draftOutline', () => {
     const f = await fixture();
     const unit = await ClassUnitService.create(f.schoolId, f.actor, f.input);
     const ai = vi.spyOn(AIService, 'generateJSON').mockResolvedValue(AI_OUTLINE);
-    await ClassUnitService.draftOutline(String(unit._id), f.schoolId, f.actor, false);
-    const second = await ClassUnitService.draftOutline(String(unit._id), f.schoolId, f.actor, false);
+    await ClassUnitService.draftOutline(String(unit._id), f.schoolId, f.actor);
+    const second = await ClassUnitService.draftOutline(String(unit._id), f.schoolId, f.actor);
 
     expect(ai).toHaveBeenCalledTimes(2);
     expect(ai.mock.calls[0][1]).toContain('1. Numbers, Operations and Relationships');
@@ -120,26 +110,16 @@ describe('ClassUnitService.draftOutline', () => {
     const f = await fixture();
     const unit = await ClassUnitService.create(f.schoolId, f.actor, f.input);
     vi.spyOn(AIService, 'generateJSON').mockRejectedValue(new Error('AI down'));
-    await expect(ClassUnitService.draftOutline(String(unit._id), f.schoolId, f.actor, false)).rejects.toThrow('AI down');
+    await expect(ClassUnitService.draftOutline(String(unit._id), f.schoolId, f.actor)).rejects.toThrow('AI down');
     expect(await CourseModule.countDocuments({ courseId: unit._id })).toBe(0);
     expect((await Course.findById(unit._id).lean())?.outlineStatus).toBe('none');
-  });
-
-  it('stops a free independent teacher after their free AI units', async () => {
-    const f = await fixture();
-    const soid = new mongoose.Types.ObjectId(f.schoolId);
-    await Course.collection.insertMany([1, 2].map((n) => ({ schoolId: soid, slug: `old-${n}-${oid()}`, title: 'Old', aiGenerated: true, isDeleted: n === 2 })));
-    const unit = await ClassUnitService.create(f.schoolId, f.actor, f.input);
-    vi.spyOn(AIService, 'generateJSON').mockResolvedValue(AI_OUTLINE);
-    await expect(ClassUnitService.draftOutline(String(unit._id), f.schoolId, f.actor, true))
-      .rejects.toThrow("You've used your free AI units. Upgrade to Pro to keep building units.");
   });
 
   it("won't let another teacher draft someone else's unit", async () => {
     const f = await fixture();
     const unit = await ClassUnitService.create(f.schoolId, f.actor, f.input);
     const stranger: CourseActor = { ...f.actor, userId: String(oid()) };
-    await expect(ClassUnitService.draftOutline(String(unit._id), f.schoolId, stranger, false)).rejects.toThrow('You can only edit your own courses');
+    await expect(ClassUnitService.draftOutline(String(unit._id), f.schoolId, stranger)).rejects.toThrow('You can only edit your own courses');
   });
 });
 
@@ -148,7 +128,7 @@ describe('ClassUnitService.approveOutline', () => {
     const f = await fixture();
     const unit = await ClassUnitService.create(f.schoolId, f.actor, f.input);
     vi.spyOn(AIService, 'generateJSON').mockResolvedValue(AI_OUTLINE);
-    await ClassUnitService.draftOutline(String(unit._id), f.schoolId, f.actor, false);
+    await ClassUnitService.draftOutline(String(unit._id), f.schoolId, f.actor);
     const approved = await ClassUnitService.approveOutline(String(unit._id), f.schoolId, f.actor);
 
     expect(approved.outlineStatus).toBe('approved');
@@ -156,7 +136,7 @@ describe('ClassUnitService.approveOutline', () => {
     const statuses = await CourseLesson.distinct('genStatus', { courseId: unit._id, isDeleted: false });
     expect(statuses).toEqual(['pending']);
     expect(enqueueCourseGeneration).toHaveBeenCalledWith({ courseId: String(unit._id), schoolId: f.schoolId });
-    await expect(ClassUnitService.draftOutline(String(unit._id), f.schoolId, f.actor, false))
+    await expect(ClassUnitService.draftOutline(String(unit._id), f.schoolId, f.actor))
       .rejects.toThrow('This outline is approved. Its items are being written.');
   });
 

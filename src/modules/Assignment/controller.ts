@@ -17,6 +17,7 @@ import {
   markSubmission,
 } from './service.js';
 import { generateAssignmentDraft } from './service-ai-generate.js';
+import { aiActorFor, withAIAllowance } from '../subscription/ai-allowance.js';
 import {
   createAssignmentSchema,
   updateAssignmentSchema,
@@ -205,6 +206,6 @@ export async function postGenerateAssignment(req: Request, res: Response): Promi
   const schoolId = requireSchoolId(req, res);
   if (!schoolId) return;
   const parsed = generateAssignmentSchema.parse(req.body);
-  const draft = await generateAssignmentDraft(parsed, schoolId);
+  const draft = await withAIAllowance(await aiActorFor(req), 'project_draft', () => generateAssignmentDraft(parsed, schoolId));
   res.json(apiResponse(true, draft, 'Draft generated'));
 }

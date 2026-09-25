@@ -9,6 +9,7 @@ import {
 import { apiResponse } from '../../common/utils.js';
 import { getUser } from '../../types/authenticated-request.js';
 import { BadRequestError } from '../../common/errors.js';
+import { aiActorFor, assertAIAllowance, recordAIUse } from '../subscription/ai-allowance.js';
 
 const objectIdSchema = z.string().regex(/^[0-9a-fA-F]{24}$/);
 
@@ -45,6 +46,8 @@ export async function postCreateBatch(req: Request, res: Response): Promise<void
   const files = (req.files as Express.Multer.File[] | undefined) ?? [];
   if (files.length === 0) throw new BadRequestError('No images provided');
   const parsed = createBatchBodySchema.parse(req.body);
+  // Refuse before a whole class's pages are uploaded and read; scripts are counted when marked.
+  await assertAIAllowance(await aiActorFor(req), 'marking');
   const batch = await createBatch({
     teacherId: user.id,
     schoolId,
@@ -67,12 +70,18 @@ export async function postConfirmBatch(req: Request, res: Response): Promise<voi
   const user = getUser(req);
   const schoolId = requireSchoolId(user.schoolId);
   const parsed = confirmBodySchema.parse(req.body);
+  const ai = await aiActorFor(req);
+  await assertAIAllowance(ai, 'marking');
   const result = await confirmBatch(
     req.params.id as string,
     schoolId,
     user.id,
     parsed.assignments,
   );
+  // One AI action per script marked; scripts that failed to mark are not counted.
+  for (let i = 0; i < result.spawned; i += 1) {
+    await recordAIUse(ai, 'marking', { batchId: req.params.id as string });
+  }
   res.status(200).json(apiResponse(true, result, 'Markings spawned'));
 }
 

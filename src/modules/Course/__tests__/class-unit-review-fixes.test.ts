@@ -54,19 +54,19 @@ async function approvedUnit() {
   const f = await teacherWithClass();
   const unit = await ClassUnitService.create(f.schoolId, f.actor, f.input);
   vi.spyOn(AIService, 'generateJSON').mockResolvedValue(OUTLINE);
-  await ClassUnitService.draftOutline(String(unit._id), f.schoolId, f.actor, false);
+  await ClassUnitService.draftOutline(String(unit._id), f.schoolId, f.actor);
   await ClassUnitService.approveOutline(String(unit._id), f.schoolId, f.actor);
   return { ...f, courseId: String(unit._id) };
 }
 
-describe('I4: a free teacher can redraft a unit they already have', () => {
-  it('does not count the unit being redrafted against the free allowance', async () => {
+describe('I4: a teacher can redraft a unit they already have', () => {
+  it('redrafts the same unit (the AI allowance is checked in the controller)', async () => {
     const f = await teacherWithClass();
     const first = await ClassUnitService.create(f.schoolId, f.actor, f.input);
     vi.spyOn(AIService, 'generateJSON').mockResolvedValue(OUTLINE);
-    await ClassUnitService.draftOutline(String(first._id), f.schoolId, f.actor, true);
+    await ClassUnitService.draftOutline(String(first._id), f.schoolId, f.actor);
     await Course.collection.insertOne({ schoolId: f.soid, slug: `other-${oid()}`, title: 'Second', aiGenerated: true, isDeleted: false });
-    const redrafted = await ClassUnitService.draftOutline(String(first._id), f.schoolId, f.actor, true);
+    const redrafted = await ClassUnitService.draftOutline(String(first._id), f.schoolId, f.actor);
     expect(redrafted.outlineStatus).toBe('drafted');
   });
 });
@@ -134,7 +134,7 @@ describe('Draft and approve racing each other', () => {
     const unit = await ClassUnitService.create(f.schoolId, f.actor, f.input);
     const courseId = String(unit._id);
     vi.spyOn(AIService, 'generateJSON').mockResolvedValueOnce(OUTLINE);
-    await ClassUnitService.draftOutline(courseId, f.schoolId, f.actor, false);
+    await ClassUnitService.draftOutline(courseId, f.schoolId, f.actor);
     const itemsBefore = await CourseLesson.find({ courseId: unit._id, isDeleted: false }).select('_id').lean();
 
     // The teacher approves in another tab while this redraft waits on the AI.
@@ -142,7 +142,7 @@ describe('Draft and approve racing each other', () => {
       await ClassUnitService.approveOutline(courseId, f.schoolId, f.actor);
       return OUTLINE;
     });
-    await expect(ClassUnitService.draftOutline(courseId, f.schoolId, f.actor, false)).rejects.toThrow('This outline is approved');
+    await expect(ClassUnitService.draftOutline(courseId, f.schoolId, f.actor)).rejects.toThrow('This outline is approved');
 
     const itemsAfter = await CourseLesson.find({ courseId: unit._id, isDeleted: false }).select('_id').lean();
     expect(itemsAfter.map((i) => String(i._id)).sort()).toEqual(itemsBefore.map((i) => String(i._id)).sort());

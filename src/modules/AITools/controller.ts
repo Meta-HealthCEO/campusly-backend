@@ -14,6 +14,7 @@ import {
   issueMarking,
 } from './service-marking-queries.js';
 import { markPaperFromText } from './service-marking-text.js';
+import { aiActorFor, withAIAllowance } from '../subscription/ai-allowance.js';
 import { PaperMarking } from './model-marking.js';
 import { AssessmentPaper } from '../QuestionBank/model-papers.js';
 import { markingDir } from './service-marking-images.js';
@@ -134,14 +135,15 @@ export class AIToolsController {
     if (!paperId) throw new BadRequestError('paperId is required');
     if (!studentName) throw new BadRequestError('studentName is required');
 
-    const marking = await AIToolsService.markPaperFromImages(getUser(req).id, schoolId, {
+    // One AI action per script marked.
+    const marking = await withAIAllowance(await aiActorFor(req), 'marking', () => AIToolsService.markPaperFromImages(getUser(req).id, schoolId, {
       paperId,
       paperType: paperType ?? 'assessment',
       studentName,
       studentId: studentId ?? null,
       classId: classId ?? null,
       files,
-    });
+    }), { paperId });
     res.status(201).json(apiResponse(true, marking, 'Paper marked successfully'));
   }
 
@@ -174,14 +176,14 @@ export class AIToolsController {
       throw new BadRequestError('answers must include at least one questionNumber');
     }
 
-    const marking = await markPaperFromText(getUser(req).id, schoolId, {
+    const marking = await withAIAllowance(await aiActorFor(req), 'marking', () => markPaperFromText(getUser(req).id, schoolId, {
       paperId,
       paperType: paperType ?? 'assessment',
       studentName,
       studentId: studentId ?? null,
       classId: classId ?? null,
       answers: cleanedAnswers,
-    });
+    }), { paperId });
     res.status(201).json(apiResponse(true, marking, 'Paper marked successfully'));
   }
 

@@ -6,6 +6,7 @@ import { UnitInsightService } from './service-insight.js';
 import { UnitItemsService } from './service-unit-items.js';
 import { UnitCopyService } from './service-unit-copy.js';
 import type { CourseActor } from './service.js';
+import { aiActorFor, assertAIAllowance, withAIAllowance } from '../subscription/ai-allowance.js';
 
 function context(req: Request) {
   const user = getUser(req);
@@ -15,7 +16,7 @@ function context(req: Request) {
     isHOD: user.isHOD ?? false,
     isSchoolPrincipal: user.isSchoolPrincipal ?? false,
   };
-  return { schoolId: user.schoolId!, actor, isStandaloneTeacher: user.isStandaloneTeacher === true };
+  return { schoolId: user.schoolId!, actor };
 }
 
 export class ClassUnitController {
@@ -37,20 +38,30 @@ export class ClassUnitController {
   }
 
   static async create(req: Request, res: Response): Promise<void> {
-    const { schoolId, actor, isStandaloneTeacher } = context(req);
-    const unit = await ClassUnitService.create(schoolId, actor, req.body, isStandaloneTeacher);
+    const { schoolId, actor } = context(req);
+    // A teacher with no AI actions left isn't left with an empty unit they can't draft.
+    await assertAIAllowance(await aiActorFor(req), 'unit_outline');
+    const unit = await ClassUnitService.create(schoolId, actor, req.body);
     res.status(201).json(apiResponse(true, unit, 'Unit created'));
   }
 
   static async draftOutline(req: Request, res: Response): Promise<void> {
-    const { schoolId, actor, isStandaloneTeacher } = context(req);
-    const unit = await ClassUnitService.draftOutline(req.params.id as string, schoolId, actor, isStandaloneTeacher);
+    const { schoolId, actor } = context(req);
+    const courseId = req.params.id as string;
+    const draft = () => ClassUnitService.draftOutline(courseId, schoolId, actor);
+    const ai = await aiActorFor(req);
+    // One action per unit outline: redrafting the same unit isn't counted again.
+    const unit = ai.isStandaloneTeacher && await ClassUnitService.isFirstOutline(courseId, schoolId)
+      ? await withAIAllowance(ai, 'unit_outline', draft, { courseId })
+      : await draft();
     res.json(apiResponse(true, unit, 'Outline drafted'));
   }
 
   static async approveOutline(req: Request, res: Response): Promise<void> {
     const { schoolId, actor } = context(req);
-    const unit = await ClassUnitService.approveOutline(req.params.id as string, schoolId, actor);
+    const courseId = req.params.id as string;
+    // One action for writing all of the unit's items, counted once they are queued.
+    const unit = await withAIAllowance(await aiActorFor(req), 'unit_build', () => ClassUnitService.approveOutline(courseId, schoolId, actor), { courseId });
     res.json(apiResponse(true, unit, 'Outline approved; the items are being written'));
   }
 
@@ -91,7 +102,8 @@ export class ClassUnitController {
 
   static async rewrite(req: Request, res: Response): Promise<void> {
     const { schoolId, actor } = context(req);
-    await UnitItemsService.rewrite(req.params.id as string, req.params.lessonId as string, schoolId, actor, req.body);
+    const courseId = req.params.id as string;
+    await withAIAllowance(await aiActorFor(req), 'unit_rewrite', () => UnitItemsService.rewrite(courseId, req.params.lessonId as string, schoolId, actor, req.body), { courseId });
     res.json(apiResponse(true, null, 'Rewritten'));
   }
 
@@ -102,7 +114,8 @@ export class ClassUnitController {
 
   static async addRevision(req: Request, res: Response): Promise<void> {
     const { schoolId, actor } = context(req);
-    const item = await UnitItemsService.addRevisionItem(req.params.id as string, schoolId, actor, req.body);
+    const courseId = req.params.id as string;
+    const item = await withAIAllowance(await aiActorFor(req), 'revision_item', () => UnitItemsService.addRevisionItem(courseId, schoolId, actor, req.body), { courseId });
     res.status(201).json(apiResponse(true, item, 'Revision item added'));
   }
 
