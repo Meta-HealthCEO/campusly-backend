@@ -18,8 +18,12 @@ import { Student } from '../Student/model.js';
 import { classRosterFilter } from '../../common/class-roster.js';
 import { enrolOnJoin } from '../Course/enrolment.js';
 
-/** Learner sign-up with an email that already has an account (spec §3). */
-export const LEARNER_HAS_ACCOUNT = 'You already have an account. Sign in, then join with the code on your Profile.';
+/**
+ * Learner sign-up with an email that already has an account (spec §3). Names
+ * the learner dashboard's join card ("Join a class with a code") until the
+ * Profile join ships (Task C6); then it becomes "...join with the code on your Profile."
+ */
+export const LEARNER_HAS_ACCOUNT = 'You already have an account. Sign in, then enter the code under Join a class with a code.';
 
 export interface TokenPair {
   accessToken: string;

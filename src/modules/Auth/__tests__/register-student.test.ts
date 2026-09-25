@@ -23,13 +23,14 @@ afterAll(async () => { await cleanUpClassrooms(); await mongoose.disconnect(); }
 const signUp = (body: Record<string, unknown>) => request(app).post('/api/auth/register-student').send({ password: 'Learner1-check', ...body });
 
 describe('POST /api/auth/register-student', () => {
-  it('tells someone who already has an account to sign in and join from Profile', async () => {
+  it("tells someone who already has an account to sign in and use the dashboard's join card", async () => {
     const room = await standaloneClassroom();
     const email = `lp-dup+${Date.now()}@test.local`;
     expect((await signUp({ firstName: 'A', lastName: 'B', email, classroomCode: room.maths.code })).status).toBe(201);
     const again = await signUp({ firstName: 'A', lastName: 'B', email, classroomCode: room.science.code });
     expect(again.status).toBe(409);
-    expect(again.body.error).toBe('You already have an account. Sign in, then join with the code on your Profile.');
+    // The learner dashboard's JoinClassCard is titled "Join a class with a code" (until the Profile join ships, C6).
+    expect(again.body.error).toBe('You already have an account. Sign in, then enter the code under Join a class with a code.');
   });
 
   it('gives a new learner the lessons already released to the group', async () => {
