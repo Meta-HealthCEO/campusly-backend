@@ -89,6 +89,7 @@ import { RecordingController } from './modules/Classroom/controller-recording.js
 import contentLibraryRoutes from './modules/ContentLibrary/routes.js';
 import contentLibraryStudentRoutes from './modules/ContentLibrary/routes-student.js';
 import questionBankRoutes from './modules/QuestionBank/routes.js';
+import evidenceRoutes from './modules/Evidence/routes.js';
 import textbookRoutes from './modules/Textbook/routes.js';
 import courseRoutes from './modules/Course/routes.js';
 import courseStudentRoutes from './modules/Course/routes-student.js';
@@ -227,6 +228,7 @@ app.use('/api/classroom', authenticate, classroomRoutes);
 app.use('/api/content-library', authenticate, contentLibraryRoutes);
 app.use('/api/content-library/student', authenticate, contentLibraryStudentRoutes);
 app.use('/api/question-bank', authenticate, questionBankRoutes);
+app.use('/api/evidence', authenticate, evidenceRoutes);
 app.use('/api/textbooks', authenticate, textbookRoutes);
 app.use('/api/courses', authenticate, requireModule('courses'), courseRoutes);
 app.use('/api/assessment-structures', authenticate, requireModule('academic'), assessmentStructureRoutes);
