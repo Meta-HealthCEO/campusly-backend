@@ -188,5 +188,8 @@ studentSchema.index({ userId: 1 });
 studentSchema.index({ gradeId: 1, classId: 1 });
 studentSchema.index({ subjectClassIds: 1, schoolId: 1 });
 studentSchema.index({ schoolId: 1, isDeleted: 1, createdAt: -1 });
+// Roster reads match classId OR subjectClassIds (common/class-roster.ts); an
+// $or uses indexes only when both branches have one.
+studentSchema.index({ classId: 1, schoolId: 1 });
 
 export const Student = mongoose.model<IStudent>('Student', studentSchema);
