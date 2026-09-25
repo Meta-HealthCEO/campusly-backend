@@ -37,6 +37,10 @@ export const resetPasswordSchema = z.object({
     .regex(/[0-9]/, 'Password must contain at least one number'),
 }).strict();
 
+export const verifyEmailSchema = z.object({
+  token: z.string().regex(/^[0-9a-f]{64}$/, 'This link has expired or was already used. Send a new one.'),
+}).strict();
+
 export const registerTeacherSchema = z.object({
   firstName: z.string().min(1, 'First name is required').trim(),
   lastName: z.string().min(1, 'Last name is required').trim(),

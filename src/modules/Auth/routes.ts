@@ -12,6 +12,7 @@ import {
   loginSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
+  verifyEmailSchema,
   joinSchoolSchema,
   standaloneTeacherSignupSchema,
   standaloneCoachSignupSchema,
@@ -30,6 +31,8 @@ router.post('/logout', authenticate, AuthController.logout);
 router.post('/forgot-password', authRateLimiter, validate(forgotPasswordSchema), AuthController.forgotPassword);
 router.post('/reset-password', authRateLimiter, validate(resetPasswordSchema), AuthController.resetPassword);
 router.post('/change-password', authenticate, AuthController.changePassword);
+router.post('/verify-email', authRateLimiter, validate(verifyEmailSchema), AuthController.verifyEmail);
+router.post('/resend-verification', authenticate, AuthController.resendVerification);
 router.get('/me', authenticate, AuthController.getMe);
 router.get('/me/mobile-context', authenticate, getMobileContext);
 router.post('/join-school', authenticate, validate(joinSchoolSchema), AuthController.joinSchool);

@@ -71,6 +71,24 @@ export class EmailService {
     return EmailService.sendEmail(to, subject, html);
   }
 
+  static async sendEmailVerification(to: string, link: string): Promise<EmailResult> {
+    const appName = process.env.APP_NAME ?? 'Campusly';
+    const safeAppName = escapeHtml(appName);
+    const safeLink = escapeHtml(link);
+    const subject = `Verify your email for ${appName}`;
+    if (!resend && process.env.NODE_ENV !== 'production') {
+      // No email provider locally: log the link so a developer can open it.
+      logger.info({ to, link }, 'Email verification link (dev mode)');
+    }
+    const html = `
+      <h2>Verify your email</h2>
+      <p>Welcome to ${safeAppName}. Verify your email so you can use AI to build lessons, papers and homework.</p>
+      <p><a href="${safeLink}" style="display:inline-block;padding:12px 20px;background:#2563eb;color:#ffffff;border-radius:6px;text-decoration:none;">Verify my email</a></p>
+      <p>This link expires in 24 hours. If you did not sign up, you can ignore this email.</p>
+    `;
+    return EmailService.sendEmail(to, subject, html);
+  }
+
   static async sendStudentPortalCredentials(
     to: string,
     data: {

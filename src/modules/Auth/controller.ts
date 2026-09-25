@@ -6,6 +6,7 @@ import { AuthService, type TokenPair } from './service.js';
 import type { IUser } from './model.js';
 import { StandaloneService } from './standalone.service.js';
 import { StandaloneCoachService } from './standalone-coach.service.js';
+import { verifyEmail, resendEmailVerification } from './email-verification.js';
 import { apiResponse } from '../../common/utils.js';
 import { Subscription, Plan } from '../subscription/model.js';
 import { SubscriptionService } from '../subscription/service.js';
@@ -173,6 +174,17 @@ export class AuthController {
     const { token, password } = req.body;
     await AuthService.resetPassword(token, password);
     res.status(200).json(apiResponse(true, undefined, 'Password reset successfully'));
+  }
+
+  static async verifyEmail(req: Request, res: Response): Promise<void> {
+    await verifyEmail(req.body.token);
+    res.status(200).json(apiResponse(true, undefined, 'Your email is verified'));
+  }
+
+  static async resendVerification(req: Request, res: Response): Promise<void> {
+    const { sent } = await resendEmailVerification(getUser(req).id);
+    const message = sent ? 'We sent a new link. Check your inbox.' : 'Your email is already verified';
+    res.status(200).json(apiResponse(true, { sent }, message));
   }
 
   static async getMe(req: Request, res: Response): Promise<void> {

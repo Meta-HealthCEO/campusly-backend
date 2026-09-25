@@ -17,6 +17,13 @@ export interface IUser extends Document {
   lastLoginAt?: Date;
   passwordResetToken?: string;
   passwordResetExpires?: Date;
+  /** Null until the teacher opens the emailed link; pre-verification users were backfilled. */
+  emailVerifiedAt?: Date | null;
+  /** sha256 of the emailed verification token. */
+  emailVerifyToken?: string | null;
+  emailVerifyExpires?: Date | null;
+  /** When verification links were sent, for the resend limit (recent entries only). */
+  emailVerifySentAt?: Date[];
   isSchoolPrincipal: boolean;
   isHOD: boolean;
   departmentId?: Types.ObjectId | null;
@@ -100,6 +107,21 @@ const userSchema = new Schema<IUser>(
     passwordResetExpires: {
       type: Date,
     },
+    emailVerifiedAt: {
+      type: Date,
+      default: null,
+    },
+    emailVerifyToken: {
+      type: String,
+      select: false,
+    },
+    emailVerifyExpires: {
+      type: Date,
+    },
+    emailVerifySentAt: {
+      type: [Date],
+      default: undefined,
+    },
     isSchoolPrincipal: {
       type: Boolean,
       default: false,
@@ -161,6 +183,7 @@ userSchema.index({ email: 1, isDeleted: 1 });
 userSchema.index({ schoolId: 1, isHOD: 1 });
 userSchema.index({ schoolId: 1, isSchoolPrincipal: 1 });
 userSchema.index({ schoolId: 1, isCounselor: 1 });
+userSchema.index({ emailVerifyToken: 1 }, { sparse: true });
 
 userSchema.pre('save', async function () {
   if (!this.isModified('password')) return;

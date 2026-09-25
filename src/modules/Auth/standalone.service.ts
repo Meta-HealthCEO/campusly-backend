@@ -11,6 +11,8 @@ import { AuthService } from './service.js';
 import { SubscriptionService } from '../subscription/service.js';
 import { ConflictError, NotFoundError } from '../../common/errors.js';
 import { STANDALONE_DEFAULT_MODULES } from '../../common/moduleConfig.js';
+import { logger } from '../../common/logger.js';
+import { issueEmailVerification } from './email-verification.js';
 
 interface StandaloneSignupInput {
   firstName: string;
@@ -78,6 +80,13 @@ export class StandaloneService {
     const tokens = AuthService.generateTokenPair(user);
     user.refreshTokens.push(tokens.refreshToken);
     await user.save();
+
+    // The teacher can start without verifying; a failed email never fails sign-up.
+    try {
+      await issueEmailVerification(String(user._id));
+    } catch (err: unknown) {
+      logger.error({ err, userId: String(user._id) }, 'Sending the email verification link failed');
+    }
 
     return { user, tokens };
   }
