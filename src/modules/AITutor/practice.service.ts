@@ -1,13 +1,15 @@
 import { PracticeAttempt, IPracticeAttempt, IPracticeQuestion } from './model.js';
 import { AIUsageLog } from '../AITools/model.js';
 import { AIService } from '../../services/ai.service.js';
-import { NotFoundError, BadRequestError } from '../../common/errors.js';
+import { NotFoundError, BadRequestError, ConflictError } from '../../common/errors.js';
 import { logger } from '../../common/logger.js';
 import { resolveTutorContext } from './student-context.js';
 import type { GeneratePracticeInput, SubmitPracticeInput } from './validation.js';
 import { config } from '../../config/env.js';
 
 const ANTHROPIC_MODEL = config.anthropic.model;
+/** A marking claim older than this was left by a request that died; another submit may take it over. */
+const GRADING_CLAIM_STALE_MS = 5 * 60_000;
 
 interface AIGeneratedQuestion {
   questionText: string;
@@ -216,56 +218,76 @@ export class PracticeService {
     schoolId: string,
     input: SubmitPracticeInput,
   ): Promise<IPracticeAttempt> {
-    const attempt = await PracticeAttempt.findOne({
-      _id: input.attemptId,
-      schoolId,
-      studentId: userId,
-      isDeleted: false,
-    });
-
-    if (!attempt) throw new NotFoundError('Practice attempt not found');
-    if (attempt.completedAt) throw new BadRequestError('Practice already completed');
-
-    // Grade each answer. MCQ and true/false use exact match; short answers
-    // are graded by Claude with partial credit and feedback.
-    const gradingPromises: Promise<void>[] = [];
-
-    for (const answer of input.answers) {
-      if (answer.questionIndex < 0 || answer.questionIndex >= attempt.questions.length) {
-        continue;
-      }
-      const question = attempt.questions[answer.questionIndex];
-      question.studentAnswer = answer.answer;
-
-      if (question.questionType === 'short_answer') {
-        gradingPromises.push(
-          gradeShortAnswer({
-            questionText: question.questionText,
-            correctAnswer: question.correctAnswer,
-            studentAnswer: answer.answer,
-            marks: question.marks,
-          }).then((graded) => {
-            question.isCorrect = graded.isCorrect;
-            question.marksAwarded = graded.marksAwarded;
-            question.feedback = graded.feedback;
-          }),
-        );
-      } else {
-        const isCorrect = normalize(answer.answer) === normalize(question.correctAnswer);
-        question.isCorrect = isCorrect;
-        question.marksAwarded = isCorrect ? question.marks : 0;
-      }
+    const mine = { _id: input.attemptId, schoolId, studentId: userId, isDeleted: false };
+    const found = await PracticeAttempt.findOne(mine).select('questions completedAt').lean();
+    if (!found) throw new NotFoundError('Practice attempt not found');
+    if (found.completedAt) throw new BadRequestError('Practice already completed');
+    if (input.answers.some((a) => a.questionIndex >= found.questions.length)) {
+      throw new BadRequestError('An answer is for a question that is not in this practice set');
     }
 
-    await Promise.all(gradingPromises);
-
-    attempt.score = attempt.questions.reduce(
-      (sum, q) => sum + (q.marksAwarded ?? (q.isCorrect ? q.marks : 0)),
-      0,
+    // Claim the marking atomically: a second submit while this one is being
+    // marked is refused, so the AI marks each answer once (release review I1).
+    // A claim left by a crashed request can be taken over after a few minutes.
+    const now = new Date();
+    const attempt = await PracticeAttempt.findOneAndUpdate(
+      {
+        ...mine,
+        completedAt: null,
+        $or: [{ gradingStartedAt: null }, { gradingStartedAt: { $lt: new Date(now.getTime() - GRADING_CLAIM_STALE_MS) } }],
+      },
+      { $set: { gradingStartedAt: now } },
+      { new: true },
     );
-    attempt.completedAt = new Date();
+    if (!attempt) throw new ConflictError('This practice set is already being marked.');
 
-    await attempt.save();
-    return attempt;
+    try {
+      return await markAttempt(attempt, input);
+    } catch (err: unknown) {
+      await PracticeAttempt.updateOne({ _id: attempt._id, schoolId }, { $set: { gradingStartedAt: null } });
+      throw err;
+    }
   }
+}
+
+/** Marks the claimed attempt's answers and completes it. */
+async function markAttempt(attempt: IPracticeAttempt, input: SubmitPracticeInput): Promise<IPracticeAttempt> {
+  // Grade each answer. MCQ and true/false use exact match; short answers
+  // are graded by Claude with partial credit and feedback.
+  const gradingPromises: Promise<void>[] = [];
+
+  for (const answer of input.answers) {
+    const question = attempt.questions[answer.questionIndex];
+    question.studentAnswer = answer.answer;
+
+    if (question.questionType === 'short_answer') {
+      gradingPromises.push(
+        gradeShortAnswer({
+          questionText: question.questionText,
+          correctAnswer: question.correctAnswer,
+          studentAnswer: answer.answer,
+          marks: question.marks,
+        }).then((graded) => {
+          question.isCorrect = graded.isCorrect;
+          question.marksAwarded = graded.marksAwarded;
+          question.feedback = graded.feedback;
+        }),
+      );
+    } else {
+      const isCorrect = normalize(answer.answer) === normalize(question.correctAnswer);
+      question.isCorrect = isCorrect;
+      question.marksAwarded = isCorrect ? question.marks : 0;
+    }
+  }
+
+  await Promise.all(gradingPromises);
+
+  attempt.score = attempt.questions.reduce(
+    (sum, q) => sum + (q.marksAwarded ?? (q.isCorrect ? q.marks : 0)),
+    0,
+  );
+  attempt.completedAt = new Date();
+
+  await attempt.save();
+  return attempt;
 }

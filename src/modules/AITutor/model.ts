@@ -149,6 +149,8 @@ export interface IPracticeAttempt extends Document {
   score: number;
   totalMarks: number;
   completedAt?: Date;
+  /** Set while a submit is being marked, so a second submit can't mark it again. */
+  gradingStartedAt?: Date | null;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -165,6 +167,7 @@ const practiceAttemptSchema = new Schema<IPracticeAttempt>(
     score: { type: Number, default: 0 },
     totalMarks: { type: Number, required: true },
     completedAt: { type: Date },
+    gradingStartedAt: { type: Date, default: null },
     isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true },

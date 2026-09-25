@@ -76,16 +76,25 @@ export type GeneratePracticeInput = z.infer<typeof generatePracticeSchema>;
 
 // ─── Submit Practice ─────────────────────────────────────────────────────────
 
+/** Each answer may be marked by the AI, so a submit is bounded (release review I1). */
+export const PRACTICE_MAX_ANSWERS = 20;
+export const PRACTICE_MAX_ANSWER_CHARS = 2000;
+
 export const submitPracticeSchema = z.object({
   attemptId: oid,
   answers: z
     .array(
       z.object({
         questionIndex: z.number().int().min(0),
-        answer: z.string().min(1, 'Answer is required'),
+        answer: z.string().min(1, 'Answer is required').max(PRACTICE_MAX_ANSWER_CHARS),
       }),
     )
-    .min(1, 'At least one answer is required'),
+    .min(1, 'At least one answer is required')
+    .max(PRACTICE_MAX_ANSWERS)
+    .refine(
+      (answers) => new Set(answers.map((a) => a.questionIndex)).size === answers.length,
+      { message: 'Each question can be answered only once' },
+    ),
 }).strict();
 
 export type SubmitPracticeInput = z.infer<typeof submitPracticeSchema>;
