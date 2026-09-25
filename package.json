@@ -16,6 +16,7 @@
     "migrate:behaviour": "tsx src/scripts/migrate-behaviour.ts",
     "migrate:email-verified": "tsx src/scripts/backfill-email-verified.ts",
     "migrate:standalone-modules": "tsx src/scripts/standalone-modules.ts",
+    "migrate:unit-enrolments": "tsx src/scripts/backfill-unit-enrolments.ts",
     "pdf:install-browser": "playwright install chromium",
     "test": "vitest run",
     "test:watch": "vitest"
