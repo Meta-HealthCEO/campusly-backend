@@ -247,7 +247,7 @@ export const GradingJob = mongoose.model<IGradingJob>('GradingJob', gradingJobSc
 
 // ─── AI Usage Log ─────────────────────────────────────────────────────────────
 
-export type AIUsageType = 'paper_generation' | 'question_regeneration' | 'grading' | 'paper_marking' | 'memo_generation' | 'tutor_chat' | 'tutor_practice' | 'report_comments' | 'sports_analysis' | 'news_generation' | 'lesson_plan_generation' | 'paper_import';
+export type AIUsageType = 'paper_generation' | 'question_regeneration' | 'grading' | 'paper_marking' | 'memo_generation' | 'tutor_chat' | 'tutor_practice' | 'report_comments' | 'sports_analysis' | 'news_generation' | 'lesson_plan_generation' | 'paper_import' | 'evidence_diagnosis' | 'misconception_seed' | 'question_tagging';
 
 export interface IAIUsageLog extends Document {
   schoolId: Types.ObjectId;
@@ -266,7 +266,7 @@ const aiUsageLogSchema = new Schema<IAIUsageLog>(
     teacherId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     type: {
       type: String,
-      enum: ['paper_generation', 'question_regeneration', 'grading', 'paper_marking', 'memo_generation', 'tutor_chat', 'tutor_practice', 'report_comments', 'sports_analysis', 'news_generation', 'lesson_plan_generation', 'paper_import'],
+      enum: ['paper_generation', 'question_regeneration', 'grading', 'paper_marking', 'memo_generation', 'tutor_chat', 'tutor_practice', 'report_comments', 'sports_analysis', 'news_generation', 'lesson_plan_generation', 'paper_import', 'evidence_diagnosis', 'misconception_seed', 'question_tagging'],
       required: true,
     },
     tokensUsed: {
