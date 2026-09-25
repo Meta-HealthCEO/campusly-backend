@@ -16,10 +16,14 @@ export interface MarkedPaperFixture {
   schoolId: Oid; teacherId: Oid; classId: Oid; paperId: Oid; topicId: Oid; subtopicId: Oid; bankQuestionId: Oid; students: Oid[];
 }
 
-async function node(type: string, title: string, parentId: Oid | null, subjectId: Oid | null): Promise<Oid> {
+/** The fixture's nodes are tagged with their school, so one school's clean-up leaves another's topics alone. */
+const schoolTag = (schoolId: Oid): string => String(schoolId).slice(-10);
+
+async function node(schoolId: Oid, type: string, title: string, parentId: Oid | null, subjectId: Oid | null): Promise<Oid> {
   const id = oid();
   await CurriculumNode.collection.insertOne({
-    _id: id, frameworkId: oid(), type, parentId, title, code: `E-FX-${String(id)}`, description: '', metadata: {},
+    // No full ObjectId in the code: type codes built from it reach the AI prompt, which must carry no ids.
+    _id: id, frameworkId: oid(), type, parentId, title, code: `E-FX-${type}-${schoolTag(schoolId)}-${String(id).slice(-10)}`, description: '', metadata: {},
     order: 0, schoolId: null, subjectId, isDeleted: false, createdAt: new Date(), updatedAt: new Date(),
   });
   return id;
@@ -35,9 +39,9 @@ export async function seedMarkedPaper(input: { schoolId?: Oid; teacherId?: Oid; 
   const schoolId = input.schoolId ?? oid();
   const teacherId = input.teacherId ?? oid();
   const classId = input.classId ?? oid();
-  const subject = await node('subject', 'Mathematics', null, null);
-  const topicId = await node('topic', 'Functions', subject, subject);
-  const subtopicId = await node('subtopic', 'Inverse functions', topicId, subject);
+  const subject = await node(schoolId, 'subject', 'Mathematics', null, null);
+  const topicId = await node(schoolId, 'topic', 'Functions', subject, subject);
+  const subtopicId = await node(schoolId, 'subtopic', 'Inverse functions', topicId, subject);
   const bank = await Question.create({
     curriculumNodeId: subtopicId, schoolId, subjectId: oid(), gradeId: oid(), type: 'short_answer',
     stem: 'Write down the inverse of f(x) = 3x.', answer: 'f^-1(x) = x/3', markingRubric: '1 mark for swapping, 1 for solving.',
@@ -84,6 +88,7 @@ export async function seedMarking(
 export async function cleanUpEvidenceFixtures(schoolId: Oid): Promise<void> {
   await Promise.all([
     AssessmentPaper.deleteMany({ schoolId }), Question.deleteMany({ schoolId }), PaperMarking.deleteMany({ schoolId }),
-    Student.deleteMany({ schoolId }), AnswerEvidence.deleteMany({ schoolId }), CurriculumNode.deleteMany({ code: /^E-FX-/ }),
+    Student.deleteMany({ schoolId }), AnswerEvidence.deleteMany({ schoolId }),
+    CurriculumNode.deleteMany({ code: new RegExp(`^E-FX-[a-z]+-${schoolTag(schoolId)}-`) }),
   ]);
 }

@@ -19,6 +19,7 @@
     "migrate:unit-enrolments": "tsx src/scripts/backfill-unit-enrolments.ts",
     "evidence:seed-taxonomy": "tsx src/scripts/evidence-seed-taxonomy.ts",
     "migrate:paper-question-tags": "tsx src/scripts/evidence-tag-paper-questions.ts",
+    "evidence:diagnose": "tsx src/scripts/evidence-diagnose.ts",
     "pdf:install-browser": "playwright install chromium",
     "test": "vitest run",
     "test:watch": "vitest"
