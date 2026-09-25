@@ -84,6 +84,9 @@ export async function setupWorkers(): Promise<Worker[]> {
     const { createCourseGenerationWorker } = await import('./course-generation.job.js');
     workers.push(createCourseGenerationWorker());
 
+    const { createEvidenceWorker, scheduleEvidenceJobs } = await import('./evidence.job.js');
+    workers.push(createEvidenceWorker());
+
     if (process.env.SUBSCRIPTION_CRON_ENABLED === 'true') {
       const { createSubscriptionBillingWorker, scheduleSubscriptionBilling } = await import(
         '../modules/subscription/cron.js'
@@ -118,6 +121,7 @@ export async function setupWorkers(): Promise<Worker[]> {
 
     const { scheduleLostFoundArchive } = await import('./lost-found-archive.job.js');
     await scheduleLostFoundArchive();
+    await scheduleEvidenceJobs();
 
     logger.info('[Jobs] Repeatable jobs scheduled');
   } catch (error) {

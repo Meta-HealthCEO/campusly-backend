@@ -104,3 +104,6 @@ export const courseGenerationQueue = new Queue('course-generation', {
 export const paperImportQueue = new Queue('paper-import', {
   connection: redisConnection,
 });
+
+// Phase E: reconcile, diagnosis submit/collect, taxonomy tidy.
+export const evidenceQueue = new Queue('evidence', { connection: redisConnection, defaultJobOptions });

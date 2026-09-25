@@ -20,6 +20,7 @@
     "evidence:seed-taxonomy": "tsx src/scripts/evidence-seed-taxonomy.ts",
     "migrate:paper-question-tags": "tsx src/scripts/evidence-tag-paper-questions.ts",
     "evidence:diagnose": "tsx src/scripts/evidence-diagnose.ts",
+    "migrate:evidence": "tsx src/scripts/evidence-backfill.ts",
     "pdf:install-browser": "playwright install chromium",
     "test": "vitest run",
     "test:watch": "vitest"
