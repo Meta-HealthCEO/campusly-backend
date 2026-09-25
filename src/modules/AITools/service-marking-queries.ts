@@ -266,6 +266,8 @@ async function dispatchIssueNotification(
     message: 'Your marked paper is ready to review.',
     data: {
       url: `/student/tests/${String(marking.paperId)}`,
+      // The web app follows data.link (ruling R3).
+      link: `/student/tests/${String(marking.paperId)}`,
       entityType: 'marking_result_issued',
       entityId: String(marking._id),
     },

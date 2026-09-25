@@ -3,6 +3,7 @@ import { Notification, NotificationPreference, INotification, INotificationPrefe
 import { Student } from '../Student/model.js';
 import { NotFoundError } from '../../common/errors.js';
 import { paginationHelper } from '../../common/utils.js';
+import { classRosterFilter } from '../../common/class-roster.js';
 import type { CreateNotificationInput, BulkNotificationInput, UpdatePreferenceInput } from './validation.js';
 
 interface ListQuery {
@@ -108,12 +109,11 @@ export class NotificationService {
       }).select('userId');
       userIds = students.filter((s) => s.userId != null).map((s) => s.userId!.toString());
     } else if (data.targetType === 'class') {
-      // Only learners of the school the notice is sent in.
-      const students = await Student.find({
+      // The whole group (their own group or a group they joined), in this school only.
+      const students = await Student.find(classRosterFilter(data.targetId, {
         schoolId: data.schoolId,
-        classId: data.targetId,
         isDeleted: false,
-      }).select('userId');
+      })).select('userId');
       userIds = students.filter((s) => s.userId != null).map((s) => s.userId!.toString());
     }
 

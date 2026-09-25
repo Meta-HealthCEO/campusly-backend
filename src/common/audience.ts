@@ -33,7 +33,11 @@ export async function audienceUserIds(
   who: { learners: boolean; parents: boolean },
 ): Promise<string[]> {
   const or: Record<string, unknown>[] = [];
-  if (scope.classIds?.length) or.push({ classId: { $in: oids(scope.classIds) } });
+  if (scope.classIds?.length) {
+    // Everyone in the class: their own group, or a group they joined (spec §3).
+    const ids = oids(scope.classIds);
+    or.push({ classId: { $in: ids } }, { subjectClassIds: { $in: ids } });
+  }
   if (scope.gradeIds?.length) or.push({ gradeId: { $in: oids(scope.gradeIds) } });
   if (or.length === 0) return [];
   const learners = await Student.find({ schoolId: oid(schoolId), isDeleted: false, $or: or }).select('_id userId guardianIds').lean();

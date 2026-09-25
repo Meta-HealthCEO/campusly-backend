@@ -54,6 +54,8 @@ describe('issueMarking tells the learner once per result', () => {
     await Promise.all([issue(markingId), issue(markingId)]);
 
     await vi.waitFor(async () => expect(await resultNotices(userId)).toBe(1));
+    const told = await Notification.findOne({ recipientId: userId, 'data.entityType': 'marking_result_issued' }).lean();
+    expect((told?.data as { link?: string }).link).toMatch(/^\/student\/tests\/[a-f0-9]{24}$/);
     await new Promise((r) => setTimeout(r, 50));
     expect(await resultNotices(userId)).toBe(1);
   });
