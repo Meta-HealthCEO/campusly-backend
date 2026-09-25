@@ -19,6 +19,7 @@ import { BadRequestError, NotFoundError } from '../../common/errors.js';
 import { markPaperFromText } from '../AITools/service-marking-text.js';
 import { logger } from '../../common/logger.js';
 import { PaperMarking } from '../AITools/model-marking.js';
+import { learnerClassIds } from '../../common/class-roster.js';
 
 type PaperAssignmentLike = {
   _id: mongoose.Types.ObjectId;
@@ -34,11 +35,10 @@ function toOid(id: string | mongoose.Types.ObjectId): mongoose.Types.ObjectId {
 
 function findDigitalAssignment(
   assignments: readonly PaperAssignmentLike[] | undefined,
-  classId: mongoose.Types.ObjectId,
+  classIds: readonly mongoose.Types.ObjectId[],
 ): PaperAssignmentLike | undefined {
-  return assignments?.find(
-    (a) => String(a.classId) === String(classId) && a.mode === 'digital',
-  );
+  const keys = new Set(classIds.map(String));
+  return assignments?.find((a) => keys.has(String(a.classId)) && a.mode === 'digital');
 }
 
 function assertReleased(assignment: PaperAssignmentLike): void {
@@ -63,7 +63,10 @@ function deriveSubmissionStatus(
 interface StudentContext {
   studentDocId: mongoose.Types.ObjectId;
   studentName: string;
+  /** The learner's own group. */
   classId: mongoose.Types.ObjectId | null;
+  /** Every group the learner is in (spec §3). */
+  classIds: mongoose.Types.ObjectId[];
   schoolId: mongoose.Types.ObjectId;
 }
 
@@ -95,6 +98,7 @@ export async function resolveStudentContext(
     studentDocId: student._id as mongoose.Types.ObjectId,
     studentName: `${firstName} ${lastName}`.trim() || (student.admissionNumber ?? 'Student'),
     classId: student.classId ? toOid(String(student.classId)) : null,
+    classIds: learnerClassIds(student),
     schoolId: toOid(schoolId),
   };
 }
@@ -125,12 +129,12 @@ export interface AssignedPaperSummary {
 export async function listAssignedPapersForStudent(
   ctx: StudentContext,
 ): Promise<AssignedPaperSummary[]> {
-  if (!ctx.classId) return [];
+  if (ctx.classIds.length === 0) return [];
 
   type PopulatedRef = { _id: mongoose.Types.ObjectId; name?: string };
   const papers = await AssessmentPaper.find({
     schoolId: ctx.schoolId,
-    'assignments.classId': ctx.classId,
+    'assignments.classId': { $in: ctx.classIds },
     isDeleted: false,
     status: 'finalised',
   })
@@ -163,7 +167,7 @@ export async function listAssignedPapersForStudent(
 
   const result: AssignedPaperSummary[] = [];
   for (const paper of papers) {
-    const assignment = findDigitalAssignment(paper.assignments, ctx.classId);
+    const assignment = findDigitalAssignment(paper.assignments, ctx.classIds);
     if (!assignment) continue;
     const sub = subByPaper.get(String(paper._id));
     result.push({
@@ -220,7 +224,7 @@ export async function getStudentPaperView(
   paperId: string,
   ctx: StudentContext,
 ): Promise<StudentPaperView> {
-  if (!ctx.classId) throw new BadRequestError('Student is not assigned to a class');
+  if (ctx.classIds.length === 0) throw new BadRequestError('Student is not assigned to a class');
 
   type PopulatedRef = { _id: mongoose.Types.ObjectId; name?: string };
   const paper = await AssessmentPaper.findOne({
@@ -236,7 +240,7 @@ export async function getStudentPaperView(
     .lean();
 
   if (!paper) throw new NotFoundError('Paper not found');
-  const assignment = findDigitalAssignment(paper.assignments, ctx.classId);
+  const assignment = findDigitalAssignment(paper.assignments, ctx.classIds);
   if (!assignment) {
     throw new NotFoundError('Paper is not assigned to this class for digital take');
   }
@@ -308,7 +312,7 @@ export async function startSubmission(
   paperId: string,
   ctx: StudentContext,
 ): Promise<SubmissionResult> {
-  if (!ctx.classId) throw new BadRequestError('Student is not assigned to a class');
+  if (ctx.classIds.length === 0) throw new BadRequestError('Student is not assigned to a class');
   // Find-or-create — students can resume an in-progress submission.
   const existing = await PaperSubmission.findOne({
     paperId: toOid(paperId),
@@ -327,7 +331,7 @@ export async function startSubmission(
     status: 'finalised',
   }).select('version assignments').lean();
   if (!paper) throw new NotFoundError('Paper not found');
-  const assignment = findDigitalAssignment(paper.assignments, ctx.classId);
+  const assignment = findDigitalAssignment(paper.assignments, ctx.classIds);
   if (!assignment) throw new NotFoundError('Paper is not assigned to this class for digital take');
   assertReleased(assignment);
 
@@ -335,7 +339,8 @@ export async function startSubmission(
     paperId: toOid(paperId),
     assignmentId: assignment._id,
     schoolId: ctx.schoolId,
-    classId: ctx.classId,
+    // The group the test was set for, not the learner's own group (ruling R12).
+    classId: toOid(String(assignment.classId)),
     studentId: ctx.studentDocId,
     studentName: ctx.studentName,
     paperVersion: paper.version,

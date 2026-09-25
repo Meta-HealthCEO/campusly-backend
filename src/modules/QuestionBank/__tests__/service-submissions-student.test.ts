@@ -36,10 +36,12 @@ function makeStudentContext(overrides: Partial<{
   classId: mongoose.Types.ObjectId | null;
   schoolId: mongoose.Types.ObjectId;
 }> = {}) {
+  const classId = overrides.classId ?? objectId();
   return {
     studentDocId: overrides.studentDocId ?? objectId(),
     studentName: overrides.studentName ?? 'Student One',
-    classId: overrides.classId ?? objectId(),
+    classId,
+    classIds: classId ? [classId] : [],
     schoolId: overrides.schoolId ?? objectId(),
   };
 }

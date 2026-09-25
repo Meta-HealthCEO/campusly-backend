@@ -10,6 +10,7 @@ import {
   type IAssignmentSubmission,
 } from './model.js';
 import { Student } from '../Student/model.js';
+import { learnerClassIds } from '../../common/class-roster.js';
 import { publishAssignmentGrade } from '../Academic/service-gradebook-publish.js';
 import {
   BadRequestError,
@@ -127,7 +128,7 @@ function validatePublishable(assignment: Pick<IAssignment, 'rubric' | 'totalMark
 
 function visibleClassAssignment(
   assignedClasses: IAssignment['assignedClasses'],
-  classId: string,
+  classIds: ReadonlySet<string>,
   now = new Date(),
 ) {
   return assignedClasses.find((a) => {
@@ -135,7 +136,7 @@ function visibleClassAssignment(
     const refId = typeof ref === 'object' && ref !== null && '_id' in ref
       ? String((ref as { _id: unknown })._id)
       : String(a.classId);
-    if (refId !== classId) return false;
+    if (!classIds.has(refId)) return false;
     return !a.releaseAt || a.releaseAt <= now;
   });
 }
@@ -387,17 +388,18 @@ export async function listAssignmentsForStudent(
     _id: toOid(studentId, 'studentId'),
     schoolId: toOid(schoolId, 'schoolId'),
     isDeleted: false,
-  }).select('classId').lean();
+  }).select('classId subjectClassIds').lean();
   if (!student) throw new NotFoundError('Student not found.');
 
-  const classId = String(student.classId);
+  const classIds = learnerClassIds(student);
+  const classKeys = new Set(classIds.map(String));
   const assignments = await Assignment.find({
     schoolId: toOid(schoolId, 'schoolId'),
     isDeleted: false,
     status: 'published',
     assignedClasses: {
       $elemMatch: {
-        classId: toOid(classId, 'classId'),
+        classId: { $in: classIds },
         $or: [{ releaseAt: null }, { releaseAt: { $lte: now } }],
       },
     },
@@ -417,7 +419,7 @@ export async function listAssignmentsForStudent(
     .then((subs) => new Map(subs.map((s) => [String(s.assignmentId), s])));
 
   return assignments.map((a) => {
-    const classMeta = visibleClassAssignment(a.assignedClasses, classId, now);
+    const classMeta = visibleClassAssignment(a.assignedClasses, classKeys, now);
     const sub = submissionMap.get(String(a._id));
     return {
       ...a,
@@ -435,14 +437,15 @@ async function getAssignmentForStudentByUser(
     userId: toOid(actor.id, 'userId'),
     schoolId: schoolObjectId(actor),
     isDeleted: false,
-  }).select('_id classId').lean<{
+  }).select('_id classId subjectClassIds').lean<{
     _id: mongoose.Types.ObjectId;
     classId: mongoose.Types.ObjectId;
+    subjectClassIds?: mongoose.Types.ObjectId[];
   } | null>();
   if (!student) throw new NotFoundError('Student profile not found.');
 
   const now = new Date();
-  const classId = String(student.classId);
+  const classIds = learnerClassIds(student);
   const assignment = await Assignment.findOne({
     _id: toOid(assignmentId, 'assignmentId'),
     schoolId: schoolObjectId(actor),
@@ -450,7 +453,7 @@ async function getAssignmentForStudentByUser(
     status: 'published',
     assignedClasses: {
       $elemMatch: {
-        classId: student.classId,
+        classId: { $in: classIds },
         $or: [{ releaseAt: null }, { releaseAt: { $lte: now } }],
       },
     },
@@ -473,7 +476,7 @@ async function getAssignmentForStudentByUser(
 
   const classAssignment = visibleClassAssignment(
     assignment.assignedClasses as unknown as IAssignment['assignedClasses'],
-    classId,
+    new Set(classIds.map(String)),
     now,
   );
 
@@ -507,16 +510,16 @@ export async function submitAssignment(
     _id: toOid(studentId, 'studentId'),
     schoolId: toOid(schoolId, 'schoolId'),
     isDeleted: false,
-  }).select('classId').lean();
+  }).select('classId subjectClassIds').lean();
   if (!student) throw new NotFoundError('Student profile not found.');
 
-  const classId = String(student.classId);
-  const classAssignment = assignment.assignedClasses.find(
-    (a) => String(a.classId) === classId,
-  );
+  const classKeys = new Set(learnerClassIds(student).map(String));
+  const classAssignment = assignment.assignedClasses.find((a) => classKeys.has(String(a.classId)));
   if (!classAssignment) {
     throw new ForbiddenError('This assignment was not pushed to your class.');
   }
+  // The submission belongs to the group the project was set for (ruling R12).
+  const classId = String(classAssignment.classId);
 
   const now = new Date();
   if (classAssignment.releaseAt && now < classAssignment.releaseAt) {
