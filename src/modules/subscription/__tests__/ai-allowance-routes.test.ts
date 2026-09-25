@@ -35,7 +35,6 @@ import { PaperGenerationService } from '../../QuestionBank/service-paper-generat
 import { GenerationService } from '../../QuestionBank/service-generation.js';
 import { MemoService } from '../../TeacherWorkbench/services/memo.service.js';
 import { ClassUnitService } from '../../Course/service-class-unit.js';
-import { HomeworkService } from '../../Homework/service.js';
 import { generateAssignmentDraft } from '../../Assignment/service-ai-generate.js';
 import { markPaperFromText } from '../../AITools/service-marking-text.js';
 import { confirmBatch } from '../../AITools/service-marking-batch.js';
@@ -133,10 +132,7 @@ const endpoints: Endpoint[] = [
     body: { contentResourceId: id(), count: 4 },
     stub: () => vi.mocked(generateComprehensionQuestions).mockResolvedValue([] as never),
   },
-  {
-    name: 're-grade a learner submission', action: 'homework_regrade', method: 'post', path: () => `/api/homework/submissions/${id()}/regrade`, body: {},
-    stub: () => vi.spyOn(HomeworkService, 'regrade').mockResolvedValue({ _id: id() } as never),
-  },
+  // Re-grades are counted in the background grading path: see ai-allowance-fixes.test.ts.
 ];
 
 describe('every standalone AI action draws from one allowance', () => {

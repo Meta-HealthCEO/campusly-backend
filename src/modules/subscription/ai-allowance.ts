@@ -22,7 +22,7 @@ export const PRO_AI_ACTIONS_PER_MONTH = 500;
 
 export const AI_ACTIONS = [
   'unit_outline', 'unit_build', 'unit_rewrite', 'revision_item', 'paper', 'paper_regenerate',
-  'homework_draft', 'homework_regrade', 'project_draft', 'marking', 'memo',
+  'homework_draft', 'homework_regrade', 'project_draft', 'marking', 'memo', 'report_comments',
 ] as const;
 export type AIAction = (typeof AI_ACTIONS)[number];
 
@@ -67,21 +67,38 @@ export async function aiAllowance(schoolId: string, now: Date = new Date()): Pro
   return { used, limit: plan === 'pro' ? PRO_AI_ACTIONS_PER_MONTH : FREE_AI_ACTIONS_PER_MONTH, resetsAt: end, plan };
 }
 
-function limitMessage(allowance: AIAllowance): string {
+function limitMessage(allowance: AIAllowance, count: number): string {
+  const left = Math.max(0, allowance.limit - allowance.used);
+  if (left > 0) {
+    const more = allowance.plan === 'free' ? ' Upgrade to Pro for more.' : '';
+    return `This needs ${count} AI actions and you have ${left} left this month.${more}`;
+  }
   return allowance.plan === 'free'
     ? `You've used this month's ${allowance.limit} free AI actions. Upgrade to Pro for more.`
     : `You've used this month's ${allowance.limit} AI actions. They reset at the start of next month.`;
 }
 
-/** Refuses the action when a standalone teacher is unverified or out of AI actions. No-op for school users. */
-export async function assertAIAllowance(actor: AIActor, _action: AIAction): Promise<void> {
+/** AI actions a standalone teacher has left this month; null for school users (no limit). */
+export async function remainingAIActions(actor: AIActor): Promise<number | null> {
+  if (!actor.isStandaloneTeacher) return null;
+  const allowance = await aiAllowance(actor.schoolId);
+  return Math.max(0, allowance.limit - allowance.used);
+}
+
+/**
+ * Refuses the action when a standalone teacher is unverified or has fewer
+ * than `count` AI actions left (one request that spends several — batch
+ * marking, report comments — is refused whole, before any AI call).
+ * No-op for school users.
+ */
+export async function assertAIAllowance(actor: AIActor, _action: AIAction, count = 1): Promise<void> {
   if (!actor.isStandaloneTeacher) return;
   if (!(actor.emailVerifiedAt instanceof Date)) {
     throw new AppError('Verify your email to use AI. We sent you a link.', 403, true, { code: 'EMAIL_UNVERIFIED' });
   }
   const allowance = await aiAllowance(actor.schoolId);
-  if (allowance.used < allowance.limit) return;
-  throw new AppError(limitMessage(allowance), 402, true, {
+  if (allowance.limit - allowance.used >= count) return;
+  throw new AppError(limitMessage(allowance, count), 402, true, {
     code: 'AI_ALLOWANCE',
     details: { used: allowance.used, limit: allowance.limit, resetsAt: allowance.resetsAt.toISOString(), plan: allowance.plan },
   });

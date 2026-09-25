@@ -3,6 +3,7 @@ import path from 'path';
 import os from 'os';
 import { authenticate } from '../../middleware/auth.js';
 import { authorize } from '../../middleware/rbac.js';
+import { refuseStandalone } from '../../middleware/refuse-standalone.js';
 import { validate } from '../../middleware/validate.js';
 import { AIToolsController } from './controller.js';
 import { createMarkingUpload } from './service-marking-images.js';
@@ -227,11 +228,14 @@ router.get(
 
 // ─── AI Grading ───────────────────────────────────────────────────────────────
 
+// Rubric AI grading has no page in the standalone teacher portal; its routes
+// refuse standalone teachers so they can't spend AI outside their allowance.
 // POST /grade — grade a single submission
 router.post(
   '/grade',
   authenticate,
   authorize('teacher', 'school_admin', 'super_admin'),
+  refuseStandalone(),
   validate(gradeSubmissionSchema),
   AIToolsController.gradeSubmission,
 );
@@ -241,6 +245,7 @@ router.post(
   '/grade/bulk',
   authenticate,
   authorize('teacher', 'school_admin', 'super_admin'),
+  refuseStandalone(),
   validate(bulkGradeSchema),
   AIToolsController.bulkGrade,
 );
@@ -311,6 +316,7 @@ router.post(
   '/grade/:jobId/retry',
   authenticate,
   authorize('teacher', 'school_admin', 'super_admin'),
+  refuseStandalone(),
   AIToolsController.retryGrade,
 );
 

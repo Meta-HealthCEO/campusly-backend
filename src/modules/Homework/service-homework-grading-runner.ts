@@ -4,6 +4,7 @@ import { Homework, HomeworkSubmission } from './model.js';
 import { Question, IQuestion } from '../QuestionBank/model.js';
 import { gradeAnswer, applyLatePenalty } from './service-homework-grading.js';
 import { publishHomeworkGrade } from '../Academic/service-gradebook-publish.js';
+import { recordAIUse, type AIActor } from '../subscription/ai-allowance.js';
 
 // ─── Per-school semaphore (single-instance only) ────────────────────────────
 
@@ -75,6 +76,8 @@ interface GradedItem {
   awarded: number;
   rationale: string;
   method: 'deterministic' | 'ai';
+  /** Whether the AI actually marked this answer (not a deterministic or unresolvable one). */
+  viaAI: boolean;
 }
 
 // ─── Public entry ───────────────────────────────────────────────────────────
@@ -83,8 +86,12 @@ interface GradedItem {
  * Fire-and-forget. Iterates `gradingMethod='pending'` answers, calls AI, writes
  * results back to the submission. Honors gradingGeneration to abort if the
  * student has resubmitted mid-grade.
+ *
+ * `regradedBy` is the teacher who asked for a re-grade: their AI allowance is
+ * charged one action once the AI has marked at least one answer. A learner's
+ * own submission (no `regradedBy`) is never counted.
  */
-export async function gradeSubmissionAsync(submissionId: string): Promise<void> {
+export async function gradeSubmissionAsync(submissionId: string, regradedBy?: AIActor): Promise<void> {
   // Initial load: no schoolId in scope yet — submissionId comes from an internal
   // call (submitHomework / regrade) which has already validated school access.
   const submission = await HomeworkSubmission.findOne({ _id: submissionId, isDeleted: false });
@@ -148,7 +155,7 @@ export async function gradeSubmissionAsync(submissionId: string): Promise<void> 
         const ans = answers[idx];
         if (submission.type === 'quiz' && ans.questionIndex !== undefined) {
           const qq = quizQuestions[ans.questionIndex];
-          if (!qq) return { idx, awarded: 0, rationale: 'Question not found', method: 'ai' };
+          if (!qq) return { idx, awarded: 0, rationale: 'Question not found', method: 'ai', viaAI: false };
           const fakeQ = {
             _id: new mongoose.Types.ObjectId(),
             stem: qq.questionText,
@@ -159,18 +166,19 @@ export async function gradeSubmissionAsync(submissionId: string): Promise<void> 
             options: [],
           } as unknown as IQuestion;
           const r = await gradeAnswer(fakeQ, ans.studentAnswer);
-          return { idx, awarded: r.awarded, rationale: r.rationale, method: r.gradingMethod };
+          return { idx, awarded: r.awarded, rationale: r.rationale, method: r.gradingMethod, viaAI: r.gradingMethod === 'ai' };
         }
         if (ans.questionId) {
           const q = questionMap.get(ans.questionId.toString());
-          if (!q) return { idx, awarded: 0, rationale: 'Question not found', method: 'ai' };
+          if (!q) return { idx, awarded: 0, rationale: 'Question not found', method: 'ai', viaAI: false };
           const r = await gradeAnswer(q, ans.studentAnswer);
-          return { idx, awarded: r.awarded, rationale: r.rationale, method: r.gradingMethod };
+          return { idx, awarded: r.awarded, rationale: r.rationale, method: r.gradingMethod, viaAI: r.gradingMethod === 'ai' };
         }
-        return { idx, awarded: 0, rationale: 'Unable to resolve question', method: 'ai' };
+        return { idx, awarded: 0, rationale: 'Unable to resolve question', method: 'ai', viaAI: false };
       },
       PER_SUBMISSION_CAP,
     );
+    await chargeRegrade(regradedBy, results, submissionId);
 
     // Re-load + generation guard (scoped to school now that we have submission.schoolId)
     const fresh = await HomeworkSubmission.findOne({ _id: submissionId, schoolId: submission.schoolId });
@@ -210,6 +218,21 @@ export async function gradeSubmissionAsync(submissionId: string): Promise<void> 
     );
   } finally {
     releaseSchoolSlot(schoolId);
+  }
+}
+
+/** One AI action for a teacher's re-grade, once the AI has marked at least one answer. */
+async function chargeRegrade(
+  regradedBy: AIActor | undefined,
+  results: Array<{ status: 'fulfilled'; value: GradedItem } | { status: 'rejected'; reason: unknown }>,
+  submissionId: string,
+): Promise<void> {
+  if (!regradedBy) return;
+  if (!results.some((r) => r.status === 'fulfilled' && r.value.viaAI)) return;
+  try {
+    await recordAIUse(regradedBy, 'homework_regrade', { submissionId });
+  } catch (err: unknown) {
+    logger.error({ err, submissionId }, 'Could not record the re-grade against the AI allowance');
   }
 }
 

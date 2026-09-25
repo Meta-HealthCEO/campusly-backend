@@ -28,10 +28,16 @@ const toneGuidance: Record<'encouraging' | 'balanced' | 'formal', string> = {
 };
 
 export class ReportService {
+  /**
+   * One AI comment per learner. `onCommentWritten` runs after each comment the
+   * AI wrote is saved, so a caller can count exactly the comments written (a
+   * later AI failure doesn't undo the earlier ones).
+   */
   static async generateReportComments(
     teacherId: string,
     schoolId: string,
     input: GenerateReportCommentsInput,
+    onCommentWritten?: () => Promise<void>,
   ): Promise<ReportCommentResult[]> {
     const results: ReportCommentResult[] = [];
 
@@ -157,6 +163,7 @@ export class ReportService {
         tokensUsed: { input: usage.input_tokens, output: usage.output_tokens },
         aiModel: ANTHROPIC_MODEL,
       });
+      if (onCommentWritten) await onCommentWritten();
     }
 
     return results;

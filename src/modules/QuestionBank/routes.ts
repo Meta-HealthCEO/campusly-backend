@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { authorize, validate } from '../../middleware/index.js';
-import { requireEntitlement } from '../subscription/entitlements.js';
+import { refuseStandalone } from '../../middleware/refuse-standalone.js';
 import { QuestionBankController } from './controller.js';
 import {
   postAddQuestionToPaper,
@@ -63,7 +63,8 @@ router.post(
 router.post(
   '/questions/extract-from-paper',
   authorize(...READ_ROLES),
-  requireEntitlement('aiGeneration'),
+  // Only the question-bank page (not in the standalone portal) uses this.
+  refuseStandalone(),
   validate(extractFromPaperSchema),
   QuestionBankController.extractFromPaper,
 );

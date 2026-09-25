@@ -8,6 +8,7 @@ import { ParentService } from './parent.service.js';
 import { MasteryService } from './mastery.service.js';
 import { RecommendationsService } from './recommendations.service.js';
 import { apiResponse } from '../../common/utils.js';
+import { aiActorFor, assertAIAllowance, recordAIUse, withAIAllowance } from '../subscription/ai-allowance.js';
 
 export class AITutorController {
   static async sendMessage(req: Request, res: Response): Promise<void> {
@@ -143,10 +144,16 @@ export class AITutorController {
 
   static async generateReportComments(req: Request, res: Response): Promise<void> {
     const schoolId = req.user!.schoolId!;
+    const ai = await aiActorFor(req);
+    // One AI action per comment: refuse the whole request up front if there
+    // aren't enough left, then count each comment as it is written.
+    const studentIds = (req.body as { studentIds: string[] }).studentIds;
+    await assertAIAllowance(ai, 'report_comments', studentIds.length);
     const comments = await ReportService.generateReportComments(
       getUser(req).id,
       schoolId,
       req.body,
+      () => recordAIUse(ai, 'report_comments'),
     );
     res.status(201).json(apiResponse(true, comments, 'Report comments generated successfully'));
   }
@@ -208,7 +215,7 @@ export class AITutorController {
   static async regenerateReportComment(req: Request, res: Response): Promise<void> {
     const schoolId = req.user?.schoolId;
     if (!schoolId) { res.status(400).json({ success: false, error: 'User must be assigned to a school' }); return; }
-    const comment = await regenerateReportComment(req.params.id as string, schoolId, getUser(req).id);
+    const comment = await withAIAllowance(await aiActorFor(req), 'report_comments', () => regenerateReportComment(req.params.id as string, schoolId, getUser(req).id));
     res.json(apiResponse(true, comment, 'Report comment regenerated'));
   }
 

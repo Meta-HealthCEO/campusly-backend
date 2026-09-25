@@ -32,7 +32,7 @@ async function schoolTeacherToken() {
     principal: 'T',
     joinCode: `F${Math.random().toString(36).slice(2, 7).toUpperCase()}`,
     isActive: true,
-    modulesEnabled: ['academic'],
+    modulesEnabled: ['academic', 'ai_tools'],
   });
   const schoolId = school._id as mongoose.Types.ObjectId;
   schools.push(schoolId);
@@ -59,6 +59,14 @@ const hiddenRoutes = [
   { name: 'lesson-plan add material', path: () => `/api/lessons/${id()}/materials`, body: {} },
   { name: 'Library generate', path: () => '/api/content-library/resources/generate', body: {} },
   { name: 'Library paper import', path: () => '/api/paper-imports', body: {} },
+  { name: 'rubric AI grading', path: () => '/api/ai-tools/grade', body: {} },
+  { name: 'bulk rubric AI grading', path: () => '/api/ai-tools/grade/bulk', body: {} },
+  { name: 'rubric AI grading retry', path: () => `/api/ai-tools/grade/${id()}/retry`, body: {} },
+  { name: 'school news AI article', path: () => '/api/school-news/generate', body: {} },
+  // A school teacher without the timetable capability is refused by that guard instead — never by this one.
+  { name: 'timetable line suggestions', path: () => '/api/timetable-builder/lines/suggest', body: {}, schoolMay403: true },
+  { name: 'lesson recording notes retry', path: () => `/api/classroom/sessions/${id()}/notes/retry`, body: {} },
+  { name: 'question bank extract from paper', path: () => '/api/question-bank/questions/extract-from-paper', body: {} },
 ];
 
 describe('AI routes behind pages hidden from standalone teachers', () => {
@@ -74,7 +82,7 @@ describe('AI routes behind pages hidden from standalone teachers', () => {
       const token = await schoolTeacherToken();
       const res = await request(app).post(route.path()).set('Authorization', `Bearer ${token}`).send(route.body);
       expect(res.body.code).not.toBe('NOT_IN_TEACHER_PORTAL');
-      expect(res.status).not.toBe(403);
+      if (!('schoolMay403' in route)) expect(res.status).not.toBe(403);
     });
   });
 });

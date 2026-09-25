@@ -9,7 +9,7 @@ import {
   getParentDashboardCounts,
 } from './service.js';
 import { generateComprehensionQuestions } from './service-homework-comprehension.js';
-import { aiActorFor, withAIAllowance } from '../subscription/ai-allowance.js';
+import { aiActorFor, assertAIAllowance, withAIAllowance } from '../subscription/ai-allowance.js';
 import { apiResponse } from '../../common/utils.js';
 import { BadRequestError } from '../../common/errors.js';
 import { toObjectId, type HomeworkActor } from './service-access.js';
@@ -242,8 +242,11 @@ export class HomeworkController {
 
   static async regradeSubmission(req: Request, res: Response): Promise<void> {
     const actor = getHomeworkActor(req);
-    // A teacher-triggered re-grade counts; a learner's own submission being auto-marked never does.
-    const result = await withAIAllowance(await aiActorFor(req), 'homework_regrade', () => HomeworkService.regrade(req.params.id as string, actor));
+    // A teacher-triggered re-grade counts once the background AI has marked
+    // something (see gradeSubmissionAsync); a learner's own submission never does.
+    const ai = await aiActorFor(req);
+    await assertAIAllowance(ai, 'homework_regrade');
+    const result = await HomeworkService.regrade(req.params.id as string, actor, ai);
     res.json({ data: result });
   }
 

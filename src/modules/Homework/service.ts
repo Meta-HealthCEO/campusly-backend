@@ -17,6 +17,7 @@ import { logger } from '../../common/logger.js';
 import { publishHomeworkGrade } from '../Academic/service-gradebook-publish.js';
 import { submitHomework as _submitHomework } from './service-homework-submit.js';
 import type { CreateHomeworkInput, SubmitHomeworkInput } from './validation.js';
+import type { AIActor } from '../subscription/ai-allowance.js';
 import {
   assertCanUseClass,
   assertSubjectBelongsToSchool,
@@ -651,7 +652,8 @@ export class HomeworkService {
     return submission;
   }
 
-  static async regrade(submissionId: string, scope: HomeworkScope): Promise<IHomeworkSubmissionBase> {
+  /** `regradedBy` is charged one AI action when the background AI grading marks something. */
+  static async regrade(submissionId: string, scope: HomeworkScope, regradedBy?: AIActor): Promise<IHomeworkSubmissionBase> {
     const schoolOid = schoolObjectId(scope);
     const sub = await HomeworkSubmission.findOne({
       _id: toObjectId(submissionId, 'submissionId'),
@@ -682,7 +684,7 @@ export class HomeworkService {
     sub.gradingGeneration += 1;
     await sub.save();
 
-    void gradeSubmissionAsync(submissionId);
+    void gradeSubmissionAsync(submissionId, regradedBy);
 
     const fresh = await HomeworkSubmission.findOne({
       _id: toObjectId(submissionId, 'submissionId'),

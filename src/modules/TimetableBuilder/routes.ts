@@ -1,6 +1,7 @@
 import express from 'express';
 import { authorize } from '../../middleware/rbac.js';
 import { requireCapability } from '../../middleware/capability.js';
+import { refuseStandalone } from '../../middleware/refuse-standalone.js';
 import { validate } from '../../middleware/validate.js';
 import { TimetableBuilderController } from './controller.js';
 import {
@@ -38,7 +39,8 @@ router.put('/availability/:teacherId', requireCapability('manage_academic_setup'
 
 router.get('/lines', adminOrTeacher, TimetableBuilderController.listLines);
 router.post('/lines', requireCapability('manage_academic_setup'), validate(lineSchema), TimetableBuilderController.upsertLine);
-router.post('/lines/suggest', requireCapability('manage_academic_setup'), validate(lineSuggestSchema), TimetableBuilderController.suggestLines);
+// AI line suggestions: school timetabling only, never a standalone teacher's AI allowance.
+router.post('/lines/suggest', refuseStandalone(), requireCapability('manage_academic_setup'), validate(lineSuggestSchema), TimetableBuilderController.suggestLines);
 router.put('/lines/:id', requireCapability('manage_academic_setup'), validate(lineSchema), TimetableBuilderController.updateLine);
 router.delete('/lines/:id', requireCapability('manage_academic_setup'), TimetableBuilderController.deleteLine);
 

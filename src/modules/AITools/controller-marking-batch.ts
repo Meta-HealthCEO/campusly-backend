@@ -71,7 +71,8 @@ export async function postConfirmBatch(req: Request, res: Response): Promise<voi
   const schoolId = requireSchoolId(user.schoolId);
   const parsed = confirmBodySchema.parse(req.body);
   const ai = await aiActorFor(req);
-  await assertAIAllowance(ai, 'marking');
+  // One AI action per script: refuse the whole batch before any marking if too few are left.
+  await assertAIAllowance(ai, 'marking', parsed.assignments.length);
   const result = await confirmBatch(
     req.params.id as string,
     schoolId,

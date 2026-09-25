@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { authorize, validate } from '../../middleware/index.js';
 import { requireEntitlement } from '../subscription/entitlements.js';
+import { refuseStandalone } from '../../middleware/refuse-standalone.js';
 import { ClassroomController } from './controller.js';
 import { RecordingController } from './controller-recording.js';
 import {
@@ -157,6 +158,8 @@ router.get(
 router.post(
   '/sessions/:id/notes/retry',
   authorize(...TEACHER_ROLES),
+  // Lesson recordings aren't part of the standalone teacher portal (AI notes outside their allowance).
+  refuseStandalone(),
   RecordingController.retryLessonNotes,
 );
 

@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { authorize } from '../../middleware/rbac.js';
+import { refuseStandalone } from '../../middleware/refuse-standalone.js';
 import { validate } from '../../middleware/validate.js';
 import { SchoolNewsController } from './controller.js';
 import { createArticleSchema, updateArticleSchema, generateArticleSchema } from './validation.js';
@@ -28,6 +29,8 @@ router.post(
 router.post(
   '/generate',
   authorize('teacher', 'school_admin'),
+  // School news isn't part of the standalone teacher portal (AI outside their allowance).
+  refuseStandalone(),
   validate(generateArticleSchema),
   SchoolNewsController.generateArticle,
 );
