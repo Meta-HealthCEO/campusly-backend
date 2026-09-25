@@ -25,6 +25,12 @@ async function node(type: string, title: string, parentId: Oid | null, subjectId
   return id;
 }
 
+/** The writers only write learners that exist in the marking's school. */
+async function ensureStudent(schoolId: Oid, classId: Oid, studentId: Oid): Promise<void> {
+  if (await Student.exists({ _id: studentId })) return;
+  await Student.collection.insertOne({ _id: studentId, schoolId, classId, gradeId: oid(), admissionNumber: `E-${String(studentId)}`, isDeleted: false });
+}
+
 export async function seedMarkedPaper(input: { schoolId?: Oid; teacherId?: Oid; classId?: Oid; students?: Oid[] } = {}): Promise<MarkedPaperFixture> {
   const schoolId = input.schoolId ?? oid();
   const teacherId = input.teacherId ?? oid();
@@ -52,11 +58,7 @@ export async function seedMarkedPaper(input: { schoolId?: Oid; teacherId?: Oid; 
     ],
   });
   const students = input.students ?? [oid(), oid(), oid()];
-  for (const studentId of students) {
-    if (!(await Student.exists({ _id: studentId }))) {
-      await Student.collection.insertOne({ _id: studentId, schoolId, classId, gradeId: oid(), admissionNumber: `E-${String(studentId)}`, isDeleted: false });
-    }
-  }
+  for (const studentId of students) await ensureStudent(schoolId, classId, studentId);
   return { schoolId, teacherId, classId, paperId: paper._id as Oid, topicId, subtopicId, bankQuestionId: bank._id as Oid, students };
 }
 
@@ -70,6 +72,7 @@ export async function seedMarking(
   }));
   const total = answers.reduce((s, a) => s + a.awarded, 0);
   const max = answers.reduce((s, a) => s + a.max, 0);
+  await ensureStudent(fx.schoolId, fx.classId, studentId);
   const m = await PaperMarking.create({
     paperId: fx.paperId, paperType: 'assessment', studentId, studentName: 'Learner', teacherId: fx.teacherId, schoolId: fx.schoolId,
     classId: fx.classId, imageCount: 0, totalMarks: total, maxMarks: max, percentage: Math.round((total / max) * 100), status: 'completed',

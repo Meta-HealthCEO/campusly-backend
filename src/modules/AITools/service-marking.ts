@@ -151,7 +151,7 @@ export async function markPaperFromImages(
     marking.aiRawResult = validated as unknown as Record<string, unknown>;
     marking.status = terminalStatus;
     await marking.save();
-    await safeEvidence('marking.images', () => syncMarkingEvidence(marking._id));
+    await safeEvidence('marking.images', () => syncMarkingEvidence(marking._id, marking.schoolId));
 
     return toResult(marking);
   } catch (err: unknown) {

@@ -20,7 +20,8 @@ export const MARKED_BY = ['deterministic', 'ai', 'teacher'] as const;
 export type MarkedBy = (typeof MARKED_BY)[number];
 export const DIAGNOSIS_STATES = ['none', 'pending', 'queued', 'ready', 'skipped', 'skipped_budget', 'failed', 'dismissed'] as const;
 export type DiagnosisState = (typeof DIAGNOSIS_STATES)[number];
-export const DELETED_REASONS = ['source_deleted', 'superseded', 'item_removed'] as const;
+/** `wrong_paper`: a photo of another paper, waiting for the teacher (checkpoint fix 1). */
+export const DELETED_REASONS = ['source_deleted', 'superseded', 'item_removed', 'wrong_paper'] as const;
 export type DeletedReason = (typeof DELETED_REASONS)[number];
 
 /** One answered question as a source's writer sees it. */

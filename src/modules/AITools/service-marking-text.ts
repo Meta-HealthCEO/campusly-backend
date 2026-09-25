@@ -124,7 +124,7 @@ export async function markPaperFromText(
     marking.aiRawResult = validated as unknown as Record<string, unknown>;
     marking.status = 'completed';
     await marking.save();
-    await safeEvidence('marking.text', () => syncMarkingEvidence(marking._id));
+    await safeEvidence('marking.text', () => syncMarkingEvidence(marking._id, marking.schoolId));
 
     return toResult(marking);
   } catch (err: unknown) {

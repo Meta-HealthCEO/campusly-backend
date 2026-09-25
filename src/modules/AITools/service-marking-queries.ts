@@ -90,7 +90,7 @@ export async function updateMarking(
     marking.status = updates.status;
   }
   await marking.save();
-  await safeEvidence('marking.update', () => syncMarkingEvidence(marking._id));
+  await safeEvidence('marking.update', () => syncMarkingEvidence(marking._id, marking.schoolId));
   return marking.toObject() as IPaperMarking;
 }
 
@@ -207,7 +207,7 @@ export async function issueMarking(
   if (isFirstIssue) marking.issuedAt = issuedAt;
   if (mark?._id) marking.gradebookEntryId = mark._id as mongoose.Types.ObjectId;
   await marking.save();
-  await safeEvidence('marking.issue', () => syncMarkingEvidence(marking._id, { studentId: resolvedStudentId }));
+  await safeEvidence('marking.issue', () => syncMarkingEvidence(marking._id, marking.schoolId, { studentId: resolvedStudentId }));
 
   // A digital script is done once its mark is issued.
   await PaperSubmission.updateOne(
