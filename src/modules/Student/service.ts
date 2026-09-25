@@ -4,6 +4,7 @@ import { User, type IUser } from '../Auth/model.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../common/constants.js';
 import { escapeRegex } from '../../common/utils.js';
+import { classRosterFilter } from '../../common/class-roster.js';
 import { EmailService } from '../../services/email.service.js';
 import { regenerateCredentials } from './service-regenerate.js';
 import crypto from 'crypto';
@@ -290,25 +291,21 @@ export class StudentService {
       isDeleted: false,
     };
 
+    let roster: Record<string, unknown> = filter;
     if (filters?.classIds) {
       if (filters.classIds.length === 0) {
-        return {
-          students: [],
-          total: 0,
-          page,
-          limit,
-          totalPages: 0,
-        };
+        return { students: [], total: 0, page, limit, totalPages: 0 };
       }
-      filter.classId = { $in: filters.classIds };
+      // A group's roster includes learners who joined it as a second group (spec §3).
+      roster = classRosterFilter(filters.classIds, filter);
     }
 
     if (query.search) {
       const searchRegex = new RegExp(escapeRegex(query.search), 'i');
-      filter.$or = [{ admissionNumber: searchRegex }];
+      roster = { ...roster, $or: [{ admissionNumber: searchRegex }] };
     }
 
-    let baseQuery = Student.find(filter)
+    let baseQuery = Student.find(roster)
       .populate('userId', 'firstName lastName email')
       .populate('gradeId')
       .populate('classId')
@@ -319,7 +316,7 @@ export class StudentService {
 
     const [students, total] = await Promise.all([
       baseQuery.exec(),
-      Student.countDocuments(filter),
+      Student.countDocuments(roster),
     ]);
 
     return {

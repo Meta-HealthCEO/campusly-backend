@@ -5,8 +5,8 @@ import { generateCSV, setCsvHeaders, type CSVColumn } from '../../common/csv-exp
 import { renderRegisterPdf, renderHistoryGridPdf, type RegisterRow, type HistoryCell } from './pdf-export.js';
 import { School } from '../School/model.js';
 import { Class } from '../Academic/model.js';
-import { Student } from '../Student/model.js';
 import { NotFoundError } from '../../common/errors.js';
+import { registerRoster } from './register-roster.js';
 
 interface PopulatedAttendance {
   date: Date;
@@ -136,14 +136,7 @@ export class AttendanceExportController {
     // export covers multiple classes).
     let roster: Array<{ admissionNumber: string; studentName: string; studentId: string }> = [];
     if (args.classId) {
-      const students = await Student.find({
-        classId: new mongoose.Types.ObjectId(args.classId),
-        schoolId: new mongoose.Types.ObjectId(args.schoolId),
-        isDeleted: false,
-      })
-        .select('admissionNumber userId')
-        .populate({ path: 'userId', select: 'firstName lastName' })
-        .lean();
+      const students = await registerRoster(args.schoolId, args.classId);
       roster = students
         .map((s) => {
           const u = (s as { userId?: { firstName?: string; lastName?: string } }).userId;

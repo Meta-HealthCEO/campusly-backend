@@ -7,6 +7,7 @@ import { CurriculumNode } from '../../CurriculumStructure/model.js';
 import { NotFoundError, ConflictError, BadRequestError } from '../../../common/errors.js';
 import { PAGINATION_DEFAULTS } from '../../../common/constants.js';
 import { escapeRegex } from '../../../common/utils.js';
+import { classRosterFilter, groupRosterByClass } from '../../../common/class-roster.js';
 
 /**
  * Resolves class.gradeId in place. Classes for standalone teachers point at a
@@ -592,15 +593,11 @@ export class GradeService {
 
       const classIds = classes.map((c) => String(c._id));
       const students = classIds.length > 0
-        ? await Student.find({ schoolId, classId: { $in: classIds }, isDeleted: false })
+        ? await Student.find(classRosterFilter(classIds, { schoolId, isDeleted: false }))
             .populate('userId', 'firstName lastName email profileImage').lean()
         : [];
-      const studentsByClass = new Map<string, typeof students>();
-      for (const s of students) {
-        const cid = String(s.classId);
-        if (!studentsByClass.has(cid)) studentsByClass.set(cid, []);
-        studentsByClass.get(cid)!.push(s);
-      }
+      // A learner in two of these groups appears in both (spec §3).
+      const studentsByClass = groupRosterByClass(students, classIds);
 
       // Pick the class explicitly flagged isHomeroom (if any) for the homeroom
       // slot; everything else goes into subjectClasses.
@@ -681,21 +678,12 @@ export class GradeService {
     const uniqueClassIds = [...new Set(allClassIds.map((id) => String(id)))];
 
     // 5. Fetch all students in one query
-    const students = await Student.find({
-      schoolId,
-      classId: { $in: uniqueClassIds },
-      isDeleted: false,
-    })
+    const students = await Student.find(classRosterFilter(uniqueClassIds, { schoolId, isDeleted: false }))
       .populate('userId', 'firstName lastName email profileImage')
       .lean();
 
-    // 6. Group students by classId
-    const studentsByClass = new Map<string, typeof students>();
-    for (const student of students) {
-      const cid = String(student.classId);
-      if (!studentsByClass.has(cid)) studentsByClass.set(cid, []);
-      studentsByClass.get(cid)!.push(student);
-    }
+    // 6. Group students by class (a learner in two groups is in both)
+    const studentsByClass = groupRosterByClass(students, uniqueClassIds);
 
     // 7. Assemble response — but DON'T duplicate the homeroom class as a
     // subjectClass entry if a Timetable row points back at it. For standalone
@@ -740,7 +728,7 @@ export class GradeService {
     classId: string,
     schoolId: string,
   ): Promise<number> {
-    return Student.countDocuments({ classId, schoolId, isDeleted: false });
+    return Student.countDocuments(classRosterFilter(classId, { schoolId, isDeleted: false }));
   }
 
   static async getTeacherAccessibleClassIds(

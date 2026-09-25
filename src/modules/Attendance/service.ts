@@ -4,6 +4,7 @@ import { AttendanceStatsService } from './service-stats.js';
 import { Student } from '../Student/model.js';
 import { Class } from '../Academic/model.js';
 import { BadRequestError } from '../../common/errors.js';
+import { classRosterFilter } from '../../common/class-roster.js';
 
 interface AttendanceReportFilters {
   schoolId: string;
@@ -69,13 +70,12 @@ export class AttendanceService {
       throw new BadRequestError('Class not found for this school');
     }
 
-    const matchingStudents = await Student.find({
+    const matchingStudents = await Student.find(classRosterFilter(data.classId, {
       _id: { $in: uniqueStudentIds },
       schoolId: data.schoolId,
-      classId: data.classId,
       enrollmentStatus: 'active',
       isDeleted: false,
-    })
+    }))
       .select('_id')
       .lean();
 
