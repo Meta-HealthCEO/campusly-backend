@@ -15,6 +15,11 @@ import mongoose from 'mongoose';
 import { School } from '../School/model.js';
 import { Class } from '../Academic/model.js';
 import { Student } from '../Student/model.js';
+import { classRosterFilter } from '../../common/class-roster.js';
+import { enrolOnJoin } from '../Course/enrolment.js';
+
+/** Learner sign-up with an email that already has an account (spec §3). */
+export const LEARNER_HAS_ACCOUNT = 'You already have an account. Sign in, then join with the code on your Profile.';
 
 export interface TokenPair {
   accessToken: string;
@@ -220,7 +225,7 @@ export class AuthService {
     const loginEmail = data.email.toLowerCase();
     const existingUser = await User.findOne({ email: loginEmail, isDeleted: false });
     if (existingUser) {
-      throw new ConflictError('An account with this email already exists. Please sign in or ask your teacher to reset the portal password.');
+      throw new ConflictError(LEARNER_HAS_ACCOUNT);
     }
 
     // Find the class by classroom code
@@ -229,12 +234,12 @@ export class AuthService {
       throw new NotFoundError('No class found with that classroom code. Please check the code and try again.');
     }
 
-    const roster = await Student.find({
+    // Everyone in the group, including learners who joined it as a second group.
+    const roster = await Student.find(classRosterFilter(cls._id, {
       schoolId: cls.schoolId,
-      classId: cls._id,
       isDeleted: false,
       userId: { $exists: true, $ne: null },
-    }).select('_id userId').lean();
+    })).select('_id userId').lean();
 
     const userIds: mongoose.Types.ObjectId[] = [];
     for (const student of roster) {
@@ -278,8 +283,11 @@ export class AuthService {
       matchedUser.lastName = data.lastName;
       matchedUser.isActive = true;
       matchedUser.refreshTokens = [];
+      // They just chose their own password (R14).
+      matchedUser.mustChangePassword = false;
       await matchedUser.save();
       user = matchedUser;
+      await enrolOnJoin(matchedStudent._id, cls._id, cls.schoolId);
     } else {
       // Create the user with role student
       user = await User.create({
@@ -295,7 +303,7 @@ export class AuthService {
       const admissionNumber = `STU-${Date.now().toString(36).toUpperCase()}`;
 
       // Create the Student record linked to the class, grade, and school
-      await Student.create({
+      const student = await Student.create({
         userId: user._id,
         schoolId: cls.schoolId,
         gradeId: cls.gradeId,
@@ -303,6 +311,7 @@ export class AuthService {
         admissionNumber,
         enrollmentStatus: 'active',
       });
+      await enrolOnJoin(student._id, cls._id, cls.schoolId);
     }
 
     const tokens = AuthService.generateTokenPair(user);
