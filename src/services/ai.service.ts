@@ -5,9 +5,12 @@ import { AppError } from '../common/errors.js';
 import { samplingParams } from './ai-model-capabilities.js';
 import { aiAppError, toAIError } from './ai-errors.js';
 import { acquireSemaphore, releaseSemaphore } from './ai-semaphore.js';
+import { chatUsageOf, firstText, usageOf, type ChatResult, type TextResult, type Usage } from './ai-usage.js';
 
-// The concurrency limit and its bounded wait queue live in ai-semaphore.ts.
+// The concurrency limit (and its bounded wait queue) and the token-usage helpers live
+// in ai-semaphore.ts and ai-usage.ts, split out to stay under 350 lines.
 export { AI_MAX_QUEUED } from './ai-semaphore.js';
+export type { ChatUsage } from './ai-usage.js';
 
 const ANTHROPIC_API_KEY = config.anthropic.apiKey;
 const ANTHROPIC_MODEL = config.anthropic.model;
@@ -20,19 +23,9 @@ const TIMEOUT_MS = 180_000; // 3 minutes for content generation, across all retr
  */
 export const AI_MAX_RETRIES = 2;
 
-type Usage = { input_tokens: number; output_tokens: number };
-type TextResult = { text: string; usage: Usage };
 /** A system prompt: plain text, or text blocks that may carry cache breakpoints. */
 type SystemPrompt = string | Anthropic.TextBlockParam[];
 
-/** Token usage of one chat call, including prompt-cache reads and writes. */
-export interface ChatUsage {
-  input_tokens: number;
-  output_tokens: number;
-  cache_read_input_tokens: number;
-  cache_creation_input_tokens: number;
-}
-type ChatResult = { text: string; usage: ChatUsage };
 type Options = { maxTokens?: number; temperature?: number; model?: string };
 
 function assertKey(): void {
@@ -72,35 +65,6 @@ async function sendMessage(
     clearTimeout(timer);
     releaseSemaphore();
   }
-}
-
-function usageOf(message: Anthropic.Message, label: string): Usage {
-  const usage = {
-    input_tokens: message.usage?.input_tokens ?? 0,
-    output_tokens: message.usage?.output_tokens ?? 0,
-  };
-  logger.info(`[AIService] ${label} tokens — input: ${usage.input_tokens}, output: ${usage.output_tokens}`);
-  return usage;
-}
-
-function chatUsageOf(message: Anthropic.Message, label: string): ChatUsage {
-  const u = message.usage;
-  const usage: ChatUsage = {
-    input_tokens: u?.input_tokens ?? 0,
-    output_tokens: u?.output_tokens ?? 0,
-    cache_read_input_tokens: u?.cache_read_input_tokens ?? 0,
-    cache_creation_input_tokens: u?.cache_creation_input_tokens ?? 0,
-  };
-  logger.info(
-    `[AIService] ${label} tokens — input: ${usage.input_tokens}, output: ${usage.output_tokens}, `
-    + `cache read: ${usage.cache_read_input_tokens}, cache write: ${usage.cache_creation_input_tokens}`,
-  );
-  return usage;
-}
-
-function firstText(message: Anthropic.Message): string {
-  const textBlock = message.content.find((b) => b.type === 'text');
-  return textBlock ? textBlock.text : '';
 }
 
 const DIAGNOSIS_MODEL = config.anthropic.diagnosisModel;
