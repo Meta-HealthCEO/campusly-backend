@@ -62,6 +62,9 @@ router.post(
   AITutorController.submitPractice,
 );
 
+// GET /usage — the learner's tutor messages this month (standalone classrooms)
+router.get('/usage', authorize('student'), AITutorController.getUsage);
+
 // GET /weak-areas — get student's weak areas
 router.get(
   '/weak-areas',

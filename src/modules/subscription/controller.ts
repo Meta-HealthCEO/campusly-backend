@@ -8,6 +8,7 @@ import { logger } from '../../common/logger.js';
 import { aiAllowance } from './ai-allowance.js';
 import { getUser } from '../../types/authenticated-request.js';
 import { subscriptionForViewer } from './subscription-view.js';
+import { learnerPoolUsage } from './learner-ai.js';
 
 function schoolIdFromReq(req: Request): mongoose.Types.ObjectId {
   const raw = req.user!.schoolId;
@@ -45,7 +46,9 @@ export class SubscriptionController {
       res.json({ data: { plan: 'school' } });
       return;
     }
-    res.json({ data: await aiAllowance(user.schoolId) });
+    // Beside the teacher's own allowance: how much of the learners' tutor pool is used (ruling R17).
+    const [allowance, learners] = await Promise.all([aiAllowance(user.schoolId), learnerPoolUsage(user.schoolId)]);
+    res.json({ data: { ...allowance, learners } });
   }
 
   static async checkout(req: Request, res: Response): Promise<void> {

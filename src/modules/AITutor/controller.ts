@@ -11,6 +11,7 @@ import { apiResponse } from '../../common/utils.js';
 import { aiActorFor, assertAIAllowance, recordAIUse, withAIAllowance } from '../subscription/ai-allowance.js';
 import { AppError } from '../../common/errors.js';
 import { logger } from '../../common/logger.js';
+import { learnerAIActorFor, learnerTutorUsage } from '../subscription/learner-ai.js';
 
 const STREAM_FAILED = 'Something went wrong. Try again.';
 
@@ -79,6 +80,16 @@ export class AITutorController {
       if (!abortController.signal.aborted) send('error', streamErrorPayload(err));
     }
     res.end();
+  }
+
+  /** This month's tutor messages for a standalone teacher's learner; school learners aren't limited. */
+  static async getUsage(req: Request, res: Response): Promise<void> {
+    const learner = await learnerAIActorFor(req);
+    if (!learner.isStandaloneLearner) {
+      res.json({ data: { plan: 'school' } });
+      return;
+    }
+    res.json({ data: await learnerTutorUsage(learner.schoolId, learner.userId) });
   }
 
   static async listConversations(req: Request, res: Response): Promise<void> {
