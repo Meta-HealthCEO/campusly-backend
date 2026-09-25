@@ -3,6 +3,7 @@ import type mongoose from 'mongoose';
 import { Subscription, Plan, Invoice, CheckoutSession, type ISubscription, type IInvoice } from './model.js';
 import { School } from '../School/model.js';
 import { getOneGateClient } from '../../lib/onegate/index.js';
+import { pastDueGraceEnd } from './entitlements.js';
 import type { ChargeTokenResponse } from '../../lib/onegate/index.js';
 
 export interface StartTrialInput {
@@ -99,6 +100,7 @@ export class SubscriptionService {
     sub.cardExpiryYear = input.cardExpiryYear;
     sub.retryCount = 0;
     sub.lastFailureReason = null;
+    sub.pastDueSince = null;
     await sub.save();
 
     await SubscriptionService.syncSchoolCache(sub);
@@ -165,10 +167,17 @@ export class SubscriptionService {
     }
 
     if (SubscriptionService.isCardExpired(sub)) {
+      // Pro for a grace period while the teacher adds a new card; then Free.
+      sub.pastDueSince = sub.pastDueSince ?? new Date();
+      const graceEnd = pastDueGraceEnd(sub)!;
+      if (graceEnd.getTime() <= Date.now()) {
+        await SubscriptionService.endSubscription(sub);
+        return;
+      }
       sub.status = 'past_due';
       sub.lastFailureReason = 'card_expired';
       sub.nextRetryAt = null;
-      sub.nextBillingAt = null;
+      sub.nextBillingAt = graceEnd;
       await sub.save();
       await SubscriptionService.syncSchoolCache(sub);
       return;
@@ -253,6 +262,7 @@ export class SubscriptionService {
     sub.retryCount = 0;
     sub.nextRetryAt = null;
     sub.lastFailureReason = null;
+    sub.pastDueSince = null;
     await sub.save();
     await SubscriptionService.syncSchoolCache(sub);
   }
@@ -293,8 +303,10 @@ export class SubscriptionService {
         sub.cardExpiryYear = null;
         sub.nextBillingAt = null;
         sub.nextRetryAt = null;
+        sub.pastDueSince = null;
       } else {
         sub.status = 'past_due';
+        sub.pastDueSince = sub.pastDueSince ?? new Date();
         const days = RETRY_INTERVALS_DAYS[Math.min(sub.retryCount - 1, RETRY_INTERVALS_DAYS.length - 1)];
         sub.nextRetryAt = new Date(Date.now() + days * 86400000);
         sub.nextBillingAt = sub.nextRetryAt;
@@ -384,6 +396,7 @@ export class SubscriptionService {
     sub.nextBillingAt = null;
     sub.trialEndsAt = null;
     sub.cancelAtPeriodEnd = false;
+    sub.pastDueSince = null;
     await sub.save();
     await SubscriptionService.syncSchoolCache(sub);
   }

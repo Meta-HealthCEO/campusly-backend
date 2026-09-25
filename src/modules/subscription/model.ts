@@ -66,6 +66,8 @@ export interface ISubscription extends Document {
   retryCount: number;
   nextRetryAt: Date | null;
   lastFailureReason: string | null;
+  /** When the subscription first fell behind (past_due); Pro lasts PAST_DUE_GRACE_DAYS from here. */
+  pastDueSince: Date | null;
   processingLockedAt: Date | null;
   gatewayProvider: string;
   gatewayCustomerRef: string | null;
@@ -100,6 +102,7 @@ const SubscriptionSchema = new Schema<ISubscription>(
     retryCount: { type: Number, default: 0, min: 0 },
     nextRetryAt: { type: Date, default: null },
     lastFailureReason: { type: String, default: null },
+    pastDueSince: { type: Date, default: null },
     processingLockedAt: { type: Date, default: null },
     gatewayProvider: { type: String, default: 'onegate' },
     gatewayCustomerRef: { type: String, default: null },

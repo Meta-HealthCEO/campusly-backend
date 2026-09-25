@@ -2,21 +2,35 @@ import type { Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
 import { Subscription, Plan } from './model.js';
 
-const ENTITLED_STATUSES = new Set(['trialing', 'active', 'past_due']);
+const ENTITLED_STATUSES = new Set(['trialing', 'active']);
+
+/** How long a past-due subscription keeps its plan while the card is fixed or retried. */
+export const PAST_DUE_GRACE_DAYS = 7;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/** When a past-due subscription's grace ends (null when it has no record of falling behind). */
+export function pastDueGraceEnd(sub: { pastDueSince?: Date | null }): Date | null {
+  return sub.pastDueSince ? new Date(sub.pastDueSince.getTime() + PAST_DUE_GRACE_DAYS * DAY_MS) : null;
+}
 
 /**
- * Whether a subscription currently carries its plan: trialing, active or
- * past_due, or canceled but still inside the period already paid for (or
- * the free trial it was canceled in).
+ * Whether a subscription currently carries its plan: trialing or active;
+ * past_due only for PAST_DUE_GRACE_DAYS after it fell behind; canceled but
+ * still inside the period already paid for (or the free trial it was
+ * canceled in).
  */
 export function isSubscriptionEntitled(
-  sub: { status: string; currentPeriodEnd?: Date | null; trialEndsAt?: Date | null } | null,
+  sub: { status: string; currentPeriodEnd?: Date | null; trialEndsAt?: Date | null; pastDueSince?: Date | null } | null,
   now: Date = new Date(),
 ): boolean {
   if (!sub) return false;
   if (sub.status === 'canceled') {
     const end = sub.currentPeriodEnd ?? sub.trialEndsAt ?? null;
     return !!end && end.getTime() > now.getTime();
+  }
+  if (sub.status === 'past_due') {
+    const graceEnd = pastDueGraceEnd(sub);
+    return !!graceEnd && graceEnd.getTime() > now.getTime();
   }
   // free / unpaid / anything else → no plan entitlements
   return ENTITLED_STATUSES.has(sub.status);
