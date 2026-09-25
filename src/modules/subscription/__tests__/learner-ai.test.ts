@@ -59,6 +59,26 @@ describe('the learner tutor limits', () => {
   });
 });
 
+describe('the class pool follows the teacher allowance plan rules (release review M6)', () => {
+  const DAY = 86_400_000;
+  const poolLimit = async (room: Classroom, sub: Record<string, unknown>): Promise<number> => {
+    await Subscription.updateOne({ schoolId: room.schoolId }, { $set: sub });
+    return (await learnerTutorUsage(String(room.schoolId), String(new mongoose.Types.ObjectId()))).pool.limit;
+  };
+
+  it('a past-due class gets the Free pool once its 7-day grace is over (Pro inside the grace)', async () => {
+    const room = await standaloneClassroom();
+    expect(await poolLimit(room, { status: 'past_due', pastDueSince: new Date(Date.now() - 10 * DAY) })).toBe(LEARNER_TUTOR_POOL_FREE);
+    expect(await poolLimit(room, { status: 'past_due', pastDueSince: new Date(Date.now() - 2 * DAY) })).toBe(LEARNER_TUTOR_POOL_PRO);
+  });
+
+  it('a cancelled class gets the Free pool once its paid period is over (Pro until then)', async () => {
+    const room = await standaloneClassroom();
+    expect(await poolLimit(room, { status: 'canceled', currentPeriodEnd: new Date(Date.now() - DAY) })).toBe(LEARNER_TUTOR_POOL_FREE);
+    expect(await poolLimit(room, { status: 'canceled', currentPeriodEnd: new Date(Date.now() + 5 * DAY) })).toBe(LEARNER_TUTOR_POOL_PRO);
+  });
+});
+
 describe('one plan lookup per send (release review M4)', () => {
   it('reads the subscription once to check a learner', async () => {
     const room = await standaloneClassroom();

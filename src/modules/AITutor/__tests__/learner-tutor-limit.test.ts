@@ -86,6 +86,43 @@ describe('a learner at their limit', () => {
   });
 });
 
+describe('refusals on every learner send path (release review M6)', () => {
+  it('refuses practice generation and a photo at the cap, before any AI call', async () => {
+    const { room, thabo } = await thaboIn();
+    await spend(room, thabo, 60);
+    const subjectId = await subjectIn(room.schoolId);
+    const vision = vi.spyOn(AIService, 'generateVisionCompletionWithImages');
+    const json = vi.spyOn(AIService, 'generateJSONWithUsage');
+    const auth = { Authorization: `Bearer ${thabo.token}` };
+
+    const photo = await request(app).post('/api/ai-tutor/chat').set(auth)
+      .send(message({ subjectId, image: { mediaType: 'image/png', base64: 'aGVsbG8=' } }));
+    expect(photo.status).toBe(402);
+    expect(photo.body).toMatchObject({ code: 'LEARNER_AI_LIMIT', details: { scope: 'learner' } });
+    const practice = await request(app).post('/api/ai-tutor/practice').set(auth)
+      .send({ subjectId, subjectName: 'Mathematics', grade: 10, topic: 'Algebra', questionCount: 3, difficulty: 'easy', questionTypes: ['mcq'] });
+    expect(practice.status).toBe(402);
+    expect(practice.body).toMatchObject({ code: 'LEARNER_AI_LIMIT', details: { scope: 'learner' } });
+    expect(vision).not.toHaveBeenCalled();
+    expect(json).not.toHaveBeenCalled();
+    expect(await learnerRows(room)).toBe(60);
+  });
+
+  it("refuses a learner under their own cap once the class pool is used (scope 'class')", async () => {
+    const { room, thabo } = await thaboIn();
+    const lebo = await room.learner('Lebo', room.maths.id);
+    const zola = await room.learner('Zola', room.maths.id);
+    await spend(room, lebo, 50);
+    await spend(room, zola, 50);
+    const ai = vi.spyOn(AIService, 'generateChatCompletionWithUsage');
+    const res = await request(app).post('/api/ai-tutor/chat').set('Authorization', `Bearer ${thabo.token}`)
+      .send(message({ subjectId: await subjectIn(room.schoolId) }));
+    expect(res.status).toBe(402);
+    expect(res.body).toMatchObject({ code: 'LEARNER_AI_LIMIT', details: { used: 100, limit: 100, scope: 'class' } });
+    expect(ai).not.toHaveBeenCalled();
+  });
+});
+
 describe('does not count a stream that fails (Review Focus 3)', () => {
   it('records nothing when the AI call errors mid-stream', async () => {
     const { room, thabo } = await thaboIn();

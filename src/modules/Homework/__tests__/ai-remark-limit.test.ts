@@ -7,6 +7,8 @@ vi.mock('../service-homework-grading-runner.js', () => ({ gradeSubmissionAsync: 
 import { gradeSubmissionAsync } from '../service-homework-grading-runner.js';
 import { Homework, HomeworkSubmission } from '../model.js';
 import { HOMEWORK_AI_REMARKS, submitHomework } from '../service-homework-submit.js';
+import { HomeworkService } from '../service.js';
+import { UserRole } from '../../../common/enums.js';
 import { Question } from '../../QuestionBank/model.js';
 import { School } from '../../School/model.js';
 import { Student } from '../../Student/model.js';
@@ -46,6 +48,25 @@ describe('homework AI re-marks (ruling R20)', () => {
     const sub = await HomeworkSubmission.findOne({ homeworkId: hw, studentId: thabo.studentId }).lean();
     expect(sub?.aiMarkCount).toBe(3);
     expect(sub?.gradingStatus).toBe('pending');
+  });
+
+  it("the teacher can still mark by hand, and re-grade with AI, after the learner's three AI marks (release review M6)", async () => {
+    const room = await standaloneClassroom();
+    const thabo = await room.learner('Thabo', room.maths.id);
+    const { hw, q } = await exercise(room.schoolId, room.maths.id, room.teacherId);
+    for (let i = 1; i <= HOMEWORK_AI_REMARKS + 1; i += 1) {
+      await submitHomework(String(hw), String(thabo.studentId), String(room.schoolId), answer(q, `Attempt ${i}`));
+    }
+    const sub = await HomeworkSubmission.findOne({ homeworkId: hw, studentId: thabo.studentId }).lean();
+    const teacher = { id: String(room.teacherId), schoolId: String(room.schoolId), email: 't@test.local', role: UserRole.TEACHER };
+
+    const marked = await HomeworkService.gradeSubmission(String(sub!._id), teacher as never, 2, 'Well done', teacher.id);
+    expect(marked).toMatchObject({ mark: 2, gradingStatus: 'graded' });
+
+    vi.mocked(gradeSubmissionAsync).mockClear();
+    const regraded = await HomeworkService.regrade(String(sub!._id), teacher as never);
+    expect(regraded.gradingStatus).toBe('pending');
+    expect(gradeSubmissionAsync).toHaveBeenCalledTimes(1);
   });
 
   it('a school learner keeps unlimited AI marking', async () => {
