@@ -14,7 +14,28 @@ import { parseReply, sendDirect, transportMode } from './ai-transport.js';
 import { closeRequest, customIdFor, logAIUsage, openRequest } from './ledger.js';
 import type { Oid } from './types.js';
 
-export const NON_CONTENT_TITLE = /\b(revision|examination|exam|test|assessment)\b/i;
+/**
+ * Words that, on their own, make a CAPS node about assessment, revision or
+ * planning rather than content (from the node titles in scripts/output):
+ * "Formal Assessment Task: Investigation", "Final NSC Examination",
+ * "Planning for 2024/25", "Weeks 9-10: Assessment and Consolidation".
+ */
+const NON_CONTENT_WORDS = new Set([
+  'revision', 'consolidation', 'comprehensive', 'assessment', 'formal', 'task', 'tasks', 'test', 'tests', 'controlled',
+  'exam', 'exams', 'examination', 'examinations', 'final', 'trial', 'preparatory', 'internal', 'end', 'year', 'nsc', 'ncs',
+  'paper', 'papers', 'week', 'weeks', 'june', 'november', 'planning', 'academic', 'preparation', 'fat', 'pat', 'completion',
+  'investigation', 'assignment', 'project', 'prior', 'knowledge', 'grade', 'grades', 'caps', 'topics', 'all', 'of', 'and', 'the', 'for',
+]);
+
+/**
+ * True only when every word of the title is an assessment/planning word, so
+ * "Measurement (Revision)" and "Revision of lines, angles and triangles" stay
+ * content topics while "Revision" or "Trial Examination" do not.
+ */
+export function isNonContentTitle(title: string): boolean {
+  const words = title.toLowerCase().split(/[^a-z]+/).filter(Boolean);
+  return words.length > 0 && words.every((w: string) => NON_CONTENT_WORDS.has(w));
+}
 export interface TopicCandidate { _id: Oid; code: string; title: string }
 export interface TagOutcome { tagged: number; untagged: number; skipped: 'none' | 'budget' | 'no_candidates' | 'failed' | null }
 
@@ -34,11 +55,11 @@ export async function candidateTopics(paper: { schoolId: Oid; topicIds: Oid[] })
   const visible = [{ schoolId: null }, { schoolId: paper.schoolId }];
   const picked = (await CurriculumNode.find({ _id: { $in: paper.topicIds }, isDeleted: false, $or: visible })
     .select('type title code subjectId').lean()) as unknown as NodeLite[];
-  const content = picked.filter((n) => (n.type === 'topic' || n.type === 'subtopic') && !NON_CONTENT_TITLE.test(n.title));
+  const content = picked.filter((n) => (n.type === 'topic' || n.type === 'subtopic') && !isNonContentTitle(n.title));
   const other = picked.filter((n) => !content.includes(n));
   const extra = other.length === 0 ? [] : ((await CurriculumNode.find({
     subjectId: { $in: other.map((n) => n.subjectId).filter(Boolean) }, type: 'topic', isDeleted: false, $or: visible,
-  }).select('type title code subjectId').lean()) as unknown as NodeLite[]).filter((n) => !NON_CONTENT_TITLE.test(n.title));
+  }).select('type title code subjectId').lean()) as unknown as NodeLite[]).filter((n) => !isNonContentTitle(n.title));
   const topics = [...content, ...extra];
   const subtopics = (await CurriculumNode.find({
     parentId: { $in: topics.filter((t) => t.type === 'topic').map((t) => t._id) }, type: 'subtopic', isDeleted: false, $or: visible,

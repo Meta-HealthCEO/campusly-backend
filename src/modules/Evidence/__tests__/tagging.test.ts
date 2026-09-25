@@ -13,7 +13,7 @@ import { School } from '../../School/model.js';
 import { DiagnosisRequest } from '../model-taxonomy.js';
 import { finalisePaper } from '../../QuestionBank/service-papers-pdf-finalise.js';
 import { DIAGNOSIS_POOL_FREE } from '../diagnosis-pool.js';
-import { candidateTopics, tagPaperQuestions } from '../tagging.js';
+import { candidateTopics, isNonContentTitle, tagPaperQuestions } from '../tagging.js';
 
 type Oid = mongoose.Types.ObjectId;
 const oid = (): Oid => new mongoose.Types.ObjectId();
@@ -63,6 +63,40 @@ describe('candidateTopics', () => {
   it('a "Revision" topic is replaced by the subject’s content topics, with subtopics', async () => {
     const titles = (await candidateTopics({ schoolId, topicIds: [revision] })).map((c) => c.title).sort();
     expect(titles).toEqual(['Functions', 'Inverse functions', 'Number patterns']);
+  });
+
+  it('keeps a content topic marked "(Revision)"; swaps an assessment or planning node for the subject’s content topics', async () => {
+    const literacy = oid();
+    const [measurement, fat, planning, data] = [oid(), oid(), oid(), oid()];
+    const n = (_id: Oid, type: string, title: string, parentId: Oid | null) => ({
+      _id, type, title, parentId, subjectId: literacy, frameworkId: oid(), code: `E-TAG-ML-${String(_id)}`, metadata: {}, order: 0, schoolId: null, isDeleted: false,
+    });
+    await CurriculumNode.collection.insertMany([
+      n(literacy, 'subject', 'Mathematical Literacy', null), n(measurement, 'topic', 'Measurement (Revision)', literacy),
+      n(fat, 'topic', 'Formal Assessment Task: Investigation', literacy), n(planning, 'topic', 'Planning for 2024/25', literacy),
+      n(data, 'topic', 'Data Handling', literacy),
+    ]);
+    const titles = async (topicIds: Oid[]) => (await candidateTopics({ schoolId, topicIds })).map((c) => c.title).sort();
+    expect(await titles([measurement])).toEqual(['Measurement (Revision)']);
+    expect(await titles([fat, planning])).toEqual(['Data Handling', 'Measurement (Revision)']);
+  });
+});
+
+describe('isNonContentTitle (titles from the CAPS data)', () => {
+  it.each([
+    'Revision', 'Formal Assessment Task: Investigation', 'Revision and Final Examination', 'Final NSC Examination', 'Planning for 2024/25',
+    'Weeks 9-10: Assessment and Consolidation', 'Revision of All Grade 12 Topics', 'End-of-Year Examinations', 'Paper 1 revision', 'Test',
+    'Prior Knowledge Assessment (Grades 8 & 9)', 'Revision and PAT Completion',
+  ])('%s is not content', (title) => {
+    expect(isNonContentTitle(title)).toBe(true);
+  });
+
+  it.each([
+    'Measurement (Revision)', 'Revision of lines, angles and triangles', 'Finance revision', 'Study Skills and Examination Preparation',
+    'Assessment of Entrepreneurial Qualities in Business', 'Production Planning and Control', 'Genetic engineering, paternity testing and genetic links',
+    'Team Performance Assessment',
+  ])('%s is content', (title) => {
+    expect(isNonContentTitle(title)).toBe(false);
   });
 });
 
