@@ -1,6 +1,7 @@
 import { Router, type Request, type Response, type NextFunction } from 'express';
 import { authenticate } from '../../middleware/auth.js';
 import { createRateLimiter } from '../../middleware/rateLimiter.js';
+import { requireBillingOwner } from '../../middleware/require-billing-owner.js';
 import { SubscriptionController } from './controller.js';
 import { handleOneGateWebhook } from './webhook.js';
 
@@ -23,11 +24,11 @@ function webhookLimiter(req: Request, res: Response, next: NextFunction): void {
 router.get('/plans', authenticate, SubscriptionController.listPlans);
 router.get('/subscriptions/me', authenticate, SubscriptionController.getMine);
 router.get('/subscriptions/ai-usage', authenticate, SubscriptionController.getAIUsage);
-router.post('/subscriptions/checkout', authenticate, SubscriptionController.checkout);
-router.post('/subscriptions/cancel', authenticate, SubscriptionController.cancel);
-router.post('/subscriptions/resume', authenticate, SubscriptionController.resume);
-router.get('/subscriptions/invoices', authenticate, SubscriptionController.listInvoices);
-router.get('/subscriptions/checkout-session/:id', authenticate, SubscriptionController.getCheckoutSession);
+router.post('/subscriptions/checkout', authenticate, requireBillingOwner, SubscriptionController.checkout);
+router.post('/subscriptions/cancel', authenticate, requireBillingOwner, SubscriptionController.cancel);
+router.post('/subscriptions/resume', authenticate, requireBillingOwner, SubscriptionController.resume);
+router.get('/subscriptions/invoices', authenticate, requireBillingOwner, SubscriptionController.listInvoices);
+router.get('/subscriptions/checkout-session/:id', authenticate, requireBillingOwner, SubscriptionController.getCheckoutSession);
 
 // Public — OneGate-server-to-server callback. Idempotency handled inside the handler.
 // Rate limit: 60 req/min per IP, with ONEGATE_IP_ALLOWLIST exempt.
