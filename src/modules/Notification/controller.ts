@@ -3,10 +3,28 @@ import { Response } from 'express';
 import { getUser } from '../../types/authenticated-request.js';
 import { NotificationService } from './service.js';
 import { apiResponse } from '../../common/utils.js';
+import { ForbiddenError } from '../../common/errors.js';
+import { User } from '../Auth/model.js';
+import type { BulkNotificationInput, CreateNotificationInput } from './validation.js';
+
+const OWN_SCHOOL_ONLY = 'You can only notify people in your own school';
+
+/** The body names the school; only a super admin may name another one (final review I1). */
+function assertOwnSchool(req: Request, schoolId: string): void {
+  const user = getUser(req);
+  if (user.role === 'super_admin') return;
+  if (!user.schoolId || String(user.schoolId) !== schoolId) throw new ForbiddenError(OWN_SCHOOL_ONLY);
+}
 
 export class NotificationController {
   static async create(req: Request, res: Response): Promise<void> {
-    const notification = await NotificationService.create(req.body);
+    const body = req.body as CreateNotificationInput;
+    assertOwnSchool(req, body.schoolId);
+    if (getUser(req).role !== 'super_admin') {
+      const inSchool = await User.exists({ _id: body.recipientId, schoolId: body.schoolId, isDeleted: false });
+      if (!inSchool) throw new ForbiddenError(OWN_SCHOOL_ONLY);
+    }
+    const notification = await NotificationService.create(body);
     res.status(201).json(apiResponse(true, notification, 'Notification created successfully'));
   }
 
@@ -38,7 +56,11 @@ export class NotificationController {
   }
 
   static async bulkCreate(req: Request, res: Response): Promise<void> {
-    const result = await NotificationService.bulkCreate(req.body);
+    const body = req.body as BulkNotificationInput;
+    assertOwnSchool(req, body.schoolId);
+    // A whole-school notice names the school twice; both must be the caller's.
+    if (body.targetType === 'school') assertOwnSchool(req, body.targetId);
+    const result = await NotificationService.bulkCreate(body);
     res.status(201).json(apiResponse(true, result, 'Bulk notifications created successfully'));
   }
 

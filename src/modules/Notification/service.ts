@@ -102,12 +102,15 @@ export class NotificationService {
       userIds = students.filter((s) => s.userId != null).map((s) => s.userId!.toString());
     } else if (data.targetType === 'grade') {
       const students = await Student.find({
+        schoolId: data.schoolId,
         gradeId: data.targetId,
         isDeleted: false,
       }).select('userId');
       userIds = students.filter((s) => s.userId != null).map((s) => s.userId!.toString());
     } else if (data.targetType === 'class') {
+      // Only learners of the school the notice is sent in.
       const students = await Student.find({
+        schoolId: data.schoolId,
         classId: data.targetId,
         isDeleted: false,
       }).select('userId');
