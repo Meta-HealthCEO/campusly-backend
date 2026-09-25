@@ -17,6 +17,7 @@ import { logger } from '../../common/logger.js';
 import { publishHomeworkGrade } from '../Academic/service-gradebook-publish.js';
 import { submitHomework as _submitHomework } from './service-homework-submit.js';
 import { learnerClassIds } from '../../common/class-roster.js';
+import { dueLabel, notifyClassLearners, notifyLearnerOnce } from '../Notification/learner-notices.js';
 import type { CreateHomeworkInput, SubmitHomeworkInput } from './validation.js';
 import type { AIActor } from '../subscription/ai-allowance.js';
 import {
@@ -418,6 +419,13 @@ export class HomeworkService {
         teacherId: toObjectId(teacherId, 'teacherId'),
         version: 1,
       });
+      await notifyClassLearners(homework.schoolId, [homework.classId], {
+        title: `New homework: ${homework.title}`,
+        message: `Due ${dueLabel(homework.dueDate)}.`,
+        entityType: 'homework',
+        entityId: String(homework._id),
+        link: `/student/homework/${String(homework._id)}`,
+      });
       return homework.toObject() as unknown as IHomework;
     } catch (err: unknown) {
       if (generatedComprehensionIds?.length) {
@@ -654,6 +662,14 @@ export class HomeworkService {
         logger.error({ err, submissionId }, 'Manual publishHomeworkGrade failed');
       }
     }
+    // Once per attempt: marking the same attempt again doesn't repeat the notice.
+    await notifyLearnerOnce(existing.schoolId, existing.studentId, {
+      title: `Homework marked: ${parentHomework.title}`,
+      message: `You got ${mark} out of ${parentHomework.totalMarks}.`,
+      entityType: 'homework_marked',
+      entityId: `${submissionId}:${new Date(existing.submittedAt).getTime()}`,
+      link: `/student/homework/${String(parentHomework._id)}`,
+    });
     return submission;
   }
 

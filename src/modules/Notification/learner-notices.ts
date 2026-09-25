@@ -2,12 +2,14 @@
 //
 // In-app notices to learners about new and marked work (spec §6). They reach
 // everyone in a group — their own group or a group they joined — and never
-// throw: a notice that fails must not undo the teacher's action.
+// throw: a notice that fails must not undo the teacher's action. They are for
+// standalone teachers' classrooms only; school learners see no change.
 import mongoose from 'mongoose';
 import { Notification } from './model.js';
 import { Student } from '../Student/model.js';
 import { audienceUserIds, notifyUsers } from '../../common/audience.js';
 import { logger } from '../../common/logger.js';
+import { isStandaloneTeacherSchool } from '../Auth/standalone-learner.js';
 
 type IdLike = string | mongoose.Types.ObjectId;
 
@@ -32,6 +34,7 @@ const dataOf = (n: LearnerNotice) => ({ entityType: n.entityType, entityId: n.en
 export async function notifyClassLearners(schoolId: IdLike, classIds: IdLike[], notice: LearnerNotice): Promise<void> {
   if (classIds.length === 0) return;
   try {
+    if (!(await isStandaloneTeacherSchool(schoolId))) return;
     const learners = await audienceUserIds(schoolId, { classIds }, { learners: true, parents: false });
     await notifyUsers(schoolId, learners, { title: notice.title, message: notice.message, data: dataOf(notice) });
   } catch (err: unknown) {
@@ -41,6 +44,7 @@ export async function notifyClassLearners(schoolId: IdLike, classIds: IdLike[], 
 
 export async function notifyLearnerOnce(schoolId: IdLike, studentId: IdLike, notice: LearnerNotice): Promise<void> {
   try {
+    if (!(await isStandaloneTeacherSchool(schoolId))) return;
     const school = new mongoose.Types.ObjectId(String(schoolId));
     const student = await Student.findOne({ _id: studentId, schoolId: school, isDeleted: false }).select('userId').lean();
     if (!student?.userId) return;

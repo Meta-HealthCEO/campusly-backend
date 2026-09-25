@@ -11,6 +11,7 @@ import {
 } from './model.js';
 import { Student } from '../Student/model.js';
 import { learnerClassIds } from '../../common/class-roster.js';
+import { dueLabel, notifyClassLearners, notifyLearnerOnce } from '../Notification/learner-notices.js';
 import { publishAssignmentGrade } from '../Academic/service-gradebook-publish.js';
 import {
   BadRequestError,
@@ -339,6 +340,16 @@ export async function addClassAssignment(
     assignedAt: new Date(),
   });
   await assignment.save();
+  const opensNow = !input.releaseAt || new Date(input.releaseAt) <= new Date();
+  if (opensNow) {
+    await notifyClassLearners(assignment.schoolId, [input.classId], {
+      title: `New project: ${assignment.title}`,
+      message: input.dueAt ? `Due ${dueLabel(new Date(input.dueAt))}.` : 'Your teacher set a new project.',
+      entityType: 'project',
+      entityId: String(assignment._id),
+      link: `/student/assignments/${String(assignment._id)}`,
+    });
+  }
   return assignment.assignedClasses;
 }
 
@@ -727,5 +738,12 @@ export async function markSubmission(
     await submission.save();
   }
 
+  await notifyLearnerOnce(submission.schoolId, submission.studentId, {
+    title: `Project marked: ${assignment.title}`,
+    message: `You got ${submission.totalMark} out of ${assignment.totalMarks}.`,
+    entityType: 'project_marked',
+    entityId: `${String(submission._id)}:${new Date(submission.submittedAt).getTime()}`,
+    link: `/student/assignments/${String(assignment._id)}`,
+  });
   return submission.toObject() as unknown as IAssignmentSubmission;
 }

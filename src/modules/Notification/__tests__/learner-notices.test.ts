@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import { Notification } from '../model.js';
 import { NotificationService } from '../service.js';
 import { Student } from '../../Student/model.js';
+import { School } from '../../School/model.js';
 import { dueLabel, notifyClassLearners, notifyLearnerOnce, type LearnerNotice } from '../learner-notices.js';
 import { cleanUpClassrooms, standaloneClassroom, trackSchool } from '../../../test-utils/standalone-classroom.js';
 
@@ -34,6 +35,19 @@ describe('notifyLearnerOnce', () => {
     await notifyLearnerOnce(room.schoolId, thabo.studentId, { ...notice, entityType: 'homework_marked', entityId: 'sub1:1' });
     await notifyLearnerOnce(room.schoolId, thabo.studentId, { ...notice, entityType: 'homework_marked', entityId: 'sub1:1' });
     expect(await noticesFor(thabo.userId)).toHaveLength(1);
+  });
+});
+
+describe('school learners (no behaviour change, Global Constraints)', () => {
+  it("hear nothing new: the learner notices are for standalone teachers' classrooms", async () => {
+    const schoolId = new mongoose.Types.ObjectId();
+    trackSchool(schoolId);
+    await School.collection.insertOne({ _id: schoolId, name: 'lp_school', plan: 'school', isActive: true, isDeleted: false });
+    const [classId, userId, studentId] = [new mongoose.Types.ObjectId(), new mongoose.Types.ObjectId(), new mongoose.Types.ObjectId()];
+    await Student.collection.insertOne({ _id: studentId, schoolId, userId, classId, subjectClassIds: [], admissionNumber: `S-${studentId}`, isDeleted: false });
+    await notifyClassLearners(schoolId, [classId], notice);
+    await notifyLearnerOnce(schoolId, studentId, { ...notice, entityType: 'homework_marked', entityId: 'sub9:1' });
+    expect(await noticesFor(userId)).toHaveLength(0);
   });
 });
 

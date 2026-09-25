@@ -14,6 +14,7 @@ import { AssessmentPaper } from './model.js';
 import type { IAssessmentPaper, PaperAssignmentMode } from './model-papers.js';
 import { Class } from '../Academic/model.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
+import { dueLabel, notifyClassLearners } from '../Notification/learner-notices.js';
 
 interface CreateAssignmentInput {
   classId: string;
@@ -82,6 +83,17 @@ export async function addAssignment(
     assignedAt: new Date(),
   });
   await paper.save();
+  // Learners only take digital tests, and only once released (ruling R2).
+  const opensNow = !input.releaseAt || new Date(input.releaseAt) <= new Date();
+  if (input.mode === 'digital' && opensNow) {
+    await notifyClassLearners(schoolId, [input.classId], {
+      title: `New test: ${paper.title}`,
+      message: input.dueAt ? `Due ${dueLabel(new Date(input.dueAt))}.` : 'Your teacher set a new test.',
+      entityType: 'test',
+      entityId: String(paper._id),
+      link: `/student/tests/${String(paper._id)}`,
+    });
+  }
   return paper.assignments;
 }
 

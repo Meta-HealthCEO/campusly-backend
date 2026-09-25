@@ -21,6 +21,7 @@ import { checkUsageLimit } from '../../middleware/usageLimits.js';
 import { enqueueCourseGeneration } from '../../jobs/course-generation.job.js';
 import { BadRequestError, ForbiddenError, NotFoundError } from '../../common/errors.js';
 import { classRosterFilter } from '../../common/class-roster.js';
+import { notifyClassLearners } from '../Notification/learner-notices.js';
 
 export interface CreateClassUnitInput {
   classId: string;
@@ -312,6 +313,8 @@ export class ClassUnitService {
    */
   static async release(courseId: string, schoolId: string, actor: CourseActor, classIds: string[]) {
     const course = await unitOrThrow(courseId, schoolId);
+    // Groups that already had the unit hear nothing on a repeat release.
+    const releasedBefore = new Set((course.scope?.classIds ?? []).map(String));
     assertCanEditCourse(course, actor);
     if (course.outlineStatus !== 'approved') throw new BadRequestError('Approve the outline first');
     const itemFilter = { courseId: course._id, schoolId: course.schoolId, isDeleted: false, itemKind: { $ne: null } };
@@ -364,6 +367,14 @@ export class ClassUnitService {
       }
       throw err;
     }
+    const newlyReleased = results.map((r) => r.classId).filter((id: string) => !releasedBefore.has(id));
+    await notifyClassLearners(course.schoolId, newlyReleased, {
+      title: `New lesson: ${course.title}`,
+      message: 'Your teacher released a new lesson.',
+      entityType: 'class_unit',
+      entityId: String(course._id),
+      link: `/student/courses/${String(course._id)}`,
+    });
     return { classes: results };
   }
 }
