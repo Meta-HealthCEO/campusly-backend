@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 import { AnswerEvidence } from '../model.js';
 import { CurriculumNode } from '../../CurriculumStructure/model.js';
 import { Subject } from '../../Academic/model.js';
-import { createTopicResolver, schoolSubjectForNode } from '../topic-resolver.js';
+import { createTopicResolver, resolveTopics, schoolSubjectForNode } from '../topic-resolver.js';
 import { safeEvidence, writeEvidenceRows } from '../write-rows.js';
 import { resetGenericTypeCache } from '../taxonomy-generic.js';
 import type { EvidenceItem, EvidenceRecord } from '../types.js';
@@ -64,6 +64,31 @@ describe('createTopicResolver', () => {
     expect(await resolve(nodes.Custom)).toEqual({ topicNodeId: null, subtopicNodeId: null });
   });
 
+  it('a soft-deleted node gives no topic', async () => {
+    const gone = await node('Deleted topic', 'topic', nodes.Mathematics, null, nodes.Mathematics);
+    await CurriculumNode.collection.updateOne({ _id: gone }, { $set: { isDeleted: true } });
+    expect(await createTopicResolver(schoolId)(gone)).toEqual({ topicNodeId: null, subtopicNodeId: null });
+  });
+
+  it('resolves each distinct node once, all at the same time', async () => {
+    const a = oid();
+    const b = oid();
+    const started: string[] = [];
+    let release: () => void = () => undefined;
+    const gate = new Promise<void>((done) => { release = done; });
+    const resolve = vi.fn(async (id: Oid | null) => {
+      started.push(String(id));
+      await gate;
+      return { topicNodeId: id, subtopicNodeId: null };
+    });
+    const pending = resolveTopics(resolve, [a, b, a, null]);
+    expect(started).toEqual([String(a), String(b)]); // both started before either finished
+    release();
+    const topics = await pending;
+    expect(resolve).toHaveBeenCalledTimes(2);
+    expect(topics.get(String(b))).toEqual({ topicNodeId: b, subtopicNodeId: null });
+  });
+
   it("finds the school's Subject for a node", async () => {
     const subjectId = await schoolSubjectForNode(schoolId, nodes.Inverses);
     expect(subjectId).not.toBeNull();
@@ -117,6 +142,24 @@ describe('writeEvidenceRows', () => {
     ]);
     expect(result.skipped).toEqual({ zero_marks: 1 });
     expect(result.withTopic).toBe(0);
+  });
+
+  it('a changed question key resets the diagnosis even when answer and marks are the same', async () => {
+    const rec = record({ source: { ...record().source, recordId: oid() } });
+    await writeEvidenceRows(rec, [item('k1')]);
+    await AnswerEvidence.updateOne({ 'source.recordId': rec.source.recordId }, { $set: { 'diagnosis.state': 'dismissed' } });
+    await writeEvidenceRows(rec, [item('k1', { questionKey: 'p:x:v2:k1' })]);
+    const row = await AnswerEvidence.findOne({ schoolId, 'source.recordId': rec.source.recordId }).lean();
+    expect(row!.questionKey).toBe('p:x:v2:k1');
+    expect(row!.diagnosis.state).toBe('pending');
+  });
+
+  it('counts a repeated item number as skipped and keeps the first', async () => {
+    const rec = record({ source: { ...record().source, recordId: oid() } });
+    const result = await writeEvidenceRows(rec, [item('1.1'), item('1.1', { marksAwarded: 0 })]);
+    expect(result.skipped).toEqual({ duplicate_item: 1 });
+    expect(result.written).toBe(1);
+    expect((await AnswerEvidence.findOne({ 'source.recordId': rec.source.recordId }).lean())!.marksAwarded).toBe(1);
   });
 
   it('a dry run writes nothing', async () => {

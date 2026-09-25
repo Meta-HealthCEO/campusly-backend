@@ -47,6 +47,20 @@ export function createTopicResolver(schoolId: Oid): TopicResolver {
   };
 }
 
+/** Resolves every distinct node of a record once, all at the same time; keyed by String(nodeId). */
+export async function resolveTopics(
+  resolve: TopicResolver, nodeIds: ReadonlyArray<Oid | null>,
+): Promise<Map<string, ResolvedTopic>> {
+  const distinct = [...new Set(nodeIds.filter((id): id is Oid => id !== null).map(String))];
+  const resolved = await Promise.all(distinct.map((id: string) => resolve(new mongoose.Types.ObjectId(id))));
+  return new Map(distinct.map((id: string, i: number) => [id, resolved[i]]));
+}
+
+/** A node's resolved topic from `resolveTopics`, or no topic. */
+export function topicOf(topics: ReadonlyMap<string, ResolvedTopic>, nodeId: Oid | null): ResolvedTopic {
+  return (nodeId && topics.get(String(nodeId))) || NONE;
+}
+
 /** The school's own Subject for a curriculum node (library blocks carry only the node). */
 export async function schoolSubjectForNode(schoolId: Oid, nodeId: Oid | null): Promise<Oid | null> {
   if (!nodeId) return null;

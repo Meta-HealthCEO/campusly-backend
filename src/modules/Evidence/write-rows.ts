@@ -9,7 +9,7 @@ import { AnswerEvidence, type IAnswerEvidence, type IEvidenceDiagnosis } from '.
 import { MAX_ANSWER_CHARS, MAX_NOTE_CHARS, answerHash, capText, diagnosisCacheKey } from './normalise.js';
 import { initialDiagnosis } from './rules.js';
 import { genericTypeId } from './taxonomy-generic.js';
-import { createTopicResolver, type TopicResolver } from './topic-resolver.js';
+import { createTopicResolver, resolveTopics, topicOf, type ResolvedTopic } from './topic-resolver.js';
 import {
   emptyResult, type DeletedReason, type EvidenceItem, type EvidenceRecord, type Oid, type WriteResult, type WriterOptions,
 } from './types.js';
@@ -21,8 +21,7 @@ type Lean = Pick<IAnswerEvidence, 'marksAwarded' | 'marksAvailable' | 'topicNode
 
 interface BuiltRow { fields: Record<string, unknown>; diagnosis: IEvidenceDiagnosis; topicNodeId: Oid | null; hash: string }
 
-async function buildRow(record: EvidenceRecord, item: EvidenceItem, resolve: TopicResolver, unanswered: Oid): Promise<BuiltRow> {
-  const topic = await resolve(item.nodeId);
+function buildRow(record: EvidenceRecord, item: EvidenceItem, topic: ResolvedTopic, unanswered: Oid): BuiltRow {
   const answer = capText(item.answerText, MAX_ANSWER_CHARS);
   const hash = answerHash(item.answerText, item.answerKind);
   const cacheKey = diagnosisCacheKey(String(record.schoolId), item.questionKey, hash, item.marksAwarded, item.marksAvailable);
@@ -45,9 +44,10 @@ async function buildRow(record: EvidenceRecord, item: EvidenceItem, resolve: Top
   return { fields, diagnosis, topicNodeId: topic.topicNodeId, hash };
 }
 
-/** Answer, marks or topic changed: the old reason no longer applies. */
+/** Question, answer, marks or topic changed: the old reason no longer applies. */
 function diagnosisStale(prior: Lean, row: BuiltRow): boolean {
-  return prior.answer.hash !== row.hash
+  return prior.questionKey !== row.fields.questionKey
+    || prior.answer.hash !== row.hash
     || prior.marksAwarded !== row.fields.marksAwarded
     || prior.marksAvailable !== row.fields.marksAvailable
     || String(prior.topicNodeId ?? '') !== String(row.topicNodeId ?? '');
@@ -67,22 +67,29 @@ export async function writeEvidenceRows(
   record: EvidenceRecord, items: readonly EvidenceItem[], options: WriterOptions = {},
 ): Promise<WriteResult> {
   const result = emptyResult();
-  const resolve = createTopicResolver(record.schoolId);
-  const unanswered = await genericTypeId('unanswered');
+  const skip = (reason: string): void => { result.skipped[reason] = (result.skipped[reason] ?? 0) + 1; };
   const key = { schoolId: record.schoolId, 'source.type': record.source.type, 'source.recordId': record.source.recordId };
-  const existing = (await AnswerEvidence.find(key).lean()) as unknown as Lean[];
+  const [unanswered, topics, existingRows] = await Promise.all([
+    genericTypeId('unanswered'),
+    resolveTopics(createTopicResolver(record.schoolId), items.map((i: EvidenceItem) => i.nodeId)),
+    AnswerEvidence.find(key).lean(),
+  ]);
+  const existing = existingRows as unknown as Lean[];
   const byItem = new Map(existing.map((r: Lean) => [r.source.itemKey, r]));
   const kept = new Set<string>();
   const ops: AnyBulkWriteOperation<IAnswerEvidence>[] = [];
 
   for (const item of items) {
     if (!(item.marksAvailable > 0)) {
-      result.skipped.zero_marks = (result.skipped.zero_marks ?? 0) + 1;
+      skip('zero_marks');
       continue;
     }
-    if (kept.has(item.itemKey)) continue;
+    if (kept.has(item.itemKey)) {
+      skip('duplicate_item');
+      continue;
+    }
     kept.add(item.itemKey);
-    const row = await buildRow(record, item, resolve, unanswered);
+    const row = buildRow(record, item, topicOf(topics, item.nodeId), unanswered);
     if (row.topicNodeId) result.withTopic += 1;
     if (item.cognitiveLevel) result.withLevel += 1;
     const prior = byItem.get(item.itemKey);
