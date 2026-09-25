@@ -11,7 +11,9 @@ import { apiResponse } from '../../common/utils.js';
 import { aiActorFor, assertAIAllowance, recordAIUse, withAIAllowance } from '../subscription/ai-allowance.js';
 import { AppError } from '../../common/errors.js';
 import { logger } from '../../common/logger.js';
-import { learnerAIActorFor, learnerTutorUsage } from '../subscription/learner-ai.js';
+import {
+  assertLearnerAIAllowance, learnerAIActorFor, learnerTutorUsage, recordLearnerAIUse, withLearnerAIAllowance,
+} from '../subscription/learner-ai.js';
 
 const STREAM_FAILED = 'Something went wrong. Try again.';
 
@@ -25,11 +27,10 @@ function streamErrorPayload(err: unknown): { message: string; code?: string } {
 export class AITutorController {
   static async sendMessage(req: Request, res: Response): Promise<void> {
     const schoolId = req.user!.schoolId!;
-    const conversation = await AITutorService.sendMessage(
-      getUser(req).id,
-      schoolId,
-      req.body,
-    );
+    // Text and photo turns both count one tutor message (spec §5).
+    const learner = await learnerAIActorFor(req);
+    const conversation = await withLearnerAIAllowance(learner, 'tutor_message', () =>
+      AITutorService.sendMessage(getUser(req).id, schoolId, req.body));
     res.status(201).json(apiResponse(true, conversation, 'Message sent successfully'));
   }
 
@@ -43,10 +44,14 @@ export class AITutorController {
    *   - `error`: `{ message, code? }` — sent before the stream is closed on
    *     failure; an AI failure carries the same plain message and code
    *     (e.g. AI_BUSY) the JSON routes return.
+   * A learner over their tutor limit gets a plain JSON 402 LEARNER_AI_LIMIT
+   * instead: it is decided before any SSE header is sent (ruling R18).
    */
   static async streamMessage(req: Request, res: Response): Promise<void> {
     const schoolId = req.user!.schoolId!;
     const userId = getUser(req).id;
+    const learner = await learnerAIActorFor(req);
+    await assertLearnerAIAllowance(learner);
 
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache, no-transform');
@@ -72,6 +77,8 @@ export class AITutorController {
           onConversationReady: (conv) => send('meta', { conversationId: conv._id }),
         },
       );
+      // Counted only once the reply is complete; a failed or aborted stream is free.
+      await recordLearnerAIUse(learner, 'tutor_message');
       send('done', conversation);
     } catch (err: unknown) {
       // Nothing sent yet: let the error handler answer with the real status.
@@ -116,11 +123,10 @@ export class AITutorController {
 
   static async generatePractice(req: Request, res: Response): Promise<void> {
     const schoolId = req.user!.schoolId!;
-    const attempt = await PracticeService.generatePractice(
-      getUser(req).id,
-      schoolId,
-      req.body,
-    );
+    // Generating a practice set counts one tutor message; marking it does not (spec §5).
+    const learner = await learnerAIActorFor(req);
+    const attempt = await withLearnerAIAllowance(learner, 'practice_set', () =>
+      PracticeService.generatePractice(getUser(req).id, schoolId, req.body));
     res.status(201).json(apiResponse(true, attempt, 'Practice generated successfully'));
   }
 
