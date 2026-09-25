@@ -6,9 +6,9 @@ describe('STANDALONE_DEFAULT_MODULES', () => {
     expect(STANDALONE_DEFAULT_MODULES).toContain('courses');
   });
 
-  it('keeps the modules independent teachers already had', () => {
+  it('keeps the modules the standalone portal uses', () => {
     expect(STANDALONE_DEFAULT_MODULES).toEqual(expect.arrayContaining([
-      'auth', 'academic', 'ai_tools', 'teacher_workbench', 'learning', 'homework', 'attendance', 'incident_wellbeing', 'communication',
+      'auth', 'academic', 'ai_tools', 'teacher_workbench', 'learning', 'homework', 'attendance',
     ]));
     for (const m of STANDALONE_DEFAULT_MODULES) {
       if (m !== 'auth') expect(BOLT_ON_MODULES).toContain(m);

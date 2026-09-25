@@ -49,8 +49,9 @@ export const BOLT_ON_MODULES = [
 
 export const ALL_MODULES = [...CORE_MODULES, ...BOLT_ON_MODULES] as const;
 
-// Modules an independent teacher's own "school" starts with. Courses are core
-// for every teacher (programme decision, 2026-09-24).
+// Modules an independent teacher's own "school" starts with: exactly what the
+// standalone teacher portal uses. Courses are core for every teacher (programme
+// decision, 2026-09-24); messaging and incident/wellbeing have no standalone page.
 export const STANDALONE_DEFAULT_MODULES = [
   'auth',
   'academic',
@@ -59,8 +60,6 @@ export const STANDALONE_DEFAULT_MODULES = [
   'learning',
   'homework',
   'attendance',
-  'incident_wellbeing',
-  'communication',
   'courses',
 ] as const;
 
