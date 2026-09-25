@@ -30,7 +30,7 @@ router.post('/forgot-password', authRateLimiter, validate(forgotPasswordSchema),
 router.post('/reset-password', authRateLimiter, validate(resetPasswordSchema), AuthController.resetPassword);
 router.post('/change-password', authenticate, AuthController.changePassword);
 router.post('/verify-email', authRateLimiter, validate(verifyEmailSchema), AuthController.verifyEmail);
-router.post('/resend-verification', authenticate, AuthController.resendVerification);
+router.post('/resend-verification', authRateLimiter, authenticate, AuthController.resendVerification);
 router.get('/me', authenticate, AuthController.getMe);
 router.get('/me/mobile-context', authenticate, getMobileContext);
 router.post('/join-school', authenticate, validate(joinSchoolSchema), AuthController.joinSchool);

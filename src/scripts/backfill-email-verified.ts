@@ -14,8 +14,14 @@ import { config } from '../config/env.js';
 import { logger } from '../common/logger.js';
 import { User } from '../modules/Auth/model.js';
 
-export async function backfillEmailVerified({ apply }: { apply: boolean }): Promise<{ matched: number; updated: number }> {
-  const filter = { emailVerifiedAt: { $exists: false }, createdAt: { $lt: new Date() } };
+export async function backfillEmailVerified(
+  { apply, userIds }: { apply: boolean; /** Limit to these users (tests); default: everyone. */ userIds?: mongoose.Types.ObjectId[] },
+): Promise<{ matched: number; updated: number }> {
+  const filter = {
+    emailVerifiedAt: { $exists: false },
+    createdAt: { $lt: new Date() },
+    ...(userIds ? { _id: { $in: userIds } } : {}),
+  };
   const matched = await User.collection.countDocuments(filter);
   if (!apply) return { matched, updated: 0 };
   // Native driver: an update pipeline copies createdAt per document.

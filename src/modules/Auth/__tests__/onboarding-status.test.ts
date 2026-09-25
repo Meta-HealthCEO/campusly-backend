@@ -12,7 +12,7 @@ vi.mock('../../../middleware/rateLimiter.js', () => ({
 import app from '../../../app.js';
 import { TeacherSettingsService } from '../../TeacherSettings/service.js';
 import { CurriculumNode } from '../../CurriculumStructure/model.js';
-import { Class, Grade, Subject } from '../../Academic/model.js';
+import { Class, Grade, Subject, Timetable } from '../../Academic/model.js';
 import { Course } from '../../Course/model.js';
 import { StandaloneService } from '../standalone.service.js';
 import { School } from '../../School/model.js';
@@ -34,6 +34,7 @@ beforeAll(async () => {
 afterAll(async () => {
   await CurriculumNode.deleteMany({ schoolId: { $in: createdSchoolIds } });
   await Class.deleteMany({ schoolId: { $in: createdSchoolIds } });
+  await Timetable.deleteMany({ schoolId: { $in: createdSchoolIds } });
   await Grade.deleteMany({ schoolId: { $in: createdSchoolIds } });
   await Subject.deleteMany({ schoolId: { $in: createdSchoolIds } });
   await Course.deleteMany({ schoolId: { $in: createdSchoolIds } });
@@ -151,6 +152,30 @@ describe('getOnboardingStatus — the three onboarding steps', () => {
     return { gradeId: String(grade._id), subjectId: String(subject._id) };
   }
 
+  async function newClass(schoolId: mongoose.Types.ObjectId, teacherId: mongoose.Types.ObjectId) {
+    return Class.create({
+      name: 'Grade 4 Mathematics', gradeId: new mongoose.Types.ObjectId(), schoolId, teacherId, capacity: 40,
+      classroomCode: `C${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
+    });
+  }
+
+  /** A class linked to a subject, as the onboarding and My classes create it (a timetable row carries the subject). */
+  async function classWithSubject(schoolId: mongoose.Types.ObjectId, teacherId: mongoose.Types.ObjectId) {
+    const cls = await newClass(schoolId, teacherId);
+    await Timetable.create({
+      schoolId, teacherId, classId: cls._id, subjectId: new mongoose.Types.ObjectId(),
+      day: 'monday', period: 1, startTime: '08:00', endTime: '08:30',
+    });
+    return cls;
+  }
+
+  it('a class with no subject (from the old onboarding) does not count as the first class', async () => {
+    const { user, school } = await makeTeacher();
+    await newClass(school._id as mongoose.Types.ObjectId, user._id as mongoose.Types.ObjectId);
+    const status = await StandaloneService.getOnboardingStatus(String(user._id), String(school._id));
+    expect(status.hasClass).toBe(false);
+  });
+
   it('a new standalone teacher has not picked what they teach, made a class, or made a lesson', async () => {
     const { user, school } = await makeTeacher();
     const status = await StandaloneService.getOnboardingStatus(String(user._id), String(school._id));
@@ -162,10 +187,7 @@ describe('getOnboardingStatus — the three onboarding steps', () => {
     const schoolId = school._id as mongoose.Types.ObjectId;
     const { gradeId, subjectId } = await capsGradeAndSubject(schoolId);
     await TeacherSettingsService.updateTeachingScope(String(user._id), { grades: [gradeId], subjectsByGrade: [{ gradeId, subjectIds: [subjectId] }] });
-    await Class.create({
-      name: 'Grade 4 Mathematics', gradeId: new mongoose.Types.ObjectId(), schoolId, teacherId: user._id, capacity: 40,
-      classroomCode: `C${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
-    });
+    await classWithSubject(schoolId, user._id as mongoose.Types.ObjectId);
     await Course.create({ schoolId, title: 'Fractions', slug: `fractions-${Date.now()}`, createdBy: user._id, kind: 'class_unit' });
 
     const status = await StandaloneService.getOnboardingStatus(String(user._id), String(schoolId));

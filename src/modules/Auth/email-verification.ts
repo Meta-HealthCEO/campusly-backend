@@ -23,26 +23,28 @@ export function isEmailVerified(user: { emailVerifiedAt?: Date | null }): boolea
   return user.emailVerifiedAt instanceof Date;
 }
 
-/** Creates a fresh link (replacing any earlier one) and emails it. */
-export async function issueEmailVerification(userId: string): Promise<{ token: string }> {
-  const user = await User.findOne({ _id: userId, isDeleted: false }).select('email emailVerifySentAt');
-  if (!user) throw new NotFoundError('User not found');
-
+function newLink(now: number): { token: string; set: Record<string, unknown> } {
   const token = crypto.randomBytes(32).toString('hex');
-  const now = Date.now();
-  const recentSends = (user.emailVerifySentAt ?? []).filter((d: Date) => now - d.getTime() < HOUR_MS);
-  await User.updateOne(
-    { _id: user._id },
-    {
-      $set: {
-        emailVerifyToken: hashToken(token),
-        emailVerifyExpires: new Date(now + EMAIL_VERIFY_LINK_TTL_MS),
-        emailVerifySentAt: [...recentSends, new Date(now)],
-      },
-    },
-  );
+  return {
+    token,
+    set: { emailVerifyToken: hashToken(token), emailVerifyExpires: new Date(now + EMAIL_VERIFY_LINK_TTL_MS) },
+  };
+}
 
-  await EmailService.sendEmailVerification(user.email, `${config.app.url}/verify-email?token=${token}`);
+function linkUrl(token: string): string {
+  return `${config.app.url}/verify-email?token=${token}`;
+}
+
+/**
+ * Creates a fresh link (replacing any earlier one) and emails it. Used at
+ * sign-up; it does not count toward the resend limit.
+ */
+export async function issueEmailVerification(userId: string): Promise<{ token: string }> {
+  const { token, set } = newLink(Date.now());
+  const user = await User.findOneAndUpdate({ _id: userId, isDeleted: false }, { $set: set }, { returnDocument: 'after' })
+    .select('email');
+  if (!user) throw new NotFoundError('User not found');
+  await EmailService.sendEmailVerification(user.email, linkUrl(token));
   return { token };
 }
 
@@ -58,17 +60,36 @@ export async function verifyEmail(token: string): Promise<{ userId: string }> {
   return { userId: String(user._id) };
 }
 
-/** Sends a new link unless three were sent in the last hour. Already verified: nothing to send. */
+/**
+ * Sends a new link unless three were re-sent in the last hour. The limit check
+ * and the new send time are one conditional update, so parallel requests
+ * can't all pass. Already verified: nothing to send.
+ */
 export async function resendEmailVerification(userId: string): Promise<{ sent: boolean }> {
-  const user = await User.findOne({ _id: userId, isDeleted: false }).select('emailVerifiedAt emailVerifySentAt');
-  if (!user) throw new NotFoundError('User not found');
-  if (isEmailVerified(user)) return { sent: false };
-
   const now = Date.now();
-  const recentSends = (user.emailVerifySentAt ?? []).filter((d: Date) => now - d.getTime() < HOUR_MS);
-  if (recentSends.length >= EMAIL_VERIFY_RESENDS_PER_HOUR) {
+  const hourAgo = new Date(now - HOUR_MS);
+  const { token, set } = newLink(now);
+  const recentSends = {
+    $size: {
+      $filter: { input: { $ifNull: ['$emailVerifySentAt', []] }, as: 'sentAt', cond: { $gte: ['$$sentAt', hourAgo] } },
+    },
+  };
+  const user = await User.findOneAndUpdate(
+    { _id: userId, isDeleted: false, emailVerifiedAt: null, $expr: { $lt: [recentSends, EMAIL_VERIFY_RESENDS_PER_HOUR] } },
+    {
+      $set: set,
+      // Only the last few send times matter for the limit.
+      $push: { emailVerifySentAt: { $each: [new Date(now)], $slice: -EMAIL_VERIFY_RESENDS_PER_HOUR } },
+    },
+    { returnDocument: 'after' },
+  ).select('email');
+
+  if (!user) {
+    const current = await User.findOne({ _id: userId, isDeleted: false }).select('emailVerifiedAt');
+    if (!current) throw new NotFoundError('User not found');
+    if (isEmailVerified(current)) return { sent: false };
     throw new AppError(`You've asked for ${EMAIL_VERIFY_RESENDS_PER_HOUR} links in the last hour. Try again in an hour.`, 429);
   }
-  await issueEmailVerification(userId);
+  await EmailService.sendEmailVerification(user.email, linkUrl(token));
   return { sent: true };
 }

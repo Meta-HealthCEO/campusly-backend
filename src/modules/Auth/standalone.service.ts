@@ -1,7 +1,7 @@
 import type mongoose from 'mongoose';
 import { User } from './model.js';
 import { School, generateJoinCode } from '../School/model.js';
-import { Class } from '../Academic/model.js';
+import { Class, Timetable } from '../Academic/model.js';
 import { Student } from '../Student/model.js';
 import { CurriculumFramework } from '../TeacherWorkbench/model.js';
 import { Lesson } from '../Lesson/model.js';
@@ -102,7 +102,12 @@ export class StandaloneService {
       throw new NotFoundError('User not found');
     }
 
-    const classCount = await Class.countDocuments({ schoolId, isDeleted: false });
+    // A class counts once it is taught for a subject (a timetable row carries the subject), as
+    // onboarding and My classes create it; a bare class from the old onboarding doesn't.
+    const subjectClassIds = await Timetable.distinct('classId', { schoolId, isDeleted: false, subjectId: { $ne: null } });
+    const classCount = subjectClassIds.length === 0
+      ? 0
+      : await Class.countDocuments({ schoolId, isDeleted: false, _id: { $in: subjectClassIds } });
     const studentCount = await Student.countDocuments({ schoolId, isDeleted: false });
     const frameworkCount = await CurriculumFramework.countDocuments({
       $or: [{ schoolId: null }, { schoolId }],

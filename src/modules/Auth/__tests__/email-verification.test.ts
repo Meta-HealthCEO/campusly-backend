@@ -52,16 +52,46 @@ describe('email verification', () => {
 
   it('counts teachers who existed before verification shipped as verified', async () => {
     const id = await newTeacher();
-    await backfillEmailVerified({ apply: true });
+    const untouched = await newTeacher();
+    await backfillEmailVerified({ apply: true, userIds: [id] });
     const u = await User.findById(id).lean();
     expect(u?.emailVerifiedAt?.getTime()).toBe((u as unknown as { createdAt: Date }).createdAt.getTime());
+    // Scoped to the given users, so other tests' users in the shared DB stay as they are.
+    expect(await User.collection.findOne({ _id: untouched })).not.toHaveProperty('emailVerifiedAt');
   });
 
   it('does not backfill a teacher who signed up after verification shipped', async () => {
     const id = await newTeacher();
     await User.collection.updateOne({ _id: id }, { $set: { emailVerifiedAt: null } });
-    await backfillEmailVerified({ apply: true });
+    await backfillEmailVerified({ apply: true, userIds: [id] });
     expect((await User.findById(id).lean())?.emailVerifiedAt ?? null).toBeNull();
     expect(isEmailVerified({ emailVerifiedAt: null })).toBe(false);
+  });
+
+  it('does not count the sign-up link toward the three resends an hour', async () => {
+    vi.spyOn(EmailService, 'sendEmailVerification').mockResolvedValue(undefined as never);
+    const id = String(await newTeacher());
+    await issueEmailVerification(id); // the sign-up email
+    await resendEmailVerification(id); await resendEmailVerification(id); await resendEmailVerification(id);
+    await expect(resendEmailVerification(id)).rejects.toThrow("You've asked for 3 links in the last hour");
+  });
+
+  it('sends at most three links when ten resends arrive at once', async () => {
+    const send = vi.spyOn(EmailService, 'sendEmailVerification').mockResolvedValue(undefined as never);
+    const id = String(await newTeacher());
+    const results = await Promise.allSettled(Array.from({ length: 10 }, () => resendEmailVerification(id)));
+    expect(send).toHaveBeenCalledTimes(3);
+    expect(results.filter((r) => r.status === 'fulfilled')).toHaveLength(3);
+    const refused = results.filter((r): r is PromiseRejectedResult => r.status === 'rejected');
+    expect(refused).toHaveLength(7);
+    for (const r of refused) expect(r.reason).toMatchObject({ statusCode: 429 });
+  });
+
+  it('never saves a pre-verification user as unverified just by loading and saving them', async () => {
+    const id = await newTeacher(); // no emailVerifiedAt field, like users from before this shipped
+    const user = await User.findById(id);
+    user!.lastLoginAt = new Date(); // what login does
+    await user!.save();
+    expect(await User.collection.findOne({ _id: id })).not.toHaveProperty('emailVerifiedAt');
   });
 });
