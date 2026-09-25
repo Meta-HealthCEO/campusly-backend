@@ -9,7 +9,20 @@ import type Anthropic from '@anthropic-ai/sdk';
 import type { TutorMode } from './model.js';
 import { tutorInstructions, tutorSessionLine, tutorTurnContext, type TutorPromptContext } from './prompts.js';
 
-export const MAX_CONTEXT_MESSAGES = 20;
+/** Once a conversation is this long, at least this many prior messages are sent. */
+export const MIN_CONTEXT_MESSAGES = 20;
+/**
+ * History is trimmed this many messages at a time, so 20–29 prior messages
+ * are sent and the cached prefix holds from turn to turn; it moves only on the
+ * turn that trims (release review M1, replacing "the last 20").
+ */
+export const CONTEXT_TRIM_BLOCK = 10;
+
+/** How many of the latest stored messages to send: all under 20, then 20–29. */
+function keptHistoryLength(stored: number): number {
+  if (stored < MIN_CONTEXT_MESSAGES) return stored;
+  return MIN_CONTEXT_MESSAGES + ((stored - MIN_CONTEXT_MESSAGES) % CONTEXT_TRIM_BLOCK);
+}
 const CACHED = { type: 'ephemeral' } as const;
 
 export interface TutorRequest {
@@ -25,7 +38,7 @@ export function buildTutorRequest(
   history: readonly StoredMessage[],
   message: string,
 ): TutorRequest {
-  const kept = history.slice(-MAX_CONTEXT_MESSAGES);
+  const kept = history.slice(history.length - keptHistoryLength(history.length));
   // Every stored message is one text block, the same shape turn after turn, so
   // the previous request's prefix repeats exactly; only the last carries the breakpoint.
   const past = kept.map((m: StoredMessage, i: number): Anthropic.MessageParam => ({

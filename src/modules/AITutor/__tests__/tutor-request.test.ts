@@ -1,6 +1,6 @@
 // src/modules/AITutor/__tests__/tutor-request.test.ts
 import { describe, expect, it } from 'vitest';
-import { MAX_CONTEXT_MESSAGES, buildTutorRequest } from '../tutor-request.js';
+import { CONTEXT_TRIM_BLOCK, MIN_CONTEXT_MESSAGES, buildTutorRequest } from '../tutor-request.js';
 import type { TutorPromptContext } from '../prompts.js';
 
 const ctx = (over: Partial<TutorPromptContext> = {}): TutorPromptContext => ({
@@ -28,10 +28,10 @@ describe('buildTutorRequest (ruling R19)', () => {
     expect(JSON.stringify(req.system)).not.toContain('Algebra test');
   });
 
-  it('caches the history at its last block and keeps only the last 20 messages', () => {
+  it('caches the history at its last block (30 stored messages keep the last 20)', () => {
     const req = buildTutorRequest('chat', ctx(), turns(30), 'Next?');
-    expect(req.messages).toHaveLength(MAX_CONTEXT_MESSAGES + 1);
-    const lastHistory = req.messages[MAX_CONTEXT_MESSAGES - 1]!;
+    expect(req.messages).toHaveLength(MIN_CONTEXT_MESSAGES + 1);
+    const lastHistory = req.messages[MIN_CONTEXT_MESSAGES - 1]!;
     expect(lastHistory.content).toEqual([{ type: 'text', text: 'turn 29', cache_control: { type: 'ephemeral' } }]);
   });
 
@@ -46,5 +46,31 @@ describe('buildTutorRequest (ruling R19)', () => {
   it('keeps the no-answers rule in system while an assessment is active', () => {
     const req = buildTutorRequest('homework_help', ctx({ isAssessmentActive: true }), [], 'Answer?');
     expect(req.system[1]?.text).toContain('Do not reveal the final answer');
+  });
+});
+
+describe('history kept in blocks, so the cache holds across turns (release review M1)', () => {
+  it('keeps 20 to 29 prior messages, dropping the oldest 10 at a time', () => {
+    expect([MIN_CONTEXT_MESSAGES, CONTEXT_TRIM_BLOCK]).toEqual([20, 10]);
+    for (const [stored, kept] of [[6, 6], [20, 20], [28, 28], [29, 29], [30, 20], [39, 29], [40, 20], [48, 28]]) {
+      expect(buildTutorRequest('chat', ctx(), turns(stored), 'x').messages).toHaveLength(kept + 1);
+    }
+  });
+
+  it("repeats the previous turn's history byte for byte, except on the turn that trims it", () => {
+    const history: Array<{ role: 'student' | 'assistant'; content: string }> = [];
+    let previous: ReturnType<typeof buildTutorRequest> | null = null;
+    const missedAt: number[] = [];
+    for (let turn = 0; turn < 25; turn += 1) {
+      const req = buildTutorRequest('chat', ctx({ marksSummary: `mark ${turn}` }), history, `question ${turn}`);
+      if (previous) {
+        const cachedBefore = withoutCache(previous.messages.slice(0, -1)); // up to the history breakpoint
+        const sentNow = withoutCache(req.messages.slice(0, cachedBefore.length));
+        if (JSON.stringify(sentNow) !== JSON.stringify(cachedBefore)) missedAt.push(history.length);
+      }
+      previous = req;
+      history.push({ role: 'student', content: `question ${turn}` }, { role: 'assistant', content: `answer ${turn}` });
+    }
+    expect(missedAt).toEqual([30, 40]);
   });
 });
