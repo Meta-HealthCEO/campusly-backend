@@ -1,0 +1,63 @@
+{
+  "family": "NSC-MATHEMATICS-GR12",
+  "examBody": "DBE",
+  "qualification": "NSC",
+  "session": "november",
+  "subjectKey": "CAPS-MATHEMATICS",
+  "slug": "mathematics",
+  "subjectTitle": "Mathematics",
+  "grade": 12,
+  "examYear": 2026,
+  "sources": [
+    { "ref": "ATP12", "title": "Grade 12 Mathematics ATP (AI transcription in scripts/output/caps-mathematics-gr12.json, Term 4 description)", "edition": "undated, older than 2026", "publisher": "DBE" },
+    { "ref": "GEN", "title": "Paper generator fallback weighting (src/modules/QuestionBank/service-paper-generation.ts)", "edition": "code constant", "publisher": "Campusly" },
+    { "ref": "EG26", "title": "Mathematics Examination Guidelines Grade 12", "edition": "2026, not yet received", "publisher": "DBE" }
+  ],
+  "cognitiveScheme": {
+    "key": "maths-4",
+    "levels": [
+      { "key": "knowledge", "label": "Knowledge", "percent": 20, "fromStored": ["knowledge"], "sourceRef": "GEN", "verified": false },
+      { "key": "routine", "label": "Routine procedures", "percent": 35, "fromStored": ["routine"], "sourceRef": "GEN", "verified": false },
+      { "key": "complex", "label": "Complex procedures", "percent": 30, "fromStored": ["complex"], "sourceRef": "GEN", "verified": false },
+      { "key": "problem_solving", "label": "Problem solving", "percent": 15, "fromStored": ["problem_solving"], "sourceRef": "GEN", "verified": false }
+    ]
+  },
+  "papers": [
+    {
+      "key": "P1", "title": "Paper 1", "totalMarks": 150, "durationMinutes": 180, "examDate": null, "sitting": null, "sourceRef": "ATP12", "verified": false,
+      "topics": [
+        { "key": "P1.ALG", "label": "Algebra, equations and inequalities", "group": "Algebra and patterns", "marks": 25, "tolerance": null, "sourceRef": "ATP12", "verified": false, "note": "",
+          "nodes": ["CAPS-MATHEMATICS-GR10-T1-ALG", "CAPS-MATHEMATICS-GR10-T1-EXP", "CAPS-MATHEMATICS-GR11-T1-EXP", "CAPS-MATHEMATICS-GR11-T1-EQN"] },
+        { "key": "P1.PATT", "label": "Number patterns, sequences and series", "group": "Algebra and patterns", "marks": 25, "tolerance": null, "sourceRef": "ATP12", "verified": false, "note": "",
+          "nodes": ["CAPS-MATHEMATICS-GR10-T4-PATT", "CAPS-MATHEMATICS-GR11-T4-PATT", "CAPS-MATHEMATICS-GR12-T1-SEQ"] },
+        { "key": "P1.FUNC", "label": "Functions and graphs", "group": "Functions and calculus", "marks": 35, "tolerance": null, "sourceRef": "ATP12", "verified": false,
+          "note": "Grade 10–11 trigonometric-graph subtopics are mapped to P2.TRIG; check against EG26.",
+          "nodes": ["CAPS-MATHEMATICS-GR10-T2-FUNC", "CAPS-MATHEMATICS-GR11-T2-FUNC", "CAPS-MATHEMATICS-GR12-T1-FUNC"] },
+        { "key": "P1.CALC", "label": "Differential calculus", "group": "Functions and calculus", "marks": 35, "tolerance": null, "sourceRef": "ATP12", "verified": false,
+          "note": "Includes GR12-T2-CALC-01 factor and remainder theorems; check which topic EG26 examines them under.",
+          "nodes": ["CAPS-MATHEMATICS-GR12-T2-CALC"] },
+        { "key": "P1.FIN", "label": "Finance, growth and decay", "group": "Finance and probability", "marks": 15, "tolerance": null, "sourceRef": "ATP12", "verified": false, "note": "",
+          "nodes": ["CAPS-MATHEMATICS-GR10-T3-FIN", "CAPS-MATHEMATICS-GR11-T3-FIN", "CAPS-MATHEMATICS-GR12-T3-FIN"] },
+        { "key": "P1.PROB", "label": "Counting and probability", "group": "Finance and probability", "marks": 15, "tolerance": null, "sourceRef": "ATP12", "verified": false, "note": "",
+          "nodes": ["CAPS-MATHEMATICS-GR10-T3-PROB", "CAPS-MATHEMATICS-GR11-T3-PROB", "CAPS-MATHEMATICS-GR12-T3-PROB"] }
+      ]
+    },
+    {
+      "key": "P2", "title": "Paper 2", "totalMarks": 150, "durationMinutes": 180, "examDate": null, "sitting": null, "sourceRef": "ATP12", "verified": false,
+      "topics": [
+        { "key": "P2.ANAG", "label": "Analytical geometry", "group": "Geometry", "marks": 40, "tolerance": null, "sourceRef": "ATP12", "verified": false, "note": "",
+          "nodes": ["CAPS-MATHEMATICS-GR10-T2-ANAG", "CAPS-MATHEMATICS-GR11-T2-ANAG", "CAPS-MATHEMATICS-GR12-T2-ANAG"] },
+        { "key": "P2.GEOM", "label": "Euclidean geometry and measurement", "group": "Geometry", "marks": 40, "tolerance": null, "sourceRef": "ATP12", "verified": false,
+          "note": "Conflict: the ATP transcription gives Euclidean Geometry 40; the CAPS table as recalled (not a repo source) gives Euclidean Geometry and Measurement 50 ± 3. EG26 decides.",
+          "nodes": ["CAPS-MATHEMATICS-GR10-T2-GEOM", "CAPS-MATHEMATICS-GR11-T2-GEOM", "CAPS-MATHEMATICS-GR12-T2-GEOM", "CAPS-MATHEMATICS-GR10-T4-MEAS", "CAPS-MATHEMATICS-GR11-T4-MEAS"] },
+        { "key": "P2.TRIG", "label": "Trigonometry", "group": "Trigonometry and statistics", "marks": 50, "tolerance": null, "sourceRef": "ATP12", "verified": false,
+          "note": "Conflict: the ATP transcription gives Trigonometry 50; the CAPS table as recalled (not a repo source) gives 40 ± 3. EG26 decides.",
+          "nodes": ["CAPS-MATHEMATICS-GR10-T1-TRIG", "CAPS-MATHEMATICS-GR10-T3-TRIG2D", "CAPS-MATHEMATICS-GR11-T1-TRIG", "CAPS-MATHEMATICS-GR11-T3-TRIG", "CAPS-MATHEMATICS-GR12-T1-TRIG",
+                    "CAPS-MATHEMATICS-GR10-T2-FUNC-05", "CAPS-MATHEMATICS-GR10-T2-FUNC-06",
+                    "CAPS-MATHEMATICS-GR11-T2-FUNC-03", "CAPS-MATHEMATICS-GR11-T2-FUNC-04", "CAPS-MATHEMATICS-GR11-T2-FUNC-05", "CAPS-MATHEMATICS-GR11-T2-FUNC-06"] },
+        { "key": "P2.STAT", "label": "Statistics", "group": "Trigonometry and statistics", "marks": 20, "tolerance": null, "sourceRef": "ATP12", "verified": false, "note": "",
+          "nodes": ["CAPS-MATHEMATICS-GR10-T3-STAT", "CAPS-MATHEMATICS-GR11-T3-STAT", "CAPS-MATHEMATICS-GR12-T3-STAT"] }
+      ]
+    }
+  ]
+}
