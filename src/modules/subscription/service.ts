@@ -130,10 +130,15 @@ export class SubscriptionService {
     if (sub.currentPeriodEnd && sub.currentPeriodEnd.getTime() <= Date.now()) {
       throw new Error('Subscription period has ended; resubscribe instead');
     }
-    sub.status = 'active';
+    // Canceled during the free trial (never charged): back on the trial, billed when it ends.
+    const inTrial = !sub.currentPeriodEnd;
+    if (inTrial && (!sub.trialEndsAt || sub.trialEndsAt.getTime() <= Date.now())) {
+      throw new Error('Trial has ended; resubscribe instead');
+    }
+    sub.status = inTrial ? 'trialing' : 'active';
     sub.cancelAtPeriodEnd = false;
     sub.canceledAt = null;
-    sub.nextBillingAt = sub.currentPeriodEnd;
+    sub.nextBillingAt = inTrial ? sub.trialEndsAt : sub.currentPeriodEnd;
     await sub.save();
     await SubscriptionService.syncSchoolCache(sub);
     return sub;
@@ -151,7 +156,9 @@ export class SubscriptionService {
     if (!sub) return;
 
     if (sub.status === 'canceled') {
-      if (sub.currentPeriodEnd && sub.currentPeriodEnd.getTime() <= Date.now()) {
+      // Paid period, or the free trial it was canceled in: nothing is charged; it ends.
+      const end = sub.currentPeriodEnd ?? sub.trialEndsAt;
+      if (!end || end.getTime() <= Date.now()) {
         await SubscriptionService.endSubscription(sub);
       }
       return;

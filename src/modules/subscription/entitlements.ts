@@ -6,15 +6,17 @@ const ENTITLED_STATUSES = new Set(['trialing', 'active', 'past_due']);
 
 /**
  * Whether a subscription currently carries its plan: trialing, active or
- * past_due, or canceled but still inside the period already paid for.
+ * past_due, or canceled but still inside the period already paid for (or
+ * the free trial it was canceled in).
  */
 export function isSubscriptionEntitled(
-  sub: { status: string; currentPeriodEnd?: Date | null } | null,
+  sub: { status: string; currentPeriodEnd?: Date | null; trialEndsAt?: Date | null } | null,
   now: Date = new Date(),
 ): boolean {
   if (!sub) return false;
   if (sub.status === 'canceled') {
-    return !!sub.currentPeriodEnd && sub.currentPeriodEnd.getTime() > now.getTime();
+    const end = sub.currentPeriodEnd ?? sub.trialEndsAt ?? null;
+    return !!end && end.getTime() > now.getTime();
   }
   // free / unpaid / anything else → no plan entitlements
   return ENTITLED_STATUSES.has(sub.status);
