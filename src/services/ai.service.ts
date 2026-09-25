@@ -2,6 +2,7 @@ import { logger } from '../common/logger.js';
 import Anthropic from '@anthropic-ai/sdk';
 import { config } from '../config/env.js';
 import { AppError } from '../common/errors.js';
+import { samplingParams } from './ai-model-capabilities.js';
 
 const ANTHROPIC_API_KEY = config.anthropic.apiKey;
 const ANTHROPIC_MODEL = config.anthropic.model;
@@ -95,7 +96,7 @@ export class AIService {
           {
             model: ANTHROPIC_MODEL,
             max_tokens: options?.maxTokens ?? 4096,
-            temperature: options?.temperature ?? 0.7,
+            ...samplingParams(ANTHROPIC_MODEL, options?.temperature ?? 0.7),
             system: systemPrompt,
             messages: [{ role: 'user', content: userPrompt }],
           },
@@ -137,7 +138,7 @@ export class AIService {
           {
             model: ANTHROPIC_MODEL,
             max_tokens: options?.maxTokens ?? 2048,
-            temperature: options?.temperature ?? 0.7,
+            ...samplingParams(ANTHROPIC_MODEL, options?.temperature ?? 0.7),
             system: systemPrompt,
             messages,
           },
@@ -182,7 +183,7 @@ export class AIService {
         {
           model: ANTHROPIC_MODEL,
           max_tokens: options?.maxTokens ?? 2048,
-          temperature: options?.temperature ?? 0.7,
+          ...samplingParams(ANTHROPIC_MODEL, options?.temperature ?? 0.7),
           system: systemPrompt,
           messages,
         },
@@ -291,7 +292,7 @@ export class AIService {
           {
             model: ANTHROPIC_MODEL,
             max_tokens: options?.maxTokens ?? 4096,
-            temperature: options?.temperature ?? 0.3,
+            ...samplingParams(ANTHROPIC_MODEL, options?.temperature ?? 0.3),
             system: systemPrompt,
             messages: [{ role: 'user', content }],
           },
@@ -336,7 +337,7 @@ export class AIService {
           {
             model: ANTHROPIC_MODEL,
             max_tokens: options?.maxTokens ?? 8192,
-            temperature: options?.temperature ?? 0.2,
+            ...samplingParams(ANTHROPIC_MODEL, options?.temperature ?? 0.2),
             system: systemPrompt,
             messages: [
               {
@@ -404,7 +405,7 @@ export class AIService {
           {
             model: ANTHROPIC_MODEL,
             max_tokens: options?.maxTokens ?? 8192,
-            temperature: options?.temperature ?? 0.3,
+            ...samplingParams(ANTHROPIC_MODEL, options?.temperature ?? 0.3),
             system: systemPrompt,
             messages: [
               {
