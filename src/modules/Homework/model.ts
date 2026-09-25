@@ -129,6 +129,8 @@ export interface IHomeworkSubmissionBase extends Document {
   isLate: boolean;
   gradingStatus: GradingStatus;
   gradingGeneration: number;
+  /** How many times AI marking was dispatched (standalone classrooms cap it, HOMEWORK_AI_REMARKS). */
+  aiMarkCount: number;
   mark?: number;
   maxMarks: number;
   feedback?: string;
@@ -215,6 +217,7 @@ const homeworkSubmissionBaseSchema = new Schema<IHomeworkSubmissionBase>(
       default: 'pending',
     },
     gradingGeneration: { type: Number, required: true, default: 1, min: 1 },
+    aiMarkCount: { type: Number, default: 0, min: 0 },
     mark: { type: Number, default: undefined },
     maxMarks: { type: Number, required: true, min: 0 },
     feedback: { type: String, trim: true },

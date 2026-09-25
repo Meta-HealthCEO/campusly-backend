@@ -10,6 +10,25 @@ import { logger } from '../../common/logger.js';
 import type { SubmitHomeworkInput } from './validation.js';
 import { toObjectId } from './service-access.js';
 import { isInClass } from '../../common/class-roster.js';
+import { isStandaloneTeacherSchool } from '../Auth/standalone-learner.js';
+
+/** Standalone classrooms: AI marks one learner's homework at most this many times (spec §5). */
+export const HOMEWORK_AI_REMARKS = 3;
+
+/**
+ * Whether this submission may go to AI marking. In a standalone classroom it
+ * claims one of HOMEWORK_AI_REMARKS atomically; later attempts are saved and
+ * wait for the teacher (ruling R20). `$not: { $gte }` also matches older
+ * submissions that have no aiMarkCount yet.
+ */
+async function mayAIMark(submissionId: mongoose.Types.ObjectId, schoolOid: mongoose.Types.ObjectId): Promise<boolean> {
+  if (!(await isStandaloneTeacherSchool(schoolOid))) return true;
+  const claimed = await HomeworkSubmission.updateOne(
+    { _id: submissionId, schoolId: schoolOid, aiMarkCount: { $not: { $gte: HOMEWORK_AI_REMARKS } } },
+    { $inc: { aiMarkCount: 1 } },
+  );
+  return claimed.modifiedCount === 1;
+}
 
 function assertUniqueKeys(keys: string[], label: string): void {
   const seen = new Set<string>();
@@ -235,7 +254,7 @@ export async function submitHomework(
         logger.error({ err, submissionId: updated._id }, 'Sync publishHomeworkGrade failed');
       }
     }
-  } else {
+  } else if (await mayAIMark(updated._id as mongoose.Types.ObjectId, schoolOid)) {
     void gradeSubmissionAsync(updated._id.toString());
   }
 
