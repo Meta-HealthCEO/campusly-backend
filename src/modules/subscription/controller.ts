@@ -7,6 +7,7 @@ import { OneGateError } from '../../lib/onegate/index.js';
 import { logger } from '../../common/logger.js';
 import { aiAllowance } from './ai-allowance.js';
 import { getUser } from '../../types/authenticated-request.js';
+import { subscriptionForViewer } from './subscription-view.js';
 
 function schoolIdFromReq(req: Request): mongoose.Types.ObjectId {
   const raw = req.user!.schoolId;
@@ -34,7 +35,7 @@ export class SubscriptionController {
     const sub = await Subscription.findOne({ schoolId });
     if (!sub) throw new Error('Subscription creation failed');
     const plan = await Plan.findOne({ code: sub.planCode });
-    res.json({ data: { subscription: sub, plan } });
+    res.json({ data: { subscription: subscriptionForViewer(sub, getUser(req)), plan } });
   }
 
   /** This month's AI actions for a standalone teacher; school users' AI is covered by their school. */
@@ -85,12 +86,12 @@ export class SubscriptionController {
 
   static async cancel(req: Request, res: Response): Promise<void> {
     const sub = await SubscriptionService.cancel(schoolIdFromReq(req));
-    res.json({ data: sub });
+    res.json({ data: subscriptionForViewer(sub, getUser(req)) });
   }
 
   static async resume(req: Request, res: Response): Promise<void> {
     const sub = await SubscriptionService.resume(schoolIdFromReq(req));
-    res.json({ data: sub });
+    res.json({ data: subscriptionForViewer(sub, getUser(req)) });
   }
 
   static async listInvoices(req: Request, res: Response): Promise<void> {

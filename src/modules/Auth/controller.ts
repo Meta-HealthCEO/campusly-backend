@@ -10,6 +10,7 @@ import { verifyEmail, resendEmailVerification } from './email-verification.js';
 import { apiResponse } from '../../common/utils.js';
 import { Subscription, Plan } from '../subscription/model.js';
 import { SubscriptionService } from '../subscription/service.js';
+import { subscriptionForViewer } from '../subscription/subscription-view.js';
 import { changePasswordSchema } from './validation.js';
 import { UnauthorizedError } from '../../common/errors.js';
 import { resolveRegistrationScope } from './registration-policy.js';
@@ -184,7 +185,11 @@ export class AuthController {
     }
 
     res.status(200).json(
-      apiResponse(true, { user, subscription, plan }, 'User retrieved successfully'),
+      apiResponse(true, {
+        user,
+        subscription: subscriptionForViewer(subscription, user),
+        plan,
+      }, 'User retrieved successfully'),
     );
   }
 
