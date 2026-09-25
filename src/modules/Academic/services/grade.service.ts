@@ -8,6 +8,7 @@ import { NotFoundError, ConflictError, BadRequestError } from '../../../common/e
 import { PAGINATION_DEFAULTS } from '../../../common/constants.js';
 import { escapeRegex } from '../../../common/utils.js';
 import { classRosterFilter, groupRosterByClass } from '../../../common/class-roster.js';
+import { joinClassByCode, type JoinClassResult } from './join-class.service.js';
 
 /**
  * Resolves class.gradeId in place. Classes for standalone teachers point at a
@@ -234,52 +235,9 @@ export class GradeService {
     return Class.findOne({ classroomCode: classroomCode.toUpperCase(), isDeleted: false }).lean();
   }
 
-  /**
-   * Join a class via its classroom code.
-   *
-   * The Student model only stores a single `classId`, so joining a new class
-   * REPLACES the student's current homeroom assignment. The frontend should
-   * surface this consequence to the student before they submit.
-   */
-  static async joinClassByCode(
-    userId: string,
-    schoolId: string,
-    classroomCode: string,
-  ): Promise<{ class: IClass; previousClassId: string | null }> {
-    const normalised = classroomCode.trim().toUpperCase();
-    if (!normalised) throw new BadRequestError('Classroom code is required');
-
-    const cls = await Class.findOne({
-      classroomCode: normalised,
-      schoolId,
-      isDeleted: false,
-    }).lean();
-    if (!cls) throw new NotFoundError('No class matches that code in your school');
-
-    const student = await Student.findOne({ userId, schoolId, isDeleted: false });
-    if (!student) throw new NotFoundError('Student profile not found');
-
-    const previousClassId = student.classId ? String(student.classId) : null;
-    if (previousClassId === String(cls._id)) {
-      throw new ConflictError('You are already in this class');
-    }
-
-    if (cls.capacity) {
-      const enrolled = await Student.countDocuments({
-        classId: cls._id,
-        schoolId,
-        isDeleted: false,
-      });
-      if (enrolled >= cls.capacity) {
-        throw new ConflictError('This class is full');
-      }
-    }
-
-    student.classId = cls._id as Types.ObjectId;
-    student.gradeId = cls.gradeId as Types.ObjectId;
-    await student.save();
-
-    return { class: cls, previousClassId };
+  /** Join a group with its classroom code (join-class.service.ts). */
+  static async joinClassByCode(userId: string, schoolId: string, classroomCode: string): Promise<JoinClassResult> {
+    return joinClassByCode(userId, schoolId, classroomCode);
   }
 
   static async regenerateClassroomCode(id: string, schoolId: string): Promise<IClass> {

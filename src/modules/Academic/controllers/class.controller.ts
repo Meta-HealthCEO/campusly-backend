@@ -212,7 +212,7 @@ export class ClassController {
     const schoolId = user.schoolId!;
     const code = String((req.body as { code?: string }).code ?? '');
     const result = await AcademicService.joinClassByCode(user.id, schoolId, code);
-    res.json(apiResponse(true, result, 'Joined class successfully'));
+    res.json(apiResponse(true, result, result.message));
   }
 
   static async getTeacherTeachingLoad(req: Request, res: Response): Promise<void> {
