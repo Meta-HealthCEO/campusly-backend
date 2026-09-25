@@ -38,21 +38,24 @@ async function planOf(schoolId: string, now: Date): Promise<'free' | 'pro'> {
   return isSubscriptionEntitled(sub, now) ? 'pro' : 'free';
 }
 
-/** The class pool this month: every learner row of the school. */
-export async function learnerPoolUsage(schoolId: string, now: Date = new Date()): Promise<{ used: number; limit: number }> {
+/** The class pool this month for a known plan: every learner row of the school. */
+async function poolFor(schoolId: string, plan: 'free' | 'pro', now: Date): Promise<{ used: number; limit: number }> {
   const { start, end } = sastMonthWindow(now);
-  const [plan, used] = await Promise.all([
-    planOf(schoolId, now),
-    AIUsage.countDocuments({ schoolId: oid(schoolId), scope: 'learner', createdAt: { $gte: start, $lt: end } }),
-  ]);
+  const used = await AIUsage.countDocuments({ schoolId: oid(schoolId), scope: 'learner', createdAt: { $gte: start, $lt: end } });
   return { used, limit: plan === 'pro' ? LEARNER_TUTOR_POOL_PRO : LEARNER_TUTOR_POOL_FREE };
 }
 
+/** The class pool this month: every learner row of the school. */
+export async function learnerPoolUsage(schoolId: string, now: Date = new Date()): Promise<{ used: number; limit: number }> {
+  return poolFor(schoolId, await planOf(schoolId, now), now);
+}
+
+/** One learner's month and the class pool; the plan is read once (release review M4). */
 export async function learnerTutorUsage(schoolId: string, userId: string, now: Date = new Date()): Promise<LearnerTutorUsage> {
   const { start, end } = sastMonthWindow(now);
-  const [plan, pool, used] = await Promise.all([
-    planOf(schoolId, now),
-    learnerPoolUsage(schoolId, now),
+  const plan = await planOf(schoolId, now);
+  const [pool, used] = await Promise.all([
+    poolFor(schoolId, plan, now),
     AIUsage.countDocuments({ schoolId: oid(schoolId), scope: 'learner', userId: oid(userId), createdAt: { $gte: start, $lt: end } }),
   ]);
   return { used, limit: LEARNER_TUTOR_CAP, pool, resetsAt: end, plan };

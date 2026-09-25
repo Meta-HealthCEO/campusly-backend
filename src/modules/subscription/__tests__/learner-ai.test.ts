@@ -1,5 +1,5 @@
 // src/modules/subscription/__tests__/learner-ai.test.ts
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import mongoose from 'mongoose';
 import request from 'supertest';
 import app from '../../../app.js';
@@ -12,6 +12,7 @@ import {
 import { cleanUpClassrooms, standaloneClassroom, type Classroom, type Learner } from '../../../test-utils/standalone-classroom.js';
 
 beforeAll(async () => { if (mongoose.connection.readyState === 0) await mongoose.connect(process.env.MONGODB_TEST_URI!); });
+afterEach(() => { vi.restoreAllMocks(); });
 afterAll(async () => { await cleanUpClassrooms(); await mongoose.disconnect(); });
 
 const actorOf = (room: Classroom, l: Learner): LearnerAIActor => ({ schoolId: String(room.schoolId), userId: String(l.userId), isStandaloneLearner: true });
@@ -55,6 +56,16 @@ describe('the learner tutor limits', () => {
 
   it('never limits a school learner', async () => {
     await expect(assertLearnerAIAllowance({ schoolId: String(new mongoose.Types.ObjectId()), userId: String(new mongoose.Types.ObjectId()), isStandaloneLearner: false })).resolves.toBeUndefined();
+  });
+});
+
+describe('one plan lookup per send (release review M4)', () => {
+  it('reads the subscription once to check a learner', async () => {
+    const room = await standaloneClassroom();
+    const thabo = await room.learner('Thabo', room.maths.id);
+    const lookups = vi.spyOn(Subscription, 'findOne');
+    await assertLearnerAIAllowance(actorOf(room, thabo));
+    expect(lookups).toHaveBeenCalledTimes(1);
   });
 });
 
