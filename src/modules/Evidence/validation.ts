@@ -16,3 +16,5 @@ export const renameTypeBody = z.object({
 }).strict().refine((b) => Object.keys(b).length > 0, { message: 'Change at least one field' });
 export const mergeTypeBody = z.object({ intoId: objectIdSchema }).strict();
 export const retireTypeBody = z.object({ replacementId: objectIdSchema.optional() }).strict();
+export const reasonsQuery = z.object({ source: z.enum(['test', 'homework']), recordId: objectIdSchema });
+export const classMisconceptionsQuery = z.object({ parent: z.enum(['paper', 'homework']), parentId: objectIdSchema, classId: objectIdSchema });
