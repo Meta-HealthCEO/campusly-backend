@@ -4,6 +4,8 @@ import type { IContentBlock } from './model.js';
 import { StudentAttempt, StudentMastery } from './model-tracking.js';
 import { NotFoundError, BadRequestError } from '../../common/errors.js';
 import type { SubmitAttemptInput } from './validation-student.js';
+import { safeEvidence } from '../Evidence/write-rows.js';
+import { syncLibraryEvidence } from '../Evidence/writers/library.js';
 
 // ─── CAPS cognitive level → breakdown key mapping ───────────────────────────
 
@@ -253,6 +255,7 @@ export class AttemptsService {
       response: data.response,
       schoolId: schoolOid,
     });
+    await safeEvidence('library.attempt', () => syncLibraryEvidence(attempt._id as mongoose.Types.ObjectId, schoolOid));
 
     // 5. Update mastery
     const mastery = await StudentMastery.findOneAndUpdate(

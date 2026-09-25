@@ -21,6 +21,8 @@ import {
 } from '../../common/errors.js';
 import { sortLessonsForUnlock, computeUnlockStatuses } from './service-student.js';
 import { CourseCertificateService } from './service-certificates.js';
+import { safeEvidence } from '../Evidence/write-rows.js';
+import { syncQuickCheckEvidence } from '../Evidence/writers/unit-check.js';
 
 // Block types that require student interaction to "complete". Names must
 // match BLOCK_TYPES in src/modules/ContentLibrary/model.ts. Excludes text,
@@ -223,6 +225,7 @@ export class CourseProgressService {
       passed,
       submittedAt: new Date(),
     });
+    await safeEvidence('course.quick-check', () => syncQuickCheckEvidence(attempt._id as mongoose.Types.ObjectId, soid));
 
     if (passed) {
       let progress = await LessonProgress.findOne({

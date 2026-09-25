@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document, Types } from 'mongoose';
+import { CAPS_LEVELS, type CapsLevel } from '../QuestionBank/model-shared.js';
 
 // ─── Tutor Mode ──────────────────────────────────────────────────────────────
 
@@ -115,6 +116,8 @@ export interface IPracticeQuestion {
   feedback?: string;
   explanation: string;
   marks: number;
+  /** The CAPS cognitive level the generator gave (Phase E §4.2); null for older attempts. */
+  capsLevel?: CapsLevel | null;
 }
 
 const practiceQuestionSchema = new Schema<IPracticeQuestion>(
@@ -133,6 +136,7 @@ const practiceQuestionSchema = new Schema<IPracticeQuestion>(
     feedback: { type: String },
     explanation: { type: String, required: true },
     marks: { type: Number, default: 1 },
+    capsLevel: { type: String, enum: CAPS_LEVELS, default: null },
   },
   { _id: false },
 );
@@ -144,6 +148,8 @@ export interface IPracticeAttempt extends Document {
   studentId: Types.ObjectId;
   subjectId: Types.ObjectId;
   topic: string;
+  /** Set when practice was launched on a curriculum topic (Phase E §4.2); rows then have a topic. */
+  curriculumNodeId: Types.ObjectId | null;
   grade: number;
   questions: IPracticeQuestion[];
   score: number;
@@ -162,6 +168,7 @@ const practiceAttemptSchema = new Schema<IPracticeAttempt>(
     studentId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     subjectId: { type: Schema.Types.ObjectId, ref: 'Subject', required: true },
     topic: { type: String, required: true, trim: true },
+    curriculumNodeId: { type: Schema.Types.ObjectId, ref: 'CurriculumNode', default: null },
     grade: { type: Number, required: true },
     questions: [practiceQuestionSchema],
     score: { type: Number, default: 0 },

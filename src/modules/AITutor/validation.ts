@@ -64,6 +64,8 @@ export const generatePracticeSchema = z.object({
   subjectName: z.string().min(1, 'Subject name is required'),
   grade: z.number().int().min(1).max(12),
   topic: z.string().min(1, 'Topic is required'),
+  /** When practice is launched on a curriculum topic (Phase E §4.2). */
+  curriculumNodeId: oid.optional(),
   questionCount: z.number().int().min(3).max(20).default(10),
   difficulty: z.enum(['easy', 'medium', 'hard', 'mixed']).default('mixed'),
   questionTypes: z

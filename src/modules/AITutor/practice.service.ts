@@ -6,6 +6,10 @@ import { logger } from '../../common/logger.js';
 import { resolveTutorContext } from './student-context.js';
 import type { GeneratePracticeInput, SubmitPracticeInput } from './validation.js';
 import { config } from '../../config/env.js';
+import mongoose from 'mongoose';
+import { CAPS_LEVELS, type CapsLevel } from '../QuestionBank/model-shared.js';
+import { safeEvidence } from '../Evidence/write-rows.js';
+import { syncPracticeEvidence } from '../Evidence/writers/practice.js';
 
 const ANTHROPIC_MODEL = config.anthropic.model;
 /** A marking claim older than this was left by a request that died; another submit may take it over. */
@@ -18,6 +22,7 @@ interface AIGeneratedQuestion {
   correctAnswer: string;
   explanation: string;
   marks: number;
+  capsLevel?: string;
 }
 
 interface GradedShortAnswer {
@@ -82,6 +87,7 @@ function sanitizeQuestion(raw: AIGeneratedQuestion): IPracticeQuestion {
     correctAnswer: correctAnswer || 'See explanation',
     explanation,
     marks,
+    capsLevel: (CAPS_LEVELS as readonly string[]).includes(String(raw.capsLevel)) ? (raw.capsLevel as CapsLevel) : null,
   };
 }
 
@@ -170,7 +176,7 @@ export class PracticeService {
     const userPrompt = [
       `Generate ${input.questionCount} ${input.difficulty} practice questions`,
       `for Grade ${context.grade} ${context.subjectName} on "${input.topic}".`,
-      'JSON format: [{ questionText, questionType, options?, correctAnswer, explanation, marks }]',
+      'JSON format: [{ questionText, questionType, options?, correctAnswer, explanation, marks, capsLevel }] where capsLevel is knowledge | routine | complex | problem_solving',
     ].join(' ');
 
     const { data: questions, usage } = await AIService.generateJSONWithUsage<AIGeneratedQuestion[]>(
@@ -195,6 +201,7 @@ export class PracticeService {
       studentId: userId,
       subjectId: context.subjectId,
       topic: input.topic,
+      curriculumNodeId: input.curriculumNodeId ? new mongoose.Types.ObjectId(input.curriculumNodeId) : null,
       grade: context.grade,
       questions: validQuestions,
       totalMarks,
@@ -289,5 +296,6 @@ async function markAttempt(attempt: IPracticeAttempt, input: SubmitPracticeInput
   attempt.completedAt = new Date();
 
   await attempt.save();
+  await safeEvidence('practice.submit', () => syncPracticeEvidence(attempt._id as mongoose.Types.ObjectId, attempt.schoolId));
   return attempt;
 }
