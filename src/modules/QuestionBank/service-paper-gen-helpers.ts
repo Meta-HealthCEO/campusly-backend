@@ -18,6 +18,12 @@ import {
   renderLessonSourceSection,
 } from '../Lesson/service-lesson-context.js';
 import type { GeneratePaperInput, PaperQuestionType } from './validation.js';
+import { INLINE_ONLY_TAG, capsToDefaultBlooms, isInlineOnly } from './service-paper-gen-sections.js';
+import { parseGeneratedQuestions, type ParsedGenQuestion } from './service-paper-gen-parse.js';
+
+// Paper-question shaping and sections live in service-paper-gen-sections.ts and
+// the reply parser in service-paper-gen-parse.ts (split to stay under 350 lines).
+export { INLINE_ONLY_TAG, capsToDefaultBlooms, isInlineOnly, organiseSections, toPaperQuestion } from './service-paper-gen-sections.js';
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -28,15 +34,6 @@ export interface CognitiveWeighting {
   problemSolving: number;
 }
 
-interface ParsedGenQuestion {
-  stem: string;
-  type: QuestionType;
-  options: Array<{ label: string; text: string; isCorrect: boolean }>;
-  answer: string;
-  markingRubric: string;
-  marks: number;
-  capsLevel: CapsLevel;
-}
 
 const CAPS_TO_QUERY: Record<string, CapsLevel> = {
   knowledge: 'knowledge',
@@ -45,18 +42,6 @@ const CAPS_TO_QUERY: Record<string, CapsLevel> = {
   problemSolving: 'problem_solving',
 };
 
-const SECTION_LABELS: Record<QuestionType, string> = {
-  mcq: 'Multiple Choice',
-  true_false: 'True or False',
-  short_answer: 'Short Answer',
-  structured: 'Structured Questions',
-  essay: 'Essay Questions',
-  match: 'Matching',
-  fill_blank: 'Fill in the Blank',
-  calculation: 'Calculations',
-  diagram_label: 'Diagram Labelling',
-  case_study: 'Case Study',
-};
 
 // ─── Question Selection ────────────────────────────────────────────────────
 
@@ -293,13 +278,6 @@ async function callAIForQuestions(
   });
 }
 
-/**
- * Marker tag attached to in-memory IQuestion-shaped objects produced by
- * the AI generator. The organise* functions inspect this tag to decide
- * whether to write a question as INLINE on the paper (questionText, no
- * questionId, no Question doc anywhere) or as a BANK-REF.
- */
-export const INLINE_ONLY_TAG = '__inline_only';
 
 /**
  * Build IQuestion-shaped objects for the AI's parsed output WITHOUT writing
@@ -342,133 +320,4 @@ function buildInlineQuestions(
     status: 'draft' as const,
     createdBy: uoid,
   })) as unknown as IQuestion[];
-}
-
-export function isInlineOnly(q: IQuestion): boolean {
-  return Array.isArray(q.tags) && q.tags.includes(INLINE_ONLY_TAG);
-}
-
-/**
- * Build the IPaperQuestion sub-doc from a source question. Inline-tagged
- * questions become INLINE on the paper (no questionId — the bank doesn't
- * know about them); plain bank questions become BANK-REF (questionId set,
- * downstream features like usage tracking can follow them).
- */
-/** An AI-written question is about the topic its prompt described (topicIds[0]); never the Subject-id fallback. */
-function generatorTags(q: IQuestion): Pick<IPaperQuestion, 'curriculumNodeId' | 'capsLevel' | 'tagFrom'> {
-  const node = q.curriculumNodeId && String(q.curriculumNodeId) !== String(q.subjectId)
-    ? (q.curriculumNodeId as mongoose.Types.ObjectId)
-    : null;
-  const level = q.cognitiveLevel?.caps ?? null;
-  return { curriculumNodeId: node, capsLevel: level, tagFrom: node || level ? 'generator' : null };
-}
-
-export function toPaperQuestion(q: IQuestion, position: number): IPaperQuestion {
-  const inline = isInlineOnly(q);
-  return {
-    questionId: inline ? null : (q._id as mongoose.Types.ObjectId),
-    questionText: q.stem,
-    options: q.options ?? [],
-    marks: q.marks,
-    position,
-    modelAnswer: q.answer ?? null,
-    markingGuideline: q.markingRubric ?? null,
-    diagram: null,
-    ...(inline ? generatorTags(q) : {}),
-  };
-}
-
-// ─── Section Organisation ──────────────────────────────────────────────────
-
-export function organiseSections(questions: IQuestion[]): IPaperSection[] {
-  const groups = new Map<QuestionType, IQuestion[]>();
-  for (const q of questions) {
-    const existing = groups.get(q.type);
-    if (existing) existing.push(q);
-    else groups.set(q.type, [q]);
-  }
-
-  const sections: IPaperSection[] = [];
-  let sectionIndex = 1;
-  const sectionLetter = (idx: number) => String.fromCharCode(64 + idx);
-
-  for (const [type, qs] of groups) {
-    const label = SECTION_LABELS[type] ?? type.replace(/_/g, ' ');
-    const sectionQuestions: IPaperQuestion[] = qs.map((q, i) => toPaperQuestion(q, i));
-
-    sections.push({
-      title: `Section ${sectionLetter(sectionIndex)}: ${label}`,
-      instructions: getSectionInstructions(type, qs.length),
-      order: sectionIndex - 1,
-      questions: sectionQuestions,
-    });
-    sectionIndex++;
-  }
-
-  return sections;
-}
-
-function getSectionInstructions(type: QuestionType, count: number): string {
-  switch (type) {
-    case 'mcq': return `Answer ALL ${count} questions. Choose the correct answer (A, B, C or D).`;
-    case 'true_false': return `Indicate whether the following ${count} statements are TRUE or FALSE.`;
-    case 'short_answer': return `Answer ALL ${count} questions in the space provided.`;
-    case 'structured': return `Answer ALL ${count} questions. Show all working where applicable.`;
-    case 'essay': return `Answer the following essay question(s). Pay attention to structure and content.`;
-    case 'calculation': return `Answer ALL questions. Show ALL calculations clearly.`;
-    default: return `Answer ALL ${count} questions.`;
-  }
-}
-
-// ─── Parse Helpers ─────────────────────────────────────────────────────────
-
-function parseGeneratedQuestions(response: string): ParsedGenQuestion[] {
-  try {
-    const jsonMatch = response.match(/\[[\s\S]*\]/);
-    if (!jsonMatch) return [];
-    const parsed: unknown[] = JSON.parse(jsonMatch[0]);
-    if (!Array.isArray(parsed)) return [];
-
-    return parsed.map((item: unknown) => {
-      const q = item as Record<string, unknown>;
-      const options = Array.isArray(q.options)
-        ? (q.options as unknown[]).map((opt: unknown) => {
-            const o = opt as Record<string, unknown>;
-            return {
-              label: typeof o.label === 'string' ? o.label : '',
-              text: typeof o.text === 'string' ? o.text : '',
-              isCorrect: typeof o.isCorrect === 'boolean' ? o.isCorrect : false,
-            };
-          })
-        : [];
-
-      const validTypes: QuestionType[] = ['mcq', 'structured', 'short_answer', 'essay', 'calculation'];
-      const rawType = typeof q.type === 'string' ? q.type : 'structured';
-      const type: QuestionType = validTypes.includes(rawType as QuestionType)
-        ? (rawType as QuestionType) : 'structured';
-
-      const validCaps: CapsLevel[] = ['knowledge', 'routine', 'complex', 'problem_solving'];
-      const rawCaps = typeof q.capsLevel === 'string' ? q.capsLevel : 'routine';
-      const capsLevel: CapsLevel = validCaps.includes(rawCaps as CapsLevel)
-        ? (rawCaps as CapsLevel) : 'routine';
-
-      return {
-        stem: typeof q.stem === 'string' ? q.stem : 'Generated question',
-        type, options,
-        answer: typeof q.answer === 'string' ? q.answer : '',
-        markingRubric: typeof q.markingRubric === 'string' ? q.markingRubric : '',
-        marks: typeof q.marks === 'number' && q.marks >= 1 ? q.marks : 2,
-        capsLevel,
-      };
-    });
-  } catch {
-    return [];
-  }
-}
-
-export function capsToDefaultBlooms(caps: CapsLevel): string {
-  const map: Record<CapsLevel, string> = {
-    knowledge: 'remember', routine: 'apply', complex: 'analyse', problem_solving: 'evaluate',
-  };
-  return map[caps];
 }

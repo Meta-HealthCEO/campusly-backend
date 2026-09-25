@@ -1,54 +1,12 @@
 import { z } from 'zod/v4';
 import { objectIdSchema } from '../../common/validation.js';
 import { CAPS_LEVELS } from './model-shared.js';
+import { questionTypeEnum, capsLevelEnum, questionStatusEnum, paperTypeEnum, paperDifficultyEnum, mediaSchema, optionSchema, cognitiveLevelSchema } from './validation-shared.js';
+import { generatePaperSchema } from './validation-paper-generation.js';
 
-// ─── Shared Enums ──────────────────────────────────────────────────────────
-
-const questionTypeEnum = z.enum([
-  'mcq', 'true_false', 'short_answer', 'structured', 'essay',
-  'match', 'fill_blank', 'calculation', 'diagram_label', 'case_study',
-]);
-
-const capsLevelEnum = z.enum([
-  'knowledge', 'routine', 'complex', 'problem_solving',
-]);
-
-const bloomsLevelEnum = z.enum([
-  'remember', 'understand', 'apply', 'analyse', 'evaluate', 'create',
-]);
-
-const mediaTypeEnum = z.enum(['image', 'diagram', 'table']);
-
-const questionStatusEnum = z.enum([
-  'draft', 'pending_review', 'approved', 'rejected',
-]);
-
-// NOTE: paperType values match `model-papers.ts` PAPER_TYPES exactly.
-// Module 2 plan listed simpler labels but the model is source of truth.
-// Frontend types in Task 13 must mirror these legacy values.
-const paperTypeEnum = z.enum([
-  'class_test', 'assignment', 'mid_year', 'trial', 'final', 'custom',
-]);
-
-const paperDifficultyEnum = z.enum(['easy', 'medium', 'hard']);
-
-// ─── Subdoc Schemas ────────────────────────────────────────────────────────
-
-const mediaSchema = z.object({
-  mediaType: mediaTypeEnum,
-  url: z.url(),
-}).strict();
-
-const optionSchema = z.object({
-  label: z.string().min(1),
-  text: z.string().min(1),
-  isCorrect: z.boolean(),
-}).strict();
-
-const cognitiveLevelSchema = z.object({
-  caps: capsLevelEnum,
-  blooms: bloomsLevelEnum,
-}).strict();
+// Shared enums live in validation-shared.ts and the AI paper generation
+// schema in validation-paper-generation.ts (split to stay under 350 lines).
+export { PAPER_QUESTION_TYPES, type PaperQuestionType, generatePaperSchema } from './validation-paper-generation.js';
 
 // ─── Question Schemas ──────────────────────────────────────────────────────
 
@@ -207,99 +165,6 @@ export const paperQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),
 }).strict();
-
-// ─── AI Paper Generation ──────────────────────────────────────────────────
-
-const sectionConfigSchema = z.object({
-  title: z.string().trim().min(1).max(200),
-  instructions: z.string().trim().max(2000).optional(),
-  questionCount: z.number().int().min(1).max(50),
-  sectionMarks: z.number().int().min(1).max(200),
-}).strict();
-
-// Question types the AI generator can actually produce + score reliably.
-// Subset of the full Question.type enum — drops formats (true_false, match,
-// fill_blank, diagram_label) that the AI prompt and parser don't cover today.
-export const PAPER_QUESTION_TYPES = [
-  'mcq', 'short_answer', 'structured', 'essay', 'calculation',
-] as const;
-export type PaperQuestionType = (typeof PAPER_QUESTION_TYPES)[number];
-
-const questionTypeWeightSchema = z.object({
-  type: z.enum(PAPER_QUESTION_TYPES),
-  weight: z.number().min(0).max(100),
-}).strict();
-
-export const generatePaperSchema = z.object({
-  schoolId: objectIdSchema.optional(),
-  subjectId: objectIdSchema,
-  gradeId: objectIdSchema,
-  topicIds: z.array(objectIdSchema).min(1).max(20),
-  term: z.number().int().min(1).max(4),
-  year: z.number().int().min(2000).max(2100),
-  paperType: paperTypeEnum,
-  duration: z.number().int().min(5).max(480),
-  totalMarks: z.number().int().min(1).max(500),
-  difficulty: paperDifficultyEnum.default('medium'),
-  title: z.string().trim().min(1).max(200),
-  sectionConfig: z.array(sectionConfigSchema).min(1).max(10),
-  instructions: z.string().trim().max(5000).optional(),
-  // Optional question-type mix. Each entry weights one paper question type
-  // as a percentage of total marks. Weights should sum to ~100 (a ±2 slack
-  // is allowed for rounding). When omitted the generator falls back to the
-  // legacy "ignore type during selection, group post-hoc" behaviour.
-  questionTypeMix: z.array(questionTypeWeightSchema).min(1).max(PAPER_QUESTION_TYPES.length).optional(),
-  // Opt-in seeding from the teacher's curated Question Bank. When false
-  // (default), every question on the paper is freshly AI-generated and
-  // saved as a draft on the paper — nothing is pulled from prior approved
-  // questions. When true, the generator first selects matching approved
-  // bank questions, then AI-fills any deficit. Lets teachers run "fresh"
-  // and "reuse" generations side-by-side without committing to one mode.
-  useExistingBank: z.boolean().default(false).optional(),
-  // Legacy fields kept for backward compatibility with existing AI generator.
-  // TODO(Task 12): drop once service-paper-generation.ts is rewritten.
-  topicNodeIds: z.array(objectIdSchema).default([]).optional(),
-  cognitiveWeighting: z.object({
-    knowledge: z.number().min(0).max(100),
-    routine: z.number().min(0).max(100),
-    complex: z.number().min(0).max(100),
-    problemSolving: z.number().min(0).max(100),
-  }).optional(),
-}).strict().superRefine((data, ctx) => {
-  const configuredMarks = data.sectionConfig.reduce(
-    (sum, section) => sum + section.sectionMarks,
-    0,
-  );
-  if (configuredMarks !== data.totalMarks) {
-    ctx.addIssue({
-      code: 'custom',
-      path: ['sectionConfig'],
-      message: 'Section marks must add up to totalMarks',
-    });
-  }
-  if (data.questionTypeMix) {
-    const sum = data.questionTypeMix.reduce((acc, m) => acc + m.weight, 0);
-    if (Math.abs(sum - 100) > 2) {
-      ctx.addIssue({
-        code: 'custom',
-        path: ['questionTypeMix'],
-        message: `Question-type weights must sum to ~100 (got ${sum.toFixed(1)})`,
-      });
-    }
-    const seen = new Set<string>();
-    for (const m of data.questionTypeMix) {
-      if (seen.has(m.type)) {
-        ctx.addIssue({
-          code: 'custom',
-          path: ['questionTypeMix'],
-          message: `Duplicate question type in mix: ${m.type}`,
-        });
-        break;
-      }
-      seen.add(m.type);
-    }
-  }
-});
 
 // ─── Paper Assignment to Class (Phase 1) ──────────────────────────────────
 
