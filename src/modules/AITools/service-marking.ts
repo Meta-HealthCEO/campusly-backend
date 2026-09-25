@@ -9,6 +9,8 @@ import { AIService } from '../../services/ai.service.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
 import { MarkingResponseSchema } from './validation-marking.js';
 import { finaliseImages, markingDir } from './service-marking-images.js';
+import { safeEvidence } from '../Evidence/write-rows.js';
+import { syncMarkingEvidence } from '../Evidence/writers/test.js';
 
 export interface MarkPapersPayload {
   paperId: string;
@@ -149,6 +151,7 @@ export async function markPaperFromImages(
     marking.aiRawResult = validated as unknown as Record<string, unknown>;
     marking.status = terminalStatus;
     await marking.save();
+    await safeEvidence('marking.images', () => syncMarkingEvidence(marking._id));
 
     return toResult(marking);
   } catch (err: unknown) {

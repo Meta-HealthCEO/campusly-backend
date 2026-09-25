@@ -12,6 +12,8 @@ import {
 import { Student } from '../Student/model.js';
 import { NotificationService } from '../Notification/service.js';
 import { Notification } from '../Notification/model.js';
+import { safeEvidence } from '../Evidence/write-rows.js';
+import { syncMarkingEvidence } from '../Evidence/writers/test.js';
 
 export async function listMarkings(
   schoolId: string,
@@ -88,6 +90,7 @@ export async function updateMarking(
     marking.status = updates.status;
   }
   await marking.save();
+  await safeEvidence('marking.update', () => syncMarkingEvidence(marking._id));
   return marking.toObject() as IPaperMarking;
 }
 
@@ -204,6 +207,7 @@ export async function issueMarking(
   if (isFirstIssue) marking.issuedAt = issuedAt;
   if (mark?._id) marking.gradebookEntryId = mark._id as mongoose.Types.ObjectId;
   await marking.save();
+  await safeEvidence('marking.issue', () => syncMarkingEvidence(marking._id, { studentId: resolvedStudentId }));
 
   // A digital script is done once its mark is issued.
   await PaperSubmission.updateOne(

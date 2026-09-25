@@ -12,6 +12,8 @@ import { PaperMarking } from './model-marking.js';
 import { AIService } from '../../services/ai.service.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
 import { MarkingResponseSchema } from './validation-marking.js';
+import { safeEvidence } from '../Evidence/write-rows.js';
+import { syncMarkingEvidence } from '../Evidence/writers/test.js';
 import {
   loadPaperInfo,
   loadPaperVersion,
@@ -122,6 +124,7 @@ export async function markPaperFromText(
     marking.aiRawResult = validated as unknown as Record<string, unknown>;
     marking.status = 'completed';
     await marking.save();
+    await safeEvidence('marking.text', () => syncMarkingEvidence(marking._id));
 
     return toResult(marking);
   } catch (err: unknown) {
