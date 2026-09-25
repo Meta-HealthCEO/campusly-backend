@@ -12,7 +12,8 @@ const h = vi.hoisted(() => ({
 }));
 
 vi.mock('../../config/env.js', () => ({ config: h.config }));
-vi.mock('@anthropic-ai/sdk', () => ({
+vi.mock('@anthropic-ai/sdk', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@anthropic-ai/sdk')>()),
   default: class {
     messages = { create: h.create, stream: h.stream };
   },
@@ -62,8 +63,6 @@ const SEND_PATHS: SendPath[] = [
       'sys', 'look', [{ base64: 'aGk=', mediaType: 'image/jpeg' }], { temperature: 0.5 }) },
   { name: 'generateDocumentCompletion (pdf)', api: 'create', temperature: 0.5,
     send: (s) => s.generateDocumentCompletion('sys', 'read', 'aGk=', 'application/pdf', { temperature: 0.5 }) },
-  { name: 'generateAudioCompletion', api: 'create', temperature: 0.5,
-    send: (s) => s.generateAudioCompletion('sys', 'transcribe', 'aGk=', 'audio/mp4', { temperature: 0.5 }) },
 ];
 
 function sentBody(api: 'create' | 'stream'): Record<string, unknown> {

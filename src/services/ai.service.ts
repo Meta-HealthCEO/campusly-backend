@@ -3,11 +3,24 @@ import Anthropic from '@anthropic-ai/sdk';
 import { config } from '../config/env.js';
 import { AppError } from '../common/errors.js';
 import { samplingParams } from './ai-model-capabilities.js';
+import { aiAppError, toAIError } from './ai-errors.js';
 
 const ANTHROPIC_API_KEY = config.anthropic.apiKey;
 const ANTHROPIC_MODEL = config.anthropic.model;
 const MAX_CONCURRENT = 5;
-const TIMEOUT_MS = 180_000; // 3 minutes for content generation
+const TIMEOUT_MS = 180_000; // 3 minutes for content generation, across all retries
+
+/**
+ * The only retry layer. The SDK retries 408, 409, 429, 5xx (529 overloaded
+ * included) and connection failures with backoff and honours retry-after, so
+ * one call makes at most AI_MAX_RETRIES + 1 HTTP attempts.
+ */
+export const AI_MAX_RETRIES = 2;
+
+type Usage = { input_tokens: number; output_tokens: number };
+type TextResult = { text: string; usage: Usage };
+type ChatMessage = { role: 'user' | 'assistant'; content: string };
+type Options = { maxTokens?: number; temperature?: number };
 
 let activeCalls = 0;
 const waitQueue: Array<() => void> = [];
@@ -34,34 +47,54 @@ function releaseSemaphore(): void {
 function assertKey(): void {
   // Without a key the SDK fails with an authentication riddle; say what's actually wrong.
   if (!ANTHROPIC_API_KEY) {
-    throw new AppError("AI isn't set up on this server yet. Ask your administrator to add the Anthropic API key.", 503);
+    throw new AppError(
+      "AI isn't set up on this server yet. Ask your administrator to add the Anthropic API key.",
+      503,
+      true,
+      { code: 'AI_NOT_CONFIGURED' },
+    );
   }
 }
 
 function getClient(): Anthropic {
   assertKey();
-  return new Anthropic({ apiKey: ANTHROPIC_API_KEY });
+  return new Anthropic({ apiKey: ANTHROPIC_API_KEY, maxRetries: AI_MAX_RETRIES });
 }
 
-async function callWithRetry<T>(
-  fn: () => Promise<T>,
-  maxAttempts = 3,
-): Promise<T> {
-  let lastError: unknown;
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      return await fn();
-    } catch (err: unknown) {
-      lastError = err;
-      const status = (err as { status?: number })?.status;
-      const retryable = status === 429 || (status !== undefined && status >= 500 && status < 600);
-      if (!retryable || attempt === maxAttempts) throw err;
-      const backoffMs = 1000 * Math.pow(2, attempt - 1); // 1s, 2s, 4s
-      logger.warn(`[AIService] Retrying after status ${status} (attempt ${attempt}/${maxAttempts}, backoff ${backoffMs}ms)...`);
-      await new Promise((resolve) => setTimeout(resolve, backoffMs));
-    }
+/**
+ * Send one non-streaming request: one concurrency slot, an overall deadline
+ * across the SDK's retries, and any API failure turned into a logged AppError.
+ */
+async function sendMessage(
+  path: string,
+  body: Anthropic.MessageCreateParamsNonStreaming,
+  timeoutMs = TIMEOUT_MS,
+): Promise<Anthropic.Message> {
+  await acquireSemaphore();
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await getClient().messages.create(body, { signal: controller.signal });
+  } catch (err: unknown) {
+    throw toAIError(err, { path, model: body.model, timedOut: controller.signal.aborted });
+  } finally {
+    clearTimeout(timer);
+    releaseSemaphore();
   }
-  throw lastError;
+}
+
+function usageOf(message: Anthropic.Message, label: string): Usage {
+  const usage = {
+    input_tokens: message.usage?.input_tokens ?? 0,
+    output_tokens: message.usage?.output_tokens ?? 0,
+  };
+  logger.info(`[AIService] ${label} tokens — input: ${usage.input_tokens}, output: ${usage.output_tokens}`);
+  return usage;
+}
+
+function firstText(message: Anthropic.Message): string {
+  const textBlock = message.content.find((b) => b.type === 'text');
+  return textBlock ? textBlock.text : '';
 }
 
 export class AIService {
@@ -70,11 +103,16 @@ export class AIService {
     assertKey();
   }
 
-  static async generateCompletion(
-    systemPrompt: string,
-    userPrompt: string,
-    options?: { maxTokens?: number; temperature?: number },
-  ): Promise<string> {
+  /**
+   * Audio input isn't accepted by the Messages API, so transcription can't run.
+   * Throws AI_AUDIO_UNSUPPORTED (501); callers check before fetching any audio.
+   * Typed void, not never, so the transcription pipeline after the check stays live code.
+   */
+  static assertAudioSupported(): void {
+    throw aiAppError('AUDIO_UNSUPPORTED');
+  }
+
+  static async generateCompletion(systemPrompt: string, userPrompt: string, options?: Options): Promise<string> {
     const { text } = await AIService.generateCompletionWithUsage(systemPrompt, userPrompt, options);
     return text;
   }
@@ -82,104 +120,48 @@ export class AIService {
   static async generateCompletionWithUsage(
     systemPrompt: string,
     userPrompt: string,
-    options?: { maxTokens?: number; temperature?: number },
-  ): Promise<{ text: string; usage: { input_tokens: number; output_tokens: number } }> {
-    await acquireSemaphore();
-    try {
-      const client = getClient();
-
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
-
-      const message = await callWithRetry(() =>
-        client.messages.create(
-          {
-            model: ANTHROPIC_MODEL,
-            max_tokens: options?.maxTokens ?? 4096,
-            ...samplingParams(ANTHROPIC_MODEL, options?.temperature ?? 0.7),
-            system: systemPrompt,
-            messages: [{ role: 'user', content: userPrompt }],
-          },
-          { signal: controller.signal },
-        ),
-      );
-
-      clearTimeout(timeout);
-
-      const inputTokens = message.usage?.input_tokens ?? 0;
-      const outputTokens = message.usage?.output_tokens ?? 0;
-      logger.info(
-        `[AIService] Tokens used — input: ${inputTokens}, output: ${outputTokens}`,
-      );
-
-      const textBlock = message.content.find((b) => b.type === 'text');
-      return {
-        text: textBlock ? textBlock.text : '',
-        usage: { input_tokens: inputTokens, output_tokens: outputTokens },
-      };
-    } finally {
-      releaseSemaphore();
-    }
+    options?: Options,
+  ): Promise<TextResult> {
+    const message = await sendMessage('generateCompletion', {
+      model: ANTHROPIC_MODEL,
+      max_tokens: options?.maxTokens ?? 4096,
+      ...samplingParams(ANTHROPIC_MODEL, options?.temperature ?? 0.7),
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userPrompt }],
+    });
+    return { text: firstText(message), usage: usageOf(message, 'Completion') };
   }
 
   static async generateChatCompletionWithUsage(
     systemPrompt: string,
-    messages: Array<{ role: 'user' | 'assistant'; content: string }>,
-    options?: { maxTokens?: number; temperature?: number },
-  ): Promise<{ text: string; usage: { input_tokens: number; output_tokens: number } }> {
-    await acquireSemaphore();
-    try {
-      const client = getClient();
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
-
-      const message = await callWithRetry(() =>
-        client.messages.create(
-          {
-            model: ANTHROPIC_MODEL,
-            max_tokens: options?.maxTokens ?? 2048,
-            ...samplingParams(ANTHROPIC_MODEL, options?.temperature ?? 0.7),
-            system: systemPrompt,
-            messages,
-          },
-          { signal: controller.signal },
-        ),
-      );
-
-      clearTimeout(timeout);
-
-      const inputTokens = message.usage?.input_tokens ?? 0;
-      const outputTokens = message.usage?.output_tokens ?? 0;
-      logger.info(
-        `[AIService] Chat tokens — input: ${inputTokens}, output: ${outputTokens}`,
-      );
-
-      const textBlock = message.content.find((b) => b.type === 'text');
-      return {
-        text: textBlock ? textBlock.text : '',
-        usage: { input_tokens: inputTokens, output_tokens: outputTokens },
-      };
-    } finally {
-      releaseSemaphore();
-    }
+    messages: ChatMessage[],
+    options?: Options,
+  ): Promise<TextResult> {
+    const message = await sendMessage('generateChatCompletion', {
+      model: ANTHROPIC_MODEL,
+      max_tokens: options?.maxTokens ?? 2048,
+      ...samplingParams(ANTHROPIC_MODEL, options?.temperature ?? 0.7),
+      system: systemPrompt,
+      messages,
+    });
+    return { text: firstText(message), usage: usageOf(message, 'Chat') };
   }
 
   /**
    * Stream a threaded chat completion. Calls `onDelta` for each text chunk as
    * tokens arrive. Resolves with the final text + token usage once the stream
-   * completes. Errors propagate to the caller; the semaphore is always released.
+   * completes. API failures reject with a logged AppError; a cancellation via
+   * `options.signal` rejects with the SDK's abort error. The semaphore is always released.
    */
   static async streamChatCompletion(
     systemPrompt: string,
-    messages: Array<{ role: 'user' | 'assistant'; content: string }>,
+    messages: ChatMessage[],
     onDelta: (chunk: string) => void,
-    options?: { maxTokens?: number; temperature?: number; signal?: AbortSignal },
-  ): Promise<{ text: string; usage: { input_tokens: number; output_tokens: number } }> {
+    options?: Options & { signal?: AbortSignal },
+  ): Promise<TextResult> {
     await acquireSemaphore();
     try {
-      const client = getClient();
-
-      const stream = client.messages.stream(
+      const stream = getClient().messages.stream(
         {
           model: ANTHROPIC_MODEL,
           max_tokens: options?.maxTokens ?? 2048,
@@ -201,25 +183,15 @@ export class AIService {
       });
 
       const finalMessage = await stream.finalMessage();
-      const inputTokens = finalMessage.usage?.input_tokens ?? 0;
-      const outputTokens = finalMessage.usage?.output_tokens ?? 0;
-      logger.info(
-        `[AIService] Stream tokens — input: ${inputTokens}, output: ${outputTokens}`,
-      );
-
-      return {
-        text: fullText,
-        usage: { input_tokens: inputTokens, output_tokens: outputTokens },
-      };
+      return { text: fullText, usage: usageOf(finalMessage, 'Stream') };
+    } catch (err: unknown) {
+      throw toAIError(err, { path: 'streamChatCompletion', model: ANTHROPIC_MODEL });
     } finally {
       releaseSemaphore();
     }
   }
 
-  static async generateJSON<T>(
-    systemPrompt: string,
-    userPrompt: string,
-  ): Promise<T> {
+  static async generateJSON<T>(systemPrompt: string, userPrompt: string): Promise<T> {
     const { data } = await AIService.generateJSONWithUsage<T>(systemPrompt, userPrompt);
     return data;
   }
@@ -227,7 +199,7 @@ export class AIService {
   static async generateJSONWithUsage<T>(
     systemPrompt: string,
     userPrompt: string,
-  ): Promise<{ data: T; usage: { input_tokens: number; output_tokens: number } }> {
+  ): Promise<{ data: T; usage: Usage }> {
     const { text, usage } = await AIService.generateCompletionWithUsage(
       systemPrompt +
         '\n\nYou MUST respond with valid JSON only. No markdown, no code fences, no explanation.',
@@ -250,8 +222,8 @@ export class AIService {
     userText: string,
     imageBase64: string,
     imageMediaType: 'image/jpeg' | 'image/png' | 'image/webp',
-    options?: { maxTokens?: number; temperature?: number },
-  ): Promise<{ text: string; usage: { input_tokens: number; output_tokens: number } }> {
+    options?: Options,
+  ): Promise<TextResult> {
     return this.generateVisionCompletionWithImages(
       systemPrompt,
       userText,
@@ -264,118 +236,45 @@ export class AIService {
     systemPrompt: string,
     userText: string,
     images: Array<{ base64: string; mediaType: 'image/jpeg' | 'image/png' | 'image/webp' }>,
-    options?: { maxTokens?: number; temperature?: number },
-  ): Promise<{ text: string; usage: { input_tokens: number; output_tokens: number } }> {
-    await acquireSemaphore();
-    try {
-      const client = getClient();
+    options?: Options,
+  ): Promise<TextResult> {
+    const content: Anthropic.MessageParam['content'] = [
+      ...images.map(
+        (img): Anthropic.ImageBlockParam => ({
+          type: 'image',
+          source: { type: 'base64', media_type: img.mediaType, data: img.base64 },
+        }),
+      ),
+      { type: 'text', text: userText },
+    ];
 
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS * 2);
-
-      const content: Anthropic.MessageParam['content'] = [
-        ...images.map(
-          (img): Anthropic.ImageBlockParam => ({
-            type: 'image',
-            source: {
-              type: 'base64',
-              media_type: img.mediaType,
-              data: img.base64,
-            },
-          }),
-        ),
-        { type: 'text', text: userText },
-      ];
-
-      const message = await callWithRetry(() =>
-        client.messages.create(
-          {
-            model: ANTHROPIC_MODEL,
-            max_tokens: options?.maxTokens ?? 4096,
-            ...samplingParams(ANTHROPIC_MODEL, options?.temperature ?? 0.3),
-            system: systemPrompt,
-            messages: [{ role: 'user', content }],
-          },
-          { signal: controller.signal },
-        ),
-      );
-
-      clearTimeout(timeout);
-
-      const inputTokens = message.usage?.input_tokens ?? 0;
-      const outputTokens = message.usage?.output_tokens ?? 0;
-      logger.info(
-        `[AIService] Vision (multi-image) tokens — input: ${inputTokens}, output: ${outputTokens}`,
-      );
-
-      const textBlock = message.content.find((b) => b.type === 'text');
-      return {
-        text: textBlock ? textBlock.text : '',
-        usage: { input_tokens: inputTokens, output_tokens: outputTokens },
-      };
-    } finally {
-      releaseSemaphore();
-    }
+    const message = await sendMessage(
+      'generateVisionCompletion',
+      {
+        model: ANTHROPIC_MODEL,
+        max_tokens: options?.maxTokens ?? 4096,
+        ...samplingParams(ANTHROPIC_MODEL, options?.temperature ?? 0.3),
+        system: systemPrompt,
+        messages: [{ role: 'user', content }],
+      },
+      TIMEOUT_MS * 2,
+    );
+    return { text: firstText(message), usage: usageOf(message, 'Vision (multi-image)') };
   }
 
+  /**
+   * Not available: the Messages API accepts no audio input, so this fails fast
+   * with AI_AUDIO_UNSUPPORTED (501) and never calls the API. The signature is
+   * kept so callers compile unchanged.
+   */
   static async generateAudioCompletion(
-    systemPrompt: string,
-    userText: string,
-    audioBase64: string,
-    audioMediaType: 'audio/mp4' | 'audio/mpeg' | 'audio/wav' | 'audio/webm' = 'audio/mp4',
-    options?: { maxTokens?: number; temperature?: number },
-  ): Promise<{ text: string; usage: { input_tokens: number; output_tokens: number } }> {
-    await acquireSemaphore();
-    try {
-      const client = getClient();
-
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 600_000); // 10 min for audio
-
-      const message = await callWithRetry(() =>
-        client.messages.create(
-          {
-            model: ANTHROPIC_MODEL,
-            max_tokens: options?.maxTokens ?? 8192,
-            ...samplingParams(ANTHROPIC_MODEL, options?.temperature ?? 0.2),
-            system: systemPrompt,
-            messages: [
-              {
-                role: 'user',
-                content: [
-                  {
-                    type: 'input_audio',
-                    source: { type: 'base64', media_type: audioMediaType, data: audioBase64 },
-                  },
-                  { type: 'text', text: userText },
-                ] as unknown as Parameters<typeof client.messages.create>[0]['messages'][0]['content'],
-              },
-            ],
-          },
-          { signal: controller.signal },
-        ),
-      );
-
-      clearTimeout(timeout);
-
-      const inputTokens = message.usage?.input_tokens ?? 0;
-      const outputTokens = message.usage?.output_tokens ?? 0;
-      logger.info(
-        `[AIService] Audio tokens — input: ${inputTokens}, output: ${outputTokens}`,
-      );
-
-      const text = message.content
-        .filter((b) => b.type === 'text')
-        .map((b) => (b as Anthropic.TextBlock).text)
-        .join('');
-
-      return {
-        text,
-        usage: { input_tokens: inputTokens, output_tokens: outputTokens },
-      };
-    } finally {
-      releaseSemaphore();
-    }
+    _systemPrompt: string,
+    _userText: string,
+    _audioBase64: string,
+    _audioMediaType: 'audio/mp4' | 'audio/mpeg' | 'audio/wav' | 'audio/webm' = 'audio/mp4',
+    _options?: Options,
+  ): Promise<TextResult> {
+    throw aiAppError('AUDIO_UNSUPPORTED');
   }
 
   static async generateDocumentCompletion(
@@ -383,74 +282,39 @@ export class AIService {
     userText: string,
     documentBase64: string,
     mediaType: 'application/pdf' | 'image/jpeg' | 'image/png' | 'image/webp',
-    options?: { maxTokens?: number; temperature?: number },
-  ): Promise<{ text: string; usage: { input_tokens: number; output_tokens: number } }> {
+    options?: Options,
+  ): Promise<TextResult> {
     // For images, delegate to the vision method
     if (mediaType !== 'application/pdf') {
-      return this.generateVisionCompletion(
-        systemPrompt, userText, documentBase64,
-        mediaType as 'image/jpeg' | 'image/png' | 'image/webp',
-        options,
-      );
+      return this.generateVisionCompletion(systemPrompt, userText, documentBase64, mediaType, options);
     }
 
-    await acquireSemaphore();
-    try {
-      const client = getClient();
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS * 2);
-
-      const message = await callWithRetry(() =>
-        client.messages.create(
+    const message = await sendMessage(
+      'generateDocumentCompletion',
+      {
+        model: ANTHROPIC_MODEL,
+        max_tokens: options?.maxTokens ?? 8192,
+        ...samplingParams(ANTHROPIC_MODEL, options?.temperature ?? 0.3),
+        system: systemPrompt,
+        messages: [
           {
-            model: ANTHROPIC_MODEL,
-            max_tokens: options?.maxTokens ?? 8192,
-            ...samplingParams(ANTHROPIC_MODEL, options?.temperature ?? 0.3),
-            system: systemPrompt,
-            messages: [
+            role: 'user',
+            content: [
               {
-                role: 'user',
-                content: [
-                  {
-                    type: 'document',
-                    source: {
-                      type: 'base64',
-                      media_type: 'application/pdf',
-                      data: documentBase64,
-                    },
-                  } as Anthropic.DocumentBlockParam,
-                  {
-                    type: 'text',
-                    text: userText,
-                  },
-                ],
-              },
+                type: 'document',
+                source: { type: 'base64', media_type: 'application/pdf', data: documentBase64 },
+              } as Anthropic.DocumentBlockParam,
+              { type: 'text', text: userText },
             ],
           },
-          { signal: controller.signal },
-        ),
-      );
-
-      clearTimeout(timeout);
-
-      const inputTokens = message.usage?.input_tokens ?? 0;
-      const outputTokens = message.usage?.output_tokens ?? 0;
-      logger.info(`[AIService] Document tokens — input: ${inputTokens}, output: ${outputTokens}`);
-
-      const textBlock = message.content.find((b) => b.type === 'text');
-      return {
-        text: textBlock ? textBlock.text : '',
-        usage: { input_tokens: inputTokens, output_tokens: outputTokens },
-      };
-    } finally {
-      releaseSemaphore();
-    }
+        ],
+      },
+      TIMEOUT_MS * 2,
+    );
+    return { text: firstText(message), usage: usageOf(message, 'Document') };
   }
 
-  static getTokenUsage(message: Anthropic.Message): {
-    input: number;
-    output: number;
-  } {
+  static getTokenUsage(message: Anthropic.Message): { input: number; output: number } {
     return {
       input: message.usage?.input_tokens ?? 0,
       output: message.usage?.output_tokens ?? 0,

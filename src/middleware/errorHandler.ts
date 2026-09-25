@@ -20,6 +20,14 @@ export function errorHandler(
 
   // AppError (custom application errors)
   if (err instanceof AppError) {
+    // Server-side failures (e.g. the AI being down) are logged everywhere, not
+    // only in development. Path only: a query string can carry learner data.
+    if (err.statusCode >= 500 && config.nodeEnv !== 'development') {
+      logger.warn(
+        { code: err.code ?? null, statusCode: err.statusCode, method: req.method, route: req.originalUrl.split('?')[0] },
+        `[${req.method}] ${req.originalUrl.split('?')[0]} — ${err.statusCode} ${err.code ?? 'AppError'}`,
+      );
+    }
     const extra = {
       ...(err.code ? { code: err.code } : {}),
       ...(err.details ? { details: err.details } : {}),

@@ -1,9 +1,11 @@
 import https from 'https';
 import http from 'http';
-import { Worker, Job } from 'bullmq';
+import { Worker, Job, UnrecoverableError } from 'bullmq';
 import { logger } from '../common/logger.js';
+import { AppError } from '../common/errors.js';
 import { redisConnection, lessonNotesQueue } from './queues.js';
 import { AIService } from '../services/ai.service.js';
+import { AI_ERRORS } from '../services/ai-errors.js';
 import { VirtualSession } from '../modules/Classroom/model.js';
 import { SessionChatMessage } from '../modules/Classroom/model-chat.js';
 import {
@@ -110,7 +112,7 @@ function safeJsonParse<T>(text: string): T | null {
   }
 }
 
-async function processLessonNotes(job: Job<LessonNotesJobData>): Promise<void> {
+export async function processLessonNotes(job: Job<LessonNotesJobData>): Promise<void> {
   const { sessionId, schoolId, teacherId, classId, subjectId, recordingUrl } = job.data;
 
   logger.info(`[LessonNotesJob] Starting lesson notes for session ${sessionId}`);
@@ -141,6 +143,8 @@ async function processLessonNotes(job: Job<LessonNotesJobData>): Promise<void> {
   );
 
   try {
+    // Transcription needs audio input the AI doesn't accept yet: fail before downloading the recording.
+    AIService.assertAudioSupported();
     const audioBase64 = await downloadAsBase64(recordingUrl);
 
     const transcriptionResult = await AIService.generateAudioCompletion(
@@ -212,6 +216,10 @@ async function processLessonNotes(job: Job<LessonNotesJobData>): Promise<void> {
     lessonNote.status = 'failed';
     lessonNote.errorMessage = message;
     await lessonNote.save();
+    // A retry can't succeed while audio is unsupported (and would add another note): stop here.
+    if (err instanceof AppError && err.code === AI_ERRORS.AUDIO_UNSUPPORTED.code) {
+      throw new UnrecoverableError(message);
+    }
     throw err;
   }
 }

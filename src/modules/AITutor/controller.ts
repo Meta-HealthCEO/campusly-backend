@@ -9,6 +9,17 @@ import { MasteryService } from './mastery.service.js';
 import { RecommendationsService } from './recommendations.service.js';
 import { apiResponse } from '../../common/utils.js';
 import { aiActorFor, assertAIAllowance, recordAIUse, withAIAllowance } from '../subscription/ai-allowance.js';
+import { AppError } from '../../common/errors.js';
+import { logger } from '../../common/logger.js';
+
+const STREAM_FAILED = 'Something went wrong. Try again.';
+
+/** The SSE error frame: an AppError's plain message and code (e.g. AI_BUSY), never an internal message. */
+function streamErrorPayload(err: unknown): { message: string; code?: string } {
+  if (err instanceof AppError) return err.code ? { message: err.message, code: err.code } : { message: err.message };
+  logger.error({ err }, '[AITutor] chat stream failed');
+  return { message: STREAM_FAILED };
+}
 
 export class AITutorController {
   static async sendMessage(req: Request, res: Response): Promise<void> {
@@ -28,7 +39,9 @@ export class AITutorController {
    *     associate the stream with a conversation before any text arrives.
    *   - `delta`: `{ text }` — one per token chunk Claude emits.
    *   - `done`: full final conversation document.
-   *   - `error`: `{ message }` — sent before the stream is closed on failure.
+   *   - `error`: `{ message, code? }` — sent before the stream is closed on
+   *     failure; an AI failure carries the same plain message and code
+   *     (e.g. AI_BUSY) the JSON routes return.
    */
   static async streamMessage(req: Request, res: Response): Promise<void> {
     const schoolId = req.user!.schoolId!;
@@ -60,11 +73,12 @@ export class AITutorController {
       );
       send('done', conversation);
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Stream failed';
-      send('error', { message });
-    } finally {
-      res.end();
+      // Nothing sent yet: let the error handler answer with the real status.
+      if (!res.headersSent) throw err;
+      // The client went away (it aborts the stream): nobody left to tell.
+      if (!abortController.signal.aborted) send('error', streamErrorPayload(err));
     }
+    res.end();
   }
 
   static async listConversations(req: Request, res: Response): Promise<void> {
