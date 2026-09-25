@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { Homework, HomeworkSubmission, IHomeworkSubmissionBase } from './model.js';
 import { NotFoundError, BadRequestError } from '../../common/errors.js';
-import { gradeAnswer, applyLatePenalty, DETERMINISTIC_TYPES } from './service-homework-grading.js';
+import { gradeAnswer, applyLatePenalty, DETERMINISTIC_TYPES, quizQuestionAsBankShape } from './service-homework-grading.js';
 import { gradeSubmissionAsync } from './service-homework-grading-runner.js';
 import { Question, IQuestion } from '../QuestionBank/model.js';
 import { Quiz } from '../Learning/model.js';
@@ -187,9 +187,7 @@ export async function submitHomework(
       const studentAnswer = answerMap.get(questionIndex) ?? '';
       totalMaxMarks += qq.points;
       const base = { questionIndex, studentAnswer, questionSnapshot: qq.questionText, maxMarks: qq.points };
-      // The quiz's own options, so a multiple-choice answer can be marked against the right one.
-      const options = (qq.options ?? []).map((o, i) => ({ label: String.fromCharCode(65 + i), text: o.text, isCorrect: o.isCorrect }));
-      const fakeQ = { _id: new mongoose.Types.ObjectId(), type: qq.questionType, stem: qq.questionText, answer: qq.correctAnswer, markingRubric: '', marks: qq.points, options } as unknown as IQuestion;
+      const fakeQ = quizQuestionAsBankShape(qq);
       if (DETERMINISTIC_TYPES.has(qq.questionType as IQuestion['type'])) {
         const r = await gradeAnswer(fakeQ, studentAnswer);
         return { ...base, awarded: r.awarded, rationale: r.rationale, gradingMethod: r.gradingMethod };

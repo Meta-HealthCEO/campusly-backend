@@ -1,9 +1,34 @@
+import mongoose from 'mongoose';
 import { BadRequestError } from '../../common/errors.js';
 import type { IQuestion, QuestionType } from '../QuestionBank/model.js';
 import type { IHomework } from './model.js';
 import { gradeWithAI } from './service-homework-grading-ai.js';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
+
+export interface QuizQuestionLike {
+  questionText: string;
+  questionType: string;
+  options?: Array<{ text: string; isCorrect: boolean }>;
+  correctAnswer: string;
+  points: number;
+}
+
+/**
+ * A Learning-quiz question in the bank question's shape, with the quiz's own
+ * options labelled A, B, … so a multiple-choice answer is marked against them.
+ * Used by submit and by the background runner (a regrade used to pass no
+ * options, so every multiple-choice answer scored 0).
+ */
+export function quizQuestionAsBankShape(qq: QuizQuestionLike): IQuestion {
+  const options = (qq.options ?? []).map((o: { text: string; isCorrect: boolean }, i: number) => ({
+    label: String.fromCharCode(65 + i), text: o.text, isCorrect: o.isCorrect,
+  }));
+  return {
+    _id: new mongoose.Types.ObjectId(), type: qq.questionType, stem: qq.questionText, answer: qq.correctAnswer,
+    markingRubric: '', marks: qq.points, options,
+  } as unknown as IQuestion;
+}
 
 export const DETERMINISTIC_TYPES: ReadonlySet<QuestionType> = new Set<QuestionType>([
   'mcq',

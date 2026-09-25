@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { logger } from '../../common/logger.js';
 import { Homework, HomeworkSubmission } from './model.js';
 import { Question, IQuestion } from '../QuestionBank/model.js';
-import { gradeAnswer, applyLatePenalty } from './service-homework-grading.js';
+import { gradeAnswer, applyLatePenalty, quizQuestionAsBankShape, type QuizQuestionLike } from './service-homework-grading.js';
 import { publishHomeworkGrade } from '../Academic/service-gradebook-publish.js';
 import { recordAIUse, type AIActor } from '../subscription/ai-allowance.js';
 
@@ -138,7 +138,7 @@ export async function gradeSubmissionAsync(submissionId: string, regradedBy?: AI
     const questionMap = new Map(questions.map((q) => [q._id.toString(), q as unknown as IQuestion]));
 
     // Quiz embedded questions
-    let quizQuestions: Array<{ questionText: string; correctAnswer: string; points: number; questionType: string }> = [];
+    let quizQuestions: QuizQuestionLike[] = [];
     if (submission.type === 'quiz' && homework.quizId) {
       const { Quiz } = await import('../Learning/model.js');
       const quiz = await Quiz.findOne({
@@ -156,15 +156,7 @@ export async function gradeSubmissionAsync(submissionId: string, regradedBy?: AI
         if (submission.type === 'quiz' && ans.questionIndex !== undefined) {
           const qq = quizQuestions[ans.questionIndex];
           if (!qq) return { idx, awarded: 0, rationale: 'Question not found', method: 'ai', viaAI: false };
-          const fakeQ = {
-            _id: new mongoose.Types.ObjectId(),
-            stem: qq.questionText,
-            answer: qq.correctAnswer,
-            markingRubric: '',
-            marks: qq.points,
-            type: qq.questionType,
-            options: [],
-          } as unknown as IQuestion;
+          const fakeQ = quizQuestionAsBankShape(qq);
           const r = await gradeAnswer(fakeQ, ans.studentAnswer);
           return { idx, awarded: r.awarded, rationale: r.rationale, method: r.gradingMethod, viaAI: r.gradingMethod === 'ai' };
         }
