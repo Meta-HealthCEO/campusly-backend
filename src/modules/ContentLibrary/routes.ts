@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { authorize, validate } from '../../middleware/index.js';
 import { requireCapability } from '../../middleware/capability.js';
 import { refuseStandalone } from '../../middleware/refuse-standalone.js';
+import { rejectStandalonePlan } from '../../middleware/rejectStandalonePlan.js';
 import { ContentLibraryController } from './controller.js';
 import {
   createResourceSchema,
@@ -10,6 +11,7 @@ import {
   generateContentSchema,
   refineResourceSchema,
   resourceQuerySchema,
+  gradeAttemptSchema,
 } from './validation.js';
 
 const router = Router();
@@ -32,11 +34,14 @@ router.post(
 // ─── Grade Attempt ──────────────────────────────────────────────────────────
 // AI-graded short-answer / quiz response. Routed under the content library
 // because that's where the block schemas live. Available to teachers (for
-// preview / QA) and students (for real attempts).
+// preview / QA) and students (for real attempts). Standalone classrooms are
+// refused (their learners' AI is metered through the tutor pool, spec §5).
 
 router.post(
   '/grade-attempt',
   authorize('super_admin', 'school_admin', 'principal', 'hod', 'teacher', 'student'),
+  rejectStandalonePlan,
+  validate(gradeAttemptSchema),
   ContentLibraryController.gradeAttempt,
 );
 

@@ -161,19 +161,8 @@ export class ContentLibraryController {
   // and the real student-attempt flow.
 
   static async gradeAttempt(req: Request, res: Response): Promise<void> {
-    const { blockContent, blockType, response } = req.body as {
-      blockContent?: string;
-      blockType?: string;
-      response?: string;
-    };
-    if (typeof blockContent !== 'string' || typeof blockType !== 'string' || typeof response !== 'string') {
-      res.status(400).json({ success: false, error: 'blockContent, blockType, and response are required' });
-      return;
-    }
-    if (response.trim().length === 0) {
-      res.status(400).json({ success: false, error: 'response must not be empty' });
-      return;
-    }
+    // Validated by gradeAttemptSchema (routes.ts): present, trimmed, length-capped.
+    const { blockContent, blockType, response } = req.body as { blockContent: string; blockType: string; response: string };
     const result = await gradeAttempt({ blockContent, blockType, response });
     res.json(apiResponse(true, result, 'Attempt graded'));
   }

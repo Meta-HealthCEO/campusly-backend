@@ -144,3 +144,10 @@ export type ReviewResourceInput = z.infer<typeof reviewResourceSchema>;
 export type GenerateContentInput = z.infer<typeof generateContentSchema>;
 export type RefineResourceInput = z.infer<typeof refineResourceSchema>;
 export type ResourceQueryInput = z.infer<typeof resourceQuerySchema>;
+
+/** An old lesson-material answer the AI grades (spec §5: capped, standalone classrooms refused). */
+export const gradeAttemptSchema = z.object({
+  blockContent: z.string().min(1).max(8000),
+  blockType: z.string().min(1).max(50),
+  response: z.string().trim().min(1, 'response must not be empty').max(4000),
+}).strict();
