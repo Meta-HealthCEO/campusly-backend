@@ -20,7 +20,11 @@ export function errorHandler(
 
   // AppError (custom application errors)
   if (err instanceof AppError) {
-    res.status(err.statusCode).json(apiResponse(false, undefined, undefined, err.message));
+    const extra = {
+      ...(err.code ? { code: err.code } : {}),
+      ...(err.details ? { details: err.details } : {}),
+    };
+    res.status(err.statusCode).json({ ...apiResponse(false, undefined, undefined, err.message), ...extra });
     return;
   }
 

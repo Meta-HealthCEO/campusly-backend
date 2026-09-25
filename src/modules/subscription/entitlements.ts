@@ -6,20 +6,28 @@ import { AppError } from '../../common/errors.js';
 
 const ENTITLED_STATUSES = new Set(['trialing', 'active', 'past_due']);
 
+/**
+ * Whether a subscription currently carries its plan: trialing, active or
+ * past_due, or canceled but still inside the period already paid for.
+ */
+export function isSubscriptionEntitled(
+  sub: { status: string; currentPeriodEnd?: Date | null } | null,
+  now: Date = new Date(),
+): boolean {
+  if (!sub) return false;
+  if (sub.status === 'canceled') {
+    return !!sub.currentPeriodEnd && sub.currentPeriodEnd.getTime() > now.getTime();
+  }
+  // free / unpaid / anything else → no plan entitlements
+  return ENTITLED_STATUSES.has(sub.status);
+}
+
 export async function resolveEntitlements(
   schoolId: mongoose.Types.ObjectId | string,
 ): Promise<Record<string, unknown>> {
   const oid = typeof schoolId === 'string' ? new mongoose.Types.ObjectId(schoolId) : schoolId;
   const sub = await Subscription.findOne({ schoolId: oid });
-  if (!sub) return {};
-
-  // Canceled but still within paid period → entitled until period end
-  if (sub.status === 'canceled') {
-    if (!sub.currentPeriodEnd || sub.currentPeriodEnd.getTime() <= Date.now()) return {};
-  } else if (!ENTITLED_STATUSES.has(sub.status)) {
-    // free / unpaid / anything else → no plan entitlements
-    return {};
-  }
+  if (!sub || !isSubscriptionEntitled(sub)) return {};
 
   const plan = await Plan.findOne({ code: sub.planCode });
   return (plan?.entitlements ?? {}) as Record<string, unknown>;

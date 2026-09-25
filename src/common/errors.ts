@@ -1,11 +1,22 @@
+export interface AppErrorExtra {
+  /** A stable, machine-readable reason the client can act on (e.g. 'AI_ALLOWANCE'). */
+  code?: string;
+  /** Extra numbers the client shows with the message (e.g. { used, limit }). */
+  details?: Record<string, unknown>;
+}
+
 export class AppError extends Error {
   public readonly statusCode: number;
   public readonly isOperational: boolean;
+  public readonly code?: string;
+  public readonly details?: Record<string, unknown>;
 
-  constructor(message: string, statusCode: number, isOperational = true) {
+  constructor(message: string, statusCode: number, isOperational = true, extra: AppErrorExtra = {}) {
     super(message);
     this.statusCode = statusCode;
     this.isOperational = isOperational;
+    this.code = extra.code;
+    this.details = extra.details;
     Object.setPrototypeOf(this, new.target.prototype);
   }
 }
