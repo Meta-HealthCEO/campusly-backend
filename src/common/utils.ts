@@ -83,6 +83,7 @@ export async function cascadeSoftDeleteSchool(schoolId: string): Promise<number>
     'Timetable',
     'Assessment',
     'Mark',
+    'AnswerEvidence',
     'Exam',
     'ExamTimetable',
     'PastPaper',
