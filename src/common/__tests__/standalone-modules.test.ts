@@ -2,6 +2,7 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import mongoose from 'mongoose';
 import { STANDALONE_DEFAULT_MODULES } from '../moduleConfig.js';
 import { School } from '../../modules/School/model.js';
+import { User } from '../../modules/Auth/model.js';
 import { pullStandaloneModules } from '../../scripts/standalone-modules.js';
 
 beforeAll(async () => { if (mongoose.connection.readyState === 0) await mongoose.connect(process.env.MONGODB_TEST_URI!); });
@@ -20,6 +21,22 @@ describe('migrate:standalone-modules', () => {
     name: `Modules ${plan}`, joinCode: `M${new mongoose.Types.ObjectId().toHexString().slice(-8)}`, plan, isDeleted: false, createdAt: new Date(),
     modulesEnabled: ['auth', 'academic', 'homework', 'incident_wellbeing', 'communication', 'courses'],
   })).insertedId;
+
+  it("leaves a standalone coach's sport club alone (it uses messaging)", async () => {
+    const club = await insertSchool('standalone');
+    const coach = (await User.collection.insertOne({
+      email: `coach${new mongoose.Types.ObjectId()}@t.local`, firstName: 'Coach', lastName: 'C', role: 'coach',
+      schoolId: club, isStandaloneCoach: true, isDeleted: false, createdAt: new Date(),
+    })).insertedId;
+    await School.collection.updateOne({ _id: club }, { $set: { ownerUserId: coach } });
+    try {
+      expect(await pullStandaloneModules({ apply: true, schoolIds: [club] })).toEqual({ matched: 0, updated: 0 });
+      expect((await School.collection.findOne({ _id: club }))?.modulesEnabled).toContain('communication');
+    } finally {
+      await School.collection.deleteOne({ _id: club });
+      await User.collection.deleteOne({ _id: coach });
+    }
+  });
 
   it('pulls communication and incident wellbeing from standalone schools only', async () => {
     const standalone = await insertSchool('standalone');
