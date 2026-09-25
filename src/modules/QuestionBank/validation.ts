@@ -1,5 +1,6 @@
 import { z } from 'zod/v4';
 import { objectIdSchema } from '../../common/validation.js';
+import { CAPS_LEVELS } from './model-shared.js';
 
 // ─── Shared Enums ──────────────────────────────────────────────────────────
 
@@ -130,6 +131,8 @@ const paperQuestionBaseShape = {
   modelAnswer: z.string().max(5000).optional(),
   markingGuideline: z.string().max(5000).optional(),
   diagram: paperQuestionDiagramSchema.optional(),
+  curriculumNodeId: objectIdSchema.nullable().optional(),
+  capsLevel: z.enum(CAPS_LEVELS).nullable().optional(),
 } as const;
 
 const paperQuestionXorRefinement = (
@@ -331,6 +334,8 @@ export const updatePaperQuestionSchema = z.object({
     tikz: z.string().max(20000),
     caption: z.string().max(500).optional(),
   }).strict().optional(),
+  curriculumNodeId: objectIdSchema.nullable().optional(),
+  capsLevel: z.enum(CAPS_LEVELS).nullable().optional(),
 }).strict().refine(
   (obj) => Object.keys(obj).length > 0,
   { message: 'At least one field must be provided to update' },

@@ -9,11 +9,8 @@ export const QUESTION_TYPES = [
 
 export type QuestionType = (typeof QUESTION_TYPES)[number];
 
-export const CAPS_LEVELS = [
-  'knowledge', 'routine', 'complex', 'problem_solving',
-] as const;
-
-export type CapsLevel = (typeof CAPS_LEVELS)[number];
+export { CAPS_LEVELS, PAPER_QUESTION_TAG_FROM, type CapsLevel, type PaperQuestionTagFrom } from './model-shared.js';
+import { CAPS_LEVELS, type CapsLevel } from './model-shared.js';
 
 export const BLOOMS_LEVELS = [
   'remember', 'understand', 'apply', 'analyse', 'evaluate', 'create',

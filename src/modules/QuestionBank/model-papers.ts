@@ -1,5 +1,8 @@
 import mongoose, { Schema, Document, Types } from 'mongoose';
-import { DIAGRAM_RENDER_STATUSES, type DiagramRenderStatus } from './model-shared.js';
+import {
+  CAPS_LEVELS, DIAGRAM_RENDER_STATUSES, PAPER_QUESTION_TAG_FROM,
+  type CapsLevel, type DiagramRenderStatus, type PaperQuestionTagFrom,
+} from './model-shared.js';
 
 // ─── Enums ───────────────────────────────────────────────────────────────────
 
@@ -39,6 +42,10 @@ export interface IPaperQuestion {
   modelAnswer: string | null;
   markingGuideline: string | null;
   diagram: IPaperQuestionDiagram | null;
+  /** Inline questions only: the question's own topic and level; null = unknown. Bank refs resolve through Question. */
+  curriculumNodeId?: Types.ObjectId | null;
+  capsLevel?: CapsLevel | null;
+  tagFrom?: PaperQuestionTagFrom | null;
 }
 
 export interface IPaperSection {
@@ -162,6 +169,9 @@ const paperQuestionSchema = new Schema<IPaperQuestion>(
       type: paperQuestionDiagramSchema,
       default: null,
     },
+    curriculumNodeId: { type: Schema.Types.ObjectId, ref: 'CurriculumNode', default: null },
+    capsLevel: { type: String, enum: CAPS_LEVELS, default: null },
+    tagFrom: { type: String, enum: PAPER_QUESTION_TAG_FROM, default: null },
   },
   { _id: false },
 );

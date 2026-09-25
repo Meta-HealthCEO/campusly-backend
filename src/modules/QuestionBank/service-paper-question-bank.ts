@@ -19,6 +19,7 @@ import mongoose from 'mongoose';
 import { AssessmentPaper, Question, type IPaperQuestion } from './model.js';
 import type { IAssessmentPaper } from './model-papers.js';
 import { BadRequestError, NotFoundError } from '../../common/errors.js';
+import { capsToDefaultBlooms } from './service-paper-gen-helpers.js';
 
 function toOid(id: string): mongoose.Types.ObjectId {
   return new mongoose.Types.ObjectId(id);
@@ -84,7 +85,7 @@ export async function savePaperQuestionToBank(
   }
 
   const created = await Question.create({
-    curriculumNodeId: paper.topicIds?.[0] ?? paper.subjectId,
+    curriculumNodeId: pq.curriculumNodeId ?? paper.topicIds?.[0] ?? paper.subjectId,
     schoolId: toOid(schoolId),
     subjectId: paper.subjectId,
     gradeId: paper.gradeId,
@@ -95,7 +96,7 @@ export async function savePaperQuestionToBank(
     answer: pq.modelAnswer ?? '',
     markingRubric: pq.markingGuideline ?? '',
     marks: pq.marks,
-    cognitiveLevel: { caps: 'routine', blooms: 'apply' },
+    cognitiveLevel: { caps: pq.capsLevel ?? 'routine', blooms: capsToDefaultBlooms(pq.capsLevel ?? 'routine') },
     difficulty: 3,
     tags: ['committed_from_paper'],
     source: 'teacher' as const,

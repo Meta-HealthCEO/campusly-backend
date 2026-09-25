@@ -354,6 +354,15 @@ export function isInlineOnly(q: IQuestion): boolean {
  * know about them); plain bank questions become BANK-REF (questionId set,
  * downstream features like usage tracking can follow them).
  */
+/** An AI-written question is about the topic its prompt described (topicIds[0]); never the Subject-id fallback. */
+function generatorTags(q: IQuestion): Pick<IPaperQuestion, 'curriculumNodeId' | 'capsLevel' | 'tagFrom'> {
+  const node = q.curriculumNodeId && String(q.curriculumNodeId) !== String(q.subjectId)
+    ? (q.curriculumNodeId as mongoose.Types.ObjectId)
+    : null;
+  const level = q.cognitiveLevel?.caps ?? null;
+  return { curriculumNodeId: node, capsLevel: level, tagFrom: node || level ? 'generator' : null };
+}
+
 export function toPaperQuestion(q: IQuestion, position: number): IPaperQuestion {
   const inline = isInlineOnly(q);
   return {
@@ -365,6 +374,7 @@ export function toPaperQuestion(q: IQuestion, position: number): IPaperQuestion 
     modelAnswer: q.answer ?? null,
     markingGuideline: q.markingRubric ?? null,
     diagram: null,
+    ...(inline ? generatorTags(q) : {}),
   };
 }
 
@@ -456,7 +466,7 @@ function parseGeneratedQuestions(response: string): ParsedGenQuestion[] {
   }
 }
 
-function capsToDefaultBlooms(caps: CapsLevel): string {
+export function capsToDefaultBlooms(caps: CapsLevel): string {
   const map: Record<CapsLevel, string> = {
     knowledge: 'remember', routine: 'apply', complex: 'analyse', problem_solving: 'evaluate',
   };

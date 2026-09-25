@@ -7,6 +7,7 @@ import type { IMemoAnswer } from '../TeacherWorkbench/model.assessment.js';
 import { logger } from '../../common/logger.js';
 import { BadRequestError } from '../../common/errors.js';
 import { assertCanEditPaper } from './service-papers-auth.js';
+import { assertVisibleNode, teacherTags } from './paper-question-tags.js';
 import { regenerateSingleQuestion } from './service-paper-generation.js';
 import {
   assertExactlyOneSource,
@@ -73,6 +74,7 @@ export async function addQuestionToPaper(
   actorRole: string,
 ): Promise<IAssessmentPaper> {
   assertExactlyOneSource(input);
+  await assertVisibleNode(input.curriculumNodeId, schoolId);
   const paper = await loadPaperOrThrow(paperId, schoolId);
   assertCanEditPaper(paper, actorId, actorRole, 'add-question');
   const section = assertSectionInBounds(paper, sectionIdx);
@@ -97,6 +99,7 @@ export async function addQuestionToPaper(
           renderStatus: 'pending',
         }
       : null,
+    ...teacherTags(input),
   };
   section.questions.push(newQuestion);
   recomputePaperTotalMarks(paper);
@@ -159,6 +162,15 @@ export async function updatePaperQuestion(
   if (patch.modelAnswer !== undefined) question.modelAnswer = patch.modelAnswer;
   if (patch.markingGuideline !== undefined) {
     question.markingGuideline = patch.markingGuideline;
+  }
+  if (patch.curriculumNodeId !== undefined || patch.capsLevel !== undefined) {
+    await assertVisibleNode(patch.curriculumNodeId, schoolId);
+    const current = {
+      curriculumNodeId: question.curriculumNodeId ?? null,
+      capsLevel: question.capsLevel ?? null,
+      tagFrom: question.tagFrom ?? null,
+    };
+    Object.assign(question, teacherTags(patch, current));
   }
   if (patch.diagram !== undefined) {
     question.diagram = {

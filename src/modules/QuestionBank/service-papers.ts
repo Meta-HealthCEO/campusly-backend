@@ -25,6 +25,7 @@ import type {
 import { PaperModeration } from '../TeacherWorkbench/model.assessment.js';
 import { memoSectionsFromPaper } from './service-paper-memo-build.js';
 import { assertCanReadPaper } from './service-papers-read.js';
+import { assertVisibleNode, carryQuestionTags } from './paper-question-tags.js';
 
 const POPULATE_LIST = [
   { path: 'subjectId', select: 'name' },
@@ -236,6 +237,9 @@ function buildPaperSections(data: CreatePaperInput | UpdatePaperInput): {
             renderStatus: 'pending' as const,
           }
         : null,
+      curriculumNodeId: question.curriculumNodeId ? toObjectId(question.curriculumNodeId) : null,
+      capsLevel: question.capsLevel ?? null,
+      tagFrom: question.curriculumNodeId || question.capsLevel ? ('teacher' as const) : null,
     }));
 
     return {
@@ -252,6 +256,13 @@ function buildPaperSections(data: CreatePaperInput | UpdatePaperInput): {
   );
 
   return { sections, actualMarks };
+}
+
+/** Every topic a section payload names must be one the school can see. */
+async function assertSectionNodes(sections: Array<{ questions: IPaperQuestion[] }>, schoolId: string): Promise<void> {
+  for (const node of sections.flatMap((s) => s.questions.map((q) => q.curriculumNodeId)).filter(Boolean)) {
+    await assertVisibleNode(String(node), schoolId);
+  }
 }
 
 export class PapersService {
@@ -388,6 +399,7 @@ export class PapersService {
     );
 
     const { sections, actualMarks } = buildPaperSections(data);
+    await assertSectionNodes(sections, schoolId);
     const paper = await AssessmentPaper.create({
       schoolId: toObjectId(schoolId),
       title: data.title,
@@ -482,7 +494,8 @@ export class PapersService {
     if (data.topicIds) update.topicIds = normaliseTopicIds(data.topicIds);
     if (data.sections) {
       const { sections, actualMarks } = buildPaperSections(data);
-      update.sections = sections;
+      await assertSectionNodes(sections, schoolId);
+      update.sections = carryQuestionTags(paper.sections ?? [], sections);
       update.totalMarks = actualMarks || data.totalMarks || 0;
     }
 
