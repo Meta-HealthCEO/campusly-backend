@@ -52,6 +52,9 @@ describe('each send path counts one learner message', () => {
     expect((await request(app).post('/api/ai-tutor/chat').set(auth).send(message({ subjectId, image: { mediaType: 'image/png', base64: 'aGVsbG8=' } }))).status).toBe(201);
     const stream = await request(app).post('/api/ai-tutor/chat/stream').set(auth).send(message({ subjectId }));
     expect(stream.text).toContain('event: done');
+    const [system, sent] = vi.mocked(AIService.streamChatCompletion).mock.calls[0]!;
+    expect((system as Array<{ cache_control?: unknown }>)[0]?.cache_control).toEqual({ type: 'ephemeral' });
+    expect(JSON.stringify((sent as Array<{ content: unknown }>).at(-1)?.content)).toContain('recent academic performance');
     expect((await request(app).post('/api/ai-tutor/practice').set(auth)
       .send({ subjectId, subjectName: 'Mathematics', grade: 10, topic: 'Algebra', questionCount: 3, difficulty: 'easy', questionTypes: ['mcq'] })).status).toBe(201);
 

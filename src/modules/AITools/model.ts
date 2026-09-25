@@ -253,7 +253,8 @@ export interface IAIUsageLog extends Document {
   schoolId: Types.ObjectId;
   teacherId: Types.ObjectId;
   type: AIUsageType;
-  tokensUsed: { input: number; output: number };
+  /** cacheRead/cacheWrite: prompt-cache tokens (tutor chat; 0 where not cached). */
+  tokensUsed: { input: number; output: number; cacheRead?: number; cacheWrite?: number };
   aiModel: string;
   createdAt: Date;
   updatedAt: Date;
@@ -271,6 +272,8 @@ const aiUsageLogSchema = new Schema<IAIUsageLog>(
     tokensUsed: {
       input: { type: Number, required: true },
       output: { type: Number, required: true },
+      cacheRead: { type: Number, default: 0 },
+      cacheWrite: { type: Number, default: 0 },
     },
     aiModel: { type: String, required: true },
   },

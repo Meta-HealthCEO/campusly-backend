@@ -1,18 +1,18 @@
-import { TutorConversation, ITutorConversation, ITutorMessage } from './model.js';
+import { TutorConversation, ITutorConversation } from './model.js';
 import { Mark } from '../Academic/model.js';
 import { Student } from '../Student/model.js';
 import { Homework, HomeworkSubmission } from '../Homework/model.js';
 import { AIUsageLog } from '../AITools/model.js';
-import { AIService } from '../../services/ai.service.js';
+import { AIService, type ChatUsage } from '../../services/ai.service.js';
 import { NotFoundError } from '../../common/errors.js';
 import { paginationHelper } from '../../common/utils.js';
-import { buildSystemPrompt, TutorPromptContext } from './prompts.js';
+import { tutorTurnContext, type TutorPromptContext } from './prompts.js';
+import { buildTutorRequest, type TutorRequest } from './tutor-request.js';
 import { resolveTutorContext } from './student-context.js';
 import type { SendMessageInput, AuraContextInput } from './validation.js';
 import { config } from '../../config/env.js';
 
 const ANTHROPIC_MODEL = config.anthropic.model;
-const MAX_CONTEXT_MESSAGES = 20;
 
 interface WeakArea {
   subject: string;
@@ -20,16 +20,6 @@ interface WeakArea {
   averageMark: number;
   assessmentCount: number;
   recommendation: string;
-}
-
-/** Map our internal student/assistant roles → Anthropic user/assistant roles. */
-function toAnthropicMessages(
-  messages: ITutorMessage[],
-): Array<{ role: 'user' | 'assistant'; content: string }> {
-  return messages.map((m) => ({
-    role: m.role === 'student' ? 'user' : 'assistant',
-    content: m.content,
-  }));
 }
 
 const SURFACE_LABELS: Record<string, string> = {
@@ -117,16 +107,17 @@ export class AITutorService {
     schoolId: string,
     input: SendMessageInput,
   ): Promise<ITutorConversation> {
-    const { conversation, systemPrompt, threadedMessages } =
-      await this.prepareSend(userId, schoolId, input);
+    const { conversation, request, ctx } = await this.prepareSend(userId, schoolId, input);
 
     // If the student attached an image, route through the vision path. We
     // don't carry the image into future turns; the model sees it once and the
-    // text caption is what gets persisted in conversation history.
+    // text caption is what gets persisted in conversation history. Photo turns
+    // are rare and send no history, so they are not cached (ruling R19).
     if (input.image) {
+      const system = request.system.map((b) => b.text).join('\n\n');
       const { text, usage } = await AIService.generateVisionCompletionWithImages(
-        systemPrompt,
-        input.message,
+        system,
+        `${tutorTurnContext(ctx)}\n\n${input.message}`,
         [{ base64: input.image.base64, mediaType: input.image.mediaType }],
       );
       return this.finalizeSend(
@@ -139,10 +130,7 @@ export class AITutorService {
       );
     }
 
-    const { text, usage } = await AIService.generateChatCompletionWithUsage(
-      systemPrompt,
-      threadedMessages,
-    );
+    const { text, usage } = await AIService.generateChatCompletionWithUsage(request.system, request.messages);
 
     return this.finalizeSend(conversation, schoolId, userId, input.message, text, usage);
   }
@@ -159,16 +147,15 @@ export class AITutorService {
     onDelta: (chunk: string) => void,
     options?: { signal?: AbortSignal; onConversationReady?: (conv: ITutorConversation) => void },
   ): Promise<ITutorConversation> {
-    const { conversation, systemPrompt, threadedMessages } =
-      await this.prepareSend(userId, schoolId, input);
+    const { conversation, request } = await this.prepareSend(userId, schoolId, input);
 
     // Surface the conversation id to the caller before streaming starts so the
     // SSE handler can send it as the first event.
     options?.onConversationReady?.(conversation);
 
     const { text, usage } = await AIService.streamChatCompletion(
-      systemPrompt,
-      threadedMessages,
+      request.system,
+      request.messages,
       onDelta,
       { signal: options?.signal },
     );
@@ -182,11 +169,7 @@ export class AITutorService {
     userId: string,
     schoolId: string,
     input: SendMessageInput,
-  ): Promise<{
-    conversation: ITutorConversation;
-    systemPrompt: string;
-    threadedMessages: Array<{ role: 'user' | 'assistant'; content: string }>;
-  }> {
+  ): Promise<{ conversation: ITutorConversation; request: TutorRequest; ctx: TutorPromptContext }> {
     let conversation: ITutorConversation | null = null;
     let resolvedContext: Awaited<ReturnType<typeof resolveTutorContext>>;
 
@@ -260,14 +243,10 @@ export class AITutorService {
       isAssessmentActive: serverIsActive,
     };
 
-    const systemPrompt = buildSystemPrompt(input.mode, ctx);
-
-    const threadedMessages = [
-      ...toAnthropicMessages(conversation.messages.slice(-MAX_CONTEXT_MESSAGES)),
-      { role: 'user' as const, content: input.message },
-    ];
-
-    return { conversation, systemPrompt, threadedMessages };
+    // Laid out for prompt caching: fixed instructions and the stored history
+    // first, this turn's context last (tutor-request.ts, ruling R19).
+    const request = buildTutorRequest(input.mode, ctx, conversation.messages, input.message);
+    return { conversation, request, ctx };
   }
 
   private static async finalizeSend(
@@ -276,7 +255,7 @@ export class AITutorService {
     userId: string,
     studentMessage: string,
     assistantText: string,
-    usage: { input_tokens: number; output_tokens: number },
+    usage: Pick<ChatUsage, 'input_tokens' | 'output_tokens'> & Partial<ChatUsage>,
   ): Promise<ITutorConversation> {
     conversation.messages.push(
       {
@@ -302,7 +281,10 @@ export class AITutorService {
       schoolId,
       teacherId: userId,
       type: 'tutor_chat',
-      tokensUsed: { input: usage.input_tokens, output: usage.output_tokens },
+      tokensUsed: {
+        input: usage.input_tokens, output: usage.output_tokens,
+        cacheRead: usage.cache_read_input_tokens ?? 0, cacheWrite: usage.cache_creation_input_tokens ?? 0,
+      },
       aiModel: ANTHROPIC_MODEL,
     });
 

@@ -19,7 +19,17 @@ export const AI_MAX_RETRIES = 2;
 
 type Usage = { input_tokens: number; output_tokens: number };
 type TextResult = { text: string; usage: Usage };
-type ChatMessage = { role: 'user' | 'assistant'; content: string };
+/** A system prompt: plain text, or text blocks that may carry cache breakpoints. */
+type SystemPrompt = string | Anthropic.TextBlockParam[];
+
+/** Token usage of one chat call, including prompt-cache reads and writes. */
+export interface ChatUsage {
+  input_tokens: number;
+  output_tokens: number;
+  cache_read_input_tokens: number;
+  cache_creation_input_tokens: number;
+}
+type ChatResult = { text: string; usage: ChatUsage };
 type Options = { maxTokens?: number; temperature?: number };
 
 let activeCalls = 0;
@@ -92,6 +102,21 @@ function usageOf(message: Anthropic.Message, label: string): Usage {
   return usage;
 }
 
+function chatUsageOf(message: Anthropic.Message, label: string): ChatUsage {
+  const u = message.usage;
+  const usage: ChatUsage = {
+    input_tokens: u?.input_tokens ?? 0,
+    output_tokens: u?.output_tokens ?? 0,
+    cache_read_input_tokens: u?.cache_read_input_tokens ?? 0,
+    cache_creation_input_tokens: u?.cache_creation_input_tokens ?? 0,
+  };
+  logger.info(
+    `[AIService] ${label} tokens — input: ${usage.input_tokens}, output: ${usage.output_tokens}, `
+    + `cache read: ${usage.cache_read_input_tokens}, cache write: ${usage.cache_creation_input_tokens}`,
+  );
+  return usage;
+}
+
 function firstText(message: Anthropic.Message): string {
   const textBlock = message.content.find((b) => b.type === 'text');
   return textBlock ? textBlock.text : '';
@@ -133,10 +158,10 @@ export class AIService {
   }
 
   static async generateChatCompletionWithUsage(
-    systemPrompt: string,
-    messages: ChatMessage[],
+    systemPrompt: SystemPrompt,
+    messages: Anthropic.MessageParam[],
     options?: Options,
-  ): Promise<TextResult> {
+  ): Promise<ChatResult> {
     const message = await sendMessage('generateChatCompletion', {
       model: ANTHROPIC_MODEL,
       max_tokens: options?.maxTokens ?? 2048,
@@ -144,7 +169,7 @@ export class AIService {
       system: systemPrompt,
       messages,
     });
-    return { text: firstText(message), usage: usageOf(message, 'Chat') };
+    return { text: firstText(message), usage: chatUsageOf(message, 'Chat') };
   }
 
   /**
@@ -154,11 +179,11 @@ export class AIService {
    * `options.signal` rejects with the SDK's abort error. The semaphore is always released.
    */
   static async streamChatCompletion(
-    systemPrompt: string,
-    messages: ChatMessage[],
+    systemPrompt: SystemPrompt,
+    messages: Anthropic.MessageParam[],
     onDelta: (chunk: string) => void,
     options?: Options & { signal?: AbortSignal },
-  ): Promise<TextResult> {
+  ): Promise<ChatResult> {
     await acquireSemaphore();
     try {
       const stream = getClient().messages.stream(
@@ -183,7 +208,7 @@ export class AIService {
       });
 
       const finalMessage = await stream.finalMessage();
-      return { text: fullText, usage: usageOf(finalMessage, 'Stream') };
+      return { text: fullText, usage: chatUsageOf(finalMessage, 'Stream') };
     } catch (err: unknown) {
       throw toAIError(err, { path: 'streamChatCompletion', model: ANTHROPIC_MODEL });
     } finally {
