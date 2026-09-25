@@ -16,6 +16,8 @@ import { assertCanEditPaper, PAPER_ADMIN_ROLES } from './service-papers-auth.js'
 import { assertCanReadPaper } from './service-papers-read.js';
 import { PdfService } from './service-pdf.js';
 import { generateMemoPdf } from './service-memo-pdf.js';
+import { safeEvidence } from '../Evidence/write-rows.js';
+import { tagPaperQuestions } from '../Evidence/tagging.js';
 
 const PAPER_TYPE_TO_ASSESSMENT_TYPE: Record<string, 'test' | 'exam' | 'assignment'> = {
   class_test: 'test',
@@ -114,6 +116,8 @@ export async function finalisePaper(
   if (actorIsPrincipal || actorIsStandalone || PAPER_ADMIN_ROLES.has(actorRole)) {
     paper.status = 'finalised';
     await paper.save();
+    // Phase E §4.2: tag untagged inline questions in the background; never slows or fails the finalise.
+    void safeEvidence('paper.tagging', () => tagPaperQuestions(paper._id as mongoose.Types.ObjectId, paper.schoolId));
 
     try {
       await PaperMemo.updateOne(
