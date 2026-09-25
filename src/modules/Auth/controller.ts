@@ -11,6 +11,7 @@ import { apiResponse } from '../../common/utils.js';
 import { Subscription, Plan } from '../subscription/model.js';
 import { SubscriptionService } from '../subscription/service.js';
 import { subscriptionForViewer } from '../subscription/subscription-view.js';
+import { isStandaloneLearner } from './standalone-learner.js';
 import { changePasswordSchema } from './validation.js';
 import { UnauthorizedError } from '../../common/errors.js';
 import { resolveRegistrationScope } from './registration-policy.js';
@@ -24,17 +25,13 @@ const REFRESH_COOKIE_OPTIONS = {
 };
 
 /** The password login's answer; the development sign-in sends the same. */
-export function sendLoginResponse(res: Response, { user, tokens }: { user: IUser; tokens: TokenPair }): void {
+export async function sendLoginResponse(res: Response, { user, tokens }: { user: IUser; tokens: TokenPair }): Promise<void> {
   res.cookie('refresh_token', tokens.refreshToken, REFRESH_COOKIE_OPTIONS);
-
   const userData = user.toObject();
   const { password: _, refreshTokens: __, ...safeUser } = userData;
-
+  const standaloneLearner = await isStandaloneLearner(user);
   res.status(200).json(
-    apiResponse(true, {
-      user: safeUser,
-      accessToken: tokens.accessToken,
-    }, 'Login successful'),
+    apiResponse(true, { user: { ...safeUser, isStandaloneLearner: standaloneLearner }, accessToken: tokens.accessToken }, 'Login successful'),
   );
 }
 
@@ -115,7 +112,7 @@ export class AuthController {
   static async login(req: Request, res: Response): Promise<void> {
     const { email, password } = req.body;
     const session = await AuthService.login(email, password);
-    sendLoginResponse(res, session);
+    await sendLoginResponse(res, session);
   }
 
   static async refresh(req: Request, res: Response): Promise<void> {
@@ -183,10 +180,10 @@ export class AuthController {
         (await SubscriptionService.createInitialFreeSubscription(schoolId));
       plan = await Plan.findOne({ code: subscription.planCode });
     }
-
+    const standaloneLearner = await isStandaloneLearner(user);
     res.status(200).json(
       apiResponse(true, {
-        user,
+        user: { ...user.toJSON(), isStandaloneLearner: standaloneLearner },
         subscription: subscriptionForViewer(subscription, user),
         plan,
       }, 'User retrieved successfully'),
@@ -200,12 +197,9 @@ export class AuthController {
 
     const userData = user.toObject();
     const { password: _, refreshTokens: __, ...safeUser } = userData;
-
+    const standaloneLearner = await isStandaloneLearner(user);
     res.status(201).json(
-      apiResponse(true, {
-        user: safeUser,
-        accessToken: tokens.accessToken,
-      }, 'Student registered successfully'),
+      apiResponse(true, { user: { ...safeUser, isStandaloneLearner: standaloneLearner }, accessToken: tokens.accessToken }, 'Student registered successfully'),
     );
   }
 

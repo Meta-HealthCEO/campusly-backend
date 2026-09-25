@@ -41,7 +41,7 @@ router.get('/accounts', async (_req: Request, res: Response) => {
 router.post('/', async (req: Request, res: Response) => {
   const parsed = signInSchema.safeParse(req.body);
   if (!parsed.success) throw new ForbiddenError('That account is not offered for development sign-in');
-  sendLoginResponse(res, await DevSignInService.signIn(parsed.data.userId));
+  await sendLoginResponse(res, await DevSignInService.signIn(parsed.data.userId));
 });
 
 export default router;
