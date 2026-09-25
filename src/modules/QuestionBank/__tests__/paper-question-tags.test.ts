@@ -90,10 +90,38 @@ describe('tags survive editing, copying and saving to the bank', () => {
     expect(q.tagFrom).toBe('generator');
   });
 
-  it('drops the old tags when the editor replaced the question', async () => {
+  it('keeps tags when the teacher only fixes the text (orchestrator ruling)', async () => {
+    const topic = await topicNode();
+    const paperId = await draftPaper(topic);
+    const data = { sections: [{ title: 'A', instructions: '', questions: [
+      { questionText: 'Find the inverse of f(x) = 2x', marks: 3, position: 0, options: [] },
+    ] }] } as unknown as UpdatePaperInput;
+    await PapersService.updatePaper(paperId, String(schoolId), String(teacherId), 'teacher', data);
+    const q = (await AssessmentPaper.findById(paperId).lean())!.sections[0].questions[0];
+    expect(String(q.curriculumNodeId)).toBe(String(topic));
+    expect(q.tagFrom).toBe('generator');
+  });
+
+  it('tags follow questions the editor moved', async () => {
+    const [first, second] = [await topicNode(), await topicNode('Sequences')];
+    const paperId = await draftPaper(first);
+    await AssessmentPaper.updateOne({ _id: paperId }, { $push: { 'sections.0.questions': {
+      questionText: 'Find T5 of 2; 5; 8', marks: 2, position: 1, curriculumNodeId: second, capsLevel: 'routine', tagFrom: 'teacher',
+    } } });
+    const data = { sections: [{ title: 'A', instructions: '', questions: [
+      { questionText: 'Find T5 of 2; 5; 8', marks: 2, position: 0, options: [] },
+      { questionText: 'Find the inverse of f(x) = 2x.', marks: 3, position: 1, options: [] },
+    ] }] } as unknown as UpdatePaperInput;
+    await PapersService.updatePaper(paperId, String(schoolId), String(teacherId), 'teacher', data);
+    const [a, b] = (await AssessmentPaper.findById(paperId).lean())!.sections[0].questions;
+    expect(String(a.curriculumNodeId)).toBe(String(second));
+    expect(String(b.curriculumNodeId)).toBe(String(first));
+  });
+
+  it('drops the old tags when the teacher replaced the question with a bank question', async () => {
     const paperId = await draftPaper(await topicNode());
     const data = { sections: [{ title: 'A', instructions: '', questions: [
-      { questionText: 'A different question.', marks: 3, position: 0, options: [] },
+      { questionId: String(oid()), marks: 3, position: 0, options: [] },
     ] }] } as unknown as UpdatePaperInput;
     await PapersService.updatePaper(paperId, String(schoolId), String(teacherId), 'teacher', data);
     const q = (await AssessmentPaper.findById(paperId).lean())!.sections[0].questions[0];

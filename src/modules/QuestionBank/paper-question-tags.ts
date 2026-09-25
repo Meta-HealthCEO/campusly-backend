@@ -51,25 +51,43 @@ interface TaggedQuestion {
   tagFrom?: PaperQuestionTagFrom | null;
 }
 
+/** Same bank question, or both inline. */
+const sameSource = (a: TaggedQuestion, b: TaggedQuestion): boolean => String(a.questionId ?? '') === String(b.questionId ?? '');
 const sameQuestion = (a: TaggedQuestion, b: TaggedQuestion): boolean =>
-  String(a.questionId ?? '') === String(b.questionId ?? '') && (a.questionText ?? null) === (b.questionText ?? null);
+  sameSource(a, b) && (a.questionText ?? null) === (b.questionText ?? null);
+
+/** For each next question, the stored one it continues: an unchanged question anywhere, else a text edit in place. */
+function storedMatches(stored: ReadonlyArray<TaggedQuestion>, next: ReadonlyArray<TaggedQuestion>): Array<TaggedQuestion | undefined> {
+  const taken = new Set<TaggedQuestion>();
+  const claim = (hit: TaggedQuestion | undefined): TaggedQuestion | undefined => {
+    if (hit) taken.add(hit);
+    return hit;
+  };
+  const exact = next.map((q: TaggedQuestion) => claim(stored.find((o: TaggedQuestion) => !taken.has(o) && sameQuestion(o, q))));
+  return next.map((q: TaggedQuestion, i: number) => exact[i]
+    ?? claim(stored.find((o: TaggedQuestion) => !taken.has(o) && o.position === q.position && sameSource(o, q))));
+}
 
 /**
  * The paper editor saves whole sections without tag fields (service-papers.ts
- * buildPaperSections). A question still at the same place with the same bank
- * id and text keeps its stored tags; anything new or changed starts untagged.
+ * buildPaperSections). Tags change only when the teacher sets them or replaces
+ * the question (orchestrator ruling): an unchanged question keeps its tags
+ * wherever it moved, a text edit in place keeps them, and a question swapped
+ * for another bank question (or inline for bank) starts untagged.
  */
 export function carryQuestionTags<Q extends TaggedQuestion, S extends { questions: Q[] }>(
   stored: ReadonlyArray<{ questions?: ReadonlyArray<TaggedQuestion> }>,
   next: readonly S[],
 ): S[] {
-  return next.map((section: S, s: number) => ({
-    ...section,
-    questions: section.questions.map((q: Q) => {
-      if (q.curriculumNodeId || q.capsLevel) return q;
-      const old = stored[s]?.questions?.find((o: TaggedQuestion) => o.position === q.position);
-      if (!old || !sameQuestion(old, q)) return q;
-      return { ...q, curriculumNodeId: old.curriculumNodeId ?? null, capsLevel: old.capsLevel ?? null, tagFrom: old.tagFrom ?? null };
-    }),
-  }));
+  return next.map((section: S, s: number) => {
+    const matches = storedMatches(stored[s]?.questions ?? [], section.questions);
+    return {
+      ...section,
+      questions: section.questions.map((q: Q, i: number) => {
+        const old = matches[i];
+        if (q.curriculumNodeId || q.capsLevel || !old) return q;
+        return { ...q, curriculumNodeId: old.curriculumNodeId ?? null, capsLevel: old.capsLevel ?? null, tagFrom: old.tagFrom ?? null };
+      }),
+    };
+  });
 }
