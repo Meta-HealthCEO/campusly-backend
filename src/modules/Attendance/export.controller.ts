@@ -6,6 +6,7 @@ import { renderRegisterPdf, renderHistoryGridPdf, type RegisterRow, type History
 import { School } from '../School/model.js';
 import { Class } from '../Academic/model.js';
 import { Student } from '../Student/model.js';
+import { NotFoundError } from '../../common/errors.js';
 
 interface PopulatedAttendance {
   date: Date;
@@ -46,7 +47,14 @@ export class AttendanceExportController {
       isDeleted: false,
     };
 
-    if (classId) filter.classId = new mongoose.Types.ObjectId(classId as string);
+    if (classId) {
+      // Only a class in the caller's school (a school admin skips the teacher's
+      // class-ownership check); another school's class is simply not found.
+      const inSchool = typeof classId === 'string' && mongoose.Types.ObjectId.isValid(classId)
+        && await Class.exists({ _id: classId, schoolId, isDeleted: false });
+      if (!inSchool) throw new NotFoundError('Class not found');
+      filter.classId = new mongoose.Types.ObjectId(classId);
+    }
     if (typeof period === 'string' && period) {
       const p = Number(period);
       if (Number.isFinite(p)) filter.period = p;
@@ -66,7 +74,7 @@ export class AttendanceExportController {
       .lean()) as unknown as PopulatedAttendance[];
 
     if (format === 'pdf') {
-      const buffer = await this.buildPdf({
+      const buffer = await AttendanceExportController.buildPdf({
         schoolId,
         classId: typeof classId === 'string' ? classId : undefined,
         dateFrom: dateFrom as string,
@@ -115,7 +123,8 @@ export class AttendanceExportController {
 
     let classLabel = 'All classes';
     if (args.classId) {
-      const cls = await Class.findById(args.classId).select('name gradeId').populate('gradeId', 'name').lean();
+      const cls = await Class.findOne({ _id: args.classId, schoolId: args.schoolId, isDeleted: false })
+        .select('name gradeId').populate('gradeId', 'name').lean();
       if (cls) {
         const grade = cls.gradeId as unknown as { name?: string } | undefined;
         classLabel = `${grade?.name ?? ''} ${cls.name}`.trim() || cls.name;
