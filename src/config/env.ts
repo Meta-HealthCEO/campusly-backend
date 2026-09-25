@@ -18,6 +18,8 @@ function getEnvList(key: string, fallback?: string): string[] {
     .filter(Boolean);
 }
 
+const anthropicModel = getEnv('ANTHROPIC_MODEL', 'claude-sonnet-5');
+
 export const config = {
   port: parseInt(getEnv('PORT', '3000'), 10),
   nodeEnv: getEnv('NODE_ENV', 'development'),
@@ -61,7 +63,15 @@ export const config = {
 
   anthropic: {
     apiKey: getEnv('ANTHROPIC_API_KEY', ''),
-    model: getEnv('ANTHROPIC_MODEL', 'claude-sonnet-5'),
+    model: anthropicModel,
+    // Diagnosis of lost marks, misconception seeding, paper tagging (Phase E). Shaun's choice; defaults to the main model.
+    diagnosisModel: getEnv('ANTHROPIC_DIAGNOSIS_MODEL', anthropicModel),
+  },
+
+  evidence: {
+    // batch (default, half price) | direct (plain Messages API) | fixture (canned replies; refused in production)
+    mode: getEnv('EVIDENCE_DIAGNOSIS_MODE', 'batch'),
+    enabled: getEnv('EVIDENCE_DIAGNOSIS_ENABLED', 'true') !== 'false',
   },
 
   resend: {

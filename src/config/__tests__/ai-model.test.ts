@@ -20,6 +20,11 @@ describe('Claude model', () => {
     expect(config.anthropic.model).toBe('claude-sonnet-5');
   });
 
+  it('diagnoses on the main model unless ANTHROPIC_DIAGNOSIS_MODEL is set', () => {
+    if (process.env.ANTHROPIC_DIAGNOSIS_MODEL) return;
+    expect(config.anthropic.diagnosisModel).toBe(config.anthropic.model);
+  });
+
   it('is named in one place, so a model upgrade is a one-line change', () => {
     const offenders = sourceFiles(SRC)
       .filter((file: string) => !file.endsWith(path.join('config', 'env.ts')))

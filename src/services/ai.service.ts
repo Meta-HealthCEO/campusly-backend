@@ -4,10 +4,13 @@ import { config } from '../config/env.js';
 import { AppError } from '../common/errors.js';
 import { samplingParams } from './ai-model-capabilities.js';
 import { aiAppError, toAIError } from './ai-errors.js';
+import { acquireSemaphore, releaseSemaphore } from './ai-semaphore.js';
+
+// The concurrency limit and its bounded wait queue live in ai-semaphore.ts.
+export { AI_MAX_QUEUED } from './ai-semaphore.js';
 
 const ANTHROPIC_API_KEY = config.anthropic.apiKey;
 const ANTHROPIC_MODEL = config.anthropic.model;
-const MAX_CONCURRENT = 5;
 const TIMEOUT_MS = 180_000; // 3 minutes for content generation, across all retries
 
 /**
@@ -30,40 +33,7 @@ export interface ChatUsage {
   cache_creation_input_tokens: number;
 }
 type ChatResult = { text: string; usage: ChatUsage };
-type Options = { maxTokens?: number; temperature?: number };
-
-let activeCalls = 0;
-const waitQueue: Array<() => void> = [];
-
-/**
- * At most this many calls wait for a free slot. Beyond it a new call is
- * refused at once with the plain "AI is busy" error (503 AI_BUSY) instead of
- * queueing without bound (release review I1).
- */
-export const AI_MAX_QUEUED = 200;
-
-function acquireSemaphore(): Promise<void> {
-  if (activeCalls < MAX_CONCURRENT) {
-    activeCalls++;
-    return Promise.resolve();
-  }
-  if (waitQueue.length >= AI_MAX_QUEUED) {
-    logger.warn({ waiting: waitQueue.length }, '[AIService] wait queue full; refusing a call as busy');
-    return Promise.reject(aiAppError('BUSY'));
-  }
-  return new Promise<void>((resolve) => {
-    waitQueue.push(() => {
-      activeCalls++;
-      resolve();
-    });
-  });
-}
-
-function releaseSemaphore(): void {
-  activeCalls--;
-  const next = waitQueue.shift();
-  if (next) next();
-}
+type Options = { maxTokens?: number; temperature?: number; model?: string };
 
 function assertKey(): void {
   // Without a key the SDK fails with an authentication riddle; say what's actually wrong.
@@ -133,6 +103,17 @@ function firstText(message: Anthropic.Message): string {
   return textBlock ? textBlock.text : '';
 }
 
+const DIAGNOSIS_MODEL = config.anthropic.diagnosisModel;
+
+/** One Message Batches call with the key check and plain AI errors; the SDK's own retries apply. */
+async function batchCall<T>(path: string, run: (client: Anthropic) => Promise<T>): Promise<T> {
+  try {
+    return await run(getClient());
+  } catch (err: unknown) {
+    throw toAIError(err, { path, model: DIAGNOSIS_MODEL });
+  }
+}
+
 export class AIService {
   /** Throws the plain "AI isn't set up" error when there is no key, before any work starts. */
   static assertConfigured(): void {
@@ -158,10 +139,11 @@ export class AIService {
     userPrompt: string,
     options?: Options,
   ): Promise<TextResult> {
+    const model = options?.model ?? ANTHROPIC_MODEL;
     const message = await sendMessage('generateCompletion', {
-      model: ANTHROPIC_MODEL,
+      model,
       max_tokens: options?.maxTokens ?? 4096,
-      ...samplingParams(ANTHROPIC_MODEL, options?.temperature ?? 0.7),
+      ...samplingParams(model, options?.temperature ?? 0.7),
       system: systemPrompt,
       messages: [{ role: 'user', content: userPrompt }],
     });
@@ -235,12 +217,13 @@ export class AIService {
   static async generateJSONWithUsage<T>(
     systemPrompt: string,
     userPrompt: string,
+    options?: Options,
   ): Promise<{ data: T; usage: Usage }> {
     const { text, usage } = await AIService.generateCompletionWithUsage(
       systemPrompt +
         '\n\nYou MUST respond with valid JSON only. No markdown, no code fences, no explanation.',
       userPrompt,
-      { temperature: 0.3 },
+      { temperature: 0.3, ...options },
     );
 
     // Strip any accidental markdown fences
@@ -355,5 +338,36 @@ export class AIService {
       input: message.usage?.input_tokens ?? 0,
       output: message.usage?.output_tokens ?? 0,
     };
+  }
+
+  /** One Message Batches request on the diagnosis model (or `options.model`), no sampling for current models. */
+  static batchRequest(
+    customId: string, systemPrompt: string, userPrompt: string, options: { maxTokens: number; model?: string },
+  ): Anthropic.Messages.BatchCreateParams.Request {
+    const model = options.model ?? DIAGNOSIS_MODEL;
+    return {
+      custom_id: customId,
+      params: {
+        model, max_tokens: options.maxTokens, ...samplingParams(model, 0),
+        system: systemPrompt, messages: [{ role: 'user', content: userPrompt }],
+      },
+    };
+  }
+
+  static createMessageBatch(requests: Anthropic.Messages.BatchCreateParams.Request[]): Promise<Anthropic.Messages.MessageBatch> {
+    return batchCall('createMessageBatch', (c) => c.messages.batches.create({ requests }));
+  }
+
+  static retrieveMessageBatch(batchId: string): Promise<Anthropic.Messages.MessageBatch> {
+    return batchCall('retrieveMessageBatch', (c) => c.messages.batches.retrieve(batchId));
+  }
+
+  /** Every result line of an ended batch. Lines arrive in any order: match them by `custom_id`. */
+  static messageBatchResults(batchId: string): Promise<Anthropic.Messages.MessageBatchIndividualResponse[]> {
+    return batchCall('messageBatchResults', async (c) => {
+      const lines: Anthropic.Messages.MessageBatchIndividualResponse[] = [];
+      for await (const line of await c.messages.batches.results(batchId)) lines.push(line);
+      return lines;
+    });
   }
 }
