@@ -20,7 +20,6 @@ import {
   type GeneratePaperSection,
   type SimplePaperType,
 } from '../QuestionBank/service-papers-generation.js';
-import { assertPaperGenerationAccess } from '../subscription/entitlements.js';
 import {
   softDeleteEntity,
   toPlainMaterial,
@@ -152,9 +151,8 @@ export async function addMaterial(
         await assertLinkedRefAvailable('paper', input.existingPaperId, actor);
         paperId = toObjectId(input.existingPaperId, 'paperId');
       } else {
-        // A new AI paper counts against a free standalone teacher's allowance,
-        // same as the paper wizard (add, generate-all and regenerate land here).
-        await assertPaperGenerationAccess(schoolId, actor.isStandaloneTeacher === true);
+        // Standalone teachers never reach here: the lesson-plan material
+        // routes refuse them (refuseStandalone), so no AI allowance applies.
         const payload = (input.createPayload ?? {}) as Record<string, unknown>;
         const paperType =
           payload.paperType === 'test'

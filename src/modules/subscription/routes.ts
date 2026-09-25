@@ -22,6 +22,7 @@ function webhookLimiter(req: Request, res: Response, next: NextFunction): void {
 
 router.get('/plans', authenticate, SubscriptionController.listPlans);
 router.get('/subscriptions/me', authenticate, SubscriptionController.getMine);
+router.get('/subscriptions/ai-usage', authenticate, SubscriptionController.getAIUsage);
 router.post('/subscriptions/checkout', authenticate, SubscriptionController.checkout);
 router.post('/subscriptions/cancel', authenticate, SubscriptionController.cancel);
 router.post('/subscriptions/resume', authenticate, SubscriptionController.resume);

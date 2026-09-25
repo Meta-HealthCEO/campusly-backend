@@ -10,7 +10,6 @@ import { verifyEmail, resendEmailVerification } from './email-verification.js';
 import { apiResponse } from '../../common/utils.js';
 import { Subscription, Plan } from '../subscription/model.js';
 import { SubscriptionService } from '../subscription/service.js';
-import { getFreeAllowance } from '../subscription/free-allowance.js';
 import { changePasswordSchema } from './validation.js';
 import { UnauthorizedError } from '../../common/errors.js';
 import { resolveRegistrationScope } from './registration-policy.js';
@@ -176,19 +175,16 @@ export class AuthController {
 
     let subscription = null;
     let plan = null;
-    let freeAllowance = null;
     if (user.schoolId) {
       const schoolId = user.schoolId as mongoose.Types.ObjectId;
       subscription =
         (await Subscription.findOne({ schoolId })) ??
         (await SubscriptionService.createInitialFreeSubscription(schoolId));
       plan = await Plan.findOne({ code: subscription.planCode });
-      // Standalone teachers get a few free AI papers before the Pro trial.
-      if (user.isStandaloneTeacher) freeAllowance = await getFreeAllowance(String(schoolId));
     }
 
     res.status(200).json(
-      apiResponse(true, { user, subscription, plan, freeAllowance }, 'User retrieved successfully'),
+      apiResponse(true, { user, subscription, plan }, 'User retrieved successfully'),
     );
   }
 

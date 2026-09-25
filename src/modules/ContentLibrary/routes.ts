@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { authorize, validate } from '../../middleware/index.js';
 import { requireCapability } from '../../middleware/capability.js';
+import { refuseStandalone } from '../../middleware/refuse-standalone.js';
 import { ContentLibraryController } from './controller.js';
 import {
   createResourceSchema,
@@ -22,6 +23,8 @@ const READ_ROLES = ['super_admin', 'school_admin', 'principal', 'hod', 'teacher'
 router.post(
   '/resources/generate',
   authorize(...READ_ROLES),
+  // The Library is hidden from standalone teachers (outside their AI allowance).
+  refuseStandalone(),
   validate(generateContentSchema),
   ContentLibraryController.generateContent,
 );
