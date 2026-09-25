@@ -8,6 +8,8 @@ import { BadRequestError, ForbiddenError, NotFoundError, UnauthorizedError } fro
 import { Student } from './model.js';
 import { Class } from '../Academic/model.js';
 import { resolveSchoolScope } from '../../common/school-scope.js';
+import { learnerClassIds } from '../../common/class-roster.js';
+import { removeFromGroup } from './service-groups.js';
 
 async function assertTeacherCanAccessStudent(req: Request, studentId: string): Promise<void> {
   if (req.user?.role !== 'teacher') return;
@@ -16,19 +18,16 @@ async function assertTeacherCanAccessStudent(req: Request, studentId: string): P
   if (!schoolId) throw new ForbiddenError('School context is required');
 
   const student = await Student.findOne({ _id: studentId, schoolId, isDeleted: false })
-    .select('classId')
+    .select('classId subjectClassIds')
     .lean();
   if (!student) throw new NotFoundError('Student not found');
 
+  // Any of the learner's groups will do: their own or one they joined (spec §3).
   const { AcademicService } = await import('../Academic/service.js');
-  const canAccess = await AcademicService.teacherCanAccessClass(
-    req.user.id,
-    String(student.classId),
-    schoolId,
-  );
-  if (!canAccess) {
-    throw new ForbiddenError('You can only manage learners in your own teaching groups');
+  for (const classId of learnerClassIds(student)) {
+    if (await AcademicService.teacherCanAccessClass(req.user.id, String(classId), schoolId)) return;
   }
+  throw new ForbiddenError('You can only manage learners in your own teaching groups');
 }
 
 async function resolveTeacherTargetClass(req: Request, classId: string): Promise<{
@@ -174,6 +173,14 @@ export class StudentController {
 
   static async delete(req: Request, res: Response): Promise<void> {
     const schoolId = req.user!.schoolId!;
+    // "Remove from this group" (rulings R8/R9): without ?classId= it deletes the learner, as before.
+    const classId = typeof req.query.classId === 'string' && req.query.classId ? req.query.classId : null;
+    if (classId) {
+      if (req.user?.role === 'teacher') await resolveTeacherTargetClass(req, classId);
+      const result = await removeFromGroup(req.params.id as string, schoolId, classId);
+      res.json(apiResponse(true, result, result.removed === 'group' ? 'Removed from this group' : 'Student deleted successfully'));
+      return;
+    }
     await assertTeacherCanAccessStudent(req, req.params.id as string);
     await StudentService.delete(req.params.id as string, schoolId);
     res.json(apiResponse(true, undefined, 'Student deleted successfully'));
