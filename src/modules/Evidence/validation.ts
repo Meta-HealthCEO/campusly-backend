@@ -18,3 +18,10 @@ export const mergeTypeBody = z.object({ intoId: objectIdSchema }).strict();
 export const retireTypeBody = z.object({ replacementId: objectIdSchema.optional() }).strict();
 export const reasonsQuery = z.object({ source: z.enum(['test', 'homework']), recordId: objectIdSchema });
 export const classMisconceptionsQuery = z.object({ parent: z.enum(['paper', 'homework']), parentId: objectIdSchema, classId: objectIdSchema });
+export const topicsQuery = z.object({ subjectId: objectIdSchema, from: z.coerce.date().optional(), to: z.coerce.date().optional() });
+export const studentParams = z.object({ studentId: objectIdSchema });
+export const classParams = z.object({ classId: objectIdSchema });
+export const rowsQuery = z.object({
+  subjectId: objectIdSchema.optional(), topicNodeId: objectIdSchema.optional(), cursor: objectIdSchema.optional(),
+  limit: z.coerce.number().int().min(1).max(100).default(50),
+});
